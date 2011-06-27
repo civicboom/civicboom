@@ -8,6 +8,7 @@
 #frag_containers .frag_container .frag_data {
 	.frag_list {
 		font-size: 88%;
+		@include drop_shadow(1px, 1px, 1px, #666);
 
 		background: $frag-list-top; /* for non-css3 browsers */
 
@@ -58,9 +59,7 @@
 		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
 		.thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
 
-		border-radius        : $frag-radius;
-		-moz-border-radius   : $frag-radius;
-		-webkit-border-radius: $frag-radius;
+		@include border_radius($frag-radius);
 
 		td, li, ul {
 			padding-bottom: 1em;
@@ -83,9 +82,7 @@
 			position: relative;
 			top: -0.30em;
 			
-			border-radius        : 0.2em;
-			-moz-border-radius   : 0.2em;
-			-webkit-border-radius: 0.2em;
+			@include border_radius(0.2em);
 		}
 
 		/* .frag_list li .avatar {font-size: 20px;} */

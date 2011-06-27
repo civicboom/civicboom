@@ -16,17 +16,11 @@
 				margin-bottom: 0;
 			}
 				
-			.about_me {
-				/* --- Cross browser border rounding --- */
-				border-radius        : $frag-radius;
-				-moz-border-radius   : $frag-radius;
-				-webkit-border-radius: $frag-radius;
-				background-color: #fff;
-				padding: 1em;
-				font-size: 88%;
-				
-				a {
-					text-decoration: none;
+			.member_details {
+			
+				h2 {
+					font-size: 150%;
+					color: #666;
 				}
 				
 				.avatar {
@@ -35,14 +29,12 @@
 					float: right;
 				}
 				
-				.content {
-					color: #333;
-					margin-bottom: 10px;
+				.name {
 					
-					h2 {
-						font-size: 150%;
-						color: #666;
-					}
+				}
+				
+				.description {
+					padding-left: 1em;
 				}
 				
 				.button {

@@ -48,8 +48,6 @@
             'custom_share'      : custom_share
         }
         
-        
-        
         # Customize layout based on logged in user or group
         if self.current_user:
         # GregM: Removed popups as we have the janrain share popup now :D
@@ -101,35 +99,40 @@
     ## Top row (avatar/about me)
     <div class="frag_top_row">
 	<div class="frag_col">
-	<div  class="about_me">
-	    <div class="content">
-		<div class="avatar">${member_avatar(img_class='photo')}</div>
-		<h2 class="fn n">${h.guess_hcard_name(self.member['name'])}</h2>
-		% if self.member.get('description'):
-		    <div>${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
-		% endif
+	    ## About Me
+	    <div class="frag_list">
+		<div class="member_details">
+		    <div class="avatar">${member_avatar(img_class='photo')}</div>
+		    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+		    % if self.member.get('description'):
+			<div class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
+		    % endif
+		    <div class="separator"></div>
+		    ${actions_buttons()}
+		    % if 'message' in self.actions:
+			${popup.link(
+			    h.args_to_tuple('new_message', target=self.id),
+			    title = _('Send message'),
+			    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
+			)}
+			<div style="clear: both;"></div>
+		    % endif
+		</div>
 	    </div>
-	    <div style="clear: both;"></div>
-	    ${actions_buttons()}
-	    % if 'message' in self.actions:
-		${popup.link(
-		    h.args_to_tuple('new_message', target=self.id),
-		    title = _('Send message'),
-		    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
+	    
+	    
+	    
+	    ## My requests
+	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
+		${frag_list.content_list(
+		    d[list] ,
+		    description ,
+		    h.args_to_tuple('contents', creator=self.id, list=list),
+		    icon = icon ,
+		    extra_info = True ,
 		)}
-		## <span class="separtor"></span>
-	    % endif
-	    <div style="clear: both;"></div>
-	</div>
-	% for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
-	    ${frag_list.content_list(
-		d[list] ,
-		description ,
-		h.args_to_tuple('contents', creator=self.id, list=list),
-		icon = icon ,
-		extra_info = True ,
-	    )}
-	% endfor
+	    % endfor
+	    
 	</div>
     </div>
     
@@ -198,8 +201,8 @@
 	${share.AddThisFragList(**self.attr.share_kwargs)}
 	
 	% if self.num_unread_messages != None and self.num_unread_notifications != None:
-    	${messages_frag_list()}
-    % endif
+		${messages_frag_list()}
+	    % endif
 	
 	${frag_list.member_list_thumbnails(
 	    d['following'],
@@ -318,7 +321,19 @@
             </div>
         </div>
     </div>
-</%def>
+    
+    <%doc><div class="frag_list">
+        <h2>${_('Messages')}</h2>
+        <div class="frag_list_contents">
+            <div class="content" style="text-align: center;">
+                    <a style="float: left;" href="${h.url('messages', list='to')          }"><div style="float:left; width: 4em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a>
+                    <a href="${h.url('messages', list='sent')        }"><div style="float:left; width: 4em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a>
+                    <a style="float: right;" href="${h.url('messages', list='notification')}"><div style="float:left; width: 4em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a>
+            </div>
+        </div>
+	<div class="separator"></div>
+    </div></%doc>
+    </%def>
 
 ##------------------------------------------------------------------------------
 ## Actions
@@ -444,7 +459,7 @@
             value           = _("Delete _group"),
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this group?"),
-            json_form_complete_actions = "cb_frag_remove(current_element); cb_frag_reload('members/%s');" % self.id,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
         )}
         <span class="separtor"></span>
     % endif

@@ -728,7 +728,11 @@
             value           = _("Delete"),
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this content?"),
-            json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
+            # AllanC -> GMeill - this is incorrect behaviour.
+            #  frag_reload can take a string to reload ALL frags with a reference to this content obj
+            #  reinstating old behaviour
+            #json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
         )}
         <span class="separtor"></span>
     % endif
@@ -773,9 +777,6 @@
 	<img src="/images/misc/shareicons/video_icon.png" />
 	<img src="/images/misc/shareicons/camera_icon.png" />
 	<img src="/images/misc/shareicons/audio_icon.png" />
-    </div>
-    <div class="popup-actions">
-	<span class="button">Share your story now!</span>
     </div>
 </%def>
 
