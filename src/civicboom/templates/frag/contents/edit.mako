@@ -716,7 +716,7 @@
                             $(this).addClass('disabled');
                             add_onclick_submit_field($(this));
                             % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
                             % endif
                             setTimeout(function() {
                                 $(this).removeClass('disabled');
@@ -785,7 +785,7 @@
                             $(this).addClass('disabled');
                             add_onclick_submit_field($(this));
                             % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
                             % endif
                             setTimeout(function() {
                                 $(this).removeClass('disabled');
