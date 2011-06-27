@@ -733,7 +733,6 @@
             #  reinstating old behaviour
             #json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
             json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
-            
         )}
         <span class="separtor"></span>
     % endif

@@ -183,7 +183,7 @@ function cb_frag_reload(param, exclude_frag) {
     
     function display_reload_feedback(jquery_element) {
         //jquery_element.find('.title_text').first() += ' <img src="/images/ajax-loader.gif" />';
-        var title = jquery_element.find('.title_text').first();
+        var title = jquery_element.find('.action_bar').first();
         title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
     }
     
