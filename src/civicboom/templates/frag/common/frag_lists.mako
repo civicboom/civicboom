@@ -326,7 +326,7 @@
         </a>
     </td>
     
-    <td class="content_details">
+    <td class="content_details"> 
         <a href="${item_url}" ${js_link_to_frag}>
             <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
@@ -370,7 +370,7 @@
         ##% if content.get('parent') and content['parent'].get('creator'):
         ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
         ##% endif
-        <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
+        <%doc><a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a></%doc>
         
         <div style="clear: both;"></div>
     </td>
@@ -513,14 +513,12 @@
     <div class="separator"></div>
     
     <div class="content">
-        % if not 'images/default/thumbnail' in content['thumbnail_url']:
         <div class="thumbnail">
             <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
                 ${content_thumbnail_icons(content)}
                 <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
             </a>
         </div>
-        % endif
         % if content and 'content_short' in content:
             ${h.truncate(content['content_short'], length=140, indicator='...', whole_word=True)}
             <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} style="font-size: 75%;">learn more</a>

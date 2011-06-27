@@ -774,9 +774,6 @@
 	<img src="/images/misc/shareicons/camera_icon.png" />
 	<img src="/images/misc/shareicons/audio_icon.png" />
     </div>
-    <div class="popup-actions">
-	<span class="button">Share your story now!</span>
-    </div>
 </%def>
 
 ##------------------------------------------------------------------------------

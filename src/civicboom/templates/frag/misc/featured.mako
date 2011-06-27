@@ -66,7 +66,7 @@
 ##------------------------------------------------------------------------------
 <%def name="advert(content, href=None, icon=None, config_key=None, background=None)">
     % if config_key and config_key in self.advert_list:
-    <div class="advert">
+    <div><div class="advert">
         ## Display advert disable link
         ${advert_disable_link(config_key)}
         ## <a class="icon16 i_close"></a>
@@ -77,7 +77,7 @@
             <span class="content">${content}</span>
         % endif
         <div class="separator" style="clear: both;"></div>
-    </div>
+    </div></div>
     % endif
 </%def>
     

@@ -1,3 +1,6 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 /*
  * signin page, 3 forms for "log in", "forgotten password" and "register"
  */
@@ -16,9 +19,7 @@ BODY.c-account.a-signin {
 	FORM {
 		background: #f6f6f6;
 		border: 1px solid #ddd;
-		border-radius        : 0.5em;
-		-moz-border-radius   : 0.5em;
-		-webkit-border-radius: 0.5em;
+		@include border-radius(0.5em);
 	}
 	FORM TABLE,
 	FORM TABLE TBODY {
