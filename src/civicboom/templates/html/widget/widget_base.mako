@@ -17,9 +17,9 @@
     <link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
     <link rel="stylesheet" type="text/css" href="/styles/widget/layout_${c.widget['theme']}.css" />
     ## AllanC - A temp rem until we can concatinate compiled .css files for each theme
-    ##% else:
-    ##<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
-    ##% endif
+    % else:
+    <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/widget.css")}" />
+    % endif
 
     ##----------------------------------------------------------------------
     ## Scripts
