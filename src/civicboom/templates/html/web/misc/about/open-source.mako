@@ -73,6 +73,10 @@ python-recaptcha  - MIT
 python-decorator  - 2-clause BSD
 python-lxml       - BSD + Python (plus some other bits which are explicitly marked as aggregated not linked)
 python-pybabel    - BSD-like?
+python-decorator  - BSD
+python-dateutil   - Simplified BSD
+python-redis      - MIT
+python-beautifulsoup - Python
 
 mako              - MIT
 formalchemy       - MIT
@@ -81,6 +85,8 @@ GeoAlchemy        - MIT
 GeoFormAlchemy    - MIT
 twitter           - MIT
 pexif             - MIT
+
+ffmpeg            - GPL [aggregated]
 -->
 
 <p>DB Framework -
@@ -100,7 +106,7 @@ python-psycopg2   - GPL + exception that proprietary use is allowed as long as
 	&copy; The PostgreSQL Global Development Group
 
 <p>Cache -
-	<a href="http://redis.io/">Redis</a>
+	<a href="http://redis.io/">Redis</a> -
 	BSD
 
 </div>

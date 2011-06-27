@@ -1,0 +1,109 @@
+/*----------------------------------------------------------------------------*/
+/* Content                                                                    */
+/*----------------------------------------------------------------------------*/
+
+.frag_content_edit {
+	fieldset legend {
+	  font-size: 120%;
+	  font-weight: bold;
+	  color: #666;
+	  cursor: pointer;
+	  padding: 0.25em;
+	}
+
+	fieldset .hideable {
+		margin-bottom: 1em;
+	}
+
+/*
+	.form_instuctions {
+	  font-size: 86%;
+	  color: #555;
+	}
+
+	fieldset        {
+	  border-top: 1px solid #888;
+	  margin-top: 1em;
+	}
+
+	fieldset fieldset {
+	  border-top: 1px solid #aaa;
+	  margin-top: 0.5em;
+	}
+	fieldset fieldset legend {
+	  font-size: 110%;
+	  color: #999;
+	  margin-bottom: 0.25em;
+	}
+*/
+
+	/*----------------------------------------------------------------------------*/
+	/* Media                                                                      */
+	/*----------------------------------------------------------------------------*/
+	 
+	.media_files li {
+	  padding: 0.5em;
+	}
+
+	.media_preview {
+	  display: inline-block;
+	  vertical-align: top;
+	  /* float: left; */
+	  width: 5em;
+	  height: 4em;
+	  box-shadow:         3px 3px 5px black;
+	  -moz-box-shadow:    3px 3px 5px black;
+	  -webkit-box-shadow: 3px 3px 5px black;
+	  margin: 0.5em;
+	  margin-right: 1em;
+	  border: 1px solid #666;
+	}
+
+	.media_preview_none {
+	  text-align: center;
+	}
+
+	.media_fields {
+	  display: inline-block;
+	  width: 350px;
+	}
+	.media_fields input {
+	  width: 65%;
+	  vertical-align: top;
+	}
+
+	/*    
+	.media_fields .form_field_file {
+	  font-size: 50%;
+	}
+	*/
+
+	.media_fields label {
+	  display: inline-block;
+	  width: 19%;
+	  overflow: hidden;
+	}
+
+	.media_actions {
+	  display: inline-block;
+	  vertical-align: top;
+	}
+
+	.media_fields .file_remove {
+	  width: 16px;
+	  height: 16px;
+	  border: 0;
+	  color: transparent;
+	}
+	.media_fields .form_file_upload {
+	  width: auto;
+	}
+}
+
+/*----------------------------------------------------------------------------*/
+/* Selectable Section                                                         */
+/*----------------------------------------------------------------------------*/
+
+.section_selectable {border: 1px solid transparent;}
+.section_selected   {border: 1px solid black; background-color: #ccc;}
+/* .active {display: block !important;} */

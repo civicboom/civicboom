@@ -1,0 +1,120 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+#frag_containers .frag_container {
+	/*---------------------------Frag Member Adverts------------------------------*/
+	.advert {
+		$advert-height: 2em;
+		min-height: $advert-height;
+		position: relative;
+		padding: 0.75em;
+		margin: 1em 1em 0 1em;
+		text-align: left;
+		font-size: 110%;
+		font-weight: bold;
+
+		background-color: $advert-back;
+		@include horiz_gradient($advert-back-top, $advert-back-bot);
+		@include border_radius(0.3em);
+		@include drop_shadow(1px, 1px, 1px, #666);
+		
+		a {
+			text-decoration: none;
+			color: #666;
+		}
+
+		.content {
+			color: #fff;
+			max-width: 85%;
+			margin-right: 10px;
+			float: left;
+			margin-top: ($advert-height / 2) - 0.5em;
+		}
+
+		form {
+			float: right;
+		}
+
+		.hide_advert_submit {
+			position: relative;
+		}
+	}
+	
+	/* --- Sponsored Feature Content --- */
+	.sponsored_content {
+		margin: 0;
+		padding: 0;
+		padding-top: 1em;
+		width: 100%;
+		display: block;
+		min-height: 15em;
+		
+		a {
+			color: $link-colour;
+		}
+		
+		.content {
+			position: relative;
+			text-align: left;
+			color: #333;
+			font-size: 110%;
+			word-wrap: break-word;
+			padding: 0.5em 1em 0 1em;
+			min-height: 125px;
+			
+			.thumbnail {
+				min-width: 125px;
+				max-width: 125px;
+				min-height: 125px;
+				max-height: 125px;
+				margin: 0 0.5em 0 0;
+				padding: 0;
+				float: left;
+				
+				img {
+					width: 100%;
+					height: 100%;
+				}
+			}
+			
+			.prompt {
+				position: absolute;
+				bottom: 0.1em;
+				right: 1em;
+			}
+		}
+		
+		.content-info {
+			margin-bottom: 1em;
+			padding-left: 2em;
+			
+			div {
+				float: left;
+				margin-right: 2em;
+			}
+		}
+		
+		.content_title {
+			text-align: center;
+			font-size: 140%;
+			font-weight: bold;
+			
+			a {
+				display: inline;
+				float: left;
+				margin-top: 5px;
+				margin-left: 10px;
+			}
+			
+			.content_avatar {
+				float: right;
+				margin-right: 1em;
+				width: 20px;
+				height: 20px;
+				
+				border: 0.04em solid #CCC;
+				@include border_radius(0.1em);
+			}
+		}
+	}
+}

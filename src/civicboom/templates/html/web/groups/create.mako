@@ -122,7 +122,7 @@ ${group_settings.body()}
          <td colspan="2" class="bold bigger">Need help?</td>
         </tr>
         <tr class="doublepadding">
-          <td colspan="2">${_('By clicking on one of the buttons below, you can create a "Quick _Group", which will have pre-set defaults. (Try it out, click on a button and see the highlighted changes!)')}</td>
+          <td colspan="2">The buttons below represent some of the most common uses for hubs. Click one to highlight the recommended options for that type of hub.)}</td>
         </tr>
         <tr class="padding">
           <td><input class="button quickbutton" type="button" name="news" value="${_('News Organisation')}" /></td>

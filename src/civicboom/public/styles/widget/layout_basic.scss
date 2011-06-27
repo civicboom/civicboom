@@ -1,0 +1,98 @@
+/* 
+.ie {}
+*/
+
+#CivicboomWidget-basic {
+	a {
+		text-decoration: none;
+		color: inherit;
+	}
+	.widget_border {
+		border-radius        : 2px;
+		-moz-border-radius   : 2px;
+		-webkit-border-radius: 2px;
+	}
+	.widget_header td {
+		vertical-align: top;
+		padding: 2px;
+		font-weight: bold;
+	}
+	.widget_content {
+		overflow-x: hidden;
+		overflow-y: auto;
+		width: 100%;
+	}
+	.action_bar .padding {
+		padding: 2px;
+	}
+	.widget_content .padding {
+		padding: 0.5em;
+	}
+	.widget_footer .padding {
+		padding: 2px;
+	}
+	.widget_header {overflow: hidden;}
+	.action_bar    {overflow: hidden;}
+	.widget_footer {overflow: hidden;}
+
+	/* Widget Content */
+
+	.widget_content {
+
+		.content_list {
+			/* font-size: 110%; */
+			margin-bottom: 0.5em;
+			clear: both;
+
+            /* UL-LI widget list */
+            LI {
+                padding: 0.5em 0em 0.5em 0em;
+                clear: both;
+                .thumbnail {width: 3em; float: left;}
+                .details   {margin-left: 4em;}
+            }
+
+            /* Old table styles
+			TD {
+				vertical-align: top;
+				padding-top: 0.25em;
+				padding-bottom: 0.25em;
+
+				.thumbnail {height: 3em; margin-right: 0.25em;}
+				.title     {font-weight: bold;}
+				.creator   {float: right; text-align: right;}
+				.content   {display: none;}
+			}
+            */
+		}
+
+		.content_preview {
+			H1, IMG {
+				margin-bottom: 0.5em;
+			}
+		}
+
+		.action .padding {
+			text-align: center;
+			vertical-align: middle;
+			font-weight: bold;
+			border-radius        : 2px;
+			-moz-border-radius   : 2px;
+			-webkit-border-radius: 2px;
+		}
+
+		h1 {
+			font-size  : 116%;
+			font-weight: bold;
+		}
+
+		h2 {
+			font-size  : 116%;
+			font-weight: bold;
+			margin-top: 1em;
+		}
+		.responses TD IMG {
+			max-height: 2.5em;
+		}
+	}
+}

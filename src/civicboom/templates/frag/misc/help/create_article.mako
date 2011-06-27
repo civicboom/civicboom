@@ -8,7 +8,7 @@
 <p>1. Write the title of your content</p>
 <p>2. If it's text based, write your content. You can also add in the url of any YouTube video or Google video to help support your piece.</p>
 <p>3. Tags - these are key words that help others categories and find your content.</p>
-<p>4. Your content might just be video or images - or you might want to support your text with additional media. You can add it in here, including audio files.</p>
+<p>4. You can add photo, video and audio content by clicking the "media" tab. You content doesn't need to have any text at all, it could just be media.</p>
 <p>5. We have one licence selection at the moment - Creative Commons Attributed license. This license lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation. This is the most accommodating of licenses offered. Recommended for maximum dissemination and use of licensed materials.</p>
 
 <h2>Save, Preview or Publish:</h2>

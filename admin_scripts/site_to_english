@@ -55,9 +55,9 @@ def trans(text, locations):
         ("plus",       "premium"),
         ("corporate",  "corporate"),
 
-        ("widget",     "Boombox"),
-
-        ("respond",    "respond"),
+        ("widget",  "Boombox"),
+        ("respond", "respond"),
+        ("request", "request"),
     ]
     for w, r in words:
         text = text.replace("_"+w, r)

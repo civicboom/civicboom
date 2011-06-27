@@ -1,0 +1,77 @@
+@import "../common/_palette.scss";
+
+#frag_containers .frag_container {
+	.frag_member {
+		/*-------------------------- Frag Member Cols---------------------------------*/
+		.frag_top_row {
+			/*padding: 0.5em 0.9em 0 0.9em;*/
+			color: #333;
+			
+			h1 {
+				margin-left: 0.5em;
+				margin-bottom: 0.5em;
+			}
+			
+			.frag_col {
+				margin-bottom: 0;
+			}
+				
+			.member_details {
+			
+				h2 {
+					font-size: 150%;
+					color: #666;
+				}
+				
+				.avatar {
+					width: 90px;
+					padding: 5px;
+					float: right;
+				}
+				
+				.name {
+					
+				}
+				
+				.description {
+					padding-left: 1em;
+				}
+				
+				.button {
+					font-size: 110%;
+					float: left;
+					margin-right: 10px;
+				}
+				
+				.actions {
+					width: 90px;
+					text-align: right;
+				}
+			}
+		}
+	
+		.frag_left_col {
+			width: 33%;
+			float: left;
+		}
+		.frag_right_col {
+			width: 66%;
+			float: right;
+		}
+
+		/*---------------------------Frag Member Avatar-------------------------------*/
+		.avatar {
+			text-align: center;
+		}
+	
+		/*---------------------------Frag Member User Details-------------------------*/
+		.user-details {
+			margin-top: 10px;
+			margin-left: 5px;
+	
+			.detail-title {
+				font-weight: bold;
+			}
+		}
+	}
+}

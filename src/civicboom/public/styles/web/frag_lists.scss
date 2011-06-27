@@ -1,0 +1,181 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+/*----------------------------------------------------------------------------*/
+/* Fragment Lists
+/*----------------------------------------------------------------------------*/
+
+#frag_containers .frag_container .frag_data {
+	.frag_list {
+		font-size: 88%;
+		@include drop_shadow(1px, 1px, 1px, #666);
+
+		background: $frag-list-top; /* for non-css3 browsers */
+
+		@include border_radius($frag_radius);
+		
+		margin-top: inherit;
+		padding: 0.6em;
+
+		color: $frag-list-title-txt;
+
+		/* --------------------------
+		   Frag list Headings (for lists in content and member frags)
+		   -------------------------- */
+		h2 {
+			font-size: 130%;
+			margin: 0em;
+			background-color: #fff; /* $frag-list-title; */
+			padding: 0.5em 0.5em 0.25em 0.5em;
+			
+			/* Proto - Have to put this here too to round entire list for some reason */
+			@include border-radius($frag-radius);
+		}
+		
+		h2 .count {
+			color: $frag-list-count;
+			float: right;
+		}
+
+		.list_actions {
+			float: right;
+		}
+		
+		a {
+			text-decoration: none;
+		}
+	}
+
+
+	/* --------------------------
+	   Frag list contents
+	   -------------------------- */
+	.frag_list_contents {
+		background-color: white;
+	
+		padding       : 0.5em;
+		padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
+
+		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
+		.thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
+
+		@include border_radius($frag-radius);
+
+		td, li, ul {
+			padding-bottom: 1em;
+		}
+
+		a {
+			text-decoration: none;
+		}
+
+		td {
+			vertical-align: top;
+		}
+
+		.link_more {
+			float: right;
+			background-color: $frag-list-border; 
+			
+			padding: 0.2em;
+			
+			position: relative;
+			top: -0.30em;
+			
+			@include border_radius(0.2em);
+		}
+
+		/* .frag_list li .avatar {font-size: 20px;} */
+
+
+		/*------------------------------ Content -------------------------------------*/
+		.content_details {
+			width: 100%;
+			position: relative;
+			
+			p {
+			    padding-top : 0.1em;
+			    padding-left: 0.4em;
+			}
+			
+			.content_title {
+			    width: 85%;
+			    font-size: 120%;
+			    color: lighten($frag-list-txt, 20%);
+			}
+			
+			.timestamp {
+			font-size: 105%;
+			    color: lighten($frag-list-txt, 30%);
+			}
+			
+			.extra {
+			    color: lighten($frag-list-txt, 40%);
+			    width: 80%;
+			    float: left;
+			}
+
+			.thumbnail {
+				position: absolute;
+				top: 0;
+				right: 0;
+			}
+			
+			.prompt {
+				position: absolute;
+				bottom: 1em;
+				right: 0;
+			}
+		}
+
+
+		/*------------------------------ Members -------------------------------------*/
+		.member {
+			li {
+				display: inline;
+				
+				.thumbnail {
+					margin-bottom: 0.2em;
+				}
+			}
+		}
+
+
+		/*----------------------------- Messages -------------------------------------*/
+		.messages {
+			li {
+				margin-bottom: 0.5em;
+				/*border-bottom: 1px solid #ccc;*/
+			}
+			.unread      {background-color: #eee;}
+			.source      {float: left;}
+			.target      {float: left;}
+			.subject     {font-weight: bold; background-color: #ccc;}
+			.content a   {font-weight: bold;}
+			.icon_delete {float: right;}
+		}
+	}
+	
+	.list_item_creator_avatar {
+		float: right;
+	}
+	
+	.pagination {
+	
+		padding: 0 1em 0.5em 1em;
+		font-weight: bold;
+	
+		a {
+			font-size: 125%;
+		}
+	
+		.next {
+			float: right;
+		}
+		
+		.prev {
+			float: left;
+		}
+	
+	}
+}
