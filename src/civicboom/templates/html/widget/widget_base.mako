@@ -12,7 +12,7 @@
     ##----------------------------------------------------------------------
     ## Styles
     ##----------------------------------------------------------------------
-    ##% if config['development_mode']:
+    % if config['development_mode']:
     <link rel="stylesheet" type="text/css" href="/styles/common/yui-3.2.0-reset-fonts.css" />
     <link rel="stylesheet" type="text/css" href="/styles/common/icons.css" />
     <link rel="stylesheet" type="text/css" href="/styles/widget/layout_${c.widget['theme']}.css" />
