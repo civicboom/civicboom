@@ -176,7 +176,7 @@ function removeMedia(jquery_element) {
 }
 
 function refreshProgress (jquery_element) {
-  var url = jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href').replace(/\.frag$/, '.json');
+  var url = jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href').replace(/\.frag$/, '.json');
   $.getJSON( url, function (data) {
     if (typeof data.data.content.attachments != 'undefined') {
       var attachments = data.data.content.attachments
