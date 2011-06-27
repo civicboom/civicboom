@@ -149,7 +149,8 @@
             value=_('Delete') ,
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text=_("Are your sure you want to delete this content?") ,
-            json_form_complete_actions = "cb_frag_remove($(this));" ,
+            #json_form_complete_actions = "cb_frag_remove($(this));" ,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
         )}
         <span class="separtor"></span>
         % endif
