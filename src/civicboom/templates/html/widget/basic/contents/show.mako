@@ -33,18 +33,21 @@
 
 
 % if content['type'] == 'assignment':
-    <table><tr>
-        <td class="action">
-            <div class="padding" style="background-color: #${c.widget['color_header']}; margin-right: 1em;">
-            <a href="${h.url('content_action', id=id, action='accept', sub_domain='www')}" target="_blank">${_('Accept _assignment')}</a>
-            </div>
-        </td>
-        <td class="action">
+    ## AllanC - Rem accept button as this is being stipped out
+    ##<table><tr>
+    ##    <td class="action">
+    ##        <div class="padding" style="background-color: #${c.widget['color_header']}; margin-right: 1em;">
+    ##        <a href="${h.url('content_action', id=id, action='accept', sub_domain='www')}" target="_blank">${_('Accept _assignment')}</a>
+    ##        </div>
+    ##    </td>
+    ##    <td class="action">
+        <div class="action">
             <div class="padding" style="background-color: #${c.widget['color_header']};">
-            <a href="${h.url('new_content', parent_id=id, sub_domain='www')}" target="_blank">${_("Respond now!")}</a>
+            <a href="${h.url('new_content', parent_id=id, sub_domain='www')}" target="_blank">${_("Respond now with text, images and video")}</a>
             </div>
-        </td>
-    </tr></table>
+        </div>
+    ##    </td>
+    ##</tr></table>
     
     <div>
         % if content.get('due_date'):
