@@ -49,6 +49,10 @@ class MiscController(BaseController):
             return redirect(url(controller="profile", action="index"))
         return action_ok()
 
+    @web
+    def new_article(self):
+        return action_ok()
+
     def search_redirector(self):
         if request.GET.get("type") == "Members": # these need to match the submit buttons
             return redirect(url(controller="members", action="index", term=request.GET.get("term")))

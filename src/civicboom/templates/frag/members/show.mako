@@ -82,6 +82,52 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
+        
+        # GregM: Dynamic translation templates:
+        
+        trans_if = self.member['type']+('profile' if self.current_user else '')
+        
+        if trans_if == 'user':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses I've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'userprofile':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests I want a response to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses I've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'group':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests we want you to respond to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses we've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'groupprofile':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests we want a response to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses we've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        endif
     %>
 </%def>
 
@@ -123,7 +169,7 @@
 	    
 	    
 	    ## My requests
-	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
+	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
 		${frag_list.content_list(
 		    d[list] ,
 		    description ,
@@ -277,7 +323,7 @@
 	    
 	    ## Memers Content --------------------------------------------
 	    
-	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0] not in ["all","assignments_active" ]]:
+	    % for list, icon, description in [n for n in self.trans_strings if n[0] not in ["all","assignments_active" ]]:
 		${frag_list.content_list(
 		    d[list] ,
 		    description ,
@@ -314,9 +360,9 @@
         <div class="frag_list_contents">
             <div class="content">
                 <ul>
-                    <li><a href="${h.url('messages', list='to')          }"><div style="float:left; width: 4em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a></li>
-                    <li><a href="${h.url('messages', list='sent')        }"><div style="float:left; width: 4em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a></li>
-                    <li><a href="${h.url('messages', list='notification')}"><div style="float:left; width: 4em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a></li>
+                    <li><a onclick="cb_frag($(this), '${h.url('messages', list='to')          }'); return false;" href="${h.url('messages', list='to')          }"><div style="float:left; width: 4em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a></li>
+                    <li><a onclick="cb_frag($(this), '${h.url('messages', list='sent')        }'); return false;" href="${h.url('messages', list='sent')        }"><div style="float:left; width: 4em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a></li>
+                    <li><a onclick="cb_frag($(this), '${h.url('messages', list='notification')}'); return false;" href="${h.url('messages', list='notification')}"><div style="float:left; width: 4em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a></li>
                 </ul>
             </div>
         </div>

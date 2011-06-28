@@ -77,11 +77,15 @@ class ContentObjectValidator(validators.FancyValidator):
         'empty'       : _('You must specify content'),
         'not_content' : _('Not valid content'),
         'not_viewable': _('content not viewable by your user'),
+        'not_owner'   : _('You are not the owner of this piece of content'),
+        'not_type'    : _('This piece of content is not: %(content_type)s')
     }
 
-    def __init__(self, return_object=False, *args, **kwargs):
+    def __init__(self, return_object=False, persona_owner=False, content_type=None, *args, **kwargs):
         validators.FancyValidator.__init__(self, *args, **kwargs)
         self.return_object = return_object
+        self.persona_owner = persona_owner
+        self.content_type  = content_type
 
     def _to_python(self, value, state):
         from pylons import tmpl_context as c
@@ -91,6 +95,10 @@ class ContentObjectValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("not_content", state), value, state)
         if not content.viewable_by(c.logged_in_persona):
             raise formencode.Invalid(self.message("not_viewable", state), value, state)
+        if self.persona_owner and content.creator.id != c.logged_in_persona.id:
+            raise formencode.Invalid(self.message("not_owner", state), value, state)
+        if self.content_type and content.__type__ != self.content_type:
+            raise formencode.Invalid(self.message("not_type", state, content_type=self.content_type), value, state)
         if self.return_object:
             return content
         return content.id
