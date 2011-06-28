@@ -681,8 +681,6 @@ class ContentsController(BaseController):
             for new_tag_name in tags_input - tags_current: # add new tags
                 content.tags.append(get_tag(new_tag_name))
         
-        if kwargs.parent
-        
         # Extra fields
         # AllanC - not used yet .. but could be in future
         for extra_field in []:
