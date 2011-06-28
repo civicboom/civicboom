@@ -643,6 +643,15 @@ class ContentsController(BaseController):
                 #log.debug("set %s as %s" % (field, kwargs[field]))
                 setattr(content,field,kwargs[field])
         
+        # Set the parent parent object manually as the content oject may not have been commited yet
+        if not content.parent and content.parent_id:
+            content.parent = get_content(content.parent_id)
+            
+        # Enforcing prvacy - if the parent is private so are all children
+        #                    this is because if the parent is deleted we dont want all the children content to become visable to all users.
+        if content.parent and content.parent.private:
+            content.private = True
+        
         # Update Existing Media - Form Fields
         for media in content.attachments:
             # Update media item fields

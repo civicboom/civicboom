@@ -459,7 +459,7 @@
             value           = _("Delete _group"),
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this group?"),
-            json_form_complete_actions = "cb_frag_remove(current_element); cb_frag_reload('members/%s');" % self.id,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
         )}
         <span class="separtor"></span>
     % endif

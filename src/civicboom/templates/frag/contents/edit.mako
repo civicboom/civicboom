@@ -112,7 +112,9 @@
                 ${content_type()}
             % endif
             ${location()}
-            ${privacy()}
+            % if not self.content.get('parent'):
+                ${privacy()}
+            % endif
             ${tags()}
             ${submit_buttons()}
             ${license()}
@@ -149,7 +151,8 @@
             value=_('Delete') ,
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text=_("Are your sure you want to delete this content?") ,
-            json_form_complete_actions = "cb_frag_remove($(this));" ,
+            #json_form_complete_actions = "cb_frag_remove($(this));" ,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
         )}
         <span class="separtor"></span>
         % endif
@@ -716,7 +719,7 @@
                             $(this).addClass('disabled');
                             add_onclick_submit_field($(this));
                             % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
                             % endif
                             setTimeout(function() {
                                 $(this).removeClass('disabled');
@@ -785,7 +788,7 @@
                             $(this).addClass('disabled');
                             add_onclick_submit_field($(this));
                             % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}';
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
                             % endif
                             setTimeout(function() {
                                 $(this).removeClass('disabled');

@@ -113,7 +113,8 @@
             	<a class="icon16 i_boom"  title="${_('Powered by _site_name')}" href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><span>${_('Powered by _site_name')}</span></a>
             </div>
             <a class="icon16 i_mobile"    title="${_('Mobile reporting')}"   href="${h.url(controller='misc', action='about', id='mobile', sub_domain='www')}" target="_blank"><span>Mobile</span></a>
-            <a class="icon16 i_widget"    title="${_('Embed this widget')}"  href="${h.url(controller='misc', action='get_widget')                          }"                ><span>Embed </span></a>
+            ## AllanC - Broken when adding other widget types, will be reenabled later
+            ##<a class="icon16 i_widget"    title="${_('Embed this widget')}"  href="${h.url(controller='misc', action='get_widget')                          }"                ><span>Embed </span></a>
 
             <%
                 rss_url = ''
