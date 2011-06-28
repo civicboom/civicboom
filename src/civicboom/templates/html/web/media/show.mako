@@ -1,8 +1,12 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+## Include caousel javascripts in header
+<%def name="scripts_head()">
+    <script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
+    <script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
+</%def>
 
 <%def name="title()">${_("Media Viewer")}</%def>
-
 
 <%def name="preview(media)">
     <%
@@ -53,8 +57,80 @@
     <p>${media['caption']}<p>
     <p>Credited to ${media['credit']}</p>
 </%def>
+    
+## ---
+## Media carousel
+## ---
+<%def name="media_carousel(contents)">
+    <ul id="media_carousel" class="jcarousel-skin-content-media">
+        % for content in contents:
+            ${carousel_item(content)}
+        % endfor
+    </ul>
+    <div class="preview_details"></div>
+    
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            jQuery('#media_carousel').jcarousel({
+                scroll  :   1,
+                visible :   1,
+                auto    :   3,
+                wrap    :   'circular',
+                initCallback    :   media_carousel_initCallback,
+                buttonNextHTML  :   "<div>NEXT</div>",
+                buttonPrevHTML  :   "<div>LAST</div>",
+            });
+        });
+        
+        function media_carousel_initCallback(carousel) {
+            // Disable autoscrolling if the user clicks the prev or next button.
+            carousel.buttonNext.bind('click', function() {carousel.startAuto(0);});
+            carousel.buttonPrev.bind('click', function() {carousel.startAuto(0);});
+            // Pause autoscrolling if the user moves with the cursor over the clip.
+            carousel.clip.hover(
+                function() {carousel.stopAuto(); },
+                function() {carousel.startAuto();}
+            );
+            jQuery('.jcarousel-control').hover(
+                function() {carousel.stopAuto(); },
+                function() {carousel.startAuto();}
+            );
+            
+            jQuery('.jcarousel-control a').bind('click', function() {
+                carousel.scroll(jQuery.jcarousel.intval(jQuery(this).text()));
+                return false;
+            });
+        };
+        
+        function get_preview_details_itemVisibleInCallback(carousel, item, idx, state) {
+            
+        }
+    </script>
+</%def>
 
+<%def name="carousel_item(content)">
+    <li class="preview_item">
+        <a href="${content['original_url']}" target="_blank">
+            <img src="${content['thumbnail_url']}" />
+        </a>
+        <div class="item_details">
+            <%
+                caption = content['caption']
+                credit = content['credit']
+            %>
+            % if not caption == "":
+                <p class="caption">"${content['caption']}"</p>
+            % endif
+            % if not credit == "":
+                <p class="credit">Credited to ${content['credit']}</p>
+            % endif
+        </div>
+    </li>
+</%def>
 
+## ---
+## Body
+## ---
 <%def name="body()">
     ##<div style="position: fixed; top: 52px; left: 10px;">
     <div style="padding: 1em;">
