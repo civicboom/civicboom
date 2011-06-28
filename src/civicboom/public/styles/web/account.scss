@@ -1,0 +1,52 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+/*
+ * signin page, 3 forms for "log in", "forgotten password" and "register"
+ */
+BODY.c-account.a-signin {
+	.signin {
+		text-align: center;
+		margin: auto;
+		width: 940px;
+	}
+	TABLE {
+		margin: auto;
+	}
+	TABLE TD {
+		vertical-align: middle;
+	}
+	FORM {
+		background: #f6f6f6;
+		border: 1px solid #ddd;
+		@include border-radius(0.5em);
+	}
+	FORM TABLE,
+	FORM TABLE TBODY {
+		width: 100%;
+	}
+
+
+	/* --- stardard full page version --- */
+
+	H1 {
+		text-align: left;
+		margin-bottom: 16px;
+	}
+	FORM,
+	FORM TD {
+		padding: 8px;
+	}
+
+	/* --- frag page version --- */
+	.frag_signin {
+		H1 {
+			font-size: 100%;
+			margin-bottom: 0.5em;
+		}
+		FORM,
+		FORM TD {
+			padding: 2px;
+		}
+	}
+}

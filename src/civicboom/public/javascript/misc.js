@@ -176,7 +176,7 @@ function removeMedia(jquery_element) {
 }
 
 function refreshProgress (jquery_element) {
-  var url = jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href').replace(/\.frag$/, '.json');
+  var url = jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href').replace(/\.frag$/, '.json');
   $.getJSON( url, function (data) {
     if (typeof data.data.content.attachments != 'undefined') {
       var attachments = data.data.content.attachments
@@ -216,6 +216,27 @@ function countInputLength (event, textElement, maxLength, statusElement) {
 	var textLength = $(textElement).val().length;
 	if (typeof statusElement != 'undefined') statusElement.text(maxLength - (textLength));
 }
+
+function convertYesNoCheckbox() {
+	var selects = $('select.yesno').filter(':visible');
+	if (selects.length == 0) return;
+	selects.after('<input type="checkbox" class="yesnocheck unproc" />');
+	selects.hide();
+	var checks = $('input.yesnocheck').filter('.unproc');
+	checks.each(function(index) {
+	    var value = $(this).prev('select.yesno').val();
+	    $(this).attr('checked', (value == '' || value == 'no')?'':'checked');
+	});
+	checks.unbind().change(function() {
+	    var yesno = $(this).prev('select.yesno');
+	    var yes = yesno.children('.yes').val();
+	    var no  = yesno.children('.no' ).val();
+	    yesno.val(this.checked ? yes:no);
+	});
+	checks.removeClass('unproc');
+}
+
+$(convertYesNoCheckbox);
 
 function init_validation(element, validator) {
 	var check_timer = null;

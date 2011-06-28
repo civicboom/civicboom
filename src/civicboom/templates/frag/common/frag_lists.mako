@@ -36,7 +36,11 @@
 <%def name="actions_common()">
     ${self.georss_link()}
 </%def>
+    
 <%def name="actions_specific()">
+</%def>
+    
+<%def name="pagination()">
     ## Pagination
     <%
         args, kwargs = c.web_params_to_kwargs
@@ -48,14 +52,17 @@
         count  = d['list']['count']
         items  = len(d['list']['items'])
     %>
-    % if offset > 0:
-        <% kwargs['offset'] = offset - limit %>
-        <a href="${h.url('current', format='html', **kwargs)}" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">prev</a>
-    % endif
-    % if offset + items < count:
-        <% kwargs['offset'] = offset + limit %>
-        <a href="${h.url('current', format='html', **kwargs)}" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">next</a>
-    % endif
+    <div class="pagination">
+        % if offset > 0:
+            <% kwargs['offset'] = offset - limit %>
+            <a href="${h.url('current', format='html', **kwargs)}" class="prev" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">Prev</a>
+        % endif
+        % if offset + items < count:
+            <% kwargs['offset'] = offset + limit %>
+            <a href="${h.url('current', format='html', **kwargs)}" class="next" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">Next</a>
+        % endif
+        <div style="clear: both;"></div>
+    </div>
 </%def>
 
 
@@ -83,13 +90,16 @@
     ${frag_list(render_item_function=render_item_message      , type_=('ul','li')   , list_class='messages', empty_message=_('You have no messages')      , *args, **kwargs)}
 </%def>
 
+<%def name="sponsored_list(*args, **kwargs)">
+    ${frag_list(render_item_function=render_item_sponsored, type_=('table','tr'),   show_count=False, content_class='sponsored_content',  list_class='content',   *args,  **kwargs)}
+</%def>
 
 
 ##------------------------------------------------------------------------------
 ## Private Rendering Structure
 ##------------------------------------------------------------------------------
 
-<%def name="frag_list(cb_list, title, href=None, show_heading=True, hide_if_empty=True, type_=('ul','li'), list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
+<%def name="frag_list(cb_list, title, href=None, show_heading=True, show_count=True, paginate=False, hide_if_empty=True, type_=('ul','li'), content_class=None, list_class='', icon='', render_item_function=None, empty_message=None, actions=None, *args, **kwargs)">
     <%
         count = None
         if isinstance(cb_list, dict) and 'items' in cb_list:
@@ -128,17 +138,17 @@
         % if show_heading:
         <div class='frag_list'>
             <h2>
-                % if icon:
-                <span class="icon16 i_${icon}"><span>${icon}</span></span>
-                % endif
+                ##% if icon:
+                ##<span class="icon16 i_${icon}"><span>${icon}</span></span>
+                ##% endif
                 % if href:
                 <a href="${href}" ${js_link_to_frag_list}>${title}</a>
                 % else:
                 ${title}
                 % endif
-                ##% if show_count:
+                % if show_count:
                 <span class="count">${count}</span>
-                ##% endif
+                % endif
                 % if actions:
                     <div class="list_actions">
                     % if type(actions) == types.FunctionType:
@@ -150,13 +160,17 @@
                 % endif
             </h2>
         % endif
-            <div class="frag_list_contents">
+            % if content_class:
+                <div class=${content_class}>
+            % else:
+                <div class="frag_list_contents">
+            % endif
             <${type_[0]} class="${list_class}">
                 ##% for item in items[0:limit]:
                 % if count:
                   % for item in items:
                   ##<${type_[1]}>
-                      ${render_item_function(item, *args, **kwargs)}
+                    ${render_item_function(item, *args, **kwargs)}
                   ##</${type_[1]}>
                   % endfor
                 % elif empty_message:
@@ -165,6 +179,9 @@
             </${type_[0]}>
             % if href and show_heading and len(items) < count:
             <a href="${href}" ${js_link_to_frag_list} class="link_more">${count-len(items)} more</a>
+            % endif
+            % if paginate:
+                ${pagination()}
             % endif
             </div>
             ##<div style="clear: both;"></div>
@@ -288,10 +305,12 @@
 ## Content Item
 ##------------------------------------------------------------------------------
 
-<%def name="render_item_content(content, location=False, stats=False, creator=False)">
+<%def name="render_item_content(content, extra_info=False, creator=False)">
 <tr>
     <%
         id = content['id']
+    
+        item_url = h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))
     
         js_link_to_frag = True
         if js_link_to_frag:
@@ -301,35 +320,66 @@
     %>
 
     <td>
-        <a class="thumbnail" href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+        <a class="thumbnail" href="${item_url}" ${js_link_to_frag}>
             ${content_thumbnail_icons(content)}
             <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
         </a>
     </td>
     
-    <td style="width:100%;">
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
-            <p class="content_title">${content['title']}</p>
-          % if creator and 'creator' in content:
-            <p><small class="content_title">By: ${content['creator']['name']}</small>
-          % endif
+    <td class="content_details"> 
+        <a href="${item_url}" ${js_link_to_frag}>
+            <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
+        <p class="timestamp">
+            ${timestamp(content)}
+        </p>
+        % if extra_info:
+            % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
+                <%
+                    (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
+                %>
+                <p class="extra">${_('In response to:')}
+                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                        % if content.get('parent'):
+                        ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
+                        % else:
+                        content
+                        % endif
+                    </a>
+                </p>
+            % elif content['type']=='article':
+                <p class="extra">
+                ${_('Views')}:${content['views']}
+                % if content.get('tags'):
+                , ${_('Tags')}:${content['tags'][:3]}
+                % endif
+                </p>
+            % elif content['type']=='assignment':
+                <%
+                    (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
+                %>
+                <p class="extra"><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
+            % endif
+        % endif
+        
+        ## Creator avatar
+        <%doc>% if creator and 'creator' in content:
+            ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+        % endif</%doc>
+        ## Responses show parent Creator
+        ##% if content.get('parent') and content['parent'].get('creator'):
+        ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
+        ##% endif
+        <%doc><a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a></%doc>
+        
+        <div style="clear: both;"></div>
     </td>
-    % if location:
-    <td>
-        flag
-    </td>
-    % endif
-    % if stats:
-    <td>
-        rating <br/> comments
-    </td>
-    % endif
-    % if creator and 'creator' in content:
-    <td class="creator">
-        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
-    </td>
-    % endif
+
+    <%doc>
+        % if creator and 'creator' in content:
+          <p><small class="content_by">By: ${content['creator']['name']}</small>
+        % endif
+    </%doc>
 </tr>
 % if request.GET.get('term', '') and 'content_short' in content:
 <tr><td colspan="5">
@@ -432,4 +482,141 @@
     </div>
     
 </li>
+</%def>
+
+##------------------------------------------------------------------------------
+## Sponsored Content Item
+##------------------------------------------------------------------------------
+<%def name="render_item_sponsored(content, location=False, stats=False, creator=False)">
+<tr style="width: 100%;">
+    <%
+        id = content['id']
+    
+        js_link_to_frag = True
+        if js_link_to_frag:
+            js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('content', id=id, format='frag'))
+        else:
+            js_link_to_frag = ''
+    %>
+
+    <div class="content_title">
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+            <p>${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
+        </a>
+        <%doc><div class="content_avatar">
+            % if content and 'creator' in content:
+                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+            % endif
+        </div></%doc>
+    </div>
+
+    <div class="separator"></div>
+    
+    <div class="content">
+        <div class="thumbnail">
+            <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+                ${content_thumbnail_icons(content)}
+                <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img"/>
+            </a>
+        </div>
+        % if content and 'content_short' in content:
+            ${h.truncate(content['content_short'], length=140, indicator='...', whole_word=True)}
+            <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} style="font-size: 75%;">learn more</a>
+        % endif
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} class="prompt">Click here to participate <img src="/images/settings/arrow.png" style="vertical-align: middle;" /></a>
+    </div>
+
+    <div class="separator"></div>
+
+    <div class="content-info">
+        % if content and 'creator' in content:
+            <div class="creator">
+                <small class="content_by">By: ${content['creator']['name']}</small>
+            </div>
+        % endif
+        
+        <div class="timestamp">
+            <small>${timestamp(content)}</small>
+        </div>
+        
+        % if content and 'views' in content:
+            <div class="views">
+                <small>${content['views']} views</small>
+            </div>
+        % endif
+        
+        % if content and 'num_responses' in content:
+            <div class="responses">
+                <small>${content['num_responses']} responses</small>
+            </div>
+        % endif
+        
+        <%doc>% if content and 'num_comments' in content:
+            <div class="comments">
+                <small>${content['num_comments']} comments</small>
+            </div>
+        % endif</%doc>
+    </div>
+    <div class="separator"></div>
+</tr>
+<tr>
+    % if location:
+    <td>
+        flag
+    </td>
+    % endif
+    % if stats:
+    <td>
+        rating <br/> comments
+    </td>
+    % endif
+    % if creator and 'creator' in content:
+    <td class="creator">
+        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+    </td>
+    % endif
+</tr>
+% if request.GET.get('term', '') and 'content_short' in content:
+<tr><td colspan="5">
+	## content_short is stripped of html tags, so any that are in here are search highlights
+	<small class="content_short">${content['content_short']|n}</small>
+</td></tr>
+% endif
+</%def>
+
+##------------------------------------------------------------------------------
+## Timestamp
+##------------------------------------------------------------------------------
+<%def name="timestamp(content)">
+    % if content['type']=='assignment':
+        <%
+            publish    = h.time_ago(content['publish_date'])
+            event_date = h.api_datestr_to_datetime(content['event_date'])
+            due_date   = h.api_datestr_to_datetime(content['due_date']  )
+        %>
+        % if   event_date and event_date > h.now():
+            ${_('Set %s ago, Event in %s time') % (publish, h.time_ago(event_date))}
+        % elif due_date   and due_date   > h.now():
+            ${_('Set %s ago, Due in %s time'  ) % (publish, h.time_ago(due_date  ))}
+        % else:
+            ${_('Set %s ago'                  ) % (publish                        )}
+        % endif
+    % elif content['type']=='draft':
+        % if content.get('parent'):
+            <%
+                event_date = h.api_datestr_to_datetime(content['parent']['event_date'])
+                due_date   = h.api_datestr_to_datetime(content['parent']['due_date']  )
+            %>
+            % if   event_date and event_date > h.now():
+                ${_('Event in %s time'  ) % h.time_ago(event_date)}
+            % elif due_date   and due_date > h.now():
+                ${_('Due in %s time'    ) % h.time_ago(due_date  )}
+            % endif
+        % endif
+        % if content.get('sceduled_publish_date'):
+            ${_('Will be published in %s time'  ) % h.time_ago(content['sceduled_publish_date'])}
+        % endif
+    % else:
+        ${_('%s ago') % h.time_ago(content['update_date'])}
+    % endif
 </%def>

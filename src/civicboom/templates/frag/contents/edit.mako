@@ -1,5 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%namespace name="popup" file="/html/web/common/popup_base.mako" />
 <%namespace name="loc" file="/html/web/common/location.mako" />
 
 <%!    
@@ -43,8 +44,18 @@
 ## Edit Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-
     <div class="frag_col">
+        <div class="frag_list">
+        <h1>
+            % if self.content.get('parent'):
+                ${_("You are responding to: %s") % self.content['parent']['title']}
+            % elif self.selected_type == 'assignment':
+                Post a request
+            % elif self.selected_type == 'article':
+                Post a story
+            % endif
+        </h1>
+        <div class="separator"></div>
         
         <!-- Toggle Section -->
         <script type="text/javascript">
@@ -64,9 +75,7 @@
             }
         </script>
         
-        % if self.content.get('parent'):
-            <h1>${_("Responding to: %s") % self.content['parent']['title']}</h1>
-        % endif
+        
         
         ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
         ##  reference - http://www.dreamincode.net/forums/topic/52581-textarea-value-not-updating/
@@ -98,13 +107,19 @@
             </script>
             ${invalid_messages()}
             ${base_content()}
-            ${content_type()}
             ${media()}
+            % if self.selected_type == 'assignment':
+                ${content_type()}
+            % endif
             ${location()}
-            ${privacy()}
+            % if not self.content.get('parent'):
+                ${privacy()}
+            % endif
+            ${tags()}
+            ${submit_buttons()}
             ${license()}
-			${submit_buttons()}
         ${h.end_form()}
+        </div>
     </div>
 </%def>
 
@@ -136,7 +151,8 @@
             value=_('Delete') ,
             value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
             confirm_text=_("Are your sure you want to delete this content?") ,
-            json_form_complete_actions = "cb_frag_remove($(this));" ,
+            #json_form_complete_actions = "cb_frag_remove($(this));" ,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
         )}
         <span class="separtor"></span>
         % endif
@@ -147,7 +163,7 @@
 ##------------------------------------------------------------------------------
 ## Display Utils
 ##------------------------------------------------------------------------------
-<%def name="popup(text)">
+<%def name="tooltip(text)">
 <span class="tooltip tooltip_icon"><span>${_(text)}</span></span>
 </%def>
 
@@ -184,17 +200,17 @@
         ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
         ##<p>
-            <label for="title_${self.id}">${_('Title')}</label><br />
-            <input style="width: 100%" id="title_${self.id}" name="title" type="text" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
+            <label for="title_${self.id}">${_('Add your title')}</label>
+            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
             ##${popup(_("extra info"))}
         ##</p>
-        
+        <div class="separator"></div>
         ##${YUI.richtext(c.content.content, width='100%', height='300px')}
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<label for="${area_id}">Content</label><br />
-		<textarea class="editor" name="content" id="${area_id}">${self.content['content']}</textarea>
+		<label for="${area_id}">Add more detail and supporting links, etc</label>
+		<textarea class="editor edit_input" name="content" id="${area_id}">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
 		<script type="text/javascript">
@@ -203,7 +219,7 @@
                     mode     : "exact" ,
                     elements : "${area_id}" ,
                     theme    : "advanced" ,
-                    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+                    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,link,unlink",
                     theme_advanced_buttons2 : "",
                     theme_advanced_buttons3 : "",
                     theme_advanced_toolbar_location : "top",
@@ -239,7 +255,7 @@
             cb_frag_set_variable($("#${area_id}"), 'autoSaveDraftTimer', setInterval('ajaxSave()', 60000));
             % endif
 		</script>
-
+        <div class="separator"></div>
         ## Owner
         <%doc>
         <p><label for="owner">${_("By")}</label>
@@ -265,30 +281,34 @@
         ${popup(_("extra_info"))}
         </p>
         </%doc>
-        
-        
-        ## Tags
-
-        <p>
-            <span class="padded"><label for="tags_${self.id}">${_("Tags")}</label></span>
-            <%
-            tags = []
-            separator = config['setting.content.tag_string_separator']
-            if   isinstance(self.content['tags'], list):
-                tags = self.content['tags']
-            elif isinstance(self.content['tags'], basestring):
-                tags = self.content['tags'].split(separator)
-                
-            tags_string = u""
-            for tag in tags:
-                tags_string += tag + separator
-            %>
-            <input class="detail" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-            <span>(${_('separated by commas')} ',')</span>
-            ##${popup(_("extra_info"))}
-        </p>
 
     </fieldset>
+    <div class="separator"></div>
+</%def>
+
+##------------------------------------------------------------------------------
+## Tags
+##------------------------------------------------------------------------------
+<%def name="tags()">
+    <fieldset>
+        <label for="tags_${self.id}">${_("Tags")}</label>
+        <%
+        tags = []
+        separator = config['setting.content.tag_string_separator']
+        if   isinstance(self.content['tags'], list):
+            tags = self.content['tags']
+        elif isinstance(self.content['tags'], basestring):
+            tags = self.content['tags'].split(separator)
+            
+        tags_string = u""
+        for tag in tags:
+            tags_string += tag + separator
+        %>
+        <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+        <span>(${_('separated by commas')} ',')</span>
+        ##${popup(_("extra_info"))}
+    </fieldset>
+    <div class="separator"></div><div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -297,10 +317,20 @@
 
 <%def name="media()">
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Media")}<span class="smaller"> - ${_("you can add video, images and audio to your content")}</span></legend>
+        <label>
+            % if self.selected_type == 'assignment':
+                Add media to help build a better request!
+            % elif self.selected_type == 'article':
+                Add media to help build a better story!
+            % endif
+        </label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/media_trio.png" alt="Media" />
+        </legend>
         <div class="hideable">
         ##${form_instruction(_("Add any relevent pictures, videos, sounds, links to your content"))}
-        
+        <div class="separator"></div>
         <ul class="media_files">
             <li class="media_file" style="display: none;" id="mediatemplate">
               <div class="file_type_overlay icon"></div>
@@ -388,8 +418,8 @@
                 </div>
                 <div class="media_fields">
                     <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
-                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${popup(_("extra_info"))}</p>
-                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${popup(_("extra_info"))}</p>
+                    <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" />${tooltip(_("extra_info"))}</p>
+                    <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" />${tooltip(_("extra_info"))}</p>
                 </div>              
             </li>
             <!-- End Add media -->
@@ -397,6 +427,7 @@
         </ul>
         </div>
     </fieldset>
+    <div class="separator"></div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -466,7 +497,15 @@
             ${type}
         % endif
         </%doc>
-
+            
+    <fieldset>
+        <label>Click here to set a deadline!</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
+        </legend>
+        <div class="hideable">
+        <div class="separator"></div>
         <div id="content_type_additional_fields">
             ## See CSS for "active" class
             <div id="type_assignment_extras" class="hideable, additional_fields">
@@ -476,8 +515,8 @@
                 %>
                   <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
                   <input class="detail" type="date" name="due_date"   value="${due_date}">
-                  <span class="padded"><label for="event_date">${_("Event Date")}</label></span>
-                  <input class="detail" type="date" name="event_date" value="${event_date}">
+                  ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
+                  ##<input class="detail" type="date" name="event_date" value="${event_date}">
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
@@ -535,6 +574,9 @@
         </script>
 		##</div>
     ##</fieldset>
+        </div>
+    </fieldset>
+    <div class="separator"></div>
 </%def>
 
 
@@ -544,12 +586,18 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Location")}<span class="smaller"> - set the location of your event or request</span></legend>
+        <label>Add a location?</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/map.png" alt="Location" />
+        </legend>
         <div class="hideable">
+            <div class="separator"></div>
             ##${form_instruction(_("why give us this..."))}
 			${loc.location_picker(field_name='location', always_show_map=True, width="100%")}
         </div>
     </fieldset>
+    <div class="separator"></div>
 </%def>
 
 
@@ -557,14 +605,14 @@
 ## License
 ##------------------------------------------------------------------------------
 <%def name="license()">
-
+<%doc>
     % if self.content['type'] == 'draft':
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset>
         <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
         <div class="hideable">
-            <%doc>
+            </%doc><%doc>
             <span style="padding-top: 3px;">
               ${form_instruction(_("What is licensing explanation"))}
             </span>
@@ -583,7 +631,7 @@
                 ##${popup(_(license.description))}
             % endfor
 			</table>
-            </%doc>
+            </%doc><%doc>
               <div class="padded">This content will be published under the Creative Commons Attributed licence</div>
               <div class="padded">
                 <a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
@@ -591,6 +639,10 @@
         </div>
     </fieldset>
     % endif
+</%doc>
+    <span class="smaller"><a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    ${what_now_link()}
+    <div class="separator"></div>
 </%def>
 
 
@@ -599,26 +651,39 @@
 ##------------------------------------------------------------------------------
 <%def name="privacy()">
     % if c.logged_in_persona.has_account_required('plus'):
-	<%def name="selected(private)">
+	<%def name="selected(private, text='selected')">
 		%if private == self.content.get('private'):
-			selected="selected"
+			${text}="${text}"
 		%endif
 	</%def>
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Content Privacy")}</legend>
+        <label>Want to tell the world, or just a select few?</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
+        </legend>
         <div class="hideable">
               <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
-                <select id="private" name="private">
-                	<option ${selected("False")} value="False">Public</option>
-                	<option ${selected("True")} value="True">Private</option>
-                </select>
+                  <div class="jqui-radios">
+                      <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
+                      <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                  </div>
+                  <script type="text/javascript">
+                    $(function() {
+                        $('.jqui-radios').buttonset().removeClass('.jqui-radios');
+                    })
+                  </script>
+##                <select id="private" name="private">
+##                    <option ${selected(False)} value="False">Public</option>
+##                    <option ${selected(True)} value="True">Private</option>
+##                </select>
               </div>
         </div>
     </fieldset>
+    <div class="separator"></div>
     % endif
 </%def>
-
 
 ##------------------------------------------------------------------------------
 ## Submit buttons
@@ -626,41 +691,57 @@
 <%def name="submit_buttons()">
 
     ## AllanC - note the class selectors are used by jQuery to simulate clicks
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False)">
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r', extrajs='')">
+
         <%
             button_id = "submit_%s_%s" % (name, self.id)
             if not title_text:
                 title_text = _(name)
         %>
-        <input
-            type    = "submit"
-            id      = "${button_id}"
-            name    = "submit_${name}"
-            class   = "submit_${name} button"
-            value   = "${title_text}"
-            onclick = "
-                ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                if (!$(this).hasClass('disabled')) {
-                    $(this).addClass('disabled');
-                    add_onclick_submit_field($(this));
-                    % if show_content_frag_on_submit_complete:
-                    submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag', prompt_aggregate=prompt_aggregate)}';
-                    % endif
-                    setTimeout('$(\'#${button_id}\').removeClass(\'disabled\');', 1000);
-                }
-                else {
-                    return false;
-                }
-            "
-        />
+
+        % if mo_text:
+            <span class="mo-help">
+            <div class="${mo_class}">
+                <h2>${title_text}</h2>
+                <p>${_(mo_text)}</p>
+            </div>
+        % endif
+                <input
+                    type    = "submit"
+                    id      = "${button_id}"
+                    name    = "submit_${name}"
+                    class   = "submit_${name} button"
+                    value   = "${title_text}"
+                    onclick = "
+                        ${extrajs}
+                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                        if (!$(this).hasClass('disabled')) {
+                            $(this).addClass('disabled');
+                            add_onclick_submit_field($(this));
+                            % if show_content_frag_on_submit_complete:
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
+                            % endif
+                            setTimeout(function() {
+                                $(this).removeClass('disabled');
+                            }, 1000);
+                        }
+                        else {
+                            return false;
+                        }
+                    "
+                />
+        % if mo_text:
+            </span>
+        % endif
     </%def>
     
-    <div style="text-align: right;">
+    <div style="font-size: 130%; text-align: center;" class="buttons">
+        ${popup.popup_static('What happens now?', what_now, '', html_class="what-now-pop")}
         % if self.content['type'] == "draft":
-            ${submit_button('draft'  , _("Save")                                               )}
-            ${submit_button('preview', _("Preview"), show_content_frag_on_submit_complete=True )}
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to publishing." )}</span>
+            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once published." )}
             % if 'publish' in self.actions:
-            ${submit_button('publish', _("Publish"), show_content_frag_on_submit_complete=True, prompt_aggregate=True )}
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l", extrajs="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
         % else:
             % if 'update' in self.actions:
@@ -668,5 +749,104 @@
             % endif
             <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
+    </div>
+    <div class="separator"></div><div class="separator"></div>
+</%def>
+
+##------------------------------------------------------------------------------
+## What happens now?
+##------------------------------------------------------------------------------
+<%def name="what_now_link()">
+</%def>
+
+<%def name="what_now()">
+
+    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
+
+        <%
+            button_id = "submit_%s_%s" % (name, self.id)
+            if not title_text:
+                title_text = _(name)
+        %>
+
+        % if mo_text:
+            <span class="mo-help">
+            <div class="${mo_class}">
+                <h2>${title_text}</h2>
+                <p>${_(mo_text)}</p>
+            </div>
+        % endif
+                <input
+                    type    = "submit"
+                    id      = "${button_id}"
+                    name    = "submit_${name}"
+                    class   = "submit_${name} button"
+                    value   = "${title_text}"
+                    onclick = "
+                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                        if (!$(this).hasClass('disabled')) {
+                            $(this).addClass('disabled');
+                            add_onclick_submit_field($(this));
+                            % if show_content_frag_on_submit_complete:
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
+                            % endif
+                            setTimeout(function() {
+                                $(this).removeClass('disabled');
+                            }, 1000);
+                        }
+                        else {
+                            return false;
+                        }
+                    "
+                />
+        % if mo_text:
+            </span>
+        % endif
+    </%def>
+    <div class="information">
+        
+        % if self.selected_type == "assignment":
+        	<div class="popup-title">
+        	    Once you post this request, it will appear:
+        	</div>
+        	<div class="popup-message">
+        	    <ol>
+        		<li>${_("In your _Widget for your community to respond to")}</li>
+        		<li>${_("In your follower's notification stream")}</li>
+        		<li>${_("On the _site_name request stream")}</li>
+        	    </ol>
+        	</div>
+        % elif self.selected_type == "article":
+            % if self.content.get('parent'):
+                <div class="popup-title">
+                    Once you share this story, it will:
+                </div>
+                <div class="popup-message">
+                    <ol>
+                    <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
+                    <li>${_("Be listed as a response against the request")}</li>
+                    <li>${_("Appear in your follower's notification stream")}</li>
+                    </ol>
+                </div>
+            % else:
+                <div class="popup-title">
+                    Once you post this story, it will appear in your follower's notification stream.
+                </div>
+                <div class="popup-title">
+                    You will also be able to share it on Facebook, LinkedIn and Twitter once you post.
+                </div>
+            % endif
+        % endif
+        <div style="font-size: 130%; text-align: center;">
+            % if self.content['type'] == "draft":
+                % if 'publish' in self.actions:
+                <span >${submit_button('publish', _("Yes I want to Post!"), show_content_frag_on_submit_complete=True, prompt_aggregate=True)}</span>
+                % endif
+            % else:
+                % if 'update' in self.actions:
+                ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
+                % endif
+            % endif
+        </div>
     </div>
 </%def>

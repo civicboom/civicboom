@@ -8,7 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>${self.subject()}</title>
+        <title>${self.subject() if callable(self.subject) else self.subject}</title>
         <meta name="keywords" content="" />
         <meta name="Authors"  content="" />
         <meta name="robots"   content="all" />
@@ -25,7 +25,7 @@
     <body>
         <a href="${site_url}"><img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/></a>
         <br/>
-        ${next.body()}
+        ${next.body() if callable(self.body) else self.body}
     </body>
 </html>
 </%def>

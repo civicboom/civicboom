@@ -1,9 +1,0 @@
-/*-------------------------- Frag Member Cols---------------------------------*/
-#frag_containers .frag_container .frag_member .frag_left_col {
-  width: 50%;
-  float: left;
-}
-#frag_containers .frag_container .frag_member .frag_right_col {
-  width: 50%;
-  float: right;
-}

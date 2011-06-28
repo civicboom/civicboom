@@ -1,0 +1,185 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+#frag_containers {
+	/*overflow-x : scroll;*/
+	white-space: nowrap;
+	display: block;
+	top:0;
+	bottom:0;
+	/* white-space-collapse: discard; /* http://www.w3.org/TR/css3-text/#white-space-collapsing */
+	margin-left: 0.5em;
+
+	.frag_container {
+		@include drop_shadow(1px, 1px, 1px, #333);
+		vertical-align: top;
+		display : inline-block !important;
+		overflow: auto !important; /* the important property is needed because JQuery sets the style="" element to block and overflow */
+		white-space: normal;
+
+		width      : 500px;
+
+		/* margin     : 0.25em;*/
+		margin: 0.5em 0.25em 0 0.25em;
+		/*margin-left: 0.2em;*/
+
+		border: 1px solid $frag-border;
+		@include border_radius($frag-radius);
+
+		/*bottom: 0em;
+		position: relative;
+		*/
+		
+		.content_box {
+			background: $frag-list-top; /* for non-css3 browsers */
+
+			/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
+			@include border_radius($frag-radius);
+			
+			padding: 1em;
+		}
+	}
+
+	/* No support for IE7 NO!!! GOD NO!!
+	.ie7 .frag_container {
+		float: left;
+	}
+	*/
+
+	.frag_col_1 {width: 250px;}
+	/* .frag_col_2 {width: 500px;} /* default is width 2 */
+
+
+	/*-----------------------------Action bar -----------------------------------*/
+	.frag_container {
+		.icon {
+			padding-right: 2px;
+		}
+
+
+
+		/*----------------------------------------------------------------------------*/
+		/* Fragment Data
+		/*----------------------------------------------------------------------------*/
+		.frag_data {
+		  overflow-y: scroll;
+		  overflow-x: hidden;
+			
+		background-color: $frag-background;
+		  
+		  /*
+		  background: -webkit-gradient(
+			linear,
+			left bottom,
+			left top,
+			color-stop(33 , rgb(240,240,240)),
+			color-stop(0.1, rgb(255,255,255))
+		  );
+		  background: -moz-linear-gradient(
+			center bottom,
+			rgb(255,255,255)  33%,
+			rgb(240,240,240) 100%
+		  );
+		  */
+		  
+		  /*
+			http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
+			http://gradients.glrzad.com/
+		  */
+		}
+
+    .frag_whitewrap {
+      background-color: #fff;
+      @include border_radius(0.4em);
+      padding: 0.5em;
+      margin: 0.5em;
+    }
+
+
+		.frag_data .frag_right_col .frag_col {
+			margin-left: 0em;
+		}
+
+		/* Because the CSS box model is a pain with width, I read a killer tip. If you are ever setting the width/height of an item, NEVER set the margin or padding, always use an internal or external element. Yeah it's a bit of extra markup, but you have total control without having to be frustrated with the box model */
+
+		.frag_data .frag_col {
+		  margin: 1em;
+		  //font-size: 88%;
+		}
+
+		.frag_data.frag_map {
+			height: 100%;
+		}
+		.frag_data.frag_map .frag_col {
+			height: 100%;
+			margin: 0px;
+		}
+		.frag_data.frag_map .frag_col .olMap {
+			border: 0px;
+		}
+		
+		.title {
+			padding: 1em 0 0 1em;
+			font-size: 120%;
+		}
+		.title .title_text {
+			font-weight: bold;
+			padding: 0.25em 0 0 0.25em;
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*/
+/* Action/Title Bar                                                           */
+/*----------------------------------------------------------------------------*/
+.frag_bars {
+	background-color: $frag-background;
+
+	/* #frag_containers .frag_container - used in popups*/
+	.title_bar {
+		float: right;
+		display: inline;
+		height: 1.25em;
+		overflow: hidden;
+		color: white;
+		/* border-bottom: 0.1em solid $frag-border; /* to match .frag_container */
+		padding: 0.25em;
+		background-color: none;
+		
+		.common_actions {
+			float: right;
+		}
+	}
+	
+	.action_bar {
+		float: left;
+		display: inline;
+		height: 1.25em;
+		overflow: hidden;
+		color: $frag-action-bar-txt;
+		font-size: .9em;
+	
+		/* border-bottom: 0.1em solid darken($frag-action-bar, 30%); */
+	
+		background-color: none;
+		padding: 0.25em;
+	
+		.object_actions_common {
+			float: right;
+		}
+	
+		.object_actions_specific {
+			float: left;
+		}
+	
+		a {
+			color: inherit;
+			text-decoration: inherit;
+		}
+	
+		.separtor {
+			border-left: 1px solid darken($frag-action-bar, 10%);
+			margin: 0em 0.5em;
+		}
+	}
+}

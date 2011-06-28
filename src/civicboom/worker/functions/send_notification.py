@@ -14,7 +14,8 @@ import collections
 import os
 
 
-#from pylons.templating  import render_mako # AllanC - this needs to be a setable function that can be called from mako directyly
+# AllanC - sorry Shish - this broke notifications before the KM demo and we needed it working
+from pylons.templating  import render_mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
@@ -71,16 +72,24 @@ def send_notification(members, message): #members, rendered_message
                             return template_path
                         return 'email/notifications/default.mako'
                     
-                    l = TemplateLookup(directories=['.', 'civicboom/templates'])
-                    f = os.path.join("civicboom/templates", notification_template(message.get('name')))
-                    t = Template(filename=f, lookup=l)
-                    c = t.render(kwargs=message, h=helpers)
+                    if config['debug']:
+                        c = render_mako(
+                            notification_template(message.get('name')) ,
+                            extra_vars ={
+                                "kwargs": message,
+                            }
+                        )
+                    else:
+                        l = TemplateLookup(directories=['.', 'civicboom/templates'])
+                        f = os.path.join("civicboom/templates", notification_template(message.get('name')))
+                        t = Template(filename=f, lookup=l)
+                        c = t.render(kwargs=message, h=helpers)
                     send_email(
                         member,
                         subject      = message.get('subject'), #, _('_site_name notification')
                         content_html = c,
                     )
-            
+
             # -- Notification --------------------------------------------------
             # Save message in message table (to be seen as a notification)
             if route == 'n':

@@ -44,7 +44,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     filter_extra_fields = False
     ignore_key_missing  = True
     type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
-    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=False, strip=True, max=250, min=2, html='strip_html_tags')
+    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, strip=True, max=250, min=2, html='strip_html_tags')
     content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
@@ -321,6 +321,9 @@ class ContentsController(BaseController):
         if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
             kwargs['include_fields'] += ",creator"
             kwargs['exclude_fields'] += ",creator_id"
+        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
+        if kwargs.get('list') == 'responses':
+            kwargs['include_fields'] += ",parent"
         
         
         include_private_content = 'private' in kwargs and logged_in_creator
@@ -477,7 +480,6 @@ class ContentsController(BaseController):
                     if ae.original_dict.get('code') == 403:
                         raise ae
                 
-            
 
         # comments are always owned by the writer; ignore settings
         # and parent preferences
@@ -641,6 +643,15 @@ class ContentsController(BaseController):
                 #log.debug("set %s as %s" % (field, kwargs[field]))
                 setattr(content,field,kwargs[field])
         
+        # Set the parent parent object manually as the content oject may not have been commited yet
+        if not content.parent and content.parent_id:
+            content.parent = get_content(content.parent_id)
+            
+        # Enforcing prvacy - if the parent is private so are all children
+        #                    this is because if the parent is deleted we dont want all the children content to become visable to all users.
+        if content.parent and content.parent.private:
+            content.private = True
+        
         # Update Existing Media - Form Fields
         for media in content.attachments:
             # Update media item fields
@@ -670,6 +681,11 @@ class ContentsController(BaseController):
             for new_tag_name in tags_input - tags_current: # add new tags
                 content.tags.append(get_tag(new_tag_name))
         
+        # Extra fields
+        # AllanC - not used yet .. but could be in future
+        for extra_field in []:
+            if extra_field in kwargs: # AllanC - could these have validators at somepoint?
+                content.extra_fields[extra_field] = kwargs[extra_field]
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
