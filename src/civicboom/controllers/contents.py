@@ -291,10 +291,16 @@ class ContentsController(BaseController):
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         #          TODO: we need maybe a separte call, or something to identify a private call
         logged_in_creator = False
+        trusted_follower  = False
         if 'creator' in kwargs:
-            kwargs['creator'] = normalize_member(kwargs['creator']) # normalize creator
+            creator = get_member(kwargs['creator'])
+            kwargs['creator'] = normalize_member(creator) # normalize creator
             if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
                 logged_in_creator = True
+            # Additional check for trusted followers, only trigger if not logged in
+            elif 'private' in kwargs:
+                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
+        
         
         # Location - 'me' - replace 'me' with current location
         # NOTE: Cache warning! this is not a public cacheable item
@@ -326,7 +332,8 @@ class ContentsController(BaseController):
             kwargs['include_fields'] += ",parent"
         
         
-        include_private_content = 'private' in kwargs and logged_in_creator
+        # AllanC - TEMP HACK!!!!! the line below means a trusted follower can see drafts!! this is NOT the correct behaviour.
+        include_private_content = 'private' in kwargs and (logged_in_creator or trusted_follower)
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
 
         if union_query:

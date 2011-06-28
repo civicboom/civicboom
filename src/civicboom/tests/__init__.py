@@ -294,7 +294,7 @@ class TestController(TestCase):
         member.delete()
         
 
-    def follow(self, username):
+    def follow(self, username, trusted=False):
         response = self.app.post(
             url('member_action', action='follow', id=username, format='json'),
             params={
@@ -302,6 +302,13 @@ class TestController(TestCase):
             },
             status=200
         )
+        # If we require a trusted follower perform accept from following
+        if trusted:
+            original_username = self.logged_in_as
+            self.log_in_as(username)
+            self.follower_trust(original_username)
+            self.log_in_as(original_username)
+            
     
     def unfollow(self, username):
         response = self.app.post(
