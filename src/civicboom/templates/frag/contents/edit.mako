@@ -112,7 +112,9 @@
                 ${content_type()}
             % endif
             ${location()}
-            ${privacy()}
+            % if not self.content.get('parent'):
+                ${privacy()}
+            % endif
             ${tags()}
             ${submit_buttons()}
             ${license()}
