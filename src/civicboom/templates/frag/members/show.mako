@@ -82,6 +82,52 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
+        
+        # GregM: Dynamic translation templates:
+        
+        trans_if = self.member['type']+('profile' if self.current_user else '')
+        
+        if trans_if == 'user':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses I've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'userprofile':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests I want a response to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses I've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'group':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests we want you to respond to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses we've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'groupprofile':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests we want a response to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses we've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        endif
     %>
 </%def>
 
@@ -123,7 +169,7 @@
 	    
 	    
 	    ## My requests
-	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
+	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
 		${frag_list.content_list(
 		    d[list] ,
 		    description ,
@@ -277,7 +323,7 @@
 	    
 	    ## Memers Content --------------------------------------------
 	    
-	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0] not in ["all","assignments_active" ]]:
+	    % for list, icon, description in [n for n in self.trans_strings if n[0] not in ["all","assignments_active" ]]:
 		${frag_list.content_list(
 		    d[list] ,
 		    description ,
