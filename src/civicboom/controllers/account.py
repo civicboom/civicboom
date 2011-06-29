@@ -293,3 +293,29 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
+    
+    @web
+    def payment(self, id, **kwargs):
+        user = get_member(id)
+        raise_if_current_role_insufficent('admin', group=user)
+        
+        if not c.logged_in_persona.payment_account:
+            raise action_error(_('There is no payment account associated with this user'), code=404)
+        
+        account = user.payment_account
+        
+        data = {
+            'account_id':   account.id,
+            'account_type': account.type,
+            'members':      [member.username for member in account.members],
+            }
+        return action_ok(code=200, data=data, template="account/payment")
+    
+    @web
+    def payment_remove(self, id, **kwargs):
+        pass
+    
+    @web
+    def payment_add(self, id, **kwargs):
+        pass
+    

@@ -33,6 +33,10 @@ from civicboom.model.meta import location_to_string
 
 from civicboom.lib.web import _find_template_basic
 
+from civicboom.controllers.account import AccountController
+
+account_controller = AccountController()
+
 log = logging.getLogger(__name__)
 
 
@@ -298,6 +302,9 @@ class SettingsController(BaseController):
                 user_type=user.__type__,
                 template="settings/panel/link_janrain",
             )
+        
+        if panel == 'account_payment':
+            return account_controller.payment(id=id)
             
         if panel not in data['panels']:
             raise action_error(code=404, message="This panel is not applicable for a " + user.__type__)
