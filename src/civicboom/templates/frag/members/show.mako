@@ -155,6 +155,7 @@
 		    % endif
 		    <div class="separator"></div>
 		    ${actions_buttons()}
+            
 		    % if 'message' in self.actions:
 			${popup.link(
 			    h.args_to_tuple('new_message', target=self.id),
@@ -163,6 +164,12 @@
 			)}
 			<div style="clear: both;"></div>
 		    % endif
+            
+		    % if self.member.get('push_assignment'):
+            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Directly give us a story now!") , css_class="button")}
+			<div style="clear: both;"></div>
+		    % endif
+            
 		</div>
 	    </div>
 	    
