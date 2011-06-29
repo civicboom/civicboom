@@ -22,7 +22,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="group()">
-    ${frag.frag_basic(title=_('%s _Group') % c.action.capitalize(), icon='group', frag_content=group_settings.body())}
+    ${frag.frag_basic(title=_('%s _Group') % c.action.capitalize(), icon='group', frag_content=group_content)}
 </%def>
 <%def name="group_content()">
 ${group_settings.body()}
@@ -37,15 +37,15 @@ ${group_settings.body()}
 </%def>
 <%def name="quick_group_content()">
     <script type="text/javascript">
-      var quickOrder = ['default_role', 'join_mode', 'member_visibility']; //'default_content_visibility' 0,0,0,1,1,1,0,1
-      var quickSelection = {'news': '001',
-                            'interest':'110',
-                            'educational':'220',
-                            'marketing':'010',
-                            'internal':'221',
-                            'business':'221',
-                            'creative':'001',
-                            'research':'210'};
+      var quickOrder = ['default_role', 'join_mode', 'member_visibility', 'default_content_visibility'];
+      var quickSelection = {'news': '0010',
+                            'interest':'1100',
+                            'educational':'2200',
+                            'marketing':'0101',
+                            'internal':'2211',
+                            'business':'2211',
+                            'creative':'0010',
+                            'research':'2101'};
       var quickBlurb =     {'news': '${_("Connect with your community and audience by creating _Groups for your titles, sections or issues. Send out breaking news requests, get coverage directly from the source and utilise the power of the crowd. Empower the community you serve to be part of news and its creation.")}',
                             'interest':'${_("Create a _Group and crowdsource social action, motivate advocacy from your community, generate real case studies and stories for your publications, heighten awareness, build a movement. Use the creativity of your community to heighten awareness on issues you need to know about.")}',
                             'educational':'${_("Students can create _Groups on specific topics - evolve ideas together, share your creative work, tap into the wider community, build your portfolio. University departments can utilise the collective wisdom of their students to develop and improve courses and reach new audiences.")}',
