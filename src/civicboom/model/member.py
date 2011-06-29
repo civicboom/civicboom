@@ -321,7 +321,7 @@ class Member(Base):
             'join_date'           : None ,
             'website'             : lambda member: member.extra_fields.get('website') ,
             'description'         : None ,
-            #'url'                 : None ,
+            'push_assignment'     : lambda member: member.extra_fields.get('push_assignment') ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             #'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
@@ -362,6 +362,10 @@ class Member(Base):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
+        
+        #if self != member:
+        #    if 'push_assignment' in self.extra_fields:
+        #        action_list.append('push_assignment')
         if self == member:
             action_list.append('settings')
             action_list.append('logout')

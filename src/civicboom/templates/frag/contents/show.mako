@@ -436,26 +436,27 @@
     %>
     <div class="media_container">
     
-    ## Load the content carousel to display previews of all content media
-    <span class="carousel">${media_includes.media_carousel(content['attachments'], content['id'])}</span>
+    % if config['development_mode']:
+	## Load the content carousel to display previews of all content media
+	<span class="carousel">${media_includes.media_carousel(content['attachments'], content['id'])}</span>
+    % else:
+	<ul id="media_carousel_content_${content['id']}" class="media_carousel">
+	% for media in content['attachments']:
+	    <li>
+		${media_includes.preview(media)}
+		<p>
+		% if media.get('caption'):
+		    <span class="caption">${media['caption']}</span>
+		% endif
+		% if media.get('credit'):
+		    <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
+		% endif
+		</p>
+	    </li>
+	% endfor
+	</ul>
+    % endif
     
-    <%doc>
-    <ul id="media_carousel_content_${content['id']}" class="media_carousel">
-    % for media in content['attachments']:
-        <li>
-            ${media_includes.preview(media)}
-            <p>
-            % if media.get('caption'):
-                <span class="caption">${media['caption']}</span>
-            % endif
-            % if media.get('credit'):
-                <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
-            % endif
-            </p>
-        </li>
-    % endfor
-    </ul>
-    </%doc>
     
     </div>
     

@@ -159,8 +159,10 @@
                 <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
             % elif content['type'] == "video":
                 <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
             % elif content['type'] == "audio":
                 <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
+                ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
             % else:
                 Unrecognised media type
             % endif

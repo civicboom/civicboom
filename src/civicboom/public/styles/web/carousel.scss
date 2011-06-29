@@ -16,23 +16,28 @@
         overflow: hidden;
     }
     
-    .preview_item {
-        height: 100%;
+    .jcarousel-item {
+        position: relative;
         
-        a, img {
-            height: 150px;
-        }
-    }
-    
-    .item_details {
-        color: white;
-        text-align: left;
-        
-        .caption {
-        }
-        
-        .credit {
+        .preview_item {
+            height: 100%;
             
+            a, img {
+                height: 150px;
+            }
+        }
+        
+        .item_details {
+            position: absolute;
+            color: white;
+            text-align: left;
+            top: 150px;
+            
+            .caption {
+            }
+            
+            .credit {
+            }
         }
     }
     
@@ -45,10 +50,6 @@
         position: absolute;
         right: 1em;
         top: 65px;
-        
-        &:hover {
-            
-        }
     }
     
     .jcarousel-prev {
