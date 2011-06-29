@@ -453,7 +453,7 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
             value           = _('Invite trusted') ,
-            value_formatted = h.literal("<span class='button mo-help'>%s</span>") % _('Invite trusted'),
+            value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -461,21 +461,19 @@
     % endif
     
 	% if 'follower_trust' in self.actions:
-	<% description = "Your trusted followers will be able to view your private content" %>
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
             value           = _('Trust') ,
-            value_formatted = h.literal("<span class='button mo-help'>%s<div class='mo-help-r'>%s</div></span>") % (_('Trust'), description),
+            value_formatted = h.literal("<span class='button'>%s</span>") % _('Trust'),
             title           = _("Trust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
 	% elif 'follower_distrust' in self.actions:
-	<% description = "By untrusting this user they will no longer be able to view your private content" %>
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
             value           = _('Distrust') ,
-            value_formatted = h.literal("<span class='button mo-help'>%s<div class='mo-help-r'>%s</div></span>") % (_('Distrust'), description),
+            value_formatted = h.literal("<span class='button'>%s</span>") % _('Distrust'),
             title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
