@@ -1,0 +1,60 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+.jcarousel-skin-content-media {
+    width: 80%;
+    height: 150px;
+    // padding: 0.5em 0 0.5em 0;
+    margin: auto;
+    background-color: lighten($cb-lightblue, 40%);
+    border: 1em solid $cb-lightblue;
+    border-bottom: 3em solid $cb-lightblue;
+    @include border_radius(0.5em);
+    @include drop_shadow(1px, 1px, 1px, #333);
+    
+    .jcarousel-clip {
+        overflow: hidden;
+    }
+    
+    .preview_item {
+        height: 100%;
+        
+        a, img {
+            height: 150px;
+        }
+    }
+    
+    .item_details {
+        color: white;
+        text-align: left;
+        
+        .caption {
+        }
+        
+        .credit {
+            
+        }
+    }
+    
+    .hidden {
+        display: none;
+    }
+    
+    .jcarousel-next {
+        cursor: pointer;
+        position: absolute;
+        right: 1em;
+        top: 65px;
+        
+        &:hover {
+            
+        }
+    }
+    
+    .jcarousel-prev {
+        cursor: pointer;
+        position: absolute;
+        left: 1em;
+        top: 65px;
+    }
+}

@@ -37,14 +37,32 @@ class TestPrivateResponse(TestController):
         response_id = self.create_content(
             title   = 'private_response_test' ,
             content = 'private_response_test' ,
-            type    = 'assignment' ,
+            type    = 'article' ,
+            parent_id = assignment_id,
         )
         
-        # Check response in list
-        for username in ['unittest', 'unitfriend']:
+        # Sign up new users as trusted followers of unittest and unitfriend
+        # Check that the response lists 'do' or 'do not' contain the private_response_test article
+        # Sign up User C who is a trsuted follower of unittest
+        self.sign_up_as('user_c')
+        self.follow('unittest'  , trusted=True)
+        self.sign_up_as('user_d')
+        self.follow('unitfriend', trusted=True)
+        
+        # Check response in list - for all users that should be able to see it
+        for username in ['unittest', 'unitfriend', 'user_c']:
             self.log_in_as(username)
             assignment_reponse_titles = [response['title'] for response in self.get_content(assignment_id)['responses']['items']]
             self.assertIn('private_response_test', assignment_reponse_titles)
+        # Check response in list - for all users that should NOT be able to see it
+        for username in ['user_d']:
+            self.log_in_as(username)
+            response  = self.app.get(url('content' , id=assignment_id), status=403) # we cant get the content to get the listing
+            response  = self.app.get(url('content' , id=response_id  ), status=403)
+            
+            response  = self.app.get(url('contents', response_id=assignment_id, format='json'), status=200)
+            response_json = json.loads(response.body)
+            self.assertNotIn('private_response_test' , [response['title'] for response in response_json['data']['list']['items']])
         
         # Reset
         self.log_in_as('unittest')
@@ -52,3 +70,5 @@ class TestPrivateResponse(TestController):
         self.follower_distrust('unitfriend')
         self.log_in_as('unitfriend')
         self.delete_content(response_id)
+        self.delete_member('user_c')
+        self.delete_member('user_d')

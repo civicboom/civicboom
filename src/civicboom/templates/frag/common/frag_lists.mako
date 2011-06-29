@@ -370,7 +370,7 @@
         ##% if content.get('parent') and content['parent'].get('creator'):
         ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
         ##% endif
-        <%doc><a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a></%doc>
+        <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
         
         <div style="clear: both;"></div>
     </td>

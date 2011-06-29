@@ -153,6 +153,7 @@ class Content(Base):
             'license_id'   : None ,
             'private'      : None ,
             'edit_lock'    : None ,
+            'url'          : lambda content: content.__link__(),
         },
     })
     

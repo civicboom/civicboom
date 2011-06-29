@@ -88,7 +88,6 @@
         });
         $(".jcarousel-skin-widget-gradient LI").css({ display: "block" });
     </script>
-
 </%def>
 
 
@@ -108,8 +107,3 @@
         <div style="clear:both;"></div>
     </li>
 </%def>
-
-
-<%doc>
-
-</%doc>
