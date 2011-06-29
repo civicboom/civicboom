@@ -108,10 +108,10 @@
 <%
     widget_default = dict(widget_defaults.get(theme, 'basic'))
     widget_default['owner'] = normalize_member_username(member)
+     ##name='${_("_site_name")}'\
 %>
 % if member:
 <iframe \
- name='${_("_site_name")}'\
  id='CivicboomWidget-${theme}'\
  title='${_("_site_name _widget")}'\
  src='${h.url('member_action', id=widget_default['owner'], action=widget_default['base_list'], theme=theme ,sub_domain='widget', protocol=protocol)}'\
