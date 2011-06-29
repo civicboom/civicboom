@@ -56,36 +56,43 @@
     % else:
         ${_("unrecognised media type: %s") % type}
     % endif
-    <p>${media['caption']}<p>
-    <p>Credited to ${media['credit']}</p>
+    ${media_details(media)}
+</%def>
+
+## ---
+## Caption and credit to paragraph tags
+## ---
+<%def name="media_details(media, truncate=False)">
+    <%
+        if truncate:
+            caption = h.truncate(media['caption'], length=40, indicator='...', whole_word=True)
+            credit  = h.truncate(media['credit'], length=35, indicator='...', whole_word=True)
+        else:
+            caption = media['caption']
+            credit  = media['credit']
+    %>
+    % if not caption == "":
+        <p class="caption">${caption}</p>
+    % endif
+    % if not credit == "":
+        <p class="credit">Credited to <b>${credit}</b></p>
+    % endif
 </%def>
     
 ## ---
 ## Media carousel
 ## ---
-<%def name="media_carousel(contents)">
+<%def name="media_carousel(contents, content_id)">
     % if len(contents):
-        <ul id="media_carousel" class="jcarousel-skin-content-media">
+        <ul id="media_carousel-${content_id}" class="jcarousel-skin-content-media">
             % for content in contents:
                 ${carousel_item(content)}
             % endfor
-            <%doc>
-            % for content in contents:
-                ## Popup
-                <script>
-                    $('.${content['hash']}-popup').click(function() {
-                        $('#view-'+content['hash']).modal({ onShow: function (dialog) {}});
-                        return false;
-                    });
-                </script>
-                ${popup.popup_static("View media", (full(content)), "view-"+content['hash'])}
-            % endfor
-            </%doc>
         </ul>
         
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                jQuery('#media_carousel').jcarousel({
+                jQuery('#media_carousel-${content_id}').jcarousel({
                     scroll  :   1,
                     visible :   1,
                     auto    :   5,
@@ -100,23 +107,21 @@
                         onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
                     },
                 });
+                
+                // hide_control();
             });
             
             function media_carousel_initCallback(carousel) {
                 // Pause autoscrolling if the user moves with the cursor over the clip.
                 carousel.clip.hover(
-                    function() {carousel.stopAuto(); },
-                    function() {carousel.startAuto();} 
-                );
-                jQuery('.jcarousel-control').hover(
-                    function() {carousel.stopAuto(); },
-                    function() {carousel.startAuto();}
+                    function() {carousel.stopAuto();    },
+                    function() {carousel.startAuto();   } 
                 );
                 
-                jQuery('.jcarousel-control a').bind('click', function() {
-                    carousel.scroll(jQuery.jcarousel.intval(jQuery(this).text()));
-                    return false;
-                });
+                /*$('.jcarousel-skin-content-media').hover(
+                    function() {show_controls();},
+                    function() {hide_controls();}
+                );*/
             };
             
             function get_item_details(item) {
@@ -132,6 +137,16 @@
                 details = get_item_details(item);
                 $(details).addClass('hidden');
             }
+            
+            function show_controls() {
+                $('.jcarousel-prev').fadeIn();
+                $('.jcarousel-next').fadeIn();
+            }
+            
+            function hide_controls() {
+                $('.jcarousel-prev').fadeOut();
+                $('.jcarousel-next').fadeOut();
+            }
         </script>
     % endif
 </%def>
@@ -145,26 +160,40 @@
             % elif content['type'] == "video":
                 <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
             % elif content['type'] == "audio":
-                <img src="/images/misc/contenticons/audio.png" alt="${content['caption']}" />
+                <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
             % else:
                 Unrecognised media type
             % endif
         </a>
         
+        ## Popup
+        <script>
+            $('.${content['hash']}-popup').click(function() {
+                $(this).parent().find('#view-media').modal({ onShow: function (dialog) {}});
+                return false;
+            });
+        </script>
+        ${media_popup(content)}
+        
         ## Media details
         <div class="item_details hidden">
-            <%
-                caption = content['caption']
-                credit = content['credit']
-            %>
-            % if not caption == "":
-                <p class="caption">${h.truncate(content['caption'], length=55, indicator='...', whole_word=True)}</p>
-            % endif
-            % if not credit == "":
-                <p class="credit">Credited to <b>${h.truncate(content['credit'], length=35, indicator='...', whole_word=True)}</b></p>
-            % endif
+            ${media_details(content, truncate=1)}
         </div>
     </li>
+</%def>
+    
+<%def name="media_popup(content)">
+    <div id="view-media" class="hideable">
+        <div class="title_bar">
+            <div class="common_actions">
+                ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
+                <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+            </div>
+        </div>
+        <div class="media_popup_content">
+            ${full(content)}
+        </div>
+    </div>
 </%def>
 
 ## ---
