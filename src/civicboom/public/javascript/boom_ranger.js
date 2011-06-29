@@ -77,11 +77,12 @@ if (typeof window.boom.plugins.content == 'undefined')
 	                div.innerHTML += '<img style="float:left;" '+(img>0?'height="'+img+'"':'')+' src="'+data.data.content.thumbnail_url+'" />'
 	            //div.innerHTML += '<div>';
 	            div.innerHTML += '<h3>'+data.data.content.title+'</h3>';
-	            div.innerHTML += '<p class="content">'+data.data.content.content+'</p>';
+	            div.innerHTML += '<div class="creator">By: <a href="'+data.data.content.creator.url+'">'+data.data.content.creator.name+'</a></div>';
+	            div.innerHTML += '<div class="content">'+data.data.content.content+'</div>';
 	            if (responses !== null && (data.data.content.num_responses * 1) > 0) {
 	                num_responses = data.data.content.num_responses * 1;
 	                responses = responses * 1;
-	                div.innerHTML += '<p class="responses">'+num_responses+' response'+(num_responses>1?'s':'')+'<br />';
+	                div.innerHTML += '<div class="responses">'+num_responses+' response'+(num_responses>1?'s':'')+'<br />';
 	                if (responses > data.data.content.num_responses)
 	                    responses = num_responses;
 	                if (responses > data.data.responses.limit*1)
@@ -94,7 +95,7 @@ if (typeof window.boom.plugins.content == 'undefined')
 	                    }
 	                    div.innerHTML += '</ul>';
 	                }
-	                div.innerHTML += '</p>';
+	                div.innerHTML += '</div>';
 	            }
 	            div.setAttribute('boom:status', 'loaded');
 	            delete window['boom_callback_'+counter];

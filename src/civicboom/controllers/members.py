@@ -72,6 +72,8 @@ def _init_search_filters():
         return query
 
     def append_exclude_members(query, members):
+        if not members:
+            return query
         if isinstance(members, basestring):
             members = [member.strip() for member in members.split(',')]
         return query.filter(not_(Member.username.in_(members)))
