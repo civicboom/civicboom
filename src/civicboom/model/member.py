@@ -308,6 +308,7 @@ class Member(Base):
             'num_followers'     : None ,
             'num_following'     : None ,
             'account_type'      : None ,
+            'url'               : lambda member: member.__link__(),
         },
     })
     
