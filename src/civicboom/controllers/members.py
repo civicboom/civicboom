@@ -7,7 +7,7 @@ import re
 
 # AllanC - for members autocomplete index
 from civicboom.model      import Member, Follow, GroupMembership, Group
-from sqlalchemy           import or_, and_, null
+from sqlalchemy           import or_, and_, null, not_
 from sqlalchemy.orm       import join, joinedload, defer
 
 
@@ -71,6 +71,11 @@ def _init_search_filters():
         log.warning('member location search not implemented')
         return query
 
+    def append_exclude_members(query, members):
+        if isinstance(members, basestring):
+            members = [member.strip() for member in members.split(',')]
+        return query.filter(not_(Member.username.in_(members)))
+
     def append_search_followed_by(query, member):
         member_id = normalize_member(member)
         return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id).filter(Follow.type!='trusted_invite') ))
@@ -81,11 +86,12 @@ def _init_search_filters():
 
 
     search_filters = {
-        'member'       : append_search_member      ,
-        'name'         : append_search_name        ,
-        'username'     : append_search_username    ,
-        'type'         : append_search_type        ,
-        'location'     : append_search_location    ,
+        'member'         : append_search_member      ,
+        'name'           : append_search_name        ,
+        'username'       : append_search_username    ,
+        'type'           : append_search_type        ,
+        'location'       : append_search_location    ,
+        'exclude_members': append_exclude_members    ,
         #'followed_by'  : append_search_followed_by ,
         #'follower_of'  : append_search_follower_of ,
     }
@@ -120,6 +126,7 @@ class MembersController(BaseController):
         @param location     find members with a public location near to this point
         @param followed_by  find members followed by the specified member
         @param follower_of  find members who are a follower of the specified member
+        @param exculde_members comma separated list of usernames to exclude from the return
         @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-id' 
         @param *            (see common list return controls)
     
