@@ -91,6 +91,8 @@ def init_base_data():
         u2_login.type   = "password"
         u2_login.token  = hashlib.sha1("password").hexdigest()
 
+        u2.set_payment_account('plus', delay_commit=True)
+
         Session.add_all([u2, u2_login])
         Session.commit()
         assert u2.id == 2
