@@ -144,7 +144,7 @@ def _init_search_filters():
     def append_search_response_to(query, content_id):
         if isinstance(content_id, Content):
             content_id = content_id.id
-        return query.filter(Content.parent_id==int(content_id)).filter(ArticleContent.approval != 'dissassociated')
+        return query.filter(Content.parent_id==int(content_id)).filter(or_(Content.__type__!='article', and_(Content.__type__=='article', ArticleContent.approval != 'dissassociated')))
 
     def append_search_boomed_by(query, member):
         member = normalize_member(member)
@@ -213,9 +213,11 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     else:
         results = results.filter(Content.private==False) # public content only
         results = results.filter(Content.__type__!='draft')
+    
     if 'creator' in kwargs.get('include_fields',[]):
         #results = results.options(joinedload('creator'))
         results = results.options(joinedload(Content.creator))
+    
     if 'attachments' in kwargs.get('include_fields',[]):
         results = results.options(joinedload('attachments'))
     if 'tags' in kwargs.get('include_fields',[]):
@@ -290,11 +292,33 @@ class ContentsController(BaseController):
         # Permissions
         # AllanC - to aid cacheing we need permissions to potentially be a decorator
         #          TODO: we need maybe a separte call, or something to identify a private call
+        trusted_follower  = False
         logged_in_creator = False
-        if 'creator' in kwargs:
-            kwargs['creator'] = normalize_member(kwargs['creator']) # normalize creator
-            if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
+        creator = None
+        try:
+            # Try to get the creator of the whole parent chain or creator of self
+            # This models the same permission view enforcement as the 
+            parent_root = get_content(kwargs['response_to'])
+            parent_root = parent_root.root_parent or parent_root
+            creator = parent_root.creator
+        except:
+            pass
+        try:
+            creator = get_member(kwargs['creator'])
+            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
+        except:
+            pass
+        
+        if creator:
+            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
+            if c.logged_in_persona == creator:
                 logged_in_creator = True
+            else:
+                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
+        # If we've gone though the hassle of identifying if this is actually the user then show the private content ... this may not be the correct way, we may want to see always default to public .. need to consider
+        if trusted_follower or logged_in_creator:
+            kwargs['private'] = True
+        
         
         # Location - 'me' - replace 'me' with current location
         # NOTE: Cache warning! this is not a public cacheable item
@@ -326,7 +350,8 @@ class ContentsController(BaseController):
             kwargs['include_fields'] += ",parent"
         
         
-        include_private_content = 'private' in kwargs and logged_in_creator
+        # AllanC - TEMP HACK!!!!! the line below means a trusted follower can see drafts!! this is NOT the correct behaviour.
+        include_private_content = 'private' in kwargs and (logged_in_creator or trusted_follower)
         results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
 
         if union_query:

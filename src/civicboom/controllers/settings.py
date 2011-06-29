@@ -33,6 +33,10 @@ from civicboom.model.meta import location_to_string
 
 from civicboom.lib.web import _find_template_basic
 
+from civicboom.controllers.account import AccountController
+
+account_controller = AccountController()
+
 log = logging.getLogger(__name__)
 
 
@@ -110,6 +114,7 @@ add_setting('advert_profile_group', _('Hide the info box encouraging the use of 
 
 add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
+add_setting('push_assignment', _('Set a _assignment you would like followers to be able to push stories to'), group='advanced/follower_settings', weight=1002, type='id_assignment', info=_('Please speak to our team before you change this option!'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -132,6 +137,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
                     'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
+                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment')
 }
 
 settings_validators = {}
@@ -215,7 +221,7 @@ def copy_user_settings(settings_meta, user, user_type):
             # Special case for email addresses, if the user has no email address but has unverified, show that instead.
             if v == None and setting_name == 'email' and user.email_unverified != None:
                 v = user.email_unverified
-            if isinstance(v, basestring): # ugly hack
+            if isinstance(v, basestring) or isinstance(v, int): # ugly hack
                 settings[setting_name_repl] = v
             else:
                 settings[setting_name_repl] = location_to_string(v)
@@ -296,6 +302,9 @@ class SettingsController(BaseController):
                 user_type=user.__type__,
                 template="settings/panel/link_janrain",
             )
+        
+        if panel == 'account_payment':
+            return account_controller.payment(id=id)
             
         if panel not in data['panels']:
             raise action_error(code=404, message="This panel is not applicable for a " + user.__type__)

@@ -45,3 +45,20 @@
         }
     }
 }
+
+.media_popup_content {
+    text-align: center;
+    padding: 1em;
+    
+    .caption, .credit {
+        text-align: left;
+        padding-top: 0.5em;
+        max-width: 600px;
+        word-wrap: break-word;
+    }
+    
+    img {
+        max-width: 600px;
+        max-height: 400px;
+    }
+}

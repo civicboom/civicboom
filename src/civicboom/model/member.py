@@ -256,8 +256,6 @@ class Member(Base):
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
-    #payment_account      = relationship("PaymentAccount", cascade="all,delete-orphan", single_parent=True) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
-
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
     flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
@@ -310,6 +308,7 @@ class Member(Base):
             'num_followers'     : None ,
             'num_following'     : None ,
             'account_type'      : None ,
+            'url'               : lambda member: member.__link__(),
         },
     })
     
@@ -322,7 +321,7 @@ class Member(Base):
             'join_date'           : None ,
             'website'             : lambda member: member.extra_fields.get('website') ,
             'description'         : None ,
-            #'url'                 : None ,
+            'push_assignment'     : lambda member: member.extra_fields.get('push_assignment') ,
             
             #'followers'           : lambda member: [m.to_dict() for m in member.followers            ] ,
             #'following'           : lambda member: [m.to_dict() for m in member.following            ] ,
@@ -363,6 +362,10 @@ class Member(Base):
         action_list = []
         #if self.can_message(member):
         #    action_list.append('editable')
+        
+        #if self != member:
+        #    if 'push_assignment' in self.extra_fields:
+        #        action_list.append('push_assignment')
         if self == member:
             action_list.append('settings')
             action_list.append('logout')

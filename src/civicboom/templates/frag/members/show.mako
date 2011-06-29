@@ -82,6 +82,52 @@
         #self.attr.rss_url = url('contents', creator=self.id, format='rss')
         
         self.attr.auto_georss_link = True
+        
+        # GregM: Dynamic translation templates:
+        
+        trans_if = self.member['type']+('profile' if self.current_user else '')
+        
+        if trans_if == 'user':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses I've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'userprofile':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests I want a response to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses I've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'group':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests we want you to respond to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses we've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        elif trans_if == 'groupprofile':
+            self.trans_strings = [
+                #list name , icon, description
+                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('assignments_active'  , 'assignment' , _("Requests we want a response to")  ),
+                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('responses'           , 'response'   , _("Responses we've written") ),
+                ('articles'            , 'article'    , _("My news")    ),
+            ]
+        endif
     %>
 </%def>
 
@@ -109,6 +155,7 @@
 		    % endif
 		    <div class="separator"></div>
 		    ${actions_buttons()}
+            
 		    % if 'message' in self.actions:
 			${popup.link(
 			    h.args_to_tuple('new_message', target=self.id),
@@ -117,13 +164,19 @@
 			)}
 			<div style="clear: both;"></div>
 		    % endif
+            
+		    % if self.member.get('push_assignment'):
+            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Directly give us a story now!") , css_class="button")}
+			<div style="clear: both;"></div>
+		    % endif
+            
 		</div>
 	    </div>
 	    
 	    
 	    
 	    ## My requests
-	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0]  in ["assignments_active"]]:
+	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
 		${frag_list.content_list(
 		    d[list] ,
 		    description ,
@@ -277,7 +330,7 @@
 	    
 	    ## Memers Content --------------------------------------------
 	    
-	    % for list, icon, description in [n for n in constants.contents_list_titles if n[0] not in ["all","assignments_active" ]]:
+	    % for list, icon, description in [n for n in self.trans_strings if n[0] not in ["all","assignments_active" ]]:
 		${frag_list.content_list(
 		    d[list] ,
 		    description ,
@@ -314,9 +367,9 @@
         <div class="frag_list_contents">
             <div class="content">
                 <ul>
-                    <li><a href="${h.url('messages', list='to')          }"><div style="float:left; width: 4em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a></li>
-                    <li><a href="${h.url('messages', list='sent')        }"><div style="float:left; width: 4em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a></li>
-                    <li><a href="${h.url('messages', list='notification')}"><div style="float:left; width: 4em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a></li>
+                    <li><a onclick="cb_frag($(this), '${h.url('messages', list='to',           format='frag')}', 'frag_col_1'); return false;" href="${h.url('messages', list='to')          }"><div style="float:left; width: 4em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a></li>
+                    <li><a onclick="cb_frag($(this), '${h.url('messages', list='sent',         format='frag')}', 'frag_col_1'); return false;" href="${h.url('messages', list='sent')        }"><div style="float:left; width: 4em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a></li>
+                    <li><a onclick="cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;" href="${h.url('messages', list='notification')}"><div style="float:left; width: 4em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a></li>
                 </ul>
             </div>
         </div>
@@ -407,7 +460,7 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
             value           = _('Invite trusted') ,
-            value_formatted = h.literal("<span class='button mo-help'>%s</span>") % _('Invite trusted'),
+            value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -415,21 +468,19 @@
     % endif
     
 	% if 'follower_trust' in self.actions:
-	<% description = "Your trusted followers will be able to view your private content" %>
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
             value           = _('Trust') ,
-            value_formatted = h.literal("<span class='button mo-help'>%s<div class='mo-help-r'>%s</div></span>") % (_('Trust'), description),
+            value_formatted = h.literal("<span class='button'>%s</span>") % _('Trust'),
             title           = _("Trust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
 	% elif 'follower_distrust' in self.actions:
-	<% description = "By untrusting this user they will no longer be able to view your private content" %>
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
             value           = _('Distrust') ,
-            value_formatted = h.literal("<span class='button mo-help'>%s<div class='mo-help-r'>%s</div></span>") % (_('Distrust'), description),
+            value_formatted = h.literal("<span class='button'>%s</span>") % _('Distrust'),
             title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}

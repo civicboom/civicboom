@@ -40,17 +40,25 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
+        def custom_share_line():
+            popup.link(
+                h.args_to_tuple(controller='misc', action='get_link_embed',type='content', id=self.id),
+                title = _('Link or embed this content'),
+                text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Link or embed'),
+            )
+        
         # Agregation dict
         if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
-                'url'           : h.url('content', id=self.id, qualified=True) ,
-                'title'         : self.content.get('title') ,
-                'summary'       : self.content.get('content_short') ,
-                'image'         : self.content.get('thumbnail_url') ,
-                'published'     : self.content.get('publish_date') ,
-                'updated'       : self.content.get('update_date') ,
-                'author'        : self.content.get('creator', dict()).get('name') ,
-                'custom_share'  : custom_share,
+                'url'               : h.url('content', id=self.id, qualified=True) ,
+                'title'             : self.content.get('title') ,
+                'summary'           : self.content.get('content_short') ,
+                'image'             : self.content.get('thumbnail_url') ,
+                'published'         : self.content.get('publish_date') ,
+                'updated'           : self.content.get('update_date') ,
+                'author'            : self.content.get('creator', dict()).get('name') ,
+                'custom_share'      : custom_share,
+                'custom_share_line' : custom_share_line,
             }
         
         # Help Frag
@@ -68,6 +76,9 @@
         # GregM: Removed popups as we have the janrain share popup now :D
         #if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_user.config['help_popup_created_assignment']:
         #    self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
+	
+	self.popup_link_class	= "get-involved-popup-" + str(self.content['id'])
+	self.popup_class	= "get-involved-" + str(self.content['id'])
     %>
 </%def>
 
@@ -378,14 +389,17 @@
 </%doc>
 		</td>
 		<td class="tip"><div>
-		    <a href="" class="get-involved-popup">Why should you get involved?</a>
+		    <%
+			
+		    %>
+		    <a href="" class="${self.popup_link_class}">Why should you get involved?</a>
 		    <script>
-			$('.get-involved-popup').click(function() {
-			    $('#get-involved').modal({ onShow: function (dialog) {}});
+			$(".${self.popup_link_class}").click(function() {
+			    $("#${self.popup_class}").modal({ onShow: function (dialog) {}});
 			    return false;
 			});
 		    </script>
-		    ${popup.popup_static('Why get involved?', get_involved, 'get-involved')}
+		    ${popup.popup_static('Why get involved?', get_involved, self.popup_class)}
 		</div></td>
 	    </tr>
 	</table>
@@ -422,21 +436,27 @@
     %>
     <div class="media_container">
     
-    <ul id="media_carousel_content_${content['id']}" class="media_carousel">
-    % for media in content['attachments']:
-        <li>
-            ${media_includes.preview(media)}
-            <p>
-            % if media.get('caption'):
-                <span class="caption">${media['caption']}</span>
-            % endif
-            % if media.get('credit'):
-                <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
-            % endif
-            </p>
-        </li>
-    % endfor
-    </ul>
+    % if config['development_mode']:
+	## Load the content carousel to display previews of all content media
+	<span class="carousel">${media_includes.media_carousel(content['attachments'], content['id'])}</span>
+    % else:
+	<ul id="media_carousel_content_${content['id']}" class="media_carousel">
+	% for media in content['attachments']:
+	    <li>
+		${media_includes.preview(media)}
+		<p>
+		% if media.get('caption'):
+		    <span class="caption">${media['caption']}</span>
+		% endif
+		% if media.get('credit'):
+		    <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
+		% endif
+		</p>
+	    </li>
+	% endfor
+	</ul>
+    % endif
+    
     
     </div>
     
