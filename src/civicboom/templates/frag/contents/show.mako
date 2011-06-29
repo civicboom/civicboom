@@ -68,6 +68,9 @@
         # GregM: Removed popups as we have the janrain share popup now :D
         #if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_user.config['help_popup_created_assignment']:
         #    self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
+	
+	self.popup_link_class	= "get-involved-popup-" + str(self.content['id'])
+	self.popup_class	= "get-involved-" + str(self.content['id'])
     %>
 </%def>
 
@@ -378,14 +381,17 @@
 </%doc>
 		</td>
 		<td class="tip"><div>
-		    <a href="" class="get-involved-popup">Why should you get involved?</a>
+		    <%
+			
+		    %>
+		    <a href="" class="${self.popup_link_class}">Why should you get involved?</a>
 		    <script>
-			$('.get-involved-popup').click(function() {
-			    $('#get-involved').modal({ onShow: function (dialog) {}});
+			$(".${self.popup_link_class}").click(function() {
+			    $("#${self.popup_class}").modal({ onShow: function (dialog) {}});
 			    return false;
 			});
 		    </script>
-		    ${popup.popup_static('Why get involved?', get_involved, 'get-involved')}
+		    ${popup.popup_static('Why get involved?', get_involved, self.popup_class)}
 		</div></td>
 	    </tr>
 	</table>

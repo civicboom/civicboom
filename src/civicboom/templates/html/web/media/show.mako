@@ -1,5 +1,7 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+
 ## Include caousel javascripts in header
 <%def name="scripts_head()">
     <script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
@@ -62,67 +64,104 @@
 ## Media carousel
 ## ---
 <%def name="media_carousel(contents)">
-    <ul id="media_carousel" class="jcarousel-skin-content-media">
-        % for content in contents:
-            ${carousel_item(content)}
-        % endfor
-    </ul>
-    <div class="preview_details"></div>
-    
-    <script type="text/javascript">
-        jQuery(document).ready(function() {
-            jQuery('#media_carousel').jcarousel({
-                scroll  :   1,
-                visible :   1,
-                auto    :   3,
-                wrap    :   'circular',
-                initCallback    :   media_carousel_initCallback,
-                buttonNextHTML  :   "<div>NEXT</div>",
-                buttonPrevHTML  :   "<div>LAST</div>",
-            });
-        });
+    % if len(contents):
+        <ul id="media_carousel" class="jcarousel-skin-content-media">
+            % for content in contents:
+                ${carousel_item(content)}
+            % endfor
+            <%doc>
+            % for content in contents:
+                ## Popup
+                <script>
+                    $('.${content['hash']}-popup').click(function() {
+                        $('#view-'+content['hash']).modal({ onShow: function (dialog) {}});
+                        return false;
+                    });
+                </script>
+                ${popup.popup_static("View media", (full(content)), "view-"+content['hash'])}
+            % endfor
+            </%doc>
+        </ul>
         
-        function media_carousel_initCallback(carousel) {
-            // Disable autoscrolling if the user clicks the prev or next button.
-            carousel.buttonNext.bind('click', function() {carousel.startAuto(0);});
-            carousel.buttonPrev.bind('click', function() {carousel.startAuto(0);});
-            // Pause autoscrolling if the user moves with the cursor over the clip.
-            carousel.clip.hover(
-                function() {carousel.stopAuto(); },
-                function() {carousel.startAuto();}
-            );
-            jQuery('.jcarousel-control').hover(
-                function() {carousel.stopAuto(); },
-                function() {carousel.startAuto();}
-            );
-            
-            jQuery('.jcarousel-control a').bind('click', function() {
-                carousel.scroll(jQuery.jcarousel.intval(jQuery(this).text()));
-                return false;
+        <script type="text/javascript">
+            jQuery(document).ready(function() {
+                jQuery('#media_carousel').jcarousel({
+                    scroll  :   1,
+                    visible :   1,
+                    auto    :   5,
+                    wrap    :   'circular',
+                    initCallback    :   media_carousel_initCallback,
+                    buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
+                    buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
+                    itemVisibleInCallback   :   {
+                        onAfterAnimation    :   show_preview_details_itemVisibleInCallback
+                    },
+                    itemVisibleOutCallback  :   {
+                        onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
+                    },
+                });
             });
-        };
-        
-        function get_preview_details_itemVisibleInCallback(carousel, item, idx, state) {
             
-        }
-    </script>
+            function media_carousel_initCallback(carousel) {
+                // Pause autoscrolling if the user moves with the cursor over the clip.
+                carousel.clip.hover(
+                    function() {carousel.stopAuto(); },
+                    function() {carousel.startAuto();} 
+                );
+                jQuery('.jcarousel-control').hover(
+                    function() {carousel.stopAuto(); },
+                    function() {carousel.startAuto();}
+                );
+                
+                jQuery('.jcarousel-control a').bind('click', function() {
+                    carousel.scroll(jQuery.jcarousel.intval(jQuery(this).text()));
+                    return false;
+                });
+            };
+            
+            function get_item_details(item) {
+                return $(item).find('.item_details');
+            }
+            
+            function show_preview_details_itemVisibleInCallback(carousel, item, idx, state) {
+                details = get_item_details(item);
+                $(details).removeClass('hidden');
+            }
+            
+            function hide_preview_details_itemVisibleInCallback(carousel, item, idx, state) {
+                details = get_item_details(item);
+                $(details).addClass('hidden');
+            }
+        </script>
+    % endif
 </%def>
 
 <%def name="carousel_item(content)">
     <li class="preview_item">
-        <a href="${content['original_url']}" target="_blank">
-            <img src="${content['thumbnail_url']}" />
+        ## Media preview/link to full
+        <a href="${h.url('medium', id=content['hash'])}" class="${content['hash']}-popup">
+            % if content['type'] == "image":
+                <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+            % elif content['type'] == "video":
+                <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+            % elif content['type'] == "audio":
+                <img src="/images/misc/contenticons/audio.png" alt="${content['caption']}" />
+            % else:
+                Unrecognised media type
+            % endif
         </a>
-        <div class="item_details">
+        
+        ## Media details
+        <div class="item_details hidden">
             <%
                 caption = content['caption']
                 credit = content['credit']
             %>
             % if not caption == "":
-                <p class="caption">"${content['caption']}"</p>
+                <p class="caption">${h.truncate(content['caption'], length=55, indicator='...', whole_word=True)}</p>
             % endif
             % if not credit == "":
-                <p class="credit">Credited to ${content['credit']}</p>
+                <p class="credit">Credited to <b>${h.truncate(content['credit'], length=35, indicator='...', whole_word=True)}</b></p>
             % endif
         </div>
     </li>
