@@ -95,6 +95,14 @@ class MiscController(BaseController):
     def get_widget(self, id=None):
         c.widget_user_preview = _get_member(id)
         return action_ok()
+    
+    @web
+    def get_link_embed(self, type=None, id=None):
+        if type not in ['content']:
+            raise action_error(code=404, message="Cannot link to this type")
+        if not id:
+            raise action_error(code=404, message="No id")
+        return action_ok(data={'type':type, 'id':id})
 
     def opensearch(self, format="xml"):
         import base64

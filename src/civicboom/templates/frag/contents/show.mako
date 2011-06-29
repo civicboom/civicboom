@@ -40,17 +40,25 @@
         
         self.attr.frag_data_css_class = 'frag_content'
         
+        def custom_share_line():
+            popup.link(
+                h.args_to_tuple(controller='misc', action='get_link_embed',type='content', id=self.id),
+                title = _('Link or embed this content'),
+                text  = h.literal("<span class='icon16 i_widget'></span>%s") % _('Link or embed'),
+            )
+        
         # Agregation dict
         if self.content['private'] == False and self.content['type'] != 'draft':
             self.attr.share_kwargs = {
-                'url'           : h.url('content', id=self.id, qualified=True) ,
-                'title'         : self.content.get('title') ,
-                'summary'       : self.content.get('content_short') ,
-                'image'         : self.content.get('thumbnail_url') ,
-                'published'     : self.content.get('publish_date') ,
-                'updated'       : self.content.get('update_date') ,
-                'author'        : self.content.get('creator', dict()).get('name') ,
-                'custom_share'  : custom_share,
+                'url'               : h.url('content', id=self.id, qualified=True) ,
+                'title'             : self.content.get('title') ,
+                'summary'           : self.content.get('content_short') ,
+                'image'             : self.content.get('thumbnail_url') ,
+                'published'         : self.content.get('publish_date') ,
+                'updated'           : self.content.get('update_date') ,
+                'author'            : self.content.get('creator', dict()).get('name') ,
+                'custom_share'      : custom_share,
+                'custom_share_line' : custom_share_line,
             }
         
         # Help Frag
