@@ -319,15 +319,6 @@ class ContentsController(BaseController):
         if trusted_follower or logged_in_creator:
             kwargs['private'] = True
         
-        # AllanC - special case for response lists - private content needs to be visible to trusted followers of the parent content
-        #if 'response_to' in kwargs:
-        #    parent_content   = get_content(kwargs.get('response_to'))
-        #    if parent_content:
-        #        if parent_content.creator == c.logged_in_persona:
-        #            logged_in_creator = True
-        #        else:
-        #            trusted_follower = parent_content.creator.is_follower_trusted(c.logged_in_persona)
-        #        #kwargs['private'] = True
         
         # Location - 'me' - replace 'me' with current location
         # NOTE: Cache warning! this is not a public cacheable item
