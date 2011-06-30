@@ -69,7 +69,10 @@
         # Manipulate Action List
         # - remove actions in exclude_actions kwarg
         if self.kwargs.get('exclude_actions'):
-            self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
+            if self.kwargs.get('exclude_actions') == 'all':
+                self.actions = []
+            else:
+                self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
         
         self.attr.auto_georss_link = True
         
