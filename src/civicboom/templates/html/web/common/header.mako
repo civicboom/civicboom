@@ -30,9 +30,9 @@
 ## Content creation actions
 ##------------------------------------------------------------------------------
 <nav id="actions">
-	${h.secure_link(h.url('new_content', target_type='assignment'), _("Make a request"), css_class="button")}
-	${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
-    ##<a href="${h.url(controller='misc', action='new_article')}" class="button">${_("Post a story")}</a>
+	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for stories"), css_class="button")}
+	##${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
+    <a href="${h.url(controller='misc', action='new_article')}" class="button">${_("Post a story")}</a>
 </nav>
 
 ##------------------------------------------------------------------------------
