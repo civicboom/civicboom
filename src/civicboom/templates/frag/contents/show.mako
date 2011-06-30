@@ -95,7 +95,11 @@
     ## --- redesign --- ##
     <div class="frag_top_row">
 	<div class="frag_col">
-	    <div class="content_box">
+	    % if self.content['parent']:
+		${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
+	    % endif
+	    
+	    <div class="frag_list">
 		${content_title()}
 		${content_media()}
 		${content_content()}
@@ -154,10 +158,6 @@
         % endif
         
         ##<h2>${_("Content by")}</h2>
-        
-        % if self.content['parent']:
-            ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
-        % endif
         
         % if 'accepted_status' in d:
             ${frag_lists.member_list_thumbnails(
@@ -456,7 +456,6 @@
 	% endfor
 	</ul>
     % endif
-    
     
     </div>
     

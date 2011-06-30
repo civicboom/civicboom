@@ -92,6 +92,7 @@
 		.content_details {
 			width: 100%;
 			position: relative;
+			min-height: 45px;
 			
 			p {
 			    padding-top : 0.1em;
@@ -123,8 +124,8 @@
 			
 			.prompt {
 				position: absolute;
-				bottom: 1em;
-				right: 0;
+				bottom: 0;
+				right: 0.25em;
 			}
 		}
 

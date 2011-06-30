@@ -15,32 +15,26 @@
     .jcarousel-clip {
         overflow: hidden;
     }
-    
-    .jcarousel-item {
-        position: relative;
         
-        .preview_item {
-            height: 100%;
-            
-            a, img {
-                height: 150px;
-            }
-        }
+    .preview_item {
+        height: 100%;
         
-        .item_details {
-            position: absolute;
-            color: white;
-            text-align: left;
-            top: 150px;
-            
-            .caption {
-            }
-            
-            .credit {
-            }
+        a, img {
+            height: 150px;
         }
     }
     
+    .item_details {
+        color: white;
+        text-align: left;
+        
+        .caption {
+        }
+        
+        .credit {
+        }
+    }
+
     .hidden {
         display: none;
     }
