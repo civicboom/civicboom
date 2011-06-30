@@ -178,7 +178,10 @@ class MessagesController(BaseController):
         
         # Alert via email, MSN, etc - NOTE the message route for message_recived does not generate a notification by default
         messages.send_notification(members, message)
-        #send_notification(messages.message_received(member=m.source, message=m, you=m.target))
+        # AllanC - DANG!! cant do a batch one here ... while this is efficent, we cant get the id of the message to the email - this is needed to allow replys to the message
+        #          not really send_notification ... but this is used to trigger the 'email' route for the message
+        #for message in messages_sent:
+        #    messages.send_notification(message.target, message)
         
         #user_log.debug("Sending message to User #%d (%s)" % (target.id, target.username))
         user_log.debug("Sent message to %s" % kwargs.get('target'))
