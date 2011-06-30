@@ -166,7 +166,7 @@
 		    % endif
             
 		    % if self.member.get('push_assignment'):
-            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Directly give us a story now!") , css_class="button")}
+            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
 			<div style="clear: both;"></div>
 		    % endif
             

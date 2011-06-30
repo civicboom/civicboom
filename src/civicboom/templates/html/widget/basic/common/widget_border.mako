@@ -1,17 +1,20 @@
 <%inherit file="/html/widget/widget_base.mako"/>
 <%
+
+    owner = c.widget['owner']
+    title = c.widget['title']
+
     size_font       =  9
     size_header     = 24
     size_footer     = 20
+    if owner and owner.get('push_assignment'):
+        size_footer += 16 # Add space for the give news button
     size_action_bar = 13
     size_content    = c.widget['height'] - size_header - size_footer - size_action_bar - 5 #there are 4 * 1px borders
     size_avatar     = 20
     
     self.size_content = size_content
-    
-    owner = c.widget['owner']
-    title = c.widget['title']
-    
+        
 %>
 <div class="widget_border" style="border: 1px solid #${c.widget['color_border']}; font-size:${size_font}px; color:#${c.widget['color_font']};">
 
@@ -108,6 +111,10 @@
     ##----------------------------------------
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
+            % if owner and owner.get('push_assignment'):
+            <a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'])}" style="background-color:#${c.widget['color_action_bar']};" class="push_assignment_button">${_("Send us your stories")}</a>
+            % endif
+            
             <div style="float:right;">
             	<a class="icon16 i_help"  title="${_('About _site_name')}"      href="${h.url(controller='misc', action='about')                      }"                ><span>${_('About _site_name')     }</span></a>
             	<a class="icon16 i_boom"  title="${_('Powered by _site_name')}" href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><span>${_('Powered by _site_name')}</span></a>
