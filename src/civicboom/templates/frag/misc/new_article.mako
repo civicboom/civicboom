@@ -1,13 +1,11 @@
 <%inherit file="/frag/common/frag.mako"/>
+<%namespace name="member_includes" file="/html/web/common/member.mako"     />
+
+<%def name="member_avatar(member, img_class='')">
+    ${member_includes.avatar(member, class_='thumbnail', img_class=img_class)}
+</%def>
 
 <%def name="body()">
-    <%
-        organisations = {
-            # request_id, display name
-            '25': 'Kent Online',
-            '100'  : 'Gradvine',
-        }
-    %>
     <div class="frag_col">
         <div class="frag_whitewrap">
             <h1>
