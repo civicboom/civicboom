@@ -58,7 +58,7 @@
         if args and kwargs and 'member' in args and 'id' in kwargs:
             owner_obj = get_member(kwargs['id'])
             if owner_obj:
-                c.widget['owner'] = owner_obj.to_dict()
+                c.widget['owner'] = owner_obj.to_dict(include_fields='push_assignment')
     if not isinstance(c.widget['owner'], dict):
         c.widget['owner'] = dict(avatar_url='', username='', name='')
 %>

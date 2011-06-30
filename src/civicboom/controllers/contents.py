@@ -192,10 +192,11 @@ list_filters = {
     'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
     'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
     'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
+    'not_drafts'          : lambda results: results.filter(Content.__type__!='draft'),
 }
 
 
-def sqlalchemy_content_query(include_private=False, **kwargs):
+def sqlalchemy_content_query(include_private=False, trusted_follower= False, **kwargs):
     """
     Returns an SQLAlchemy query object
     This is used in the main contents/index and also to create a union stream of 2 querys
@@ -211,7 +212,8 @@ def sqlalchemy_content_query(include_private=False, **kwargs):
     if include_private:
         pass # allow private content
     else:
-        results = results.filter(Content.private==False) # public content only
+        if not trusted_follower:
+            results = results.filter(Content.private==False) # public content only
         results = results.filter(Content.__type__!='draft')
     
     if 'creator' in kwargs.get('include_fields',[]):
@@ -301,6 +303,7 @@ class ContentsController(BaseController):
             parent_root = get_content(kwargs['response_to'])
             parent_root = parent_root.root_parent or parent_root
             creator = parent_root.creator
+            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
         except:
             pass
         try:
@@ -351,8 +354,8 @@ class ContentsController(BaseController):
         
         
         # AllanC - TEMP HACK!!!!! the line below means a trusted follower can see drafts!! this is NOT the correct behaviour.
-        include_private_content = 'private' in kwargs and (logged_in_creator or trusted_follower)
-        results = sqlalchemy_content_query(include_private = include_private_content, **kwargs)
+        #include_private_content = 'private' in kwargs and (logged_in_creator or trusted_follower)
+        results = sqlalchemy_content_query(include_private = logged_in_creator, trusted_follower=trusted_follower, **kwargs)
 
         if union_query:
             results = results.union(union_query)

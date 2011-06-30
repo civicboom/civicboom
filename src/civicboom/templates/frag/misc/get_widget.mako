@@ -42,7 +42,7 @@
     
     ${components.tabs(
         tab_id       ='get_widget_tabs',
-        titles       = [_('What is a _widget?'), _('Stardard _widget'), _('Carousel _widget')],
+        titles       = [_('What is a _widget?'), _('Standard _widget'), _('Carousel _widget')],
         tab_contents = [what                   , basic                , gradient             ],
         member = member
     )}
@@ -182,7 +182,7 @@
             <label>${_("Title")}</label>
                 <input type="text" name="title" value="${widget_default['title']}" size="30"/><br/>
             
-            <label>${_("Base list")}</label>
+            <label>${_("Content to show on _widget")}</label>
                 <%
                     base_lists = [
                         ('assignments_active'   , _('My active _assignments')                ),
