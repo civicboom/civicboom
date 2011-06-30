@@ -33,7 +33,12 @@
         	padding: 2px;
         }
         .push_assignment_button {
-        
+            display: inline-block;
+            padding: 1px 3px 0px 3px;
+            height: 14px;
+            align: center;
+            font-weight: bold;
+            margin-bottom: 1px;
         }
 	}
 	.widget_header {overflow: hidden;}
