@@ -13,7 +13,7 @@ FOOT=\
 	jquery.ui.stars-3.0.1.js \
 	jquery.html5-0.0.1.js \
 	jquery.scrollTo.js \
-	jquery.simplemodal.1.4.1.min.js \
+	jquery.simplemodal-1.4.1.js \
 	jquery.uploadify.v2.1.4.js \
 	jquery.simple-color-picker.js \
 	jquery.ba-hashchange.min.js \
