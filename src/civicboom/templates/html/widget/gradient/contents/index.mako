@@ -62,6 +62,7 @@
         
         function widget_carousel_itemVisibleInCallbackAfterAnimation(carousel, item, idx, state) {
             ##console.log('Item #' + idx + ' is now visible');
+            ##console.log((idx % carousel.size())+1);
             get_jcarousel_control_item(item, idx).addClass('item_selected').removeClass('item_unselected');
         };
         
@@ -72,8 +73,10 @@
         
         jQuery(document).ready(function() {
             jQuery('#widget_carousel').jcarousel({
-                auto   : 2 ,
+                auto   : 3 ,
                 wrap   : 'last' ,
+                ##wrap   : 'circular',
+                ## AllanC circular ****s up the numbering and scrolling after a number of cycles
                 scroll : 1 ,
                 visible: 1 ,
                 initCallback: widget_carousel_initCallback ,
@@ -82,9 +85,11 @@
                 },
                 itemVisibleOutCallback: {
                     onAfterAnimation:  widget_carousel_itemVisibleOutCallbackAfterAnimation
-                }
+                },
+                itemFallbackDimension: 260,
             });
-            
+            ## itemFallbackDimension, it dosnt seem to ever be needed but it stops the following error
+            ## http://stackoverflow.com/questions/3784925/jcarousel-no-width-height-set-for-items-this-will-cause-an-infinite-loop-abort
         });
         $(".jcarousel-skin-widget-gradient LI").css({ display: "block" });
     </script>
