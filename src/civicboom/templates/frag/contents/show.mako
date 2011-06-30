@@ -99,7 +99,7 @@
     <div class="frag_top_row">
 	<div class="frag_col">
 	    % if self.content['parent']:
-		${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
+		${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
 	    % endif
 	    
 	    <div class="frag_list">
@@ -349,7 +349,7 @@
 			h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
 			method = "PUT" ,
 			css_class = 'button',
-			value           = _('Publish') ,
+			value           = _('Post') ,
 			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
 			
 		    )}

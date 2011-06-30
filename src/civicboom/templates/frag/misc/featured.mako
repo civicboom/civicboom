@@ -51,15 +51,17 @@
             </div>
         
             ## Adverts
-            % for (title, cb_list) in d['sponsored'].iteritems():
-                <% title = list_names.get(title, title) %>
-                ${frag_list.sponsored_list(cb_list, title)}
-            % endfor
-            
-            % for (title, cb_list) in d['featured'].iteritems():
-                <% title = list_names.get(title, title) %>
-                ${frag_list.content_list(cb_list, title)}
-            % endfor
+            % if not c.logged_in_user:
+                % for (title, cb_list) in d['sponsored'].iteritems():
+                    <% title = list_names.get(title, title) %>
+                    ${frag_list.sponsored_list(cb_list, title)}
+                % endfor
+                
+                % for (title, cb_list) in d['featured'].iteritems():
+                    <% title = list_names.get(title, title) %>
+                    ${frag_list.content_list(cb_list, title)}
+                % endfor
+            % endif
         </div>
         <div style="padding: 0.15em"></div>
     </div>
