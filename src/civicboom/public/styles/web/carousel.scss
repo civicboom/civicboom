@@ -4,8 +4,7 @@
 .jcarousel-skin-content-media {
     width: 80%;
     height: 150px;
-    // padding: 0.5em 0 0.5em 0;
-    margin: auto;
+    margin: 0 auto 0 auto;
     background-color: lighten($cb-lightblue, 40%);
     border: 1em solid $cb-lightblue;
     border-bottom: 3em solid $cb-lightblue;
@@ -15,32 +14,24 @@
     .jcarousel-clip {
         overflow: hidden;
     }
-    
-    .jcarousel-item {
-        position: relative;
         
-        .preview_item {
-            height: 100%;
-            
-            a, img {
-                height: 150px;
-            }
-        }
+    .preview_item {
+        height: 100%;
         
-        .item_details {
-            position: absolute;
-            color: white;
-            text-align: left;
-            top: 150px;
-            
-            .caption {
-            }
-            
-            .credit {
-            }
+        a, img {
+            height: 150px;
         }
     }
     
+    .jcarousel-item {
+        .item_details {
+            padding-top: 3px;
+            color: white;
+            text-align: left;
+            width: 100%;
+        }
+    }
+
     .hidden {
         display: none;
     }

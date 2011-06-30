@@ -51,7 +51,19 @@ class MiscController(BaseController):
 
     @web
     def new_article(self):
-        return action_ok()
+        if config['development_mode']:
+            organisations = ['unittest', 'unitfriend']
+        else:
+            organisations = ['kentonline', 'gradvine']
+        data = {'list':[],}
+        for org in organisations:
+            org = _get_member(org)
+            push_assignment = org.config.get('push_assignment')
+            if push_assignment:
+                org_d = org.to_dict()
+                org_d.update({'push_assignment': push_assignment, 'description': org.description}) 
+                data['list'].append(org_d)
+        return action_ok(data=data)
 
     def search_redirector(self):
         if request.GET.get("type") == "Members": # these need to match the submit buttons
@@ -220,8 +232,8 @@ Disallow: /*.frag$
         
         # Sponsored content dictionary
         sponsored =  {
-            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
             'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
+            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
         }
         # Featured content dictionary
         featured =  {

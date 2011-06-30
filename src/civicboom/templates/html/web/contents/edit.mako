@@ -22,7 +22,7 @@
 </%def>
 
 <%def name="parent()">
-	<!--#include file="${url('content', id=d['content']['parent']['id'], format='frag')}"-->
+	<!--#include file="${url('content', id=d['content']['parent']['id'], format='frag', exclude_actions='all' )}"-->
 </%def>
 
 <%def name="help()">

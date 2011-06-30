@@ -166,7 +166,7 @@
 		    % endif
             
 		    % if self.member.get('push_assignment'):
-            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Directly give us a story now!") , css_class="button")}
+            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
 			<div style="clear: both;"></div>
 		    % endif
             
@@ -192,7 +192,7 @@
     ## Left col
     <div class="frag_left_col">
 	<div class="frag_col">
-	    <%doc><div class="frag_col vcard">
+	    <div class="frag_col hideable vcard">
 		<div class="user-details">
 		    <span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
 		    % if self.member.get('website'):
@@ -248,7 +248,7 @@
 		    % endif
 		</div>
 	    </div>
-	    <div style="clear: both;"></div></%doc>
+	    <div style="clear: both;"></div>
 	    ## Community ----------------------------------------
 	    
 	${share.AddThisFragList(**self.attr.share_kwargs)}

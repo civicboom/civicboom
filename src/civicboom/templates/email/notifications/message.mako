@@ -16,4 +16,5 @@
     
     <p>${          kwargs.get('subject') }</p>
     <p>${h.literal(kwargs.get('content'))}</p>
+##    <p><a href="${h.url('messages', id=kwargs.get('id'), qualified=True)}">${_('Click here to reply!')}</a></p>
 </%def>

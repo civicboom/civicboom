@@ -5,7 +5,7 @@
 	<li>It is a tool that makes building a news story easier.</li>
 </ul>
 
-<h2>${_("What is this widget?")}</h2>
+<h2>${_("What is this _widget?")}</h2>
 <ul>
     <%
         name = ""

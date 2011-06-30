@@ -326,53 +326,55 @@
         </a>
     </td>
     
-    <td class="content_details"> 
-        <a href="${item_url}" ${js_link_to_frag}>
-            <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
-        </a>
-        <p class="timestamp">
-            ${timestamp(content)}
-        </p>
-        % if extra_info:
-            % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
-                <%
-                    (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
-                %>
-                <p class="extra">${_('In response to:')}
-                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
-                        % if content.get('parent'):
-                        ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
-                        % else:
-                        content
-                        % endif
-                    </a>
-                </p>
-            % elif content['type']=='article':
-                <p class="extra">
-                ${_('Views')}:${content['views']}
-                % if content.get('tags'):
-                , ${_('Tags')}:${content['tags'][:3]}
+    <td class="content_details">
+        <div class="content_details">
+            <a href="${item_url}" ${js_link_to_frag}>
+                <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
+            </a>
+            <p class="timestamp">
+                ${timestamp(content)}
+            </p>
+            % if extra_info:
+                % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
+                    <%
+                        (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
+                    %>
+                    <p class="extra">${_('In response to:')}
+                        <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                            % if content.get('parent'):
+                            ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
+                            % else:
+                            content
+                            % endif
+                        </a>
+                    </p>
+                % elif content['type']=='article':
+                    <p class="extra">
+                    ${_('Views')}:${content['views']}
+                    % if content.get('tags'):
+                    , ${_('Tags')}:${content['tags'][:3]}
+                    % endif
+                    </p>
+                % elif content['type']=='assignment':
+                    <%
+                        (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
+                    %>
+                    <p class="extra"><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
                 % endif
-                </p>
-            % elif content['type']=='assignment':
-                <%
-                    (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
-                %>
-                <p class="extra"><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
             % endif
-        % endif
-        
-        ## Creator avatar
-        <%doc>% if creator and 'creator' in content:
-            ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
-        % endif</%doc>
-        ## Responses show parent Creator
-        ##% if content.get('parent') and content['parent'].get('creator'):
-        ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
-        ##% endif
-        <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
-        
-        <div style="clear: both;"></div>
+            
+            ## Creator avatar
+            <%doc>% if creator and 'creator' in content:
+                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
+            % endif</%doc>
+            ## Responses show parent Creator
+            ##% if content.get('parent') and content['parent'].get('creator'):
+            ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
+            ##% endif
+            <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
+            
+            <div style="clear: both;"></div>
+        </div>
     </td>
 
     <%doc>

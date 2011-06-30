@@ -69,7 +69,10 @@
         # Manipulate Action List
         # - remove actions in exclude_actions kwarg
         if self.kwargs.get('exclude_actions'):
-            self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
+            if self.kwargs.get('exclude_actions') == 'all':
+                self.actions = []
+            else:
+                self.actions = list(set(self.actions) - set(self.kwargs.get('exclude_actions', '').split(',')))
         
         self.attr.auto_georss_link = True
         
@@ -95,7 +98,11 @@
     ## --- redesign --- ##
     <div class="frag_top_row">
 	<div class="frag_col">
-	    <div class="content_box">
+	    % if self.content['parent']:
+		${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
+	    % endif
+	    
+	    <div class="frag_list">
 		${content_title()}
 		${content_media()}
 		${content_content()}
@@ -154,10 +161,6 @@
         % endif
         
         ##<h2>${_("Content by")}</h2>
-        
-        % if self.content['parent']:
-            ${frag_lists.content_list(self.content['parent'], _("Parent content"), creator=True)}
-        % endif
         
         % if 'accepted_status' in d:
             ${frag_lists.member_list_thumbnails(
@@ -346,7 +349,7 @@
 			h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
 			method = "PUT" ,
 			css_class = 'button',
-			value           = _('Publish') ,
+			value           = _('Post') ,
 			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
 			
 		    )}
@@ -456,7 +459,6 @@
 	% endfor
 	</ul>
     % endif
-    
     
     </div>
     
