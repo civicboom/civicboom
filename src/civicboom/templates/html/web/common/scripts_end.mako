@@ -4,46 +4,47 @@
 	${refresh_fragment_height()}
 
 	% if config['online']:
-	    ${google_analytics_end()}
-	    ${share.init_janrain_social()}
-	    ##${share.share_this_js()}
+		${google_analytics_end()}
+		${share.init_janrain_social()}
+		##${share.share_this_js()}
 	% endif
 
-    ## Maps (should be loaded on-demand, but frags confuse that
-    % if config['development_mode']:
-        ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
+	## Maps (should be loaded on-demand, but frags confuse that
+	% if config['development_mode']:
+		## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 		<!-- non-urgent bits -->
 		<script src="/javascript/jquery.ui.js"></script>
-        <script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
-        <script src="/javascript/jquery.html5-0.0.1.js"></script>
+		<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+		<script src="/javascript/jquery.html5-0.0.1.js"></script>
 		<script src="/javascript/jquery.scrollTo.js"></script>
-		<script src="/javascript/jquery.simplemodal.1.4.1.min.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
+		<script src="/javascript/jquery.simplemodal-1.4.1.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
 		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
-        <script src="/javascript/jquery.simple-color-picker.js"></script>
+		<script src="/javascript/jquery.simple-color-picker.js"></script>
 		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
 		<script src="/javascript/jquery.limit-1.2.js"></script>
 		<script src="/javascript/jquery.getUrlParam.js"></script>
-        <script src="/javascript/jquery.cookie.js"></script>
-        <script src="/javascript/jquery.jcarousel.min.js"></script>
+		<script src="/javascript/jquery.cookie.js"></script>
+		<script src="/javascript/jquery.jcarousel.min.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
 		<!-- maps -->
-        <script src="/javascript/gears_init.js"></script>
-        <script src="/javascript/geo.js"></script>
-        <script src="/javascript/OpenLayers.js"></script>
-        <script src="/javascript/minimap.js"></script>
-    % else:
+		<script src="/javascript/gears_init.js"></script>
+		<script src="/javascript/geo.js"></script>
+		<script src="/javascript/OpenLayers.js"></script>
+		<script src="/javascript/minimap.js"></script>
+	% else:
 		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
-    % endif
+	% endif
 
 
-    ##----------------------------------------------------------------------------
-    ## JQuery SimpleModel Setup
-    ##----------------------------------------------------------------------------
-    ## http://www.ericmmartin.com/projects/simplemodal/
+	##----------------------------------------------------------------------------
+	## JQuery SimpleModel Setup
+	##----------------------------------------------------------------------------
+	## http://www.ericmmartin.com/projects/simplemodal/
 	<script type="text/javascript">
 		$.extend($.modal.defaults, {
 			closeClass: "simplemodalClose" ,
+			autoResize: true ,
 			##closeHTML : "<a href='#' class='icon16 i_close' style='float: right;' title='Close'></a>" ,
 			##opacity   : 60 ,
 			onOpen: function (dialog) {
