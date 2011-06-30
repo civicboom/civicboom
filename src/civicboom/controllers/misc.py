@@ -232,8 +232,8 @@ Disallow: /*.frag$
         
         # Sponsored content dictionary
         sponsored =  {
-            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
             'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
+            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
         }
         # Featured content dictionary
         featured =  {

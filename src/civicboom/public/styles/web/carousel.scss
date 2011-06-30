@@ -4,8 +4,7 @@
 .jcarousel-skin-content-media {
     width: 80%;
     height: 150px;
-    // padding: 0.5em 0 0.5em 0;
-    margin: auto;
+    margin: 0 auto 0 auto;
     background-color: lighten($cb-lightblue, 40%);
     border: 1em solid $cb-lightblue;
     border-bottom: 3em solid $cb-lightblue;
@@ -24,14 +23,12 @@
         }
     }
     
-    .item_details {
-        color: white;
-        text-align: left;
-        
-        .caption {
-        }
-        
-        .credit {
+    .jcarousel-item {
+        .item_details {
+            padding-top: 3px;
+            color: white;
+            text-align: left;
+            width: 100%;
         }
     }
 
