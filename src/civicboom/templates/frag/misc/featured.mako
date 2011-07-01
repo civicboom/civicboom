@@ -41,7 +41,9 @@
         )
     %>
     
-    ${advert(content="Make news with the Civicboom mobile app!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
+    % if c.logged_in_user:
+        ${advert(content="Make news with the Civicboom mobile app!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
+    % endif
     ## ${advert(content="Are you an organisation, journalist, blogger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
     <span style="clear: both; display: block;"></span>
     <div class="frag_top_row">
@@ -51,18 +53,15 @@
                 <h1>Featured content</h1>
             </div>
         
-            ## Adverts
-            % if not c.logged_in_user:
-                % for (title, cb_list) in d['sponsored'].iteritems():
-                    <% title = list_names.get(title, title) %>
-                    ${frag_list.sponsored_list(cb_list, title)}
-                % endfor
-                
-                % for (title, cb_list) in d['featured'].iteritems():
-                    <% title = list_names.get(title, title) %>
-                    ${frag_list.content_list(cb_list, title)}
-                % endfor
-            % endif
+            % for (title, cb_list) in d['sponsored'].iteritems():
+                <% title = list_names.get(title, title) %>
+                ${frag_list.sponsored_list(cb_list, title)}
+            % endfor
+            
+            % for (title, cb_list) in d['featured'].iteritems():
+                <% title = list_names.get(title, title) %>
+                ${frag_list.content_list(cb_list, title)}
+            % endfor
         </div>
         <div style="padding: 0.15em"></div>
     </div>
