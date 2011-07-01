@@ -107,8 +107,6 @@
                         onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
                     },
                 });
-                
-                // hide_control();
             });
             
             function media_carousel_initCallback(carousel) {
@@ -117,11 +115,6 @@
                     function() {carousel.stopAuto();    },
                     function() {carousel.startAuto();   } 
                 );
-                
-                /*$('.jcarousel-skin-content-media').hover(
-                    function() {show_controls();},
-                    function() {hide_controls();}
-                );*/
             };
             
             function get_item_details(item) {
@@ -155,17 +148,19 @@
     <li class="preview_item">
         ## Media preview/link to full
         <a href="${h.url('medium', id=content['hash'])}" class="${content['hash']}-popup">
-            % if content['type'] == "image":
-                <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-            % elif content['type'] == "video":
-                <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-                ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
-            % elif content['type'] == "audio":
-                <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
-                ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
-            % else:
-                Unrecognised media type
-            % endif
+            <div style="height: 150px;">
+                % if content['type'] == "image":
+                    <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                % elif content['type'] == "video":
+                    <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                % elif content['type'] == "audio":
+                    <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
+                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                % else:
+                    Unrecognised media type
+                % endif
+            </div>
         </a>
         
         ## Popup
