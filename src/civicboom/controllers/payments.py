@@ -17,11 +17,8 @@ class PaymentsController(BaseController):
     def index(self, **kwargs):
         """
         GET /groups: All groups the current user is a member of
-
         @api groups 1.0 (WIP)
-        
         @param * (see common list return controls)
-        
         @return 200 - data.list = array of group objects that logged in user is a member including the additional field 'members "role" in the group'
         """
         user = c.logged_in_persona
@@ -42,6 +39,11 @@ class PaymentsController(BaseController):
     @web
     @auth
     def show(self):
+        return action_ok()
+    
+    @web
+    @auth
+    def create(self):
         return action_ok()
     
     @web
