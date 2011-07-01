@@ -150,9 +150,9 @@
 		<div class="member_details">
 		    
 		    <div class="avatar">${member_avatar(img_class='photo')}</div>
-		    <h2 class="name" style="padding: 0.5em 0.5em 0 0.25em; margin: 0;">${h.guess_hcard_name(self.member['name'])}</h2>
+		    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
 		    % if self.member.get('website'):
-			<div class="website" style="padding: 0 0 0.25em 1em; font-size: 12px;"><a href="${self.member['website']}">${self.member['website']}</a></div>
+			<p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
 		    % endif
 		    % if self.member.get('description'):
 			<p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
@@ -406,7 +406,8 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
             value           = _('Follow') ,
-            value_formatted = h.literal("<span class='button '>%s</span>") % _('Follow'),
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button '>%s</span>") % _('Follow'),
             title           = _("Follow %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -416,8 +417,9 @@
     % if 'unfollow' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-            value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Stop Following'),
+            value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Stop Following'),
+            css_class       = "button" ,
             title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -428,7 +430,8 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Join _Group'),
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Join _Group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
@@ -439,7 +442,8 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Request to join _group') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Request to join _group'),
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Request to join _group'),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
@@ -450,7 +454,8 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
             value           = _('Invite') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite') ,
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite') ,
             title           = invite_text , 
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -462,7 +467,8 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
             value           = _('Invite trusted') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite trusted'),
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -473,7 +479,8 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
             value           = _('Trust') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Trust'),
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Trust'),
             title           = _("Trust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -482,7 +489,8 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
             value           = _('Distrust') ,
-            value_formatted = h.literal("<span class='button'>%s</span>") % _('Distrust'),
+            css_class       = "button" ,
+            #value_formatted = h.literal("<span class='button'>%s</span>") % _('Distrust'),
             title           = _("Distrust follower %s" % self.name) ,
             json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
@@ -490,7 +498,12 @@
     % endif
     
     % if 'push_assignment' in self.actions and self.member.get('push_assignment'):
-        ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
+        ${h.secure_link(
+            h.url('new_content', target_type='article', parent_id=self.member['push_assignment']),
+            value           = _("Send us your stories") ,
+            css_class       = "button" ,
+            title           = _("Got a story? Send us a story directly") ,
+        )}
 	% endif
     
 </%def>
