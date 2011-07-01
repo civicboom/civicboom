@@ -26,7 +26,7 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-    ${widget_preview(c.logged_in_persona)}
+    ${widget_preview(c.widget_user_preview or c.logged_in_persona)}
 </%def>
 
 
