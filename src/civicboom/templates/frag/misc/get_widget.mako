@@ -42,8 +42,8 @@
     
     ${components.tabs(
         tab_id       ='get_widget_tabs',
-        titles       = [_('What is a _widget?'), _('Standard _widget'), _('Carousel _widget')],
-        tab_contents = [what                   , basic                , gradient             ],
+        titles       = [_('What is a _widget?'), _('Standard _widget'), _('Dynamic _widget')],
+        tab_contents = [what                   , basic                , gradient            ],
         member = member
     )}
     

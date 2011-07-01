@@ -13,7 +13,7 @@ class PaymentsController(BaseController):
     """
     
     @web
-    @auth
+    @authorize
     def index(self, **kwargs):
         """
         GET /groups: All groups the current user is a member of
@@ -21,6 +21,8 @@ class PaymentsController(BaseController):
         @param * (see common list return controls)
         @return 200 - data.list = array of group objects that logged in user is a member including the additional field 'members "role" in the group'
         """
+        # url('payments')
+        
         user = c.logged_in_persona
         raise_if_current_role_insufficent('admin', group=user)
         
@@ -38,20 +40,40 @@ class PaymentsController(BaseController):
     
     @web
     @auth
-    def show(self):
+    def new(self, **kwargs):
+        """
+        """
+        #url_for('new_payment')
+        return action_ok()
+
+    @web
+    @auth
+    def create(self, **kwargs):
+        """
+        """
+        # url('payments') + POST
+        return action_ok()
+
+    @web
+    @auth
+    def update(self, id, **kwargs):
+        """
+        """
+        # url('payment', id=ID)
         return action_ok()
     
     @web
     @auth
-    def create(self):
+    def delete(self, id, **kwargs):
+        """
+        """
+        # url('payment', id=ID)
         return action_ok()
     
     @web
-    @auth
-    def create(self):
-        return action_ok()
-    
-    @web
-    @auth
-    def delete(self):
+    @authorize
+    def show(self, id, **kwargs):
+        """
+        """
+        # url('content', id=ID)
         return action_ok()
