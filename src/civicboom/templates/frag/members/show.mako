@@ -150,24 +150,30 @@
 		<div class="member_details">
 		    <div class="avatar">${member_avatar(img_class='photo')}</div>
 		    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+            
 		    % if self.member.get('description'):
-			<div class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
+            <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
 		    % endif
+            
+            % if self.member.get('website'):
+            <p class="website">Website: <a href="${self.member['website']}" target="_blank">self.member['website']</a></p>
+            % endif
+            
 		    <div class="separator"></div>
 		    ${actions_buttons()}
             
 		    % if 'message' in self.actions:
-			${popup.link(
-			    h.args_to_tuple('new_message', target=self.id),
-			    title = _('Send message'),
-			    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
-			)}
-			<div style="clear: both;"></div>
+                ${popup.link(
+                    h.args_to_tuple('new_message', target=self.id),
+                    title = _('Send message'),
+                    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
+                )}
+                <div style="clear: both;"></div>
 		    % endif
             
 		    % if self.member.get('push_assignment'):
-            ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
-			<div style="clear: both;"></div>
+                ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
+                <div style="clear: both;"></div>
 		    % endif
             
 		</div>
