@@ -484,3 +484,49 @@ BODY.c-misc.a-about {
 .payplan .ideal:hover .idealpop {
   display: block; 
 }
+
+BODY.c-misc.a-new_article.u-user {
+  div.new-article {
+    .button {
+      width: 6em;
+    }
+    div.na-padleft {
+      padding-left: 2em;
+    }
+    .na-orgs {
+      .mo-help-l {
+        float: left;
+        bottom: -0em;
+        left: -19em;
+        filter: none;
+        opacity: 1;
+        width: 20em;
+      }
+      li {
+        padding: 0.5em 0;
+        display: table;
+        width: 30.45em;
+      }
+      .fr {
+        padding-bottom: 0.75em;
+      }
+      .na-org-text {
+        display: inline-block;
+        display: table-cell;
+        vertical-align: middle;
+        width: 18em;
+      }
+    }
+    .na-other {
+      .fr {
+        padding-top: 0.25em;
+      }
+    }
+    .pr {
+      position: relative;
+    }
+    .cb {
+      clear: both;
+    }
+  }
+}

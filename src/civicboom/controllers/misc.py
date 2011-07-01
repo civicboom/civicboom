@@ -11,6 +11,16 @@ content_search = ContentsController().index
 import datetime
 import random
 
+static_org_descriptions = {
+    'kentonline': 'Join us in making the news in Kent, by telling us your stories, sending in videos, pictures and audio - help us build a news picture of Kent.',
+    'gradvine'  : 'Be part of a new online student community with the Gradvine. Get involved in creating your own news and online portfolio: Upload images, video and text then share it with Gradvine...and the world. Our network spans the whole of the UK, with a website just like this for every UK university and town. So your voice will be heard everywhere.'
+}
+
+static_org_descriptions.update({
+    'unittest'    : static_org_descriptions['kentonline'],
+    'unitfriend'  : static_org_descriptions['gradvine']
+})
+
 
 class MiscController(BaseController):
     @cacheable(time=600)
@@ -57,11 +67,12 @@ class MiscController(BaseController):
             organisations = ['kentonline', 'gradvine']
         data = {'list':[],}
         for org in organisations:
+            static_desc = static_org_descriptions.get(org)
             org = _get_member(org)
             push_assignment = org.config.get('push_assignment')
             if push_assignment:
                 org_d = org.to_dict()
-                org_d.update({'push_assignment': push_assignment, 'description': org.description}) 
+                org_d.update({'push_assignment': push_assignment, 'description': static_desc or org.description}) 
                 data['list'].append(org_d)
         return action_ok(data=data)
 
