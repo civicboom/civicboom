@@ -157,9 +157,10 @@
 		    % if self.member.get('description'):
 			<p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
 		    % endif
-            
+		    
 		    <div class="separator"></div>
 		    ${actions_buttons()}
+            
             
 		    % if 'message' in self.actions:
                 ${popup.link(
@@ -167,14 +168,10 @@
                     title = _('Send message'),
                     text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
                 )}
-                <div style="clear: both;"></div>
+                ##<div style="clear: both;"></div>
 		    % endif
             
-		    % if self.member.get('push_assignment'):
-                ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
-                <div style="clear: both;"></div>
-		    % endif
-            
+            <div style="clear: both;"></div>
 		</div>
 	    </div>
 	    
@@ -491,6 +488,11 @@
         )}
         <span class="separtor"></span>
     % endif
+    
+    % if 'push_assignment' in self.actions and self.member.get('push_assignment'):
+        ${h.secure_link(h.url('new_content', target_type='article', parent_id=self.member['push_assignment']), _("Send us your stories") , css_class="button")}
+	% endif
+    
 </%def>
 
 
