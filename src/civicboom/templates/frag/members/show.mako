@@ -149,7 +149,10 @@
 	    <div class="frag_list">
 		<div class="member_details">
 		    <div class="avatar">${member_avatar(img_class='photo')}</div>
-		    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+		    <h2 class="name" style="padding: 0.5em 0.5em 0 0.25em; margin: 0;">${h.guess_hcard_name(self.member['name'])}</h2>
+		    % if self.member.get('website'):
+			<div class="website" style="padding: 0 0 0.25em 1em; font-size: 12px;"><a href="${self.member['website']}">${self.member['website']}</a></div>
+		    % endif
 		    % if self.member.get('description'):
 			<div class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</div>
 		    % endif
@@ -527,7 +530,7 @@
 ## Avatar
 ##------------------------------------------------------------------------------
 <%def name="member_avatar(img_class='')">
-    ${member_includes.avatar(self.member, class_='thumbnail_large', img_class=img_class)}
+    ${member_includes.avatar(self.member, class_='thumbnail_large', img_class=img_class, as_link=False)}
 </%def>
 
 
