@@ -18,8 +18,6 @@
 				
 			.member_details {
                 
-                padding-left: 1em;
-                
 				h2 {
 					font-size: 150%;
 					color: #666;
@@ -35,8 +33,8 @@
 					
 				}
 				
-				.description {
-					
+				.description, .website {
+					padding-left: 1em;
 				}
 				
 				.button {
