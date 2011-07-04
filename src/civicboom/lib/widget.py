@@ -73,4 +73,4 @@ def setup_widget_env():
     if c.widget['owner']:
         owner = _get_member(c.widget['owner'])
         if owner:
-            c.widget['owner'] = owner.to_dict()
+            c.widget['owner'] = owner.to_dict(include_fields='push_assignment')
