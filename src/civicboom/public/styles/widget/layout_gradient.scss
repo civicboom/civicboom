@@ -1,7 +1,8 @@
 $border-size: 0.1em;
 
-$widget-header-txt : #000000;
-$widget-content-txt: #666666;
+$widget-header-height: 2.2em;
+$widget-header-txt   : #000000;
+$widget-content-txt  : #666666;
 
 $button-border: #a7c7d9;
 $button-top: #f1f6f9;
@@ -94,29 +95,51 @@ $title-kerning: 0.08em;
     }
     
     .widget_header {
-        position: relative;
-        
-        margin-bottom: 0.1em;
-        height: 2.2em;
-        
-        letter-spacing: $title-kerning;
-        
-        border: $border-size solid $header_border;
-        @include horiz_gradient($header-top, $header-bot);
-        
-        color: $widget-header-txt;
-        
-        .padding {
-            padding: 0.15em;
-            padding-left: 0.4em;
+        .title {
+            position: relative;
+            
+            margin-bottom: 0.1em;
+            height: $widget-header-height;
+            
+            letter-spacing: $title-kerning;
+            
+            border: $border-size solid $header_border;
+            @include horiz_gradient($header-top, $header-bot);
+            
+            color: $widget-header-txt;
+            
+            .padding {
+                padding: 0.15em;
+                padding-left: 0.4em;
+            }
+            
+            .logo {
+                position: absolute;
+                bottom: 0.1em;
+                right : 0.1em;
+                opacity: 0.5;
+                width: 4em;
+            }
         }
         
-        .logo {
-            position: absolute;
-            bottom: 0.1em;
-            right : 0.1em;
-            opacity: 0.5;
-            width: 4em;
+        .action + .title {
+            width: 70%;
+        }
+        
+        .action {
+            width: 27.5%;
+            float: right;
+            
+            height: $widget-header-height;
+            
+            border: $border-size solid $header_border;
+            @include horiz_gradient($header-top, $header-bot);
+            position: relative;
+        }
+        .action a {
+            font-size: 60%;
+            display: inline-block;
+            positon: absolute;
         }
     }
     
