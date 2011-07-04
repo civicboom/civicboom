@@ -24,18 +24,21 @@
     ## Header
     ##----------------------------------------
     <div class="widget_header">
+        
+        <% owner = c.widget['owner'] %>
+        % if owner and owner.get('push_assignment'):
+        <div class="action">
+            <a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'], sub_domain="www")}">${_("Send us your stories")}</a>
+        </div>
+        % endif
+        
         <div class="title">
             <div class="padding">
             Latest requests
             <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo_com.png" /></a>
             </div>
         </div>
-        <div class="action">
-            
-            
-            
-            
-        </div>
+
     </div>
     
     ##----------------------------------------
