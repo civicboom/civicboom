@@ -21,7 +21,6 @@ FOOT=\
 	jquery.getUrlParam.js \
 	jquery.cookie.js \
 	jquery.jcarousel.min.js \
-	jquery.mobile-1.0b1.min.js \
 	invite.js \
 	mobile.js \
 	gears_init.js \
