@@ -153,7 +153,7 @@
                         <ul>
                             <li>
                                 <div class="fl">
-                                    <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'public' else ''} value="public" id="join_mode_public" />
+                                    <input type="radio" class="radio" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'public' else ''} value="public" id="join_mode_public" />
                                     <label for="join_mode_public">${_('Open')}</label>
                                 </div>
                                 <div class="radio-right">
@@ -164,7 +164,7 @@
                             </li>
                             <li>
                                 <div class="fl">
-                                    <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite_and_request' else ''} value="invite_and_request" id="join_mode_invite_and_request" />
+                                    <input type="radio" class="radio" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite_and_request' else ''} value="invite_and_request" id="join_mode_invite_and_request" />
                                     <label for="join_mode_invite_and_request">${_('Public')}</label>
                                 </div>
                                 <div class="radio-right">
@@ -174,7 +174,7 @@
                             </li>
                             <li>
                                 <div class="fl">
-                                    <input type="radio" class="quickchange" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite' else ''} value="invite" id="join_mode_invite" />
+                                    <input type="radio" class="radio" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite' else ''} value="invite" id="join_mode_invite" />
                                     <label for="join_mode_invite">${_('Private')}</label>
                                 </div>
                                 <div class="radio-right">
@@ -205,7 +205,7 @@
                                     <ul>
                                         <li>
                                             <div class="fl">
-                                                <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'public' else ''} value="public" id="member_visibility_public" />
+                                                <input type="radio" class="radio" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'public' else ''} value="public" id="member_visibility_public" />
                                                 <label for="member_visibility_public">${_('Open')}</label>
                                             </div>
                                             <div class="radio-right">
@@ -214,7 +214,7 @@
                                         </li>
                                         <li>
                                             <div class="fl">
-                                                <input type="radio" class="quickchange" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'private' else ''} value="private" id="member_visibility_private" />
+                                                <input type="radio" class="radio" name="member_visibility" ${'checked="checked"' if get_param('member_visibility') == 'private' else ''} value="private" id="member_visibility_private" />
                                                 <label for="member_visibility_private">${_('Hidden')}</label>
                                             </div>
                                             <div class="radio-right">
@@ -227,7 +227,7 @@
                                     <ul>
                                         <li>
                                             <div class="fl">
-                                                <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" />
+                                                <input type="radio" class="radio" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'public' else ''} value="public" id="content_visibility_public" />
                                                 <label for="content_visibility_public">${_('Open')}</label>
                                             </div>
                                             <div class="radio-right">
@@ -236,7 +236,7 @@
                                         </li>
                                         <li>
                                             <div class="fl">
-                                                <input type="radio" class="quickchange" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" />
+                                                <input type="radio" class="radio" name="default_content_visibility" ${'checked="checked"' if get_param('default_content_visibility') == 'private' else ''} value="private" id="content_visibility_private" />
                                                 <label for="content_visibility_private">${_('Hidden')}</label>
                                             </div>
                                             <div class="radio-right">
