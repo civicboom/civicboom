@@ -24,9 +24,17 @@
     ## Header
     ##----------------------------------------
     <div class="widget_header">
-        <div class="padding">
-        See the latest requests
-        <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo_com.png" /></a>
+        <div class="title">
+            <div class="padding">
+            Latest requests
+            <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo_com.png" /></a>
+            </div>
+        </div>
+        <div class="action">
+            
+            
+            
+            
         </div>
     </div>
     

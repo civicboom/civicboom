@@ -128,7 +128,7 @@
             <span class="mo-help">
             	<span class="mo-marker">?</span>
             	<div class="mo-help-r">
-            		${_('Anyone can join this Hub and become a member as per default role setting. This means anyone beyond your club/assoc/brand can have privilages to Observe / Contribute / Edit or Administrate your Hub as set above.')}<br />
+            		${_('Anyone can join this Hub and become a member as per default role setting. This means anyone beyond your club/assoc/brand can have privileges to Observe / Contribute / Edit or Administrate your Hub as set above.')}<br />
             		${_('Do not create an open Hub if you are not prepared for general access. For tighter join modes please see Public and Private options.')}
             	</div>
             </span>

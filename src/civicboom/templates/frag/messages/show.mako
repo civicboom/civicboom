@@ -16,8 +16,8 @@
     <div class="frag_list_contents">
         <div class="messages" style="padding: 3px;">
             ${show_message(message)}
-            
-            % if message.get('source_id') and not (message['source_id']==str(c.logged_in_persona.id) or message['source_id']==c.logged_in_persona.username):
+            <div style="clear:both"></div>
+            % if message.get('source_id') and not (message['source_id']==c.logged_in_persona.id or message['source_id']==c.logged_in_persona.username):
             <h3 class="subject">${_('Reply')}</h3>
             ${reply_message(message)}
             % endif

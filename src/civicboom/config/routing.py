@@ -100,6 +100,7 @@ def make_map(config):
     cb_resource(map, 'feed',    'feeds'   )
     cb_resource(map, 'group',   'groups'  )
     cb_resource(map, 'medium',  'media'   )
+    cb_resource(map, 'payment', 'payments')
 
     # Map the /admin url to FA's AdminController
     # Map static files
