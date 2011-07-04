@@ -9,7 +9,7 @@
 ## AllanC - this isnt the best way to enforce a limit ... should be at API level .. short term fix only
 <% limit = 8 %>
 % if d['list']['count'] == 0:
-    ${_('Check out all of our _assignments here! Comming soon.')}
+    ${_('Check out all of our _assignments here! Coming soon.')}
 % else:
     ${content_list(d['list']['items'][:limit])}
 % endif

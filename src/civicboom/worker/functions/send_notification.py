@@ -28,7 +28,7 @@ def send_notification(members, message): #members, rendered_message
 
     from cbutils.worker import config
 
-    message['source'] = get_member(message.get('source')) or message.get('source') # Attempt to normalize source member
+    message['source'] = get_member(message.get('source') or message.get('source_id')) or message.get('source') # Attempt to normalize source member
 
     # Multiple memebrs
     if isinstance(members, collections.Iterable):
@@ -43,6 +43,13 @@ def send_notification(members, message): #members, rendered_message
     # Single member
     else:
         member = get_member(members)
+        
+        # AllanC - Messages can be passed without a default_route or name if they are not auto generated notifications
+        #          in this case they are deemed "user to user" messages and have enforced default template and route
+        if 'default_route' not in message:
+            message['default_route'] = 'e'
+        if 'name' not in message:
+            message['name'] = 'message'
         
         # Get propergate settings - what other technologies is this message going to be sent over
         # Attempt to get routing settings from the member's config; if that fails, use the

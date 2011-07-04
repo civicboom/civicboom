@@ -111,6 +111,7 @@
     ##----------------------------------------
     <div class="widget_footer" style="height:${size_footer}px; background-color:#${c.widget['color_header']}; border-top: 1px solid #${c.widget['color_border']}">
         <div class="padding">
+
             % if owner and owner.get('push_assignment'):
             <p><a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'], sub_domain="www")}" style="background-color:#${c.widget['color_action_bar']};" class="push_assignment_button">${_("Send us your stories")}</a></p>
             % endif

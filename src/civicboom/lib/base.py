@@ -301,9 +301,13 @@ class BaseController(WSGIController):
         request.environ['node_name']   = platform.node()
 
         # Widget default settings
-        c.widget = dict(widget_defaults[request.params.get(config['setting.widget.var_prefix']+'theme', config['setting.widget.default_theme'])])
+        widget_theme = request.params.get(config['setting.widget.var_prefix']+'theme')
+        if widget_theme not in widget_defaults:
+            widget_theme = config['setting.widget.default_theme']
+        c.widget = dict(widget_defaults[widget_theme])
         if get_subdomain_format() == 'widget':
             setup_widget_env()
+        c.widget['theme'] = widget_theme # Set the widget theme to the one requested (this is needed because theme 'light' could be set, it does not exist so gets 'basic', then overwrites theme with 'light' again from set_env)
 
         # Log out if missing logged_in -------------------------------
         # The cache is active if logged_in is false. If the cookie is

@@ -31,10 +31,10 @@ FOOT=\
 
 all: _combined.head.js _combined.foot.js
 
-_combined.head.js: $(HEAD)
+_combined.head.js: Makefile $(HEAD)
 	cat $(HEAD) | yui-compressor --type js -o _combined.head.js
 
-_combined.foot.js: $(FOOT)
+_combined.foot.js: Makefile $(FOOT)
 	cat $(FOOT) | yui-compressor --type js -o _combined.foot.js
 
 clean:

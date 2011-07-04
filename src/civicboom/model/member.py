@@ -363,9 +363,9 @@ class Member(Base):
         #if self.can_message(member):
         #    action_list.append('editable')
         
-        #if self != member:
-        #    if 'push_assignment' in self.extra_fields:
-        #        action_list.append('push_assignment')
+        if self != member:
+            if 'push_assignment' in self.extra_fields:
+                action_list.append('push_assignment')
         if self == member:
             action_list.append('settings')
             action_list.append('logout')

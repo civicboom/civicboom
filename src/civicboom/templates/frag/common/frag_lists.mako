@@ -422,12 +422,13 @@
 <li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
     <div style="float:right;">
-    	
+      % if list=="to":
       <a href    = "${url('message', id=message['id'])}"
          onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
          class   = "icon16 i_message" title="Open / Reply"
       >
       </a>
+      % endif
     	
     % if list!='sent':
         ${h.secure_link(

@@ -51,6 +51,8 @@
     #    c.widget['owner'] = d.get('content',dict()).get('creator')
     #if not c.widget['owner']:
     #    c.widget['owner'] = d.get('member')
+    
+    # AllanC - if there is no speific widget owner - try and asertain the widget owner from the url
     if not c.widget['owner']:
         from civicboom.lib.database.get_cached import get_member
         from civicboom.lib.web                 import current_url
