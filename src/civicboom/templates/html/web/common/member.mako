@@ -17,6 +17,10 @@
 
 <%def name="avatar(member, class_='', js_link_to_frag=True, new_window=False, img_class='', as_link=True, **kwargs)">
     % if member:
+    <%
+        if hasattr(member,'to_dict'):
+            member = member.to_dict()
+    %>
     <div class="thumbnail ${class_}">
         <%
             if js_link_to_frag:
