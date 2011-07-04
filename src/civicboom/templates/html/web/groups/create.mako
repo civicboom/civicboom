@@ -11,8 +11,8 @@
     <%
         self.attr.frags = group
         if c.action in ('new', 'create'):
-            self.attr.frags = [quick_group, group]
-            self.attr.frag_col_sizes = [1, 2]
+            self.attr.frags = [group]
+            self.attr.frag_col_sizes = [2]
     %>
 </%def>
 

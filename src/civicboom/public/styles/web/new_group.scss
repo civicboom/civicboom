@@ -1,4 +1,77 @@
 BODY.c-groups.u-user, BODY.c-settings.u-user {
+  .group_settings {
+    
+    .button {
+      width: 10em;
+    }
+  
+    .group-block {
+      padding: 0.5em 0;
+      padding-left: 2.5em;
+      * {
+        top: 0;
+        vertical-align: top;
+      }
+    }
+    
+    .number {
+      padding: 0.5em;
+      padding-top: 0.5em;
+    }
+    
+    .upgrade {
+      position: relative;
+      display: inline-block;
+      width: 13em;
+      font-size: 90%;
+      font-weight: normal;
+    }
+    
+    .radio {
+      margin-right: 1em;
+    }
+    
+    .disabled {
+      background-color: #DDD;
+
+      // color: #999 !important;
+    }
+    
+    .radio-right {
+      padding-left: 11em;
+    }
+    
+    .b {
+      font-weight: bold;
+    }
+    
+    li {
+      padding: 0.25em 0;
+    }
+    
+    ul {
+      padding-bottom: 0.5em;
+    }
+    
+    label, .number, legend {
+      font-weight: bold;
+    }
+    
+    label {
+      display: inline-block;
+      width: 8em;
+    }
+    
+    .label {
+    display: inline-block;
+    width: 15em;
+    }
+    
+    input, textarea {
+      display: inline-block;
+      width: 20em;
+    }
+  }
 	.group-edit {
 		width: 300px;
 	}
