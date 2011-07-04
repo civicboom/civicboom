@@ -29,7 +29,7 @@ FOOT=\
 	minimap.js \
 
 
-all: _combined.head.js _combined.foot.js
+all: clean _combined.head.js _combined.foot.js
 
 _combined.head.js: $(HEAD)
 	cat $(HEAD) | yui-compressor --type js -o _combined.head.js
