@@ -1,7 +1,8 @@
 <%inherit file="/frag/common/frag.mako"/>
 
-<%namespace name="popup" file="/html/web/common/popup_base.mako" />
-<%namespace name="loc" file="/html/web/common/location.mako" />
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+<%namespace name="loc"             file="/html/web/common/location.mako"   />
+<%namespace name="member_includes" file="/html/web/common/member.mako"     />
 
 <%!    
     share_url        = False
@@ -804,23 +805,23 @@
         % endif
     </%def>
     <div class="information">
-        
+        <p>${member_includes.avatar(c.logged_in_persona)} ${c.logged_in_persona}</p>
         % if self.selected_type == "assignment":
         	<div class="popup-title">
-        	    Once you post this request, it will appear:
+        	    ${_("Once you post this request, it will appear:")}
         	</div>
         	<div class="popup-message">
         	    <ol>
-        		<li>${_("In your _Widget for your community to respond to")}</li>
-        		<li>${_("In your follower's notification stream")}</li>
-        		<li>${_("On the _site_name request stream")}</li>
+                    <li>${_("On your _Widget for your community to respond to")}</li>
+                    <li>${_("In all your _site_name follower's notification stream")}</li>
+                    <li>${_("On the _site_name request stream")}</li>
         	    </ol>
         	</div>
         % elif self.selected_type == "article":
             % if self.content.get('parent'):
                 <div class="popup-title">
-                    Once you share this story, it will:
-                </div>
+                    ${_("Once you share this story, it will:")}
+                </div>"
                 <div class="popup-message">
                     <ol>
                     <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
@@ -829,12 +830,12 @@
                     </ol>
                 </div>
             % else:
-                <div class="popup-title">
-                    Once you post this story, it will appear in your follower's notification stream.
+                <div class="popup-title">"
+                    ${_("Once you post this story, it will appear in your follower's notification stream.")}
                 </div>
                 <div class="popup-title">
-                    You will also be able to share it on Facebook, LinkedIn and Twitter once you post.
-                </div>
+                    ${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}
+                </div>"
             % endif
         % endif
         <div style="font-size: 130%; text-align: center;">

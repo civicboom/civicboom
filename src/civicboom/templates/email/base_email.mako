@@ -32,7 +32,7 @@
         </div>
         <div style="padding: 2em; background: #DCE4F1;border-radius:0.5em;-moz-border-radius:0.5em;-webkit-border-radius:0.5em;">
             <div style="padding: 2em; background: #fff;border-radius:0.5em;-moz-border-radius:0.5em;-webkit-border-radius:0.5em;">
-                <h2 style="margin: 0; margin-bottom: 0.25em;">Hi [username]</h2>
+                <h2 style="margin: 0; margin-bottom: 0.25em;">Hi,</h2>
                 <p>
                     ${next.body() if callable(self.body) else self.body}
                 </p>

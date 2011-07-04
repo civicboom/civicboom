@@ -1,6 +1,7 @@
 from civicboom.lib.base import url, _, config
 from civicboom.lib.database.get_cached import get_member
 from civicboom.lib.communication.email_lib import send_email
+from civicboom.lib.services.janrain import janrain
 from civicboom.model import UserLogin
 from civicboom.model.meta import Session
 
