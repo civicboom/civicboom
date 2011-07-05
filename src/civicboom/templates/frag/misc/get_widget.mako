@@ -106,7 +106,7 @@
 ##------------------------------------------------------------------------------
 <%def name="widget_iframe(theme='basic', member=None, protocol='http')">
 <%
-    widget_default = dict(widget_defaults.get(theme, 'basic'))
+    widget_default = dict(widget_defaults.get(theme, widget_defaults[config['setting.widget.default_theme']]))
     widget_default['owner'] = normalize_member_username(member)
      ##name='${_("_site_name")}'\
 %>

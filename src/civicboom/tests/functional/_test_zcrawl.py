@@ -37,6 +37,7 @@ class TestCrawlSite(TestController):
         self.count += 1
         soup = BeautifulSoup(response.body)
         hrefs = [ link.get('href') for link in soup.findAll('a') if not re.match(not_civicboom, link.get('href', ''))]
+        ## Iframe srcs? widget. and m. links
         for href in hrefs:
             if href not in self.crawled:
                 self.crawl(href, url)
