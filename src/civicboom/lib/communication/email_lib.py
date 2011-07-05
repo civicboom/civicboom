@@ -151,6 +151,9 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
     if isinstance(email_to, basestring):
         email_to = [email.strip() for email in email_to.split(',')]
     
+    if not email_to:
+        log.warn('email not given any recipients - %s' % subject)
+        return
     # Send the email
     try:
         smtp = smtplib.SMTP()
