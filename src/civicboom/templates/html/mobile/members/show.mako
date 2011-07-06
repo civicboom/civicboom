@@ -16,7 +16,7 @@
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
         <div data-role="header" data-position="inline">
             <h1>${self.name}</h1>
-            <a href="#member-extra-${self.id}" alt="extra" class="ui-btn-right">Extra</a>
+            <a href="#member-extra-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
         </div>
         
         ${member_details_full(self.member)}
@@ -25,6 +25,7 @@
     ## Extra info (content/boomed/etc)
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
         <div data-role="header" data-position="inline">
+            <a href="#member-details-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
             <h1>${self.name} - extra</h1>
         </div>
         
@@ -50,7 +51,7 @@
                     <a href="${h.url('member', id=member['username'])}" title="${member['name']}" rel="external">
                     % endif
                         ${member_includes.avatar(member, as_link=0, img_class="thumbnail")}
-                        <h3>By ${member['name']}</h3>
+                        <h3>${member['name']}</h3>
                         <p>Username: <b>${member['username']}</b></p>
                         <p>Type: <b>${member['type'].capitalize()}</b></p>
                     % if as_link:
@@ -76,7 +77,7 @@
                 ## Avatar/name
                 <li>
                     ${member_includes.avatar(member, as_link=0, img_class="thumbnail")}
-                    <h3>By ${member['name']}</h3>
+                    <h3>${member['name']}</h3>
                     <p>Username: <b>${member['username']}</b></p>
                     <p>Type: <b>${member['type'].capitalize()}</b></p>
                 </li>
@@ -161,8 +162,8 @@
             
             % for item in items:
                 <li>
-                    <a href="${item['url']}">
-                        <img src="{['thumbnail_url']}" class="thumbnail" />
+                    <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}">
+                        <img src="${item['thumbnail_url']}" class="thumbnail" />
                         <h3>${item['title']}</h3>
                         <p>${item['content_short']}</p>
                     </a>

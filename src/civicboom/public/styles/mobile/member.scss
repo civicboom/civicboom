@@ -1,19 +1,30 @@
-.thumbnail {
-    $size: 80px;
-    min-width: $size;
-    min-height: $size;
-    max-width: $size;
-    max-height: $size;
-}
+.ui-mobile-viewport {
 
-.thumbnail_small {
-    $size: 40px;
-    min-width: $size;
-    min-height: $size;
-    max-width: $size;
-    max-height: $size;
-}
-
-.content_page {
-
+    .thumbnail {
+        $size: 80px;
+        min-width: $size;
+        min-height: $size;
+        max-width: $size;
+        max-height: $size;
+    }
+    
+    .thumbnail_small {
+        $size: 40px;
+        min-width: $size;
+        min-height: $size;
+        max-width: $size;
+        max-height: $size;
+    }
+    
+    /* Content page styles */
+    .content_page {
+        
+        .top_media {
+            text-align: center;
+            
+            img {
+                max-width: 320px;
+            }
+        }
+    }
 }
