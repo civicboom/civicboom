@@ -76,7 +76,6 @@ def _init_search_filters():
             return query
         if isinstance(members, basestring):
             members = [member.strip() for member in members.split(',')]
-            print '##HERE ',members
         return query.filter(not_(Member.username.in_(members)))
 
     def append_search_followed_by(query, member):
@@ -237,7 +236,6 @@ class MembersController(BaseController):
             if False: # if fields in include_fields are in User or Group only
                 results = results.with_polymorphic('*')
             for key in [key for key in search_filters if key in kwargs]: # Append filters to results query based on kwarg params
-                print key
                 results = search_filters[key](results, kwargs[key])
         
             # Sort

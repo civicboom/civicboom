@@ -127,10 +127,6 @@ class InviteController(BaseController):
         form_exclude_members.extend(object_exclude_members)
         kwargs['exclude-members'] = ','.join(form_exclude_members)
         
-        print '#####', form_exclude_members
-        
-        
-        
         if not item:
             raise action_error('could not find item', code=404)
         
