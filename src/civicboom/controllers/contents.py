@@ -815,7 +815,25 @@ class ContentsController(BaseController):
         # url('content', id=ID)
         content = get_content(id, is_editable=True)
         user_log.info("Deleting content %d" % content.id)
+        
+        # AllanC - Short term hack
+        #    We removed the concept of accepting an assignment as this was too complicated for users
+        #    This is now a problem because we have removed the accept and withdraw buttons
+        #    When content is created as a response accept() is automatically run
+        #    There is no way users can withdraw() from assignments
+        #
+        #    This hack is here so that when a draft is removed the corresponding withdraw is performed too.
+        #    Not a long term solution - we need to consider user flow - maybe removing the concept of accept altogether?
+        #    We could just use drafts as the indicatior of number accepted.
+        try:
+            if content.__type__ == 'draft':
+                from civicboom.controllers.content_actions import ContentActionsController
+                ContentActionsController().withdraw(id=content.parent)
+        except:
+            pass
+        
         content.delete()
+        
         return action_ok(_("_content deleted"), code=200)
 
 

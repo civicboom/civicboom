@@ -183,6 +183,8 @@ function cb_frag_reload(param, exclude_frag) {
     //    JQuery - find frag_container parent - find hidden source link for that frag - reload
     //    String - find hidden source link for all frags - dose source href contain param - reload
     // Sometimes we want to exclude a fragment in the reload search, these can be passed with OPTIONAL exclude_frag as a jquery object
+    //
+    // AllanC - Suggeston - it would be nice if cb_frag_reload could take a combination of string and jQuery objects in param
     
     function display_reload_feedback(jquery_element) {
         //jquery_element.find('.title_text').first() += ' <img src="/images/ajax-loader.gif" />';

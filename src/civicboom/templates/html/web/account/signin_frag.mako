@@ -16,7 +16,7 @@
         
         if hasattr(c,'action_objects'):
             self.attr.frags.append(action_object_frag)
-            self.attr.action_object_frag_url = c.action_objects['frag_url']
+            self.attr.action_object_frag_url = c.action_objects['frag_url'] + '?exclude_actions=all'
     %>
 </%def>
 

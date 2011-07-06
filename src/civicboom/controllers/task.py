@@ -47,6 +47,11 @@ class TaskController(BaseController):
         # Shish  - then they get logged as "anonymous"; it's still good to
         #          have the logging go to the central place
         # AllanC - automated tests seems to be failing as c.logged_in_user is not set. should lib/database/userlog.py be modifyed to cope with this? advice on loggin needed. This is strange because c.logged_in_user is ALWAYS inited even if it is None see base.py line 373 _get_member() always returns None
+        
+        # AllanC - BEHOLD!!! THE HOLY HACK!!! This was a short term fix so that timed tasks had links to live server rather than generating URL's with 'localhost' - issue #614
+        #          Shish can you fix this properly. www.civicboom.com should not be hard coded here, it should be in python code, should be in a cfg file somewhere
+        request.environ['HTTP_HOST'] = 'www.civicboom.com'
+            
         user_log.info("Performing task '%s'" % (action, ))
         BaseController.__before__(self)
 

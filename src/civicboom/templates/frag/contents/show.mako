@@ -346,29 +346,29 @@
 		## --- Publish -----------------------------------------------------------
 		% if 'publish' in self.actions:
 		    ${h.secure_link(
-			h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
-			method = "PUT" ,
-			css_class = 'button',
-			value           = _('Post') ,
-			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-			
+                h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
+                method    = "PUT" ,
+                css_class = 'button',
+                value     = _('Post') ,
+                json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+                ## AllanC - the line above could refresh parent_id - it would be nice if cb_frag_reload could take a combination of string and jQuery objects
 		    )}
 		% endif
       
 		## --- Respond -----------------------------------------------------------
 		% if 'respond' in self.actions:
 		    ${h.secure_link(
-			h.args_to_tuple('new_content', parent_id=self.id) ,
-			css_class = 'button',
-			value           = _("Share your story") ,
-			json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+                h.args_to_tuple('new_content', parent_id=self.id) ,
+                css_class = 'button',
+                value     = _("Share your story") ,
+                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
 		    )}
 		    ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
 		    ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
 		% endif
 		
-<%doc>
-	      ## --- Accept ------------------------------------------------------------
+        <%doc>
+	    ## --- Accept ------------------------------------------------------------
 		% if 'accept' in self.actions:
 		    ${h.secure_link(
 			h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
@@ -389,7 +389,8 @@
 			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
 		    )}
 		% endif
-</%doc>
+        </%doc>
+        
 		</td>
 		<td class="tip"><div>
 		    <%
