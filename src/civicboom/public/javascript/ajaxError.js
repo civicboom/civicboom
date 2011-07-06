@@ -7,6 +7,8 @@ $(document).ajaxError(function(event, request, settings, exception) {
 		} else {
 			flash_message({message: 'A server error has occurred!'                                                  , status: 'error'});
 		}
+        console.log(request.status);
+        console.log(exception);
 	}
 	
 	if (typeof jsob != 'undefined') {

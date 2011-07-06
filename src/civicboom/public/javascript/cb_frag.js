@@ -147,7 +147,7 @@ function cb_frag_remove(jquery_element, callback, from_history) {
         parent.remove();
         // If no fragments on screen redirect to default page
         if ($('.'+fragment_container_class).length == 0) {
-            window.location.replace("/profile");
+            window.location.replace("/");
         }
         if (typeof callback != 'undefined') callback();
         if (! from_history) update_history( $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href') );
@@ -183,6 +183,8 @@ function cb_frag_reload(param, exclude_frag) {
     //    JQuery - find frag_container parent - find hidden source link for that frag - reload
     //    String - find hidden source link for all frags - dose source href contain param - reload
     // Sometimes we want to exclude a fragment in the reload search, these can be passed with OPTIONAL exclude_frag as a jquery object
+    //
+    // AllanC - Suggeston - it would be nice if cb_frag_reload could take a combination of string and jQuery objects in param
     
     function display_reload_feedback(jquery_element) {
         //jquery_element.find('.title_text').first() += ' <img src="/images/ajax-loader.gif" />';

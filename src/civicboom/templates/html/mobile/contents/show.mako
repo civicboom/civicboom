@@ -1,22 +1,43 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-<h1>${d['content']['title']}</h1>
+## includes
+<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 
-##----Type----
-<p>Type: ${d['content']['type']}</p>
+## page structure defs
+<%def name="body()">
+    <div data-role="page" data-title="${page_title()}" data-theme="b" id="content-${d['content']['id']}" class="content_page">
+        ${header()}
+        ${content()}
+    </div>
+</%def>
 
-##----Details----
-% if hasattr(d['content'],'views'):
-<p>views: ${d['content']['views']}</p>
-% endif
+<%def name="page_title()">
+    ${_("_site_name Mobile - " + d['content']['title'])}
+</%def>
 
-##----Content----
-<div class="content_text">
-    ${h.literal(h.scan_for_embedable_view_and_autolink(d['content']['content']))}
-</div>
+<%def name="header()">
+    <div data-role="header" data-position="inline">
+        <h1>${d['content']['title']}</h1>
+    </div>
+</%def>
 
-% for media in d['content']['attachments']:
-    % if media['type'] == "image":
-        <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
-    % endif
-% endfor
+<%def name="content()">
+    <div data-role="content">    
+        ##----Content----
+        <div class="content_text">
+            ${h.literal(h.scan_for_embedable_view_and_autolink(d['content']['content']))}
+        </div>
+        
+        ##----Media----
+        % for media in d['content']['attachments']:
+            % if media['type'] == "image":
+                <a href="${media['original_url']}"><img src="${media['media_url']}" alt="${media['caption']}"/></a>
+            % endif
+        % endfor
+        
+        ##----Details----
+        % if hasattr(d['content'],'views'):
+            <p>views: ${d['content']['views']}</p>
+        % endif
+    </div>
+</%def>
