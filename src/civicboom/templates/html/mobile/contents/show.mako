@@ -45,5 +45,5 @@
 </%def>
 
 <%def name="creator()">
-    ${member_includes.member_details(d['content']['creator'])}
+    ${member_includes.member_details_short(d['content']['creator'])}
 </%def>

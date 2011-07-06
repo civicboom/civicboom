@@ -7,22 +7,21 @@
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
         %>
-        <img src="${member['avatar_url']}" alt="${member['username']}'s avatar" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+        % if as_link:
+        <a href="${h.url('member', id=member['username'])}" title="${member['name']}" rel="external">
+        % endif
+        <img src="${member['avatar_url']}" alt="${member['username']}'s avatar" class="${img_class}" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+        % if as_link:
+        </a>
+        % endif
     % endif
 </%def>
 
-<%def name="member_details(member)">
-    <% creator = d['content']['creator'] %>
-    <div class="member_details">
-        <ul data-role="listview">
-            <li>
-                <a href="${h.url('member', id=member['username'])}" title="${member['name']}" rel="external">
-                    ${avatar(member)}
-                    <h3>By ${creator['name']}</h3>
-                    <p>Username: <b>${creator['username']}</b></p>
-                    <p>Type: <b>${creator['type'].capitalize()}</b></p>
-                </a>
-            </li>
-        </ul>
-    </div>
+##------------------------------------------------------------------------------
+## List member thumbnails
+##------------------------------------------------------------------------------
+<%def name="member_thumbnail_list(member_list)">
+    % for member in member_list['items']:
+        ${avatar(member, img_class="thumbnail_small")}
+    % endfor
 </%def>
