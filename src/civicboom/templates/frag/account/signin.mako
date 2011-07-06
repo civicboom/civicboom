@@ -88,6 +88,10 @@
                 content       = c.action_objects['action_object'].get('content')
             %>
             ## <p>By signing in/up you make a comment on <b>${content.get('title')}</b> </p>
+        %elif  c.action_objects['action'] == 'new_article':
+            <%
+            %>
+            <p>By signing in/up you will start creating a new _article</p>
         % endif
 
         ##${c.action_objects['description']}

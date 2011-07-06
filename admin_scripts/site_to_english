@@ -57,7 +57,7 @@ def trans(text, locations):
 
         ("widget",  "Boombox"),
         ("respond", "respond"),
-        ("request", "request"),
+        #("request", "request"), # AllanC - duplicated?
     ]
     for w, r in words:
         text = text.replace("_"+w, r)
