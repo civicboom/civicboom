@@ -132,23 +132,42 @@
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
             requests = data['assignments_active']
+            responses = data['responses']
+            articles = data['articles']
         %>
         <div class="member_content">
             <ul data-role="listview">
-                <li data-role="list-divider" role="heading">
-                    ${member['name']}'s active requests
-                    <span class="ui-li-count">${requests['count']}</span>
-                </li>
-                <li>
-                    % for item in requests['items']:
-                        <a href="${item['url']}">
-                            <img src="{['thumbnail_url']}" class="thumbnail_small" />
-                            <h3>${item['title']}</h3>
-                            <p>${item['content_short']}</p>
-                        </a>
-                    % endfor
-                </li>
+                ${list_contents(requests, "Active requests")}
+                ${list_contents(responses, "Responses")}
+                ${list_contents(articles, "Stories")}
             </ul>
         </div>
+    % endif
+</%def>
+
+## Create li elements for each item in the given list
+<%def name="list_contents(content, title)">
+    % if content:
+        <%
+            items = content['items']
+            count = content['count']
+        %>
+        
+        % if items and count:
+            <li data-role="list-divider" role="heading">
+                ${title}
+                <span class="ui-li-count">${count}</span>
+            </li>
+            
+            % for item in items:
+                <li>
+                    <a href="${item['url']}">
+                        <img src="{['thumbnail_url']}" class="thumbnail" />
+                        <h3>${item['title']}</h3>
+                        <p>${item['content_short']}</p>
+                    </a>
+                </li>
+            % endfor
+        % endif
     % endif
 </%def>

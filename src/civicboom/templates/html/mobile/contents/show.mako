@@ -22,9 +22,7 @@
 </%def>
 
 <%def name="content()">
-    <div data-role="content">
-        ${creator()}
-    
+    <div data-role="content">    
         ##----Content----
         <div class="content_text">
             ${h.literal(h.scan_for_embedable_view_and_autolink(d['content']['content']))}
@@ -42,8 +40,4 @@
             <p>views: ${d['content']['views']}</p>
         % endif
     </div>
-</%def>
-
-<%def name="creator()">
-    ${member_includes.member_details_short(d['content']['creator'])}
 </%def>

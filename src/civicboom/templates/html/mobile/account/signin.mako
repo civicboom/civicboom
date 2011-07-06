@@ -13,20 +13,22 @@
 </%def>
 
 <%def name="signin()">
-<section>
-	<h1>${_("Sign in")}</h1>
-	<form action="${h.url('current', format='redirect')}" method="POST">
-            <div data-role="fieldcontain">
-                <label for="username">${_("Username")}</label>
-                <input type="text" id="username" name="username" placeholder="e.g. dave43"/>
-            </div>
-            <div data-role="fieldcontain">
-                <label for="password">${_("Password")}</label>
-                <input type="password" id="password" name="password" />
-            </div>
-            <div data-role="fieldcontain">
-                <input class="button" type="submit" name="submit" value="${_("Sign in")}"/>
-            </div>
-	</form>
-</section>
+	<div data-role="page">
+		<div data-role="content">
+			<h1>${_("Sign in")}</h1>
+			<form action="${h.url('current', format='redirect')}" method="POST">
+			    <div data-role="fieldcontain">
+				<label for="username">${_("Username")}</label>
+				<input type="text" id="username" name="username" placeholder="e.g. dave43"/>
+			    </div>
+			    <div data-role="fieldcontain">
+				<label for="password">${_("Password")}</label>
+				<input type="password" id="password" name="password" />
+			    </div>
+			    <div data-role="fieldcontain">
+				<input class="button" type="submit" name="submit" value="${_("Sign in")}"/>
+			    </div>
+			</form>
+		</div>
+	</div>
 </%def>
