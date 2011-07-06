@@ -27,18 +27,18 @@ def get_list_titles(list_name):
     return (list_name, list_name)
 
 
-actions_list = [
-    # url identifyer , action, description
-    (re.compile('/accept'                                   ) , 'accept'     , _('Accept a _assignment')),
-    (re.compile('/follow'                                   ) , 'follow'     , _('Follow a _member')     ),
-    (re.compile('/boom'                                     ) , 'boom'       , _('Boom _content')        ),
-    (re.compile('/contents/new\?parent_id='                 ) , 'new_respose', _('Create a response')    ),
-    (re.compile('/contents?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')       ), #AllanC - I weep at the inefficency and code duplication
-    (re.compile('/contents?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')       ),
-
-#/contents/new?parent_id=26&type=comment
-
-]
+# AllanC - !!!???!! I just found this duplicated in get_action_objects_for_url in civicboomb.lib.civicboom_lib -
+#          this took me ages to debug .. why wasnt this commented? why is this still here?
+#actions_list = [
+#    #            url identifyer                                ,  action      ,    description
+#    (re.compile('/accept'                                    ) , 'accept'     , _('Accept a _assignment')),
+#    (re.compile('/follow'                                    ) , 'follow'     , _('Follow a _member')    ),
+#    (re.compile('/boom'                                      ) , 'boom'       , _('Boom _content')       ),
+#    (re.compile('/contents/new\?parent_id='                  ) , 'new_respose', _('Create a response')   ),
+#    (re.compile('/contents/new\?target_type=article'         ) , 'new_article', _('Post a _article')     ),
+#    (re.compile('/contents\?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')      ), #AllanC - I weep at the inefficency and code duplication
+#    (re.compile('/contents\?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')      ),
+#]
 
 setting_titles = {
     'password'      :   _('Password and mobile access'),

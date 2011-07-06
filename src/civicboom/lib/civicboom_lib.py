@@ -26,14 +26,14 @@ def get_action_objects_for_url(action_url=None):
     member_show  = MembersController().show
 
     actions_list = [
-        # url identifyer , action, description
-        (re.compile('/accept'                                   ) , 'accept'     , _('Accept an _assignment')),
-        (re.compile('/follow'                                   ) , 'follow'     , _('Follow a _member')     ),
-        (re.compile('/boom'                                     ) , 'boom'       , _('Boom _content')        ),
-        (re.compile('/contents/new\?parent_id='                 ) , 'new_respose', _('Create a response')    ),
-        (re.compile('/contents?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')       ), #AllanC - I weep at the inefficency and code duplication
-        (re.compile('/contents?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')       ),
-        #/contents/new?parent_id=26&type=comment
+        #            url identifyer                                ,  action      ,    description
+        (re.compile('/accept'                                    ) , 'accept'     , _('Accept a _assignment')),
+        (re.compile('/follow'                                    ) , 'follow'     , _('Follow a _member')    ),
+        (re.compile('/boom'                                      ) , 'boom'       , _('Boom _content')       ),
+        (re.compile('/contents/new\?parent_id='                  ) , 'new_respose', _('Create a response')   ),
+        (re.compile('/contents/new\?target_type=article'         ) , 'new_article', _('Post a new _article') ),
+        (re.compile('/contents\?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')      ), #AllanC - I weep at the inefficency and code duplication
+        (re.compile('/contents\?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')      ),
     ]
 
     # If performing an action we may want to display a custom message with the login

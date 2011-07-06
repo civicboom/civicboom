@@ -147,7 +147,7 @@ function cb_frag_remove(jquery_element, callback, from_history) {
         parent.remove();
         // If no fragments on screen redirect to default page
         if ($('.'+fragment_container_class).length == 0) {
-            window.location.replace("/profile");
+            window.location.replace("/");
         }
         if (typeof callback != 'undefined') callback();
         if (! from_history) update_history( $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href') );

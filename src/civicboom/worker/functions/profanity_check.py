@@ -6,7 +6,7 @@ from civicboom.lib.database.get_cached import get_content
 from cbutils.text import profanity_check as _profanity_check
 from cbutils.worker import config
 
-#from civicboom.lib.civicboom_lib import twitter_global
+#from civicboom.lib.aggregation import twitter_global
 
 
 def profanity_check(content_id, url_base):
@@ -36,6 +36,13 @@ def profanity_check(content_id, url_base):
         content.content = profanity_response['CleanText']
     else:
         log.debug("No profanity found")
-        #twitter_global(content) # TODO? diseminate new or updated content?
+        if content.__type__ != 'comment' and content.__type__ != 'draft':
+            # TODO? diseminate new or updated content?
+            # AllanC - really didnt want this crashing the live server, so wrapped it all in a try except
+            try:
+                from civicboom.lib.aggregation import twitter_global
+                twitter_global(content)
+            except:
+                log.warn('Global twitter failed')
     
     return True
