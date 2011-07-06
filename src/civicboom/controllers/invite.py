@@ -72,6 +72,7 @@ invite_types = {
         'show'   : payments_controller.show,
         'check'  : check_payment_account,
         'method' : 'member_add',
+        'exclude': 'members',
     }
 }
 
@@ -117,6 +118,18 @@ class InviteController(BaseController):
         
         # Get item
         item = type['get'](id)
+        
+        # Exclude object results
+        object_exclude_members = []
+        if type.get('exclude'):
+            object_exclude_members = [member.username for member in getattr(item, type.get('exclude'))]
+        form_exclude_members = kwargs.get('exclude-members', '').split(',')
+        form_exclude_members.extend(object_exclude_members)
+        kwargs['exclude-members'] = ','.join(form_exclude_members)
+        
+        print '#####', form_exclude_members
+        
+        
         
         if not item:
             raise action_error('could not find item', code=404)
@@ -177,12 +190,10 @@ class InviteController(BaseController):
         
         if 'submit-everyone' in request.POST:
             if kwargs.get('search-type', '') != '':
-                lala = dict([(user['username'], get_member(user['username']).to_dict()) for user in self.search(limit_override=1000, **kwargs)['data']['invite_list']['items'] if user['username'] not in invitee_usernames])
-                invitee_add.update(lala)
-                print lala
-                pass
+                everyone_search = dict([(user['username'], get_member(user['username']).to_dict()) for user in self.search(limit_override=1000, **kwargs)['data']['invite_list']['items'] if user['username'] not in invitee_usernames])
+                invitee_add.update(everyone_search)
             else:
-                set_flash_message({'status': 'error', 'message':_('You cannot invite everyone!')})
+                set_flash_message({'status': 'error', 'message':_('You cannot add everyone!')})
         
         # Add new additions to invitee_list
         for username in invitee_add.keys():
@@ -194,7 +205,7 @@ class InviteController(BaseController):
         message = None
         error_list = None
         
-        if 'submit-invite' in request.POST:
+        if 'submit-invite' in request.POST and 'submit-everyone' not in request.POST:
             error_list = {}
             if len(invitee_list) > 0:
                 for key in invitee_list.keys():
@@ -226,6 +237,8 @@ class InviteController(BaseController):
         # search data
         data = self.search(**kwargs)['data']
         
+        object_exclude_members.extend(invitee_usernames)
+        
         # If we are rendering a static page we need the object's data GregM: OH NO WE DON'T
 #        if c.format == 'html':
 #            data.update(type['show'](id = id)['data'])
@@ -236,7 +249,7 @@ class InviteController(BaseController):
             'invitee-offset'  : invitee_offset,
             'invite'          : kwargs.get('invite'),
             'id'              : kwargs.get('id'),
-            'exclude-members' : ','.join(invitee_usernames),
+            'exclude-members' : ','.join(object_exclude_members),
             'actions'         : [],
             'invite-role'     : role,
         } )
@@ -248,6 +261,12 @@ class InviteController(BaseController):
             data.update( {'roles': roles})
         
         return action_ok(data=data, message=message)
+    
+    @web
+    @authorize
+    def show (self, id, **kwargs):
+        kwargs['id'] = id
+        return self.index(**kwargs)
     
     @web
     @authorize

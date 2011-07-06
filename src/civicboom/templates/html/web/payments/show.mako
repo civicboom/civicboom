@@ -17,5 +17,5 @@
 </%def>
 
 <%def name="payment()">
-    <%include file="./show.mako"/>
+    <%include file="/frag/payments/show.mako"/>
 </%def>

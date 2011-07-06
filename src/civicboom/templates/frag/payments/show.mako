@@ -34,8 +34,7 @@
                 </li>
             % endfor
         </ul>
-        ${h.form(h.url(controller='payment_actions', action='member_add', id=d['account_id'], format='redirect'), method='POST', multipart=True)}
-            <input type="text" name="username" /><div class="fr"><input class="button" type="submit" value="Add" /></div>
-        ${h.end_form()}
+        <br />
+        ${h.frag_link(value='Add members', title='Add members', href_tuple=h.args_to_tuple('invite', id=d['account_id'], invite='payment_add_user'))}
     </div>
 </%def>
