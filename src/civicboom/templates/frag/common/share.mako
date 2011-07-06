@@ -496,6 +496,7 @@
     <%
 from civicboom.lib.aggregation import aggregation_dict
 cd = aggregation_dict(content, safe_strings=True)
+cd['url'] = h.url('content', id=content['id'], qualified=True)
 def clean(s):
 	if isinstance(s, basestring):
 		return s.replace("'", "\\'")
@@ -503,7 +504,7 @@ def clean(s):
 share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
     %>
 	$(function() {
-		var content   = ${json.dumps(cd).replace('\\\"', "\\\'").replace('"', "'")};
+		var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
 		var url       = content.url;
 		var variables = {
 			share_display:				'${_(share_taglines[share_type])}',
@@ -539,7 +540,7 @@ def clean(s):
 share_usergen_default = clean(_(share_types[share_type]) % {'name': cd['title']})
     %>
 	$(function() {
-		var content   = ${json.dumps(cd).replace('\\\"', "\\\'").replace('"', "'")};
+		var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
 		var url       = content.url;
 		var variables = {
 			share_display:				'${clean(_(share_taglines[share_type]))}',

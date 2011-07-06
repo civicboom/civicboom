@@ -16,13 +16,16 @@
 		invite_type = d.get('invite')
 		self.attr.frags = [frag, invite]
 		self.attr.frag_col_sizes = [2, 2]
-		
+		self.attr.frag_url = '';
 		if invite_type == 'assignment':
 			self.attr.frag_url = h.url('content', action='show', id=d['id'], invite=d['invite'], format='frag')
-		endif
-		if invite_type in ['group', 'trusted_follower']:
+		elif invite_type in ['group', 'trusted_follower']:
 			self.attr.frag_url = h.url('member', action='show', id=d['id'], invite=d['invite'], format='frag')
+		elif invite_type == 'payment_add_user':
+		    self.attr.frag_url = h.url('payment', action='show', id=d['id'], invite=d['invite'], format='frag')
+		    print self.attr.frag_url
 		endif
+		
 	%>
 </%def>
 

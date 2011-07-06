@@ -2,23 +2,37 @@
 $widget_unit_width : 280px;
 $widget_unit_height: 300px;
 
+
 .get_widget {
     display: inline-block;
+    /*
     width : $widget_unit_width * 3 + 60px;
     height: $widget_unit_height;
+    */
+    width : 940px;
+    height: 400px;
 }
 
+
 .widget_creator {
+    /*
     width : $widget_unit_width * 3 + 60px;
     height: $widget_unit_height;
+    */
     
     .padding {
+        padding: 0.5em;
+    }
+    
+    
+    .segment {
+        display: inline-block;
+        width  : $widget_unit_width;
+        height : $widget_unit_height;
+        vertical-align:text-top;
     }
     
     .params {
-        float: left;
-        width: $widget_unit_width;
-        
         .params_extra {
             font-size: 70%;
             label {
@@ -29,17 +43,13 @@ $widget_unit_height: 300px;
     }
     
     .preview {
-        float: left;
-        width: $widget_unit_width;
         text-align: center;
     }
     
     .code {
-        float: left;
-        
         textarea {
-            width : $widget_unit_width;
-            height: $widget_unit_height;
+            width: 100%;
+            height: $widget_unit_height - 20px;
         }
     }
     
