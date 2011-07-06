@@ -13,6 +13,12 @@
         % endfor
     </div>
     <script>
-        $(function() {$("#${tab_id}").tabs();});
+        $(function() {
+            $("#${tab_id}").tabs({
+                create: function(event, ui) {
+                    ##$.modal.update(); ## AllanC - failed attempt at trying to get the ***ing thing to resize
+                }
+            });
+        });
 	</script>
 </%def>
