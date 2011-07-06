@@ -17,10 +17,12 @@
     	invite_types		= { 'trusted_follower' : _('Invite people to become trusted followers'),
     							'assignment'       : _('Invite people to participate in this _assignment'),
     							'group'            : _('Invite people to join this _group'),
+    							'payment_add_user' : _('Add members and _groups to this payment account'),
     	}
     	invite_types_desc   = { 'trusted_follower' : _('The people below will be invited to become trusted followers'),
     							'assignment'       : _('The people below will be invited to participate in this _assignment'),
     							'group'            : _('The people below will be invited to join this _group'),
+                                'payment_add_user' : _('The people below will be added to this payment account'),
     	}
         self.attr.title     = invite_types[d['invite']]
         self.attr.desc      = invite_types_desc[d['invite']]

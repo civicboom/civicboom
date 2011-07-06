@@ -1,24 +1,33 @@
 from civicboom.lib.base import *
 
-from civicboom.controllers.contents       import ContentsController
-from civicboom.controllers.members        import MembersController, has_role_required
-from civicboom.controllers.member_actions import MemberActionsController
-from civicboom.controllers.group_actions  import GroupActionsController
+from civicboom.controllers.contents        import ContentsController
+from civicboom.controllers.members         import MembersController, has_role_required
+from civicboom.controllers.payments        import PaymentsController
+from civicboom.controllers.member_actions  import MemberActionsController
+from civicboom.controllers.group_actions   import GroupActionsController
+from civicboom.controllers.payment_actions  import PaymentActionsController
 
 import copy
 
-from civicboom.model.member import group_member_roles
+from civicboom.model.member import group_member_roles, PaymentAccount
 
 
-contents_controller       = ContentsController()
-members_controller        = MembersController()
-member_actions_controller = MemberActionsController()
-group_actions_controller  = GroupActionsController()
+contents_controller        = ContentsController()
+members_controller         = MembersController()
+payments_controller        = PaymentsController()
+member_actions_controller  = MemberActionsController()
+group_actions_controller   = GroupActionsController()
+payment_actions_controller = PaymentActionsController()
 
+
+def get_payment_account(id):
+    return Session.query(PaymentAccount).filter(PaymentAccount.id==id).first()
 
 def check_member(member):
     return has_role_required('editor', c.logged_in_persona_role) and member == c.logged_in_persona
 
+def check_payment_account(payment_account):
+    return has_role_required('admin', c.logged_in_persona_role) and c.logged_in_persona in payment_account.members
 
 def check_assignment(content):
     return content.editable_by(c.logged_in_persona)
@@ -56,6 +65,14 @@ invite_types = {
         'check'  : check_member,
         'method' : 'follower_invite_trusted',
     },
+    'payment_add_user' : {
+        'key'    : 'payment_account',
+        
+        'get'    : get_payment_account,
+        'show'   : payments_controller.show,
+        'check'  : check_payment_account,
+        'method' : 'member_add',
+    }
 }
 
 
