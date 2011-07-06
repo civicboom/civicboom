@@ -64,9 +64,8 @@
                 member      = c.action_objects['action_object'].get('member')
                 member_name = member['name']
             %>
-            ## AllanC: TODO - internationalise this string!
+            ##<p>By signing in/up you will follow <b>${member_name}</b> </p>
             ${content_why(member_name)}
-            ## <p>By signing in/up you will follow <b>${member_name}</b> </p>
             
         % elif c.action_objects['action'] == 'boom':
             <%
@@ -91,7 +90,7 @@
         %elif  c.action_objects['action'] == 'new_article':
             <%
             %>
-            <p>By signing in/up you will start creating a new _article</p>
+            <p>By signing in/up you will ${c.action_objects['description']}</p>
         % endif
 
         ##${c.action_objects['description']}
