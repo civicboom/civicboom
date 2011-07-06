@@ -793,6 +793,15 @@ class PaymentAccount(Base):
     type        = Column(account_types, nullable=False, default="free")
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    
+    def member_add(self, member, **kwargs):
+        from civicboom.lib.database.actions import payment_member_add
+        return payment_member_add(self, member)
+        
+    def member_remove(self, member, **kwargs):
+        from civicboom.lib.database.actions import payment_member_remove
+        return payment_member_remove(self, member)
+        
     #cascade="all,delete-orphan"
     
     

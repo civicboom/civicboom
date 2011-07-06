@@ -89,9 +89,14 @@ def make_map(config):
     map.connect(None, '/about/{id}' , controller='misc', action="about")
     map.connect(None, '/profile',     controller='profile', action="index")
     map.connect(None, '/help/{id}'  , controller='misc', action="help", format="frag")
-    map.connect(None, '/settings/{id}/{panel}{.format}', controller='settings', action='panel', format="html")
+    map.connect(None, '/settings/{id}/{panel}{.format}', controller='settings', action='panel', format="html", conditions=dict(method=['GET']))
     map.connect(None, '/contents/{id}{.format}/-/{title}', controller='contents', action='show', conditions=dict(method=['GET']))
+
     map.redirect('/api.html', '/doc/')
+    
+    map.connect('invite', '/invite{.format}', controller='invite', action='index', format="html")
+    map.connect('invite', '/invite/search{.format}', controller='invite', action="search", format="html")
+    map.connect('invite', '/invite/{id}{.format}', controller='invite', action='show', format="html")
 
     cb_resource(map, 'content', 'contents')
     cb_resource(map, 'message', 'messages')

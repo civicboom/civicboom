@@ -4,7 +4,7 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${_('Payment accounts')}</%def>
+<%def name="title()">${_('Payment account')}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -17,5 +17,5 @@
 </%def>
 
 <%def name="payment()">
-    <%include file="/frag/account/payment.mako"/>
+    <%include file="/frag/payments/show.mako"/>
 </%def>

@@ -139,7 +139,6 @@ class MembersController(BaseController):
         @example https://test.civicboom.com/members.json?name=unit
         @example https://test.civicboom.com/members.json?follower_of=1&limit=5
         """
-        
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
         if 'term' in kwargs and 'name' not in kwargs:
             kwargs['name'] = kwargs['term']

@@ -193,9 +193,7 @@
     <h1>${self.content['title']}</h1>
     <div style="clear: both;"></div>
     <div class="creator_avatar">
-	% if c.logged_in_user:
-	${member_includes.avatar(self.content['creator'])}
-	%endif
+	   ${member_includes.avatar(self.content['creator'])}
     </div>
     <div class="content_creator">By: ${self.content['creator']['name']}</div>
     ## ${map_icon()}
