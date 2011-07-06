@@ -21,8 +21,20 @@
         <h2>Users and hubs associated with this account</h2>
         <ul>
             % for member in d['members']:
-                <li><a href="${h.url('member', id=member)}">${member}</a></li>
+                <li>
+                    <a href="${h.url('member', id=member.get('username'))}">${member.get('name')}</a>
+                    <div class="fr">
+                        ${h.secure_link(
+                            h.args_to_tuple('payment_action', action='member_remove', id=d['account_id'], username=member.get('username'), format='redirect') ,
+                            value           = _('Remove') ,
+                            title           = _("Remove") ,
+                        )}
+                    </div>
+                    
+                </li>
             % endfor
         </ul>
+        <br />
+        ${h.frag_link(value='Add members', title='Add members', href_tuple=h.args_to_tuple('invite', id=d['account_id'], invite='payment_add_user'))}
     </div>
 </%def>

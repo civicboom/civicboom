@@ -916,3 +916,20 @@ def validate_user(username, password):
     m.email = m.email_unverified
     m.email_unverified = None
     "insert into member_user_login(member_id, type, token) values((select id from member where username='%s'), 'password', 'cbfdac6008f9cab4083784cbd1874f76618d2a97');"
+
+
+def payment_member_add(payment_account, member):
+    member = get_member(member)
+    if member.payment_account:
+        return False
+    member.payment_account = payment_account
+    Session.commit()
+    return True
+
+def payment_member_remove(payment_account, member):
+    member = get_member(member)
+    if not member.payment_account == payment_account:
+        return False
+    member.payment_account = None
+    Session.commit()
+    return True

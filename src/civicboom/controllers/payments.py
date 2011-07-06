@@ -1,5 +1,5 @@
 from civicboom.lib.base import *
-from civicboom.model import User, Group
+from civicboom.model import User, Group, PaymentAccount
 
 import time
 
@@ -23,23 +23,17 @@ class PaymentsController(BaseController):
         """
         # url('payments')
         
-        user = c.logged_in_persona
-        raise_if_current_role_insufficent('admin', group=user)
+        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         
         if not c.logged_in_persona.payment_account:
             raise action_error(_('There is no payment account associated with this user, please contact us if you wish to setup a payment account'), code=404)
         
-        account = user.payment_account
-        
-        data = {
-            'account_id':   account.id,
-            'account_type': account.type,
-            'members':      [member.username for member in account.members],
-            }
-        return action_ok(code=200, data=data, template="account/payment")
+        account = c.logged_in_persona.payment_account
+
+        return self.show(account.id)
     
     @web
-    @auth
+    @authorize
     def new(self, **kwargs):
         """
         """
@@ -75,5 +69,19 @@ class PaymentsController(BaseController):
     def show(self, id, **kwargs):
         """
         """
-        # url('content', id=ID)
-        return action_ok()
+        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
+        
+        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        
+        if not account:
+            raise action_error(_('Payment account does not exist'), code=404)
+        
+        if not c.logged_in_persona in account.members:
+            raise action_error(_('You do not have permission to view this account'), code=404)
+        
+        data = {
+            'account_id':   account.id,
+            'account_type': account.type,
+            'members':      [member.to_dict() for member in account.members]
+            }
+        return action_ok(code=200, data=data)

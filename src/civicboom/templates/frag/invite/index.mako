@@ -17,10 +17,12 @@
     	invite_types		= { 'trusted_follower' : _('Invite people to become trusted followers'),
     							'assignment'       : _('Invite people to participate in this _assignment'),
     							'group'            : _('Invite people to join this _group'),
+    							'payment_add_user' : _('Add members and _groups to this payment account'),
     	}
     	invite_types_desc   = { 'trusted_follower' : _('The people below will be invited to become trusted followers'),
     							'assignment'       : _('The people below will be invited to participate in this _assignment'),
     							'group'            : _('The people below will be invited to join this _group'),
+                                'payment_add_user' : _('The people below will be added to this payment account'),
     	}
         self.attr.title     = invite_types[d['invite']]
         self.attr.desc      = invite_types_desc[d['invite']]
@@ -42,7 +44,7 @@
 		</script>
 	% endif
 
-	<form onsubmit="" class="inviteform" method="POST" action="/${h.url('invite')}">
+	<form onsubmit="" class="inviteform" method="POST" action="${h.url('current')}">
 		<input type="hidden" class="search-limit" name="search-limit" value="${d['search-limit']}" />
 		<input type="hidden" name="id" value="${d.get('id')}" />
 		<input type="hidden" name="invite" value="${d.get('invite')}" />
@@ -60,8 +62,8 @@
 		        		</select>
 		        		<input name="search-name" placeholder="Enter your search here..." type="text" value="${d.get('search-name')}" />
 		        		<div class="pad_top align_right">
-			        		<input class="button" onclick="return postInviteFrag($(this))" type="submit" name="submit-everyone" value="Add All" />
 			        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-button" value="Search" />
+                            <input class="button" onclick="return postInviteFrag($(this))" type="submit" name="submit-everyone" value="Add All" />
 			        	</div>
 		        	</div>
 		        </div>

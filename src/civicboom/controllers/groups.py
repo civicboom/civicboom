@@ -206,6 +206,12 @@ class GroupsController(BaseController):
         if not kwargs.get('name') and kwargs.get("username"):
             kwargs["name"] = kwargs.get("username")
         
+        if not c.logged_in_persona.has_account_required('plus'):
+            if not kwargs.get('member_visibility'):
+                kwargs['member_visibility'] = 'public'
+            if not kwargs.get('default_content_visibility'):
+                kwargs['default_content_visibility'] = 'public'
+        
         # Need to validate before creating group, not sure how we could do this via settings controller :S GregM
         data       = {'settings':kwargs, 'action':'create'}
         data       = validate_dict(data, CreateGroupSchema(), dict_to_validate_key='settings', template_error='groups/edit')
