@@ -613,7 +613,7 @@
     <fieldset>
         <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
         <div class="hideable">
-            </%doc><%doc>
+
             <span style="padding-top: 3px;">
               ${form_instruction(_("What is licensing explanation"))}
             </span>
@@ -632,7 +632,6 @@
                 ##${popup(_(license.description))}
             % endfor
 			</table>
-            </%doc><%doc>
               <div class="padded">This content will be published under the Creative Commons Attributed licence</div>
               <div class="padded">
                 <a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
@@ -686,70 +685,105 @@
     % endif
 </%def>
 
+
+
+##------------------------------------------------------------------------------
+## Submit button - form post buttons have special behaviour template
+##------------------------------------------------------------------------------
+
+## AllanC - note the class selectors are used by jQuery to simulate clicks
+<%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r', onclick_js='')">
+
+    <%
+        button_id = "submit_%s_%s" % (name, self.id)
+        if not title_text:
+            title_text = _(name)
+    %>
+
+    % if mo_text:
+        <span class="mo-help">
+        <div class="${mo_class}">
+            <h2>${title_text}</h2>
+            <p>${_(mo_text)}</p>
+        </div>
+    % endif
+            <input
+                type    = "submit"
+                id      = "${button_id}"
+                name    = "submit_${name}"
+                class   = "submit_${name} button"
+                value   = "${title_text}"
+                onclick = "
+                    % if onclick_js:
+                        ${onclick_js}
+                    % else:
+                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
+                        
+                        ## If button enabled
+                        if (!$(this).hasClass('disabled')) {
+                            ## Disable this button
+                            $(this).addClass('disabled');
+                            
+                            ## Fake that a static submit button has been pressed
+                            ##  - Standard HTML forms contain the name and value of the submit button pressed
+                            ##  - JS Form submissions do not - this add's a fake input to the final submission to mimic this submit press
+                            add_onclick_submit_field($(this));
+                            
+                            ## AllanC - I dont like the fact we start setting global var's here ... could we move to cb_frag.js:cb_frag_set_variable() ??
+                            % if show_content_frag_on_submit_complete:
+                                ## AllanC - Cleaner suggestion? - could this prompt aggregate be part of the python URL gen and not an appended string?
+                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
+                            % endif
+                            
+                            ## Re-enable button after 1 second
+                            setTimeout(function() {$(this).removeClass('disabled');}, 1000);
+                            
+                            ## Reload parent on post if publishing
+                            ## AllanC - this was a nice idea - but the POST has not completed at this point and race hazzards occour
+                            ##            if this is going to be used it needs to be at the end of the onsubmit event
+                            ##% if name=='publish' and self.content.get('parent'):
+                            ##    cb_frag_reload('${url('content', id=self.content['parent']['id'])}', $(this));
+                            ##% endif
+                        }
+                        ## If button disabled - abort submit by returning false
+                        else {
+                            return false;
+                        }
+                    % endif
+                "
+            />
+    % if mo_text:
+        </span>
+    % endif
+</%def>
+
+
+
 ##------------------------------------------------------------------------------
 ## Submit buttons
 ##------------------------------------------------------------------------------
 <%def name="submit_buttons()">
 
-    ## AllanC - note the class selectors are used by jQuery to simulate clicks
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r', extrajs='')">
-
-        <%
-            button_id = "submit_%s_%s" % (name, self.id)
-            if not title_text:
-                title_text = _(name)
-        %>
-
-        % if mo_text:
-            <span class="mo-help">
-            <div class="${mo_class}">
-                <h2>${title_text}</h2>
-                <p>${_(mo_text)}</p>
-            </div>
-        % endif
-                <input
-                    type    = "submit"
-                    id      = "${button_id}"
-                    name    = "submit_${name}"
-                    class   = "submit_${name} button"
-                    value   = "${title_text}"
-                    onclick = "
-                        ${extrajs}
-                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                        if (!$(this).hasClass('disabled')) {
-                            $(this).addClass('disabled');
-                            add_onclick_submit_field($(this));
-                            % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
-                            % endif
-                            setTimeout(function() {
-                                $(this).removeClass('disabled');
-                            }, 1000);
-                        }
-                        else {
-                            return false;
-                        }
-                    "
-                />
-        % if mo_text:
-            </span>
-        % endif
-    </%def>
-    
     <div style="font-size: 130%; text-align: center;" class="buttons">
-        ${popup.popup_static('What happens now?', what_now, '', html_class="what-now-pop")}
+        
+        ${popup.popup_static('What happens now?', what_now_popup, '', html_class="what-now-pop")}
+        
+        ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to posting." )}</span>
-            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once it's been posted." )}
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _request will be saved to your profile for further editing prior to posting.") )}</span>)
+            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l", extrajs="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
+            
+        ## Update
         % else:
             % if 'update' in self.actions:
             ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
             % endif
             <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
         % endif
+        
     </div>
     <div class="separator"></div><div class="separator"></div>
 </%def>
@@ -757,11 +791,16 @@
 ##------------------------------------------------------------------------------
 ## What happens now?
 ##------------------------------------------------------------------------------
+## This is the popup for post confirmation
+
 <%def name="what_now_link()">
 </%def>
 
-<%def name="what_now()">
+<%def name="what_now_popup()">
 
+    <%doc>
+    ## AllanC - WHY IS THIS HERE!!! .. Why is it duplicatied from the suibmit buttons above?
+    
     <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
 
         <%
@@ -804,6 +843,8 @@
             </span>
         % endif
     </%def>
+    </%doc>
+
     <div class="information">
         <p>${member_includes.avatar(c.logged_in_persona)} ${c.logged_in_persona}</p>
         % if self.selected_type == "assignment":

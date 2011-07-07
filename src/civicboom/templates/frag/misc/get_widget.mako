@@ -36,6 +36,8 @@
 
 <%def name="widget_preview(member)">
 <div class="get_widget">
+    ## style="height: 400px; padding-right: 2em;"
+    ## AllanC - style hack above - to get the ***ing popup to pad and size properly in the popup ... $.modal.update() dose not work, the tabs mess with stuff
     <%
         member = normalize_member_username(member);
     %>
@@ -171,12 +173,12 @@
 ##----------------------------------
 
 <%def name="basic(member)">
-<div class="widget_creator"><div class="padding">
+<div class="widget_creator">
     <%
         theme          = 'basic'
         widget_default = widget_defaults[theme]
     %>
-    <div class="params">
+    <div class="segment params"><div class="padding">
         <form action="">
             
             <label>${_("Title")}</label>
@@ -235,18 +237,18 @@
         
         </form>
         <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
-    </div>
+    </div></div>
     
-    <div class="preview">
+    <div class="segment preview"><div class="padding">
         ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
-    </div>
+    </div></div>
     
-    <div class="code">
+    <div class="segment code"><div class="padding">
         <form action="">
             <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
         </form>
-    </div>
-</div></div>
+    </div></div>
+</div>
 </%def>
 
 ##----------------------------------
@@ -259,21 +261,21 @@
         theme          = 'gradient'
         widget_default = widget_defaults[theme]
     %>
-    <div class="params">
+    <div class="segment params"><div class="padding">
         <form action="">
         </form>
         ##<input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
         
-    </div>
+    </div></div>
     
-    <div class="preview">
+    <div class="segment preview"><div class="padding">
         ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
-    </div>
+    </div></div>
     
-    <div class="code">
+    <div class="segment code"><div class="padding">
         <form action="">
             <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
         </form>
-    </div>
+    </div></div>
 </div>
 </%def>

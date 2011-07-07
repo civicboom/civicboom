@@ -1,5 +1,6 @@
 $border-size: 0.1em;
 
+$widget-border       : #c4cdd2;
 $widget-header-height: 2.2em;
 $widget-header-txt   : #000000;
 $widget-content-txt  : #666666;
@@ -79,10 +80,10 @@ $title-kerning: 0.08em;
         }
     }
     .item_selected {
-        background:url('/images/widget/item_selected.png') no-repeat;
+        background:url('../common/item_selected.png') no-repeat;
     }
     .item_unselected {
-        background:url('/images/widget/item_unselected.png') no-repeat;
+        background:url('../common/item_unselected.png') no-repeat;
     }
     
     /* -------------------------------------------------------------------------- */
@@ -92,6 +93,8 @@ $title-kerning: 0.08em;
         .padding {
             padding: 0.1em;
         }
+        border: 0.1em solid $widget-border;
+        font-size: 19px;
     }
     
     .widget_header {
