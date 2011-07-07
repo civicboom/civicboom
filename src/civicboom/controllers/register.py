@@ -94,7 +94,7 @@ class RegisterController(BaseController):
         schema = build_schema(*c.required_fields)
         schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
         schema.fields['name']  = validators.NotEmpty(messages={'missing': 'Please give us your full name as you wish it to appear on your profile'})
-        schema.fields['help_type'] = formencode.validators.OneOf(['org','individual'], if_missing='individual')
+        schema.fields['help_type'] = formencode.validators.OneOf(['org','ind'], if_missing='ind')
         data = {'register':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='register', template_error='account/register')
         form = data['register']

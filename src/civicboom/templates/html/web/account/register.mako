@@ -44,14 +44,14 @@
                 <td>
                     <%
                         radio_choices = [
-                            ('individual',_('Individual')  ),
-                            ('org'       ,_('Organisation')),
+                            ('ind' ,_('Individual')  ),
+                            ('org' ,_('Organisation')),
                         ]
                     %>
                     % for radio_option, display_text in radio_choices:
                         <%
                             checked = ''
-                            if h.get_data_value('help_type','register', default_value='individual') == radio_option:
+                            if h.get_data_value('help_type','register', default_value=radio_choices[0][0]) == radio_option:
                                 checked = 'checked'
                         %>
                         <input type="radio" name="help_type" value='${radio_option}' ${checked} />${display_text}<br/>
