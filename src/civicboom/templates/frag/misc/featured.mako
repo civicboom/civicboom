@@ -31,12 +31,12 @@
     <%
         list_names = dict(
             sponsored_responded     = _('Most responses'),
-            sponsored_assignment    = _('Top _request'),
+            sponsored_assignment    = _('Top _assignment'),
             
-            top_viewed_assignments  = _('Top _requests'),
+            top_viewed_assignments  = _('Top _assignments'),
             most_responses          = _('What people are getting involved in'),
             near_me                 = _('Near me'),
-            recent_assignments      = _('Recent _requests'),
+            recent_assignments      = _('Recent _assignments'),
             recent                  = _('Just happened'),
         )
     %>
