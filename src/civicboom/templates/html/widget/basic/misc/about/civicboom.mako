@@ -23,5 +23,5 @@
 </ul>
   
 <p style="text-align: center; margin-top: 1em; font-weight: bold;">
-<a href="${h.url(controller="widget", action="signin")}">${_("Get involved today!")}</a>
+<a href="${h.url(controller='misc', action='titlepage' ,sub_domain='www')}" target="_blank">${_("Get involved today!")}</a>
 </p>
