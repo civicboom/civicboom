@@ -94,10 +94,10 @@
                 <fieldset>
                     <span class="number fl">3.</span>
                     <div class="group-block">
-                        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+                        <div onclick="toggle_edit_section($(this));" class="edit_input">
                             <span class="label">${_('When others join your _Group what default role do you want them to have?')}</span>
                             <span class="icon16 i_plus"></span>
-                        </legend>
+                        </div>
                         <div class="hideable">
                             ${show_error('default_role')}
                             <ul>
@@ -149,10 +149,10 @@
                 <fieldset>
                     <span class="number fl">4.</span>
                     <div class="group-block">
-                        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+                        <div onclick="toggle_edit_section($(this));" class="edit_input">
                             <span class="label">${_('How do you want others to join this _Group?')}</span>
                             <span class="icon16 i_plus"></span>
-                        </legend>
+                        </div>
                         <div class="hideable">
                             ${show_error('join_mode')}
                             <ul>
@@ -196,7 +196,7 @@
                         <span class="number fl">5.</span>
                         <div class="group-block">
                             <div class="fl">
-                                <legend onclick="toggle_edit_section($(this));" class="edit_input">
+                                <div onclick="toggle_edit_section($(this));" class="edit_input">
                                     <span class="label">${_('Member & content visibility')}</span>
                                     <span class="icon16 i_plus"></span>
                                     % if not c.logged_in_persona.has_account_required('plus'):
@@ -204,7 +204,7 @@
                                             This requires a plus account. Please <a href="${h.url(controller='about', action='upgrade_plans')}">upgrade</a> if you want access to this feature
                                         </div>
                                     % endif
-                                </legend>
+                                </div>
                                 <div class="hideable">
                                     % if c.logged_in_persona.has_account_required('plus'):
                                         <h3>${_("Member visibility")}</h3>
