@@ -135,7 +135,7 @@
             'org'  : ['advert_hand_hub', 'advert_hand_assignment', 'advert_hand_widget']
         }
         
-        self.adverts_hand = None
+        self.adverts_hand = []
         if self.current_user:
             my_type = (c.logged_in_persona.__type__ == 'group') ? 'org' : (c.logged_in_persona.get('help_type') or 'ind')
             self.adverts_hand = hand_adverts[my_type]
