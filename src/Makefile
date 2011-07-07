@@ -37,10 +37,7 @@ help2:
 
 release:
 	git tag
-	echo "What is the new release tag?"; read NEW_TAG
-	git flow release start $$NEW_TAG
-	git flow release finish $$NEW_TAG
-	git push origin master $$NEW_TAG
+	echo "What is the new release tag?"; read NEW_TAG; git flow release start $$NEW_TAG; git flow release finish $$NEW_TAG;	git push origin master $$NEW_TAG
 	git checkout develop
 
 site: i18n js css
