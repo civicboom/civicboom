@@ -26,18 +26,25 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(content, href=None, icon=None, config_key=None, background=None)">
+<%def name="advert(content, href=None, int=None, icon=None, config_key=None, background=None)">
     % if config_key: ## and config_key in self.advert_list:
     <div class="advert">
         ## Display advert disable link
         ${advert_disable_link(config_key)}
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
-        % if href:
-            <a href="${href}"><span class="content">${content}</span></a>
-        % else:
-            <span class="content">${content}</span>
-        % endif
+
+	% if int:
+	    <span class="int">${int}</span>
+	% endif
+	% if href:
+	    <a href="${href}">
+	% endif
+	<span class="content">${content}</span>
+	% if href:
+	    </a>
+	% endif
+
         <div class="separator" style="clear: both;"></div>
     </div>
     % endif

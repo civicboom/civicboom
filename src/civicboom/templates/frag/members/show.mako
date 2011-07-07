@@ -17,7 +17,11 @@
 ##------------------------------------------------------------------------------
 
 <%def name="custom_share()">
-    <a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;" class="icon16 i_share"><span>Janrain</span></a>
+    <a href="#" class="janrain_link" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p>Get others involved!</p></a>
+</%def>
+
+<%def name="custom_share_widget()">
+    
 </%def>
 
 <%def name="init_vars()">
@@ -46,7 +50,7 @@
             'url'               : h.url('member', id=self.id, qualified=True) ,
             'title'             : self.name ,
             'image'             : self.member['avatar_url'] ,
-            'custom_share_line' : custom_share_line,
+            ## 'custom_share_line' : custom_share_line,
             'custom_share'      : custom_share
         }
         
@@ -148,11 +152,11 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     ## AllanC!?! (c.logged_in_persona.username or c.logged_in_user.username) this is a meaninless statement because or returns one or the other? logged_in_persona always not null if logged_in_user
-	% if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
-	<script>
-		${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
-	</script>
-	% endif
+    % if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
+    <script>
+	${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
+    </script>
+    % endif
 	
     ## Top row (avatar/about me)
     <div class="frag_top_row">
@@ -160,37 +164,48 @@
 	    ## About Me
 	    <div class="frag_list">
 		<div class="member_details">
+		    <div class="col_left">
+			<h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+			% if self.member.get('website'):
+			    <p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
+			% endif
+			% if self.member.get('description'):
+			    <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+			% endif
+			
+			<div class="separator"></div>
+			${actions_buttons()}
+		    </div>
 		    
-		    <div class="avatar">${member_avatar(img_class='photo')}</div>
-		    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
-		    % if self.member.get('website'):
-			<p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
-		    % endif
-		    % if self.member.get('description'):
-			<p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
-		    % endif
+		    <div class="col_right">
+			<div class="avatar">${member_avatar(img_class='photo')}</div>
+			% if 'message' in self.actions:
+			    ${popup.link(
+				h.args_to_tuple('new_message', target=self.id),
+				title = _('Send message'),
+				text  = h.literal("<div class='button'>%s</div>") % _('Send message'),
+			    )}
+			    ##<div style="clear: both;"></div>
+			% endif
+			<a href="#"><p class="boombox_link">
+			    ${popup.link(
+				h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+				title = _('Get _widget'),
+				text  = h.literal("%s") % _("Get _widget"),
+			    )}
+			</p></a>
+			<a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
+		    </div>
 		    
-		    <div class="separator"></div>
-		    ${actions_buttons()}
-            
-            
-		    % if 'message' in self.actions:
-                ${popup.link(
-                    h.args_to_tuple('new_message', target=self.id),
-                    title = _('Send message'),
-                    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
-                )}
-                ##<div style="clear: both;"></div>
-		    % endif
-            
-		<div style="clear: both;"></div>
+		    <div style="clear: both;"></div>
 		</div>
+		${share.AddThisLine(**self.attr.share_kwargs)}
 	    </div>
 	    
-	    ## Adverts?
-	    ## % if "advert_hand_article" in self.adverts_hand:
-		## ${components.advert(content="WRITE SOME STORIES PEOPLE.", config_key="advert_hand_article")}
-	    ## % endif
+	    ## Request advert
+	    % if "advert_hand_assignment" in self.adverts_hand:
+		${components.advert(content="WRITE SOME STORIES PEOPLE.", config_key="advert_hand_assignment")}
+	    % endif
 	    
 	    ## My requests
 	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
@@ -267,8 +282,6 @@
 	    </div>
 	    <div style="clear: both;"></div>
 	    ## Community ----------------------------------------
-	    
-	${share.AddThisFragList(**self.attr.share_kwargs)}
 	
 	% if self.num_unread_messages != None and self.num_unread_notifications != None:
 		${messages_frag_list()}
