@@ -720,9 +720,9 @@
                         ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
                         
                         ## If button enabled
-                        if (!$(this).hasClass('disabled')) {
+                        if (!$(this).hasClass('disabled_filter')) {
                             ## Disable this button
-                            $(this).addClass('disabled');
+                            $(this).addClass('disabled_filter');
                             
                             ## Fake that a static submit button has been pressed
                             ##  - Standard HTML forms contain the name and value of the submit button pressed
@@ -736,7 +736,7 @@
                             % endif
                             
                             ## Re-enable button after 1 second
-                            setTimeout(function() {$(this).removeClass('disabled');}, 1000);
+                            setTimeout(function() {$(this).removeClass('disabled_filter');}, 1000);
                             
                             ## Reload parent on post if publishing
                             ## AllanC - this was a nice idea - but the POST has not completed at this point and race hazzards occour
