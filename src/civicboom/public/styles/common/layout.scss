@@ -404,7 +404,7 @@ DIV#app .button {
 .disabled {
     /* Greyscale disbaled elements */
     /* http://stackoverflow.com/questions/609273/convert-an-image-to-grayscale-in-html-css */
-    filter: url(/styles/filters.svg#desaturate);
+    filter: url(filters.svg#desaturate);
     -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
 }
 
