@@ -42,7 +42,7 @@ releasetest:
 
 release:
 	git tag
-	echo "What is the new release tag?"; read NEW_TAG; git flow release start $$NEW_TAG; ifeq ($$?,0); git flow release finish $$NEW_TAG; ifeq ($$?,0); git push origin master $$NEW_TAG;endif;endif
+	echo "What is the new release tag?"; read NEW_TAG; git flow release start $$NEW_TAG && git flow release finish $$NEW_TAG && git push origin master $$NEW_TAG
 	git checkout develop
 
 site: i18n js css
