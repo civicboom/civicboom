@@ -24,7 +24,7 @@
 		}
 	</style>
 <div class="layout">
-	<table><tr><td class="body">
+	<table><tr><td class="body page_border">
 	<table class="email">
 		<tr>
 			<td style="width: 33em; padding-right: 2em;">

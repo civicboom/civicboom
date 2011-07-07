@@ -9,10 +9,7 @@ BODY.c-account.a-signin {
     .signin_action_description {
         display: inline-block;
         
-        
-		background: white;
-		border-radius: 16px;
-		padding: 16px;
+		/* padding: 16px; */
         
         margin-bottom: 1em;
         width: 940px;
@@ -25,10 +22,14 @@ BODY.c-account.a-signin {
         
         text-align: center;
 	}
+    
 	TD.body {
+        /*
+        given class page_border
 		background: white;
 		border-radius: 16px;
 		padding: 16px;
+        */
 	}
 	.signin {
 		text-align: center;
@@ -83,9 +84,13 @@ BODY.c-register.a-check_email {
 	TABLE {
 		margin: auto;
 	}
+    /*
 	TD.body {
-		background: white;
+		
+        background: white;
 		border-radius: 16px;
 		padding: 16px;
+      
 	}
+    */
 }
