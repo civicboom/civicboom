@@ -401,7 +401,7 @@ DIV#app .button {
 /* Filters                                                                    */
 /*----------------------------------------------------------------------------*/
 
-.disabled {
+.disabled_filter {
     /* Greyscale disbaled elements */
     /* http://stackoverflow.com/questions/609273/convert-an-image-to-grayscale-in-html-css */
     filter: url(filters.svg#desaturate);
