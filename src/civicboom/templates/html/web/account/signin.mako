@@ -2,35 +2,39 @@
 
 <%def name="title()">${_("Sign in")}</%def>
 
-<style>
-</style>
-<div class="layout">
-	<table><tr><td class="body">
-		<table class="signin">
-			<tr>
-				<td width="45%">
-					${signin()}
-				</td>
-				<td width="10%" rowspan="3">
-					<b>or &rarr;</b>
-				</td>
-				<td width="45%" rowspan="3">
-					${janrain()}
-				</td>
-			</tr>
-			<tr>
-				<td class="block">
-					${forgot()}
-				</td>
-			</tr>
-			<tr>
-				<td class="block">
-					${signup()}
-				</td>
-			</tr>
-		</table>
-	</td></tr></table>
-</div>
+
+<%def name="body()">
+    
+    
+    <div class="layout">
+        ${signin_actions()}
+        <table><tr><td class="body">
+            <table class="signin">
+                <tr>
+                    <td width="45%">
+                        ${signin()}
+                    </td>
+                    <td width="10%" rowspan="3">
+                        <b>or &rarr;</b>
+                    </td>
+                    <td width="45%" rowspan="3">
+                        ${janrain()}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="block">
+                        ${forgot()}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="block">
+                        ${signup()}
+                    </td>
+                </tr>
+            </table>
+        </td></tr></table>
+    </div>
+</%def>
 
 
 <%def name="janrain()">
@@ -164,4 +168,64 @@ $(function() {
 	<p>&nbsp;
 	</div>
 </section>
+</%def>
+
+
+<%def name="signin_actions()">
+    ## AllanC:
+    ##   TODO - internationalise these strings!
+
+    ## Approved actions
+    % if hasattr(c, 'action_objects'):
+        <div class="signin_action_description">
+        
+        ## Accept
+        % if   c.action_objects['action'] == 'accept':
+            <%
+                assignment   = c.action_objects['action_object']['content']
+                creator_name = assignment['creator']['name'] or assignment['creator']['username']
+                content_title = assignment['title'] or None
+            %>
+            <p>By signing  in/up you will accept the <b>${assignment['title']}</b> request that has been set by <b>${creator_name}</b></p>
+            
+        ## Follow
+        % elif c.action_objects['action'] == 'follow':
+            <%
+                member      = c.action_objects['action_object'].get('member')
+                member_name = member['name']
+            %>
+            <p>By signing in/up you will follow <b>${member_name}</b> </p>
+        
+        % elif c.action_objects['action'] == 'boom':
+            <%
+                content      = c.action_objects['action_object'].get('content')
+                creator_name = content['creator']['name']
+            %>
+            <p>By signing in/up you will Boom the _content <b>${content['title']}</b> by <b>${creator_name}</b></p>
+            
+        %elif  c.action_objects['action'] == 'new_respose':
+            <%
+                content      = c.action_objects['action_object'].get('content')
+                creator_name = content['creator']['name']
+            %>
+            <p>By signing in/up you will respond to the _assignment <b>${content['title']}</b> by <b>${creator_name}</b></p>
+        
+        %elif  c.action_objects['action'] == 'comment':
+            <%
+                content       = c.action_objects['action_object'].get('content')
+            %>
+            <p>By signing in/up you make a comment on <b>${content.get('title')}</b> </p>
+        
+        %else:
+            ##c.action_objects['action'] == 'new_article':
+            <%
+            %>
+            <p>By signing in/up you will ${c.action_objects['description']}</p>
+        % endif
+        
+        ##${c.action_objects['description']}
+        ##${c.action_objects['action_object']}
+        </div>
+    % endif
+    
 </%def>

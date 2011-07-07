@@ -1,3 +1,8 @@
+##------------------------------------------------------------------------------
+## Disabled for now ...
+##   We don't have an action frag like this anymore .. it's a single page
+##------------------------------------------------------------------------------
+
 <%inherit file="/frag/common/frag.mako"/>
 
 <%namespace name="signin" file="/html/web/account/signin.mako"/>
