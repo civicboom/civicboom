@@ -147,7 +147,7 @@ def _init_search_filters():
         try:
             content_id = int(content_id)
         except:
-            raise action_error('response_id must be an integer')
+            raise action_error('response_to must be an integer')
         return query.filter(Content.parent_id==content_id).filter(or_(Content.__type__!='article', and_(Content.__type__=='article', ArticleContent.approval != 'dissassociated')))
 
     def append_search_boomed_by(query, member):
