@@ -1,6 +1,5 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
-<%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Please check your email")}</%def>
 
 <%def name="show_error(name)">
@@ -24,7 +23,8 @@
 			padding:0 !important;
 		}
 	</style>
-
+<div class="layout">
+	<table><tr><td class="body">
 	<table class="email">
 		<tr>
 			<td style="width: 33em; padding-right: 2em;">
@@ -60,3 +60,5 @@
 			</td>
 		</tr>
 	</table>
+	</td></tr></table>
+</div>
