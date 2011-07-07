@@ -1,35 +1,36 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
-<%def name="html_class_additions()">blank_background</%def>
-
 <%def name="title()">${_("Sign in")}</%def>
 
 <style>
 </style>
-<table class="signin">
-	<tr>
-		<td width="45%">
-			${signin()}
-		</td>
-		<td width="10%" rowspan="3">
-			<b>or &rarr;</b>
-		</td>
-		<td width="45%" rowspan="3">
-			${janrain()}
-		</td>
-	</tr>
-	<tr>
-		<td class="block">
-			${forgot()}
-		</td>
-	</tr>
-	<tr>
-		<td class="block">
-			${signup()}
-		</td>
-	</tr>
-</table>
-
+<div class="layout">
+	<table><tr><td class="body">
+		<table class="signin">
+			<tr>
+				<td width="45%">
+					${signin()}
+				</td>
+				<td width="10%" rowspan="3">
+					<b>or &rarr;</b>
+				</td>
+				<td width="45%" rowspan="3">
+					${janrain()}
+				</td>
+			</tr>
+			<tr>
+				<td class="block">
+					${forgot()}
+				</td>
+			</tr>
+			<tr>
+				<td class="block">
+					${signup()}
+				</td>
+			</tr>
+		</table>
+	</td></tr></table>
+</div>
 
 
 <%def name="janrain()">

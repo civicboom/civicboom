@@ -284,7 +284,7 @@ class GroupsController(BaseController):
         """
         #url_for('new_group')
         ##print settings_base
-        return action_ok(template='groups/create')
+        return action_ok( action="create", template='groups/create')
 
 
     @web

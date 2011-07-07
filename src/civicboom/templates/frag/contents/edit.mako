@@ -720,9 +720,9 @@
                         ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
                         
                         ## If button enabled
-                        if (!$(this).hasClass('disabled')) {
+                        if (!$(this).hasClass('disabled_filter')) {
                             ## Disable this button
-                            $(this).addClass('disabled');
+                            $(this).addClass('disabled_filter');
                             
                             ## Fake that a static submit button has been pressed
                             ##  - Standard HTML forms contain the name and value of the submit button pressed
@@ -736,7 +736,7 @@
                             % endif
                             
                             ## Re-enable button after 1 second
-                            setTimeout(function() {$(this).removeClass('disabled');}, 1000);
+                            setTimeout(function() {$(this).removeClass('disabled_filter');}, 1000);
                             
                             ## Reload parent on post if publishing
                             ## AllanC - this was a nice idea - but the POST has not completed at this point and race hazzards occour
@@ -770,7 +770,7 @@
         
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _request will be saved to your profile for further editing prior to posting.") )}</span>)
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>)
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
             <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>

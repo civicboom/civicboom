@@ -5,6 +5,16 @@
  * signin page, 3 forms for "log in", "forgotten password" and "register"
  */
 BODY.c-account.a-signin {
+	.layout {
+		padding-top: 32px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	TD.body {
+		background: white;
+		border-radius: 16px;
+		padding: 16px;
+	}
 	.signin {
 		text-align: center;
 		margin: auto;
@@ -48,5 +58,19 @@ BODY.c-account.a-signin {
 		FORM TD {
 			padding: 2px;
 		}
+	}
+}
+
+BODY.c-register.a-check_email {
+	.layout {
+		padding-top: 32px;
+	}
+	TABLE {
+		margin: auto;
+	}
+	TD.body {
+		background: white;
+		border-radius: 16px;
+		padding: 16px;
 	}
 }

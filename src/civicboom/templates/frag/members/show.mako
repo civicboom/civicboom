@@ -5,10 +5,12 @@
     rss_url = True
 %>
 
-<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
+<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"     />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="share"           file="/frag/common/share.mako"          />
+<%namespace name="components"	   file="/html/web/common/components.mako" />
+
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -90,44 +92,54 @@
         if trans_if == 'user':
             self.trans_strings = [
                 #list name , icon, description
-                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('all'                 , 'article'    , _('All')   ),
                 ('drafts'              , 'draft'      , _("What I am working on now")   ),
                 ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
-                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses I've written") ),
                 ('articles'            , 'article'    , _("My news")    ),
             ]
         elif trans_if == 'userprofile':
             self.trans_strings = [
                 #list name , icon, description
-                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('all'                 , 'article'    , _('All')   ),
                 ('drafts'              , 'draft'      , _("What I am working on now")   ),
                 ('assignments_active'  , 'assignment' , _("Requests I want a response to")  ),
-                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses I've written") ),
                 ('articles'            , 'article'    , _("My news")    ),
             ]
         elif trans_if == 'group':
             self.trans_strings = [
                 #list name , icon, description
-                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('all'                 , 'article'    , _('All')   ),
                 ('drafts'              , 'draft'      , _("What we are working on now")   ),
                 ('assignments_active'  , 'assignment' , _("Requests we want you to respond to")  ),
-                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses we've written") ),
                 ('articles'            , 'article'    , _("My news")    ),
             ]
         elif trans_if == 'groupprofile':
             self.trans_strings = [
                 #list name , icon, description
-                ('all'                 , 'article'    , _('all').capitalize()   ),
+                ('all'                 , 'article'    , _('All')   ),
                 ('drafts'              , 'draft'      , _("What we are working on now")   ),
                 ('assignments_active'  , 'assignment' , _("Requests we want a response to")  ),
-                ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+                ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses we've written") ),
                 ('articles'            , 'article'    , _("My news")    ),
             ]
-        endif
+        
+        # GregM: Hand holding adverts
+        hand_adverts = {
+            'ind'    : ['advert_hand_article', 'advert_hand_response', 'advert_hand_mobile'],
+            'org'  : ['advert_hand_hub', 'advert_hand_assignment', 'advert_hand_widget']
+        }
+        
+        self.adverts_hand = []
+        if self.current_user:
+	    my_type = 'org' if c.logged_in_persona.__type__ == 'group' else (c.logged_in_persona.config.get('help_type') or 'ind')
+            self.adverts_hand = hand_adverts[my_type]
     %>
 </%def>
 
@@ -171,11 +183,14 @@
                 ##<div style="clear: both;"></div>
 		    % endif
             
-            <div style="clear: both;"></div>
+		<div style="clear: both;"></div>
 		</div>
 	    </div>
 	    
-	    
+	    ## Adverts?
+	    ## % if "advert_hand_article" in self.adverts_hand:
+		## ${components.advert(content="WRITE SOME STORIES PEOPLE.", config_key="advert_hand_article")}
+	    ## % endif
 	    
 	    ## My requests
 	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
