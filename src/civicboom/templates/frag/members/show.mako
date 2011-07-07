@@ -5,10 +5,12 @@
     rss_url = True
 %>
 
-<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"/>
+<%namespace name="frag_list"       file="/frag/common/frag_lists.mako"     />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="share"           file="/frag/common/share.mako"          />
+<%namespace name="components"	   file="/html/web/common/components.mako" />
+
 
 ##------------------------------------------------------------------------------
 ## Variables
@@ -181,11 +183,14 @@
                 ##<div style="clear: both;"></div>
 		    % endif
             
-            <div style="clear: both;"></div>
+		<div style="clear: both;"></div>
 		</div>
 	    </div>
 	    
-	    
+	    ## Adverts?
+	    ## % if "advert_hand_article" in self.adverts_hand:
+		## ${components.advert(content="WRITE SOME STORIES PEOPLE.", config_key="advert_hand_article")}
+	    ## % endif
 	    
 	    ## My requests
 	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
