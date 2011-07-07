@@ -27,7 +27,7 @@
                         ${h.secure_link(
                             h.args_to_tuple('payment_action', action='member_remove', id=d['account_id'], username=member.get('username'), format='redirect') ,
                             value           = _('Remove') ,
-                            title           = _("Remove") ,
+                            title           = _("Remove %s") % member.get('name', '') ,
                         )}
                     </div>
                     
