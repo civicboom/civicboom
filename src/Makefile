@@ -35,9 +35,14 @@ help2:
 	# run-worker    -- run a local worker
 	# stopsys       -- stop the system cb-website and cb-worker
 
+releasetest:
+	git tag
+	echo "What is the new release tag?"; read NEW_TAG; git flow release start $$NEW_TAG && echo "git flow release finish $$NEW_TAG" && echo "git push origin master $$NEW_TAG"
+	git checkout develop
+
 release:
 	git tag
-	echo "What is the new release tag?"; read NEW_TAG; git flow release start $$NEW_TAG; git flow release finish $$NEW_TAG;	git push origin master $$NEW_TAG
+	echo "What is the new release tag?"; read NEW_TAG; git flow release start $$NEW_TAG; ifeq ($$?,0); git flow release finish $$NEW_TAG; ifeq ($$?,0); git push origin master $$NEW_TAG;endif;endif
 	git checkout develop
 
 site: i18n js css
