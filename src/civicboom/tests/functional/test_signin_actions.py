@@ -41,9 +41,9 @@ class TestSigninActions(TestController):
         self.log_out()
         
         action_responses = [
-            ('/members/unittest/follow'         ,'respond NOW to'   ), # AllanC - im annoyed that these all get replaced with a stock message rather than telling them what they are going to perform, will need to disscuss this
-            ('/contents/1/boom'                 ,'respond NOW to'   ),
-            ('/contents/new?parent_id=1'        ,'respond NOW to'   ),
-            ('/contents/new?target_type=article','Post a new '      ),
+            ('/members/unittest/follow'         ,'you will follow'  ), # AllanC - im annoyed that these all get replaced with a stock message rather than telling them what they are going to perform, will need to disscuss this
+            ('/contents/1/boom'                 ,'you will Boom'    ),
+            ('/contents/new?parent_id=1'        ,'you will respond' ),
+            ('/contents/new?target_type=article','you will '        ),
         ]
         run_get_actions(action_responses)

@@ -5,10 +5,25 @@
  * signin page, 3 forms for "log in", "forgotten password" and "register"
  */
 BODY.c-account.a-signin {
+
+    .signin_action_description {
+        display: inline-block;
+        
+        
+		background: white;
+		border-radius: 16px;
+		padding: 16px;
+        
+        margin-bottom: 1em;
+        width: 940px;
+    }
+
 	.layout {
-		padding-top: 32px;
+        margin-top: 1em;
 		margin-left: auto;
 		margin-right: auto;
+        
+        text-align: center;
 	}
 	TD.body {
 		background: white;

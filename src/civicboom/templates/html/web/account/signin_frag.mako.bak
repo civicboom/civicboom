@@ -10,8 +10,18 @@
 ## Body
 ##------------------------------------------------------------------------------
 
+
+
+## AllanC - DIABLED FOR NOW ... Lizze didn't want the frag preview
+
+
+
+## Old fragment side by side
+
+<%doc>
+
 <%def name="body()">
-    <%        
+    <%
         self.attr.frags = [signin]
         
         if hasattr(c,'action_objects'):
@@ -29,3 +39,5 @@
 <%def name="action_object_frag()">
     <!--#include file="${self.attr.action_object_frag_url}"-->
 </%def>
+
+</%doc>

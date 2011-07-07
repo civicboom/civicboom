@@ -16,7 +16,7 @@
         <h2>Link</h2>
         <p>
             Paste link in <b>email</b> or <b>IM</b><br />
-            <textarea onclick="this.focus();this.select();" readonly="readonly" style="width: 100%">${h.url('contents', id=d['id'], qualified=True)}</textarea>
+            <textarea onclick="this.focus();this.select();" readonly="readonly" style="width: 100%">${h.url('content', action='show', id=d['id'], qualified=True)}</textarea>
         </p>
         <h2>Embed</h2>
         <p>

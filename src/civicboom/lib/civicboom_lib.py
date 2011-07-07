@@ -27,6 +27,7 @@ def get_action_objects_for_url(action_url=None):
 
     actions_list = [
         #            url identifyer                                ,  action      ,    description
+        (re.compile('/signout'                                   ) , 'signout'    , _('Sign out')            ),
         (re.compile('/accept'                                    ) , 'accept'     , _('Accept a _assignment')),
         (re.compile('/follow'                                    ) , 'follow'     , _('Follow a _member')    ),
         (re.compile('/boom'                                      ) , 'boom'       , _('Boom _content')       ),

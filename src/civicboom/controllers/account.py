@@ -74,7 +74,7 @@ class AccountController(BaseController):
             action_objects = get_action_objects_for_url(session_get('login_redirect') or '')
             if action_objects:
                 c.action_objects = action_objects
-                return render("/html/web/account/signin_frag.mako")
+                #return render("/html/web/account/signin_frag.mako")
             
             return render("/html/web/account/signin.mako")
 
