@@ -4,11 +4,13 @@
 #frag_containers .frag_container {
 	/*---------------------------Frag Member Adverts------------------------------*/
 	.advert {
+		color: white;
+		text-shadow: -1px -1px 1px darken($advert-back, 10%);
 		$advert-height: 2em;
 		min-height: $advert-height;
 		position: relative;
 		padding: 0.75em;
-		margin: 1em 1em 0 1em;
+		margin: 1em 0 0 0;
 		text-align: left;
 		font-size: 110%;
 		font-weight: bold;
@@ -20,15 +22,42 @@
 		
 		a {
 			text-decoration: none;
-			color: #666;
+			color: white;
+		}
+		
+		.mo-help {
+			max-width: 32px;
+			float: right;
+			
+			.mo-help-l {
+				color: black;
+				text-shadow: none;
+			}
+		}
+		
+		.int {
+			float: left;
+			font-size: 300%;
+			padding-right: 10px;
 		}
 
 		.content {
-			color: #fff;
+			// margin-right: 10px;
 			max-width: 85%;
-			margin-right: 10px;
 			float: left;
-			margin-top: ($advert-height / 2) - 0.5em;
+			
+			.advert_title {
+				font-size: 130%;
+				padding-bottom: 5px;
+			}
+			
+			.advert_content {
+				font-size: 90%;
+			}
+		}
+		
+		.small {
+			max-width: 75%;
 		}
 
 		form {

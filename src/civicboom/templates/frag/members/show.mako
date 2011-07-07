@@ -204,7 +204,23 @@
 	    
 	    ## Request advert
 	    % if "advert_hand_assignment" in self.adverts_hand:
-		${components.advert(content="WRITE SOME STORIES PEOPLE.", config_key="advert_hand_assignment")}
+		${components.advert(
+		    title="Ask for stories",
+		    content="Now you've created this Hub, you can ask your audience for their stories by clicking on the \"Ask for stories\" button on the top left of this screen. Once you have done this, you can go to part 2:",
+		    int=1,
+		    heading="What next?",
+		    config_key="advert_hand_assignment"
+		)}
+	    % endif
+	    
+	    ## Response advert
+	    % if "advert_hand_response" in self.adverts_hand:
+		${components.advert(title="Get involved!",
+		    content="",
+		    int=1,
+		    heading="What next?",
+		    config_key="advert_hand_response"
+		)}
 	    % endif
 	    
 	    ## My requests
@@ -345,6 +361,29 @@
     ## Right col
     <div class="frag_right_col">
 	    <div class="frag_col">
+		
+	    ## Widget advert
+	    % if "advert_hand_widget" in self.adverts_hand:
+		${components.advert(
+		    title="Put Hub Boombox on your site ",
+		    content='The Boombox is a "widget" that lives on your website within which all requests for stories set by you will automatically appear. People can respond to requests for news and submit their news through your Boombox, as video, images or audio directly to you for you to edit and publish',
+		    advert_class="small",
+		    int=2,
+		    config_key="advert_hand_widget"
+		)}
+	    % endif
+	    
+	    ## Mobile advert
+	    % if "advert_hand_mobile" in self.adverts_hand:
+		${components.advert(
+		    title="Make news with the Civicboom mobile app!",
+		    content="Grab the app and share your stories from the scene... click here!",
+		    advert_class="small",
+		    href=h.url(controller="misc", action="about", id="mobile"),
+		    int=2,
+		    config_key="advert_profile_mobile"
+		)}
+	    % endif
 	    
 	    ## Accepted Assignments --------------------------------------
 	    

@@ -42,12 +42,6 @@
         )
     %>
     
-    ## Adverts
-    % if c.logged_in_user:
-        ${components.advert(content="Make news with the Civicboom mobile app!", href=h.url(controller="misc", action="about", id="mobile"), icon="mobile", config_key="advert_profile_mobile")}
-        ## ${components.advert(content="Are you an organisation, journalist, blogger or in PR? GET STARTED HERE", href=h.url("new_group"), icon="group", config_key="advert_profile_group")}
-    % endif
-    
     <span style="clear: both; display: block;"></span>
     <div class="frag_top_row">
         <div class="frag_col">
