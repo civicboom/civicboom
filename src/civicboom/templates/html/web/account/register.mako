@@ -37,11 +37,37 @@
             % endif
             ##${eval(field)} wanted to just eval the field name but mako defs use differnt python names :( it's going to have to be a set of IF's
         % endfor
+        
+            ## help_type - radio buttons - this needs layout
+            <tr>
+                <td class="newformtitle">User type</td>
+                <td>
+                    <%
+                        radio_choices = [
+                            ('ind' ,_('Individual')  ),
+                            ('org' ,_('Organisation')),
+                        ]
+                    %>
+                    % for radio_option, display_text in radio_choices:
+                        <%
+                            checked = ''
+                            if h.get_data_value('help_type','register', default_value=radio_choices[0][0]) == radio_option:
+                                checked = 'checked'
+                        %>
+                        <input type="radio" name="help_type" value='${radio_option}' ${checked} />${display_text}<br/>
+                    % endfor
+                </td>
+        		<td>${invalid('help_type')}</td>
+            </tr>
+            
+            ## Terms and conditions checkbox
 			<tr>
 				<td class="newformtitle">Agree to <a href="/about/terms" target="_blank">terms</a></td>
 				<td><input type="checkbox" name="terms" value="checked" /></td>
         		<td>${invalid('terms')}</td>
 			</tr>
+            
+            ## Submit button
 			<tr>
 				<td></td>
 				<td><input type="submit" name="submit" class="button" value="${_("Register")}"/></td>

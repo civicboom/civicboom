@@ -27,10 +27,10 @@
 <h3>${_("Ask for news out in the field:")}</h3>
 ${_("Post directly to your organisation's website _widget")}
 
-<p><h3>${_("Get story _requests:")}</h3>
+<p><h3>${_("Get _article _assignments:")}</h3>
 ${_("Respond in an instant")}
 
-<P><h3>${_("Post stories from the scene:")}</h3>
+<P><h3>${_("Post _articles from the scene:")}</h3>
 ${_("Get your news")} <i>${_("in")}</i> ${_("the news")}
 </td>
 
