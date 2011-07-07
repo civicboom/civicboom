@@ -613,7 +613,7 @@
     <fieldset>
         <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
         <div class="hideable">
-            </%doc><%doc>
+
             <span style="padding-top: 3px;">
               ${form_instruction(_("What is licensing explanation"))}
             </span>
@@ -632,7 +632,6 @@
                 ##${popup(_(license.description))}
             % endfor
 			</table>
-            </%doc><%doc>
               <div class="padded">This content will be published under the Creative Commons Attributed licence</div>
               <div class="padded">
                 <a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
@@ -771,10 +770,10 @@
         
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text="This _request will be saved to your profile for further editing prior to posting." )}</span>
-            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text="See how it will look once it's been posted." )}
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _request will be saved to your profile for further editing prior to posting.") )}</span>)
+            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text="Ask the world!", mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
             
         ## Update
