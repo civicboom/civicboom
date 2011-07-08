@@ -133,17 +133,38 @@ $title-kerning: 0.08em;
             width: 27.5%;
             float: right;
             
+            position: relative;
             height: $widget-header-height;
             
+            /*
             border: $border-size solid $header_border;
             @include horiz_gradient($header-top, $header-bot);
-            position: relative;
+            */
+            
+            /* AllanC - I tryed to use the button style class=button .. but no ... no the alignment went everywhere, so I duplucated it here and moded it. Please tidy */
+            
+            border    : 0.1em solid $button-border;
+            @include horiz_gradient($button-top, $button-bot);
+            @include border_radius(0.1em);
+        }
+        .action:hover {
+            @include horiz_gradient($button-bot, $button-top);
         }
         .action a {
-            font-size: 60%;
             display: inline-block;
             positon: absolute;
+            
+            color: $button-txt;
+            
+            font-weight: bold;
+            font-size:50%;
+            
+            text-decoration: none;
+            
+            padding: 0.6em;
+            padding-top: 1em;
         }
+        
     }
     
     .widget_content {
