@@ -44,8 +44,8 @@
     
     ${components.tabs(
         tab_id       ='get_widget_tabs',
-        titles       = [_('What is a _widget?'), _('Standard _widget'), _('Dynamic _widget')],
-        tab_contents = [what                   , basic                , gradient            ],
+        titles       = [_('What is a _widget?'), _('Standard _widget'), _('Animated _widget')],
+        tab_contents = [what                   , basic                , gradient             ],
         member = member
     )}
     
@@ -139,31 +139,42 @@
 
 <%def name="what(member)">
 <div class="widget_creator"><div class="padding">
-<h1>What is a _Widget?</h1>
-<p>
-    ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
-    ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
-</p>
-
-<p>${_('We offer two versions of the _Widget:')}</p>
-<ol>
-    <li>
-        <p>Fixed size - dynamic design</p>
-        <ul>
-            <li>Requests appear on a carousel</li>
-            <li>Larger font for clear reading</li>
-            <li>Direct "Share your story" button</li>
-        </ul>
-    </li>
-    <li>
-        <p>Editable - basic design:</p>
-        <ul>
-            <li>Size adaptable to fit website needs</li>
-            <li>Editable colours</li>
-            <li>Lists requests</li>
-        </ul>
-    </li>
-</ol>
+    <h1>What is a _Widget?</h1>
+    <p>
+        ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
+        ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
+    </p>
+    
+    <p style="font-weight: bold; margin-top: 1em; margin-bottom:1em;">${_('We offer two versions of the _Widget:')}</p>
+    
+    ## AllanC - I know, it's a table for layout - rewrite it properly, I didnt have time
+    <table class="what_table"><tr>
+        
+        <td>
+            <p>1. Standard design: Customizable</p>
+            <ul>
+                <li>Size adaptable to fit website needs</li>
+                <li>Editable colours</li>
+                <li>List your _assignments and _articles</li>
+                ##<li>Direct "Share your _article" button</li>
+            </ul>
+        </td>
+        <td>
+            <img src="/images/widget/preview_basic.png" alt="basic_widget_preview" style="margin-right: 2em;"/>
+        </td>
+        <td>
+            <p>2. Animated Design: Fixed size</p>
+            <ul>
+                <li>Requests appear on a carousel</li>
+                <li>Larger font for clear reading</li>
+                ##<li>Direct "Share your story" button</li>
+            </ul>
+        </td>
+        <td>
+            <img src="/images/widget/preview_gradient.png" alt="gradient_widget_preview" />
+        </td>
+        
+    </tr></table>
 
 </div></div>
 </%def>
@@ -178,76 +189,98 @@
         theme          = 'basic'
         widget_default = widget_defaults[theme]
     %>
-    <div class="segment params"><div class="padding">
-        <form action="">
-            
-            <label>${_("Title")}</label>
-                <input type="text" name="title" value="${widget_default['title']}" size="30"/><br/>
-            
-            <label>${_("Content to show on _widget")}</label>
-                <%
-                    base_lists = [
-                        ('assignments_active'   , _('My active _assignments')                ),
-                        ('assignments_accepted' , _('_Assignments I have accepted')          ),
-                        ('content_and_boomed'   , _('My _content and _content I have boomed')),
-                        ('boomed'               , _('_Content I have boomed')                ),
-                        ('content'              , _('My _content')                           ),
-                    ]
-                %>
-                <select name="base_list">
-                    % for list_name, list_description in base_lists:
+    <table><tr>
+        <td class="description">
+            <h2>Grab the _widget</h2>
+            <ol>
+                <li>Give your Boombox a title</li>
+                <li>Choose from the dropdown the content you want to show on the Boombox</li>
+                <li>Add the right colours and set your size of the Boombox (note the font size will remain the same).</li>
+                <li>Click on preview</li>
+                <li>When you're happy, copy and paste the code into an HTML page</li>
+                <li>Start Booming out your requests for stories!</li>
+            </ol>
+        </td>
+    
+        <td class="params">
+            <form action="">
+                
+                <feildset>
+                    <legend>${_("Title")}</legend>
+                    <input type="text" name="title" value="${widget_default['title']}" size="30"/><br/>
+                </feildset>
+                
+                <feildset>
+                    <legend>${_("Content to show on _widget")}</legend>
                     <%
-                        selected = ''
-                        if widget_default['base_list'] == list_name:
-                            selected = 'selected'
+                        base_lists = [
+                            ('assignments_active'   , _('My active _assignments')                ),
+                            ('assignments_accepted' , _('_Assignments I have accepted')          ),
+                            ('content_and_boomed'   , _('My _content and _content I have boomed')),
+                            ('boomed'               , _('_Content I have boomed')                ),
+                            ('content'              , _('My _content')                           ),
+                        ]
                     %>
-                    <option value="${list_name}" ${selected}>${list_description}</option>
-                    % endfor
-                </select>
-            
-            <label>${_("Size")}</label>
-                <div class="params_extra">
-                <label>${_('Width')} </label><input type="text" name="width"  value="${widget_default['width' ]}" size="3" /><br/>
-                <label>${_('Height')}</label><input type="text" name="height" value="${widget_default['height']}" size="3" />
-                </div>
-            
-            <fieldset><legend>${_("Colours")}</legend>
-                <div class="params_extra">
-                <%
-                    colors = [
-                        (_('Border') , 'color_border'    ),
-                        (_('Header') , 'color_header'    ),
-                        (_('Action') , 'color_action_bar'),
-                        (_('Content'), 'color_content'   ),
-                        (_('Font')   , 'color_font'      ),
-                    ]
-                %>
-                % for color_name, color_field in colors:
-                <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" /><br/>
-                % endfor
-                </div>
-                <script type="text/javascript">
-                    $(document).ready(function() {
-                        % for color_name, color_field in colors:
-                        $('#${color_field}').simpleColorPicker();
+                    <select name="base_list">
+                        % for list_name, list_description in base_lists:
+                        <%
+                            selected = ''
+                            if widget_default['base_list'] == list_name:
+                                selected = 'selected'
+                        %>
+                        <option value="${list_name}" ${selected}>${list_description}</option>
                         % endfor
-                    });
-                </script>
-            </fieldset>
+                    </select>
+                </feildset>
+                
+                <feildset>
+                    <legend>${_("Size")}</legend>
+                    <div class="params_extra">
+                    <label>${_('Width')} </label><input type="text" name="width"  value="${widget_default['width' ]}" size="3" /><br/>
+                    <label>${_('Height')}</label><input type="text" name="height" value="${widget_default['height']}" size="3" />
+                    </div>
+                </feildset>
+                
+                <fieldset>
+                    <legend>${_("Colours")}</legend>
+                    <div class="params_extra">
+                    <%
+                        colors = [
+                            (_('Border') , 'color_border'    ),
+                            (_('Header') , 'color_header'    ),
+                            (_('Action') , 'color_action_bar'),
+                            (_('Content'), 'color_content'   ),
+                            (_('Font')   , 'color_font'      ),
+                        ]
+                    %>
+                    % for color_name, color_field in colors:
+                    <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" /><br/>
+                    % endfor
+                    </div>
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            % for color_name, color_field in colors:
+                            $('#${color_field}').simpleColorPicker();
+                            % endfor
+                        });
+                    </script>
+                </fieldset>
+            
+            </form>
+            <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
+        </td>
         
-        </form>
-        <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
-    </div></div>
+        <td class="preview" style="width: 280px;">
+            ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
+        </td>
     
-    <div class="segment preview"><div class="padding">
-        ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
-    </div></div>
+        <td class="code">
+            <form action="">
+                <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
+            </form>
+        </td>
     
-    <div class="segment code"><div class="padding">
-        <form action="">
-            <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
-        </form>
-    </div></div>
+    </tr></table>
 </div>
 </%def>
 
@@ -261,21 +294,24 @@
         theme          = 'gradient'
         widget_default = widget_defaults[theme]
     %>
-    <div class="segment params"><div class="padding">
-        <form action="">
-        </form>
-        ##<input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
-        
-    </div></div>
-    
-    <div class="segment preview"><div class="padding">
-        ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
-    </div></div>
-    
-    <div class="segment code"><div class="padding">
-        <form action="">
-            <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
-        </form>
-    </div></div>
+    <table class="">
+        <td class="description">
+            <h2>Grab the Animated Boombox:</h2>
+            <ul>
+                <li>This Boombox animates your requests for stories.</li>
+                <li>It has a fixed size of 280 x 180.</li>
+                <li>To get your Boombox, simply copy and paste the code into an HTML page.</li>
+                <li>Note: The dynamic Boombox requires Java script for all viewers.</li>
+            </ul>
+        </td>
+        <td class="preview">
+            ${widget_iframe(theme=theme, member=member, protocol=current_protocol())}
+        </div>
+        <td class="code">
+            <form action="">
+                <textarea>${widget_iframe(theme=theme, member=member, protocol=current_protocol())}</textarea>
+            </form>
+        </div>
+    </table>
 </div>
 </%def>

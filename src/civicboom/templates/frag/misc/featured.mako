@@ -12,14 +12,6 @@
     <%
         self.advert_list = [] # List of advert/info box to display (empty by default, populated below)
         self.attr.title = _('Featured Content')
-        
-        # Adverts/info boxs
-        # Logic for mini advert/info fragments from user prefs- used in the same way as the action_list - the logic is here, the display is in the template
-        if c.logged_in_user:
-            if not c.logged_in_user.config['advert_profile_mobile']:
-                self.advert_list.append('advert_profile_mobile')
-            if not c.logged_in_user.config['advert_profile_group']:
-                self.advert_list.append('advert_profile_group')
     %>
 </%def>
 
