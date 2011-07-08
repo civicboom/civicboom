@@ -30,6 +30,8 @@
             <div style="padding-left: 3em;">
                 <div class="fl" style="width: 20em;">
                     <h3>${_('Click on create a _Group button')}</h3>
+                    <br />
+                    <p>${_('You can click here - or read on for full instructions and then create your _Group.')}</p>
                 </div>
                 <div class="fr" style="width: 30em;">
                     <a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a>
@@ -66,6 +68,14 @@
                     <p>
                         ${_("Once you've created the _Group, click on the _Group profile (top right of every page) in the drop down list to access.")}
                     </p>
+                    <br />
+                    <br />
+                    <div style="width: 20em" class="border_box">
+                        <div style="width: 10em; margin:auto; margin-top: 1.5em; margin-bottom: 1.5em;">
+                            <h3>4. GET STARTED!</h3>
+                            <p style="font-size: 150%"><a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a></p>
+                        </div>
+                    </div>
                 </div>
                 <div class="fr" style="width: 30em;">
                     <img src="/images/settings/hub-creation-2.png" />
@@ -75,7 +85,7 @@
     </div>
     <div class="cb"></div>
     <p>&nbsp;</p>
-    <div class="fr"><a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a></div>
     <div class="cb"></div>
 </div>
+<p>&nbsp;</p>
 </%def>

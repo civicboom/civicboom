@@ -400,6 +400,16 @@ DIV#app .button {
 	cursor: pointer;
 }
 
+.border_box {
+  display: inline-block;
+  background: white;
+
+  border-radius        : $button-radius;
+  -moz-border-radius   : $button-radius;
+  -webkit-border-radius: $button-radius;
+  
+  border: 1px solid #BBB;
+}
 /*----------------------------------------------------------------------------*/
 /* Filters                                                                    */
 /*----------------------------------------------------------------------------*/
