@@ -411,3 +411,11 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         """
         return content_search(creator=id, list='assignments_previous',**kwargs)
+
+    # AllanC - for disscusuton
+    #  should get_widget go here?
+    # e.g. members/unittest/get_widget
+    # e.g. members/unittest/widget
+    # rather than
+    # misc/get_widget/unittest
+    # thoughts?
