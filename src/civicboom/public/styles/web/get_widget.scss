@@ -19,37 +19,63 @@ $widget_unit_height: 300px;
     width : $widget_unit_width * 3 + 60px;
     height: $widget_unit_height;
     */
+    background-color: white;
     
-    .padding {
-        padding: 0.5em;
-    }
+    font-size: 80%;
     
     
-    .segment {
-        display: inline-block;
-        width  : $widget_unit_width;
-        height : $widget_unit_height;
-        vertical-align:text-top;
-    }
+    table {
     
-    .params {
-        .params_extra {
-            font-size: 70%;
-            label {
-                display: inline-block;
-                width: 6em;
+        TD {
+            padding: 0.5em;
+            vertical-align: top;
+            
+        }
+        .description {
+            ol {
+            }
+            li {
+                
+                margin-top   : 0.5em;
+                margin-bottom: 0.5em;
+            }
+            width: 280px;
+        
+        }
+        .params {
+            /* font-size: 80%; */
+            legend {
+                font-weight: bold;
+            }
+            
+            .params_extra {
+                /* font-size: 70%; */
+                label {
+                    display: inline-block;
+                    width: 6em;
+                }
+
+            }
+        }
+        .preview {
+            vertical-align: middle;
+            text-align    : center;
+        }
+        .code {
+            /* font-size: 80%; */
+            textarea {
+                height: $widget_unit_height;
             }
         }
     }
     
-    .preview {
-        text-align: center;
-    }
-    
-    .code {
-        textarea {
-            width: 100%;
-            height: $widget_unit_height - 20px;
+    .what_table {
+        TD {
+            padding: 0.5em;
+            vertical-align: top;
+        }
+        P {
+            font-weight: bold;
         }
     }
     

@@ -26,7 +26,7 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(title, content_text=None, content_list=None, href=None, advert_class='', heading=None, int=None, config_key=None, background=None)">
+<%def name="advert(title, content_text=None, content_list=None, href=None, advert_class='', heading=None, int=None, prompt=None, config_key=None)">
     % if config_key: ## and config_key in self.advert_list:
     <div class="advert">
         ## Display advert disable link
@@ -56,6 +56,9 @@
 		    % endfor
 		</ul>
 	    % endif
+	    % if prompt:
+		<br /><i>Click here!</i>
+	    % endif
 	</div>
 	% if href:
 	    </a>
@@ -80,7 +83,7 @@
 	    <input type='hidden' name='${config_key}' value='True'/>
 	    <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
 	    <div class="mo-help-l">
-		Be aware, by closing this advert it will disappear from your profile <b>forever!</b>
+		Click here to permanently hide this
 	    </div>
 	</form>
     </div>

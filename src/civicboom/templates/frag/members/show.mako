@@ -196,19 +196,27 @@
 			    )}
 			    ##<div style="clear: both;"></div>
 			% endif
-			<a href="#"><p class="boombox_link">
-			    ${popup.link(
-				h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-				title = _('Get _widget'),
-				text  = h.literal("%s") % _("Get _widget"),
-			    )}
-			</p></a>
+			<div class="mo-help">
+			    <div class="mo-help-l">${_("The Boombox is a widget that lets your readers post their content and respond to requests for stories")}</div>
+			    <a href="#">
+				<p class="boombox_link">
+				    ${popup.link(
+					h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+					title = _('Get _widget'),
+					text  = h.literal("%s") % _("Get _widget"),
+				    )}
+				</p>
+			    </a>
+			</div>
 			<a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
 		    </div>
 		    
-		    <div style="clear: both;"></div>
+		    <div class="separator"></div>
 		</div>
-		${share.AddThisLine(**self.attr.share_kwargs)}
+		% if self.attr.share_kwargs:
+		    ${share.AddThisLine(**self.attr.share_kwargs)}
+		% endif
+		<div class="separator"></div>
 	    </div>
 	    
 	    ## Request advert
@@ -225,10 +233,11 @@
 	    ## Response advert
 	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
 		${components.advert(title="Get involved!",
-		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request", "Click here!"],
+		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request"],
 		    int=1,
 		    heading="What next?",
 		    href=""+h.url(controller='misc', action='new_article'),
+		    prompt=1,
 		    config_key="advert_hand_response"
 		)}
 	    % endif
@@ -405,10 +414,11 @@
 	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
 		${components.advert(
 		    title="Make news with the Civicboom mobile app!",
-		    content_text="Grab the app and share your stories from the scene... click here!",
+		    content_text="Grab the app and share your stories from the scene...",
 		    advert_class="small",
 		    href=h.url(controller="misc", action="about", id="mobile"),
 		    int=2,
+		    prompt=1,
 		    config_key="advert_hand_mobile"
 		)}
 	    % endif
