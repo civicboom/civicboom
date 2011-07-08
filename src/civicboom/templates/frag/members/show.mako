@@ -147,6 +147,15 @@
     %>
 </%def>
 
+<%def name="invite_members(title, href_tuple, help_text, help_classes)">
+    <span class="mo-help" style="display: inline;">
+        ${h.frag_link(value='', title=title, class_='icon16 i_plus_blue', href_tuple=href_tuple)}
+        <div class="${help_classes}">
+            ${help_text}
+        </div> 
+    </span>
+</%def>
+
 ##------------------------------------------------------------------------------
 ## Member Fragment
 ##------------------------------------------------------------------------------
@@ -312,13 +321,22 @@
 	    icon =  'follow'
 	)}
 	
+	<%def name="invite_members_trusted()">
+        ${invite_members(
+           title='Invite Trusted Followers',
+           href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower'),
+           help_text=_('Invite other members to become trusted followers'),
+           help_classes='mo-help-r mo-help-b'
+        )}
+	</%def>
+	
 	${frag_list.member_list_thumbnails(
 	    d['followers'] ,
 	    _('Followers') ,
 	    #h.args_to_tuple('member_action', id=self.id, action='followers') ,
 	    h.args_to_tuple('members', follower_of=self.id),
 	    icon    = 'follow',
-	    actions = h.frag_link(value='', title='Invite Trusted Followers', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower')) if 'invite_trusted_followers' in self.actions else None ,
+	    actions = invite_members_trusted if 'invite_trusted_followers' in self.actions else None ,
 	)}
 	
 	${frag_list.member_list_thumbnails(
@@ -336,12 +354,21 @@
 	)}
 	
 	% if self.member['type']=='group':
+	<%def name="invite_members_group()">
+        ${invite_members(
+           title='Invite Members to join',
+           href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group'),
+           help_text=_('Invite other members to join this _Group'),
+           help_classes='mo-help-r mo-help-b'
+        )}
+	</%def>
+	
 	${frag_list.member_list_thumbnails(
 	    [m for m in d['members']['items'] if m['status']=='active'],
 	    _('Members'),
 	    h.args_to_tuple('member_action', id=self.id, action='members') ,
 	    icon = 'user' ,
-	    actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group')) if 'invite_members' in self.actions else None ,
+        actions = invite_members_group if 'invite_members' in self.actions else None ,
 	)}
 	
 	${frag_list.member_list_thumbnails(

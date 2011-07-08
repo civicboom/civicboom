@@ -482,11 +482,18 @@ DIV#app .button {
 	}
 	
 	.mo-help-l {
-	    right: 0em;
+    right: 0em;
 	}
 	
 	.mo-help-r {
-	    left: 0em;
+    left: 0em;
+	}
+	
+	.mo-help-b {
+    bottom: auto;
+    heigth: auto;
+    top: 0em;
+    margin-top: 2em;
 	}
 	
 	.mo-help-r:hover, .mo-help-l:hover {
@@ -495,9 +502,9 @@ DIV#app .button {
 }
 
 .mo-help:hover {
-    .mo-help-r, .mo-help-l {
-	display: block;
-    }
+  .mo-help-r, .mo-help-l {
+    display: block;
+  }
 }
 
 
