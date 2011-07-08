@@ -16,7 +16,7 @@
 ##    <pre>${c.result['data']['invalid']}</pre>
 ##    % endif
 <div style="width:61em;margin:auto;text-align:left;">
-	<h1>Just a few more details and you're done!</h1>
+	<h1>Just a few more details and you'll be all set!</h1>
     <form action="" method="post">
 		<table class="newform">
         % for field in c.required_fields:

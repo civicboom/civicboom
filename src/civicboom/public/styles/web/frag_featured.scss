@@ -54,6 +54,14 @@
 			.advert_content {
 				font-size: 90%;
 			}
+			
+			ul {
+				list-style: circle outside;
+				
+				li {
+					padding-left: 8px;
+				}
+			}
 		}
 		
 		.small {

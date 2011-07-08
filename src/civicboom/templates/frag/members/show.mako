@@ -203,10 +203,10 @@
 	    </div>
 	    
 	    ## Request advert
-	    % if "advert_hand_assignment" in self.adverts_hand:
+	    % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
 		${components.advert(
 		    title="Ask for stories",
-		    content="Now you've created this Hub, you can ask your audience for their stories by clicking on the \"Ask for stories\" button on the top left of this screen. Once you have done this, you can go to part 2:",
+		    content_text="Now you've created this Hub, you can ask your audience for their stories by clicking on the \"Ask for stories\" button on the top left of this screen. Once you have done this, you can go to part 2:",
 		    int=1,
 		    heading="What next?",
 		    config_key="advert_hand_assignment"
@@ -214,11 +214,12 @@
 	    % endif
 	    
 	    ## Response advert
-	    % if "advert_hand_response" in self.adverts_hand:
+	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
 		${components.advert(title="Get involved!",
-		    content="",
+		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request", "Click here!"],
 		    int=1,
 		    heading="What next?",
+		    href=""+h.url(controller='misc', action='new_article'),
 		    config_key="advert_hand_response"
 		)}
 	    % endif
@@ -350,7 +351,6 @@
 	    icon = 'invite' ,
 	)}
 
-
 	% endif
 	
 	${member_map()}
@@ -363,10 +363,10 @@
 	    <div class="frag_col">
 		
 	    ## Widget advert
-	    % if "advert_hand_widget" in self.adverts_hand:
+	    % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
 		${components.advert(
 		    title="Put Hub Boombox on your site ",
-		    content='The Boombox is a "widget" that lives on your website within which all requests for stories set by you will automatically appear. People can respond to requests for news and submit their news through your Boombox, as video, images or audio directly to you for you to edit and publish',
+		    content_text='The Boombox is a "widget" that lives on your website within which all requests for stories set by you will automatically appear. People can respond to requests for news and submit their news through your Boombox, as video, images or audio directly to you for you to edit and publish',
 		    advert_class="small",
 		    int=2,
 		    config_key="advert_hand_widget"
@@ -374,14 +374,14 @@
 	    % endif
 	    
 	    ## Mobile advert
-	    % if "advert_hand_mobile" in self.adverts_hand:
+	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
 		${components.advert(
 		    title="Make news with the Civicboom mobile app!",
-		    content="Grab the app and share your stories from the scene... click here!",
+		    content_text="Grab the app and share your stories from the scene... click here!",
 		    advert_class="small",
 		    href=h.url(controller="misc", action="about", id="mobile"),
 		    int=2,
-		    config_key="advert_profile_mobile"
+		    config_key="advert_hand_mobile"
 		)}
 	    % endif
 	    

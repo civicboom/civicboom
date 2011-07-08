@@ -26,7 +26,7 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(title, content, href=None, advert_class='', heading=None, int=None, config_key=None, background=None)">
+<%def name="advert(title, content_text=None, content_list=None, href=None, advert_class='', heading=None, int=None, config_key=None, background=None)">
     % if config_key: ## and config_key in self.advert_list:
     <div class="advert">
         ## Display advert disable link
@@ -46,7 +46,16 @@
 	% endif
 	<div class="content ${advert_class}">
 	    <p class="advert_title">${title}</p>
-	    <p class="advert_content">${content}</p>
+	    % if content_text:
+		<p class="advert_content">${content_text}</p>
+	    % endif
+	    % if content_list:
+		<ul>
+		    % for item in content_list:
+			<li>- ${item}</li>
+		    % endfor
+		</ul>
+	    % endif
 	</div>
 	% if href:
 	    </a>
@@ -64,7 +73,7 @@
 ## Used for setting user settings to not display this chunk again
 <%def name="advert_disable_link(config_key)">
     <div class="mo-help">
-	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().toggle(500, function(){current_element.parent().remove();});")}
+	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
 	    ##${_("Don't show me this again")}
 	    ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
 	    ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
