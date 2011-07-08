@@ -38,11 +38,11 @@
 	    <h1>${heading}</h1><div style="clear: both"></div>
 	    <div style="clear: both;"></div>
 	% endif
-	% if int:
-	    <span class="int">${int}.</span>
-	% endif
 	% if href:
 	    <a href="${href}">
+	% endif
+	% if int:
+	    <span class="int">${int}.</span>
 	% endif
 	<div class="content ${advert_class}">
 	    <p class="advert_title">${title}</p>

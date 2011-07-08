@@ -317,9 +317,13 @@ BODY.c-misc.a-about {
 		}
 	}
 
-	TD.body ul li {
-		list-style: disc;
-		margin-left: 2em;
+	TD.body ul {
+	    padding-left: 10px;
+	
+	    li {
+		    list-style: disc;
+		    margin-left: 2em;
+	    }
 	}
 }
 
