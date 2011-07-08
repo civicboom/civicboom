@@ -16,8 +16,6 @@ from civicboom.lib.web  import action_error, url
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from sqla_hierarchy import *
-
 from sqlalchemy import select
 
 
@@ -859,31 +857,6 @@ def add_to_interests(member, content, delay_commit=False):
         Session.commit()
 
     return True
-
-
-def find_content_root(content):
-    content = get_content(content)
-    
-    if not content:
-        raise action_error(_('unable to find content'), code=404)
-    
-    if not content.parent:
-        return False
-    
-    qry = Hierarchy(
-        Session,
-        Content.__table__,
-        select([Content.__table__.c.id, Content.__table__.c.parent_id]),
-        starting_node=content.id,
-        return_leaf=True,
-    ) # FIXME: Greg
-    #print qry
-    ev = Session.execute(qry).first()
-    
-    if ev:
-        return get_content(ev.id) or False
-    else:
-        return False
 
 
 #-------------------------------------------------------------------------------
