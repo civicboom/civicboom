@@ -41,6 +41,7 @@ BODY.c-register.a-new_user.u-user {
     
     .user_type_option {
         display: inline-block;
+        position: relative;
         width: 250px;
         height: 140px;
         
@@ -60,10 +61,19 @@ BODY.c-register.a-new_user.u-user {
             margin-top   : 0.5em;
             margin-bottom: 0.5em;
         }
+        span {
+            display: none;
+        }
     }
     
     .selected {
         background-color: $cb-lighterblue;
         border: 0.1em solid $cb-lightblue;
+        span {
+            display: block;
+            position: absolute;
+            bottom: 1em;
+            right: 1em;
+        }
     }
 }

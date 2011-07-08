@@ -193,6 +193,7 @@
                     </ol>
                 </div>
                 </%doc>
+                <span class="icon16 i_accept"></span>
             </div>
             
             <div class="user_type_option ${'selected' if radio_choices['org'][1] else ''}" onclick="$('#help_type_org').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
@@ -213,6 +214,8 @@
                     </ol>
                 </div>
                 </%doc>
+                
+                <span class="icon16 i_accept"></span>
             </div>
             
             ##<div style="clear:both;"></div>
