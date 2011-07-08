@@ -1,0 +1,43 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+BODY.c-register.a-new_user.u-user {
+	.newform {
+		text-align:left;
+	}
+
+	.newform tr td {
+		vertical-align: bottom !important;
+		padding-bottom: 1em;
+	}
+
+	.newform .newformtitle {
+		font-size: 110%;
+		font-weight: bold;
+	}
+
+	.newform .smaller {
+		font-size: 75%;
+	}
+
+	.newform input {
+		width: 17em;
+	}
+    
+    .user_type_option {
+        background-color: $cb-light-inactive;
+        border: 0.1em solid $cb-light-inactive;
+        img {
+            float: right;
+        }
+        width: 43%;
+        margin: 1em;
+        padding: 1em;
+        @include border_radius(0.5em);
+    }
+    
+    .selected {
+        background-color: $cb-lighterblue;
+        border: 0.1em solid $cb-lightblue;
+    }
+}

@@ -1,6 +1,8 @@
 /* --- Civicboom colours --- */
 $cb-lightblue: #4974b8;
 $cb-darkblue: #3a4a97;
+$cb-lighterblue: lighten($cb-lightblue, 30%);
+$cb-light-inactive: #eee;
 
 
 /* --- Misc --- */
@@ -38,6 +40,7 @@ $actionbar-back: $titlebar-top;
 
 /* --- Page --- */
 $page-background: lighten($cb-lightblue, 30%);
+$page-border-width: 940px;
 
 
 /* --- Frags --- */
