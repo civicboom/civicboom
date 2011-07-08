@@ -4,7 +4,7 @@
 <div class="layout">
 <table><tr>
 
-<td class="body">
+<td class="body page_border">
 	${next.body()}
 	<p style="height: 0px; margin: 0px;"><!-- hack to widen the table up to its max-width, while remaining shrinkable -->
 	% for n in range(0, 50):
