@@ -15,7 +15,7 @@
 <td class="nav">
 <ul class='toc'>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='civicboom'  )}">${_("About")}</a>
-<li><a class="button" href="${h.url(controller='misc', action='about', id='howto'      )}">${_("FAQ")}</a>
+<li><a class="button" href="${h.url(controller='misc', action='about', id='faq'      )}">${_("FAQ")}</a>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='team'       )}">${_("Team")}</a>
 <li><a class="button" href="${h.url(controller='misc', action='about', id='investors'  )}">${_("Investors")}</a>
 <!--<li><a class="button" href="${h.url(controller='misc', action='about', id='press'      )}">${_("Press")}</a>-->

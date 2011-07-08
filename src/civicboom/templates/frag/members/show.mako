@@ -363,6 +363,7 @@
 	    <div class="frag_col">
 		
 	    ## Widget advert
+	    ## Needs href for widget popup
 	    % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
 		${components.advert(
 		    title="Put Hub Boombox on your site ",
