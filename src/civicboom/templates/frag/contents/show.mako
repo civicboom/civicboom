@@ -117,10 +117,12 @@
 		${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
 		${content_details_foot()}
 		${content_details()}
-		<span style="display: block; clear: both; padding: 0.5em;"></span>
+		<div class="separator" style="padding: 10px;"></div>
                 % if self.attr.share_kwargs:
                     ${share.AddThisLine(**self.attr.share_kwargs)}
                 % endif
+                ${content_license()}
+                <div class="separator"></div>
 	    </div>
 	</div>
     </div>
@@ -184,7 +186,6 @@
                 _("Withdrawn"),
             )}
         % endif
-        ${content_license()}
         </div>
     </div>
 
@@ -475,6 +476,7 @@
             d['content']['license']['url'] = 'http://www.creativecommons.org/licenses/' + license['id'][3:].lower() + '/3.0/'
     %>
     
+    <%doc>
     <div class="frag_list" style="margin-top:14px">
         <h2>License</h2>
         <div class="frag_list_contents">
@@ -482,6 +484,13 @@
                 <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
             </a>
         </div>
+    </div>
+    </%doc>
+    
+    <div class="license">
+        <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
+            <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
+        </a>
     </div>
     % endif
 </%def>

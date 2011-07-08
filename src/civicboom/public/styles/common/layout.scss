@@ -453,7 +453,6 @@ DIV#app .button {
 	position: relative;
 
 	.mo-help-r, .mo-help-l {
-		font-size: 12px;
 		display: none;
 		position: absolute;
 		z-index: 100;
@@ -465,6 +464,7 @@ DIV#app .button {
 		border: 8px solid lighten($cb-lightblue, 20%);
 		
 		color: #333;
+		font-size: 12px;
 		text-align: center;
 		text-shadow: none;
 		
@@ -472,6 +472,7 @@ DIV#app .button {
 		filter:alpha(opacity=9);
 		
 		@include border_radius(0.5em);
+		@include drop_shadow(1px, 1px, 5px, #333);
 	}
 	
 	.mo-help-l {

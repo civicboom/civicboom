@@ -83,7 +83,7 @@
 	    <input type='hidden' name='${config_key}' value='True'/>
 	    <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
 	    <div class="mo-help-l">
-		Be aware, by closing this advert it will disappear from your profile <b>forever!</b>
+		Click here to permanently hide this
 	    </div>
 	</form>
     </div>

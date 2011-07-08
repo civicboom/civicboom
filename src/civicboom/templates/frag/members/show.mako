@@ -197,11 +197,12 @@
 			<a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
 		    </div>
 		    
-		    <div style="clear: both; "></div>
+		    <div class="separator"></div>
 		</div>
 		% if self.attr.share_kwargs:
 		    ${share.AddThisLine(**self.attr.share_kwargs)}
 		% endif
+		<div class="separator"></div>
 	    </div>
 	    
 	    ## Request advert
