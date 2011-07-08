@@ -241,6 +241,7 @@
     <!-- AddThis Button END -->
     </%def>
 </%doc>
+
 <%def name="AddThisFragList(*args, **kwargs)">
     <%
         custom_share_line = kwargs.get('custom_share_line')
@@ -291,6 +292,51 @@
             </div>
         </div>
     </div>
+</%def>
+
+<%def name="AddThisLine(*args, **kwargs)">
+    <%
+        custom_share_line = kwargs.get('custom_share_line')
+        custom_share      = kwargs.get('custom_share')
+        if custom_share_line:   del kwargs['custom_share_line']
+        if custom_share:        del kwargs['custom_share']
+    %>
+    <%def name="sharebutton(type, **kwargs)">
+        <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
+            % for k,v in kwargs.iteritems():
+                addthis:${k}="${v.replace('\"','') if v else ""}"
+            % endfor
+        ></a></div></li>
+    </%def>
+	
+	## <h2>${_('Share this profile')}</h2>
+	<div class="frag_list_contents">
+	    <div class="social_sharing content note addthis_toolbox" style="padding-bottom: 0px;">
+		## Boombox link generation moved to show.mako (using custom_share directly)
+		<ul class="member">
+		    % for name in ['email', 'facebook', 'twitter', 'linkedin', 'compact']:
+			${sharebutton(name, **kwargs)}
+		    % endfor
+		    
+		## Janrain moved directly to show.mako too
+		## Possibly don't want to do these individually for both member and content
+		</ul>
+		<style>
+		    .link_more_hide span {
+			width:0; height:0;
+		    }
+		    .atclear {
+			clear: none;
+			display: none;
+		    }
+		</style>
+		<script>
+		    $(function(){
+			addthis.toolbox('.addthis_toolbox');
+		    });
+		</script>
+	    </div>
+	</div>
 </%def>
 
 ##------------------------------------------------------------------------------

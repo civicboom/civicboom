@@ -170,29 +170,6 @@ label.norm {
 }
 
 
-BODY.c-register.a-new_user.u-user {
-	.newform {
-		text-align:left;
-	}
-
-	.newform tr td {
-		vertical-align: bottom !important;
-		padding-bottom: 1em;
-	}
-
-	.newform .newformtitle {
-		font-size: 110%;
-		font-weight: bold;
-	}
-
-	.newform .smaller {
-		font-size: 75%;
-	}
-
-	.newform input {
-		width: 17em;
-	}
-}
 
 table.upgrade_plans {
 
@@ -278,7 +255,7 @@ BODY.c-misc.a-about {
 		margin-right: auto;
 		padding-top: 32px;
 		padding-bottom: 48px;
-		max-width: 940px;
+		max-width: $page-border-width; /*940px;*/
 	}
 	TD.body,
 	TD.nav {
@@ -286,11 +263,12 @@ BODY.c-misc.a-about {
 		padding: 16px;
 		padding-bottom: 16px;
 	}
-
+    /*
 	TD.body {
 		background: white;
 		border-radius: 16px;
 	}
+    */
 	TD H1 {
 		margin: 0px;
 	}

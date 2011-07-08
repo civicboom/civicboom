@@ -1,4 +1,5 @@
 @import "../common/_palette.scss";
+@import "../common/_mixin.scss";
 
 /*
  * If we have javascript, hide the things that are shown using javascript
@@ -195,7 +196,8 @@ H1 {
 .tooltip:hover {
 	z-index:25; background-color:#ccc;
 }
-.tooltip span {
+.tooltip span,
+.tooltip .tooltip_content {
 	display: none;
 	border-radius        : 5px 5px;
 	-moz-border-radius   : 5px;
@@ -204,7 +206,8 @@ H1 {
 	-webkit-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
 	-moz-box-shadow   : 0.2em 0.2em rgba(0, 0, 0, 0.1);
 }
-.tooltip:hover span{ /*the span will display just on :hover state*/
+.tooltip:hover span,
+.tooltip:hover .tooltip_content { /*the span will display just on :hover state*/
 	display:block;
 	position:absolute;
 	top:1em; left:1em; width:15em;
@@ -406,6 +409,18 @@ DIV#app .button {
     /* http://stackoverflow.com/questions/609273/convert-an-image-to-grayscale-in-html-css */
     filter: url(filters.svg#desaturate);
     -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(grayscale=1)";
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* Page Border                                                                */
+/*----------------------------------------------------------------------------*/
+
+.page_border {
+    background: white;
+    @include border_radius(16px);
+    padding: 16px;
+    max-width: $page-border-width;
 }
 
 

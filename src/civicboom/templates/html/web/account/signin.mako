@@ -7,8 +7,10 @@
     
     
     <div class="layout">
+        
         ${signin_actions()}
-        <table><tr><td class="body">
+        
+        <table><tr><td class="body page_border">
             <table class="signin">
                 <tr>
                     <td width="45%">
@@ -177,7 +179,7 @@ $(function() {
 
     ## Approved actions
     % if hasattr(c, 'action_objects'):
-        <div class="signin_action_description">
+        <div class="signin_action_description page_border">
         
         ## Accept
         % if   c.action_objects['action'] == 'accept':
