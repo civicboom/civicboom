@@ -218,10 +218,11 @@
 	    ## Response advert
 	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
 		${components.advert(title="Get involved!",
-		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request", "Click here!"],
+		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request"],
 		    int=1,
 		    heading="What next?",
 		    href=""+h.url(controller='misc', action='new_article'),
+		    prompt=1,
 		    config_key="advert_hand_response"
 		)}
 	    % endif
@@ -380,10 +381,11 @@
 	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
 		${components.advert(
 		    title="Make news with the Civicboom mobile app!",
-		    content_text="Grab the app and share your stories from the scene... click here!",
+		    content_text="Grab the app and share your stories from the scene...",
 		    advert_class="small",
 		    href=h.url(controller="misc", action="about", id="mobile"),
 		    int=2,
+		    prompt=1,
 		    config_key="advert_hand_mobile"
 		)}
 	    % endif
