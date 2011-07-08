@@ -17,7 +17,11 @@
 ##------------------------------------------------------------------------------
 
 <%def name="custom_share()">
-    <a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;" class="icon16 i_share"><span>Janrain</span></a>
+    <a href="#" class="janrain_link" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p>Get others involved!</p></a>
+</%def>
+
+<%def name="custom_share_widget()">
+    
 </%def>
 
 <%def name="init_vars()">
@@ -46,7 +50,7 @@
             'url'               : h.url('member', id=self.id, qualified=True) ,
             'title'             : self.name ,
             'image'             : self.member['avatar_url'] ,
-            'custom_share_line' : custom_share_line,
+            ## 'custom_share_line' : custom_share_line,
             'custom_share'      : custom_share
         }
         
@@ -148,11 +152,11 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     ## AllanC!?! (c.logged_in_persona.username or c.logged_in_user.username) this is a meaninless statement because or returns one or the other? logged_in_persona always not null if logged_in_user
-	% if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
-	<script>
-		${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
-	</script>
-	% endif
+    % if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
+    <script>
+	${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
+    </script>
+    % endif
 	
     ## Top row (avatar/about me)
     <div class="frag_top_row">
@@ -160,37 +164,65 @@
 	    ## About Me
 	    <div class="frag_list">
 		<div class="member_details">
+		    <div class="col_left">
+			<h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+			% if self.member.get('website'):
+			    <p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
+			% endif
+			% if self.member.get('description'):
+			    <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+			% endif
+			
+			<div class="separator"></div>
+			${actions_buttons()}
+		    </div>
 		    
-		    <div class="avatar">${member_avatar(img_class='photo')}</div>
-		    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
-		    % if self.member.get('website'):
-			<p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
-		    % endif
-		    % if self.member.get('description'):
-			<p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
-		    % endif
+		    <div class="col_right">
+			<div class="avatar">${member_avatar(img_class='photo')}</div>
+			% if 'message' in self.actions:
+			    ${popup.link(
+				h.args_to_tuple('new_message', target=self.id),
+				title = _('Send message'),
+				text  = h.literal("<div class='button'>%s</div>") % _('Send message'),
+			    )}
+			    ##<div style="clear: both;"></div>
+			% endif
+			<a href="#"><p class="boombox_link">
+			    ${popup.link(
+				h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+				title = _('Get _widget'),
+				text  = h.literal("%s") % _("Get _widget"),
+			    )}
+			</p></a>
+			<a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
+		    </div>
 		    
-		    <div class="separator"></div>
-		    ${actions_buttons()}
-            
-            
-		    % if 'message' in self.actions:
-                ${popup.link(
-                    h.args_to_tuple('new_message', target=self.id),
-                    title = _('Send message'),
-                    text  = h.literal("<div class='button' style='float: right; margin: 0;'>%s</div>") % _('Send message'),
-                )}
-                ##<div style="clear: both;"></div>
-		    % endif
-            
-		<div style="clear: both;"></div>
+		    <div style="clear: both;"></div>
 		</div>
+		${share.AddThisLine(**self.attr.share_kwargs)}
 	    </div>
 	    
-	    ## Adverts?
-	    ## % if "advert_hand_article" in self.adverts_hand:
-		## ${components.advert(content="WRITE SOME STORIES PEOPLE.", config_key="advert_hand_article")}
-	    ## % endif
+	    ## Request advert
+	    % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
+		${components.advert(
+		    title="Ask for stories",
+		    content_text="Now you've created this Hub, you can ask your audience for their stories by clicking on the \"Ask for stories\" button on the top left of this screen. Once you have done this, you can go to part 2:",
+		    int=1,
+		    heading="What next?",
+		    config_key="advert_hand_assignment"
+		)}
+	    % endif
+	    
+	    ## Response advert
+	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
+		${components.advert(title="Get involved!",
+		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request", "Click here!"],
+		    int=1,
+		    heading="What next?",
+		    href=""+h.url(controller='misc', action='new_article'),
+		    config_key="advert_hand_response"
+		)}
+	    % endif
 	    
 	    ## My requests
 	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
@@ -267,8 +299,6 @@
 	    </div>
 	    <div style="clear: both;"></div>
 	    ## Community ----------------------------------------
-	    
-	${share.AddThisFragList(**self.attr.share_kwargs)}
 	
 	% if self.num_unread_messages != None and self.num_unread_notifications != None:
 		${messages_frag_list()}
@@ -321,7 +351,6 @@
 	    icon = 'invite' ,
 	)}
 
-
 	% endif
 	
 	${member_map()}
@@ -332,6 +361,29 @@
     ## Right col
     <div class="frag_right_col">
 	    <div class="frag_col">
+		
+	    ## Widget advert
+	    % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
+		${components.advert(
+		    title="Put Hub Boombox on your site ",
+		    content_text='The Boombox is a "widget" that lives on your website within which all requests for stories set by you will automatically appear. People can respond to requests for news and submit their news through your Boombox, as video, images or audio directly to you for you to edit and publish',
+		    advert_class="small",
+		    int=2,
+		    config_key="advert_hand_widget"
+		)}
+	    % endif
+	    
+	    ## Mobile advert
+	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
+		${components.advert(
+		    title="Make news with the Civicboom mobile app!",
+		    content_text="Grab the app and share your stories from the scene... click here!",
+		    advert_class="small",
+		    href=h.url(controller="misc", action="about", id="mobile"),
+		    int=2,
+		    config_key="advert_hand_mobile"
+		)}
+	    % endif
 	    
 	    ## Accepted Assignments --------------------------------------
 	    

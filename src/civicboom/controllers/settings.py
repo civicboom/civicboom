@@ -109,8 +109,10 @@ add_setting('help_popup_created_user', _('Hide the help popup shown upon login t
 add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='help_adverts/help_popups', weight=401, type='boolean')
 add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='help_adverts/help_popups', weight=402, type='boolean')
 
-add_setting('advert_profile_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/adverts', weight=403, type='boolean')
-add_setting('advert_profile_group', _('Hide the info box encouraging the use of _groups'), group='help_adverts/adverts', weight=404, type='boolean')
+add_setting('advert_hand_response', _('Hide the info box encouraging users to start responding to requests'), group='help_adverts/adverts', weight=403, type='boolean')
+add_setting('advert_hand_assignment', _('Hide the info box encouraging _groups to create _assignments'), group='help_adverts/adverts', weight=404, type='boolean')
+add_setting('advert_hand_widget', _('Hide the info box encouraging the use of the _widget'), group='help_adverts/adverts', weight=405, type='boolean')
+add_setting('advert_hand_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/adverts', weight=406, type='boolean')
 
 add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
