@@ -187,13 +187,18 @@
 			    )}
 			    ##<div style="clear: both;"></div>
 			% endif
-			<a href="#"><p class="boombox_link">
-			    ${popup.link(
-				h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-				title = _('Get _widget'),
-				text  = h.literal("%s") % _("Get _widget"),
-			    )}
-			</p></a>
+			<div class="mo-help">
+			    <div class="mo-help-l">${_("The Boombox is a widget that lets your readers post their content and respond to requests for stories")}</div>
+			    <a href="#">
+				<p class="boombox_link">
+				    ${popup.link(
+					h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+					title = _('Get _widget'),
+					text  = h.literal("%s") % _("Get _widget"),
+				    )}
+				</p>
+			    </a>
+			</div>
 			<a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
 		    </div>
 		    
