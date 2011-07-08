@@ -46,7 +46,6 @@
     #if isinstance(c.widget_width, basestring) and int(c.widget_width) >= 280:
     #    additonal_layout_class = "wide"
 
-
     #if not c.widget['owner']:
     #    c.widget['owner'] = d.get('content',dict()).get('creator')
     #if not c.widget['owner']:
