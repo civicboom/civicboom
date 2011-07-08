@@ -310,7 +310,7 @@
     </%def>
 	
 	## <h2>${_('Share this profile')}</h2>
-	<div class="frag_list_contents">
+	## <div class="frag_list_contents">
 	    <div class="social_sharing content note addthis_toolbox" style="padding-bottom: 0px;">
 		## Boombox link generation moved to show.mako (using custom_share directly)
 		<ul class="member">
@@ -336,7 +336,7 @@
 		    });
 		</script>
 	    </div>
-	</div>
+	## </div>
 </%def>
 
 ##------------------------------------------------------------------------------

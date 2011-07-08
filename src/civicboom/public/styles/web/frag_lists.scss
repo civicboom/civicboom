@@ -45,6 +45,22 @@
 			text-decoration: none;
 		}
 	}
+	
+	.frag_top_row {
+		.social_sharing {
+			padding-left: 1em;
+			float: left;
+			
+			.thumbnail {
+				border: none;
+			}
+		}
+		
+		.license {
+			float: right;
+			padding-right: 1em;
+		}
+	}
 
 
 	/* --------------------------
@@ -130,16 +146,7 @@
 		}
 
 
-		/*------------------------------ Members -------------------------------------*/
-		.member {			
-			li {
-				display: inline;
-				
-				.thumbnail {
-					// margin-bottom: 0.2em;
-				}
-			}
-		}
+		
 
 
 		/*----------------------------- Messages -------------------------------------*/
@@ -154,6 +161,17 @@
 			.subject     {font-weight: bold; background-color: #ccc;}
 			.content a   {font-weight: bold;}
 			.icon_delete {float: right;}
+		}
+	}
+	
+	/*------------------------------ Members -------------------------------------*/
+	.member {			
+		li {
+			display: inline;
+			
+			.thumbnail {
+				// margin-bottom: 0.2em;
+			}
 		}
 	}
 	
