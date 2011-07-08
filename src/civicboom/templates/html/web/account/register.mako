@@ -136,7 +136,7 @@
 		<td>
             <input type="password" name="password"         value="" />
             <br/>
-            <span class="smaller">(minimum of 5 characters):</span>
+            <p class="smaller">(minimum of 5 characters):</p>
             ${invalid('password')}
         </td>
   </tr>

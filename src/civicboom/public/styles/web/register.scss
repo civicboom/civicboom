@@ -19,6 +19,9 @@ BODY.c-register.a-new_user.u-user {
 	.newform tr td {
 		vertical-align: top !important;
 		padding-bottom: 1em;
+        p {
+            margin-top: 0.5em;
+        }
 	}
 
 	.newform th {
