@@ -191,14 +191,14 @@
     %>
     <table><tr>
         <td class="description">
-            <h2>Grab the _widget</h2>
+            <h2>${_('Grab the _widget')}</h2>
             <ol>
-                <li>Give your Boombox a title</li>
-                <li>Choose from the dropdown the content you want to show on the Boombox</li>
-                <li>Add the right colours and set your size of the Boombox (note the font size will remain the same).</li>
-                <li>Click on preview</li>
-                <li>When you're happy, copy and paste the code into an HTML page</li>
-                <li>Start Booming out your requests for stories!</li>
+                <li>${_('Give your _widget a title')}</li>
+                <li>${_('Choose from the dropdown the content you want to show on the Boombox')}</li>
+                <li>${_('Add the right colours and set your size of the _widget (note the font size will remain the same).')}</li>
+                <li>${_('Click on preview')}</li>
+                <li>${_("When you're happy, copy and paste the code into an HTML page")}</li>
+                <li>${_('Start Booming out your _assignments for _articles!')}</li>
             </ol>
         </td>
     
@@ -296,12 +296,12 @@
     %>
     <table class="">
         <td class="description">
-            <h2>Grab the Animated Boombox:</h2>
+            <h2>${_('Grab the Animated _widget:')}</h2>
             <ul>
-                <li>This Boombox animates your requests for stories.</li>
-                <li>It has a fixed size of 280 x 180.</li>
-                <li>To get your Boombox, simply copy and paste the code into an HTML page.</li>
-                <li>Note: The dynamic Boombox requires Java script for all viewers.</li>
+                <li>${_('This _widget animates your _assignments for _articles.')}</li>
+                <li>${_('It has a fixed size of 280 x 180.')}</li>
+                <li>${_('To get your _widget, simply copy and paste the code into an HTML page.')}</li>
+                <li>${_('Note: The dynamic _widget requires Javascript for all viewers.')}</li>
             </ul>
         </td>
         <td class="preview">
