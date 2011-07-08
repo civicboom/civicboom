@@ -634,7 +634,7 @@
 			</table>
               <div class="padded">This content will be published under the Creative Commons Attributed licence</div>
               <div class="padded">
-                <a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
+                <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
               </div>
         </div>
     </fieldset>

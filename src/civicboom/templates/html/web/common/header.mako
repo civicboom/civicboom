@@ -283,7 +283,7 @@
         <tr>
             <td colspan="4">
                 <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
-                <span style="float:right;"><a href="${h.url('new_group')}" class="sub_option">${_("Create a _Group")}</a></span>
+                <span style="float:right;"><a href="${h.url(controller='misc', action='what_is_a_hub')}" class="sub_option">${_("Create a _Group")}</a></span>
             </td>
         </tr>
         <%def name="persona_select(member, **kwargs)">

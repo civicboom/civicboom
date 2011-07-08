@@ -5,20 +5,28 @@
 <h1>Civicboom connects the people that have news want the </h1>
 
 <p><h2>${_('How does it work? Simple.')}</h2>
-${_('1. A news organisation or journalist asks for _articles.')}
-${_('2. Their readers respond with videos, photo, audio and text.')}
-${_('It really is that simple.')} </p>
+<ol>
+	<li>${_('A news organisation or journalist asks for _articles.')}</li>
+	<li>${_('Their readers respond with videos, photo, audio and text.')}</li>
+	<li style="list-style: none;">${_('It really is that simple.')}</li>
+</ol>
+</p>
  
 <p><h2>${_('Civicboom for journalists, bloggers, publishers,  media organisations')}</h2>
-${_('- Engage your audience')}
-${_('- Get relevant news _articles')}
-${_('- Build your community')}</p>
+<ul>
+	<li>${_('Engage your audience')}</li>
+	<li>${_('Get relevant news _articles')}</li>
+	<li>${_('Build your community')}</li>
+</ul>
+</p>
 
 <p><h2>${_('Civicboom for individuals')}</h2>
-${_('- Share your _articles and help make the news')}
-${_('- Report the unreported')}
-${_('- Get published and get recognition')}</p>
-
+<ul>
+	<li>${_('Share your _articles and help make the news')}</li>
+	<li>${_('Report the unreported')}</li>
+	<li>${_('Get published and get recognition')}</li>
+</ul>
+</p>
 
 <p><h1><a href="/account/signin" class="button" style="float:right;"> Sign up </a></h1>
 <h1>Don't just read it. Feed it.</h1>

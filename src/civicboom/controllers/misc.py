@@ -126,6 +126,10 @@ class MiscController(BaseController):
         if not id:
             raise action_error(code=404, message="No id")
         return action_ok(data={'type':type, 'id':id})
+    
+    @web
+    def what_is_a_hub(self):
+        return action_ok()
 
     def opensearch(self, format="xml"):
         import base64

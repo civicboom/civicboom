@@ -44,7 +44,7 @@
 					text-align: center;
 					
 					.avatar {
-						
+						padding-top: 1em;
 					}
 					
 					.button {
@@ -67,6 +67,10 @@
 			
 			.social_sharing {
 				padding-left: 1em;
+				
+				.thumbnail {
+					border: none;
+				}
 			}
 		}
 	
