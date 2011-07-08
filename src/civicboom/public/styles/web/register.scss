@@ -2,19 +2,34 @@
 @import "../common/_mixin.scss";
 
 BODY.c-register.a-new_user.u-user {
+
+	.layout {
+        margin-top: 1em;
+		margin-left: auto;
+		margin-right: auto;
+        
+        text-align: center;
+	}
+
 	.newform {
+        margin-top: 1em;
 		text-align:left;
 	}
 
 	.newform tr td {
-		vertical-align: bottom !important;
+		vertical-align: top !important;
 		padding-bottom: 1em;
 	}
 
-	.newform .newformtitle {
+	.newform th {
+        vertical-align: top !important;
 		font-size: 110%;
 		font-weight: bold;
+        width: 140px;
 	}
+    .newform th:after {
+        content: ":";
+    }
 
 	.newform .smaller {
 		font-size: 75%;
@@ -25,15 +40,26 @@ BODY.c-register.a-new_user.u-user {
 	}
     
     .user_type_option {
+        display: inline-block;
+        width: 250px;
+        height: 140px;
+        
         background-color: $cb-light-inactive;
         border: 0.1em solid $cb-light-inactive;
         img {
             float: right;
+            width: 50px;
         }
-        width: 43%;
-        margin: 1em;
+        
         padding: 1em;
         @include border_radius(0.5em);
+        vertical-align: text-top;
+        margin-right: 1em;
+        
+        p {
+            margin-top   : 0.5em;
+            margin-bottom: 0.5em;
+        }
     }
     
     .selected {
