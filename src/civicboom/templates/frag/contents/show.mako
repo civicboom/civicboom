@@ -117,7 +117,10 @@
 		${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
 		${content_details_foot()}
 		${content_details()}
-		<span style="display: block; clear: both;"></span>
+		<span style="display: block; clear: both; padding: 0.5em;"></span>
+                % if self.attr.share_kwargs:
+                    ${share.AddThisLine(**self.attr.share_kwargs)}
+                % endif
 	    </div>
 	</div>
     </div>
@@ -156,9 +159,12 @@
             </div>
           </div>
 	</div></%doc>
+      
+      <%doc>
         % if self.attr.share_kwargs:
             ${share.AddThisFragList(**self.attr.share_kwargs)}
         % endif
+        </%doc>
         
         ##<h2>${_("Content by")}</h2>
         

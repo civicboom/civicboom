@@ -26,7 +26,7 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(title, content_text=None, content_list=None, href=None, advert_class='', heading=None, int=None, config_key=None, background=None)">
+<%def name="advert(title, content_text=None, content_list=None, href=None, advert_class='', heading=None, int=None, prompt=None, config_key=None)">
     % if config_key: ## and config_key in self.advert_list:
     <div class="advert">
         ## Display advert disable link
@@ -55,6 +55,9 @@
 			<li>- ${item}</li>
 		    % endfor
 		</ul>
+	    % endif
+	    % if prompt:
+		<br /><i>Click here!</i>
 	    % endif
 	</div>
 	% if href:
