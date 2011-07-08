@@ -8,6 +8,10 @@ from sqlalchemy.orm     import joinedload
 from sqlalchemy         import and_
 from sqlalchemy.orm.exc import NoResultFound
 
+from sqlalchemy import select
+
+from sqla_hierarchy import *
+
 from cbutils.misc import make_username
 
 import logging
@@ -287,6 +291,29 @@ def get_content(content):
         return content
     return get_content_nocache(content)
 
+def find_content_root(content):
+    content = get_content(content)
+    
+    if not content:
+        raise action_error(_('unable to find content'), code=404)
+    
+    if not content.parent:
+        return False
+    
+    qry = Hierarchy(
+        Session,
+        Content.__table__,
+        select([Content.__table__.c.id, Content.__table__.c.parent_id]),
+        starting_node=content.id,
+        return_leaf=True,
+    ) # FIXME: Greg
+    #print qry
+    ev = Session.execute(qry).first()
+    
+    if ev:
+        return get_content(ev.id) or False
+    else:
+        return False
 
 def get_tag(tag):
     """

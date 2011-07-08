@@ -31,7 +31,7 @@
                 'desc': {
                     'new_assignment': 'New _assignment on _site_name',
                     'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _hub on _site_name',
+                    'new_group'     : 'New _group on _site_name',
                     'new_user'      : "I'm on _site_name",
                     'new_article'   : 'New _article on _site_name',
                 },
@@ -54,7 +54,7 @@
                 'desc': {
                     'new_assignment': 'My _assignment on _site_name',
                     'new_response'  : 'My _article on _site_name',
-                    'new_group'     : 'My _hub on _site_name',
+                    'new_group'     : 'My _group on _site_name',
                     'new_user'      : "I'm on _site_name",
                     'new_article'   : 'My _article on _site_name',
                 },
@@ -77,7 +77,7 @@
                 'desc': {
                     'new_assignment': '_Assignment on _site_name',
                     'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Hub on _site_name',
+                    'new_group'     : '_Group on _site_name',
                     'new_user'      : "Profile on _site_name",
                     'new_article'   : '_Article on _site_name',
                 },
@@ -102,7 +102,7 @@
                 'desc': {
                     'new_assignment': 'New _assignment on _site_name',
                     'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _hub on _site_name',
+                    'new_group'     : 'New _group on _site_name',
                     'new_user'      : "I'm on _site_name",
                     'new_article'   : 'New _article on _site_name',
                 },
@@ -125,7 +125,7 @@
                 'desc': {
                     'new_assignment': 'Our _assignment on _site_name',
                     'new_response'  : 'Our _article on _site_name',
-                    'new_group'     : 'Our _hub on _site_name',
+                    'new_group'     : 'Our _group on _site_name',
                     'new_user'      : "We're on _site_name",
                     'new_article'   : 'Our _article on _site_name',
                 },
@@ -148,7 +148,7 @@
                 'desc': {
                     'new_assignment': '_Assignment on _site_name',
                     'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Hub on _site_name',
+                    'new_group'     : '_Group on _site_name',
                     'new_user'      : "Profile on _site_name",
                     'new_article'   : '_Article on _site_name',
                 },
@@ -174,7 +174,7 @@
     share_descs = {
         'new_assignment': 'New _assignment on _site_name',
         'new_response'  : 'New _article on _site_name',
-        'new_group'     : 'New _hub on _site_name',
+        'new_group'     : 'New _group on _site_name',
         'new_user'      : "I'm on _site_name",
         'new_article'   : 'New _article on _site_name',
     }
