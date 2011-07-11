@@ -26,7 +26,7 @@ class PaymentsController(BaseController):
         raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         
         if not c.logged_in_persona.payment_account:
-            raise action_error(_('There is no payment account associated with this user, please contact us if you wish to setup a payment account'), code=404)
+            raise action_error(_('There is no payment account associated with this user, please contact us if you wish to set up a payment account'), code=404)
         
         account = c.logged_in_persona.payment_account
 

@@ -122,7 +122,7 @@
  scrolling='no'\
  frameborder='0'\
 >\
-<a href='${h.url('member', id=widget_default['owner'], sub_domain='www')}'>${_('%s on _site_name' % widget_default['owner'])}</a>\
+<a href='${h.url('member', id=widget_default['owner'], sub_domain='www')}'>${_('%s on _site_name') % widget_default['owner']}</a>\
 </iframe>\
 % endif
 </%def>

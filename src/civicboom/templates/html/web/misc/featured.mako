@@ -6,7 +6,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="title()">${_('Featured Content')}</%def>
-<%def name="description()">${_('Highlights of whats happening now on _site_name')}</%def>
+<%def name="description()">${_("Highlights of what's happening now on _site_name")}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body

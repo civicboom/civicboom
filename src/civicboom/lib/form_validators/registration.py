@@ -119,7 +119,7 @@ class ReCaptchaValidator(validators.FancyValidator):
     messages = {
         'incorrect'       : _('reCAPTCHA field is incorrect'),
         'missing'         : _("Missing reCAPTCHA value."),
-        'network_failure' : _("unable to contact reCAPTCHA server to validate response, our admins have been notifyed"),
+        'network_failure' : _("unable to contact reCAPTCHA server to validate response, our admins have been notified"),
         'recapture_error' : _("reCAPTCHA server returned an error %(error_code)s, the problem has been logged and reported to _site_name"),
     }
 
