@@ -167,12 +167,11 @@ HEADER #persona_select {
 		font-size: 88%;
 		background-color: white;
 
-		/*
 		border-bottom-left-radius        : 8px;
 		-webkit-border-bottom-left-radius: 8px;
 		-moz-border-radius               : 0px 0px 0px 8px;
-		*/
-		@include border_radius(8px);
+		// the include rounds all corners; we only want the bottom left done
+		//@include border_radius(8px);
 
 		-webkit-transition: right 0.15s ease-in;
 		-moz-transition: right 0.15s ease-in;

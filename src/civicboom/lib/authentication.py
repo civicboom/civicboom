@@ -149,7 +149,7 @@ def authorize(_target, *args, **kwargs):
                         login_redirect_action = json.dumps(multidict_to_dict(request.POST))
                     except:
                         set_flash_message(_('error saving POST operation, please login and try the action again. If the problem persists please contact us'))
-                        log.error(        _('POST was unable to encode to put in session as the POST has filedata encoded in it'))
+                        log.error(        _('POST was unable to encode to put in session as the POST has file data encoded in it'))
                 else:
                     login_redirect_action = json.dumps(dict())
                 if login_redirect_action:

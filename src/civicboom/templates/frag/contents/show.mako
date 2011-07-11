@@ -800,7 +800,7 @@
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disassociate') ,
             value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>&nbsp;%s") % _('Disassociate'),
-            title           = _("Dissacociate your content from this response") ,
+            title           = _("Disassociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
         )}

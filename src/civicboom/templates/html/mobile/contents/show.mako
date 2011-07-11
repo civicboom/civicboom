@@ -28,7 +28,7 @@
 </%def>
 
 <%def name="page_title()">
-    ${_("_site_name Mobile - " + d['content']['title'])}
+    ${_("_site_name Mobile - %s") % d['content']['title']}
 </%def>
 
 <%def name="content_main(content)">

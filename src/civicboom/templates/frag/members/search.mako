@@ -26,6 +26,7 @@
 <%def name="body()">
 	<% args, kwargs = c.web_params_to_kwargs %>
     <div class="frag_col">
+	    <div class="frag_list">
         <form class="form" id="form_search" action="${url('members')}" method="GET"
               onsubmit="cb_frag($(this), '/members.frag?' + $('#form_search').serialize(), 'frag_col_1'); return false;">
             <fieldset>
@@ -49,5 +50,6 @@
                 <input type="submit" value="Search" class="button"/>
             </fieldset>
         </form>
+		</div>
     </div>
 </%def>
