@@ -855,27 +855,29 @@
 ## Get involved
 ##------------------------------------------------------------------------------
 <%def name="get_involved()">
-    <div class="information" style="width: 35em;">
-	<div class="popup-title">
-	    Why should you get involved?
-	</div>
-	<div class="popup-message">
-	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
-	    <ol>
-		<li>Get published</li>
-		<li>Get recognition</li>
-		<li>Make the news!</li>
-	    </ol>
-	</div>
-	<div class="popup-tag-line">
-	    Don't just read it. Feed it.
-	</div>
-    </div>
-    <div class="popup-icons">
-	<img src="/images/misc/shareicons/video_icon.png" />
-	<img src="/images/misc/shareicons/camera_icon.png" />
-	<img src="/images/misc/shareicons/audio_icon.png" />
-    </div>
+    <div class="wrapper">
+        <div class="information">
+            <div class="popup-title">
+                Why should you get involved?
+            </div>
+            <div class="popup-message">
+                By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+                <ol>
+                    <li>Get published</li>
+                    <li>Get recognition</li>
+                    <li>Make the news!</li>
+                </ol>
+            </div>
+            <div class="popup-tag-line">
+                Don't just read it. Feed it.
+            </div>
+        </div>
+        <div class="popup-icons">
+            <img src="/images/misc/shareicons/video_icon.png" />
+            <img src="/images/misc/shareicons/camera_icon.png" />
+            <img src="/images/misc/shareicons/audio_icon.png" />
+        </div>
+    </wrapper>
 </%def>
 
 ##------------------------------------------------------------------------------
