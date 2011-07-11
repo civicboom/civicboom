@@ -149,8 +149,8 @@
 ##------------------------------------------------------------------------------
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
-        <input type="search" name="term" placeholder="Search" class="search_input">
-        <input type="submit" name="type" class="button b0" value="All">
+        <input type="search" name="term" placeholder="Search" class="search_input" id="search_input">
+        <input type="submit" name="type" class="button b0" value="All" id="search_default">
         <input type="submit" name="type" class="button b1" value="Requests">
         <input type="submit" name="type" class="button b2" value="Stories">
         <input type="submit" name="type" class="button b3" value="Members">
