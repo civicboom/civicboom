@@ -1,4 +1,4 @@
 19116c19116
 <                     contentHTML += '<a class="link" href="'+link+'" target="_blank">';
 ---
->                     contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'\'); return false;">';
+>                     contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'.frag\'); return false;">';
