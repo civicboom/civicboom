@@ -140,23 +140,27 @@
 <%def name="front_windows()">
 	<div class="windows">
 		<div class="window" id="left">
-			
+			<img src="/images/misc/titlepage/middle_panel.png" alt="Request" />
 		</div>
 		
-		<div class="symbol" id="plus">
-			+
-		</div>
-			
-		<div class="window" id="center">
-			<img src="/images/misc/titlepage/middle_panel.png" alt="Respond" />
-		</div>
-		
-		<div class="symbol" id="equals">
-			=
+		<div class="window_wrapper">
+			<div class="symbol" id="plus">
+				+
+			</div>
+				
+			<div class="window" id="center">
+				<img src="/images/misc/titlepage/middle_panel.png" alt="Respond" />
+			</div>
 		</div>
 		
-		<div class="window" id="right">
+		<div class="window_wrapper">
+			<div class="symbol" id="equals">
+				=
+			</div>
 			
+			<div class="window" id="right">
+				<img src="/images/misc/titlepage/last_panel.png" alt="Get published" />
+			</div>
 		</div>
 		
 		<div style="clear: both;"></div>

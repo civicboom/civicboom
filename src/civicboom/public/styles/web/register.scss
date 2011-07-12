@@ -29,6 +29,10 @@ BODY.c-register.a-new_user.u-user {
 		font-size: 110%;
 		font-weight: bold;
         width: 140px;
+	
+		.step {
+			font-size: 300%;
+		}
 	}
     .newform th:after {
         content: ":";
@@ -45,11 +49,13 @@ BODY.c-register.a-new_user.u-user {
     .user_type_option {
         display: inline-block;
         position: relative;
-        width: 250px;
-        height: 140px;
+        width: 40%;
+        min-height: 165px;
+	font-size: 120%;
         
         background-color: $cb-light-inactive;
         border: 0.1em solid $cb-light-inactive;
+	
         img {
             float: right;
             width: 50px;
@@ -57,8 +63,8 @@ BODY.c-register.a-new_user.u-user {
         
         padding: 1em;
         @include border_radius(0.5em);
-        vertical-align: text-top;
-        margin-right: 1em;
+        vertical-align: middle;
+        // margin-right: 1em;
         
         p {
             margin-top   : 0.5em;
@@ -67,6 +73,18 @@ BODY.c-register.a-new_user.u-user {
         span {
             display: none;
         }
+    }
+    
+    .or {
+	display: inline-block;
+	position: relative;
+	width: 10%;
+	font-size: 300%;
+	text-align: center;
+	
+	p {
+		margin: 0;
+	}
     }
     
     .selected {

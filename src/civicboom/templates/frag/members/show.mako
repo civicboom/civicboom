@@ -137,7 +137,8 @@
         # GregM: Hand holding adverts
         hand_adverts = {
             'ind'    : ['advert_hand_article', 'advert_hand_response', 'advert_hand_mobile'],
-            'org'  : ['advert_hand_hub', 'advert_hand_assignment', 'advert_hand_widget']
+	    'org'    : ['advert_hand_content', 'advert_hand_hub', 'advert_hand_mobile'],
+            ## 'org'  : ['advert_hand_hub', 'advert_hand_assignment', 'advert_hand_widget']
         }
         
         self.adverts_hand = []
@@ -170,7 +171,11 @@
 			    <p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
 			% endif
 			% if self.member.get('description'):
-			    <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+			    % if self.member['description'] != "":
+				<p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+			    % else:
+				<p class="description">To complete your profile, add a description <a href="/settings">here</a></p>
+			    % endif
 			% endif
 			
 			<div class="separator"></div>
@@ -210,32 +215,82 @@
 		<div class="separator"></div>
 	    </div>
 	    
-	    ## Request advert
+	    ##------------------------------------------------------------------
+	    ## Guide #1
+	    ##------------------------------------------------------------------
+	    
+	    ## Request advert (Hubs)
 	    % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
+		<%
+		contents = [
+		    {
+			'title':	"Ask for stories",
+			'content_text':	"Now you've created this Hub, you can ask your audience for their stories by clicking on the \"Ask for stories\" button on the top left of this screen. Once you have done this, you can go to part 2:",
+		    }
+		]
+		%>
 		${components.advert(
-		    title="Ask for stories",
-		    content_text="Now you've created this Hub, you can ask your audience for their stories by clicking on the \"Ask for stories\" button on the top left of this screen. Once you have done this, you can go to part 2:",
+		    contents=contents,
 		    int=1,
 		    heading="What next?",
 		    config_key="advert_hand_assignment"
 		)}
 	    % endif
 	    
-	    ## Response advert
-	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
-		${components.advert(title=_("Get involved!"),
-		    content_list=[
-				_("Post your story directly to a news organisation"),
-				_("Post your story on _site_name"),
-				_("Respond to a request")
-			],
+	    ## Content advert (Journalists)
+	    % if "advert_hand_content" in self.adverts_hand and not c.logged_in_user.config["advert_hand_content"]:
+		<%
+		    contents = [
+			{
+			    'title':	'Ask for stories!',
+			    'content_text':	'You can ask your audience for their stories but clicking on the "Ask for stories" button on the top left of this screen.',
+			    'href':	''+h.url('new_content', target_type='assignment'),
+			    'prompt':	1
+			},
+			{
+			   'title':	'Post stories!',
+			    'content_list':	[
+						    _("Send your stories directly to people that want them"),
+						    _("Post your news on Civicboom"),
+						    _("Respond to a request")
+						],
+			    'href':	''+h.url(controller='misc', action='new_article'),
+			    'prompt':	1
+			}
+		    ]
+		%>
+		${components.advert(
+		    contents=contents,
 		    int=1,
 		    heading=_("What next?"),
-		    href=""+h.url(controller='misc', action='new_article'),
-		    prompt=1,
+		    config_key="advert_hand_content"
+		)}
+	    % endif
+	    
+	    ## Response advert (Individuals)
+	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
+		<%
+		    contents = [
+			{
+			    'title':	'Get involved!',
+			    'content_list':	[
+						    _("Post your story directly to a news organisation"),
+						    _("Post your story on _site_name"),
+						    _("Respond to a request")
+						],
+			    'href':	''+h.url(controller='misc', action='new_article'),
+			    'prompt':	1
+			}
+		    ]
+		%>
+		${components.advert(
+		    contents=contents,
+		    int=1,
+		    heading=_("What next?"),
 		    config_key="advert_hand_response"
 		)}
 	    % endif
+	    
 	    
 	    ## My requests
 	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
@@ -375,31 +430,75 @@
     ## Right col
     <div class="frag_right_col">
 	    <div class="frag_col">
-		
-	    ## Widget advert
-	    ## Needs href for widget popup
+	    
+	    ##------------------------------------------------------------------
+	    ## Guides #2
+	    ##------------------------------------------------------------------
+	    ## Widget advert (Hubs)
 	    % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
+		<%
+		    contents = [
+			{
+			    'advert_class':	'small',
+			    'title':	'Put Hub Boombox on your site!',
+			    'content_text':	'The Boombox is a "widget" that lives on your website within which all requests for stories set by you will automatically appear. People can respond to requests for news and submit their news through your Boombox, as video, images or audio directly to you for you to edit and publish',
+			    'prompt':	1,
+			}
+		    ]
+		%>
 		${components.advert(
-		    title="Put Hub Boombox on your site ",
-		    content_text='The Boombox is a "widget" that lives on your website within which all requests for stories set by you will automatically appear. People can respond to requests for news and submit their news through your Boombox, as video, images or audio directly to you for you to edit and publish',
-		    advert_class="small",
+		    contents=contents,
 		    int=2,
 		    config_key="advert_hand_widget"
 		)}
 	    % endif
 	    
-	    ## Mobile advert
-	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
+	    ## Hub/widget hybrid advert (Journalists)
+	    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
+		<%
+		    contents = [
+			{
+			    'advert_class':	'small',
+			    'title':	'Create a Hub!',
+			    'content_text':	'A Hub is a user (or collection of users) unified under one "identity" - be it as as a professional journalist, an organisation, a title or issue from which requests for stories can be created for others to respond to. All Hubs can create a bespoke Boombox. This is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for stories.',
+			    'prompt':	1,
+			},
+			{
+			    'title':	'Put your personal profile Boombox on your site!',
+			    'content_text':	'You can grab your personal Boombox by clicking the "Get Boombox" link under your personal avatar (this works exactly like the Hub Boombox, but just feeds through your personal requests for stories - see above.)',
+			    'prompt':	1,
+			}
+		    ]
+		%>
 		${components.advert(
-		    title="Make news with the Civicboom mobile app!",
-		    content_text="Grab the app and share your stories from the scene...",
-		    advert_class="small",
-		    href=h.url(controller="misc", action="about", id="mobile"),
+		    contents=contents,
 		    int=2,
-		    prompt=1,
+		    config_key="advert_hand_hub"
+		)}
+	    % endif
+	    
+	    ## Mobile advert (Individuals)
+	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
+		<%
+		    contents = [
+			{
+			    'advert_class':	'small',
+			    'title':	'Make news with the Civicboom mobile app!',
+			    'content_text':	'Grab the app and share your stories from the scene...',
+			    'prompt':	1,
+			    'href':	h.url(controller="misc", action="about", id="mobile"),
+			}
+		    ]
+		%>
+		${components.advert(
+		    contents=contents,
 		    config_key="advert_hand_mobile"
 		)}
 	    % endif
+	    
+	    ##------------------------------------------------------------------
+	    ## Guides #3
+	    ##------------------------------------------------------------------
 	    
 	    ## Accepted Assignments --------------------------------------
 	    

@@ -47,14 +47,19 @@ BODY.c-misc.a-titlepage {
 	/* --- Windows --- */
 	.windows {
 	    font-size: 500%;
-	    width: 800px;
+	    // width: 800px;
 	    margin: auto;
 	    text-align: center;
 	    padding: 0;
 	    
+	    .window_wrapper {
+		margin: 0;
+		padding: 0;
+	    }
+	    
 	    .window {
 		// border: 1px solid black;
-		height: 250px;
+		height: 200px;
 		float: left;
 		padding: 0;
 		
