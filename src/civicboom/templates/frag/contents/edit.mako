@@ -154,6 +154,14 @@
             confirm_text=_("Are your sure you want to delete this content?") ,
             #json_form_complete_actions = "cb_frag_remove($(this));" ,
             json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
+            modal_params = dict(
+                title='Delete posting',
+                message='Are you sure you want to delete this posting?',
+                buttons=dict(
+                    yes="Yes. Delete",
+                    no="No. Take me back!",
+                )
+            ),
         )}
         <span class="separtor"></span>
         % endif
@@ -770,7 +778,7 @@
         
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>)
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
             <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
@@ -797,54 +805,6 @@
 </%def>
 
 <%def name="what_now_popup()">
-
-    <%doc>
-    ## AllanC - WHY IS THIS HERE!!! .. Why is it duplicatied from the suibmit buttons above?
-    
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
-
-        <%
-            button_id = "submit_%s_%s" % (name, self.id)
-            if not title_text:
-                title_text = _(name)
-        %>
-
-        % if mo_text:
-            <span class="mo-help">
-            <div class="${mo_class}">
-                <h2>${title_text}</h2>
-                <p>${_(mo_text)}</p>
-            </div>
-        % endif
-                <input
-                    type    = "submit"
-                    id      = "${button_id}"
-                    name    = "submit_${name}"
-                    class   = "submit_${name} button"
-                    value   = "${title_text}"
-                    onclick = "
-                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                        if (!$(this).hasClass('disabled')) {
-                            $(this).addClass('disabled');
-                            add_onclick_submit_field($(this));
-                            % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
-                            % endif
-                            setTimeout(function() {
-                                $(this).removeClass('disabled');
-                            }, 1000);
-                        }
-                        else {
-                            return false;
-                        }
-                    "
-                />
-        % if mo_text:
-            </span>
-        % endif
-    </%def>
-    </%doc>
-
     <div class="information">
         <p>${member_includes.avatar(c.logged_in_persona)} ${c.logged_in_persona}</p>
         % if self.selected_type == "assignment":
@@ -865,18 +825,21 @@
                 </div>"
                 <div class="popup-message">
                     <ol>
-                    <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
-                    <li>${_("Be listed as a response against the request")}</li>
-                    <li>${_("Appear in your follower's notification stream")}</li>
+                        <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
+                        <li>${_("Be listed as a response against the request")}</li>
+                        <li>${_("Appear in your follower's notification stream")}</li>
                     </ol>
                 </div>
             % else:
-                <div class="popup-title">"
-                    ${_("Once you post this story, it will appear in your follower's notification stream.")}
-                </div>
                 <div class="popup-title">
-                    ${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}
-                </div>"
+                    ${_("Once you post this story:")}
+                </div>
+                <div class="popup-message">
+                    <ol>
+                        <li>${_('It will appear in your follower's notification stream.')}</li>
+                        <li>${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}</li>
+                    </ol>
+                </div>
             % endif
         % endif
         <div style="font-size: 130%; text-align: center;">

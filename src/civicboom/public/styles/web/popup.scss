@@ -12,6 +12,10 @@
         .popup-title {
                 font-size: 250%;
         }
+        .popup-icon {
+            float: right;
+            margin-left: 1em;
+        }
         
         .popup-message {
             font-size: 150%;
@@ -21,12 +25,23 @@
         .popup-tag-line {
                 font-size: 250%;
         }
+        .button {
+          font-size: 125%;
+          //width: 8em;
+          vertical-align: middle;
+          padding: 10px !important;
+          //margin-right: 1em;
+        }
+        p {
+          margin-top: 0.5em;
+        }
     }
     
     .popup-icons {
         float: right;
         height: 100%;
         width: 7em;
+        margin-left: 1em;
         
         img {
             width: 100%;
@@ -60,4 +75,9 @@
         max-width: 600px;
         max-height: 400px;
     }
+}
+
+
+.popup_hidden {
+  display: none !important;
 }

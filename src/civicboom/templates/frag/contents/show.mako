@@ -1,5 +1,8 @@
 <%inherit file="/frag/common/frag.mako"/>
-<%! import datetime %>
+<%!
+    import datetime
+    from webhelpers.html import HTML, literal
+%>
 
 <%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"     />
 <%namespace name="flag"            file="/frag/content_actions/flag.mako"  />
@@ -366,7 +369,7 @@
                 h.args_to_tuple('new_content', parent_id=content_dict['id']) ,
                 css_class = 'button',
                 value     = _("Share your story") ,
-                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); $.modal.close(); """)  , 
             )}
             </div>
         </li>
@@ -793,10 +796,19 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
             value           = _('Approve & Lock'),
-            value_formatted = h.literal("<span class='icon16 i_approve'></span>&nbsp;%s") % _('Approve & Lock'),
+            value_formatted = h.literal("<span class='icon16 i_approved'></span>&nbsp;%s") % _('Approve & Lock'),
             title           = _("Approve and lock this content so no further editing is possible"),
             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Lock and approve this',
+                message = HTML.p("When something is locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free."),
+                buttons = dict(
+                    yes = 'Yes. Lock and approve',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/lock.png',
+            ),
         )}
         <span class="separtor">&nbsp;</span>
     % endif
@@ -807,6 +819,15 @@
             value_formatted = h.literal("<span class='icon16 i_seen'></span>&nbsp;%s") % _('Viewed'),
             title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Mark this as viewed',
+                message = HTML.p('Use this to tell the contributor that you have viewed this content, but are not going to Lock and Approve it.'),
+                buttons = dict(
+                    yes = 'Yes. Mark as Viewed',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/view.png',
+            ),
         )}
         <span class="separtor">&nbsp;</span>
     % endif
@@ -814,15 +835,48 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disassociate') ,
-            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>&nbsp;%s") % _('Disassociate'),
+            value_formatted = h.literal("<span class='icon16 i_disassociate'></span>&nbsp;%s") % _('Disassociate'),
             title           = _("Dissacociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Disassociate this post from your request',
+                message = HTML.p('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.'),
+                buttons = dict(
+                    yes = 'Yes. Disassociate',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/disassociate.png',
+            ),
         )}
         <span class="separtor">&nbsp;</span>
     % endif
     
-</%def>        
+</%def>
+
+<%def name="modal_dialog(title, message, buttons, icon=None, icon_image=None)">
+    <div class="information popup-modal" style="width: 35em;">
+        % if icon:
+            <div class="popup-icon fr"><div class="icon_32 i_${icon}"></div></div>
+        % elif icon_image:
+            <div class="popup-icon fr"><img src="/images/${icon_image}.png" /></div>
+        % endif
+        <div class="popup-title">
+            ${title}
+        </div>
+        <div class="popup-message">
+            ${message | n}
+        </div>
+        % if buttons:
+            <div class="popup-buttons">
+                % for button in buttons:
+                    ${button | n}
+                % endfor
+                <div class="cb"></div>
+            </div>
+        % endif
+    </div>
+</%def>
 
     
 <%def name="actions_common()">
@@ -846,6 +900,14 @@
             #  reinstating old behaviour
             #json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
             json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
+            modal_params = dict(
+                title='Delete posting',
+                message='Are you sure you want to delete this posting?',
+                buttons=dict(
+                    yes="Yes. Delete",
+                    no="No. Take me back!",
+                )
+            ),
         )}
         <span class="separtor">&nbsp;</span>
     % endif
