@@ -62,10 +62,13 @@ function minimap(div_name, options, feeds) {
 	}
 	/* ${name}.addControl(new OpenLayers.Control.LayerSwitcher()); */
 	for(var feed in feeds) {
+		if(!feeds.hasOwnProperty(feed)) continue;
 		var pin  = new OpenLayers.Icon("/images/map-icons/marker-"+feeds[feed].pin+".png", new OpenLayers.Size(21,25));
 		var newl = new OpenLayers.Layer.GeoRSS('GeoRSS', feeds[feed].url, {'icon': pin});
 		if(feeds[feed].focus) {
-			newl.events.on({'loadend': function() {map.zoomToExtent(newl.getDataExtent());}});
+			newl.events.on({'loadend': function() {
+				map.zoomToExtent(newl.getDataExtent());
+			}});
 		}
 		map.addLayer(newl);
 	}
