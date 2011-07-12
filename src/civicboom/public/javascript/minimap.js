@@ -201,7 +201,7 @@ function map_picker(field_name, options) {
 						}
 						name = name.replace(" (Ceremonial)", "");
 						name = name.replace(" (ceremonial)", "");
-						if(level == "state" || level == "country_code") break;
+						if(level == "state" || level == "state_district" || level == "country_code") break;
 						label_parts.push(name);
 					}
 					suggestions.push({
