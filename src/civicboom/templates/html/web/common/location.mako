@@ -2,6 +2,7 @@
 <%
 field_id = h.uniqueish_id(field_name)
 %>
+<div style="position: relative;">
 <!--<label${' class=%s' % label_class if label_class else ''} for="${field_name}_name">${_("Location name")}</label><br />-->
 <input id="${field_id}_name" name="${field_name}_name" type="search" placeholder="Search for location" style="width: ${width}">
 <div id="${field_id}_comp"></div>
@@ -30,6 +31,7 @@ $(function() {
 	});
 });
 </script>
+</div>
 </%def>
 
 <%def name="minimap(lon, lat, zoom=13, name='map', width='250px', height='250px', feeds=[], controls=False)">
