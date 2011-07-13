@@ -273,9 +273,14 @@ HTML.no-js #flash_message {
 	-webkit-border-radius: 8px;
 	padding: 4px;
 }
+
 .olLayerGeoRSSClose {
 	float: right;
 	cursor: pointer;
+}
+
+.olLayerGeoRSSTitle {
+	font-weight: bold;
 }
 
 
