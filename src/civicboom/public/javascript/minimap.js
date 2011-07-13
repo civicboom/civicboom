@@ -1,3 +1,15 @@
+// for https support and hopefully less relying on OSM's already
+// stressed servers, proxy requests
+
+// cloudfront is faster for tiles, and less fluff in web server logs
+//var tiles_root = "https://d2mjgy2zzircki.cloudfront.net";
+var tiles_root = "/misc/tiles";
+
+// nominatim doesn't set caching headers, so cloudfront is little benefit;
+// plus nominatim's web server is confused by the unknown vhost
+//var nominatim_root = "https://d1x3grabsleh1t.cloudfront.net";
+var nominatim_root = "/misc/nominatim";
+
 
 function minimap(div_name, options, feeds) {
 	defaults = {
@@ -22,7 +34,7 @@ function minimap(div_name, options, feeds) {
 		var map = new OpenLayers.Map(div_name, {maxResolution:'auto', theme:null, controls:[new OpenLayers.Control.Attribution()]});
 	}
 	map.addLayer(new OpenLayers.Layer.OSM("OpenLayers OSM", [
-		"/misc/tiles/${z}/${x}/${y}.png"
+		tiles_root+"/${z}/${x}/${y}.png"
 		//"http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
 		//"http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
 		//"http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
@@ -176,7 +188,7 @@ function map_picker(field_name, options) {
 	$('#'+field_name+'_name').autocomplete({
 		source: function(req, respond) {
 			req.q = req.term;
-			$.getJSON("/misc/nominatim/search?format=json&countrycodes=gb&email=developers@civicboom.com&addressdetails=1&json_callback=?", req, function(response) {
+			$.getJSON(nominatim_root+"/search?format=json&countrycodes=gb&email=developers@civicboom.com&addressdetails=1&json_callback=?", req, function(response) {
 				// translate from nominatim formatted data ('response')
 				// to jQueryUI formatted ('suggestions')
 				var suggestions = [];
