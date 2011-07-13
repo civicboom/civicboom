@@ -34,7 +34,7 @@ $(function() {
 </div>
 </%def>
 
-<%def name="minimap(lon, lat, zoom=13, name='map', width='250px', height='250px', feeds=[], controls=False)">
+<%def name="minimap(lon, lat, zoom=11, name='map', width='250px', height='250px', feeds=[], controls=False)">
 <div style="width: ${width}; height: ${height};" id="${name}_div"></div>
 <%
 import json
