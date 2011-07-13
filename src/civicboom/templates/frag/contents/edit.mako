@@ -47,6 +47,8 @@
 <%def name="body()">
     <div class="frag_col">
         <div class="frag_list">
+        ## Should be here but changes size of text editor
+        ##<div class="frag_list_contents">
         <h1>
             % if self.content.get('parent'):
                 ${_("You are responding to: %s") % self.content['parent']['title']}
@@ -120,6 +122,7 @@
             ${submit_buttons()}
             ${license()}
         ${h.end_form()}
+        ## </div>
         </div>
     </div>
 </%def>
@@ -841,7 +844,7 @@
                 </div>
                 <div class="popup-message">
                     <ol>
-                        <li>${_('It will appear in your follower's notification stream.')}</li>
+                        <li>${_("It will appear in your follower's notification stream.")}</li>
                         <li>${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}</li>
                     </ol>
                 </div>
