@@ -4,7 +4,8 @@
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 
-<%!    
+<%!
+    from webhelpers.html import HTML, literal
     share_url        = False
     rss_url          = False
     auto_georss_link = False
@@ -138,10 +139,20 @@
 
 <%def name="actions_common()">
     % if self.id:
-        <a href="${h.url('content', id=self.id)}"
-           title="${_('Discard Changes and view')}"
-           onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
-        ><span class="icon16 i_close_edit"></span>${_("Discard Changes and view")}</a>
+        ${h.confirmed_link(
+            _('Discard Changes and view'),
+            icon='close_edit',
+            href=h.url('content', id=self.id),
+            modal_params = dict(
+                title   = 'Discard changes',
+                message = HTML.p('You are about to discard any changes you have made, are you sure you wish to continue?'),
+                buttons = dict(
+                    yes = 'Yes. Discard',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/disassociate.png',
+            ),
+        )}
         
         <span class="separtor"></span>
         
@@ -836,7 +847,7 @@
                 </div>
                 <div class="popup-message">
                     <ol>
-                        <li>${_('It will appear in your follower's notification stream.')}</li>
+                        <li>${_("It will appear in your follower's notification stream.")}</li>
                         <li>${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}</li>
                     </ol>
                 </div>

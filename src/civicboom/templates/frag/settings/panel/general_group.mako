@@ -32,7 +32,7 @@
         if 'action' not in d:
             d['action'] = 'edit'
     %>
-    % if d['action']=='edit' and 'settings' in d:
+    % if c.action=='edit':
         ## Editing Form
         ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
     % else:
@@ -59,10 +59,12 @@
     </script>
     <div class="group_settings">
         <h1>
-            ${_('Great! You want to create a _Group...')}<br />
-            ${_('To do this fill out the following:')}
+            % if not c.action=='edit':
+                ${_('Great! You want to create a _Group...')}<br />
+                ${_('To do this fill out the following:')}
+            % endif
         </h1>
-        ##<a href="">${_('What is a _Group?')}</a>
+        <a href="${h.url(controller='misc', action='what_is_a_hub')}">${_('What is a _Group?')}</a>
         <br /><br />
                 <fieldset>
                     <div class="number fl">1.</div>
@@ -90,6 +92,10 @@
                         <input type="file" name="avatar" id="avatar" />
                         ${show_error('avatar')}
                     </div>
+                    <div class="group-block wide_label">
+                        <label for="create_push_assignment">${_("Add an automatic 'Send your stories' request to this _Group's _Widget and profile?")}</label>
+                        <input type="checkbox" name="create_push_assignment" id="create_push_assignment" />
+                    </div>
                 </fieldset>
                 <fieldset>
                     <span class="number fl">3.</span>
@@ -107,8 +113,8 @@
                                         <label for="default_role_observer">${_('Observer')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Minimum access:</span>
-                                        they can view drafts and comment on them.
+                                        <span class="b">${_('Minimum access:')}</span>
+                                        ${_('they can view drafts and comment on them')}
                                     </div>
                                 </li>
                                 <li>
@@ -117,8 +123,8 @@
                                         <label for="default_role_contributor">${_('Contributor')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Basic access:</span>
-                                        the above plus ability to create and edit drafts.
+                                        <span class="b">${_('Basic access:')}</span>
+                                        ${_('the above plus ability to create and edit drafts.')}
                                     </div>
                                 </li>
                                 <li>
@@ -127,8 +133,8 @@
                                         <label for="default_role_editor">${_('Editor')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Medium access:</span>
-                                        the above plus ability to post requests.
+                                        <span class="b">${_('Medium access:')}</span>
+                                        ${_('the above plus ability to post requests.')}
                                     </div>
                                 </li>
                                 <li>
@@ -137,8 +143,8 @@
                                         <label for="default_role_admin">${_('Administrator')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Maximum access:</span>
-                                        the above plus the ability to invite others to join Hub and set member roles.
+                                        <span class="b">${_('Maximum access:')}</span>
+                                        ${_('the above plus the ability to invite others to join Hub and set member roles.')}
                                     </div>
                                 </li>
                             </ul>
@@ -162,9 +168,9 @@
                                         <label for="join_mode_public">${_('Open')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Minimum control:</span>
-                                        Anyone can join this Hub and become a member as per default role setting. This means anyone beyond your chosen Hub members will be part of your "identity".
-                                        <span class="error">Do not create an open Hub if you are not prepared for general access. For tighter join modes please see Public and Private options.</span>
+                                        <span class="b">${_('Minimum control:')}</span>
+                                        ${_('Anyone can join this Hub and become a member as per default role setting. This means anyone beyond your chosen Hub members will be part of your "identity".')}
+                                        <span class="error">${_('Do not create an open Hub if you are not prepared for general access. For tighter join modes please see Public and Private options.')}</span>
                                     </div>
                                 </li>
                                 <li>
@@ -173,8 +179,8 @@
                                         <label for="join_mode_invite_and_request">${_('Public')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Medium control:</span>
-                                        Anyone can request to join this Hub, and you can invite other's to join. You also have the ability to accept or decline requests to join.
+                                        <span class="b">${_('Medium control:')}</span>
+                                        ${_('Anyone can request to join this Hub, and you can invite others to join. You also have the ability to accept or decline requests to join.')}
                                     </div>
                                 </li>
                                 <li>
@@ -183,8 +189,8 @@
                                         <label for="join_mode_invite">${_('Private')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">Maximum control:</span>
-                                        This gives you strictest control of who joins your Hub. It is invite only and as an administrator you decide who to invite.
+                                        <span class="b">${_('Maximum control:')}</span>
+                                        ${_('This gives you strictest control of who joins your Hub. It is invite only and as an administrator you decide who to invite.')}
                                     </div>
                                 </li>
                             </ul>
@@ -201,7 +207,7 @@
                                     <span class="icon16 i_plus"></span>
                                     % if not c.logged_in_persona.has_account_required('plus'):
                                         <div class="upgrade">
-                                            This requires a plus account. Please <a href="${h.url(controller='about', action='upgrade_plans')}">upgrade</a> if you want access to this feature
+                                            ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
                                         </div>
                                     % endif
                                 </div>
@@ -259,7 +265,7 @@
                    </div>
                 </fieldset>
         <div class="fl" style="width: 17em; padding-top: 1em;">
-            By clicking "Create Hub" you confirm that you have read and accepted the <a onclick="$(this).siblings('.terms_and_conds').modal(); return false;"><u>terms and conditions</u></a>.
+            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action=='edit' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
         </div>
         <div class="fr" style="padding-top: 1em;">
@@ -282,12 +288,14 @@
             Hub terms and conditions:
         </div>
         <div class="popup-message" style="white-space: nowrap; padding-right:1.5em;">
+            ${_('''
             I warrant to Indiconews Ltd (owner of Civicboom.com) that I have permissions<br />
-            and rights to create this Hub. I also confirm that any logo/image I upload does<br />
+            and rights to create this _Group. I also confirm that any logo/image I upload does<br />
             not infringe upon any trademarks, third party copyrights, other such rights or<br />
             violate the user agreement. I hereby grant to Indiconews Ltd a non-exclusive,<br />
             non-transferrable license during the term of this Agreement to copy, use and<br />
-            display on Civicboom any logos or trademarked materials provided for this Hub.<br />
+            display on Civicboom any logos or trademarked materials provided for this _Group.<br />
+            ''') | n}
         </div> 
     </div>
 </%def>
