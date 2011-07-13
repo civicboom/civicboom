@@ -110,6 +110,7 @@ def _init_search_filters():
         zoom = 10 # FIXME: inverse of radius? see bug #50
         
         if isinstance(location, basestring):
+            location = location.replace(",", " ")
             location_tuple = [i.strip() for i in location.split()]
             if   len(location_tuple) == 2:
                 (lon, lat        ) = location_tuple

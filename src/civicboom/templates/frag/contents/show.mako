@@ -586,7 +586,8 @@
 	    feeds = [
 		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
 		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
-	    ]
+	    ],
+		controls=True
 	)}
 	</p>
     % endif
