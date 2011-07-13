@@ -19113,7 +19113,7 @@ OpenLayers.Layer.GeoRSS = OpenLayers.Class(OpenLayers.Layer.Markers, {
                 var contentHTML = '<div class="olLayerGeoRSSClose">[x]</div>'; 
                 contentHTML += '<div class="olLayerGeoRSSTitle">';
                 if (link) {
-                    contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'\'); return false;">';
+                    contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'.frag\'); return false;">';
                 }
                 contentHTML += title;
                 if (link) {

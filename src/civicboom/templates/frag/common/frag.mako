@@ -1,6 +1,7 @@
 <%!
     import types
     import copy
+    from webhelpers.html import HTML, literal
 
     title               = 'List'
     icon_type           = 'list'

@@ -1,5 +1,6 @@
 from civicboom.tests import *
 from pylons import config
+from random import random
 
 #import json
 
@@ -19,6 +20,7 @@ class TestListsController(TestController):
                     'contents'      : title      ,
                     'type'          : u'article' ,
                     'submit_publish': u'publish' ,
+                    'location'      : '%f %f' % (0+random(), 51+random()),
                 },
                 status=201
             )
