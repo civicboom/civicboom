@@ -9,8 +9,8 @@ $widget_unit_height: 300px;
     width : $widget_unit_width * 3 + 60px;
     height: $widget_unit_height;
     */
-    width : 940px;
-    height: 400px;
+    width : 900px;
+    height: 430px;
 }
 
 
@@ -21,7 +21,7 @@ $widget_unit_height: 300px;
     */
     background-color: white;
     
-    font-size: 80%;
+    font-size: 90%;
     
     
     table {
@@ -54,7 +54,10 @@ $widget_unit_height: 300px;
                     display: inline-block;
                     width: 6em;
                 }
-
+            }
+            
+            input, select {
+                max-width: 200px;
             }
         }
         .preview {
