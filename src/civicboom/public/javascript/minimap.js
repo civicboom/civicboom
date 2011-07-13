@@ -73,13 +73,21 @@ function minimap(div_name, options, feeds) {
 		}
 	}
 	/* ${name}.addControl(new OpenLayers.Control.LayerSwitcher()); */
+	var focus_layer = null;
 	for(var feed in feeds) {
 		if(!feeds.hasOwnProperty(feed)) continue;
 		var pin  = new OpenLayers.Icon("/images/map-icons/marker-"+feeds[feed].pin+".png", new OpenLayers.Size(21,25));
 		var newl = new OpenLayers.Layer.GeoRSS('GeoRSS', feeds[feed].url, {'icon': pin});
 		if(feeds[feed].focus) {
-			newl.events.on({'loadend': function() {
-				map.zoomToExtent(newl.getDataExtent());
+			focus_layer = newl;
+			focus_layer.events.on({'loadend': function() {
+				// even though the callback is defined here and now, newl will
+				// be redefined in the next iteration of foreach(feeds), and
+				// the callback will call the redefined newl o_______________O
+				// wtfix: use a dedicated variable in an outer scope which
+				// is specifically for the focus layer.
+				//map.zoomToExtent(newl.getDataExtent());
+				map.zoomToExtent(focus_layer.getDataExtent());
 			}});
 		}
 		map.addLayer(newl);
