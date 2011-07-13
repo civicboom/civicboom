@@ -583,11 +583,11 @@
 	    width="100%", height="200px",
 	    lat = lat,
 	    lon = lon,
-		zoom = 10,
 	    feeds = [
-		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
-		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
-	    ]
+		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)     , focus=True ),
+		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
+	    ],
+		controls=True
 	)}
 	</p>
     % endif
