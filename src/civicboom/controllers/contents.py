@@ -110,7 +110,7 @@ def _init_search_filters():
         zoom = 10 # FIXME: inverse of radius? see bug #50
         
         if isinstance(location, basestring):
-            location_tuple = [i.strip() for i in location.split(",")]
+            location_tuple = [i.strip() for i in location.split()]
             if   len(location_tuple) == 2:
                 (lon, lat        ) = location_tuple
             elif len(location_tuple) == 3:
@@ -120,7 +120,6 @@ def _init_search_filters():
             log.warn('location search with objects is not implemented yet')
         
         if lon and lat and radius:
-            location = (lon, lat, zoom) # AllanC - ? um? how is this used in the string below?
             return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
         else:
             return query
