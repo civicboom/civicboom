@@ -11,7 +11,7 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-<div style="background: white; border-radius: 16px; padding: 16px; margin: 1em; width: 940px; margin: auto;" class="frag_whitewrap">
+<div class="frag_whitewrap">
     <h1>${_('What is a hub?')}</h1>
     <p>&nbsp;</p>
     <p>
@@ -60,16 +60,25 @@
             <div style="padding-left: 3em;">
                 <div class="fl" style="width: 25em;">
                     <h3>${_("Once you've created the Hub, click on the Hub profile (top right of every page) in the drop down list to access.")}</h3>
+                    <div class="create_hub">
+                        <h3>4. GET STARTED!</h3>
+                        <div class="special_button">
+                            <a href="${h.url('new_group')}">
+                                <span class="button">
+                                    Create Hub
+                                </span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <div class="fr" style="width: 25em;">
-                    Image here
+                    <img src="/images/settings/hub-creation-2.png" />
                 </div>
             </div>
         </div>
     </div>
     <div class="cb"></div>
     <p>&nbsp;</p>
-    <div class="fr"><a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a></div>
     <div class="cb"></div>
 </div>
 </%def>

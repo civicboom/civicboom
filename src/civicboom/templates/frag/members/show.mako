@@ -171,11 +171,11 @@
 			    <p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
 			% endif
 			% if self.member.get('description'):
-			    % if self.member['description'] != "":
-				<p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
-			    % else:
-				<p class="description">To complete your profile, add a description <a href="/settings">here</a></p>
-			    % endif
+			    <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+			% elif c.logged_in_user.username == self.member['username']:
+			    <p class="description">To complete your profile, add a description <a href="/settings">here</a></p>
+			% else:
+			    <p class="description">This user has not added a description about themselves yet</p>
 			% endif
 			
 			<div class="separator"></div>

@@ -640,7 +640,7 @@
     </fieldset>
     % endif
 </%doc>
-    <span class="smaller"><a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    <span class="smaller"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
     ${what_now_link()}
     <div class="separator"></div>
 </%def>
@@ -770,10 +770,15 @@
         
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>)
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+                <%
+                    tooltip = "Ask the world!"
+                    if self.selected_type == "article":
+                        tooltip = "Tell the world!"
+                %>
+                <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
             
         ## Update
