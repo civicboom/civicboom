@@ -139,17 +139,73 @@ function map_picker(field_name, options) {
 	map.addControl(click);
 	click.activate();
 
+	/*
+	var london = [
+		[-0.5110354,51.4676356], [-0.4994147,51.4843281], [-0.4885921,51.5003407], [-0.4828843,51.5072059],
+		[-0.4900512,51.5142572], [-0.490604,51.5267813], [-0.4903121,51.5326976], [-0.492621,51.5359384],
+		[-0.4934201,51.5410781], [-0.4909518,51.5451977], [-0.4893562,51.547261], [-0.4871346,51.5531086],
+		[-0.4842752,51.5593863], [-0.4839983,51.5709305], [-0.4951652,51.5848648], [-0.4994388,51.5952316],
+		[-0.4963172,51.6024522], [-0.4984369,51.6120036], [-0.5001932,51.6234555], [-0.4941493,51.630884],
+		[-0.4805543,51.623709], [-0.4677645,51.6162386], [-0.4483933,51.6154072], [-0.4265225,51.6174348],
+		[-0.3905827,51.6152822], [-0.3602052,51.6240784], [-0.3330625,51.6330535], [-0.3043899,51.636215],
+		[-0.2943155,51.6356541], [-0.2837346,51.6378747], [-0.2741323,51.6397666], [-0.2683362,51.6426657],
+		[-0.262161,51.644318], [-0.2554189,51.643259], [-0.2509236,51.6549087], [-0.2489115,51.6559104],
+		[-0.237862,51.6578918], [-0.2272864,51.6577284], [-0.2087008,51.6638723], [-0.1999551,51.6704845],
+		[-0.1891893,51.6661367], [-0.169645,51.6763791], [-0.1470694,51.6857186], [-0.1064666,51.69188],
+		[-0.0677141,51.6842577], [-0.0230177,51.6815037], [-0.0088771,51.6610236], [-0.0011355,51.6435786]
+	];
+	$.getJSON("/misc/nominatim/search?format=json&countrycodes=gb&email=developers@civicboom.com&&polygon=1&json_callback=?", {"q": "greater london"}, function(r) {
+		london = r[0].polygonpoints;
+		console.log("London loaded "+london.length);
+	});
+
+	//+ Jonas Raoni Soares Silva
+	//@ http://jsfromhell.com/math/is-point-in-poly [v1.0]
+	function isPointInPoly(poly, pt){
+		for(var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+			((poly[i][1] <= pt[1] && pt[1] < poly[j][1]) || (poly[j][1] <= pt[1] && pt[1] < poly[i][1]))
+				&& (pt[0] < (poly[j][0] - poly[i][0]) * (pt[1] - poly[i][1]) / (poly[j][1] - poly[i][1]) + poly[i][0])
+				&& (c = !c);
+		return c;
+	}
+	*/
 
 	$('#'+field_name+'_name').autocomplete({
 		source: function(req, respond) {
 			req.q = req.term;
-			$.getJSON("/misc/nominatim/search?format=json&countrycodes=gb&email=developers@civicboom.com&json_callback=?", req, function(response) {
+			$.getJSON("/misc/nominatim/search?format=json&countrycodes=gb&email=developers@civicboom.com&addressdetails=1&json_callback=?", req, function(response) {
 				// translate from nominatim formatted data ('response')
 				// to jQueryUI formatted ('suggestions')
 				var suggestions = [];
 				$.each(response, function(i, val) {
+					var label_parts = [];
+					for(var level in val.address) {
+						var name = val.address[level];
+						// there is no county of London; approximate it by replacing the
+						// county with "London" if the location is within a london-sized
+						// circle
+						if(level == "county") {
+							var dist_from_cc = Math.sqrt(
+								Math.pow(Math.abs(val.lon - (-0.12)), 2) +
+								Math.pow(Math.abs(val.lat -  51.5  ), 2)
+							);
+							//console.log(val.display_name+" ("+val.lon+", "+val.lat+") is "+dist_from_cc+" degrees from Charing Cross");
+							if(dist_from_cc < 0.4) {
+								name = "London";
+							}
+							/*
+							if(isPointInPoly(london, [val.lon, val.lat])) {
+								name = "London";
+							}
+							*/
+						}
+						name = name.replace(" (Ceremonial)", "");
+						name = name.replace(" (ceremonial)", "");
+						if(level == "state" || level == "country_code") break;
+						label_parts.push(name);
+					}
 					suggestions.push({
-						"label": val.display_name,
+						"label": label_parts.join(", "),
 						"value": "POINT("+val.lon+" "+val.lat+")",
 						"bbox": val.boundingbox
 					});

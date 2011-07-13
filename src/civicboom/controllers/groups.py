@@ -269,7 +269,7 @@ class GroupsController(BaseController):
         # AllanC - Temp email alert for new group
         send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
         
-        return action_ok(message=_('group created ok'), data={'id':group.id}, code=201)
+        return action_ok(message=_('group created'), data={'id':group.id}, code=201)
 
 
     @web
@@ -341,7 +341,7 @@ class GroupsController(BaseController):
             ##return redirect(url('members', id=group.username))
             set_persona(group)
             
-        return action_ok(message=_('group updated ok'), data=data)
+        return action_ok(message=_('group updated'), data=data)
 
 
     @web

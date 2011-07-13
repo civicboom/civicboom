@@ -218,7 +218,7 @@
             h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
             value           = _('Follow') ,
             value_formatted = h.literal("<span class='icon16 i_follow' style='float:right;'></span>%s") % '',#_('Follow'),
-            title           = _("Follow %s" % member['name'] or member['username']) ,
+            title           = _("Follow") + " " + (member['name'] or member['username']),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
         )}
         

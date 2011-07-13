@@ -94,7 +94,7 @@ generators = [
     # Assignment Actions
     ["assignment_created",                   "ne", _("new _assignment"),             _("%(creator)s created a new _assignment %(assignment)s")],
     ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
-    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been cancelled"), _("%(member)s cancel'ed the _assignment %(assignment)s")],
+    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been cancelled"), _("%(member)s cancelled the _assignment %(assignment)s")],
     ["assignment_accepted",                  "n", _("_assignment accepted"),        _("%(member)s accepted %(your)s _assignment %(assignment)s")],
     ["assignment_interest_withdrawn",        "n", _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in %(your)s _assignment %(assignment)s")],
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited %(you)s to participate in the _assignment %(assignment)s")],
@@ -111,7 +111,7 @@ generators = [
 
     # Groups to group
     ["group_new_member",                     "ne" , _("_member joined group"),        _("%(member)s has joined %(group)s")],
-    ["group_role_changed",                   "ne" , _("_member role changed"),        _("%(admin)s changed %(member)ss role for %(group)s to %(role)s")],
+    ["group_role_changed",                   "ne" , _("_member role changed"),        _("%(admin)s changed %(member)s's role for %(group)s to %(role)s")],
     ["group_remove_member_to_group",         "ne", _("_member removed from _group"), _("%(admin)s removed %(member)s from %(group)s")],
     ["group_join_request",                   "ne" , _("join request"),                _("%(member)s has requested to join %(group)s")],
     

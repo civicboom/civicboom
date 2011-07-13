@@ -232,10 +232,14 @@
 	    
 	    ## Response advert
 	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
-		${components.advert(title="Get involved!",
-		    content_list=["Post your story directly to a news organisation", "Post your story on _site_name", "Respond to a request"],
+		${components.advert(title=_("Get involved!"),
+		    content_list=[
+				_("Post your story directly to a news organisation"),
+				_("Post your story on _site_name"),
+				_("Respond to a request")
+			],
 		    int=1,
-		    heading="What next?",
+		    heading=_("What next?"),
 		    href=""+h.url(controller='misc', action='new_article'),
 		    prompt=1,
 		    config_key="advert_hand_response"
@@ -273,7 +277,8 @@
 		    <%
 		    groups = d['groups']['items']
 		    if len(groups) == 0:
-			role = _("_"+d['member']['type'].capitalize())
+                        _type = "_"+d['member']['type'].capitalize()
+			role = _(_type)
 			org = "Civicboom"
 		    elif len(groups) == 1:
 			role = groups[0]['role'].capitalize()

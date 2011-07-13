@@ -477,7 +477,7 @@
             types = [
                 #("draft"     , _("description of draft content")   ),
                 ("article"   , _("description of _article")        ),
-                ("assignment", _("description of _assignemnt")     ),
+                ("assignment", _("description of _assignment")     ),
                 ("syndicate" , _("description of syndicated stuff")),
             ]
         %>

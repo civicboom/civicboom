@@ -135,7 +135,7 @@ class AccountController(BaseController):
         # AllanC - TODO
         # Check if user does exisit but simply has no 'password' login record accociated with it
         if has_account_without_password(kwargs.get('username')):
-            err = action_error(_('%s has not setup a _site_name password yet, please visit your settings on the website') % kwargs.get('username'), code=403)
+            err = action_error(_('%s has not set up a _site_name password yet, please visit your settings on the website') % kwargs.get('username'), code=403)
         if c.format in ["html", "redirect"]:
             set_flash_message(err.original_dict)
             return redirect_to_referer() #AllanC - TODO .. humm .. this will remove the login_action_referer so if they fail a login first time they cant perform the action thats remembered. This need thinking about.
