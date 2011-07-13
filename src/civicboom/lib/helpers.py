@@ -402,7 +402,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions=''):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -444,13 +444,16 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
 
     # Confirm JS -------
     ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
-    if confirm_text:
+    if confirm_text and not modal_params:
         confirm_text = "confirm('%s')" % confirm_text
     else:
         confirm_text = "true"
 
     # Styled submit link ------
     # A standard <A> tag that submits the compatable form (typically used with format='redirect')
+    
+    link_onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled_filter')) {$(this).addClass('disabled_filter'); var e = $(this).parents('.secure_link').find('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+    
     hl = HTML.a(
         value_formatted ,
         id      = "link_"+hhash,
@@ -468,7 +471,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled_filter')) {$(this).addClass('disabled_filter'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick
     )
     # $('#form_%(hhash)s').onsubmit();
     
@@ -476,7 +479,50 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     # GregM: Hides secure_hide classed elements & removes class (stop dups); Shows secure_show classed elements & removes class (ditto)
     hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");'))
     
-    return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
+    popup = ''
+    if modal_params:
+        content = ''
+        if modal_params.get('icon'):
+            content = content + HTML.div(HTML.span('', class_="icon32 ic_" + modal_params['icon']), class_="popup-icon");
+        elif modal_params.get('icon_image'):
+            content = content + HTML.div(HTML.image(src=modal_params['icon_image']), class_="popup-icon");
+        content = content + HTML.div(modal_params.get('title', ''), class_="popup-title")
+        
+        if modal_params.get('message'):
+            content = content + HTML.div(modal_params['message'], class_="popup-message")
+        
+        buttons = modal_params.get('buttons', {})
+        
+        popup_actions_content = HTML.a(
+                buttons.get('yes', 'Yes') ,
+                id      = "link_"+hhash,
+                href    = href,
+                class_  = 'button fl', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
+                title   = buttons.get('yes', 'Yes'), # title
+                # AllanC - the beast onclick even below does the following:
+                #   - put yes/no proceed message up if specifyed
+                #   - check if link has NOT class='disabled'
+                #     - set class 'disablked'
+                #     - perform AJAX form post
+                #       - in preference call the 'onsubmit' function (this is not call is used jQuery is used to submit form)
+                #       - if not just serilze the form and submit
+                #     - set timer so that in 1 seconds time the link 'disabled class is removed'
+                #  - return false and ensure that the normal list is not followed
+                # GregM: This now looks for jquery relative span > form instead of unique id
+                onClick = link_onClick
+            ) + HTML.a (buttons.get('no', 'No'), href='#', class_=css_class + ' button', title=buttons.get('no', 'No'), onclick="$.modal.close(); return false;")
+        
+        content = content + HTML.div(popup_actions_content+HTML.div(class_="cb"), class_="popup-actions")
+        
+        content = HTML.div(content, class_="information")
+        
+        content = HTML.div(content, class_="popup_content")
+        
+        content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (modal_params.get('width') or '35em'));
+        
+        popup = HTML.div(content, class_="popup_hidden")
+    
+    return HTML.span(hf+hl+hs+popup, class_="secure_link") #+json_submit_script
 
 
 #-------------------------------------------------------------------------------

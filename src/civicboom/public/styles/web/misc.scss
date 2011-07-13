@@ -1,23 +1,55 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+/* Special Button
+/* --- START --- */
+.special_button {
+    font-size: 225%;
+    text-align: center;
+    
+    .button {
+	@include horiz_gradient(lighten($cb-lightblue, 10%), darken($cb-lightblue, 10%));
+	
+	-moz-box-shadow:    1px 1px 5px #333, inset 0px 30px 0px rgba(255, 255, 255, .2);
+	-webkit-box-shadow: 1px 1px 5px #333, inset 0px 30px 0px rgba(255, 255, 255, .2);
+	box-shadow:         1px 1px 5px #333, inset 0px 30px 0px rgba(255, 255, 255, .2);
+	
+	&:hover {
+	    @include horiz_gradient(lighten($cb-lightblue, 20%), darken($cb-lightblue, 0%));
+	}
+    }
+}
+
 /*----------------------------------------------------------------------------*/
 /*                                 Titlepage                                  */
 /*----------------------------------------------------------------------------*/
 
 BODY.c-misc.a-titlepage {
+	height: 100%;
+
+	.wrapper {
+	display: table;
+	height: 100%;
+	margin: auto;
+	
+	    .content {
+		display: table-cell;
+		height: 100%;
+		margin: auto;
+	    }
+	}
 
 	/* --- Title-box --- */
 	.title-box {
 		text-align: center;
 		padding: 0;
-		margin: 4em auto 4em auto;
+		margin: 1.5em auto 1.5em auto;
 		width: 65em;
 
 		.headline {
 			padding: 0;
 			margin: 0 auto 0 auto;
-			font-size: 300%;
+			font-size: 250%;
 			test-align: left;
 			color: #e38317; /*#c77b01;*/
 		}
@@ -32,80 +64,58 @@ BODY.c-misc.a-titlepage {
 	}
 
 	/* --- Windows --- */
-
 	.windows {
-		text-align: left;
-		margin: 0 auto 0 auto;
-		width: 65em;
-
-		a {
-			text-decoration: none;
-		}
-
-		.window {
-			width: 250px;
-			float: left;
-			position: relative;
-			
-		    .window-content {
-			width: 250px;
-			height: 200px;
-			border: 0.3em solid #ffda6b;
-			@include border_radius(10px);
-			opacity: 0.75;
-			filter: alpha(opacity=75);
-			
-			&:hover {
-			    border-color: #e38317;
-			    @include drop_shadow(3px, 3px, 15px, #888);
-			    opacity: 1;
-			    filter:alpha(opacity=100);
-			}
-		    }
-		}
+	    font-size: 500%;
+	    // width: 800px;
+	    margin: auto;
+	    text-align: center;
+	    padding: 0;
+	    
+	    .window_wrapper {
+		margin: 0;
+		padding: 0;
+	    }
+	    
+	    .window {
+		// border: 1px solid black;
+		height: 200px;
+		float: left;
+		padding: 0;
 		
-		.window_title {
-		    text-shadow: 1px 1px 1px #000;
-		    font-size: 200%;
-		    padding-left: 1em;
-		    padding-top: 0.5em;
-		    color: orange;
-		    text-shadow: 1px 1px 1px #000;
+		img {
+		    margin: 0;
+		    height: 100%;
 		}
-
+	    }
+	    
+	    .symbol {
+		color: #999;
+		padding-top: 70px;
+		width: 96px;
+		float: left;
 		
-
-		.window .hilite {
-			color: #e38317;
-		}
-
-		.window .larger {
-			font-size: 125%;
-		}
-
-		#window-indvs {
-			margin: 0 2.5em 0 2.5em;
-		}
-
-		.content-list {
-			font-size: 125%;
-			margin: 1em auto;
-			
-			li {
-			    padding-bottom: 0.5em;
-			}
-		}
-
-		#window-signup {
-		    .signup-link {
-			text-shadow: 1px 1px 1px #000;
-			font-size: 300%;
-			font-weight: bold;
-			text-decoration: none;
-			margin: 2em auto;
-			text-align: center;
-		    }
-		}
+		text-align: center;
+	    }
+	    
+	    #left {
+	    
+	    }
+	    
+	    #plus {
+	    
+	    }
+	    
+	    #center {
+		
+	    }
+	    
+	    #equals {
+	    
+	    }
+	    
+	    #right {
+	    
+	    }
 	}
 
 	.about {
@@ -511,4 +521,29 @@ BODY.c-misc.a-new_article.u-user {
       clear: both;
     }
   }
+}
+
+BODY.c-misc.a-what_is_a_hub {
+    .frag_whitewrap {
+	background: white;
+	border-radius: 16px;
+	padding: 16px;
+	margin: 1em;
+	width: 800px;
+	margin: auto;
+	
+	.create_hub {
+	    width: 10em;
+	    border: 1px solid #999;
+	    padding: 1em 3em 1em 3em;
+	    margin: 1em auto 0 auto;
+	    @include border_radius(0.5em);
+	    font-size: 130%;
+	    text-align: center;
+	}
+	
+	img {
+	    max-width: 300px;
+	}
+    }
 }

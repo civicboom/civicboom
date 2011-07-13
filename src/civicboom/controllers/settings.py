@@ -113,6 +113,8 @@ add_setting('advert_hand_response', _('Hide the info box encouraging users to st
 add_setting('advert_hand_assignment', _('Hide the info box encouraging _groups to create _assignments'), group='help_adverts/adverts', weight=404, type='boolean')
 add_setting('advert_hand_widget', _('Hide the info box encouraging the use of the _widget'), group='help_adverts/adverts', weight=405, type='boolean')
 add_setting('advert_hand_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/adverts', weight=406, type='boolean')
+add_setting('advert_hand_content', _('Hide the info box encouraging the creation of content'), group='help_adverts/adverts', weight=407, type='boolean')
+add_setting('advert_hand_hub', _('Hide the info box encouraging the creation of hubs'), group='help_adverts/adverts', weight=408, type='boolean')
 
 add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))

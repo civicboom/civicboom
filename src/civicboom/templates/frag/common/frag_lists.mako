@@ -152,7 +152,7 @@
                 % if actions:
                     <div class="list_actions">
                     % if type(actions) == types.FunctionType:
-                        ${actions()}
+                        <span class="action_pad">${actions()}</span>
                     % else:
                         ${actions}
                     % endif

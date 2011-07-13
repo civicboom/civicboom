@@ -7,6 +7,9 @@
 
 #frag_containers .frag_container .frag_data {
 	.frag_list {
+    .action_pad {
+      margin-right: 1px;
+    }
 		font-size: 88%;
 		@include drop_shadow(1px, 1px, 1px, #666);
 

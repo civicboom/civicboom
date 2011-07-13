@@ -1,5 +1,8 @@
 <%inherit file="/frag/common/frag.mako"/>
-<%! import datetime %>
+<%!
+    import datetime
+    from webhelpers.html import HTML, literal
+%>
 
 <%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"     />
 <%namespace name="flag"            file="/frag/content_actions/flag.mako"  />
@@ -85,6 +88,14 @@
     %>
 </%def>
 
+<%def name="invite_members_request()"> 
+    <span class="mo-help">
+        ${h.frag_link(value='', title='Invite Members', class_='icon16 i_plus_blue', href_tuple=h.args_to_tuple(controller='invite', action='index', id=self.id, invite='assignment'))}
+        <div class="mo-help-l mo-help-b">
+            ${_('Invite other members to participate in this request')}
+        </div> 
+    </span>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Content Fragment
@@ -179,7 +190,7 @@
                 [m for m in d['accepted_status']['items'] if m['status']=='invited'],
                 _("Invited"),
                 hide_if_empty = not 'invite_to_assignment' in self.actions, # Always show this list if invite is avalable
-                actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id=self.id, invite='assignment')) if 'invite_to_assignment' in self.actions else None ,
+                actions = invite_members_request if 'invite_to_assignment' in self.actions else None ,
             )}
             ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status']['items'] if m['status']=='withdrawn'],
@@ -358,7 +369,7 @@
                 h.args_to_tuple('new_content', parent_id=content_dict['id']) ,
                 css_class = 'button',
                 value     = _("Share your story") ,
-                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); $.modal.close(); """)  , 
             )}
             </div>
         </li>
@@ -719,7 +730,7 @@
             value_formatted = h.literal("<span class='icon16 i_publish'></span>&nbsp;%s") % _('Publish') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 
 
@@ -734,7 +745,7 @@
         )}
         ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
         ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     
     ## --- Accept / Withdraw ---------------------------------------------------
@@ -747,7 +758,7 @@
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif 
     
     % if 'withdraw' in self.actions:
@@ -757,20 +768,27 @@
             value_formatted = h.literal("<span class='icon16 i_withdraw'></span>&nbsp;%s") % _('Withdraw'),
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 </%doc>
     
     ## --- Boom ----------------------------------------------------------------
     
     % if 'boom' in self.actions:
+    <span class="mo-help">
         ${h.secure_link(
             h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
             value           = _('Boom') ,
             value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Boom') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        <span class="separtor"></span>
+        <div class="mo-help-r mo-help-b">
+            ${_('Booming this content will recommend it to your followers and the rest of the community.')}
+        </div> 
+    </span>
+    
+
+        <span class="separtor">&nbsp;</span>
     % endif
     
     ## --- Approve/Viewed/Dissacocite ------------------------------------------
@@ -779,12 +797,21 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
             value           = _('Approve & Lock'),
-            value_formatted = h.literal("<span class='icon16 i_approve'></span>&nbsp;%s") % _('Approve & Lock'),
+            value_formatted = h.literal("<span class='icon16 i_approved'></span>&nbsp;%s") % _('Approve & Lock'),
             title           = _("Approve and lock this content so no further editing is possible"),
             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Lock and approve this',
+                message = HTML.p("When something is locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free."),
+                buttons = dict(
+                    yes = 'Yes. Lock and approve',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/lock.png',
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     % if 'seen' in self.actions:
         ${h.secure_link(
@@ -793,8 +820,17 @@
             value_formatted = h.literal("<span class='icon16 i_seen'></span>&nbsp;%s") % _('Viewed'),
             title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Mark this as viewed',
+                message = HTML.p('Use this to tell the contributor that you have viewed this content, but are not going to Lock and Approve it.'),
+                buttons = dict(
+                    yes = 'Yes. Mark as Viewed',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/view.png',
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
@@ -804,11 +840,44 @@
             title           = _("Disassociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Disassociate this post from your request',
+                message = HTML.p('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.'),
+                buttons = dict(
+                    yes = 'Yes. Disassociate',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/disassociate.png',
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     
-</%def>        
+</%def>
+
+<%def name="modal_dialog(title, message, buttons, icon=None, icon_image=None)">
+    <div class="information popup-modal" style="width: 35em;">
+        % if icon:
+            <div class="popup-icon fr"><div class="icon_32 i_${icon}"></div></div>
+        % elif icon_image:
+            <div class="popup-icon fr"><img src="/images/${icon_image}.png" /></div>
+        % endif
+        <div class="popup-title">
+            ${title}
+        </div>
+        <div class="popup-message">
+            ${message | n}
+        </div>
+        % if buttons:
+            <div class="popup-buttons">
+                % for button in buttons:
+                    ${button | n}
+                % endfor
+                <div class="cb"></div>
+            </div>
+        % endif
+    </div>
+</%def>
 
     
 <%def name="actions_common()">
@@ -817,7 +886,7 @@
         <a href="${h.url('edit_content', id=self.id)}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
         ><span class="icon16 i_edit"></span>${_("Edit")}</a>
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 
     % if 'delete' in self.actions:
@@ -832,8 +901,16 @@
             #  reinstating old behaviour
             #json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
             json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
+            modal_params = dict(
+                title='Delete posting',
+                message='Are you sure you want to delete this posting?',
+                buttons=dict(
+                    yes="Yes. Delete",
+                    no="No. Take me back!",
+                )
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 
 
@@ -843,7 +920,7 @@
     
     % if 'flag' in self.actions:
         <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>&nbsp;Flag</a>
-        <span class="separtor"></span>
+       <span class="separtor">&nbsp;</span>
     % endif
     
     ##% if self.content.get('location'):
@@ -856,27 +933,29 @@
 ## Get involved
 ##------------------------------------------------------------------------------
 <%def name="get_involved()">
-    <div class="information" style="width: 35em;">
-	<div class="popup-title">
-	    Why should you get involved?
-	</div>
-	<div class="popup-message">
-	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
-	    <ol>
-		<li>Get published</li>
-		<li>Get recognition</li>
-		<li>Make the news!</li>
-	    </ol>
-	</div>
-	<div class="popup-tag-line">
-	    Don't just read it. Feed it.
-	</div>
-    </div>
-    <div class="popup-icons">
-	<img src="/images/misc/shareicons/video_icon.png" />
-	<img src="/images/misc/shareicons/camera_icon.png" />
-	<img src="/images/misc/shareicons/audio_icon.png" />
-    </div>
+    <div class="wrapper">
+        <div class="information">
+            <div class="popup-title">
+                Why should you get involved?
+            </div>
+            <div class="popup-message">
+                By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+                <ol>
+                    <li>Get published</li>
+                    <li>Get recognition</li>
+                    <li>Make the news!</li>
+                </ol>
+            </div>
+            <div class="popup-tag-line">
+                Don't just read it. Feed it.
+            </div>
+        </div>
+        <div class="popup-icons">
+            <img src="/images/misc/shareicons/video_icon.png" />
+            <img src="/images/misc/shareicons/camera_icon.png" />
+            <img src="/images/misc/shareicons/audio_icon.png" />
+        </div>
+    </wrapper>
 </%def>
 
 ##------------------------------------------------------------------------------

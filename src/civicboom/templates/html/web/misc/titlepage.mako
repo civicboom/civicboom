@@ -11,20 +11,42 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<div class="new_front" style="margin-bottom: 20em;">
-		${front_headline()}
-		${front_windows()}
-		<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
-			<div style="width:100%;height:10em;background-color:#adcef7;">
-				<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
-					${partners()}
-					${downloads()}
+	<div class="wrapper">
+		<div class="content">
+			${front_headline()}
+			${front_windows()}
+			${front_tagline()}
+			${start_button()}
+			
+			## Who's using us and mobile download prompt
+			<%doc>
+			<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
+				<div style="width:100%;height:10em;background-color:#adcef7;">
+					<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
+						${partners()}
+						${downloads()}
+					</div>
 				</div>
 			</div>
+			</%doc>
 		</div>
 	</div>
 </%def>
 	
+
+##------------------------------------------------------------------------------
+## Start button
+##------------------------------------------------------------------------------
+<%def name="start_button()">
+	
+	<div class="start_button">
+		<a href="${url(controller='account', action='signin')}">
+			<span class="button">
+				START
+			</span>
+		</a>
+	</div>
+</%def>
 	
 
 ##------------------------------------------------------------------------------
@@ -110,52 +132,46 @@
 <%def name="front_headline()">
 	<div class="title-box">
 		<h2 class="tagline">
-			${_("_site_name: Connecting people that need news with people that have news")}
+			${_("_site_name: Connecting people that need stories with people that have them")}
 		</h2>
 	</div>
 </%def>
 
 <%def name="front_windows()">
 	<div class="windows">
-		<div id="window-orgs" class="window">
-			<div class="window-content">
-				<div class="window_title">Journalists:<br /> >> NEED NEWS?</div>
-				<ol class="content-list">
-					<li>
-						Sign up
-					</li>
-					<li>
-						Post a request for news
-					</li>
-					<li>
-						Assess, verify and publish responses
-					</li>
-				</ol>
+		<div class="window" id="left">
+			<img src="/images/misc/titlepage/middle_panel.png" alt="Request" />
+		</div>
+		
+		<div class="window_wrapper">
+			<div class="symbol" id="plus">
+				+
+			</div>
+				
+			<div class="window" id="center">
+				<img src="/images/misc/titlepage/middle_panel.png" alt="Respond" />
 			</div>
 		</div>
-		<div id="window-indvs" class="window">
-			<div class="window-content">
-				<div class="window_title">Sources:<br /> >> GOT NEWS?</div>
-				<ol class="content-list">
-					<li>
-						Sign up
-					</li>
-					<li>
-						View requests for news
-					</li>
-					<li>
-						Post your story and get published
-					</li>
-				</ol>
+		
+		<div class="window_wrapper">
+			<div class="symbol" id="equals">
+				=
+			</div>
+			
+			<div class="window" id="right">
+				<img src="/images/misc/titlepage/last_panel.png" alt="Get published" />
 			</div>
 		</div>
-		<a class="signup-link" href="${url(controller='account', action='signin')}">
-			<div id="window-signup" class="window">
-				<div class="window-content">
-					<div class="signup-link hilite">Start now!</div>
-				</div>
-			</div>
-		</a>
+		
+		<div style="clear: both;"></div>
+	</div>
+</%def>
+		
+<%def name="front_tagline()">
+	<div class="title-box">
+		<h2 class="tagline">
+			Don't just read it. Feed it.
+		</h2>
 	</div>
 </%def>
 	
