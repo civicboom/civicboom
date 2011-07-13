@@ -822,7 +822,7 @@
         	<div class="popup-message">
         	    <ol>
                     <li>${_("On your _Widget for your community to respond to")}</li>
-                    <li>${_("In all your _site_name follower's notification stream")}</li>
+                    <li>${_("In all your _site_name followers' notification streams")}</li>
                     <li>${_("On the _site_name request stream")}</li>
         	    </ol>
         	</div>
@@ -835,7 +835,7 @@
                     <ol>
                         <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
                         <li>${_("Be listed as a response against the request")}</li>
-                        <li>${_("Appear in your follower's notification stream")}</li>
+                        <li>${_("Appear in your followers' notification streams")}</li>
                     </ol>
                 </div>
             % else:
@@ -844,7 +844,7 @@
                 </div>
                 <div class="popup-message">
                     <ol>
-                        <li>${_("It will appear in your follower's notification stream.")}</li>
+                        <li>${_("It will appear in your followers' notification streams.")}</li>
                         <li>${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}</li>
                     </ol>
                 </div>

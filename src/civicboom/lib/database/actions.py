@@ -696,12 +696,12 @@ If the content is not ok, go to the content list and delete it:
         "type"         : type,
         "comment"      : flag.comment,
         "member_name"  : flag.content.creator.username,
-        "member_url"   : url('member', id=flag.content.creator.username, sub_domain="www"),
-        "content_url"  : url('content', id=flag.content.id, sub_domain="www"),
+        "member_url"   : url('member', id=flag.content.creator.username, qualified=True, sub_domain="www"),
+        "content_url"  : url('content', id=flag.content.id, qualified=True, sub_domain="www"),
         "content_title": flag.content.title,
         "content_body" : flag.content.content,
-        "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), sub_domain="www"),
-        "action_delete": url("admin/Content/models?Content--id="+str(flag.content.id), sub_domain="www"),
+        "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), qualified=True, sub_domain="www"),
+        "action_delete": url("admin/Content/models?Content--id="+str(flag.content.id), qualified=True, sub_domain="www"),
     }
     
     send_email(
