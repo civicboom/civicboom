@@ -388,6 +388,8 @@ class ContentsController(BaseController):
                 direction = desc
                 sort_field = sort_field[1:]
 
+            # check that the sort string is the name of a column in the result
+            # set, rather than some random untrusted SQL statement
             if sort_field in [col["name"] for col in results.column_descriptions]:
                 results = results.order_by(direction(sort_field))
         
