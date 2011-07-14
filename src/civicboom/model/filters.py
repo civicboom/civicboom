@@ -186,7 +186,7 @@ class LocationFilter(Filter):
         return "LocationFilter(%s)" % repr(self.loc)
 
     def __sql__(self):
-        return "ST_DWithin(content.location, 'SRID=4326;POINT(%d %d)', %d)" % (self.loc[0], self.loc[1], self.rad)
+        return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.loc[0], self.loc[1], self.rad)
 
 
 class AuthorIDFilter(Filter):
