@@ -108,6 +108,7 @@ def _init_search_filters():
     def append_search_location(query, location):
         (lon, lat, radius) = (None, None, 10)
         zoom = 10 # FIXME: inverse of radius? see bug #50
+
         
         if isinstance(location, basestring):
             location = location.replace(",", " ")
@@ -121,8 +122,8 @@ def _init_search_filters():
             log.warn('location search with objects is not implemented yet')
         
         if lon and lat and radius:
-            query = query.add_columns(func.st_distance(Content.location, 'POINT(%d %d)' % (float(lon), float(lat))).label("distance"))
-            return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
+            query = query.add_columns(func.st_distance(func.st_geomfromwkb(Content.location, 4326), 'SRID=4326;POINT(%f %f)' % (float(lon), float(lat))).label("distance"))
+            return query.filter("location IS NOT NULL").filter("ST_DWithin(location, 'SRID=4326;POINT(%f %f)', %f)" % (float(lon), float(lat), float(radius)))
         else:
             return query
     
