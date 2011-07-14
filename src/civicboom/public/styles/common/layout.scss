@@ -14,6 +14,10 @@ HTML.js .popup {
 	top: 50px;
 }
 
+b {
+  font-weight: bold;
+}
+
 /* for browsers without JS hide sections of the page */
 HTML.no-js .hide_if_nojs {display: none;}
 HTML.js    .hide_if_js   {display: none;}
