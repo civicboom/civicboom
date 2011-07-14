@@ -169,7 +169,7 @@
         </tr>
         % endif
         <tr><td colspan="2">
-            <input type="submit" value="Request Upgrade"/>
+            <input class="button" type="submit" value="Request Upgrade"/><br /><br />
         </td></tr>
         </table>
     ${h.end_form()}
