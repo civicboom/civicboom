@@ -4,7 +4,8 @@
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 
-<%!    
+<%!
+    from webhelpers.html import HTML, literal
     share_url        = False
     rss_url          = False
     auto_georss_link = False
@@ -141,10 +142,20 @@
 
 <%def name="actions_common()">
     % if self.id:
-        <a href="${h.url('content', id=self.id)}"
-           title="${_('Discard Changes and view')}"
-           onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
-        ><span class="icon16 i_close_edit"></span>${_("Discard Changes and view")}</a>
+        ${h.confirmed_link(
+            _('Discard Changes and view'),
+            icon='close_edit',
+            href=h.url('content', id=self.id),
+            modal_params = dict(
+                title   = 'Discard changes',
+                message = HTML.p('You are about to discard any changes you have made, are you sure you wish to continue?'),
+                buttons = dict(
+                    yes = 'Yes. Discard',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/disassociate.png',
+            ),
+        )}
         
         <span class="separtor"></span>
         
@@ -663,6 +674,7 @@
 <%def name="privacy()">
     % if c.logged_in_persona.has_account_required('plus'):
 	<%def name="selected(private, text='selected')">
+	   <% print type(private), type(self.content.get('private')) %>
 		%if private == self.content.get('private'):
 			${text}="${text}"
 		%endif
@@ -677,18 +689,14 @@
               <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                   <div class="jqui-radios">
-                      <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
-                      <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                      <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
+                      <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
                   </div>
                   <script type="text/javascript">
                     $(function() {
                         $('.jqui-radios').buttonset().removeClass('.jqui-radios');
                     })
                   </script>
-##                <select id="private" name="private">
-##                    <option ${selected(False)} value="False">Public</option>
-##                    <option ${selected(True)} value="True">Private</option>
-##                </select>
               </div>
         </div>
     </fieldset>

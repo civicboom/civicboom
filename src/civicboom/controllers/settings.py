@@ -504,14 +504,14 @@ class SettingsController(BaseController):
             user.location_home = settings.get('location_home')
             del settings['location_home']
         elif settings.get("location_home_name"):
-            user.location = "SRID=4326;POINT(%d %d)" % (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
+            user.location = "SRID=4326;POINT(%f %f)" % (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
             del settings['location_home_name']
 
         if settings.get('location_current'):
             user.location_current = settings.get('location_current')
             del settings['location_current']
         elif settings.get("location_current_name"):
-            user.location = "SRID=4326;POINT(%d %d)" % (0, 0)
+            user.location = "SRID=4326;POINT(%f %f)" % (0, 0)
             del settings['location_current_name']
 
         if 'password_new' in settings:

@@ -67,7 +67,7 @@
             },
             {
                 'title': _('Unlimited Pro Hubs (for multiple titles/sites)'),
-                'who'  : ['plus', 'corp'],
+                'who'  : ['corp'],
             },
         ]
     %>
@@ -98,9 +98,9 @@
                     % for plan in plans:
                         <td class="item  ${'hilight' if plan == hilight_plan else ''}">
                             % if plan in feature['who']:
-                                YES
+                                <span class="icon16 i_accept"><span>Yes</span></span>
                             % else:
-                                N/A
+                                <span class="icon16 i_delete"><span>N/A</span></span>
                             % endif
                         </td>
                     % endfor
@@ -123,13 +123,13 @@
                         <td></td>
                     % endfor
                 % endif
-                <td><a class="button">Upgrade Now</a></td>
-                <td><a class="button">Learn More</a></td>
+                <td><a href="#" class="button">Upgrade Now</a></td>
+                <td><!--<a class="button">Learn More</a>--></td>
             </tr>
         </tfoot>
     </table>
     
-    % if not c.logged_in_user:
+    % if not c.logged_in_user and false:
     <p>Please sign in to upgrade you account.</p>
     % else:
     <p>If you want to upgrade, simply fill in the form below and one of our team will be in touch asap!</p>
@@ -155,6 +155,16 @@
             </td>
         </tr>
         % endfor
+        % if not c.logged_in_user:
+        <tr>
+            <td>
+                Proove you're human
+            </td>
+            <td>
+                ${h.get_captcha(c.lang, 'white')}
+            </td>
+        </tr>
+        % endif
 		<tr><td colspan="2">
 			<input type="submit" value="Request Upgrade"/>
 		</td></tr>

@@ -8,6 +8,10 @@ from civicboom.model.member import Group, GroupMembership, group_member_roles, g
 
 #from civicboom.controllers.contents import _normalize_member # now part of base
 
+from civicboom.controllers.contents import ContentsController
+
+create_content = ContentsController().create
+
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 import formencode
@@ -259,15 +263,25 @@ class GroupsController(BaseController):
         
         settings_update(group, private=True, **kwargs)
         
+        # GregM: Create new request for group (Arrgh, have to fudge the format otherwise we cause a redirect):
+        format = c.format
+        if kwargs.get('create_push_assignment'):
+            c.format = 'python'
+            assignment = create_content(type='assignment', private=False, title=_("Send us your stories"), content=_("Join us in making the news by telling us your stories, sending in videos, pictures or audio: Get recognition and get published - share your news with us now!"), format="python")
+            group.config['push_assignment'] = assignment.get('data', {}).get('id')
+        c.format = format
+        
+        
         c.logged_in_persona = logged_in_persona
         c.logged_in_persona_role = logged_in_persona_role
-        # GregM: prompt_aggregate for new group :)
-        set_persona(group, prompt_aggregate=True) # Will redirect if in html or redirect mode
         
         user_log.info("Created Group #%d (%s)" % (group.id, group.username))
         
         # AllanC - Temp email alert for new group
         send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
+        
+        # GregM: prompt_aggregate for new group :)
+        set_persona(group, prompt_aggregate=True) # Will redirect if in html or redirect mode
         
         return action_ok(message=_('group created'), data={'id':group.id}, code=201)
 

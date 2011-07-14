@@ -62,6 +62,15 @@ BODY.c-groups.u-user, BODY.c-settings.u-user {
       width: 8em;
     }
     
+    .wide_label {
+      label {
+        width: 27em !important;
+      }
+      input {
+        width: 2em !important;
+      } 
+    }
+        
     .label {
     display: inline-block;
     width: 15em;
