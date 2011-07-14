@@ -121,6 +121,7 @@ def _init_search_filters():
             log.warn('location search with objects is not implemented yet')
         
         if lon and lat and radius:
+            query = query.add_columns(func.st_distance(Content.location, 'POINT(%d %d)' % (float(lon), float(lat))).label("distance"))
             return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
         else:
             return query
