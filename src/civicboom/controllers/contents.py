@@ -20,7 +20,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 # Search imports
 from civicboom.model.filters import *
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null, func, Unicode
+from sqlalchemy           import or_, and_, null, func, Unicode, asc, desc
 from sqlalchemy.orm       import join, joinedload, defer
 from geoalchemy import Point
 import datetime
@@ -380,20 +380,15 @@ class ContentsController(BaseController):
         #        results = results.add_column(
         #            func.substr(func.strip_tags(Content.content), 0, 100)
         #        )
-        
-        def get_content_field(field):
-            if hasattr(Content           , field):
-                return getattr(Content           , field)
-            if hasattr(UserVisibleContent, field):
-                return getattr(UserVisibleContent, field)
-            if hasattr(AssignmentContent, field):
-                return getattr(AssignmentContent, field)
-        
+
         for sort_field in kwargs.get('sort', '-update_date').split(','):
+            direction = asc
             if sort_field[0] == "-":
-                results = results.order_by(get_content_field(sort_field[1:]).desc())
-            else:
-                results = results.order_by(get_content_field(sort_field    ).asc() )
+                direction = desc
+                sort_field = sort_field[1:]
+
+            if sort_field in [col["name"] for col in results.column_descriptions]:
+                results = results.order_by(direction(sort_field))
         
 #        def merge_snippet(content, snippet):
 #            content = content.to_dict(**kwargs)
