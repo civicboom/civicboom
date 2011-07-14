@@ -73,6 +73,7 @@
         
         jQuery(document).ready(function() {
             jQuery('#widget_carousel').jcarousel({
+                animation   :   'slow',
                 auto   : 3 ,
                 wrap   : 'last' ,
                 ##wrap   : 'circular',

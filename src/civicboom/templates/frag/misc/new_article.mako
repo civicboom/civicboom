@@ -58,7 +58,7 @@
                 <div class="h1 fl">3.</div>
                 <div class="na-padleft">
                     <h1 class="fl">${_('Respond to a request:')}</h1>
-                    <div class="fr"><a href="${h.url(controller='misc', action='featured')}" class="button" onclick="cb_frag($(this), '${h.url(controller='misc', action='featured', format='frag')}'); return false;">${_('See full list')}</a></div>
+                    <div class="fr"><a href="${h.url(controller='contents', target_type='assignment', action='index')}" class="button" onclick="cb_frag($(this), '${h.url(controller='contents', target_type='assignment', action='index', format='frag')}'); return false;">${_('See full list')}</a></div>
                     <div class="cb"></div>
                 </div>
             </div>

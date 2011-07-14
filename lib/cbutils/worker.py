@@ -89,29 +89,34 @@ def flush():
 ##############################################################################
 # Server API
 
-def run_one_job(task):
+def run_one_job(job_details):
     live = True
     job_success = None
+    next_job = None
     exception = None
     try:
         if setup:
-            setup(task)
-        task_type = task.pop("task")
-        log.debug('Starting task: %s (%s)' % (task_type, task))
-        if task_type in _worker_functions:
-            job_success = _worker_functions[task_type](**task)
-        elif task_type == "die":
+            setup(job_details)
+        function_name = job_details.pop("task")
+        if "next_job" in job_details:
+            next_job = job_details.pop("next_job")
+        log.debug('Starting job: %s (%s)' % (function_name, job_details))
+        if function_name in _worker_functions:
+            job_success = _worker_functions[function_name](**job_details)
+        elif function_name == "die":
             live = False
             job_success = True
         else:
-            log.error("Unrecognised task type: %s" % task_type)
+            log.error("Unrecognised job type: %s" % function_name)
             job_success = True
     except Exception as e:
         job_success = False
         exception = e
     finally:
         if teardown:
-            teardown(task, job_success, exception)
+            teardown(job_details, job_success, exception)
+        if job_success and next_job:
+            run_one_job(next_job)
     return live
 
 

@@ -42,7 +42,7 @@ def get_list_titles(list_name):
 
 setting_titles = {
     'password'      :   _('Password and mobile access'),
-    'help_adverts'  :   _('Help and adverts')
+    'help_adverts'  :   _('Help and guides')
 }
 
 setting_icons = {

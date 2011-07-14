@@ -264,7 +264,7 @@ HTML.no-js #flash_message {
 	background: $page-background;
 	border-top: 1px solid $input-border;
 	border-left: 1px solid $input-border;
-	font-size: 10px;
+	font-size: 8px;
 }
 .olPopup {
 	border: 2px solid gray;
@@ -273,8 +273,14 @@ HTML.no-js #flash_message {
 	-webkit-border-radius: 8px;
 	padding: 4px;
 }
+
 .olLayerGeoRSSClose {
 	float: right;
+	cursor: pointer;
+}
+
+.olLayerGeoRSSTitle {
+	font-weight: bold;
 }
 
 

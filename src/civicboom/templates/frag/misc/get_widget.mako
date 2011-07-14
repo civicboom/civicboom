@@ -295,7 +295,7 @@
         widget_default = widget_defaults[theme]
     %>
     <table class="">
-        <td class="description">
+        <td class="description" style="width: 300px;">
             <h2>${_('Grab the Animated _widget:')}</h2>
             <ul>
                 <li>${_('This _widget animates your _assignments for _articles.')}</li>

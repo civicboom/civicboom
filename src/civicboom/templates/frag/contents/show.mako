@@ -114,26 +114,28 @@
 	    % endif
 	    
 	    <div class="frag_list">
-		${content_title()}
-		${content_media()}
-		${content_content()}
-		${content_map()}
-		${content_action_buttons()}
-		## ${content_why_resond()}
-		${content_comments()}
-		## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-		<%def name="flag_form()">
-		    ${flag.flag_form(self.id)}
-		</%def>
-		${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
-		${content_details_foot()}
-		${content_details()}
-		<div class="separator" style="padding: 10px;"></div>
-                % if self.attr.share_kwargs:
-                    ${share.AddThisLine(**self.attr.share_kwargs)}
-                % endif
-                ${content_license()}
-                <div class="separator"></div>
+                <div class="frag_list_contents">
+                    ${content_title()}
+                    ${content_media()}
+                    ${content_content()}
+                    ${content_map()}
+                    ${content_action_buttons()}
+                    ## ${content_why_resond()}
+                    ${content_comments()}
+                    ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+                    <%def name="flag_form()">
+                        ${flag.flag_form(self.id)}
+                    </%def>
+                    ${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
+                    ${content_details_foot()}
+                    ${content_details()}
+                    <div class="separator" style="padding: 10px;"></div>
+                    % if self.attr.share_kwargs:
+                        ${share.AddThisLine(**self.attr.share_kwargs)}
+                    % endif
+                    ${content_license()}
+                    <div class="separator"></div>
+                </div>
 	    </div>
 	</div>
     </div>
@@ -582,9 +584,10 @@
 	    lat = lat,
 	    lon = lon,
 	    feeds = [
-		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
-		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
-	    ]
+		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)     , focus=True ),
+		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
+	    ],
+		controls=True
 	)}
 	</p>
     % endif
@@ -932,27 +935,29 @@
 ## Get involved
 ##------------------------------------------------------------------------------
 <%def name="get_involved()">
-    <div class="information" style="width: 35em;">
-	<div class="popup-title">
-	    Why should you get involved?
-	</div>
-	<div class="popup-message">
-	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
-	    <ol>
-		<li>Get published</li>
-		<li>Get recognition</li>
-		<li>Make the news!</li>
-	    </ol>
-	</div>
-	<div class="popup-tag-line">
-	    Don't just read it. Feed it.
-	</div>
-    </div>
-    <div class="popup-icons">
-	<img src="/images/misc/shareicons/video_icon.png" />
-	<img src="/images/misc/shareicons/camera_icon.png" />
-	<img src="/images/misc/shareicons/audio_icon.png" />
-    </div>
+    <div class="wrapper">
+        <div class="information">
+            <div class="popup-title">
+                Why should you get involved?
+            </div>
+            <div class="popup-message">
+                By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+                <ol>
+                    <li>Get published</li>
+                    <li>Get recognition</li>
+                    <li>Make the news!</li>
+                </ol>
+            </div>
+            <div class="popup-tag-line">
+                Don't just read it. Feed it.
+            </div>
+        </div>
+        <div class="popup-icons">
+            <img src="/images/misc/shareicons/video_icon.png" />
+            <img src="/images/misc/shareicons/camera_icon.png" />
+            <img src="/images/misc/shareicons/audio_icon.png" />
+        </div>
+    </wrapper>
 </%def>
 
 ##------------------------------------------------------------------------------

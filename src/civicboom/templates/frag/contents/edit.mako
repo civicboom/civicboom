@@ -48,6 +48,8 @@
 <%def name="body()">
     <div class="frag_col">
         <div class="frag_list">
+        ## Should be here but changes size of text editor
+        ##<div class="frag_list_contents">
         <h1>
             % if self.content.get('parent'):
                 ${_("You are responding to: %s") % self.content['parent']['title']}
@@ -121,6 +123,7 @@
             ${submit_buttons()}
             ${license()}
         ${h.end_form()}
+        ## </div>
         </div>
     </div>
 </%def>
@@ -659,7 +662,7 @@
     </fieldset>
     % endif
 </%doc>
-    <span class="smaller"><a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    <span class="smaller"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
     ${what_now_link()}
     <div class="separator"></div>
 </%def>
@@ -789,7 +792,12 @@
             <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+                <%
+                    tooltip = "Ask the world!"
+                    if self.selected_type == "article":
+                        tooltip = "Tell the world!"
+                %>
+                <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
             
         ## Update
@@ -822,7 +830,7 @@
         	<div class="popup-message">
         	    <ol>
                     <li>${_("On your _Widget for your community to respond to")}</li>
-                    <li>${_("In all your _site_name follower's notification stream")}</li>
+                    <li>${_("In all your _site_name followers' notification streams")}</li>
                     <li>${_("On the _site_name request stream")}</li>
         	    </ol>
         	</div>
@@ -835,7 +843,7 @@
                     <ol>
                         <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
                         <li>${_("Be listed as a response against the request")}</li>
-                        <li>${_("Appear in your follower's notification stream")}</li>
+                        <li>${_("Appear in your followers' notification streams")}</li>
                     </ol>
                 </div>
             % else:
@@ -844,7 +852,7 @@
                 </div>
                 <div class="popup-message">
                     <ol>
-                        <li>${_("It will appear in your follower's notification stream.")}</li>
+                        <li>${_("It will appear in your followers' notification streams.")}</li>
                         <li>${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}</li>
                     </ol>
                 </div>
