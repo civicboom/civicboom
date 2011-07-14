@@ -49,7 +49,8 @@ def trans(text, locations):
         ("assignment", "request"),
         #("request",    "request"), # AllanC - Should not be needed, we reffer to them as assignments for consistancy
         ("response",   "response"),
-
+        ("respond", "respond"),
+        
         ("member",     "member"),
         ("user",       "user"),
         ("group",      "hub"),
@@ -59,8 +60,6 @@ def trans(text, locations):
         ("corporate",  "corporate"),
 
         ("widget",  "Boombox"),
-        ("respond", "respond"),
-        #("request", "request"), # AllanC - duplicated?
     ]
     for w, r in words:
         text = text.replace("_"+w, r)

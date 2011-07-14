@@ -33,7 +33,6 @@
         ${advert_disable_link(config_key)}
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
-
 	% if heading:
 	    <h1>${heading}</h1>
 	% endif

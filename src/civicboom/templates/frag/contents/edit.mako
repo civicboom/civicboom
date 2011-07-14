@@ -328,7 +328,7 @@
             tags_string += tag + separator
         %>
         <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-        <span>(${_('separated by commas')} ',')</span>
+        <span>(${_('separated by commas')})</span>
         ##${popup(_("extra_info"))}
     </fieldset>
     <div class="separator"></div><div class="separator"></div>
@@ -686,7 +686,7 @@
             <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
         </legend>
         <div class="hideable">
-              <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
+              <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                   <div class="jqui-radios">
                       <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>

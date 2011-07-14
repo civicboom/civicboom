@@ -12,7 +12,7 @@
 
 <%def name="body()">
 	<div class="wrapper">
-		<div class="content">
+		##<div class="content">
 			${front_headline()}
 			${front_windows()}
 			${front_tagline()}
@@ -29,7 +29,7 @@
 				</div>
 			</div>
 			</%doc>
-		</div>
+		##</div>
 	</div>
 </%def>
 	
@@ -39,7 +39,7 @@
 ##------------------------------------------------------------------------------
 <%def name="start_button()">
 	
-	<div class="start_button">
+	<div class="special_button">
 		<a href="${url(controller='account', action='signin')}">
 			<span class="button">
 				START
@@ -131,9 +131,10 @@
 
 <%def name="front_headline()">
 	<div class="title-box">
-		<h2 class="tagline">
-			${_("_site_name: Connecting people that need stories with people that have them")}
-		</h2>
+		<%doc><h2 class="headline">
+			${_("_site_name")}
+		</h2></%doc>
+		<img src="images/logo_new.png" alt="Civicboom.com"/>
 	</div>
 </%def>
 
@@ -144,25 +145,19 @@
 		</div>
 		
 		<div class="window_wrapper">
-			<div class="symbol" id="plus">
-				+
-			</div>
-				
+			<span class="symbol">+</span>
 			<div class="window" id="center">
 				<img src="/images/misc/titlepage/middle_panel.png" alt="Respond" />
 			</div>
 		</div>
 		
 		<div class="window_wrapper">
-			<div class="symbol" id="equals">
-				=
-			</div>
-			
+			<span class="symbol">=</span>
 			<div class="window" id="right">
 				<img src="/images/misc/titlepage/last_panel.png" alt="Get published" />
 			</div>
 		</div>
-		
+	
 		<div style="clear: both;"></div>
 	</div>
 </%def>
@@ -170,7 +165,7 @@
 <%def name="front_tagline()">
 	<div class="title-box">
 		<h2 class="tagline">
-			Don't just read it. Feed it.
+			${_("Connecting people that need _articles with people that have them")}
 		</h2>
 	</div>
 </%def>
