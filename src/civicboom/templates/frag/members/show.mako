@@ -138,42 +138,45 @@
         hand_adverts = {
             'ind'    : ['advert_hand_article', 'advert_hand_response', 'advert_hand_mobile'],
 	    'org'    : ['advert_hand_content', 'advert_hand_hub', 'advert_hand_mobile'],
-            ## 'org'  : ['advert_hand_hub', 'advert_hand_assignment', 'advert_hand_widget']
+            'hub'  : ['advert_hand_hub', 'advert_hand_assignment']
         }
 	
 	self.adverts_content = {
 	    "assignment":	{
 		'advert_class':	'long',
-		'title':	'Ask for stories!',
-		'content_text':	'You can ask your audience for their stories by clicking on the "Ask for stories" button in the header.',
+		'title':	_('Ask for _articles!'),
+		'href':	h.url('new_content', target_type='assignment'),
+		## 'content_text':	'You can ask your audience for their stories by clicking on the "Ask for stories" button in the header.',
 	    },
 	    "article":	{
 	       'title':	'Post stories!',
-		'content_list':	[
-		    _("Send your stories directly to media organisations and publishers"),
-		    _("Respond to a specific request"),
-		    _("Post your news on Civicboom")
-		],
-		'href':	''+h.url(controller='misc', action='new_article'),
+		##'content_list':	[
+		##    _("Send your stories directly to media organisations and publishers"),
+		##    _("Respond to a specific request"),
+		##    _("Post your news on Civicboom")
+		##],
+		'href':	h.url(controller='misc', action='new_article'),
 	    },
 	    "response":	{
-		'title':	'Get involved!',
-		'content_list':	[
-					_("Post your story directly to a news organisation"),
-					_("Post your story on _site_name"),
-					_("Respond to a request")
-				    ],
+		'title':	_('Get involved!'),
+		##'content_list':	[
+		##			_("Post your story directly to a news organisation"),
+		##			_("Post your story on _site_name"),
+		##			_("Respond to a request")
+		##		    ],
 		'href':	''+h.url(controller='misc', action='new_article'),
 	    },
 	    "widget":	{
-		## 'advert_class':	'small',
-		'title':	'Grab the Boombox for your site!',
-		'content_text':	'A boombox is a simple audience engagement "widget", a window that can be embedded into your website or blog. A hub or individual user can use it to let their readers directly post content and respond to story requests. You can get the Boombox by clicking the "Get Boombox" link under your avatar.',
+		'advert_class':	'small',
+		'title':	_('Grab the _widget for your site!'),
+		'content_text':	_('Click the "Get _widget" link below your avatar to grab the code!'),
+		##'content_text':	_('A _widget is a simple audience engagement "widget", a window that can be embedded into your website or blog. A _Group or individual user can use it to let their readers directly post _content and _respond to _article _requests. You can get the _widget by clicking the "Get _widget" link under your avatar.'),
 	    },
 	    "hub":	{
 		'advert_class':	'small',
-		'title':	'Create a Hub!',
-		'content_text':	'A Hub is a user (or collection of users) unified under one "identity" - be it as as a professional journalist, an organisation, a title or issue which can issue story requests for others to respond to. Hubs can also create a bespoke Boombox.',
+		'title':	_('Create a _Group!'),
+		'href':	h.url(controller='misc', action='what_is_a_hub')
+		##'content_text':	_('A _Group is a user (or collection of users) unified under one "identity" - be it as as a professional journalist, an organisation, a title or issue which can issue _article _requests for others to _respond to. _Groups can also create a bespoke _widget.'),
 	    },
 	    "mobile":	{
 		'title':	'Make the news with the Civicboom mobile app!',
@@ -263,42 +266,7 @@
 		    ${share.AddThisLine(**self.attr.share_kwargs)}
 		% endif
 		<div class="separator"></div>
-	    </div>
-	    
-	    ##------------------------------------------------------------------
-	    ## Guide #1
-	    ##------------------------------------------------------------------
-	    
-	    ## Request advert (Hubs)
-	    % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
-		${components.advert(
-		    contents=[self.adverts_content['assignment']],
-		    int=1,
-		    heading="What next?",
-		    config_key="advert_hand_assignment"
-		)}
-	    % endif
-	    
-	    ## Content advert (Journalists)
-	    % if "advert_hand_content" in self.adverts_hand and not c.logged_in_user.config["advert_hand_content"]:
-		${components.advert(
-		    contents=[self.adverts_content["assignment"], self.adverts_content["article"]],
-		    int=1,
-		    heading=_("What next?"),
-		    config_key="advert_hand_content"
-		)}
-	    % endif
-	    
-	    ## Response advert (Individuals)
-	    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
-		${components.advert(
-		    contents=[self.adverts_content["response"]],
-		    int=1,
-		    heading=_("What next?"),
-		    config_key="advert_hand_response"
-		)}
-	    % endif
-	    
+	    </div>    
 	    
 	    ## My requests
 	    % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
@@ -458,38 +426,7 @@
     <div class="frag_right_col">
 	    <div class="frag_col">
 	    
-	    ##------------------------------------------------------------------
-	    ## Guides #2
-	    ##------------------------------------------------------------------
-	    ## Widget advert (Hubs)
-	    % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
-		${components.advert(
-		    contents=[self.adverts_content['widget']],
-		    int=2,
-		    config_key="advert_hand_widget"
-		)}
-	    % endif
-	    
-	    ## Hub/widget hybrid advert (Journalists)
-	    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
-		${components.advert(
-		    contents=[self.adverts_content['hub'], self.adverts_content['widget']],
-		    int=2,
-		    config_key="advert_hand_hub"
-		)}
-	    % endif
-	    
-	    ## Mobile advert (Individuals)
-	    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
-		${components.advert(
-		    contents=[self.adverts_content['mobile']],
-		    config_key="advert_hand_mobile"
-		)}
-	    % endif
-	    
-	    ##------------------------------------------------------------------
-	    ## Guides #3
-	    ##------------------------------------------------------------------
+	    ${guides()}
 	    
 	    ## Accepted Assignments --------------------------------------
 	    
@@ -533,6 +470,67 @@
 
 </%def>
 
+##------------------------------------------------------------------------------
+## Guides
+##------------------------------------------------------------------------------
+<%def name="guides()">
+    ## Request advert (Hubs)
+    % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
+	${components.advert(
+	    contents=[self.adverts_content['assignment']],
+	    int=1,
+	    heading="What next?",
+	    config_key="advert_hand_assignment"
+	)}
+    % endif
+    
+    ## Content advert (Journalists)
+    % if "advert_hand_content" in self.adverts_hand and not c.logged_in_user.config["advert_hand_content"]:
+	${components.advert(
+	    contents=[self.adverts_content["assignment"], self.adverts_content["article"]],
+	    int=1,
+	    heading=_("What next?"),
+	    config_key="advert_hand_content"
+	)}
+    % endif
+    
+    ## Response advert (Individuals)
+    % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
+	${components.advert(
+	    contents=[self.adverts_content["response"]],
+	    int=1,
+	    heading=_("What next?"),
+	    config_key="advert_hand_response"
+	)}
+    % endif
+
+    ## Widget advert (Hubs)
+    % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
+	${components.advert(
+	    contents=[self.adverts_content['widget']],
+	    int=2,
+	    config_key="advert_hand_widget"
+	)}
+    % endif
+    
+    ## Hub/widget hybrid advert (Journalists)
+    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
+	${components.advert(
+	    contents=[self.adverts_content['hub'], self.adverts_content['widget']],
+	    int=2,
+	    config_key="advert_hand_hub"
+	)}
+    % endif
+    
+    ## Mobile advert (Individuals)
+    % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
+	${components.advert(
+	    contents=[self.adverts_content['mobile']],
+	    config_key="advert_hand_mobile"
+	)}
+    % endif
+</%def>
+    
 ##------------------------------------------------------------------------------
 ## Messages Frag List
 ##------------------------------------------------------------------------------
@@ -626,7 +624,7 @@
         <% invite_text = _('Invite %s to join %s' % (self.name, c.logged_in_persona.name or c.logged_in_persona.username)) %>
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
-            value           = _('Invite') ,
+            value           = _('Invite to _Group') ,
             css_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite') ,
             title           = invite_text , 
@@ -678,7 +676,6 @@
             title           = _("Got a story? Send us a story directly") ,
         )}
 	% endif
-    
 </%def>
 
 

@@ -33,7 +33,6 @@
         ${advert_disable_link(config_key)}
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
-	<% pad = 0 %>
 	% if heading:
 	    <h1>${heading}</h1>
 	% endif
@@ -41,9 +40,6 @@
 	    <p class="int">${int}.</p>
 	% endif
 	% for item in contents:
-	    % if pad:
-		<div style="padding: 1em;"></div>
-	    % endif
 	    % if item.get('href'):
 		<a href="${item['href']}">
 	    % endif
@@ -72,7 +68,6 @@
 	    % if item.get('href'):
 		</a>
 	    % endif
-	    <% pad = 1 %>
 	% endfor
 
         <div class="separator" style="clear: both;"></div>

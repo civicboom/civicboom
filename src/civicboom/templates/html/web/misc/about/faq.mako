@@ -4,23 +4,26 @@
 
 <h1>${_("FAQ")}</h1>
 
-<p>
-<b>${_("Q: What is _site_name?")}</b>
-<br />${_("A: _site_name lets people that need news _articles get it from people that have it.")}
-</p>
+
+
+
+
+<h2> What does this mean?                     </h2>
 
 <p>
-<b>${_("Q: How does it work?")}</b>
-<br />${_("A: _site_name works on two levels:")}
+<b>${_("Q: What is _site_name and how does it work")}</b>
+<br />${_("A: _site_name connects the people that need news stories with the the people that have them")}
+
+<br />${_("How Civicboom can help you depends on what you want to do")}
     <ol>
-        <li>${_("Journalists, blogger, publishers, news organisations - get _articles, videos, images and audio directly from your audience.")}</li>
-        <li>${_("People - you are the eyes and ears of a _article and _site_name is the tool that lets you share those _articles directly with those that want and need them.")}</li>
+        <li> <i> ${_("Journalists, blogger, publishers, news organisations - get _articles, videos, images and audio directly from your audience.")} </i> </li>
+        <li> <i> ${_("People - Everyone has a _article and _site_name is the tool that lets you share those it with newspapers, bloggers and journalists.")} </i> </li>
     </ol>
 </p>
 
 <p>
 <b>${_("Q: What is booming?")}</b>
-<br />${_("A: Booming this content will recommend it to your followers and the rest of the community.")}
+<br />${_("A: Booming content will recommend it to your followers and the rest of the Civicboom community.")}
 </p>
 
 <p>
@@ -36,27 +39,12 @@
 
 <p>
 <b>${_("Q: What is the _widget?")}</b>
-<br />${_("A: The _widget is a simple audience engagement \"widget\", a window that can be embedded into your website or blog. It allows your readers to directly post their content and respond to requests for stories.")}
-</p>
-
-<p>
-<b>${_("Q: How do I share content via Twitter, Facebook and other social media?")}</b>
-<br />${_("A: In the top right hand corner of any piece of content there is a series of icons, click the relevant icon to share via that site.")}
-</p>
-
-<p>
-<b>${_("Q: What is an RSS feed?")}</b>
-<br />${_("A: RSS solves a problem for people who regularly use the web. It allows you to easily stay informed by retrieving the latest content from the sites you are interested in. You save time by not needing to visit each site individually. You ensure your privacy, by not needing to join each site's email newsletter.")}
+<br />${_("A: The _widget is a simple audience engagement \"widget\", a window that can be embedded into your website or blog. It allows your readers to directly post their stories and respond to news requests.")}
 </p>
 
 <p>
 <b>${_("Q: What can you do on the mobile app?")}</b>
-<br />${_("A: You can respond to news requests directly and share your news _articles as they happen.")}
-</p>
-
-<p>
-<b>${_("Q: Why doesn't my notification counter go down after I've read my notifications?")}</b>
-<br />${_("A: Click on one, it will open and show you the notification. After that, the notification counter will go down. Opening the notification list will not mark notifications as read and therefore not decrease the notification counter.")}
+<br />${_("A: You can respond to news requests directly and share your _articles as they happen.")}
 </p>
 
 <p>
@@ -75,60 +63,35 @@
 </p>
 
 <p>
-<b>${_("Q: What happens when I switch Hubs")}</b>
-<br />${_("A: All your actions-your _article requests, _responses and content - will be posted under the name of that Hub.")}
-</p>
-
-<p>
-<b>${_("Q: How do I switch Hubs?")}</b>
-<br />${_("A: Hover your mouse over your profile picture in the top righthand corner of the screen. A list of Hubs you can access will be displayed, click one to switch into that Hub.")}
-</p>
-
-<p>
-<b>${_("Q: How do I email content to others? Will I need to copy and paste it?")}</b>
-<br />${_("A: In the \"social sharing\" section of any piece of content there is a series of icons (like Facebook and Twitter) click the envelope to share that content with others by email.")}
-</p>
-
-<p>
 <b>${_("Q: What is private content?")}</b>
-<br />${_("A: Private content is a premium feature that allows users to hide their content from the general public.")}
+<br />${_("A: Private content is a premium feature that allows users to hide their requests for stories and associated content from the general public.")}
 </p>
 
 <p>
 <b>${_("Q: What is a trusted follower?")}</b>
-<br />${_("A: A trusted follower can see your your private content.")}
-</p>
-
-<p>
-<b>${_("Q: How do multiple users work on the same _articles?")}</b>
-<br />${_("A: Create a _articles whilst under the persona of a Hub, then other members Hub members can edit that _articles. Note: you must be under the persona of a Hub for this to work, it will not work with individual users for privacy reasons.")}
-</p>
-
-<p>
-<b>${_("Q: Invite function")}</b>
-<ul>
-    <li>${_("What: This allows you to invite others to join your hub.")}</li>
-    <li>${_("How to: Go to the profile of the person you want to invite and click Invite")}</li>
-    <li>${_("Accepting: After you are invited to a hub, you will receive a notification. This will enable you to join the hub at any time by clicking on its profile and join hub")}</li>
-</ul>
-</p>
-
-<p>
-<b>${_("Q: How do I change the status of my hub's members?")}</b>
-<br />${_("A: Switch into the relevant hub. In the bottom left of your hub's profile, there will be a box showing members of the hub. Click on heading members (your mouse pointer will change to a hand when you hover over it). This will open a window where each member and their status is shown and from there it can be changed by selecting a new status from the drop-down.")}
+<br />${_("A: A trusted follower can see your private requests for stories and content.")}
 </p>
 
 <p>
 <b>${_("Q: What is embedding?")}</b>
-<br />${_("A: By embedding something you make it appear inside other webpages and blogs. For example, you might embed your request for news into site so that your readers can use it to give you their _articles.")}
+<br />${_("A: By embedding something you make it appear inside other webpages and blogs. For example, you might embed your request for news into your site so that your readers can use it to directly send you their _articles.")}
+</p>
+
+<p>
+<b>${_("Q: What is an RSS feed?")}</b>
+<br />${_("A: 'RSS solves a problem for people who regularly use the web. It allows you to easily stay informed by retrieving the latest content from the sites you are interested in. You save time by not needing to visit each site individually. You ensure your privacy, by not needing to join each site's email newsletter.'")}
 </p>
 
 <p>
 <b>${_("Q: What is credit?")}</b>
-<br />${_("A: When you 'credit' a piece of media, you're saying you want to be credited if it is used by other people.")}
+<br />${_("A: When you 'credit' a piece of media, you're naming who owns it. You are only allowed to upload media via Civicboom if you either own it or if you have explicit permission from the copyright owner to do so.")}
 </p>
 
-FAQ: _site_name User Accounts
+
+
+
+<h2> How do I do this...?                     </h2>
+
 
 <p>
 <b>${_("Q: Where can I create an account?")}</b>
@@ -161,8 +124,114 @@ FAQ: _site_name User Accounts
 </p>
 
 <p>
+<b>${_("Q: How do I share content via Twitter, Facebook and other social media?")}</b>
+<br />${_("A: On the bottom of any piece of content there is a series of icons, click the relevant icon to share via that site.There are also automatic prompts that nudge you to share content posted. These are optional- you can close the prompts without needing to share first.")}
+</p>
+
+<p>
+<b>${_("Q: How do I switch Hubs?")}</b>
+<br />${_("A: Hover your mouse over your profile picture in the top righthand corner of the screen. A list of Hubs you can access will be displayed, click one to switch into that Hub.")}
+</p>
+
+<p>
+<b>${_("Q: What happens when I switch Hubs")}</b>
+<br />${_("A: All your actions-your _article requests, _responses and content - will be posted under the name of that Hub.")}
+</p>
+
+<p>
+<b>${_("Q: I don't like a response that someone has posted to my story request (for example, it could be \"off brand\") but it isn't inappropriate/offensive. What can I do?")}</b>
+<br />${_("A: You can disconnect your request from that piece of content by clicking on the \"Disassociate\". The content still exists but it is shown in the reply list.")}
+</p>
+
+<p>
+<b>${_("Q: There is a comment that I find insulting/ in conflict with your policy. What can I do?")}</b>
+<br />${_("A: In the top left hand corner of any piece of content, there is a \"flag\" button. Click it to open a window, indicate why find that content inappropriate and click \"flag it\".")}
+</p>
+
+</p>
+<b>${_("Q: Will the stories I read or post on _site_name appear on my Facebook wall?")}</b>
+<br />${_("A: Not unless you specifically share that content.")}
+</p>
+
+<p>
+<b>${_("Q: How do I email content to others? Will I need to copy and paste it?")}</b>
+<br />${_("A: In the \"social sharing\" section of any piece of content there is a series of icons (like Facebook and Twitter) click the envelope to share that content with others by email.")}
+</p>
+
+
+<p>
+<b>${_("Q: How do multiple users work on the same _articles?")}</b>
+<br />${_("A: Create a _articles whilst under the persona of a Hub, then other members Hub members can edit that _articles. Note: you must be under the persona of a Hub for this to work, it will not work with individual users for privacy reasons.")}
+</p>
+
+<p>
+<b>${_("Q: The invite function of hubs")}</b>
+<ul>
+    <li>${_("What: This allows you to invite others to join your hub.")}</li>
+    <li>${_("How to: Go to the profile of the person you want to invite and click Invite")}</li>
+    <li>${_("Accepting: After you are invited to a hub, you will receive a notification. This will enable you to join the hub at any time by clicking on its profile and join hub")}</li>
+</ul>
+</p>
+
+<p>
+<b>${_("Q: How do I change the roles of my hub's members?")}</b>
+<br />${_("A: Switch into the relevant hub. In the bottom left of your hub's profile, there will be a box showing members of the hub. Click on heading members (your mouse pointer will change to a hand when you hover over it). This will open a window where each member and their status is shown and from there it can be changed by selecting a new status from the drop-down.")}
+</p>
+
+
+<p>
+<b>${_("Q: Can I use HTML formatting in my stories?")}</b>
+<br />${_("A: No. There are specific buttons for common formatting such as Bold, Italics, Scoring etc.")}
+</p>
+
+<p>
+<b>${_("Q: If you don't allow  HTML, how  do I include a link in my comment?")}</b>
+<br />${_("A: If you include a URL in your comment, it will automatically be converted to a link. We also support hyperlinks.")}
+</p>
+
+<p>
+<b>${_("Q: Why doesn't my notification counter go down after I've read my notifications?")}</b>
+<br />${_("A: Click on the red bubble with a number inside in the top right of the screen, it will open and show you the notification. After that, the notification counter will go down. Opening the notification list will not mark notifications as read and therefore not decrease the notification counter.")}
+</p>
+
+
+<p>
+<b>${_("Q: Can I follow an individual user?")}</b>
+<br />${_("A: Yes. Go to that users profile and click the blue \"follow\" button.")}
+</p>
+
+<p>
+<b>${_("Q: Can I print stories or news requests?")}</b>
+<br />${_("A: Yes. Click on the \"social sharing\" box on any story or news request, then select print. Note, this will only print that specific piece of content rather the whole page.")}
+</p>
+
+<p>
+<b>${_("Q: How do I cancel my _site_name account?")}</b>
+<br />${_("A: Send us an email at cancelmyaccount@civicboom.com and we'll cancel it for you.")}
+</p>
+
+<p>
+<b>${_("Q: Can I change my profile picture for _site_name?")}</b>
+<br />${_("A: Yes. Go to my settings, under the heading marked 'avatar' click choose file and upload your desired display picture.")} 
+</p>
+
+<p>
+<b>${_("Q: How can I delete my _articles/news requests?")}</b>
+<br />${_("A: Find the relevant content and in the top left hand corner there will be a cross marked delete.")}
+</p>
+
+<p>
+<b>${_("Q: How will _site_name use the information I provide when I sign up?")}</b>
+<br />${_("A: For full details of how your information will be used and stored, visit our privacy conditions https://www.civicboom.com/about/privacy")}
+</p>
+
+
+
+<h2> Terms, conditions and regulations?</h2>
+
+<p>
 <b>${_("Q: What is the _site_name's account Policy?")}</b>
-<br />${_("A: _site_name's aim is to help you contribute and source news in an easy and engaging way. To this end, we have the following guidelines to make sure. If you want to get your news published, you will need to respect these rules as well as your fellow users.")} 
+<br />${_("A: _site_name's aim is to help you contribute and source stories in an easy and engaging way. To this end, we have the following guidelines to make sure. If you want to get your news published, you will need to respect these rules as well as your fellow users.")} 
 <ol>
         <li>${_("All content, whether posted or transmitted publicly or privately, is the sole responsibility of the person who originated such content. The Service cannot take responsibility for such content. Any use or reliance on any content or materials posted via The Service or obtained by you through The Services is at your own risk.")} </li>
         <li>${_("You must be 13 years or older to use The Service. Visitors can browse and explore some elements of The Service without creating an Account.")} </li>
@@ -178,65 +247,11 @@ FAQ: _site_name User Accounts
 ${_("For the full Terms of Service, please click")} <a href="https://www.civicboom.com/about/terms">here</a>
 </p>
 
-<p>
-<b>${_("Q: I don't like a response that someone has posted to my story request (for example, it could be \"off brand\") but it isn't inappropriate/offensive. What can I do?")}</b>
-<br />${_("A: You can disconnect your request from that piece of content by clicking on the \"Disassociate\". The content still exists but it is not against your request for stories")}
-</p>
 
-<p>
-<b>${_("Q: There is a comment that I find insulting/ in conflict with your policy. What can I do?")}</b>
-<br />${_("A: In the top left hand corner of any piece of content, there is a \"flag\" button. Click it to open a window, indicate why find that content inappropriate and click \"flag it\".")}
-</p>
 
-<p>
-<b>${_("Q: Can I use HTML formatting in my stories?")}</b>
-<br />${_("A: No. There are specific buttons for common formatting such as Bold, Italics, Scoring etc.")}
-</p>
 
-<p>
-<b>${_("Q: If you don't allow  HTML, how  do I include a link in my comment?")}</b>
-<br />${_("A: If you include a URL in your comment, it will automatically be converted to a link.")}
-</p>
 
-<p>
-<b>${_("Q: Can I follow an individual user?")}</b>
-<br />${_("A: Yes. Go to that users profile and click the blue \"follow\" button.")}
-</p>
 
-<p>
-<b>${_("Q: Can I print stories or news requests?")}</b>
-<br />${_("A: Yes. Click on the \"social sharing\" box on any story or news request, then select print. Note, this will only print that specific piece of content rather the whole page.")}
-</p>
-
-<p>
-<b>${_("Q: How do I cancel my _site_name account?")}</b>
-<br />${_("A: Send us an email at  and we'll cancel it for you.")}
-</p>
-
-<p>
-<b>${_("Q: How Do I Unlink My Facebook Account from _site_name?")}</b>
-<br />${_("A:Go to your settings, and click the button on the left hand side marked: \"Link additional login accounts\". Alternatively, click")} <a href="https://www.civicboom.com/settings/me/link_janrain">here</a>
-</p>
-
-<p>
-<b>${_("Q: Can I change my profile picture for _site_name?")}</b>
-<br />${_("A: Yes. Go to my settings, under the heading marked avatar click choose file and upload your desired display picture.")} 
-</p>
-
-<p>
-<b>${_("Q: How can I delete my stories/news requests?")}</b>
-<br />${_("A: Find the relevant content and in the top left hand corner there will be a cross marked delete.")}
-</p>
-
-<p>
-<b>${_("Q: How will _site_name use the information I provide when I sign up?")}</b>
-<br />${_("A:")}
-</p>
-
-</p>
-<b>${_("Q: Will the stories I read or post on _site_name appear on my Facebook wall?")}</b>
-<br />${_("A: Not unless you specifically share that content.")}
-</p>
 
 <%doc>
     <object width="640" height="390">
