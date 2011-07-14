@@ -1,6 +1,7 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
 ##<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 
@@ -140,22 +141,19 @@
 
 <%def name="front_windows()">
 	<div class="windows">
-		<div class="window" id="left">
-			<img src="/images/misc/titlepage/middle_panel.png" alt="Request" />
-		</div>
+		${make_window("left", "/images/misc/titlepage/first_panel.png", "Request",
+			content="Journalists, news organisations, media outlets and publishers: Need stories? Sign up and ask.")}
 		
 		<div class="window_wrapper">
 			<span class="symbol">+</span>
-			<div class="window" id="center">
-				<img src="/images/misc/titlepage/middle_panel.png" alt="Respond" />
-			</div>
+			${make_window("center", "/images/misc/titlepage/middle_panel.png", "Respond",
+				content="center")}
 		</div>
 		
 		<div class="window_wrapper">
 			<span class="symbol">=</span>
-			<div class="window" id="right">
-				<img src="/images/misc/titlepage/last_panel.png" alt="Get published" />
-			</div>
+			${make_window("right", "/images/misc/titlepage/last_panel.png", "Get published",
+				content="right")}
 		</div>
 	
 		<div style="clear: both;"></div>
@@ -168,6 +166,30 @@
 			${_("Connecting people that need _articles with people that have them")}
 		</h2>
 	</div>
+</%def>
+	
+## Window popups
+<%def name="make_window(id, img, alt, content)">
+	${popup.popup_static('', window_popup, 'title_window_'+id)}
+	<a href="" class="title_link_${id}">
+		<div class="window" id="${id}">
+			<img src="${img}" alt="${alt}" />
+		</div>
+	</a>
+	<script>
+	    $(".title_link_${id}").click(function() {
+		$("#title_window_${id}").modal({ onShow: function (dialog) {}});
+		return false;
+	    });
+	</script>
+	
+	<%def name="window_popup()">
+		<div style="text-align: center; font-size: 125%;">
+			<img src="${img}" style="width: 600px; display: block; margin: auto;"/>
+			${content}
+			<h2>Don't just read it. Feed it</h2>
+		</div>
+	</%def>
 </%def>
 	
 ##------------------------------------------------------------------------------

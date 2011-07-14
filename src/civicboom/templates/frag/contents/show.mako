@@ -957,7 +957,7 @@
             <img src="/images/misc/shareicons/camera_icon.png" />
             <img src="/images/misc/shareicons/audio_icon.png" />
         </div>
-    </wrapper>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
