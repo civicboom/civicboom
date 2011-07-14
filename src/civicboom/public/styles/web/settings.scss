@@ -12,7 +12,7 @@ BODY.c-settings {
 		/*width: 95%;*/
 	}
 	FIELDSET TABLE .descr {
-		width: 10em;
+		width: 9em;
 		text-align: right;
 		padding-right: 4px;
 	}
@@ -27,12 +27,12 @@ BODY.c-settings {
 		font-weight: bold;
 	}
 	DIV.setting_name {
-		width: 10em;
+		width: 9em;
 		vertical-align: top;
 		display: inline-block;
 	}
   DIV.setting_name_long {
-    width: 23em;
+    width: 25em;
     vertical-align: top;
     display: inline-block;
   }
@@ -42,12 +42,12 @@ BODY.c-settings {
 	DIV.setting_field, BODY.c-settings DIV.setting_hint {
 		//padding-left: 40px; //80
 		display: inline-block;
-		width: 23em;
+		width: 21em;
 	}
   DIV.setting_field_short {
     //padding-left: 40px; //80
     display: inline-block;
-    width: 10em;
+    width: 6em;
   }
 	DIV.setting_hint {
 		font-weight: bold;
