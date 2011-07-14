@@ -28,7 +28,7 @@
 <center class="accept_action">
     ${h.form(c.target_url)}
         <br /><h1>${_("Great! You're nearly there...")}</h1>
-        <br /><p>${_("You are about to <b>%s</b>, to continue click ") % action_description |n} <input type="submit" value="${_("continue!")}" class="button"></p>
+        <br /><p>${_("If you want to <b>%s</b>, click ") % action_description |n} <input type="submit" value="${_("continue!")}" class="button"></p>
         % for k, v in c.post_values.items():
             <input type="hidden" name="${k}" value="${v}">
         % endfor
