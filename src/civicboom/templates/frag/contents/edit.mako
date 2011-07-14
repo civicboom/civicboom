@@ -671,6 +671,7 @@
 <%def name="privacy()">
     % if c.logged_in_persona.has_account_required('plus'):
 	<%def name="selected(private, text='selected')">
+	   <% print type(private), type(self.content.get('private')) %>
 		%if private == self.content.get('private'):
 			${text}="${text}"
 		%endif
@@ -685,18 +686,14 @@
               <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
               <div class="padded">
                   <div class="jqui-radios">
-                      <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
-                      <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                      <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
+                      <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
                   </div>
                   <script type="text/javascript">
                     $(function() {
                         $('.jqui-radios').buttonset().removeClass('.jqui-radios');
                     })
                   </script>
-##                <select id="private" name="private">
-##                    <option ${selected(False)} value="False">Public</option>
-##                    <option ${selected(True)} value="True">Private</option>
-##                </select>
               </div>
         </div>
     </fieldset>
