@@ -286,6 +286,7 @@
         ${h.end_form()}
     </%def>
     
+    </tr><tr>
     % if not permission_set_role:
     <td>${member['role']}</td>
     % else:

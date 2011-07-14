@@ -20,7 +20,7 @@ class TestListsController(TestController):
                     'contents'      : title      ,
                     'type'          : u'article' ,
                     'submit_publish': u'publish' ,
-                    'location'      : '%f %f' % (0+random(), 51+random()),
+                    'location'      : '%f %f' % (-2+random()*2, 51+random()),
                 },
                 status=201
             )

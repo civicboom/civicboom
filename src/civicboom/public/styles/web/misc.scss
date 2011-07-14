@@ -10,9 +10,9 @@
     .button {
 	@include horiz_gradient(lighten($cb-lightblue, 10%), darken($cb-lightblue, 10%));
 	
-	-moz-box-shadow:    1px 1px 5px #333, inset 0px 30px 0px rgba(255, 255, 255, .2);
-	-webkit-box-shadow: 1px 1px 5px #333, inset 0px 30px 0px rgba(255, 255, 255, .2);
-	box-shadow:         1px 1px 5px #333, inset 0px 30px 0px rgba(255, 255, 255, .2);
+	-moz-box-shadow:    1px 1px 5px #333, inset 0px 25px 0px rgba(255, 255, 255, .2);
+	-webkit-box-shadow: 1px 1px 5px #333, inset 0px 25px 0px rgba(255, 255, 255, .2);
+	box-shadow:         1px 1px 5px #333, inset 0px 25px 0px rgba(255, 255, 255, .2);
 	
 	&:hover {
 	    @include horiz_gradient(lighten($cb-lightblue, 20%), darken($cb-lightblue, 0%));
@@ -25,41 +25,46 @@
 /*----------------------------------------------------------------------------*/
 
 BODY.c-misc.a-titlepage {
-	height: 100%;
-
-	.wrapper {
-	display: table;
-	height: 100%;
-	margin: auto;
+    .wrapper {
+	// height: 100%;
+	margin: 4em 5em 2em 5em;
 	
-	    .content {
-		display: table-cell;
-		height: 100%;
-		margin: auto;
-	    }
+	    // .content {
+		// height: 100%;
+		// width: 100%;
+		padding: 3em;
+		background: lighten($cb-lightblue, 20%);
+		@include horiz_gradient(lighten($cb-lightblue, 10%), lighten($cb-lightblue, 30%));
+		@include drop_shadow(5px, 5px, 10px, #333);
+		border: 1px solid #333;
+		@include border_radius(0.5em);
+	    // }
 	}
 
 	/* --- Title-box --- */
 	.title-box {
 		text-align: center;
 		padding: 0;
-		margin: 1.5em auto 1.5em auto;
+		margin: 0 auto 0 auto;
 		width: 65em;
+		color: white;
 
 		.headline {
 			padding: 0;
 			margin: 0 auto 0 auto;
-			font-size: 250%;
-			test-align: left;
-			color: #e38317; /*#c77b01;*/
+			font-size: 1000%;
+			text-shadow: 1px 1px 5px #333;
+			letter-spacing: -0.04em;
 		}
 
 		.tagline {
 			padding: 0;
 			margin: 0 auto 0 auto;
-			color: #666;
 			font-size: 300%;
 			font-weight: normal;
+			text-shadow: 1px 1px 5px #333;
+			letter-spacing: -0.04em;
+			word-spacing: 0.1em;
 		}
 	}
 
@@ -67,20 +72,24 @@ BODY.c-misc.a-titlepage {
 	.windows {
 	    font-size: 500%;
 	    // width: 800px;
-	    margin: auto;
+	    margin: 0.5em auto 0.1em auto;
 	    text-align: center;
 	    padding: 0;
 	    
 	    .window_wrapper {
 		margin: 0;
 		padding: 0;
+		display: inline-block;
+		float: left;
 	    }
 	    
 	    .window {
+		display: inline-block;
 		// border: 1px solid black;
 		height: 200px;
 		float: left;
 		padding: 0;
+		@include drop_shadow(1px, 1px, 5px, #333);
 		
 		img {
 		    margin: 0;
@@ -89,16 +98,17 @@ BODY.c-misc.a-titlepage {
 	    }
 	    
 	    .symbol {
-		color: #999;
-		padding-top: 70px;
-		width: 96px;
+		display: inline-block;
+		color: white;
+		padding: 70px 5px 0 5px;
 		float: left;
+		text-shadow: 1px 1px 5px #333;
 		
 		text-align: center;
 	    }
 	    
 	    #left {
-	    
+		margin-left: 0.4em;
 	    }
 	    
 	    #plus {

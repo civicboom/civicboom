@@ -293,7 +293,7 @@
             and rights to create this _Group. I also confirm that any logo/image I upload does<br />
             not infringe upon any trademarks, third party copyrights, other such rights or<br />
             violate the user agreement. I hereby grant to Indiconews Ltd a non-exclusive,<br />
-            non-transferrable license during the term of this Agreement to copy, use and<br />
+            non-transferable license during the term of this Agreement to copy, use and<br />
             display on Civicboom any logos or trademarked materials provided for this _Group.<br />
             ''') | n}
         </div> 

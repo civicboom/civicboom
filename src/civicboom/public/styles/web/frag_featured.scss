@@ -24,6 +24,10 @@
 			text-decoration: none;
 			color: white;
 			right: 0;
+			
+			&:hover {
+				// color: lighten(#00BFFF, 20%);
+			}
 		}
 		
 		.mo-help {
@@ -40,9 +44,8 @@
 
 		.content {
 			// margin-right: 10px;
-			max-width: 85%;
 			float: left;
-			text-align: justify;
+			display: block;
 			
 			.advert_title {
 				font-size: 130%;
@@ -62,12 +65,18 @@
 			}
 		}
 		
+		.long {
+			min-width: 80%;
+			max-width: 85%;
+		}
+		
 		.small {
-			max-width: 72.5%;
+			max-width: 82.5%;
 		}
 
 		form {
-			float: right;
+			position: absolute;
+			right: 0;
 		}
 
 		.hide_advert_submit {
