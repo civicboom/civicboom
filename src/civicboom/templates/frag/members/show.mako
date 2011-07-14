@@ -187,7 +187,7 @@
         
         self.adverts_hand = []
         if self.current_user:
-	    my_type = 'org' if c.logged_in_persona.__type__ == 'group' else (c.logged_in_persona.config.get('help_type') or 'ind')
+	    my_type = 'hub' if c.logged_in_persona.__type__ == 'group' else (c.logged_in_persona.config.get('help_type') or 'ind')
             self.adverts_hand = hand_adverts[my_type]
     %>
 </%def>
@@ -226,7 +226,7 @@
 			% if self.member.get('description'):
 			    <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
 			% elif c.logged_in_user.username == self.member['username']:
-			    <p class="description">To complete your profile, add a description <a href="/settings">here</a></p>
+			    <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
 			% else:
 			    <p class="description">This user has not added a description about themselves yet</p>
 			% endif
