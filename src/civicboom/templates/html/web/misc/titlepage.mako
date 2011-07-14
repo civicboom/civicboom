@@ -32,6 +32,7 @@
 			</%doc>
 		##</div>
 	</div>
+	<br />
 </%def>
 	
 
@@ -147,13 +148,13 @@
 		<div class="window_wrapper">
 			<span class="symbol">+</span>
 			${make_window("center", "/images/misc/titlepage/middle_panel.png", "Respond",
-				content="center")}
+				content="Got stories? Sign up and respond to requests for your stories - or send directly to journalists, news organisations, media outlets and publishers.")}
 		</div>
 		
 		<div class="window_wrapper">
 			<span class="symbol">=</span>
 			${make_window("right", "/images/misc/titlepage/last_panel.png", "Get published",
-				content="right")}
+				content="Publish and get published: Get news stories from source. Get closer to your audience. Work together.")}
 		</div>
 	
 		<div style="clear: both;"></div>
@@ -171,23 +172,25 @@
 ## Window popups
 <%def name="make_window(id, img, alt, content)">
 	${popup.popup_static('', window_popup, 'title_window_'+id)}
-	<a href="" class="title_link_${id}">
+	<a href="#" class="title_link_${id}">
 		<div class="window" id="${id}">
 			<img src="${img}" alt="${alt}" />
 		</div>
 	</a>
 	<script>
 	    $(".title_link_${id}").click(function() {
-		$("#title_window_${id}").modal({ onShow: function (dialog) {}});
-		return false;
+    		$("#title_window_${id}").modal();
+    		return false;
 	    });
 	</script>
 	
 	<%def name="window_popup()">
 		<div style="text-align: center; font-size: 125%;">
-			<img src="${img}" style="width: 600px; display: block; margin: auto;"/>
-			${content}
-			<h2>Don't just read it. Feed it</h2>
+			<div class="image_wrapper">
+			    <img src="${img}" style="width: 600px; display: block; margin: auto;"/>
+			    <div>${content}</div>
+			</div>
+			<div class="image_footer">Don't just read it. Feed it</div>
 		</div>
 	</%def>
 </%def>

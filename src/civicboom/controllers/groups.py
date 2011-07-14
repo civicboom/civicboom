@@ -201,6 +201,12 @@ class GroupsController(BaseController):
         @return 201  group created, data.id = new group id
         @return 301  if format redirect specifyed will redirect to show group
         """
+        
+        create_push_assignment = kwargs.get('create_push_assignment')
+        if create_push_assignment:
+            del kwargs['create_push_assignment']
+            
+            
         # url('groups') + POST
         # if only display name is specified, generate a user name
         if not kwargs.get('username') and kwargs.get("name"):
@@ -265,10 +271,11 @@ class GroupsController(BaseController):
         
         # GregM: Create new request for group (Arrgh, have to fudge the format otherwise we cause a redirect):
         format = c.format
-        if kwargs.get('create_push_assignment'):
+        if create_push_assignment:
             c.format = 'python'
             assignment = create_content(type='assignment', private=False, title=_("Send us your stories"), content=_("Join us in making the news by telling us your stories, sending in videos, pictures or audio: Get recognition and get published - share your news with us now!"), format="python")
             group.config['push_assignment'] = assignment.get('data', {}).get('id')
+            
         c.format = format
         
         
