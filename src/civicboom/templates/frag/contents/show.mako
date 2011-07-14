@@ -587,7 +587,7 @@
 		dict(pin='gold',    url='/contents.rss?sort=distance&location=%s,%s&limit=10' % (lon,lat)     , focus=True ),
 		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
 	    ],
-		controls=True
+		#controls=True
 	)}
 	</p>
     % endif
