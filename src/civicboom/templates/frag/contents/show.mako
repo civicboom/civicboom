@@ -584,7 +584,7 @@
 	    lat = lat,
 	    lon = lon,
 	    feeds = [
-		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)     , focus=True ),
+		dict(pin='gold',    url='/contents.rss?sort=distance&location=%s,%s&limit=10' % (lon,lat)     , focus=True ),
 		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
 	    ],
 		controls=True
