@@ -150,7 +150,7 @@
 	    },
 	    "article":	{
 	       'title':	'Post stories!',
-		##'content_list':	[
+		##'content_list':	e[
 		##    _("Send your stories directly to media organisations and publishers"),
 		##    _("Respond to a specific request"),
 		##    _("Post your news on Civicboom")
