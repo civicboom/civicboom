@@ -7,14 +7,17 @@
     help_frag = 'link_accounts'
 %>
 
-<%def name="title()">${_("%s Link additional login accounts") % (c.logged_in_persona.username)}</%def>
+<%def name="title()">${_("Link additional login accounts")}</%def>
 
 <%def name="body()">
-    <h1>${_('%(username)s link additional login accounts') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
+    <%
+        print_username = c.logged_in_persona.username if c.result.get('username', 'me') == 'me' else c.result['username']
+    %>
+    <h1>${_('%(username)s link additional login accounts') % dict(username= print_username.capitalize()) }</h1>
     
     <h2>${_("Currently Linked Accounts")}</h2>
         <ul>
-            % for login in c.logged_in_persona.login_details:
+            % for login in c.logged_in_user.login_details:
             <li>${login.type.capitalize()}</li>
             % endfor
         </ul>
