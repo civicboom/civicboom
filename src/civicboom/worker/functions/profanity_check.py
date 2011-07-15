@@ -42,7 +42,7 @@ def profanity_check(content_id, url_base):
             try:
                 from civicboom.lib.aggregation import twitter_global
                 twitter_global(content)
-            except:
-                log.warn('Global twitter failed')
+            except Exception as e:
+                log.exception('Global twitter failed')
     
     return True

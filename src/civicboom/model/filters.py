@@ -44,7 +44,7 @@ AndFilter([OrFilter([
 <div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter([1, 51])</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>AuthorFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
 
 >>> print sql(query)
-((to_tsvector(content.content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1 51)', 10)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector(content.content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+((to_tsvector(content.content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector(content.content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
 
 
 LabelFilter is a thing to put text into the human-readable output while having
@@ -186,7 +186,7 @@ class LocationFilter(Filter):
         return "LocationFilter(%s)" % repr(self.loc)
 
     def __sql__(self):
-        return "ST_DWithin(content.location, 'SRID=4326;POINT(%d %d)', %d)" % (self.loc[0], self.loc[1], self.rad)
+        return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.loc[0], self.loc[1], self.rad)
 
 
 class AuthorIDFilter(Filter):

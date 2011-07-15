@@ -30,7 +30,7 @@
           <p>${_('You may now use this content for your needs under the following license:')}</p>
             
           <h3>${_('License')}</h3>
-              <p>${_('This content has been created under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported </a>. This means you are free to copy, distribute and transmit the work. You are also free to adapt the work according to your needs.') |n}</p>
+              <p>${_('This content has been created under')} <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported</a>. ${_('This means you are free to copy, distribute and transmit the work. You are also free to adapt the work according to your needs.')}</p>
               <p>${_('The above is permissible under the following conditions:')}</p>
               <p>${_('You must attribute the work in one of the following manner:')}</p>
               <p>${_('Content credit: Three different ways:')}</p>

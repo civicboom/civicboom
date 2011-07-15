@@ -1,5 +1,8 @@
 <%inherit file="/frag/common/frag.mako"/>
-<%! import datetime %>
+<%!
+    import datetime
+    from webhelpers.html import HTML, literal
+%>
 
 <%namespace name="frag_lists"      file="/frag/common/frag_lists.mako"     />
 <%namespace name="flag"            file="/frag/content_actions/flag.mako"  />
@@ -85,6 +88,14 @@
     %>
 </%def>
 
+<%def name="invite_members_request()"> 
+    <span class="mo-help">
+        ${h.frag_link(value='', title='Invite Members', class_='icon16 i_plus_blue', href_tuple=h.args_to_tuple(controller='invite', action='index', id=self.id, invite='assignment'))}
+        <div class="mo-help-l mo-help-b">
+            ${_('Invite other members to participate in this request')}
+        </div> 
+    </span>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Content Fragment
@@ -103,21 +114,28 @@
 	    % endif
 	    
 	    <div class="frag_list">
-		${content_title()}
-		${content_media()}
-		${content_content()}
-		${content_map()}
-		${content_action_buttons()}
-		## ${content_why_resond()}
-		${content_comments()}
-		## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
-		<%def name="flag_form()">
-		    ${flag.flag_form(self.id)}
-		</%def>
-		${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
-		${content_details_foot()}
-		${content_details()}
-		<span style="display: block; clear: both;"></span>
+                <div class="frag_list_contents">
+                    ${content_title()}
+                    ${content_media()}
+                    ${content_content()}
+                    ${content_map()}
+                    ${content_action_buttons()}
+                    ## ${content_why_resond()}
+                    ${content_comments()}
+                    ## To maintain compatability the form to flag offensive content is included (hidden) at the bottom of content and viewed by JQuery model plugin
+                    <%def name="flag_form()">
+                        ${flag.flag_form(self.id)}
+                    </%def>
+                    ${popup.popup_static(_('Flag content'), flag_form, 'flag_content')}
+                    ${content_details_foot()}
+                    ${content_details()}
+                    <div class="separator" style="padding: 10px;"></div>
+                    % if self.attr.share_kwargs:
+                        ${share.AddThisLine(**self.attr.share_kwargs)}
+                    % endif
+                    ${content_license()}
+                    <div class="separator"></div>
+                </div>
 	    </div>
 	</div>
     </div>
@@ -156,9 +174,12 @@
             </div>
           </div>
 	</div></%doc>
+      
+      <%doc>
         % if self.attr.share_kwargs:
             ${share.AddThisFragList(**self.attr.share_kwargs)}
         % endif
+        </%doc>
         
         ##<h2>${_("Content by")}</h2>
         
@@ -171,14 +192,13 @@
                 [m for m in d['accepted_status']['items'] if m['status']=='invited'],
                 _("Invited"),
                 hide_if_empty = not 'invite_to_assignment' in self.actions, # Always show this list if invite is avalable
-                actions = h.frag_link(value='', title='Invite Members', class_='icon16 i_invite', href_tuple=h.args_to_tuple(controller='invite', action='index', id=self.id, invite='assignment')) if 'invite_to_assignment' in self.actions else None ,
+                actions = invite_members_request if 'invite_to_assignment' in self.actions else None ,
             )}
             ${frag_lists.member_list_thumbnails(
                 [m for m in d['accepted_status']['items'] if m['status']=='withdrawn'],
                 _("Withdrawn"),
             )}
         % endif
-        ${content_license()}
         </div>
     </div>
 
@@ -331,6 +351,43 @@
     </div>
 </%def>
 
+##------------------------------------------------------------------------------
+## Content Response button when content has parent (GregM)
+##------------------------------------------------------------------------------
+<%def name="respond_has_parent()">
+    <%def name="li_story(title, content_dict)">
+        <li>
+            <h3>${title}:</h3>
+            <p><b>${content_dict.get('title')}</b></p>
+            <p>
+                <div class="creator_avatar fl">
+                   ${member_includes.avatar(content_dict['creator'])}
+                </div>
+                <div class="content_creator">By: ${content_dict['creator']['name']}</div>
+                <div class="cb"
+            </p>
+            <div style="padding: 0.5em 0 1em 0;">
+            ${h.secure_link(
+                h.args_to_tuple('new_content', parent_id=content_dict['id']) ,
+                css_class = 'button',
+                value     = _("Share your story") ,
+                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); $.modal.close(); """)  , 
+            )}
+            </div>
+        </li>
+    </%def>
+    <div style="">
+        <h2 class="hide_if_js">Share your story</h2>
+        <h1 class="hide_if_nojs">Great you want to share your story...</h1>
+        <p>Would you like to respond to:</p>
+        <ul>
+            ${li_story(_('This story'), self.content)}
+            ${li_story(_('The original request'), self.content.get('root_parent'))}
+        </ul>
+        <div class="cb"></div>
+    </div>
+    <div class="hide_if_nojs" style="padding-bottom: 6em;"></div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Content Action Buttons
@@ -355,17 +412,28 @@
       
 		## --- Respond -----------------------------------------------------------
 		% if 'respond' in self.actions:
-		    ${h.secure_link(
-                h.args_to_tuple('new_content', parent_id=self.id) ,
-                css_class = 'button',
-                value     = _("Share your story") ,
-                json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-		    )}
+		    % if self.content.get('parent'):
+		    
+                <div class="hide_if_nojs">
+                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Share your story")}</a>
+                </div>
+                <div class="hide_if_js">
+                    ${popup.popup_static('Share your story', respond_has_parent, 'popup_share')}
+                </div>
+                
+		    % else:
+    		    ${h.secure_link(
+                    h.args_to_tuple('new_content', parent_id=self.id) ,
+                    css_class = 'button',
+                    value     = _("Share your story") ,
+                    json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+    		    )}
 		    ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
 		    ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
+		    % endif
 		% endif
 		
-        <%doc>
+<%doc>
 	    ## --- Accept ------------------------------------------------------------
 		% if 'accept' in self.actions:
 		    ${h.secure_link(
@@ -387,7 +455,7 @@
 			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
 		    )}
 		% endif
-        </%doc>
+</%doc>
         
 		</td>
 		<td class="tip"><div>
@@ -413,12 +481,29 @@
 ##------------------------------------------------------------------------------
 
 <%def name="content_license()">
+    ## BIG DIRTY HACK, changes cc urls for time being
     % if 'license' in self.content:
-    <% license = self.content['license'] %>
-    <div class="padded license" style="margin-top:14px">
-      <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
-        <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
-      </a>
+    <% 
+        license = self.content['license']
+        if license['id'][:3] == 'CC-':
+            d['content']['license']['url'] = 'http://www.creativecommons.org/licenses/' + license['id'][3:].lower() + '/3.0/'
+    %>
+    
+    <%doc>
+    <div class="frag_list" style="margin-top:14px">
+        <h2>License</h2>
+        <div class="frag_list_contents">
+            <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
+                <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
+            </a>
+        </div>
+    </div>
+    </%doc>
+    
+    <div class="license">
+        <a href="${license['url']}" target="_blank" rel="license" title="${license['description']}">
+            <img src="/images/licenses/${license['id']}.png" alt="${license['name']}" />
+        </a>
     </div>
     % endif
 </%def>
@@ -499,9 +584,10 @@
 	    lat = lat,
 	    lon = lon,
 	    feeds = [
-		dict(pin='gold',    url='/contents.rss?location=%s,%s' % (lon,lat)      ),
-		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']  ),
-	    ]
+		dict(pin='gold',    url='/contents.rss?sort=distance&location=%s,%s&limit=10' % (lon,lat)     , focus=True ),
+		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
+	    ],
+		#controls=True
 	)}
 	</p>
     % endif
@@ -528,7 +614,7 @@
 	    <td colspan="3">
 		<div class="comments-option">
 		    % if c.logged_in_user:
-		    ${_("Need more info on this request? ")}<span class="show-comments">Ask here...</span>
+		    ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments">Ask here...</span>
 		    % else:
 		    To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
 		    % endif
@@ -563,7 +649,10 @@
                     ##<input type="hidden" name="type" value="comment">
                     <textarea name="content" class="comment-${self.id}"></textarea><br />
                     <span class="commentcount-${self.id}" style="text-align: right; font-size: 120%;">${config['setting.content.max_comment_length']}</span><br />
-                    Ask <b>${content['creator']['name']}</b> for more information about this request. Note: your question and/or answers will be publically visible.
+                    ${_('Ask <b>%(name)s</b> for more information about this %(type)s. Note: your question and/or answers will be publicly visible.') % dict(name=content['creator']['name'], type=_(('_'+self.content['type'] if not self.content['parent'] else 'response'))) | n}
+                    
+                    ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}
+                    
 		    If you want to share your story please use the "share your story" button above.<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
@@ -634,15 +723,16 @@
 
     ## --- Pubish --------------------------------------------------------------
 
-<%doc>    % if 'publish' in self.actions:
+<%doc>
+    % if 'publish' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
             method = "PUT" ,
             value           = _('Publish') ,
-            value_formatted = h.literal("<span class='icon16 i_publish'></span>%s") % _('Publish') ,
+            value_formatted = h.literal("<span class='icon16 i_publish'></span>&nbsp;%s") % _('Publish') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 
 
@@ -652,12 +742,12 @@
         ${h.secure_link(
             h.args_to_tuple('new_content', parent_id=self.id) ,
             value           = _("Respond") ,
-            value_formatted = h.literal("<span class='icon16 i_respond'></span>%s") % _('Respond') ,
+            value_formatted = h.literal("<span class='icon16 i_respond'></span>&nbsp;%s") % _('Respond') ,
             json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
         )}
         ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
         ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     
     ## --- Accept / Withdraw ---------------------------------------------------
@@ -666,33 +756,41 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
             value           = _('_Respond later') ,
-            value_formatted = h.literal("<span class='icon16 i_accept'></span>%s") % _('Accept') ,
+            value_formatted = h.literal("<span class='icon16 i_accept'></span>&nbsp;%s") % _('Accept') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif 
     
     % if 'withdraw' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
             value           = _('Withdraw') ,
-            value_formatted = h.literal("<span class='icon16 i_withdraw'></span>%s") % _('Withdraw'),
+            value_formatted = h.literal("<span class='icon16 i_withdraw'></span>&nbsp;%s") % _('Withdraw'),
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        <span class="separtor"></span>
-    % endif</%doc>
+        <span class="separtor">&nbsp;</span>
+    % endif
+</%doc>
     
     ## --- Boom ----------------------------------------------------------------
     
     % if 'boom' in self.actions:
+    <span class="mo-help">
         ${h.secure_link(
             h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
             value           = _('Boom') ,
-            value_formatted = h.literal("<span class='icon16 i_boom'></span>%s") % _('Boom') ,
+            value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Boom') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
         )}
-        <span class="separtor"></span>
+        <div class="mo-help-r mo-help-b">
+            ${_('Booming this content will recommend it to your followers and the rest of the community.')}
+        </div> 
+    </span>
+    
+
+        <span class="separtor">&nbsp;</span>
     % endif
     
     ## --- Approve/Viewed/Dissacocite ------------------------------------------
@@ -701,36 +799,87 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
             value           = _('Approve & Lock'),
-            value_formatted = h.literal("<span class='icon16 i_approve'></span>%s") % _('Approve & Lock'),
+            value_formatted = h.literal("<span class='icon16 i_approved'></span>&nbsp;%s") % _('Approve & Lock'),
             title           = _("Approve and lock this content so no further editing is possible"),
             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Lock and approve this',
+                message = HTML.p("When something is locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free."),
+                buttons = dict(
+                    yes = 'Yes. Lock and approve',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/lock.png',
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     % if 'seen' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='seen'   , format='redirect', id=self.id),
             value           = _('Viewed') ,
-            value_formatted = h.literal("<span class='icon16 i_seen'></span>%s") % _('Viewed'),
+            value_formatted = h.literal("<span class='icon16 i_seen'></span>&nbsp;%s") % _('Viewed'),
             title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Mark this as viewed',
+                message = HTML.p('Use this to tell the contributor that you have viewed this content, but are not going to Lock and Approve it.'),
+                buttons = dict(
+                    yes = 'Yes. Mark as Viewed',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/view.png',
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disassociate') ,
-            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>%s") % _('Disassociate'),
-            title           = _("Dissacociate your content from this response") ,
+            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>&nbsp;%s") % _('Disassociate'),
+            title           = _("Disassociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            modal_params = dict(
+                title   = 'Disassociate this post from your request',
+                message = HTML.p('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.'),
+                buttons = dict(
+                    yes = 'Yes. Disassociate',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/disassociate.png',
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
     
-</%def>        
+</%def>
+
+<%def name="modal_dialog(title, message, buttons, icon=None, icon_image=None)">
+    <div class="information popup-modal" style="width: 35em;">
+        % if icon:
+            <div class="popup-icon fr"><div class="icon_32 i_${icon}"></div></div>
+        % elif icon_image:
+            <div class="popup-icon fr"><img src="/images/${icon_image}.png" /></div>
+        % endif
+        <div class="popup-title">
+            ${title}
+        </div>
+        <div class="popup-message">
+            ${message | n}
+        </div>
+        % if buttons:
+            <div class="popup-buttons">
+                % for button in buttons:
+                    ${button | n}
+                % endfor
+                <div class="cb"></div>
+            </div>
+        % endif
+    </div>
+</%def>
 
     
 <%def name="actions_common()">
@@ -739,7 +888,7 @@
         <a href="${h.url('edit_content', id=self.id)}"
            onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
         ><span class="icon16 i_edit"></span>${_("Edit")}</a>
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 
     % if 'delete' in self.actions:
@@ -747,15 +896,23 @@
             h.args_to_tuple('content', id=self.id, format='redirect'),
             method = "DELETE",
             value           = _("Delete"),
-            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
+            value_formatted = h.literal("<span class='icon16 i_delete'></span>&nbsp;%s") % _('Delete'),
             confirm_text    = _("Are your sure you want to delete this content?"),
             # AllanC -> GMeill - this is incorrect behaviour.
             #  frag_reload can take a string to reload ALL frags with a reference to this content obj
             #  reinstating old behaviour
             #json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
             json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
+            modal_params = dict(
+                title='Delete posting',
+                message='Are you sure you want to delete this posting?',
+                buttons=dict(
+                    yes="Yes. Delete",
+                    no="No. Take me back!",
+                )
+            ),
         )}
-        <span class="separtor"></span>
+        <span class="separtor">&nbsp;</span>
     % endif
 
 
@@ -764,8 +921,8 @@
     % endif
     
     % if 'flag' in self.actions:
-        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>Flag</a>
-        <span class="separtor"></span>
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>&nbsp;Flag</a>
+       <span class="separtor">&nbsp;</span>
     % endif
     
     ##% if self.content.get('location'):
@@ -778,26 +935,28 @@
 ## Get involved
 ##------------------------------------------------------------------------------
 <%def name="get_involved()">
-    <div class="information" style="width: 35em;">
-	<div class="popup-title">
-	    Why should you get involved?
-	</div>
-	<div class="popup-message">
-	    By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
-	    <ol>
-		<li>Get published</li>
-		<li>Get recognition</li>
-		<li>Make the news!</li>
-	    </ol>
-	</div>
-	<div class="popup-tag-line">
-	    Don't just read it. Feed it.
-	</div>
-    </div>
-    <div class="popup-icons">
-	<img src="/images/misc/shareicons/video_icon.png" />
-	<img src="/images/misc/shareicons/camera_icon.png" />
-	<img src="/images/misc/shareicons/audio_icon.png" />
+    <div class="wrapper">
+        <div class="information">
+            <div class="popup-title">
+                Why should you get involved?
+            </div>
+            <div class="popup-message">
+                By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+                <ol>
+                    <li>Get published</li>
+                    <li>Get recognition</li>
+                    <li>Make the news!</li>
+                </ol>
+            </div>
+            <div class="popup-tag-line">
+                Don't just read it. Feed it.
+            </div>
+        </div>
+        <div class="popup-icons">
+            <img src="/images/misc/shareicons/video_icon.png" />
+            <img src="/images/misc/shareicons/camera_icon.png" />
+            <img src="/images/misc/shareicons/audio_icon.png" />
+        </div>
     </div>
 </%def>
 
@@ -818,6 +977,11 @@
 
     ##-------- Licence----------
     <h2>${_("Licence")}</h2>
+    <%
+        license_id = d['content']['license']['id']
+        if license_id[:3] == 'CC-':
+            d['content']['license']['url'] = 'http://www.creativecommons.org/licenses/' + license_id[3:].lower() + '/3.0/'
+    %>
         <a href="${d['content']['license']['url']}" target="_blank" title="${d['content']['license']['name']}">
           <img src="/images/licenses/${d['content']['license']['id']}.png" alt="${d['content']['license']['name']}" />
         </a>

@@ -12,7 +12,7 @@
     
     <h2>${_('What next?')}</h2>
     <p >${_('The content you created in response to the _assignment is now locked and no further edits can be made.')}</p>
-    <p >${_('The assigner will be able to use this content under the <a href="http://creativecommons.org/licenses/by/3.0/"> Creative Commons Attribution 3.0 Unported </a>') |n}</p>
+    <p >${_('The assigner will be able to use this content under the')} <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported</a></p>
     
     <h2>${_('How you will be credited:')}</h2>
     <p >${_('If the assignee chooses to use part of or all content, they will attribute your work in one of the following ways:')}</p>

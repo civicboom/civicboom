@@ -170,6 +170,7 @@ class Content(Base):
             #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'     : lambda content: content.license.to_dict() ,
             'tags'        : lambda content: [tag.name for tag in content.tags] ,
+            'root_parent' : lambda content: content.root_parent.to_dict(include_fields='creator') if content.root_parent else None,
             #'url'         : None ,
     })
     del __to_dict__['full']['parent_id']
@@ -291,7 +292,7 @@ class Content(Base):
         """
         Find this piece of content's root parent (or False if this is the root!)
         """
-        from civicboom.lib.database.actions import find_content_root
+        from civicboom.lib.database.get_cached import find_content_root
         return find_content_root(self)
     
     @property

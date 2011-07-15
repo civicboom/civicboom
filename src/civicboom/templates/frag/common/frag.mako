@@ -1,6 +1,7 @@
 <%!
     import types
     import copy
+    from webhelpers.html import HTML, literal
 
     title               = 'List'
     icon_type           = 'list'
@@ -220,5 +221,5 @@
         georss_url      = h.url(**georss_url)
         georss_url_frag = h.url(**georss_url_frag)
     %>
-    <a href="${georss_url}" title="${_('View on map')}" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span class="icon16 i_map"></span>${_('Map')}</a>
+    <a href="${georss_url}" title="${_('View on map')}" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span class="icon16 i_map"></span>${_('Show these results on a map')}</a>
 </%def>

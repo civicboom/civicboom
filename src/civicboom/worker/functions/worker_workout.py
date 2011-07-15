@@ -12,8 +12,8 @@ def worker_workout():
     print Session.query(Content).first()
 
     print '*** I18n ***'
-    print '>>> _("This is a workout of i18n in the worker")'
-    print _("This is a workout of i18n in the worker")
+    print '>>> _("This is a workout of internationalisation in the worker")'
+    print _("This is a workout of internationalisation in the worker")
 
     print '*** Config ***'
     print '>>> cbutils.worker.config["debug"]'

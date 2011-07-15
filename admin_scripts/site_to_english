@@ -2,11 +2,14 @@
 
 import babel.messages.pofile as po
 import sys
+import re
 
 from enchant import DictWithPWL
 from enchant.checker import SpellChecker
 spell = SpellChecker(DictWithPWL("en_GB", "words.txt"))
 
+# ignore "foo %(cake)s bar" and xml
+spell_ignore = re.compile("(%\(.*?\)[si]|<.*?>)")
 
 def trans(text, locations):
     banned = [
@@ -23,13 +26,13 @@ def trans(text, locations):
     #if ("." not in text) and (text[1:] != text[1:].lower()):
     #    print "Warning: multiple capitals:", text, locations
 
-    spell.set_text(text)
-    for err in spell:
-        print "Warning: spelling error:",err.word,locations
-
     text = text.replace("_site_name", "Civicboom")
     text = text.replace("_tagline", "Don't just read it. Feed it.")
     text = text.replace("_site_description", "Building the world's first true community and audience assignment system")
+
+    spell.set_text(spell_ignore.sub("", text))
+    for err in spell:
+        print "Warning: spelling error:",err.word,locations
 
     # plurals only need to be specified if the plural of X is not Xs
     # eg.
@@ -46,7 +49,8 @@ def trans(text, locations):
         ("assignment", "request"),
         #("request",    "request"), # AllanC - Should not be needed, we reffer to them as assignments for consistancy
         ("response",   "response"),
-
+        ("respond", "respond"),
+        
         ("member",     "member"),
         ("user",       "user"),
         ("group",      "hub"),
@@ -56,8 +60,6 @@ def trans(text, locations):
         ("corporate",  "corporate"),
 
         ("widget",  "Boombox"),
-        ("respond", "respond"),
-        #("request", "request"), # AllanC - duplicated?
     ]
     for w, r in words:
         text = text.replace("_"+w, r)

@@ -358,9 +358,9 @@ class MemberActionsController(BaseController):
 
 
     @web
-    def assignments_unaccepted(self, id, **kwargs):
+    def assignments_invited(self, id, **kwargs):
         """
-        GET /members/{name}/assignments_unaccepted: get a list of assignments this user has been invited to join
+        GET /members/{name}/assignments_invited: get a list of assignments this user has been invited to join
 
         @type list
         @api members 1.0 (WIP)
@@ -369,15 +369,18 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         
-        @comment AllanC unaccepted is not the correct term, we use the term 'invite'
         @comment AllanC not driven by members/index and lacks limit/offset controls etc
         """
 
         member = get_member(id)
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
-        contents = [content.to_dict("full") for content in member.assignments_unaccepted]
+        contents = [content.to_dict("full") for content in member.assignments_invited]
         return to_apilist(contents, obj_type='content') #TODO transform .. full? again?
+    
+    # the mobile app uses "unaccepted" for "things that have been inited to and not accepted yet",
+    # remove this once the mobile is updated to not use it (and customers get the update)
+    assignments_unaccepted = assignments_invited
 
 
     @web
@@ -411,3 +414,11 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         """
         return content_search(creator=id, list='assignments_previous',**kwargs)
+
+    # AllanC - for disscusuton
+    #  should get_widget go here?
+    # e.g. members/unittest/get_widget
+    # e.g. members/unittest/widget
+    # rather than
+    # misc/get_widget/unittest
+    # thoughts?

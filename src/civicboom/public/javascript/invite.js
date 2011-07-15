@@ -24,7 +24,7 @@ function inviteClick(eO) {
 			exclude_members.push(button_key);
 			form.find('.exclude-members').val(exclude_members.join(','));
 			li.append('<input type="hidden" class="username" name="inv-' + (exclude_members.length - 1) + '" value="' + button_key + '" />');
-			button.html(button.val('Remove').attr('name', 'rem-' + (exclude_members.length - 1)).html().replace('i_plus','i_delete').replace('Add','Remove'));
+			button.html(button.val('Remove').attr('name', 'rem-' + (exclude_members.length - 1)).html().replace('i_plus_blue','i_delete').replace('Add','Remove'));
 			refreshSearch(button);
 		break;
 		case 'rem':

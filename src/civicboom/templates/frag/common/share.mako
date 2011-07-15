@@ -31,7 +31,7 @@
                 'desc': {
                     'new_assignment': 'New _assignment on _site_name',
                     'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _hub on _site_name',
+                    'new_group'     : 'New _group on _site_name',
                     'new_user'      : "I'm on _site_name",
                     'new_article'   : 'New _article on _site_name',
                 },
@@ -54,7 +54,7 @@
                 'desc': {
                     'new_assignment': 'My _assignment on _site_name',
                     'new_response'  : 'My _article on _site_name',
-                    'new_group'     : 'My _hub on _site_name',
+                    'new_group'     : 'My _group on _site_name',
                     'new_user'      : "I'm on _site_name",
                     'new_article'   : 'My _article on _site_name',
                 },
@@ -77,7 +77,7 @@
                 'desc': {
                     'new_assignment': '_Assignment on _site_name',
                     'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Hub on _site_name',
+                    'new_group'     : '_Group on _site_name',
                     'new_user'      : "Profile on _site_name",
                     'new_article'   : '_Article on _site_name',
                 },
@@ -102,7 +102,7 @@
                 'desc': {
                     'new_assignment': 'New _assignment on _site_name',
                     'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _hub on _site_name',
+                    'new_group'     : 'New _group on _site_name',
                     'new_user'      : "I'm on _site_name",
                     'new_article'   : 'New _article on _site_name',
                 },
@@ -125,7 +125,7 @@
                 'desc': {
                     'new_assignment': 'Our _assignment on _site_name',
                     'new_response'  : 'Our _article on _site_name',
-                    'new_group'     : 'Our _hub on _site_name',
+                    'new_group'     : 'Our _group on _site_name',
                     'new_user'      : "We're on _site_name",
                     'new_article'   : 'Our _article on _site_name',
                 },
@@ -148,7 +148,7 @@
                 'desc': {
                     'new_assignment': '_Assignment on _site_name',
                     'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Hub on _site_name',
+                    'new_group'     : '_Group on _site_name',
                     'new_user'      : "Profile on _site_name",
                     'new_article'   : '_Article on _site_name',
                 },
@@ -174,7 +174,7 @@
     share_descs = {
         'new_assignment': 'New _assignment on _site_name',
         'new_response'  : 'New _article on _site_name',
-        'new_group'     : 'New _hub on _site_name',
+        'new_group'     : 'New _group on _site_name',
         'new_user'      : "I'm on _site_name",
         'new_article'   : 'New _article on _site_name',
     }
@@ -241,6 +241,7 @@
     <!-- AddThis Button END -->
     </%def>
 </%doc>
+
 <%def name="AddThisFragList(*args, **kwargs)">
     <%
         custom_share_line = kwargs.get('custom_share_line')
@@ -291,6 +292,51 @@
             </div>
         </div>
     </div>
+</%def>
+
+<%def name="AddThisLine(*args, **kwargs)">
+    <%
+        custom_share_line = kwargs.get('custom_share_line')
+        custom_share      = kwargs.get('custom_share')
+        if custom_share_line:   del kwargs['custom_share_line']
+        if custom_share:        del kwargs['custom_share']
+    %>
+    <%def name="sharebutton(type, **kwargs)">
+        <li><div class="thumbnail thumbnail_small"><a class="at addthis_button_${type} ${kwargs.get('extraclass','')}"
+            % for k,v in kwargs.iteritems():
+                addthis:${k}="${v.replace('\"','') if v else ""}"
+            % endfor
+        ></a></div></li>
+    </%def>
+	
+	## <h2>${_('Share this profile')}</h2>
+	## <div class="frag_list_contents">
+	    <div class="social_sharing content note addthis_toolbox" style="padding-bottom: 0px;">
+		## Boombox link generation moved to show.mako (using custom_share directly)
+		<ul class="member">
+		    % for name in ['email', 'facebook', 'twitter', 'linkedin', 'compact']:
+			${sharebutton(name, **kwargs)}
+		    % endfor
+		    
+		## Janrain moved directly to show.mako too
+		## Possibly don't want to do these individually for both member and content
+		</ul>
+		<style>
+		    .link_more_hide span {
+			width:0; height:0;
+		    }
+		    .atclear {
+			clear: none;
+			display: none;
+		    }
+		</style>
+		<script>
+		    $(function(){
+			addthis.toolbox('.addthis_toolbox');
+		    });
+		</script>
+	    </div>
+	## </div>
 </%def>
 
 ##------------------------------------------------------------------------------

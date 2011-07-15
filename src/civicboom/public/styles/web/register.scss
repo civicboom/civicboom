@@ -1,0 +1,100 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+BODY.c-register.a-new_user.u-user {
+
+	.layout {
+        margin-top: 1em;
+		margin-left: auto;
+		margin-right: auto;
+        
+        text-align: center;
+	}
+
+	.newform {
+        margin-top: 1em;
+		text-align:left;
+	}
+
+	.newform tr td {
+		vertical-align: top !important;
+		padding-bottom: 1em;
+        p {
+            margin-top: 0.5em;
+        }
+	}
+
+	.newform th {
+        vertical-align: top !important;
+		font-size: 110%;
+		font-weight: bold;
+        width: 140px;
+	
+		.step {
+			font-size: 300%;
+		}
+	}
+    .newform th:after {
+        content: ":";
+    }
+
+	.newform .smaller {
+		font-size: 75%;
+	}
+
+	.newform input {
+		width: 17em;
+	}
+    
+    .user_type_option {
+        display: inline-block;
+        position: relative;
+        width: 40%;
+        min-height: 165px;
+	font-size: 120%;
+        
+        background-color: $cb-light-inactive;
+        border: 0.1em solid $cb-light-inactive;
+	
+        img {
+            float: right;
+            width: 50px;
+        }
+        
+        padding: 1em;
+        @include border_radius(0.5em);
+        vertical-align: middle;
+        // margin-right: 1em;
+        
+        p {
+            margin-top   : 0.5em;
+            margin-bottom: 0.5em;
+        }
+        span {
+            display: none;
+        }
+    }
+    
+    .or {
+	display: inline-block;
+	position: relative;
+	width: 10%;
+	font-size: 300%;
+	text-align: center;
+	
+	p {
+		margin: 0;
+	}
+    }
+    
+    .selected {
+        background-color: $cb-lighterblue;
+        border: 0.1em solid $cb-lightblue;
+        span {
+            display: block;
+            position: absolute;
+            bottom: 1em;
+            right: 1em;
+        }
+    }
+}

@@ -4,29 +4,49 @@
     display: block;
     padding: 0 2em 0 2em;
     
-    .information {
-        padding: 2em 0 2em 0;
-        margin: 0;
-        float: left;
-
-        .popup-title {
-                font-size: 250%;
-        }
+    .wrapper {
+        width: 45em;
         
-        .popup-message {
-            font-size: 150%;
-            margin: 1em 0 1em 0;
-        }
-        
-        .popup-tag-line {
+        .information {
+            width: 35em;
+            padding: 2em 0 2em 0;
+            margin: 0;
+            float: left;
+            
+            div {
+                max-width: 30em;
+            }
+    
+            .popup-title {
                 font-size: 250%;
+            }
+            
+            .popup-message {
+                font-size: 150%;
+                margin: 1em 0 1em 0;
+            }
+            
+            .popup-tag-line {
+                font-size: 250%;
+            }
+        }
+        .button {
+          font-size: 125%;
+          //width: 8em;
+          vertical-align: middle;
+          padding: 10px !important;
+          margin-right: 1em;
+        }
+        p {
+          margin-top: 0.5em;
         }
     }
     
     .popup-icons {
-        float: right;
+        float: left;
         height: 100%;
         width: 7em;
+        margin-left: 1em;
         
         img {
             width: 100%;
@@ -60,4 +80,9 @@
         max-width: 600px;
         max-height: 400px;
     }
+}
+
+
+.popup_hidden {
+  display: none !important;
 }

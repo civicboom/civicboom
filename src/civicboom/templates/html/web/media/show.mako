@@ -93,6 +93,7 @@
         <script type="text/javascript">
             jQuery(document).ready(function() {
                 jQuery('#media_carousel-${content_id}').jcarousel({
+                    animation   :   'slow',
                     scroll  :   1,
                     visible :   1,
                     auto    :   5,

@@ -36,5 +36,5 @@ def error_age():
     return action_error(
             status   = 'error' ,
             code     = 403 ,
-            message  = _('current user is not a sutable age to perform this operation') ,
+            message  = _('current user is not a suitable age to perform this operation') ,
         )

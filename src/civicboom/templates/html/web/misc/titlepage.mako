@@ -1,6 +1,7 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
 ##<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 
@@ -11,20 +12,43 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-	<div class="new_front" style="margin-bottom: 20em;">
-		${front_headline()}
-		${front_windows()}
-		<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
-			<div style="width:100%;height:10em;background-color:#adcef7;">
-				<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
-					${partners()}
-					${downloads()}
+	<div class="wrapper">
+		##<div class="content">
+			${front_headline()}
+			${front_windows()}
+			${front_tagline()}
+			${start_button()}
+			
+			## Who's using us and mobile download prompt
+			<%doc>
+			<div style="width:100%;left:0;bottom:17px;position:fixed;padding:1.5em 0 0 0;background-color:#cee2fa;">
+				<div style="width:100%;height:10em;background-color:#adcef7;">
+					<div style="width:61em;padding:1em 0 1em 0;margin: auto;">
+						${partners()}
+						${downloads()}
+					</div>
 				</div>
 			</div>
-		</div>
+			</%doc>
+		##</div>
 	</div>
+	<br />
 </%def>
 	
+
+##------------------------------------------------------------------------------
+## Start button
+##------------------------------------------------------------------------------
+<%def name="start_button()">
+	
+	<div class="special_button">
+		<a href="${url(controller='account', action='signin')}">
+			<span class="button">
+				START
+			</span>
+		</a>
+	</div>
+</%def>
 	
 
 ##------------------------------------------------------------------------------
@@ -109,54 +133,66 @@
 
 <%def name="front_headline()">
 	<div class="title-box">
-		<h2 class="tagline">
-			${_("_site_name: Connecting people that need news with people that have news")}
-		</h2>
+		<%doc><h2 class="headline">
+			${_("_site_name")}
+		</h2></%doc>
+		<img src="images/logo_new.png" alt="Civicboom.com"/>
 	</div>
 </%def>
 
 <%def name="front_windows()">
 	<div class="windows">
-		<div id="window-orgs" class="window">
-			<div class="window-content">
-				<div class="window_title">Journalists:<br /> >> NEED NEWS?</div>
-				<ol class="content-list">
-					<li>
-						Sign up
-					</li>
-					<li>
-						Post a request for news
-					</li>
-					<li>
-						Assess, verify and publish responses
-					</li>
-				</ol>
-			</div>
+		${make_window("left", "/images/misc/titlepage/first_panel.png", "Request",
+			content="Journalists, news organisations, media outlets and publishers: Need stories? Sign up and ask.")}
+		
+		<div class="window_wrapper">
+			<span class="symbol">+</span>
+			${make_window("center", "/images/misc/titlepage/middle_panel.png", "Respond",
+				content="Got stories? Sign up and respond to requests for your stories - or send directly to journalists, news organisations, media outlets and publishers.")}
 		</div>
-		<div id="window-indvs" class="window">
-			<div class="window-content">
-				<div class="window_title">Sources:<br /> >> GOT NEWS?</div>
-				<ol class="content-list">
-					<li>
-						Sign up
-					</li>
-					<li>
-						View requests for news
-					</li>
-					<li>
-						Post your story and get published
-					</li>
-				</ol>
-			</div>
+		
+		<div class="window_wrapper">
+			<span class="symbol">=</span>
+			${make_window("right", "/images/misc/titlepage/last_panel.png", "Get published",
+				content="Publish and get published: Get news stories from source. Get closer to your audience. Work together.")}
 		</div>
-		<a class="signup-link" href="${url(controller='account', action='signin')}">
-			<div id="window-signup" class="window">
-				<div class="window-content">
-					<div class="signup-link hilite">Start now!</div>
-				</div>
-			</div>
-		</a>
+	
+		<div style="clear: both;"></div>
 	</div>
+</%def>
+		
+<%def name="front_tagline()">
+	<div class="title-box">
+		<h2 class="tagline">
+			${_("Connecting people that need _articles with people that have them")}
+		</h2>
+	</div>
+</%def>
+	
+## Window popups
+<%def name="make_window(id, img, alt, content)">
+	${popup.popup_static('', window_popup, 'title_window_'+id)}
+	<a href="#" class="title_link_${id}">
+		<div class="window" id="${id}">
+			<img src="${img}" alt="${alt}" />
+		</div>
+	</a>
+	<script>
+	    $(".title_link_${id}").click(function() {
+    		$("#title_window_${id}").modal();
+    		return false;
+	    });
+	</script>
+	
+	<%def name="window_popup()">
+		<div style="text-align: center; font-size: 125%;">
+			<div class="image_wrapper">
+			    <img src="${img}" style="width: 600px; display: block; margin: auto;"/>
+			    <div>${content}</div>
+			</div>
+			<div class="image_footer">Don't just read it. Feed it</div>
+		</div>
+	</%def>
 </%def>
 	
 ##------------------------------------------------------------------------------

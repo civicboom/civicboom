@@ -18,7 +18,7 @@ ${loc.minimap(
 	lat = location[1],
 	zoom = location[2],
 	feeds = [
-		dict(pin='red', url=request.params.get('feed', '/search/content.rss'), focus=True)
+		dict(pin='red', url=request.params.get('feed', '/contents.rss?location=%f,%f' % (location[0], location[1])), focus=True)
 	],
 	controls = True
 )}

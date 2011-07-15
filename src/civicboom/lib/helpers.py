@@ -402,7 +402,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions=''):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -444,13 +444,16 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
 
     # Confirm JS -------
     ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
-    if confirm_text:
+    if confirm_text and not modal_params:
         confirm_text = "confirm('%s')" % confirm_text
     else:
         confirm_text = "true"
 
     # Styled submit link ------
     # A standard <A> tag that submits the compatable form (typically used with format='redirect')
+    
+    link_onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled_filter')) {$(this).addClass('disabled_filter'); var e = $(this).parents('.secure_link').find('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+    
     hl = HTML.a(
         value_formatted ,
         id      = "link_"+hhash,
@@ -468,7 +471,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled_filter')) {$(this).addClass('disabled_filter'); var e = $(this).siblings('span').children('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
+        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick
     )
     # $('#form_%(hhash)s').onsubmit();
     
@@ -476,8 +479,91 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     # GregM: Hides secure_hide classed elements & removes class (stop dups); Shows secure_show classed elements & removes class (ditto)
     hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");'))
     
-    return HTML.span(hf+hl+hs, class_="secure_link") #+json_submit_script
+    popup = ''
+    if modal_params:
+        buttons = [
+            {
+                'title': modal_params.get('buttons', {}).get('yes', 'Yes'),
+                'href': href,
+                'onClick': link_onClick,
+            },
+            {
+                'title': modal_params.get('buttons', {}).get('no', 'No'),
+                'href': '#',
+                'onClick': "$.modal.close(); return false;",
+            },
+        ]
+        
+        modal_params['buttons'] = buttons
+        
+        popup = modal_dialog_confirm(**modal_params)
+    
+    return HTML.span(hf+hl+hs+popup, class_="secure_link") #+json_submit_script
 
+# This will create an html a link with our popup.
+def confirmed_link (title, icon='', **kwargs):
+    modal_params = kwargs.get('modal_params', {})
+    
+    buttons = [
+        {
+            'title': modal_params.get('buttons', {}).get('yes', 'Yes'),
+            'href': kwargs.get('href', ''),
+            'onClick': "$.modal.close();",
+        },
+        {
+            'title': modal_params.get('buttons', {}).get('no', 'No'),
+            'href': '#',
+            'onClick': "$.modal.close(); return false;",
+        },
+    ]
+    modal_params['buttons'] = buttons
+    
+    kwargs['onClick'] = '$(this).parents(\'.confirmed_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.confirmed_link\')}); return false'
+    
+    if icon:
+        icon = HTML.span(class_="icon16 i_"+icon)
+    
+    confirm = modal_dialog_confirm (**modal_params)
+    link = HTML.a(icon+title, **kwargs)
+    
+    return HTML.span(link+confirm, class_='confirmed_link')
+
+def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = None, buttons = [{'href':'#', 'onClick':'', 'title':'Yes' }, {'href':'#', 'onClick':'$.modal.close(); return false;', 'title':'No'}] ):
+    content = ''
+    if icon:
+        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon");
+    elif icon_image:
+        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon");
+    content = content + HTML.div(title or '', class_="popup-title")
+    
+    if message:
+        content = content + HTML.div(message, class_="popup-message")
+    
+    popup_actions_content = None
+    for button in buttons:
+        if not button.get('class_'):
+            button['class_'] = ''
+        classes = button['class_'].split(' ')
+        classes.extend(['button', 'fl'])
+        button['class_'] = ' '.join(classes)
+        button_element = HTML.a(
+            button.get('title', ''),
+            **button
+        )
+        if not popup_actions_content:
+            popup_actions_content = button_element
+        else:
+            popup_actions_content += button_element
+    
+    content = content + HTML.div(popup_actions_content+HTML.div(class_="cb"), class_="popup-actions")
+    
+    content = HTML.div(content, class_="information")
+    
+    content = HTML.div(content, class_="popup_content")
+    
+    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'));
+    
+    return HTML.div(content, class_="popup_hidden")
 
 #-------------------------------------------------------------------------------
 # Frag DIV's and Links - for Static and AJAX compatability

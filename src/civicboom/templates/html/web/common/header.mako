@@ -7,7 +7,7 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img  class='logo_img'     src='${h.wh_url("public", "images/logo.png")}'              alt='${_("_site_name")}' />
+		<img  class='logo_img'     src='${h.wh_url("public", "images/logo_new_small.png")}'              alt='${_("_site_name")}' />
         <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}'       />
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
@@ -149,8 +149,8 @@
 ##------------------------------------------------------------------------------
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
-        <input type="search" name="term" placeholder="Search" class="search_input">
-        <input type="submit" name="type" class="button b0" value="All">
+        <input type="search" name="term" placeholder="Search" class="search_input" id="search_input">
+        <input type="submit" name="type" class="button b0" value="All" id="search_default">
         <input type="submit" name="type" class="button b1" value="Requests">
         <input type="submit" name="type" class="button b2" value="Stories">
         <input type="submit" name="type" class="button b3" value="Members">
@@ -283,7 +283,7 @@
         <tr>
             <td colspan="4">
                 <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
-                <span style="float:right;"><a href="${h.url('new_group')}" class="sub_option">${_("Create a _Group")}</a></span>
+                <span style="float:right;"><a href="${h.url(controller='misc', action='what_is_a_hub')}" class="sub_option">${_("Create a _Group")}</a></span>
             </td>
         </tr>
         <%def name="persona_select(member, **kwargs)">
