@@ -383,6 +383,17 @@ class ContentsController(BaseController):
         #            func.substr(func.strip_tags(Content.content), 0, 100)
         #        )
 
+        def valid_sort_field(field):
+            if field in [col["name"] for col in results.column_descriptions]:
+                return field
+            if hasattr(Content           , field):
+                return getattr(Content           , field)
+            if hasattr(UserVisibleContent, field):
+                return getattr(UserVisibleContent, field)
+            if hasattr(AssignmentContent, field):
+                return getattr(AssignmentContent, field)
+            return None
+
         for sort_field in kwargs.get('sort', '-update_date').split(','):
             direction = asc
             if sort_field[0] == "-":
@@ -391,8 +402,10 @@ class ContentsController(BaseController):
 
             # check that the sort string is the name of a column in the result
             # set, rather than some random untrusted SQL statement
-            if sort_field in [col["name"] for col in results.column_descriptions]:
-                results = results.order_by(direction(sort_field))
+            f = valid_sort_field(sort_field)
+            if f:
+                #log.debug("Sorting by %s %s" % (direction, f))
+                results = results.order_by(direction(f))
         
 #        def merge_snippet(content, snippet):
 #            content = content.to_dict(**kwargs)
