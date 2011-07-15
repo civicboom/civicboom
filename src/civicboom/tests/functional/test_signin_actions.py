@@ -31,10 +31,10 @@ class TestSigninActions(TestController):
         # Get when logged in - but directed from another website - test XsiteForgery messaage
         
         action_responses = [
-            ('/members/unittest/follow'         ,'Follow a '        ),
-            ('/contents/1/boom'                 ,'Boom '            ),
-            ('/contents/new?parent_id=1'        ,'Create a response'),
-            ('/contents/new?target_type=article','Post a new '      ),
+            ('/members/unittest/follow'         ,'want to <b>follow '        ),
+            ('/contents/1/boom'                 ,'want to <b>boom '            ),
+            ('/contents/new?parent_id=1'        ,'want to <b>create a response'),
+            ('/contents/new?target_type=article','want to <b>post a '      ),
         ]
         run_get_actions(action_responses, status=403)
         

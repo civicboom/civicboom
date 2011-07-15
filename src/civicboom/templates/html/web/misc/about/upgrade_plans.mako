@@ -6,6 +6,14 @@
 
 <%def name="body()">
     <h1>${_('_site_name plans')}</h1>
+    <p>
+        ${_('_site_name is free to use')} - 
+        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their stories directly to news organisations.")}
+    </p>
+    <p>
+        ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />
+        ${_("There are no long-term commitments - just upgrade and pay on a month-by-month basis. If you want to revert to the free plan, you can. Hover over each of the features for more details.")}
+    </p>
     ${upgrade_details()}
 </%def>
 
@@ -13,6 +21,7 @@
 <%def name="popup_()">
     <h1>Hold up!</h1>
     <p>You're trying to perform an action that is a paid-for service as part of the Premium account</p>
+    
     ${upgrade_details()}
 </%def>
 
@@ -74,15 +83,6 @@
             },
         ]
     %>
-
-    <p>
-        ${_('_site_name is free to use')} - 
-        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their stories directly to news organisations.")}
-    </p>
-    <p>
-        ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />
-        ${_("There are no long-term commitments - just upgrade and pay on a month-by-month basis. If you want to revert to the free plan, you can. Hover over each of the features for more details.")}
-    </p>
     <table class="upgrade_plans">
         <thead>
             <tr>

@@ -117,7 +117,7 @@ generators = [
     
     # Groups to members
     ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
-    ["group_invite",                         "ne", _("_group invitation"),           _("Congratulations! You have been invited to %(group) with the role %(role) by %(admin)")],
+    ["group_invite",                         "ne", _("_group invitation"),           _("Congratulations! You have been invited to %(group)s with the role %(role)s by %(admin)s")],
     ["group_request_declined",               "n" , _("_group membership request declined"), _("%(your)s membership request to join %(group)s was declined")],
     ["group_invitation_declined",            ""  , _("_group membership invitation declined"), _("%(member)s declined the invitation to join %(group)s")],
     ["group_request_accepted",               "ne" , _("_group request accepted"),     _("%(admin)s accepted %(your)s _group membership request. You are now a member of %(group)s")],
