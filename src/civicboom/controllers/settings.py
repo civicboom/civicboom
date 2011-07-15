@@ -293,8 +293,10 @@ class SettingsController(BaseController):
         #    user_type = 'member'
         user = get_member(id)
         
+        if user.username != c.logged_in_user.username:
+            raise_if_current_role_insufficent('admin', group=user)
         
-        raise_if_current_role_insufficent('admin', group=user)
+        #raise_if_current_role_insufficent('admin', group=user)
         
         data = build_meta(user, user.__type__, panel)
         

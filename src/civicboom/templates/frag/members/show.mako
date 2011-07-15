@@ -225,7 +225,7 @@
 			% endif
 			% if self.member.get('description'):
 			    <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
-			% elif c.logged_in_user.username == self.member['username']:
+			% elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
 			    <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
 			% else:
 			    <p class="description">This user has not added a description about themselves yet</p>
