@@ -29,10 +29,11 @@
 
     ## Setup Form
     <%
+        print c.action
         if 'action' not in d:
             d['action'] = 'edit'
     %>
-    % if c.action=='edit':
+    % if c.action != 'new':
         ## Editing Form
         ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
     % else:
@@ -59,7 +60,7 @@
     </script>
     <div class="group_settings">
         <h1>
-            % if not c.action=='edit':
+            % if not c.action != 'new':
                 ${_('Great! You want to create a _Group...')}<br />
                 ${_('To do this fill out the following:')}
             % endif
@@ -92,10 +93,12 @@
                         <input type="file" name="avatar" id="avatar" />
                         ${show_error('avatar')}
                     </div>
-                    <div class="group-block wide_label">
-                        <label for="create_push_assignment">${_("Add an automatic 'Send your stories' request to this _Group's _Widget and profile?")}</label>
-                        <input type="checkbox" name="create_push_assignment" id="create_push_assignment" />
-                    </div>
+                    % if c.action == 'new':
+                        <div class="group-block wide_label">
+                            <label for="create_push_assignment">${_("Add an automatic 'Send your stories' request to this _Group's _Widget and profile?")}</label>
+                            <input type="checkbox" name="create_push_assignment" id="create_push_assignment" />
+                        </div>
+                    % endif
                 </fieldset>
                 <fieldset>
                     <span class="number fl">3.</span>
@@ -265,12 +268,12 @@
                    </div>
                 </fieldset>
         <div class="fl" style="width: 17em; padding-top: 1em;">
-            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action=='edit' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
+            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
         </div>
         <div class="fr" style="padding-top: 1em;">
             <% print c %>
-            % if c.action=='edit':
+            % if c.action != 'new':
                 <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
             % else:
                 <input type="submit" name="submit" value="${_('Create _Group')}" class="button" />
