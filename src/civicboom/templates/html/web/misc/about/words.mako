@@ -35,6 +35,6 @@ ${_("Share your _article with your friends and followers:")}
 
 ${_('New _assignment on _site_name')}
 ${_('New _article on _site_name')}
-${_('New _hub on _site_name')}
+${_('New _group on _site_name')}
 ${_("I'm on _site_name")}
 ${_('New _article on _site_name')}
