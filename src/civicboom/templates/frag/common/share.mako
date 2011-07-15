@@ -555,7 +555,7 @@ share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('tit
 		var variables = {
 			share_display:				'${_(share_taglines[share_type])}',
 			action_share_description:   '${_(share_descs[share_type])}',
-			share_usergen_default:		'${share_usergen_default | n}',
+			share_usergen_default:		'${_(share_usergen_default) | n}',
 			action_page_title:       	content.title,
 			action_page_description: 	content.user_generated_content,
 			action_links: 				content.action_links,
@@ -591,7 +591,7 @@ share_usergen_default = clean(_(share_types[share_type]) % {'name': cd['title']}
 		var variables = {
 			share_display:				'${clean(_(share_taglines[share_type]))}',
 			action_share_description:   '${clean(_(share_descs[share_type]))}',
-			share_usergen_default:		'${clean(share_usergen_default) | n}',
+			share_usergen_default:		'${clean(_(share_usergen_default)) | n}',
 			action_page_title:       	content.title,
 			action_page_description: 	content.user_generated_content,
 			action_links: 				content.action_links,
