@@ -372,6 +372,8 @@
             ##% if content.get('parent') and content['parent'].get('creator'):
             ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
             ##% endif
+
+            ## ${content_icons(content)}
             <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
             
             <div style="clear: both;"></div>
@@ -390,6 +392,26 @@
 	<small class="content_short">${content['content_short']|n}</small>
 </td></tr>
 % endif
+</%def>
+
+<%def name="content_icons(content)">
+    <div class="content_icons">
+        ## AllanC - HACK!! please remove type==draft after issue #515 is fixed
+        % if content.get('private') or content.get('type')=='draft':
+            ${h.icon('private')}
+        % endif
+        % if content.get('edit_lock'):
+            ${h.icon('edit_lock')}
+        % endif
+        % if content.get('approval') and content.get('approval') != 'none':
+            ${h.icon(content.get('approval'))}
+        % endif
+        
+        ## Media icons
+        % if content.get('location'):
+            ${h.icon('map')}
+        % endif
+    </div>
 </%def>
 
 ## Content Thumbnail Icons
