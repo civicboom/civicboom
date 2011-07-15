@@ -48,7 +48,7 @@ setting_titles = {
 setting_icons = {
     'general'       :   'general',
     'password'      :   'password',
-    'messages'      :   'messages',
+    'notifications' :   'messages',
     'location'      :   'location',
     'advanced'      :   'advanced',
     'help_adverts'  :   'help',

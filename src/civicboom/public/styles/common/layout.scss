@@ -14,6 +14,10 @@ HTML.js .popup {
 	top: 50px;
 }
 
+b {
+  font-weight: bold;
+}
+
 /* for browsers without JS hide sections of the page */
 HTML.no-js .hide_if_nojs {display: none;}
 HTML.js    .hide_if_js   {display: none;}
@@ -25,6 +29,7 @@ HTML.js    .hide_if_js   {display: none;}
  * and body can be smaller with white borders?
  */
 HTML, BODY {
+  
 	/* background: #DDD; */
 }
 /*
@@ -32,7 +37,8 @@ HTML, BODY {
  * so let's try and over-override it...
  */
 HTML, BODY, INPUT {
-	font-family: "Helvetica", "Arial", sans-serif !important;
+	//font-family: "Helvetica", "Arial", sans-serif !important;
+	font-family: "FamiliarPro-Regular", "Helvetica", sans-serif  !important;
 }
 
 /*

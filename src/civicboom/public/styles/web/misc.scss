@@ -27,12 +27,12 @@
 BODY.c-misc.a-titlepage {
     .wrapper {
 	// height: 100%;
-	margin: 4em 5em 2em 5em;
+	margin: 0em 5em 2em 5em;
 	
 	    // .content {
 		// height: 100%;
 		// width: 100%;
-		padding: 3em;
+		padding: 2em;
 		background: lighten($cb-lightblue, 20%);
 		@include horiz_gradient(lighten($cb-lightblue, 10%), lighten($cb-lightblue, 30%));
 		@include drop_shadow(5px, 5px, 10px, #333);
@@ -67,12 +67,34 @@ BODY.c-misc.a-titlepage {
 			word-spacing: 0.1em;
 		}
 	}
+	
+	.image_wrapper {
+	  position: relative;
+	  height: 400px;
+	  width: 600px;
+	  img {
+	    position: absolute;
+	  }
+	  div {
+	    background: rgba(255, 255, 255, 0.90);
+	    font-size: 200%;
+	    position: absolute;
+	    padding-bottom: 1em;
+	    bottom:0em;
+	  }
+	}
+	.image_footer {
+	 size: 120%;
+	 padding: 0;
+	 border: 0;
+	 padding-bottom:1em;
+	}
 
 	/* --- Windows --- */
 	.windows {
 	    font-size: 500%;
 	    // width: 800px;
-	    margin: 0.5em auto 0.1em auto;
+	    margin: 0.1em auto 0.1em auto;
 	    text-align: center;
 	    padding: 0;
 	    

@@ -1,4 +1,7 @@
 <%inherit file="base.mako"/>
+
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+
 <%def name="title()">${_("Payment Plans")}</%def>
 
 <%def name="body()">
@@ -7,7 +10,7 @@
 </%def>
 
 
-<%def name="popup()">
+<%def name="popup_()">
     <h1>Hold up!</h1>
     <p>You're trying to perform an action that is a paid-for service as part of the Premium account</p>
     ${upgrade_details()}
@@ -123,17 +126,17 @@
                         <td></td>
                     % endfor
                 % endif
-                <td><a href="#" class="button">Upgrade Now</a></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('.upgrade_popup').modal(); return false;">Upgrade Now</a></td>
                 <td><!--<a class="button">Learn More</a>--></td>
             </tr>
         </tfoot>
     </table>
     
-    % if not c.logged_in_user and false:
-    <p>Please sign in to upgrade you account.</p>
-    % else:
+    ${popup.popup_static('Upgrade your account', upgrade_popup, '', html_class="upgrade_popup")}
+</%def>
+
+<%def name="upgrade_popup()">
     <p>If you want to upgrade, simply fill in the form below and one of our team will be in touch asap!</p>
-    
     ${h.form(h.args_to_tuple(controller='misc', action='upgrade_request', format='redirect'), method='post', json_form_complete_actions="cb_frag_remove(current_element);")}
         <%
         upgrade_form_meta = (
@@ -147,7 +150,7 @@
         <table class="upgrade form">
         % for name, title, extra in upgrade_form_meta:
         <tr>
-            <td>
+            <td class="label">
                 <label for="upgrade_${name}">${title}</label>
             </td>
             <td>
@@ -165,13 +168,9 @@
             </td>
         </tr>
         % endif
-		<tr><td colspan="2">
-			<input type="submit" value="Request Upgrade"/>
-		</td></tr>
+        <tr><td colspan="2">
+            <input class="button" type="submit" value="Request Upgrade"/><br /><br />
+        </td></tr>
         </table>
     ${h.end_form()}
-    % endif
-    
-    ##<p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
-    ##<p>Civicboom Team</p>
 </%def>

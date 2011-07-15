@@ -8,8 +8,8 @@ from enchant import DictWithPWL
 from enchant.checker import SpellChecker
 spell = SpellChecker(DictWithPWL("en_GB", "words.txt"))
 
-# ignore "foo %(cake)s bar"
-spell_ignore = re.compile("%\(.*?\)[si]")
+# ignore "foo %(cake)s bar" and xml
+spell_ignore = re.compile("(%\(.*?\)[si]|<.*?>)")
 
 def trans(text, locations):
     banned = [
