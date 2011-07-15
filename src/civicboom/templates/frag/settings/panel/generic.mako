@@ -33,11 +33,14 @@
         setting_group_order = sorted(setting_group_order.keys(), key=setting_group_order.__getitem__)
         
         settings_hints = d.get('settings_hints', {})
+        
+        print_username = c.logged_in_persona.username if c.result['username'] == 'me' else c.result['username']
+        
     %>
     % if setting_icons.get(panel_name):
         <img style="float:right;" src="/images/settings/${setting_icons.get(panel_name)}.png" />
     % endif
-    <h1>${_('%(username)s %(panel_title)s settings') % dict(username= c.logged_in_persona.username.capitalize(), panel_title=panel_title.lower()) }</h1>
+    <h1>${_('%(username)s %(panel_title)s settings') % dict(username= print_username.capitalize(), panel_title=panel_title.lower()) }</h1>
     % for group_name in setting_group_order:
         <div style="margin: 0; clear: both;">
         % if group_name.lower() != panel.lower():

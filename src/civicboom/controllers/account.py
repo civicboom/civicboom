@@ -211,7 +211,7 @@ class AccountController(BaseController):
             
         if c.auth_info:
             user_log.info("linked account from %s" % c.auth_info['profile']['providerName'])
-            associate_janrain_account(c.logged_in_persona, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
+            associate_janrain_account(user, c.auth_info['profile']['providerName'], c.auth_info['profile']['identifier'])
             set_flash_message(action_ok("Account successfully linked to _site_name"))
         else:
             set_flash_message(action_error("Error linking accounts").original_dict)
