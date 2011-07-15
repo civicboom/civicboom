@@ -126,8 +126,8 @@
                         <td></td>
                     % endfor
                 % endif
-                <td><a href="#" class="button hide_if_nojs" onclick="$('.upgrade_popup').modal(); return false;">Upgrade Now</a></td>
-                <td><!--<a class="button">Learn More</a>--></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">Upgrade Now</a></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">Learn More</a></td>
             </tr>
         </tfoot>
     </table>
@@ -136,7 +136,7 @@
 </%def>
 
 <%def name="upgrade_popup()">
-    <p>If you want to upgrade, simply fill in the form below and one of our team will be in touch asap!</p>
+    <p>If you want to upgrade or learn more, simply fill in the form below and one of our team will be in touch asap!</p>
     ${h.form(h.args_to_tuple(controller='misc', action='upgrade_request', format='redirect'), method='post', json_form_complete_actions="cb_frag_remove(current_element);")}
         <%
         upgrade_form_meta = (
@@ -148,29 +148,40 @@
         )
         %>
         <table class="upgrade form">
-        % for name, title, extra in upgrade_form_meta:
-        <tr>
-            <td class="label">
-                <label for="upgrade_${name}">${title}</label>
-            </td>
-            <td>
-                <input type="text" id="upgrade_${name}" name="${name}" placeholder="${extra}">
-            </td>
-        </tr>
-        % endfor
-        % if not c.logged_in_user:
-        <tr>
-            <td>
-                Proove you're human
-            </td>
-            <td>
-                ${h.get_captcha(c.lang, 'white')}
-            </td>
-        </tr>
-        % endif
-        <tr><td colspan="2">
-            <input class="button" type="submit" value="Request Upgrade"/><br /><br />
-        </td></tr>
+            <tr>
+                <td style="width: 10em;" class="label">
+                    <label for="upgrade_enquiry">What is your enquiry regarding?</label>
+                </td>
+                <td>
+                    <select id="upgrade_enquiry" name="upgrade_enquiry">
+                        <option value="More information">${_('More information')}</option>
+                        <option value="Upgrading my account">${_('Upgrading my account')}</option>
+                    </select>
+                </td>
+            </tr>
+            % for name, title, extra in upgrade_form_meta:
+                <tr>
+                    <td class="label">
+                        <label for="upgrade_${name}">${title}</label>
+                    </td>
+                    <td>
+                        <input type="text" id="upgrade_${name}" name="${name}" placeholder="${extra}">
+                    </td>
+                </tr>
+            % endfor
+            % if not c.logged_in_user:
+                <tr>
+                    <td>
+                        Proove you're human
+                    </td>
+                    <td>
+                        ${h.get_captcha(c.lang, 'white')}
+                    </td>
+                </tr>
+            % endif
+            <tr><td colspan="2">
+                <input class="button" type="submit" value="Request Upgrade"/><br /><br />
+            </td></tr>
         </table>
     ${h.end_form()}
 </%def>
