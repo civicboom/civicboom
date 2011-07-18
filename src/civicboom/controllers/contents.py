@@ -282,7 +282,54 @@ class ContentsController(BaseController):
 
     
     @web
-    def index(self, union_query=None, **kwargs):
+    def index(self, _filter=None, **kwargs):
+        if _filter:
+            parts = [_filter, ]
+
+        if 'feed' in kwargs and kwargs['feed']:
+            parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
+
+        if 'creator' in kwargs and kwargs['creator']:
+            parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
+
+        if 'term' in kwargs and kwargs['term']:
+            parts.append(TextFilter(kwargs['term']))
+
+        if 'location' in kwargs and kwargs['location']:
+            parts.append(LocationFilter.from_string(kwargs['location']))
+
+        if 'type' in kwargs and kwargs['type']:
+            parts.append(TypeFilter(kwargs['type']))
+
+        if 'response_to' in kwargs and kwargs['response_to']:
+            parts.append(ParentIDFilter(int(kwargs['response_to'])))
+
+        if 'boomed_by' in kwargs and kwargs['boomed_by']:
+            parts.append(BoomedByFilter(get_member(kwargs['boomed_by']).id))
+
+        if 'include_content' in kwargs and kwargs['include_content']:
+            parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
+
+        if 'exclude_content' in kwargs and kwargs['exclude_content']:
+            parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+
+        feed = AndFilter(parts)
+
+        """
+        @param private      if set and creator==logged_in_persona both public and private content will be returned
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
+        """
+
+        log.debug("Searching contents: %s" % sql(feed))
+        results = Session.query(Content) # TODO: list
+        results = results.filter(sql(feed))
+        results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
+
+        return to_apilist(results, obj_type='content', **kwargs)
+
+
+    @web
+    def index2(self, union_query=None, **kwargs):
         """
         GET /contents: Content Search
         @type list
