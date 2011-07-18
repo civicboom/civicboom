@@ -75,6 +75,10 @@ Filter()
 """
 
 
+##############################################################################
+# meta bits
+##############################################################################
+
 def html(o):
     return o.__html__()
 
@@ -108,6 +112,10 @@ class LabelFilter(Filter):
     def __html__(self):
         return "<div class='label'>%s</div>" % self.label
 
+
+##############################################################################
+# logical operators
+##############################################################################
 
 class OrFilter(Filter):
     def __init__(self, subs):
@@ -160,6 +168,24 @@ class NotFilter(Filter):
         return "NOT ("+sql(self.sub)+")"
 
 
+##############################################################################
+# content filters
+##############################################################################
+
+class IDFilter(Filter):
+    def __init__(self, id_list):
+        self.id_list = ", ".join(["%d" % d for d in id_list])
+
+    def __unicode__(self):
+        return "Content.id_list in [%s]" % self.id_list
+
+    def __repr__(self):
+        return "ParentIDFilter(%s)" % self.id_list
+
+    def __sql__(self):
+        return "content.id IN (%s)" % self.id_list
+
+
 class TextFilter(Filter):
     def __init__(self, text):
         self.text = text
@@ -171,36 +197,121 @@ class TextFilter(Filter):
         return "TextFilter(%s)" % repr(self.text)
 
     def __sql__(self):
-        return "to_tsvector(content.content) @@ to_tsquery('%s')" % self.text
+        import re
+
+        parts = []
+        for word in self.text.split():
+            word = re.sub("[^a-zA-Z0-9_-]", "", word)
+            if word:
+                parts.append(word)
+
+        if parts:
+            text = " | ".join(parts)
+            return "to_tsvector('english', title || ' ' || content) @@ to_tsquery('%s')" % text
+        else:
+            return query
 
 
 class LocationFilter(Filter):
-    def __init__(self, loc, rad=10):
-        self.loc = loc
-        self.rad = rad
+    def __init__(self, lon, lat, rad=10):
+        self.lon = float(lon)
+        self.lat = float(lat)
+        self.rad = float(rad)
+
+    @staticmethod
+    def from_string(self, s):
+        (lon, lat, radius) = (None, None, 10)
+        zoom = 10 # FIXME: inverse of radius? see bug #50
+
+        location = s.replace(",", " ")
+        location_tuple = [float(i.strip()) for i in location.split()]
+        if   len(location_tuple) == 2:
+            (lon, lat        ) = location_tuple
+        elif len(location_tuple) == 3:
+            (lon, lat, radius) = location_tuple
+
+        if lon and lat and radius:
+            return LocationFilter((lon, lat), radius)
 
     def __unicode__(self):
-        return "Content.location.near('%s', %d)" % (self.loc, self.rad)
+        return "Content.location.near((%f, %f), %f)" % (self.lon, self.lat, self.rad)
 
     def __repr__(self):
-        return "LocationFilter(%s)" % repr(self.loc)
+        return "LocationFilter((%f, %f), %f)" % (self.lon, self.lat, self.rad)
 
     def __sql__(self):
-        return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.loc[0], self.loc[1], self.rad)
+        return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.lon, self.lat, self.rad)
 
 
-class AuthorIDFilter(Filter):
-    def __init__(self, author_id):
-        self.author_id = author_id
+class TypeFilter(Filter):
+    def __init__(self, type):
+        if type in ['article', 'assignment', 'draft']:
+            self.type = type
 
     def __unicode__(self):
-        return "Content.creator_id = %d" % self.author_id
+        return "Content.__type__ = %s" % self.type
 
     def __repr__(self):
-        return "AuthorFilter(%d)" % self.author_id
+        return "TypeFilter(%s)" % self.type
 
     def __sql__(self):
-        return "content.creator_id = %d" % self.author_id
+        return "content.__type__ = %s" % self.type
+
+
+class ParentIDFilter(Filter):
+    def __init__(self, parent_id):
+        self.parent_id = parent_id
+
+    def __unicode__(self):
+        return "Content.parent_id = %d" % self.parent_id
+
+    def __repr__(self):
+        return "ParentIDFilter(%d)" % self.parent_id
+
+    def __sql__(self):
+        return "content.parent_id = %d" % self.parent_id
+
+
+class CreatorIDFilter(Filter):
+    def __init__(self, creator_id):
+        self.creator_id = creator_id
+
+    def __unicode__(self):
+        return "Content.creator_id = %d" % self.creator_id
+
+    def __repr__(self):
+        return "CreatorIDFilter(%d)" % self.creator_id
+
+    def __sql__(self):
+        return "content.creator_id = %d" % self.creator_id
+
+
+class CreatorFilter(Filter):
+    def __init__(self, creator_name):
+        self.creator_name = creator_name
+
+    def __unicode__(self):
+        return "Content.creator_name = '%s'" % self.creator_name
+
+    def __repr__(self):
+        return "CreatorFilter(%s)" % repr(self.creator_name)
+
+    def __sql__(self):
+        return "content.creator_id = (SELECT id FROM member WHERE username='%s')" % self.creator_name
+
+
+class BoomedByFilter(Filter):
+    def __init__(self, boomer_id):
+        self.boomer_id = boomer_id
+
+    def __unicode__(self):
+        return "FIXME" # Content.id in '%s'" % self.boomer_id
+
+    def __repr__(self):
+        return "BoomedByFilter(%d)" % repr(self.boomer_id)
+
+    def __sql__(self):
+        return "content.id IN (SELECT content_id FROM map_booms WHERE member_id=%d)" % self.boomer_id
 
 
 class TagFilter(Filter):
