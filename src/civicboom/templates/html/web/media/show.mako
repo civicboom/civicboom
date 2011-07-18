@@ -107,6 +107,7 @@
                     itemVisibleOutCallback  :   {
                         onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
                     },
+                    itemFallbackDimension	:	349,
                 });
             });
             
@@ -152,12 +153,13 @@
             <div style="height: 150px;">
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % elif content['type'] == "video":
-                    <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                    ## <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % elif content['type'] == "audio":
-                    <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                    ## <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
+                    <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % else:
                     Unrecognised media type
                 % endif
@@ -171,27 +173,27 @@
                 return false;
             });
         </script>
-        ${media_popup(content)}
+        ${media_popup()}
         
         ## Media details
         <div class="item_details hidden">
             ${media_details(content, truncate=1)}
         </div>
     </li>
-</%def>
     
-<%def name="media_popup(content)">
-    <div id="view-media" class="hideable">
-        <div class="title_bar">
-            <div class="common_actions">
-                ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
-                <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+    <%def name="media_popup()">
+        <div id="view-media" class="hideable">
+            <div class="title_bar">
+                <div class="common_actions">
+                    ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
+                    <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+                </div>
+            </div>
+            <div class="media_popup_content">
+                ${full(content)}
             </div>
         </div>
-        <div class="media_popup_content">
-            ${full(content)}
-        </div>
-    </div>
+    </%def>
 </%def>
 
 ## ---

@@ -10,6 +10,7 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="media_includes"  file="/html/web/media/show.mako"        />
+<%namespace name="components"	   file="/html/web/common/components.mako" />
 
 ## for deprication
 <%namespace name="loc"             file="/html/web/common/location.mako"     />
@@ -612,26 +613,25 @@
 		</tr>
 	<tr>
 	    <td colspan="3">
-		<div class="comments-option">
+		<div class="comments-option comments-option-${self.id}">
 		    % if c.logged_in_user:
-		    ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments">Ask here...</span>
+		        ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments show-comments-${self.id}">Ask here...</span>
 		    % else:
-		    To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
+		        To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
 		    % endif
 		</div>
 	    </td>
 	    <script>
 		$(function() {
-			$('.new-comment').hide();
-			//$('.new-comment').css("display", "table-row");
-			$('.show-comments').click(function() {
-				$('.new-comment').toggle();
-				$('.comment-${self.id}').focus();
+			$('.new-comment-${self.id}').hide();
+			$('.show-comments-${self.id}').click(function() {
+			    $('.new-comment-${self.id}').toggle();
+			    $('.comment-${self.id}').focus();
 			});
 		});
 	    </script>
 	</tr>
-        <tr class="new-comment">
+        <tr class="new-comment new-comment-${self.id}">
             <td class="comment_avatar">
                 % if c.logged_in_user:
                 ${member_includes.avatar(c.logged_in_user.to_dict())}
