@@ -173,27 +173,27 @@
                 return false;
             });
         </script>
-        ${media_popup(content)}
+        ${media_popup()}
         
         ## Media details
         <div class="item_details hidden">
             ${media_details(content, truncate=1)}
         </div>
     </li>
-</%def>
     
-<%def name="media_popup(content)">
-    <div id="view-media" class="hideable">
-        <div class="title_bar">
-            <div class="common_actions">
-                ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
-                <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+    <%def name="media_popup()">
+        <div id="view-media" class="hideable">
+            <div class="title_bar">
+                <div class="common_actions">
+                    ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
+                    <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+                </div>
+            </div>
+            <div class="media_popup_content">
+                ${full(content)}
             </div>
         </div>
-        <div class="media_popup_content">
-            ${full(content)}
-        </div>
-    </div>
+    </%def>
 </%def>
 
 ## ---

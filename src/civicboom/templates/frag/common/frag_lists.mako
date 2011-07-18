@@ -373,7 +373,7 @@
             ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
             ##% endif
 
-            ${content_icons(content)}
+            ## ${content_icons(content)}
             <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
             
             <div style="clear: both;"></div>
