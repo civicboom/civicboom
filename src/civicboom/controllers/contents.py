@@ -325,6 +325,15 @@ class ContentsController(BaseController):
         log.debug("Searching contents: %s" % sql(feed))
         results = Session.query(Content).with_polymorphic('*') # TODO: list
         results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
+
+        # hacky old thing to make tests pass -- rather than lists being SQLAlchemy expressions,
+        # we should migrate them to being pre-built feeds
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                results = list_filters[kwargs['list']](results)
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+
         results = results.filter(sql(feed))
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
@@ -950,7 +959,7 @@ class ContentsController(BaseController):
         
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
             if hasattr(content_actions_controller, list):
-                data[list] = getattr(content_actions_controller, list)(content, **kwargs)['data']['list']
+                data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
         
         # Increase content view count
         if hasattr(content,'views'):
