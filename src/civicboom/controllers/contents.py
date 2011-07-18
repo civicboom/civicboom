@@ -283,8 +283,10 @@ class ContentsController(BaseController):
     
     @web
     def index(self, _filter=None, **kwargs):
+        parts = []
+
         if _filter:
-            parts = [_filter, ]
+            parts.append(_filter)
 
         if 'feed' in kwargs and kwargs['feed']:
             parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)

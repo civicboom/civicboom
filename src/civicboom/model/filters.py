@@ -9,10 +9,10 @@ of themselves
 ...     OrFilter([
 ...         TextFilter("terrorists"),
 ...         AndFilter([
-...             LocationFilter([1, 51], 10),
+...             LocationFilter(1, 51, 10),
 ...             TagFilter("Science & Nature")
 ...         ]),
-...         AuthorIDFilter(1)
+...         CreatorIDFilter(1)
 ...     ]),
 ...     NotFilter(OrFilter([
 ...         TextFilter("waffles"),
@@ -23,7 +23,7 @@ of themselves
 >>> print unicode(query) # doctest: +NORMALIZE_WHITESPACE
 and_(or_(
     Content.content.matches('terrorists'),
-    and_(Content.location.near('[1, 51]', 10), Content.tags.contains('Science & Nature')),
+    and_(Content.location.near((1.000000, 51.000000), 10.000000), Content.tags.contains('Science & Nature')),
     Content.creator_id = 1
 ), not_(or_(
     Content.content.matches('waffles'),
@@ -33,18 +33,18 @@ and_(or_(
 >>> print repr(query) # doctest: +NORMALIZE_WHITESPACE
 AndFilter([OrFilter([
     TextFilter('terrorists'),
-    AndFilter([LocationFilter([1, 51]), TagFilter('Science & Nature')]),
-    AuthorFilter(1)
+    AndFilter([LocationFilter(1.000000, 51.000000, 10.000000), TagFilter('Science & Nature')]),
+    CreatorIDFilter(1)
 ]), NotFilter(OrFilter([
     TextFilter('waffles'),
     TagFilter('Business')
 ]))])
 
 >>> print html(query)
-<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter([1, 51])</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>AuthorFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
+<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorIDFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
 
 >>> print sql(query)
-((to_tsvector(content.content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector(content.content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
 
 
 LabelFilter is a thing to put text into the human-readable output while having
@@ -237,7 +237,7 @@ class LocationFilter(Filter):
         return "Content.location.near((%f, %f), %f)" % (self.lon, self.lat, self.rad)
 
     def __repr__(self):
-        return "LocationFilter((%f, %f), %f)" % (self.lon, self.lat, self.rad)
+        return "LocationFilter(%f, %f, %f)" % (self.lon, self.lat, self.rad)
 
     def __sql__(self):
         return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.lon, self.lat, self.rad)
