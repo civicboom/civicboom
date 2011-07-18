@@ -93,44 +93,6 @@
 ## New Front Title
 ##------------------------------------------------------------------------------
 
-<%doc><%def name="header()">
-	<table><tr>
-		<td colspan="4" class="how-to"><a>How to</a> | <a href="${url(controller='misc', action='about', id='mobile')}">Mobile</a></td>
-	</tr><tr>
-		<td class="logo">
-			<a href='/'>
-				<img  class='logo_img' src='${h.wh_url("public", "images/logo.png")}' alt='${_("_site_name")}' />
-				## <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}' />
-				## <span class='logo_text'>${_("_site_name")}</span>
-			</a>
-		</td>
-		<td class="signin">
-			% if c.logged_in_persona:
-			    ${h.secure_link(
-				h.url(controller='account', action='signout'),
-				_('Sign out'),
-				css_class="button"
-			    )}
-			% else:
-			    <a class="button" href="${url(controller='account', action='signin')}">
-				##<img src="/styles/web/login.png" alt="${_("Log in")}" width="68" height="17">
-				${_('Sign in')}
-			    </a>
-			% endif
-		</td>
-		<td class="links">
-			<a href="${url('contents', list='assignments_active')}">What to explore first?</a>
-
-		</td>
-		<td class="search">
-			<form action="${h.url('contents')}" method='GET'>
-				<input type="search" class="search_input" name="term" placeholder="${_("Search Content")}" />
-				<input type="submit" class="button" value="GO">
-			</form>
-		</td>
-	</tr></table>
-</%def></%doc>
-
 <%def name="front_headline()">
 	<div class="title-box">
 		<%doc><h2 class="headline">

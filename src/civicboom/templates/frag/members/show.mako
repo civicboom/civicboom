@@ -136,9 +136,9 @@
         
         # GregM: Hand holding adverts
         hand_adverts = {
-            'ind'    : ['advert_hand_article', 'advert_hand_response', 'advert_hand_mobile'],
-	    'org'    : ['advert_hand_content', 'advert_hand_hub', 'advert_hand_mobile'],
-            'hub'  : ['advert_hand_widget', 'advert_hand_assignment']
+            'ind'   : ['advert_hand_article', 'advert_hand_response', 'advert_hand_mobile'],
+	    	'org'   : ['advert_hand_content', 'advert_hand_hub', 'advert_hand_mobile'],
+            'hub'	: ['advert_hand_widget', 'advert_hand_assignment']
         }
 	
 	self.adverts_content = {
@@ -150,12 +150,12 @@
 	    },
 	    "article":	{
 	       'title':	'Post stories!',
-		##'content_list':	e[
+		##'content_list':	[
 		##    _("Send your stories directly to media organisations and publishers"),
 		##    _("Respond to a specific request"),
 		##    _("Post your news on Civicboom")
 		##],
-		'href':	h.url(controller='misc', action='new_article'),
+		'href':	h.secure_link(h.url(controller='misc', action='new_article')),
 	    },
 	    "response":	{
 		'title':	_('Get involved!'),

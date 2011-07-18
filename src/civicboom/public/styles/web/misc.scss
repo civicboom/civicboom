@@ -97,56 +97,48 @@ BODY.c-misc.a-titlepage {
 	    margin: 0.1em auto 0.1em auto;
 	    text-align: center;
 	    padding: 0;
+	    width: 1000px;
 	    
 	    .window_wrapper {
-		margin: 0;
-		padding: 0;
-		display: inline-block;
-		float: left;
+    		margin: 0;
+    		padding: 0;
+    		display: inline-block;
+    		float: left;
 	    }
 	    
 	    .window {
-		display: inline-block;
-		// border: 1px solid black;
-		height: 200px;
-		float: left;
-		padding: 0;
-		@include drop_shadow(1px, 1px, 5px, #333);
-		
-		img {
-		    margin: 0;
-		    height: 100%;
-		}
+    		display: inline-block;
+    		// border: 1px solid black;
+    		height: 200px;
+    		width: 300px;
+    		float: left;
+    		padding: 0;
+    		@include drop_shadow(1px, 1px, 5px, #333);
+
+            // Transparency
+            filter: alpha(opacity=80);
+            opacity: 0.8;
+            
+            &:hover {
+                filter: alpha(opacity=100);
+                opacity: 1;
+            }
+    		
+    		img {
+    		    margin: 0;
+    		    height: 100%;
+    		    width: 100%;
+    		}
 	    }
 	    
 	    .symbol {
-		display: inline-block;
-		color: white;
-		padding: 70px 5px 0 5px;
-		float: left;
-		text-shadow: 1px 1px 5px #333;
-		
-		text-align: center;
-	    }
-	    
-	    #left {
-		margin-left: 0.4em;
-	    }
-	    
-	    #plus {
-	    
-	    }
-	    
-	    #center {
-		
-	    }
-	    
-	    #equals {
-	    
-	    }
-	    
-	    #right {
-	    
+    		display: inline-block;
+    		color: white;
+    		padding: 70px 5px 0 5px;
+    		float: left;
+    		text-shadow: 1px 1px 5px #333;
+    		
+    		text-align: center;
 	    }
 	}
 

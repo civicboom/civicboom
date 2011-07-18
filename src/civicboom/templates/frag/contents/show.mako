@@ -10,6 +10,7 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="media_includes"  file="/html/web/media/show.mako"        />
+<%namespace name="components"	   file="/html/web/common/components.mako" />
 
 ## for deprication
 <%namespace name="loc"             file="/html/web/common/location.mako"     />

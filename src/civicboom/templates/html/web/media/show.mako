@@ -107,6 +107,7 @@
                     itemVisibleOutCallback  :   {
                         onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
                     },
+                    itemFallbackDimension	:	349,
                 });
             });
             
@@ -152,12 +153,13 @@
             <div style="height: 150px;">
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % elif content['type'] == "video":
-                    <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                    ## <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % elif content['type'] == "audio":
-                    <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                    ## <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
+                    <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % else:
                     Unrecognised media type
                 % endif
