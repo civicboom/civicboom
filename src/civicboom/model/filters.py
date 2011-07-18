@@ -148,7 +148,10 @@ class AndFilter(Filter):
         return "<div class='and'>all of:<p>" + "<p>and<p>".join([html(s) for s in self.subs]) + "</div>"
 
     def __sql__(self):
-        return "(" + (") AND (".join([sql(s) for s in self.subs])) + ")"
+        if self.subs:
+            return "(" + (") AND (".join([sql(s) for s in self.subs])) + ")"
+        else:
+            return "(1=1)"
 
 
 class NotFilter(Filter):
@@ -219,7 +222,10 @@ class LocationFilter(Filter):
         self.rad = float(rad)
 
     @staticmethod
-    def from_string(self, s):
+    def from_string(s):
+        if s == "me":
+            return LabelFilter("location=me not supported yet") # FIXME
+
         (lon, lat, radius) = (None, None, 10)
         zoom = 10 # FIXME: inverse of radius? see bug #50
 
@@ -249,13 +255,13 @@ class TypeFilter(Filter):
             self.type = type
 
     def __unicode__(self):
-        return "Content.__type__ = %s" % self.type
+        return "Content.__type__ = '%s'" % self.type
 
     def __repr__(self):
-        return "TypeFilter(%s)" % self.type
+        return "TypeFilter(%s)" % repr(self.type)
 
     def __sql__(self):
-        return "content.__type__ = %s" % self.type
+        return "content.__type__ = '%s'" % self.type
 
 
 class ParentIDFilter(Filter):
