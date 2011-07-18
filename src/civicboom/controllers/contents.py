@@ -323,7 +323,8 @@ class ContentsController(BaseController):
         """
 
         log.debug("Searching contents: %s" % sql(feed))
-        results = Session.query(Content) # TODO: list
+        results = Session.query(Content).with_polymorphic('*') # TODO: list
+        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
         results = results.filter(sql(feed))
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
