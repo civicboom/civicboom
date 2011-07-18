@@ -6,6 +6,11 @@ from civicboom.lib.communication.email_lib import send_email
 from urllib import unquote_plus
 import os
 
+from civicboom.lib.form_validators.validator_factory         import DynamicSchema
+from formencode.validators import UnicodeString, Email
+from civicboom.lib.form_validators.registration import ReCaptchaValidator
+from civicboom.lib.form_validators.dict_overlay import validate_dict
+
 from civicboom.controllers.contents import ContentsController
 content_search = ContentsController().index
 import datetime
@@ -27,6 +32,8 @@ class MiscController(BaseController):
     @auto_format_output
     def about(self, id="civicboom"):
         if c.format in ["html", "mobile"] and os.path.exists(config['path.templates']+"/html/web/misc/about/"+id+".mako"):
+            if id == "upgrade_plans":
+                pass
             return action_ok(template="misc/about/"+id)
         else:
             raise action_error(code=404, message="No description for this topic")
@@ -160,15 +167,34 @@ Disallow: /*.frag$
 """
 
     @web
-    @auth
     def upgrade_request(self, **kwargs):
         if not request.POST:
             return
+        schema = DynamicSchema()
+        schema.chained_validators = []
+        schema.fields['name'] = UnicodeString(not_empty=True)
+        schema.fields['phone'] = UnicodeString(not_empty=True)
+        schema.fields['email'] = Email(not_empty=True)
+        if not c.logged_in_user:
+            schema.fields['recaptcha_challenge_field'] = UnicodeString(not_empty=True)
+            schema.fields['recaptcha_response_field']  = UnicodeString(not_empty=True)
+            schema.chained_validators.append(ReCaptchaValidator(request.environ['REMOTE_ADDR']))
+            
+        data = {'upgrade_request':kwargs}
+        data = validate_dict(data, schema, dict_to_validate_key='upgrade_request')
+            
         
         from civicboom.lib.communication.email_lib import send_email
         form_string = ''
         for key,value in kwargs.iteritems():
             form_string += '\n%s: %s' % (key,value)
+            
+        if c.logged_in_user:
+            form_string += '\nlogged_in_user: %s' % (c.logged_in_user.username)
+            form_string += '\nlogged_in_persona: %s' % (c.logged_in_persona.username)
+        else:
+            form_string += '\nUser not logged in!'
+        
         send_email(config['email.contact'], subject='Civicboom', content_text='upgrade account request: %s' % form_string)
         
         return action_ok(_('upgrade request sent'))

@@ -70,8 +70,8 @@ generators = [
     ["msg_test",                             "",   _("a test message"),              _("%(text)s")],
     
     # Member actions
-    ["followed_by",                          "n", _("new follower"),                _("%(member)s is now following %(you)s")],
-    ["followed_on_signup",                   "n", _("new sign up via widget"),      _("%(member)s has signed up via your widget and is now following %(you)s")],
+    ["followed_by",                          "ne", _("new follower"),                _("%(member)s is now following %(you)s")],
+    ["followed_on_signup",                   "ne", _("new sign up via widget"),      _("%(member)s has signed up via your widget and is now following %(you)s")],
     ["follow_stop",                          "",   _("lost a follower"),             _("%(member)s has stopped following %(you)s")],
     
     # GregM: Follow action notifications
@@ -94,8 +94,8 @@ generators = [
     # Assignment Actions
     ["assignment_created",                   "ne", _("new _assignment"),             _("%(creator)s created a new _assignment %(assignment)s")],
     ["assignment_updated",                   "ne", _("_assignment updated"),         _("%(creator)s has updated their _assignment %(assignment)s")],
-    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been cancelled"), _("%(member)s cancel'ed the _assignment %(assignment)s")],
-    ["assignment_accepted",                  "n", _("_assignment accepted"),        _("%(member)s accepted %(your)s _assignment %(assignment)s")],
+    ["assignment_canceled",                  "ne", _("_assignment you previously accepted has been cancelled"), _("%(member)s cancelled the _assignment %(assignment)s")],
+    ["assignment_accepted",                  "ne", _("_assignment accepted"),        _("%(member)s accepted %(your)s _assignment %(assignment)s")],
     ["assignment_interest_withdrawn",        "n", _("_assignment interest withdrawn"), _("%(member)s withdrew their interest in %(your)s _assignment %(assignment)s")],
     ["assignment_invite",                    "ne", _("closed _assignment invitation") , _("%(member)s has invited %(you)s to participate in the _assignment %(assignment)s")],
 
@@ -105,19 +105,19 @@ generators = [
 
     # Response Actions
     # NOTE: Don't set these to default email because these action create emails themselfs - AllanC
-    ["article_disassociated_from_assignment","n",  _("_article disassociated from _assignment"), _("%(member)s disassociated %(your)s _article %(article)s from the _assignment %(assignment)s")],
-    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved %(your)s _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
+    ["article_disassociated_from_assignment","ne",  _("_article disassociated from _assignment"), _("%(member)s disassociated %(your)s _article %(article)s from the _assignment %(assignment)s")],
+    ["article_approved",                     "ne",  _("_article approved by organisation"), _("%(member)s has approved %(your)s _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
       # TODO: response seen
 
     # Groups to group
     ["group_new_member",                     "ne" , _("_member joined group"),        _("%(member)s has joined %(group)s")],
-    ["group_role_changed",                   "ne" , _("_member role changed"),        _("%(admin)s changed %(member)ss role for %(group)s to %(role)s")],
+    ["group_role_changed",                   "ne" , _("_member role changed"),        _("%(admin)s changed %(member)s's role for %(group)s to %(role)s")],
     ["group_remove_member_to_group",         "ne", _("_member removed from _group"), _("%(admin)s removed %(member)s from %(group)s")],
     ["group_join_request",                   "ne" , _("join request"),                _("%(member)s has requested to join %(group)s")],
     
     # Groups to members
     ["group_deleted",                        "ne", _("_group deleted"),              _("The _group %(group)s has been deleted by %(admin)s")],
-    ["group_invite",                         "ne", _("_group invitation"),           _("%(admin)s invited %(you)s to join %(group)s as a %(role)s")],
+    ["group_invite",                         "ne", _("_group invitation"),           _("Congratulations! You have been invited to %(group)s with the role %(role)s by %(admin)s")],
     ["group_request_declined",               "n" , _("_group membership request declined"), _("%(your)s membership request to join %(group)s was declined")],
     ["group_invitation_declined",            ""  , _("_group membership invitation declined"), _("%(member)s declined the invitation to join %(group)s")],
     ["group_request_accepted",               "ne" , _("_group request accepted"),     _("%(admin)s accepted %(your)s _group membership request. You are now a member of %(group)s")],

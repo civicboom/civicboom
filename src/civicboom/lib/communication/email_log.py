@@ -33,8 +33,8 @@ def getNumEmails():
     return len(emails)
 
 
-def getLastEmail():
-    return emails[-1]
+def getLastEmail(offset = 1):
+    return emails[0 - offset]
 
 
 def getEmailSubjects():

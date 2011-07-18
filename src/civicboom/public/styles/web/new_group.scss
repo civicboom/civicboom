@@ -1,13 +1,17 @@
 BODY.c-groups.u-user, BODY.c-settings.u-user {
   .group_settings {
-    
     .button {
       width: 10em;
+    }
+  
+    fieldset {
+      width: auto !important;
     }
   
     .group-block {
       padding: 0.5em 0;
       padding-left: 2.5em;
+      width: 100%;
       * {
         top: 0;
         vertical-align: top;
@@ -39,6 +43,7 @@ BODY.c-groups.u-user, BODY.c-settings.u-user {
     
     .radio-right {
       padding-left: 11em;
+      width: 18em;
     }
     
     .b {
@@ -62,6 +67,15 @@ BODY.c-groups.u-user, BODY.c-settings.u-user {
       width: 8em;
     }
     
+    .wide_label {
+      label {
+        width: 27em !important;
+      }
+      input {
+        width: 2em !important;
+      } 
+    }
+        
     .label {
     display: inline-block;
     width: 15em;

@@ -65,7 +65,7 @@ def init_model_extra():
         backref='assignments_accepted'
     )
 
-    AssignmentContent.unaccepted_by = dynamic_loader(Member,
+    AssignmentContent.invited_members = dynamic_loader(Member,
         primaryjoin=and_(
             AssignmentContent.id==MemberAssignment.content_id,
             MemberAssignment.status=="pending",
@@ -73,7 +73,7 @@ def init_model_extra():
         secondary=MemberAssignment.__table__,
         secondaryjoin=MemberAssignment.member_id==Member.id,
         foreign_keys=[MemberAssignment.content_id,MemberAssignment.member_id],
-        backref='assignments_unaccepted'
+        backref='assignments_invited'
     )
     
     Member.boomed_content = relationship("Content",

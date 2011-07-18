@@ -22,7 +22,7 @@
     	invite_types_desc   = { 'trusted_follower' : _('The people below will be invited to become trusted followers'),
     							'assignment'       : _('The people below will be invited to participate in this _assignment'),
     							'group'            : _('The people below will be invited to join this _group'),
-                                'payment_add_user' : _('The people below will be added to this payment account'),
+						'payment_add_user' : _('The people below will be added to this payment account'),
     	}
         self.attr.title     = invite_types[d['invite']]
         self.attr.desc      = invite_types_desc[d['invite']]
@@ -44,7 +44,7 @@
 		</script>
 	% endif
 
-	<form onsubmit="" class="inviteform" method="POST" action="${h.url('current')}">
+	<form onsubmit="" class="inviteform frag_whitewrap" method="POST" action="${h.url('current')}">
 		<input type="hidden" class="search-limit" name="search-limit" value="${d['search-limit']}" />
 		<input type="hidden" name="id" value="${d.get('id')}" />
 		<input type="hidden" name="invite" value="${d.get('invite')}" />
@@ -60,16 +60,16 @@
 							${select_item('follower_of', 'Followers', d.get('search-type'))}
 		        			${select_item('followed_by', 'Following', d.get('search-type'))}
 		        		</select>
-		        		<input name="search-name" placeholder="Enter your search here..." type="text" value="${d.get('search-name')}" />
+		        		<input class="search-name" name="search-name" placeholder="Enter your search here..." type="text" value="${d.get('search-name')}" />
 		        		<div class="pad_top align_right">
 			        		<input class="button" onclick="return inviteClick(this)" type="submit" name="search-button" value="Search" />
-                            <input class="button" onclick="return postInviteFrag($(this))" type="submit" name="submit-everyone" value="Add All" />
 			        	</div>
 		        	</div>
 		        </div>
 	        	<div class="invite_area invite-list">
 	        		${invite_list()}
 	        	</div>
+                <div class="fr"><input class="button ${'disabled' if (d.get('search-type','') == '') else ''}" onclick="return postInviteFrag($(this))" type="submit" name="submit-everyone" value="Add All" /></div>
 	        </div>
 	    </div>
 	    <div class="frag_left_col">
@@ -101,13 +101,13 @@
 	    			<input class="button" type="submit" onclick="return postInviteFrag($(this));" name="submit-invite" value="Invite" />
 	    			</div>
 	   			</div>
-
+    <div class="cb">&nbsp;</div>
 	</form>
 
 </%def>
 
 <%def name="page_button(name, text, disabled)">
-	<input class="button ${'disabled'if disabled else''}" onclick="return inviteClick(this)" ${'disabled=disabled'if disabled else''} type="submit" name="${name}" value="${text}" />
+	<input class="button_white ${'disabled'if disabled else''}" onclick="return inviteClick(this)" ${'disabled=disabled'if disabled else''} type="submit" name="${name}" value="${text}" />
 </%def>
 
 <%def name="invitee_list()">
@@ -164,7 +164,7 @@
 		% endif
 		% for item in list:
 			<li class="pad_top">
-				<div class="action"><button onclick="return inviteClick(this)" class="button_white" type="submit" name="add-${item.get('username')}"><div class="icon16 i_plus"><span>${_('Add')}</span></div></button></div>
+				<div class="action"><button onclick="return inviteClick(this)" class="button_white" type="submit" name="add-${item.get('username')}"><div class="icon16 i_plus_blue"><span>${_('Add')}</span></div></button></div>
 				<div class="avatar">${member_avatar(item)}</div>
 				<div class="data">
 					% if len(item.get('name')) > 0:

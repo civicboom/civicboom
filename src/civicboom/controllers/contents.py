@@ -20,7 +20,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 # Search imports
 from civicboom.model.filters import *
 from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null, func, Unicode
+from sqlalchemy           import or_, and_, null, func, Unicode, asc, desc
 from sqlalchemy.orm       import join, joinedload, defer
 from geoalchemy import Point
 import datetime
@@ -108,9 +108,11 @@ def _init_search_filters():
     def append_search_location(query, location):
         (lon, lat, radius) = (None, None, 10)
         zoom = 10 # FIXME: inverse of radius? see bug #50
+
         
         if isinstance(location, basestring):
-            location_tuple = [i.strip() for i in location.split(",")]
+            location = location.replace(",", " ")
+            location_tuple = [i.strip() for i in location.split()]
             if   len(location_tuple) == 2:
                 (lon, lat        ) = location_tuple
             elif len(location_tuple) == 3:
@@ -120,8 +122,8 @@ def _init_search_filters():
             log.warn('location search with objects is not implemented yet')
         
         if lon and lat and radius:
-            location = (lon, lat, zoom) # AllanC - ? um? how is this used in the string below?
-            return query.filter("ST_DWithin(location, 'SRID=4326;POINT(%d %d)', %d)" % (float(lon), float(lat), float(radius)))
+            query = query.add_columns(func.st_distance(func.st_geomfromwkb(Content.location, 4326), 'SRID=4326;POINT(%f %f)' % (float(lon), float(lat))).label("distance"))
+            return query.filter("location IS NOT NULL").filter("ST_DWithin(location, 'SRID=4326;POINT(%f %f)', %f)" % (float(lon), float(lat), float(radius)))
         else:
             return query
     
@@ -380,20 +382,30 @@ class ContentsController(BaseController):
         #        results = results.add_column(
         #            func.substr(func.strip_tags(Content.content), 0, 100)
         #        )
-        
-        def get_content_field(field):
+
+        def valid_sort_field(field):
+            if field in [col["name"] for col in results.column_descriptions]:
+                return field
             if hasattr(Content           , field):
                 return getattr(Content           , field)
             if hasattr(UserVisibleContent, field):
                 return getattr(UserVisibleContent, field)
             if hasattr(AssignmentContent, field):
                 return getattr(AssignmentContent, field)
-        
+            return None
+
         for sort_field in kwargs.get('sort', '-update_date').split(','):
+            direction = asc
             if sort_field[0] == "-":
-                results = results.order_by(get_content_field(sort_field[1:]).desc())
-            else:
-                results = results.order_by(get_content_field(sort_field    ).asc() )
+                direction = desc
+                sort_field = sort_field[1:]
+
+            # check that the sort string is the name of a column in the result
+            # set, rather than some random untrusted SQL statement
+            f = valid_sort_field(sort_field)
+            if f:
+                #log.debug("Sorting by %s %s" % (direction, f))
+                results = results.order_by(direction(f))
         
 #        def merge_snippet(content, snippet):
 #            content = content.to_dict(**kwargs)

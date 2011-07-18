@@ -19113,7 +19113,7 @@ OpenLayers.Layer.GeoRSS = OpenLayers.Class(OpenLayers.Layer.Markers, {
                 var contentHTML = '<div class="olLayerGeoRSSClose">[x]</div>'; 
                 contentHTML += '<div class="olLayerGeoRSSTitle">';
                 if (link) {
-                    contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'\'); return false;">';
+                    contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'.frag\'); return false;">';
                 }
                 contentHTML += title;
                 if (link) {
@@ -19148,6 +19148,7 @@ OpenLayers.Layer.GeoRSS = OpenLayers.Class(OpenLayers.Layer.Markers, {
         }
         if (!sameMarkerClicked) {
             var popup = this.createPopup();
+                      popup.panMapIfOutOfView = true;
             OpenLayers.Event.observe(popup.div, "click",
                 OpenLayers.Function.bind(function() { 
                     for(var i=0, len=this.layer.map.popups.length; i<len; i++) { 

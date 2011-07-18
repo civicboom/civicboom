@@ -1,5 +1,6 @@
 from pylons import config
 import sqlalchemy.orm.query
+from sqlalchemy.util import NamedTuple
 
 from cbutils.misc import str_to_int
 from civicboom.lib.web import action_ok
@@ -31,7 +32,14 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     
     def list_to_dict(results, list_to_dict_transform=None, **kwargs):
         def default_transform(results, **kwargs):
-            return [i.to_dict(**kwargs) for i in results]
+            r = []
+            for i in results:
+                if type(i) == NamedTuple:
+                    # we did query.add_column somewhere, so sqlalchemy gave us [(object, extra_column), ...] rather than [object, ...]
+                    r.append(i[0].to_dict(**kwargs))
+                else:
+                    r.append(i.to_dict(**kwargs))
+            return r
         if not list_to_dict_transform:
             list_to_dict_transform = default_transform
         try:

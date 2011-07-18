@@ -4,7 +4,8 @@
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 
-<%!    
+<%!
+    from webhelpers.html import HTML, literal
     share_url        = False
     rss_url          = False
     auto_georss_link = False
@@ -47,13 +48,15 @@
 <%def name="body()">
     <div class="frag_col">
         <div class="frag_list">
+        ## Should be here but changes size of text editor
+        ##<div class="frag_list_contents">
         <h1>
             % if self.content.get('parent'):
                 ${_("You are responding to: %s") % self.content['parent']['title']}
             % elif self.selected_type == 'assignment':
-                Post a request
+                ${_("Ask for stories")}
             % elif self.selected_type == 'article':
-                Post a story
+                ${_("Post a story")}
             % endif
         </h1>
         <div class="separator"></div>
@@ -120,6 +123,7 @@
             ${submit_buttons()}
             ${license()}
         ${h.end_form()}
+        ## </div>
         </div>
     </div>
 </%def>
@@ -138,10 +142,20 @@
 
 <%def name="actions_common()">
     % if self.id:
-        <a href="${h.url('content', id=self.id)}"
-           title="${_('Discard Changes and view')}"
-           onclick="if (confirm('${_('View _content without saving your changes?')}')) {cb_frag_load($(this), '${h.url('content', id=self.id, format='frag')}');} return false;"
-        ><span class="icon16 i_close_edit"></span>${_("Discard Changes and view")}</a>
+        ${h.confirmed_link(
+            _('Discard Changes and view'),
+            icon='close_edit',
+            href=h.url('content', id=self.id),
+            modal_params = dict(
+                title   = 'Discard changes',
+                message = HTML.p('You are about to discard any changes you have made, are you sure you wish to continue?'),
+                buttons = dict(
+                    yes = 'Yes. Discard',
+                    no  = 'No. Take me back',
+                ),
+                icon_image = '/images/misc/contenticons/disassociate.png',
+            ),
+        )}
         
         <span class="separtor"></span>
         
@@ -154,6 +168,14 @@
             confirm_text=_("Are your sure you want to delete this content?") ,
             #json_form_complete_actions = "cb_frag_remove($(this));" ,
             json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
+            modal_params = dict(
+                title='Delete posting',
+                message='Are you sure you want to delete this posting?',
+                buttons=dict(
+                    yes="Yes. Delete",
+                    no="No. Take me back!",
+                )
+            ),
         )}
         <span class="separtor"></span>
         % endif
@@ -306,7 +328,7 @@
             tags_string += tag + separator
         %>
         <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-        <span>(${_('separated by commas')} ',')</span>
+        <span>(${_('separated by commas')})</span>
         ##${popup(_("extra_info"))}
     </fieldset>
     <div class="separator"></div><div class="separator"></div>
@@ -469,7 +491,7 @@
             types = [
                 #("draft"     , _("description of draft content")   ),
                 ("article"   , _("description of _article")        ),
-                ("assignment", _("description of _assignemnt")     ),
+                ("assignment", _("description of _assignment")     ),
                 ("syndicate" , _("description of syndicated stuff")),
             ]
         %>
@@ -640,7 +662,7 @@
     </fieldset>
     % endif
 </%doc>
-    <span class="smaller"><a href="http://www.creativecommons.org" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    <span class="smaller"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
     ${what_now_link()}
     <div class="separator"></div>
 </%def>
@@ -650,39 +672,43 @@
 ## Privacy
 ##------------------------------------------------------------------------------
 <%def name="privacy()">
-    % if c.logged_in_persona.has_account_required('plus'):
 	<%def name="selected(private, text='selected')">
+	   <% print type(private), type(self.content.get('private')) %>
 		%if private == self.content.get('private'):
 			${text}="${text}"
 		%endif
 	</%def>
-    <fieldset>
-        <label>Want to tell the world, or just a select few?</label>
-        <legend onclick="toggle_edit_section($(this));" class="edit_input">
-            <span class="icon16 i_plus"></span>
-            <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
-        </legend>
-        <div class="hideable">
-              <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either public for anyone to see or private to you, your trusted followers and anyone you invite to respond to your request.</div>
-              <div class="padded">
-                  <div class="jqui-radios">
-                      <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
-                      <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+	<div class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
+        <fieldset>
+            <label>Want to tell the world, or just a select few?</label>
+            <legend onclick="toggle_edit_section($(this));" class="edit_input">
+                <span class="icon16 i_plus"></span>
+                <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
+                % if not c.logged_in_persona.has_account_required('plus'):
+                    <div class="upgrade">
+                        ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
+                    </div>
+                % endif
+            </legend>
+            <div class="hideable">
+                % if c.logged_in_persona.has_account_required('plus'):
+                  <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.</div>
+                  <div class="padded">
+                      <div class="jqui-radios">
+                          <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
+                          <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                      </div>
+                      <script type="text/javascript">
+                        $(function() {
+                            $('.jqui-radios').buttonset().removeClass('.jqui-radios');
+                        })
+                      </script>
                   </div>
-                  <script type="text/javascript">
-                    $(function() {
-                        $('.jqui-radios').buttonset().removeClass('.jqui-radios');
-                    })
-                  </script>
-##                <select id="private" name="private">
-##                    <option ${selected(False)} value="False">Public</option>
-##                    <option ${selected(True)} value="True">Private</option>
-##                </select>
-              </div>
-        </div>
-    </fieldset>
-    <div class="separator"></div>
-    % endif
+                % endif
+            </div>
+        </fieldset>
+        <div class="separator"></div>
+    </div>
 </%def>
 
 
@@ -770,10 +796,15 @@
         
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>)
+            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
-            <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_("Ask the world!"), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+                <%
+                    tooltip = "Ask the world!"
+                    if self.selected_type == "article":
+                        tooltip = "Tell the world!"
+                %>
+                <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
             
         ## Update
@@ -797,54 +828,6 @@
 </%def>
 
 <%def name="what_now_popup()">
-
-    <%doc>
-    ## AllanC - WHY IS THIS HERE!!! .. Why is it duplicatied from the suibmit buttons above?
-    
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r')">
-
-        <%
-            button_id = "submit_%s_%s" % (name, self.id)
-            if not title_text:
-                title_text = _(name)
-        %>
-
-        % if mo_text:
-            <span class="mo-help">
-            <div class="${mo_class}">
-                <h2>${title_text}</h2>
-                <p>${_(mo_text)}</p>
-            </div>
-        % endif
-                <input
-                    type    = "submit"
-                    id      = "${button_id}"
-                    name    = "submit_${name}"
-                    class   = "submit_${name} button"
-                    value   = "${title_text}"
-                    onclick = "
-                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                        if (!$(this).hasClass('disabled')) {
-                            $(this).addClass('disabled');
-                            add_onclick_submit_field($(this));
-                            % if show_content_frag_on_submit_complete:
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
-                            % endif
-                            setTimeout(function() {
-                                $(this).removeClass('disabled');
-                            }, 1000);
-                        }
-                        else {
-                            return false;
-                        }
-                    "
-                />
-        % if mo_text:
-            </span>
-        % endif
-    </%def>
-    </%doc>
-
     <div class="information">
         <p>${member_includes.avatar(c.logged_in_persona)} ${c.logged_in_persona}</p>
         % if self.selected_type == "assignment":
@@ -854,7 +837,7 @@
         	<div class="popup-message">
         	    <ol>
                     <li>${_("On your _Widget for your community to respond to")}</li>
-                    <li>${_("In all your _site_name follower's notification stream")}</li>
+                    <li>${_("In all your _site_name followers' notification streams")}</li>
                     <li>${_("On the _site_name request stream")}</li>
         	    </ol>
         	</div>
@@ -865,18 +848,21 @@
                 </div>"
                 <div class="popup-message">
                     <ol>
-                    <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
-                    <li>${_("Be listed as a response against the request")}</li>
-                    <li>${_("Appear in your follower's notification stream")}</li>
+                        <li>${_("Be sent directly to")} ${self.content.get('parent',dict()).get('creator', dict()).get('name')}</li>
+                        <li>${_("Be listed as a response against the request")}</li>
+                        <li>${_("Appear in your followers' notification streams")}</li>
                     </ol>
                 </div>
             % else:
-                <div class="popup-title">"
-                    ${_("Once you post this story, it will appear in your follower's notification stream.")}
-                </div>
                 <div class="popup-title">
-                    ${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}
-                </div>"
+                    ${_("Once you post this story:")}
+                </div>
+                <div class="popup-message">
+                    <ol>
+                        <li>${_("It will appear in your followers' notification streams.")}</li>
+                        <li>${_("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.")}</li>
+                    </ol>
+                </div>
             % endif
         % endif
         <div style="font-size: 130%; text-align: center;">

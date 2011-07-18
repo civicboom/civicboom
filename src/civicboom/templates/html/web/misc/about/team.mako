@@ -63,15 +63,6 @@
       <p><a href="http://uk.linkedin.com/in/gregmiell"><img src="/images/about/linkedin.png"></a></p>
     </td>
   </tr>
-	<tr>
-		<td colspan="2">
-			<h2>In the wings...</h2>
-			    Mark Hodgson: Co-Founder
-			<br>Emily Chong: Co-Founder and Non-Exec
-			<br>Jesse Wolfe: Technology Advisor and Non-Exec
-			<br>Paul Andrews: Non-Exec
-		</td>
-	</tr>
 </table>
 
 

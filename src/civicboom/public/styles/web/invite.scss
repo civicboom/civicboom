@@ -4,6 +4,9 @@
 		width: 50%;
 		height: 100%;
 	}
+	input.search-name {
+	 width: 8.75em;
+	}
 	.frag_right_col {
 		float: right;
 		width: 50%;
@@ -14,14 +17,18 @@
 		height: 100%;
 	}
 	.invite_header {
-		height: 9em;
+		height: 10em;
 	}
 	.invite_area {
 		word-wrap: break-word;
 	}
 	.button_white {
+	  color: #000;
 		background: transparent;
 		border: 0;
+	}
+	.button_white.disabled {
+	 color: #999;
 	}
 	.button.disabled {
 		border: 1px solid #545d87;

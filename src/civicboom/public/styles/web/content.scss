@@ -35,4 +35,17 @@
 	.bold td {
 		font-weight: bold;
 	}
+	
+  .setting-disabled {
+    background-color: #DDD;
+  }
+	
+  .upgrade {
+      position: relative;
+      display: inline-block;
+      width: 13em;
+      font-size: 90%;
+      font-weight: normal;
+    }
+	
 }

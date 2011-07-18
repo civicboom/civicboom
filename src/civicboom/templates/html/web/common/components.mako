@@ -26,43 +26,49 @@
 ##------------------------------------------------------------------------------
 ## Advert
 ##------------------------------------------------------------------------------
-<%def name="advert(title, content_text=None, content_list=None, href=None, advert_class='', heading=None, int=None, prompt=None, config_key=None)">
+<%def name="advert(contents, ad_class=None, int=None, heading=None, config_key=None)">
     % if config_key: ## and config_key in self.advert_list:
     <div class="advert">
         ## Display advert disable link
         ${advert_disable_link(config_key)}
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
-
 	% if heading:
-	    <h1>${heading}</h1><div style="clear: both"></div>
-	    <div style="clear: both;"></div>
-	% endif
-	% if href:
-	    <a href="${href}">
+	    <h1>${heading}</h1>
 	% endif
 	% if int:
-	    <span class="int">${int}.</span>
+	    <p class="int">${int}.</p>
 	% endif
-	<div class="content ${advert_class}">
-	    <p class="advert_title">${title}</p>
-	    % if content_text:
-		<p class="advert_content">${content_text}</p>
+	% for item in contents:
+	    % if item.get('href'):
+		<a href="${item['href']}">
 	    % endif
-	    % if content_list:
-		<ul>
-		    % for item in content_list:
-			<li>- ${item}</li>
-		    % endfor
-		</ul>
+	    % if item.get('advert_class'):
+		<div class="content ${item['advert_class']}">
+	    % else:
+		<div class="content">
 	    % endif
-	    % if prompt:
-		<br /><i>Click here!</i>
+		% if item.get('title'):
+		    <p class="advert_title">${item['title']}</p>
+		% endif
+		% if item.get('content_text'):
+		    <p class="advert_content">${item['content_text']}</p>
+		% endif
+		% if item.get('content_list'):
+		    <ul>
+			% for li in item['content_list']:
+			    <li>- ${li}</li>
+			% endfor
+		    </ul>
+		% endif
+		% if item.get('prompt'):
+		    ## <br /><i>Click here!</i>
+		% endif
+	    </div>
+	    % if item.get('href'):
+		</a>
 	    % endif
-	</div>
-	% if href:
-	    </a>
-	% endif
+	% endfor
 
         <div class="separator" style="clear: both;"></div>
     </div>

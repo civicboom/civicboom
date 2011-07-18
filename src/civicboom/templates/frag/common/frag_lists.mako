@@ -152,7 +152,7 @@
                 % if actions:
                     <div class="list_actions">
                     % if type(actions) == types.FunctionType:
-                        ${actions()}
+                        <span class="action_pad">${actions()}</span>
                     % else:
                         ${actions}
                     % endif
@@ -218,7 +218,7 @@
             h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
             value           = _('Follow') ,
             value_formatted = h.literal("<span class='icon16 i_follow' style='float:right;'></span>%s") % '',#_('Follow'),
-            title           = _("Follow %s" % member['name'] or member['username']) ,
+            title           = _("Follow") + " " + (member['name'] or member['username']),
             json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
         )}
         
@@ -286,6 +286,7 @@
         ${h.end_form()}
     </%def>
     
+    </tr><tr>
     % if not permission_set_role:
     <td>${member['role']}</td>
     % else:
@@ -371,6 +372,8 @@
             ##% if content.get('parent') and content['parent'].get('creator'):
             ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
             ##% endif
+
+            ## ${content_icons(content)}
             <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
             
             <div style="clear: both;"></div>
@@ -389,6 +392,26 @@
 	<small class="content_short">${content['content_short']|n}</small>
 </td></tr>
 % endif
+</%def>
+
+<%def name="content_icons(content)">
+    <div class="content_icons">
+        ## AllanC - HACK!! please remove type==draft after issue #515 is fixed
+        % if content.get('private') or content.get('type')=='draft':
+            ${h.icon('private')}
+        % endif
+        % if content.get('edit_lock'):
+            ${h.icon('edit_lock')}
+        % endif
+        % if content.get('approval') and content.get('approval') != 'none':
+            ${h.icon(content.get('approval'))}
+        % endif
+        
+        ## Media icons
+        % if content.get('location'):
+            ${h.icon('map')}
+        % endif
+    </div>
 </%def>
 
 ## Content Thumbnail Icons

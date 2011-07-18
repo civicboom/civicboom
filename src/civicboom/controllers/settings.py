@@ -109,10 +109,12 @@ add_setting('help_popup_created_user', _('Hide the help popup shown upon login t
 add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='help_adverts/help_popups', weight=401, type='boolean')
 add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='help_adverts/help_popups', weight=402, type='boolean')
 
-add_setting('advert_hand_response', _('Hide the info box encouraging users to start responding to requests'), group='help_adverts/adverts', weight=403, type='boolean')
-add_setting('advert_hand_assignment', _('Hide the info box encouraging _groups to create _assignments'), group='help_adverts/adverts', weight=404, type='boolean')
-add_setting('advert_hand_widget', _('Hide the info box encouraging the use of the _widget'), group='help_adverts/adverts', weight=405, type='boolean')
-add_setting('advert_hand_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/adverts', weight=406, type='boolean')
+add_setting('advert_hand_response', _('Hide the info box encouraging users to start responding to requests'), group='help_adverts/guides', weight=403, type='boolean')
+add_setting('advert_hand_assignment', _('Hide the info box encouraging _groups to create _assignments'), group='help_adverts/guides', weight=404, type='boolean')
+add_setting('advert_hand_widget', _('Hide the info box encouraging the use of the _widget'), group='help_adverts/guides', weight=405, type='boolean')
+add_setting('advert_hand_mobile', _('Hide the info box encouraging the use of the mobile app'), group='help_adverts/guides', weight=406, type='boolean')
+add_setting('advert_hand_content', _('Hide the info box encouraging the creation of content'), group='help_adverts/guides', weight=407, type='boolean')
+add_setting('advert_hand_hub', _('Hide the info box encouraging the creation of hubs'), group='help_adverts/guides', weight=408, type='boolean')
 
 add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
@@ -291,8 +293,10 @@ class SettingsController(BaseController):
         #    user_type = 'member'
         user = get_member(id)
         
+        if user.username != c.logged_in_user.username:
+            raise_if_current_role_insufficent('admin', group=user)
         
-        raise_if_current_role_insufficent('admin', group=user)
+        #raise_if_current_role_insufficent('admin', group=user)
         
         data = build_meta(user, user.__type__, panel)
         
@@ -502,14 +506,14 @@ class SettingsController(BaseController):
             user.location_home = settings.get('location_home')
             del settings['location_home']
         elif settings.get("location_home_name"):
-            user.location = "SRID=4326;POINT(%d %d)" % (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
+            user.location = "SRID=4326;POINT(%f %f)" % (0, 0) # FIXME: guess_lon_lat_from_name(request.POST["location_home_name"]), see Feature #47
             del settings['location_home_name']
 
         if settings.get('location_current'):
             user.location_current = settings.get('location_current')
             del settings['location_current']
         elif settings.get("location_current_name"):
-            user.location = "SRID=4326;POINT(%d %d)" % (0, 0)
+            user.location = "SRID=4326;POINT(%f %f)" % (0, 0)
             del settings['location_current_name']
 
         if 'password_new' in settings:

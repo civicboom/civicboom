@@ -1,15 +1,27 @@
 <%inherit file="base.mako"/>
+
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+
 <%def name="title()">${_("Payment Plans")}</%def>
 
 <%def name="body()">
     <h1>${_('_site_name plans')}</h1>
+    <p>
+        ${_('_site_name is free to use')} - 
+        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their stories directly to news organisations.")}
+    </p>
+    <p>
+        ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />
+        ${_("There are no long-term commitments - just upgrade and pay on a month-by-month basis. If you want to revert to the free plan, you can. Hover over each of the features for more details.")}
+    </p>
     ${upgrade_details()}
 </%def>
 
 
-<%def name="popup()">
+<%def name="popup_()">
     <h1>Hold up!</h1>
     <p>You're trying to perform an action that is a paid-for service as part of the Premium account</p>
+    
     ${upgrade_details()}
 </%def>
 
@@ -67,19 +79,10 @@
             },
             {
                 'title': _('Unlimited Pro Hubs (for multiple titles/sites)'),
-                'who'  : ['plus', 'corp'],
+                'who'  : ['corp'],
             },
         ]
     %>
-
-    <p>
-        ${_('_site_name is free to use')} - 
-        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their stories directly to news organisations.")}
-    </p>
-    <p>
-        ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />
-        ${_("There are no long-term commitments - just upgrade and pay on a month-by-month basis. If you want to revert to the free plan, you can. Hover over each of the features for more details.")}
-    </p>
     <table class="upgrade_plans">
         <thead>
             <tr>
@@ -98,9 +101,9 @@
                     % for plan in plans:
                         <td class="item  ${'hilight' if plan == hilight_plan else ''}">
                             % if plan in feature['who']:
-                                YES
+                                <span class="icon16 i_accept"><span>Yes</span></span>
                             % else:
-                                N/A
+                                <span class="icon16 i_delete"><span>N/A</span></span>
                             % endif
                         </td>
                     % endfor
@@ -123,17 +126,17 @@
                         <td></td>
                     % endfor
                 % endif
-                <td><a class="button">Upgrade Now</a></td>
-                <td><a class="button">Learn More</a></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">Upgrade Now</a></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">Learn More</a></td>
             </tr>
         </tfoot>
     </table>
     
-    % if not c.logged_in_user:
-    <p>Please sign in to upgrade you account.</p>
-    % else:
-    <p>If you want to upgrade, simply fill in the form below and one of our team will be in touch asap!</p>
-    
+    ${popup.popup_static('Upgrade your account', upgrade_popup, '', html_class="upgrade_popup")}
+</%def>
+
+<%def name="upgrade_popup()">
+    <p>If you want to upgrade or learn more, simply fill in the form below and one of our team will be in touch asap!</p>
     ${h.form(h.args_to_tuple(controller='misc', action='upgrade_request', format='redirect'), method='post', json_form_complete_actions="cb_frag_remove(current_element);")}
         <%
         upgrade_form_meta = (
@@ -145,23 +148,40 @@
         )
         %>
         <table class="upgrade form">
-        % for name, title, extra in upgrade_form_meta:
-        <tr>
-            <td>
-                <label for="upgrade_${name}">${title}</label>
-            </td>
-            <td>
-                <input type="text" id="upgrade_${name}" name="${name}" placeholder="${extra}">
-            </td>
-        </tr>
-        % endfor
-		<tr><td colspan="2">
-			<input type="submit" value="Request Upgrade"/>
-		</td></tr>
+            <tr>
+                <td style="width: 10em;" class="label">
+                    <label for="upgrade_enquiry">What is your enquiry regarding?</label>
+                </td>
+                <td>
+                    <select id="upgrade_enquiry" name="upgrade_enquiry">
+                        <option value="More information">${_('More information')}</option>
+                        <option value="Upgrading my account">${_('Upgrading my account')}</option>
+                    </select>
+                </td>
+            </tr>
+            % for name, title, extra in upgrade_form_meta:
+                <tr>
+                    <td class="label">
+                        <label for="upgrade_${name}">${title}</label>
+                    </td>
+                    <td>
+                        <input type="text" id="upgrade_${name}" name="${name}" placeholder="${extra}">
+                    </td>
+                </tr>
+            % endfor
+            % if not c.logged_in_user:
+                <tr>
+                    <td>
+                        Proove you're human
+                    </td>
+                    <td>
+                        ${h.get_captcha(c.lang, 'white')}
+                    </td>
+                </tr>
+            % endif
+            <tr><td colspan="2">
+                <input class="button" type="submit" value="Request Upgrade"/><br /><br />
+            </td></tr>
         </table>
     ${h.end_form()}
-    % endif
-    
-    ##<p>We promise we'll be in touch within 24 hours - or you get a free Premium upgrade!</p>
-    ##<p>Civicboom Team</p>
 </%def>
