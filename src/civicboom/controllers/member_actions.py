@@ -1,4 +1,5 @@
 from civicboom.lib.base import *
+from civicboom.model.filters import *
 from civicboom.controllers.members  import MembersController 
 from civicboom.controllers.contents import ContentsController, sqlalchemy_content_query
 from cbutils.misc import update_dict
@@ -224,7 +225,8 @@ class MemberActionsController(BaseController):
         @return 200    list generated ok
                 list   array of content objects
         """
-        return content_search(creator=id, **kwargs)
+        q = CreatorIDFilter(get_member(id).id)
+        return content_search(_filter=q, **kwargs)
 
 
     #---------------------------------------------------------------------------
@@ -244,7 +246,8 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        return content_search(boomed_by=id, **kwargs)
+        q = BoomedByFilter(get_member(id).id)
+        return content_search(_filter=q, **kwargs)
 
 
     #---------------------------------------------------------------------------
@@ -263,7 +266,11 @@ class MemberActionsController(BaseController):
         
         @comment AllanC special list union of content?boomed_by={name} and content?creator={name}
         """
-        return content_search(boomed_by=id, union_query=sqlalchemy_content_query(creator=id) , **kwargs)
+        q = OrFilter([
+            BoomedByFilter(get_member(id).id),
+            CreatorIDFilter(get_member(id).id),
+        ])
+        return content_search(_filter=q, **kwargs)
 
 
     #---------------------------------------------------------------------------
