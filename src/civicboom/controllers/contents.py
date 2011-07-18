@@ -241,6 +241,34 @@ def sqlalchemy_content_query(include_private=False, trusted_follower= False, **k
     return results
 
 
+def sort_results(results, sort_fields):
+    def valid_sort_field(field):
+        if field in [col["name"] for col in results.column_descriptions]:
+            return field
+        if hasattr(Content           , field):
+            return getattr(Content           , field)
+        if hasattr(UserVisibleContent, field):
+            return getattr(UserVisibleContent, field)
+        if hasattr(AssignmentContent, field):
+            return getattr(AssignmentContent, field)
+        return None
+
+    for sort_field in sort_fields:
+        direction = asc
+        if sort_field[0] == "-":
+            direction = desc
+            sort_field = sort_field[1:]
+
+        # check that the sort string is the name of a column in the result
+        # set, rather than some random untrusted SQL statement
+        f = valid_sort_field(sort_field)
+        if f:
+            #log.debug("Sorting by %s %s" % (direction, f))
+            results = results.order_by(direction(f))
+
+    return results
+
+
 #-------------------------------------------------------------------------------
 # Content Controler
 #-------------------------------------------------------------------------------
@@ -383,29 +411,7 @@ class ContentsController(BaseController):
         #            func.substr(func.strip_tags(Content.content), 0, 100)
         #        )
 
-        def valid_sort_field(field):
-            if field in [col["name"] for col in results.column_descriptions]:
-                return field
-            if hasattr(Content           , field):
-                return getattr(Content           , field)
-            if hasattr(UserVisibleContent, field):
-                return getattr(UserVisibleContent, field)
-            if hasattr(AssignmentContent, field):
-                return getattr(AssignmentContent, field)
-            return None
-
-        for sort_field in kwargs.get('sort', '-update_date').split(','):
-            direction = asc
-            if sort_field[0] == "-":
-                direction = desc
-                sort_field = sort_field[1:]
-
-            # check that the sort string is the name of a column in the result
-            # set, rather than some random untrusted SQL statement
-            f = valid_sort_field(sort_field)
-            if f:
-                #log.debug("Sorting by %s %s" % (direction, f))
-                results = results.order_by(direction(f))
+        results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
         
 #        def merge_snippet(content, snippet):
 #            content = content.to_dict(**kwargs)
