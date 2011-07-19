@@ -49,7 +49,7 @@
             filesize = "???"
     %>
     % if type == "image":
-        <img src="${media['original_url']}" alt="${media['caption']}"/>
+        <a href="${media['original_url']}"><img src="${media['original_url']}" alt="${media['caption']}"/></a>
     % elif type == "audio" or type == "video":
         ${preview(media)}
         <p>Download ${type} <a href="${media['original_url']}">${media['caption']}</a> (${filesize}MB)</p>
@@ -141,18 +141,15 @@
     <li class="preview_item">
         ## Media preview/link to full
         <a href="${h.url('medium', id=content['hash'])}" class="${content['hash']}-popup">
-            <div style="height: 150px;">
+            <div>
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % elif content['type'] == "video":
-                    ## <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-                    <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                    <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
                 % elif content['type'] == "audio":
-                    ## <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
-                    <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
+                    <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
                 % else:
-                    Unrecognised media type
+                    ${_("unrecognised media type: %s") % type}
                 % endif
             </div>
         </a>
