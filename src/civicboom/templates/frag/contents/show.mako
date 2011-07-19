@@ -114,14 +114,22 @@
 		${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
 	    % endif
 	    
-	    <div class="frag_list">
-	       <div class="frag_list_contents">
-	           <h3>Now you can...</h3>
-	           <div style="padding-top: 5px; font-size: 110%">
-	               ${content_actions_specific()}
-	           </div>
-	       </div>
-	    </div>
+	    ## New inline bar for actions
+	    % if config['development_mode']:
+    	    <div class="frag_list">
+    	       <div class="frag_list_contents">
+    	           <h3>Now you can...</h3>
+    	           <div style="padding-top: 5px; font-size: 110%">
+    	               <table style="width: 100%;">
+    	               <tr><td>
+    	                   ${actions_common()}
+    	               </td><td style="text-align: right;">
+    	                   ${content_actions_specific()}
+    	               </td><tr></table>
+    	           </div>
+    	       </div>
+    	    </div>
+	    % endif
 	    
 	    <% test_cont = {'content_text':'lol', 'config_key':'lol'} %>
 	    ${components.advert(
