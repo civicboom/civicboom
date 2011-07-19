@@ -84,7 +84,8 @@
 ## ---
 <%def name="media_carousel(contents, content_id)">
     % if len(contents):
-        <ul id="media_carousel-${content_id}" class="jcarousel-skin-content-media">
+        <% uid = h.uniqueish_id(content_id) %>
+        <ul id="media_carousel-${uid}" class="jcarousel-skin-content-media">
             % for content in contents:
                 ${carousel_item(content)}
             % endfor
@@ -92,12 +93,12 @@
         
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                jQuery('#media_carousel-${content_id}').jcarousel({
+                jQuery('#media_carousel-${uid}').jcarousel({
                     animation   :   'slow',
                     scroll  :   1,
                     visible :   1,
                     auto    :   5,
-                    wrap    :   'circular',
+                    wrap    :   'both',
                     initCallback    :   media_carousel_initCallback,
                     buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
                     buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
@@ -131,16 +132,6 @@
             function hide_preview_details_itemVisibleInCallback(carousel, item, idx, state) {
                 details = get_item_details(item);
                 $(details).addClass('hidden');
-            }
-            
-            function show_controls() {
-                $('.jcarousel-prev').fadeIn();
-                $('.jcarousel-next').fadeIn();
-            }
-            
-            function hide_controls() {
-                $('.jcarousel-prev').fadeOut();
-                $('.jcarousel-next').fadeOut();
             }
         </script>
     % endif
