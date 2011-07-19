@@ -47,7 +47,7 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     if not results:
         return apilist([], obj_type=kwargs.get('obj_type'))
     
-    from cbmisc.worker import config
+    from cbutils.worker import config
     limit_default = config['search.default.limit.contents']
 
     limit  = str_to_int(kwargs.get('limit' ), limit_default)
