@@ -673,7 +673,6 @@
 ##------------------------------------------------------------------------------
 <%def name="privacy()">
 	<%def name="selected(private, text='selected')">
-	   <% print type(private), type(self.content.get('private')) %>
 		%if private == self.content.get('private'):
 			${text}="${text}"
 		%endif

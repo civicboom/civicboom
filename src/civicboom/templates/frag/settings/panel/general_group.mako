@@ -29,7 +29,6 @@
 
     ## Setup Form
     <%
-        print c.action
         if 'action' not in d:
             d['action'] = 'edit'
     %>
@@ -272,7 +271,6 @@
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
         </div>
         <div class="fr" style="padding-top: 1em;">
-            <% print c %>
             % if c.action != 'new':
                 <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
             % else:

@@ -299,12 +299,12 @@ class SettingsController(BaseController):
         #raise_if_current_role_insufficent('admin', group=user)
         
         data = build_meta(user, user.__type__, panel)
+        data['username'] = user.username
         
         # Janrain HACK
         if user.__type__ == 'user' and panel == 'link_janrain':
             return action_ok(
                 data=data,
-                username=id,
                 user_type=user.__type__,
                 template="settings/panel/link_janrain",
             )
@@ -326,7 +326,6 @@ class SettingsController(BaseController):
         return action_ok(
             data     = data,
             panel    = panel,
-            username = id,
             user_type= user.__type__,
             template = "settings/panel/"+template,
         )
@@ -444,6 +443,7 @@ class SettingsController(BaseController):
         data['settings'] = copy_user_settings(data['settings_meta'], user, user.__type__)
         
         data['settings'].update(kwargs)
+        data['username'] = user.username
         
         settings = kwargs
         
