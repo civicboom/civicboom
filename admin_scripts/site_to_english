@@ -53,6 +53,7 @@ def trans(text, locations):
         
         ("disassociate", "remove"),
         ("lock", "grab"),
+        ("locked", "grabbed"),
         
         ("member",     "member"),
         ("user",       "user"),

@@ -1,5 +1,10 @@
 #frag_containers {
 	.frag_container {
+	
+	   .ui-button {
+	       margin-right: 1em;
+	   }
+	
 		.what-next, .why-respond {
 		    color: #666;
 		    margin: 1.5em auto 0 0.5em;
@@ -37,6 +42,10 @@
 				    
 				    .actions {
 				        float: right;
+				        
+				        .separator {
+				            padding: 2px;
+				        }
 				    }
 				}
 				
@@ -135,15 +144,17 @@
 			
 			/* --- guide --- */
 			TABLE.approve {
-			    background-image:    url('/images/misc/contenticons/lock.png');
-			    background-repeat:   no-repeat;
-			    background-position: 85% center;
+
 			}
 			
 			TABLE.disassociate {
-                background-image:    url('/images/misc/contenticons/disassociate.png');
-                background-repeat:   no-repeat;
-                background-position: 85% center;
+
+            }
+            
+            .response_guide {
+                background-image: url('/images/misc/contenticons/guide_separator.png');
+                background-repeat: repeat-y;
+                background-position: center;
             }
 		
 			/*----------------------------Content Comments--------------------------------*/
