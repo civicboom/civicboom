@@ -9,15 +9,12 @@
 <%def name="title()">${_("Edit your notification settings")}</%def>
 
 <%def name="body()">
-    <%
-        print_username = c.logged_in_persona.username if c.result['username'] == 'me' else c.result['username']
-    %>
     ${h.form(h.url('setting', id=c.result.get('username', 'me')), method='PUT')}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     % if setting_icons.get('messages'):
         <img style="float:right;" src="/images/settings/${setting_icons.get('messages')}.png" />
     % endif
-    <h1>${_('%(username)s notification settings') % dict(username= print_username.capitalize()) }</h1>
+    <h1>${_('%(username)s notification settings') % dict(username= d['username'].capitalize()) }</h1>
     <%
         panel = c.result.get('panel', 'messages')
         settings_meta = d['settings_meta']
