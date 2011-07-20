@@ -44,7 +44,14 @@ function html5ize (jqContainer) {
 			dateFormat: 'yy-mm-dd',
 			changeYear: true,
 			changeMonth: true,
-			yearRange: '1900:2020'
+			yearRange: '1920:2020'
+		});
+	}
+    
+	if (!Modernizr.inputtypes.datetime) {
+		jqContainer.find("input[type='datetime']").datetimepicker({
+            timeFormat: 'hh:mm',
+            separator: ' '
 		});
 	}
 }

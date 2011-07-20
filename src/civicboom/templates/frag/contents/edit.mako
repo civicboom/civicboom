@@ -535,11 +535,17 @@
                 <%
                     due_date   = str(self.content.get('due_date') or '')[:10]
                     event_date = str(self.content.get('event_date') or '')[:10]
+                    auto_publish_trigger_date = str(self.content.get('auto_publish_trigger_date') or '')
                 %>
-                  <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
-                  <input class="detail" type="date" name="due_date"   value="${due_date}">
-                  ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
-                  ##<input class="detail" type="date" name="event_date" value="${event_date}">
+                <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
+                <input class="detail" type="date" name="due_date"   value="${due_date}" />
+                
+                ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
+                ##<input class="detail" type="date" name="event_date" value="${event_date}">
+                
+                ## http://trentrichardson.com/examples/timepicker/
+                <span class="padded"><label for="auto_publish_trigger_date">${_("auto_publish_trigger_date")}</label></span>
+                <input class="detail" type="datetime" name="auto_publish_trigger_date" value="${auto_publish_trigger_date}" />
                 <%doc>
                 <p>${_("Response License:")}
 				<table>
