@@ -762,7 +762,7 @@
                             % endif
                             
                             ## Re-enable button after 1 second
-                            setTimeout(function() {$(this).removeClass('disabled_filter');}, 1000);
+                            setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));
                             
                             ## Reload parent on post if publishing
                             ## AllanC - this was a nice idea - but the POST has not completed at this point and race hazzards occour
