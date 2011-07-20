@@ -49,7 +49,7 @@
             filesize = "???"
     %>
     % if type == "image":
-        <img src="${media['original_url']}" alt="${media['caption']}"/>
+        <a href="${media['original_url']}"><img src="${media['original_url']}" alt="${media['caption']}"/></a>
     % elif type == "audio" or type == "video":
         ${preview(media)}
         <p>Download ${type} <a href="${media['original_url']}">${media['caption']}</a> (${filesize}MB)</p>
@@ -84,7 +84,8 @@
 ## ---
 <%def name="media_carousel(contents, content_id)">
     % if len(contents):
-        <ul id="media_carousel-${content_id}" class="jcarousel-skin-content-media">
+        <% uid = h.uniqueish_id(content_id) %>
+        <ul id="media_carousel-${uid}" class="jcarousel-skin-content-media">
             % for content in contents:
                 ${carousel_item(content)}
             % endfor
@@ -92,12 +93,12 @@
         
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                jQuery('#media_carousel-${content_id}').jcarousel({
+                jQuery('#media_carousel-${uid}').jcarousel({
                     animation   :   'slow',
                     scroll  :   1,
                     visible :   1,
                     auto    :   5,
-                    wrap    :   'circular',
+                    wrap    :   'both',
                     initCallback    :   media_carousel_initCallback,
                     buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
                     buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
@@ -107,6 +108,7 @@
                     itemVisibleOutCallback  :   {
                         onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
                     },
+                    itemFallbackDimension	:	349,
                 });
             });
             
@@ -131,16 +133,6 @@
                 details = get_item_details(item);
                 $(details).addClass('hidden');
             }
-            
-            function show_controls() {
-                $('.jcarousel-prev').fadeIn();
-                $('.jcarousel-next').fadeIn();
-            }
-            
-            function hide_controls() {
-                $('.jcarousel-prev').fadeOut();
-                $('.jcarousel-next').fadeOut();
-            }
         </script>
     % endif
 </%def>
@@ -149,17 +141,15 @@
     <li class="preview_item">
         ## Media preview/link to full
         <a href="${h.url('medium', id=content['hash'])}" class="${content['hash']}-popup">
-            <div style="height: 150px;">
+            <div>
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
                 % elif content['type'] == "video":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % elif content['type'] == "audio":
                     <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
-                    ## <img src="/images/misc/contenticons/play_icon.png" class="play-icon" />
                 % else:
-                    Unrecognised media type
+                    ${_("unrecognised media type: %s") % type}
                 % endif
             </div>
         </a>
@@ -171,27 +161,27 @@
                 return false;
             });
         </script>
-        ${media_popup(content)}
+        ${media_popup()}
         
         ## Media details
         <div class="item_details hidden">
             ${media_details(content, truncate=1)}
         </div>
     </li>
-</%def>
     
-<%def name="media_popup(content)">
-    <div id="view-media" class="hideable">
-        <div class="title_bar">
-            <div class="common_actions">
-                ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
-                <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+    <%def name="media_popup()">
+        <div id="view-media" class="hideable">
+            <div class="title_bar">
+                <div class="common_actions">
+                    ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
+                    <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+                </div>
+            </div>
+            <div class="media_popup_content">
+                ${full(content)}
             </div>
         </div>
-        <div class="media_popup_content">
-            ${full(content)}
-        </div>
-    </div>
+    </%def>
 </%def>
 
 ## ---
