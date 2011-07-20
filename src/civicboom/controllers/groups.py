@@ -134,8 +134,6 @@ class GroupsController(BaseController):
         # Setup search criteria
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ""
         
         #if 'status' not in kwargs:
         #    kwargs['status']
