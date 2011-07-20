@@ -14,7 +14,7 @@
     % if setting_icons.get('messages'):
         <img style="float:right;" src="/images/settings/${setting_icons.get('messages')}.png" />
     % endif
-    <h1>${_('%(username)s notification settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
+    <h1>${_('%(username)s notification settings') % dict(username= d['username'].capitalize()) }</h1>
     <%
         panel = c.result.get('panel', 'messages')
         settings_meta = d['settings_meta']

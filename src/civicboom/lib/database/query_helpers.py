@@ -1,4 +1,3 @@
-from pylons import config
 import sqlalchemy.orm.query
 from sqlalchemy.util import NamedTuple
 
@@ -8,8 +7,6 @@ from civicboom.lib.web import action_ok
 __all__ = [
     "list_to_apilist",
 ]
-
-limit_default = config['search.default.limit.contents']
 
 #-------------------------------------------------------------------------------
 # Public
@@ -50,6 +47,9 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     if not results:
         return apilist([], obj_type=kwargs.get('obj_type'))
     
+    from cbutils.worker import config
+    limit_default = config['search.default.limit.contents']
+
     limit  = str_to_int(kwargs.get('limit' ), limit_default)
     offset = str_to_int(kwargs.get('offset')               )
     

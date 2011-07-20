@@ -15,7 +15,7 @@
 
 <%def name="body()">
 ## GregM: have moved as an addition to general group
-    ${h.form(h.url('setting', id=c.result.get('username', 'me')), method='PUT', multipart=True)}
+    ${h.form(h.url('setting', id=d.get('username', 'me')), method='PUT', multipart=True)}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
         panel = c.result.get('panel', d.get('panel'))
@@ -37,7 +37,7 @@
     % if setting_icons.get(panel_name):
         <img style="float:right;" src="/images/settings/${setting_icons.get(panel_name)}.png" />
     % endif
-    <h1>${_('%(username)s %(panel_title)s settings') % dict(username= c.logged_in_persona.username.capitalize(), panel_title=panel_title.lower()) }</h1>
+    <h1>${_('%(username)s %(panel_title)s settings') % dict(username= d['username'].capitalize(), panel_title=panel_title.lower()) }</h1>
     % for group_name in setting_group_order:
         <div style="margin: 0; clear: both;">
         % if group_name.lower() != panel.lower():

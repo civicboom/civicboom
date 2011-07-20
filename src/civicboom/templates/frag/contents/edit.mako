@@ -54,9 +54,9 @@
             % if self.content.get('parent'):
                 ${_("You are responding to: %s") % self.content['parent']['title']}
             % elif self.selected_type == 'assignment':
-                Post a request
+                ${_("Ask for stories")}
             % elif self.selected_type == 'article':
-                Post a story
+                ${_("Post a story")}
             % endif
         </h1>
         <div class="separator"></div>
@@ -672,36 +672,42 @@
 ## Privacy
 ##------------------------------------------------------------------------------
 <%def name="privacy()">
-    % if c.logged_in_persona.has_account_required('plus'):
 	<%def name="selected(private, text='selected')">
-	   <% print type(private), type(self.content.get('private')) %>
 		%if private == self.content.get('private'):
 			${text}="${text}"
 		%endif
 	</%def>
-    <fieldset>
-        <label>Want to tell the world, or just a select few?</label>
-        <legend onclick="toggle_edit_section($(this));" class="edit_input">
-            <span class="icon16 i_plus"></span>
-            <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
-        </legend>
-        <div class="hideable">
-              <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.</div>
-              <div class="padded">
-                  <div class="jqui-radios">
-                      <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
-                      <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+	<div class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
+        <fieldset>
+            <label>Want to tell the world, or just a select few?</label>
+            <legend onclick="toggle_edit_section($(this));" class="edit_input">
+                <span class="icon16 i_plus"></span>
+                <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
+                % if not c.logged_in_persona.has_account_required('plus'):
+                    <div class="upgrade">
+                        ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
+                    </div>
+                % endif
+            </legend>
+            <div class="hideable">
+                % if c.logged_in_persona.has_account_required('plus'):
+                  <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.</div>
+                  <div class="padded">
+                      <div class="jqui-radios">
+                          <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
+                          <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                      </div>
+                      <script type="text/javascript">
+                        $(function() {
+                            $('.jqui-radios').buttonset().removeClass('.jqui-radios');
+                        })
+                      </script>
                   </div>
-                  <script type="text/javascript">
-                    $(function() {
-                        $('.jqui-radios').buttonset().removeClass('.jqui-radios');
-                    })
-                  </script>
-              </div>
-        </div>
-    </fieldset>
-    <div class="separator"></div>
-    % endif
+                % endif
+            </div>
+        </fieldset>
+        <div class="separator"></div>
+    </div>
 </%def>
 
 
@@ -755,7 +761,7 @@
                             % endif
                             
                             ## Re-enable button after 1 second
-                            setTimeout(function() {$(this).removeClass('disabled_filter');}, 1000);
+                            setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));
                             
                             ## Reload parent on post if publishing
                             ## AllanC - this was a nice idea - but the POST has not completed at this point and race hazzards occour

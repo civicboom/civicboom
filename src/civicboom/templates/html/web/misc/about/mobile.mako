@@ -73,8 +73,9 @@ ${_("Scan the barcode (opposite) into your phone by using the barcode reader on 
 
 <h1>${_("Signed up to _site_name via Facebook, Twitter, LinkedIn, etc? Then once you've downloaded the app:")}</h1>
 
+<% url_user = c.logged_in_user.username if c.logged_in_user else 'me' %>
 <ol class="bulleted">
-<li>${_("Go to your")} <a href="/settings/me/password">${_("password and mobile access page")}</a>
+<li>${_("Go to your")} <a href="/settings/${url_user}/password">${_("password and mobile access page")}</a>
 <li>${_("Make a note of your username")}
 <li>${_("Create a password")}
 <li>${_("Log into the mobile app on your handset with your username and password")}

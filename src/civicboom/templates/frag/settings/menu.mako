@@ -37,7 +37,7 @@
         </li>
     </%def>
     <div>
-        <h1>${_('%(username)s settings') % dict(username= c.logged_in_persona.username.capitalize()) }</h1>
+        <h1>${_('%(username)s settings') % dict(username= d['username'].capitalize()) }</h1>
         <ul class="setting_menu">
         % for panel in panelorder:
             ${link(panel['title'].capitalize(), panel['panel'])}

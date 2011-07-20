@@ -146,11 +146,21 @@
 				bottom: 0;
 				right: 0.25em;
 			}
+			
+			.content_icons {
+				position: absolute;
+				top: 0;
+				right: 0.25em;
+				
+				padding: 0.2em;
+				margin: 0;
+				
+				.icon16 {
+					float: right;
+					margin-left: 0.2em;
+				}
+			}
 		}
-
-
-		
-
 
 		/*----------------------------- Messages -------------------------------------*/
 		.messages {

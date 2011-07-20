@@ -365,13 +365,26 @@
             % endif
             
             ## Creator avatar
-            <%doc>% if creator and 'creator' in content:
-                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
-            % endif</%doc>
+            % if creator and 'creator' in content:
+                ## AllanC - Not happy with this. We are having to include an additional link with the members name in, but as the thumbnail itself is positioned absolutely, it's just aararar
+                <%doc>
+                <%
+                    member_url_static, member_url_frag = h.url_pair('member', id=content['creator']['username'], gen_format="frag")
+                %>
+                % if extra_info:
+                <a href="${member_url_static}" onclick="cb_frag($(this), '${member_url_frag}'); return false;" style="float: right;">
+                    ${content['creator']['name']}
+                </a>
+                % endif
+                </%doc>
+                ${member_includes.avatar(content['creator'], class_="thumbnail_small", show_name=True)}
+            % endif
             ## Responses show parent Creator
             ##% if content.get('parent') and content['parent'].get('creator'):
             ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
             ##% endif
+
+            ## ${content_icons(content)}
             <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
             
             <div style="clear: both;"></div>
@@ -390,6 +403,26 @@
 	<small class="content_short">${content['content_short']|n}</small>
 </td></tr>
 % endif
+</%def>
+
+<%def name="content_icons(content)">
+    <div class="content_icons">
+        ## AllanC - HACK!! please remove type==draft after issue #515 is fixed
+        % if content.get('private') or content.get('type')=='draft':
+            ${h.icon('private')}
+        % endif
+        % if content.get('edit_lock'):
+            ${h.icon('edit_lock')}
+        % endif
+        % if content.get('approval') and content.get('approval') != 'none':
+            ${h.icon(content.get('approval'))}
+        % endif
+        
+        ## Media icons
+        % if content.get('location'):
+            ${h.icon('map')}
+        % endif
+    </div>
 </%def>
 
 ## Content Thumbnail Icons
