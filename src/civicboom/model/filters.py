@@ -224,7 +224,7 @@ class LocationFilter(Filter):
     @staticmethod
     def from_string(s):
         if s == "me":
-            return LabelFilter("location=me not supported yet") # FIXME
+            return None # LabelFilter("location=me not supported yet") # FIXME
 
         (lon, lat, radius) = (None, None, 10)
         zoom = 10 # FIXME: inverse of radius? see bug #50
