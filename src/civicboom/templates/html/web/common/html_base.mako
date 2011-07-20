@@ -67,7 +67,7 @@ css_all.sort()
 	<script src="/javascript/modernizr-1.7.js"></script>
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
-	<script src="/javascript/jquery-1.5.1.js"></script>
+	<script src="/javascript/jquery-1.6.2.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/prototypes.js"></script>
 	<script src="/javascript/misc.js"></script>
