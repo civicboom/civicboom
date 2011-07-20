@@ -148,6 +148,7 @@ class Content(Base):
             'creation_date': None ,
             'update_date'  : None ,
             'location'     : lambda content: location_to_string(content.location),
+            'distance'     : lambda content: None, # if we search for a location, the extra 'distance' column will overwrite this
             'num_responses': None ,
             'num_comments' : None ,
             'license_id'   : None ,
