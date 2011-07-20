@@ -155,6 +155,7 @@ class Content(Base):
             'private'      : None ,
             'edit_lock'    : None ,
             'url'          : lambda content: content.__link__(),
+            'tags'         : lambda content: [tag.name for tag in content.tags], # TODO: turn this into an array column
         },
     })
     
@@ -170,7 +171,6 @@ class Content(Base):
             #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'     : lambda content: content.license.to_dict() ,
-            'tags'        : lambda content: [tag.name for tag in content.tags] ,
             'root_parent' : lambda content: content.root_parent.to_dict(include_fields='creator') if content.root_parent else None,
             #'url'         : None ,
     })
