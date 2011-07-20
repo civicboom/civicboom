@@ -91,11 +91,53 @@ def init_base_data():
         u2_login.type   = "password"
         u2_login.token  = hashlib.sha1("password").hexdigest()
 
-        u2.set_payment_account('plus', delay_commit=True)
+        u2_account         = PaymentAccount()
+        u2_account.type    = 'plus'
+        u2_account.start_date = datetime.datetime.now() - datetime.timedelta(days=32)
+
+        u2.set_payment_account(u2_account, delay_commit=True)
 
         Session.add_all([u2, u2_login])
         Session.commit()
         assert u2.id == 2
+        
+        u2_service = Session.query(Service).filter(Service.payment_account_type==u2_account.type).one()
+        
+        u2_billing = BillingAccount()
+        u2_billing.provider = "manual"
+        u2_billing.reference= "BACS"
+        u2_billing.payment_account = u2.payment_account
+        
+        Session.commit()
+        
+        u2_invoice1 = Invoice()
+        u2_invoice1.payment_account = u2_account
+        u2_invoice1.timestamp = (datetime.datetime.now() - datetime.timedelta(days=32)) + datetime.timedelta(minutes=1)
+        u2_invoice1line = InvoiceLine()
+        u2_invoice1line.invoice = u2_invoice1
+        
+        u2_invoice1line.service = u2_service
+        u2_invoice1line.title = u2_service.title
+        u2_invoice1line.price = u2_service.price
+        u2_invoice1line.extra_fields = u2_service.extra_fields
+        
+        Session.add_all([u2_invoice1, u2_invoice1line])
+        
+        Session.commit()
+        u2_invoice1.status = "billed"
+        Session.commit()
+        
+        u2_trans = BillingTransaction()
+        u2_trans.amount =u2_invoice1.total
+        u2_trans.billing_account = u2_billing
+        u2_trans.invoice = u2_invoice1
+        u2_trans.status = "complete"
+        
+        Session.add(u2_trans)
+        Session.commit()
+        
+        
+        
 
         #follow(u1,u2)
         #follow(u2,u1)

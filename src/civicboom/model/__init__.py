@@ -11,7 +11,7 @@ from civicboom.model.member  import Member, User, UserLogin, Group, GroupMembers
 from civicboom.model.message import Message
 from civicboom.model.media   import Media
 from civicboom.model.feed    import Feed
-from civicboom.model.payment import Service, Invoice, InvoiceLine
+from civicboom.model.payment import Service, MemberService, Invoice, InvoiceLine, BillingAccount, BillingTransaction
 
 from cbutils.misc import now
 from sqlalchemy     import and_

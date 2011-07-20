@@ -786,13 +786,47 @@ class UserLogin(Base):
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
     token       = Column(String(250),  nullable=False)
 
+class _PaymentConfigManager(UserDict.DictMixin):
+    def __init__(self, base):
+        self.base = base
+
+    def __getitem__(self, name):
+        if name in self.base:
+            return self.base[name]
+        raise KeyError(name)
+
+    def __setitem__(self, name, value):
+        self.base[name] = value
+
+    def __delitem__(self, name):
+        if name in self.base:
+            del self.base[name]
+
+    def keys(self):
+        return self.base.keys()
 
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
-    id          = Column(Integer(), primary_key=True)
-    type        = Column(account_types, nullable=False, default="free")
+    id               = Column(Integer(), primary_key=True)
+    type             = Column(account_types, nullable=False, default="free")
+    extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
+    start_date       = Column(DateTime(),     nullable=False, default=func.now())
+    
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    invoices = relationship("Invoice", backref=backref('payment_account') )
+    billing_accounts = relationship("BillingAccount", backref=backref('payment_account') )
+    services            = relationship("Service"          , primaryjoin="Service.id==MemberService.service_id"  , secondaryjoin="Member.id==MemberService.member_id", secondary='payment_service')
+    
+    _config = None
+    
+    @property
+    def config(self):
+        if not self.extra_fields:
+            self.extra_fields = {}
+        if not self._config:
+            self._config = _PaymentConfigManager(self.extra_fields)
+        return self._config
     
     def member_add(self, member, **kwargs):
         from civicboom.lib.database.actions import payment_member_add
