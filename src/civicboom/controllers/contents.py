@@ -163,6 +163,9 @@ class ContentsController(BaseController):
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
         """
+        results = Session.query(Content).with_polymorphic('*') # TODO: list
+        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
+
         parts = []
 
         if _filter:
@@ -176,9 +179,25 @@ class ContentsController(BaseController):
 
         if 'term' in kwargs and kwargs['term']:
             parts.append(TextFilter(kwargs['term']))
+            results = results.add_columns(
+                func.ts_headline('pg_catalog.english',
+                    func.strip_tags(Content.content),
+                    func.plainto_tsquery(kwargs['term']),
+                    'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+                    type_= Unicode
+                ).label("content_short")
+            )
+
 
         if 'location' in kwargs and kwargs['location']:
-            parts.append(LocationFilter.from_string(kwargs['location']))
+            lf = LocationFilter.from_string(kwargs['location'])
+            if lf:
+                parts.append(lf)
+                results = results.add_columns(
+                    func.st_distance(
+                        func.st_geomfromwkb(Content.location, 4326), 'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
+                    ).label("distance")
+                )
 
         if 'type' in kwargs and kwargs['type']:
             parts.append(TypeFilter(kwargs['type']))
@@ -198,8 +217,6 @@ class ContentsController(BaseController):
         feed = AndFilter(parts)
 
         log.debug("Searching contents: %s" % sql(feed))
-        results = Session.query(Content).with_polymorphic('*') # TODO: list
-        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
 
         ###############################
         # BEGIN COPY & PASTE OLD BITS #
