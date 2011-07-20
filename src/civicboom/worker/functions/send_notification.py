@@ -79,7 +79,7 @@ def send_notification(members, message): #members, rendered_message
                             return template_path
                         return 'email/notifications/default.mako'
                     
-                    if config['debug']: # Leave this line alone in master!
+                    if config['debug'] == True or config['debug'] == "true": # debug is a string, so config['debug'] == "false" == True
                         c = render_mako(
                             notification_template(message.get('name')) ,
                             extra_vars ={

@@ -24,7 +24,7 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Advert
+## Guide (formerly adverts)
 ##------------------------------------------------------------------------------
 <%def name="advert(contents, ad_class=None, int=None, heading=None, config_key=None)">
     % if config_key: ## and config_key in self.advert_list:

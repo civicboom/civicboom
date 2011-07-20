@@ -1,7 +1,7 @@
 HEAD=\
 	modernizr-1.7.js \
 	swfobject.js \
-	jquery-1.5.1.js \
+	jquery-1.6.2.js \
 	prototypes.js \
 	misc.js\
 	url_encode.js \

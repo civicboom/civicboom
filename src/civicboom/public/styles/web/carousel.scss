@@ -1,52 +1,65 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-.jcarousel-skin-content-media {
-    width: 80%;
-    height: 150px;
-    margin: 0 auto 0 auto;
-    background-color: lighten($cb-lightblue, 40%);
-    border: 1em solid $cb-lightblue;
-    border-bottom: 3em solid $cb-lightblue;
-    @include border_radius(0.5em);
-    @include drop_shadow(1px, 1px, 1px, #333);
-    
-    .jcarousel-clip {
-        overflow: hidden;
-    }
-        
-    .preview_item {
-        height: 100%;
-        
-        a, img {
-            height: 150px;
-        }
-    }
-    
-    .jcarousel-item {
-        .item_details {
-            padding-top: 3px;
-            color: white;
-            text-align: left;
-            width: 100%;
-        }
-    }
-
-    .hidden {
+HTML.no-js {
+    #view-media {
         display: none;
     }
+}
+
+HTML.js {
+    .jcarousel-skin-content-media {
+        width: 80%;
+        height: 150px;
+        margin: 0 auto 0 auto;
+        background-color: lighten($cb-lightblue, 40%);
+        border: 1em solid $cb-lightblue;
+        border-bottom: 3em solid $cb-lightblue;
+        @include border_radius(0.5em);
+        @include drop_shadow(1px, 1px, 1px, #333);
+        
+        .jcarousel-clip {
+            overflow: hidden;
+        }
+            
+        .preview_item {
+            height: 100%;
+            
+            a, img {
+                height: 150px;
+            }
+        }
+        
+        .jcarousel-item {
+            .item_details {
+                padding-top: 3px;
+                color: white;
+                text-align: left;
+                width: 100%;
+            }
+        }
     
-    .jcarousel-next {
-        cursor: pointer;
-        position: absolute;
-        right: 1em;
-        top: 65px;
-    }
-    
-    .jcarousel-prev {
-        cursor: pointer;
-        position: absolute;
-        left: 1em;
-        top: 65px;
+        .hidden {
+            display: none;
+        }
+        
+        .jcarousel-next {
+            cursor: pointer;
+            position: absolute;
+            right: 1em;
+            top: 65px;
+        }
+        
+        .jcarousel-prev {
+            cursor: pointer;
+            position: absolute;
+            left: 1em;
+            top: 65px;
+        }
+        
+        .play-icon {
+            filter: alpha(opacity=50);
+            opacity: 0.5;
+        }
     }
 }

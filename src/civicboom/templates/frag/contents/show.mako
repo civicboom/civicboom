@@ -10,6 +10,7 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="media_includes"  file="/html/web/media/show.mako"        />
+<%namespace name="components"	   file="/html/web/common/components.mako" />
 
 ## for deprication
 <%namespace name="loc"             file="/html/web/common/location.mako"     />
@@ -112,6 +113,28 @@
 	    % if self.content['parent']:
 		${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
 	    % endif
+	    
+	    ## New inline bar for actions
+	    % if config['development_mode']:
+    	    <div class="frag_list">
+    	       <div class="frag_list_contents">
+    	           <h3>Now you can...</h3>
+    	           <div style="padding-top: 5px; font-size: 110%">
+    	               <table style="width: 100%;">
+    	               <tr><td>
+    	                   ${actions_common()}
+    	               </td><td style="text-align: right;">
+    	                   ${content_actions_specific()}
+    	               </td><tr></table>
+    	           </div>
+    	       </div>
+    	    </div>
+	    % endif
+	    
+	    <% test_cont = {'content_text':'lol', 'config_key':'lol'} %>
+	    ${components.advert(
+	       contents = [test_cont],
+	    )}
 	    
 	    <div class="frag_list">
                 <div class="frag_list_contents">
@@ -612,26 +635,25 @@
 		</tr>
 	<tr>
 	    <td colspan="3">
-		<div class="comments-option">
+		<div class="comments-option comments-option-${self.id}">
 		    % if c.logged_in_user:
-		    ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments">Ask here...</span>
+		        ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments show-comments-${self.id}">Ask here...</span>
 		    % else:
-		    To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
+		        To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
 		    % endif
 		</div>
 	    </td>
 	    <script>
 		$(function() {
-			$('.new-comment').hide();
-			//$('.new-comment').css("display", "table-row");
-			$('.show-comments').click(function() {
-				$('.new-comment').toggle();
-				$('.comment-${self.id}').focus();
+			$('.new-comment-${self.id}').hide();
+			$('.show-comments-${self.id}').click(function() {
+			    $('.new-comment-${self.id}').toggle();
+			    $('.comment-${self.id}').focus();
 			});
 		});
 	    </script>
 	</tr>
-        <tr class="new-comment">
+        <tr class="new-comment new-comment-${self.id}">
             <td class="comment_avatar">
                 % if c.logged_in_user:
                 ${member_includes.avatar(c.logged_in_user.to_dict())}
@@ -719,7 +741,7 @@
     ##    </a>
 </%doc>
 
-<%def name="actions_specific()">
+<%def name="content_actions_specific()">
 
     ## --- Pubish --------------------------------------------------------------
 
@@ -786,7 +808,7 @@
         )}
         <div class="mo-help-r mo-help-b">
             ${_('Booming this content will recommend it to your followers and the rest of the community.')}
-        </div> 
+        </div>
     </span>
     
 
@@ -819,7 +841,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='seen'   , format='redirect', id=self.id),
             value           = _('Viewed') ,
-            value_formatted = h.literal("<span class='icon16 i_seen'></span>&nbsp;%s") % _('Viewed'),
+            value_formatted = h.literal("<span class='icon16 i_seen'></span>&nbsp;%s") % _('Mark viewed'),
             title           = _("Mark this content as viewed") ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
             modal_params = dict(
@@ -838,7 +860,7 @@
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
             value           = _('Disassociate') ,
-            value_formatted = h.literal("<span class='icon16 i_dissasociate'></span>&nbsp;%s") % _('Disassociate'),
+            value_formatted = h.literal("<span class='icon16 i_disassociate'></span>&nbsp;%s") % _('Disassociate'),
             title           = _("Disassociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,

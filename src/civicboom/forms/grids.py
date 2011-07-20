@@ -14,6 +14,14 @@ class Grid(tables.Grid):
 #FooGrid = Grid(model.Foo)
 #ReflectedGrid = Grid(Reflected)
 
+ContentGrid = Grid(model.Content)
+ContentGrid.configure(include=[
+        ContentGrid.title,
+        ContentGrid.creator,
+        ContentGrid.update_date.readonly(),
+        #ContentGrid.status,
+        ])
+
 ArticleContentGrid = Grid(model.ArticleContent)
 ArticleContentGrid.configure(include=[
         ArticleContentGrid.title,
