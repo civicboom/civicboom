@@ -237,7 +237,7 @@ class LocationFilter(Filter):
             (lon, lat, radius) = location_tuple
 
         if lon and lat and radius:
-            return LocationFilter((lon, lat), radius)
+            return LocationFilter(lon, lat, radius)
 
     def __unicode__(self):
         return "Content.location.near((%f, %f), %f)" % (self.lon, self.lat, self.rad)
