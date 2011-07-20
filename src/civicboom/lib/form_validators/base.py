@@ -204,18 +204,19 @@ class PasswordValidator(validators.FancyValidator):
 
 
 # http://osdir.com/ml/python.formencode/2008-09/msg00003.html
-class IsoFormatDateConverter(validators.DateConverter):
+#class IsoFormatDateConverter(validators.DateConverter):
+class IsoFormatDateConverter(validators.FancyValidator):
     """
     Like formencode.validators.DateConverter, but accepts ISO 8601 YYYY-mm-dd
     """
-    month_style = 'dd/mm/yyyy'
+    #month_style = 'dd/mm/yyyy'
 
     def _to_python(self, value, state):
         try:
-            value = parse_date(value, dayfirst=True).strftime("%d/%m/%Y")
+            value = parse_date(value, dayfirst=True, yearfirst=True)#.strftime("%d/%m/%Y")
         except ValueError:
             raise formencode.Invalid("Invalid date", value, state)
-        return super(IsoFormatDateConverter, self)._to_python(value, state)
+        return value #super(IsoFormatDateConverter, self)._to_python(value, state)
 
 
 class SetValidator(validators.FancyValidator):

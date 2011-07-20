@@ -380,6 +380,7 @@ class DraftContent(Content):
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
     target_type     = Column(_content_type, nullable=True, default='article')
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
+    auto_publish_trigger_date = Column(DateTime(), nullable=True)
 
     __to_dict__ = copy.deepcopy(Content.__to_dict__)
     _extra_draft_fields = {
@@ -531,7 +532,6 @@ class AssignmentContent(UserVisibleContent):
     id              = Column(Integer(),        ForeignKey('content_user_visible.id'), primary_key=True)
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
-    auto_publish_trigger_date = Column(DateTime(),       nullable=True)
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
     default_response_license_id = Column(Unicode(32), ForeignKey('license.id'), nullable=False, default=u"CC-BY")
     num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger

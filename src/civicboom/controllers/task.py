@@ -49,7 +49,7 @@ class TaskController(BaseController):
         # AllanC - automated tests seems to be failing as c.logged_in_user is not set. should lib/database/userlog.py be modifyed to cope with this? advice on loggin needed. This is strange because c.logged_in_user is ALWAYS inited even if it is None see base.py line 373 _get_member() always returns None
         
         # AllanC - BEHOLD!!! THE HOLY HACK!!! This was a short term fix so that timed tasks had links to live server rather than generating URL's with 'localhost' - issue #614
-        #          Shish can you fix this properly. www.civicboom.com should not be hard coded here, it should be in python code, should be in a cfg file somewhere
+        #          Shish can you fix this properly. www.civicboom.com should not be hard coded here, it should not be in python code, should be in a cfg file somewhere
         request.environ['HTTP_HOST'] = 'www.civicboom.com'
             
         user_log.info("Performing task '%s'" % (action, ))
@@ -192,6 +192,34 @@ class TaskController(BaseController):
         return response_completed_ok
 
 
+    #---------------------------------------------------------------------------
+    # Publish Sceduled Assignments
+    #---------------------------------------------------------------------------
+    @web_params_to_kwargs
+    def publish_sceduled_content(self, frequency_of_timed_task="hours=1"):
+        """
+        query for all users in last <timedelta> and email 
+        """
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        datetime_now            = normalize_datetime(now())
+        
+        from civicboom.model.content        import DraftContent
+        from civicboom.controllers.contents import ContentsController
+        content_publish = ContentsController().update
+        
+        def get_content_to_publish(date_start, date_end):
+            return Session.query(DraftContent).filter(and_(DraftContent.auto_publish_trigger_datetime >= date_start, DraftContent.auto_publish_trigger_datetime <= date_end)).all()
+        
+        for content in get_assignments_to_publish(datetime_now - frequency_of_timed_task, datetime_now):
+            log.info('Auto publishing content #%s - %s' % (content.id, content.title))
+            # By calling the content:update method with no param with the content as a draft, it automatically pubishs the content
+            content_publish(content)
+        
+        return response_completed_ok
+
+    #---------------------------------------------------------------------------
+    # Warehouse Managment
+    #---------------------------------------------------------------------------
     def purge_unneeded_warehouse_media(self):
         """
         Compare the warehouse files with the database media list.

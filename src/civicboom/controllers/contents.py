@@ -39,6 +39,17 @@ log      = logging.getLogger(__name__)
 # Form Schema
 #-------------------------------------------------------------------------------
 
+class AutoPublishTriggerDatetimeValidator(civicboom.lib.form_validators.base.IsoFormatDateConverter):
+    messages = {
+        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
+    }
+
+    def _to_python(self, value, state):
+        if c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('require_upgrade', state), value, state)
+        return super(AutoPublishTriggerDatetimeValidator, self)._to_python(value, state)
+
+
 class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     allow_extra_fields  = True
     filter_extra_fields = False
@@ -57,6 +68,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     # Assignment Fields
     due_date    = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
     event_date  = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
+    auto_publish_trigger_datetime = AutoPublishTriggerDatetimeValidator(not_empty=False)
     default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
@@ -607,7 +619,7 @@ class ContentsController(BaseController):
         #
         # Default
         #  Save + (if format = html or redirect -> redirect back to editor)
-        #  if no submit_???? is provided and the content type = draft -> article or assignment - pubmit type is set to 'publish'
+        #  if no submit_???? is provided and the content type = draft -> article or assignment - submit type is set to 'publish'
         #
         
         def normalise_form_submit(kwargs):
