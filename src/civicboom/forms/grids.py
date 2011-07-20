@@ -19,7 +19,7 @@ ContentGrid.configure(include=[
         ContentGrid.title,
         ContentGrid.creator,
         ContentGrid.update_date.readonly(),
-        ContentGrid.status,
+        #ContentGrid.status,
         ])
 
 ArticleContentGrid = Grid(model.ArticleContent)

@@ -5,7 +5,7 @@
 
 <%def name="body()">
 	<%
-		if d['content']['parent']:
+		if d['content'].get('parent'):
 			self.attr.frags          = [content_edit, parent]  # If the content being edited has a parent, place the parent beside it for reference
 			self.attr.frag_col_sizes = [2,2,1]
 			self.attr.frag_classes   = [None, None]

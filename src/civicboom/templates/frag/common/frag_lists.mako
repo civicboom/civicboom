@@ -365,9 +365,20 @@
             % endif
             
             ## Creator avatar
-            <%doc>% if creator and 'creator' in content:
-                ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
-            % endif</%doc>
+            % if creator and 'creator' in content:
+                ## AllanC - Not happy with this. We are having to include an additional link with the members name in, but as the thumbnail itself is positioned absolutely, it's just aararar
+                <%doc>
+                <%
+                    member_url_static, member_url_frag = h.url_pair('member', id=content['creator']['username'], gen_format="frag")
+                %>
+                % if extra_info:
+                <a href="${member_url_static}" onclick="cb_frag($(this), '${member_url_frag}'); return false;" style="float: right;">
+                    ${content['creator']['name']}
+                </a>
+                % endif
+                </%doc>
+                ${member_includes.avatar(content['creator'], class_="thumbnail_small", show_name=True)}
+            % endif
             ## Responses show parent Creator
             ##% if content.get('parent') and content['parent'].get('creator'):
             ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}

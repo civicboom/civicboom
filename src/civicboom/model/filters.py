@@ -9,10 +9,10 @@ of themselves
 ...     OrFilter([
 ...         TextFilter("terrorists"),
 ...         AndFilter([
-...             LocationFilter([1, 51], 10),
+...             LocationFilter(1, 51, 10),
 ...             TagFilter("Science & Nature")
 ...         ]),
-...         AuthorIDFilter(1)
+...         CreatorIDFilter(1)
 ...     ]),
 ...     NotFilter(OrFilter([
 ...         TextFilter("waffles"),
@@ -23,7 +23,7 @@ of themselves
 >>> print unicode(query) # doctest: +NORMALIZE_WHITESPACE
 and_(or_(
     Content.content.matches('terrorists'),
-    and_(Content.location.near('[1, 51]', 10), Content.tags.contains('Science & Nature')),
+    and_(Content.location.near((1.000000, 51.000000), 10.000000), Content.tags.contains('Science & Nature')),
     Content.creator_id = 1
 ), not_(or_(
     Content.content.matches('waffles'),
@@ -33,18 +33,18 @@ and_(or_(
 >>> print repr(query) # doctest: +NORMALIZE_WHITESPACE
 AndFilter([OrFilter([
     TextFilter('terrorists'),
-    AndFilter([LocationFilter([1, 51]), TagFilter('Science & Nature')]),
-    AuthorFilter(1)
+    AndFilter([LocationFilter(1.000000, 51.000000, 10.000000), TagFilter('Science & Nature')]),
+    CreatorIDFilter(1)
 ]), NotFilter(OrFilter([
     TextFilter('waffles'),
     TagFilter('Business')
 ]))])
 
 >>> print html(query)
-<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter([1, 51])</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>AuthorFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
+<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorIDFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
 
 >>> print sql(query)
-((to_tsvector(content.content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector(content.content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
 
 
 LabelFilter is a thing to put text into the human-readable output while having
@@ -74,6 +74,10 @@ Filter()
 (1=1)
 """
 
+
+##############################################################################
+# meta bits
+##############################################################################
 
 def html(o):
     return o.__html__()
@@ -109,6 +113,10 @@ class LabelFilter(Filter):
         return "<div class='label'>%s</div>" % self.label
 
 
+##############################################################################
+# logical operators
+##############################################################################
+
 class OrFilter(Filter):
     def __init__(self, subs):
         self.subs = subs
@@ -140,7 +148,10 @@ class AndFilter(Filter):
         return "<div class='and'>all of:<p>" + "<p>and<p>".join([html(s) for s in self.subs]) + "</div>"
 
     def __sql__(self):
-        return "(" + (") AND (".join([sql(s) for s in self.subs])) + ")"
+        if self.subs:
+            return "(" + (") AND (".join([sql(s) for s in self.subs])) + ")"
+        else:
+            return "(1=1)"
 
 
 class NotFilter(Filter):
@@ -160,6 +171,24 @@ class NotFilter(Filter):
         return "NOT ("+sql(self.sub)+")"
 
 
+##############################################################################
+# content filters
+##############################################################################
+
+class IDFilter(Filter):
+    def __init__(self, id_list):
+        self.id_list = ", ".join(["%d" % d for d in id_list])
+
+    def __unicode__(self):
+        return "Content.id_list in [%s]" % self.id_list
+
+    def __repr__(self):
+        return "ParentIDFilter(%s)" % self.id_list
+
+    def __sql__(self):
+        return "content.id IN (%s)" % self.id_list
+
+
 class TextFilter(Filter):
     def __init__(self, text):
         self.text = text
@@ -171,36 +200,124 @@ class TextFilter(Filter):
         return "TextFilter(%s)" % repr(self.text)
 
     def __sql__(self):
-        return "to_tsvector(content.content) @@ to_tsquery('%s')" % self.text
+        import re
+
+        parts = []
+        for word in self.text.split():
+            word = re.sub("[^a-zA-Z0-9_-]", "", word)
+            if word:
+                parts.append(word)
+
+        if parts:
+            text = " | ".join(parts)
+            return "to_tsvector('english', title || ' ' || content) @@ to_tsquery('%s')" % text
+        else:
+            return query
 
 
 class LocationFilter(Filter):
-    def __init__(self, loc, rad=10):
-        self.loc = loc
-        self.rad = rad
+    def __init__(self, lon, lat, rad=10):
+        self.lon = float(lon)
+        self.lat = float(lat)
+        self.rad = float(rad)
+
+    @staticmethod
+    def from_string(s):
+        if s == "me":
+            return LabelFilter("location=me not supported yet") # FIXME
+
+        (lon, lat, radius) = (None, None, 10)
+        zoom = 10 # FIXME: inverse of radius? see bug #50
+
+        location = s.replace(",", " ")
+        location_tuple = [float(i.strip()) for i in location.split()]
+        if   len(location_tuple) == 2:
+            (lon, lat        ) = location_tuple
+        elif len(location_tuple) == 3:
+            (lon, lat, radius) = location_tuple
+
+        if lon and lat and radius:
+            return LocationFilter(lon, lat, radius)
 
     def __unicode__(self):
-        return "Content.location.near('%s', %d)" % (self.loc, self.rad)
+        return "Content.location.near((%f, %f), %f)" % (self.lon, self.lat, self.rad)
 
     def __repr__(self):
-        return "LocationFilter(%s)" % repr(self.loc)
+        return "LocationFilter(%f, %f, %f)" % (self.lon, self.lat, self.rad)
 
     def __sql__(self):
-        return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.loc[0], self.loc[1], self.rad)
+        return "ST_DWithin(content.location, 'SRID=4326;POINT(%f %f)', %f)" % (self.lon, self.lat, self.rad)
 
 
-class AuthorIDFilter(Filter):
-    def __init__(self, author_id):
-        self.author_id = author_id
+class TypeFilter(Filter):
+    def __init__(self, type):
+        if type in ['article', 'assignment', 'draft']:
+            self.type = type
 
     def __unicode__(self):
-        return "Content.creator_id = %d" % self.author_id
+        return "Content.__type__ = '%s'" % self.type
 
     def __repr__(self):
-        return "AuthorFilter(%d)" % self.author_id
+        return "TypeFilter(%s)" % repr(self.type)
 
     def __sql__(self):
-        return "content.creator_id = %d" % self.author_id
+        return "content.__type__ = '%s'" % self.type
+
+
+class ParentIDFilter(Filter):
+    def __init__(self, parent_id):
+        self.parent_id = parent_id
+
+    def __unicode__(self):
+        return "Content.parent_id = %d" % self.parent_id
+
+    def __repr__(self):
+        return "ParentIDFilter(%d)" % self.parent_id
+
+    def __sql__(self):
+        return "content.parent_id = %d" % self.parent_id
+
+
+class CreatorIDFilter(Filter):
+    def __init__(self, creator_id):
+        self.creator_id = creator_id
+
+    def __unicode__(self):
+        return "Content.creator_id = %d" % self.creator_id
+
+    def __repr__(self):
+        return "CreatorIDFilter(%d)" % self.creator_id
+
+    def __sql__(self):
+        return "content.creator_id = %d" % self.creator_id
+
+
+class CreatorFilter(Filter):
+    def __init__(self, creator_name):
+        self.creator_name = creator_name
+
+    def __unicode__(self):
+        return "Content.creator_name = '%s'" % self.creator_name
+
+    def __repr__(self):
+        return "CreatorFilter(%s)" % repr(self.creator_name)
+
+    def __sql__(self):
+        return "content.creator_id = (SELECT id FROM member WHERE username='%s')" % self.creator_name
+
+
+class BoomedByFilter(Filter):
+    def __init__(self, boomer_id):
+        self.boomer_id = boomer_id
+
+    def __unicode__(self):
+        return "FIXME" # Content.id in '%s'" % self.boomer_id
+
+    def __repr__(self):
+        return "BoomedByFilter(%d)" % repr(self.boomer_id)
+
+    def __sql__(self):
+        return "content.id IN (SELECT content_id FROM map_booms WHERE member_id=%d)" % self.boomer_id
 
 
 class TagFilter(Filter):

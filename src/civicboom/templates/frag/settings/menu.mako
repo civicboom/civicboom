@@ -18,9 +18,6 @@
     if c.result.get('user_type') == 'user':
     	panels['janrain'] = {'weight':1000, 'title':'Link additional login accounts', 'panel':'link_janrain'}
     panelorder = sorted(panels.values(), key=lambda x: int(x['weight']))
-    
-    print_username = c.logged_in_persona.username if c.result['username'] == 'me' else c.result['username']
-    
 %>
     <%def name="link(title, panel)">
         <li>
@@ -40,7 +37,7 @@
         </li>
     </%def>
     <div>
-        <h1>${_('%(username)s settings') % dict(username= print_username.capitalize()) }</h1>
+        <h1>${_('%(username)s settings') % dict(username= d['username'].capitalize()) }</h1>
         <ul class="setting_menu">
         % for panel in panelorder:
             ${link(panel['title'].capitalize(), panel['panel'])}

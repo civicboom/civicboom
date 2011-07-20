@@ -3,6 +3,7 @@ TIMESTAMP := $(shell date +%s)
 
 all: $(ALL)
 	cp */*.png ./
+	cp */*.svg ./
 
 clean:
 	rm -f $(ALL) *.png */*.css

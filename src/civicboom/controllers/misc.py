@@ -258,7 +258,7 @@ Disallow: /*.frag$
                 kwargs['limit'] = 3
             if 'after' not in kwargs:
                 kwargs['after'] = now() - datetime.timedelta(days=7)
-            kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
+            kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
             content_items = content_search(**kwargs)['data']['list']['items']
             random.shuffle( content_items )
             return_list = []
