@@ -194,8 +194,9 @@ class ContentsController(BaseController):
             if lf:
                 parts.append(lf)
                 results = results.add_columns(
-                    func.st_distance(
-                        func.st_geomfromwkb(Content.location, 4326), 'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
+                    func.st_distance_sphere(
+                        func.st_geomfromwkb(Content.location, 4326),
+                        'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
                     ).label("distance")
                 )
 
