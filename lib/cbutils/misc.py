@@ -161,6 +161,8 @@ def obj_to_dict(obj, dict_fields):
                 pass
             elif type(field_value)==types.IntType or type(field_value)==types.FloatType:
                 pass
+            elif type(field_value) == datetime.datetime:
+                field_value = field_value.strftime("%Y-%m-%d %H:%M:%S")
             else:
                 try:
                     field_value = unicode(field_value)
