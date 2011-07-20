@@ -158,7 +158,7 @@ class ContentsController(BaseController):
         
         @example https://test.civicboom.com/contents.json?creator=unittest&limit=2
         @example https://test.civicboom.com/contents.rss?list=assignments_active&limit=2
-        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
@@ -258,14 +258,9 @@ class ContentsController(BaseController):
 
         # Setup search criteria
         if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = ""
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ""
+            kwargs['include_fields'] = "creator"
 
         # Defaults
-        if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
-            kwargs['include_fields'] += ",creator"
-            kwargs['exclude_fields'] += ",creator_id"
         # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
         if kwargs.get('list') == 'responses':
             kwargs['include_fields'] += ",parent"
