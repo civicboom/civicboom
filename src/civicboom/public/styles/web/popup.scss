@@ -3,50 +3,59 @@
     /* width: 45em; */
     display: block;
     padding: 0 2em 0 2em;
+    color: black;
+    text-shadow: none;
     
     .wrapper {
-        width: 45em;
-        
-        .information {
-            width: 35em;
-            padding: 2em 0 2em 0;
-            margin: 0;
-            float: left;
-            
-            div {
-                max-width: 30em;
-            }
+        width: 40em;
     
-            .popup-title {
-                font-size: 250%;
-            }
-            
-            .popup-message {
-                font-size: 150%;
-                margin: 1em 0 1em 0;
-            }
-            
-            .popup-tag-line {
-                font-size: 250%;
-            }
-        }
-        .button {
-          font-size: 125%;
-          //width: 8em;
-          vertical-align: middle;
-          padding: 10px !important;
-          margin-right: 1em;
-        }
-        p {
-          margin-top: 0.5em;
+        .information {
+            padding-bottom: 2em;
         }
     }
     
+    .information {
+        width: 30em;
+        padding: 2em 0 0 0;
+        margin: 0;
+        float: left;
+        
+        div {
+            // rmax-width: 30em;
+        }
+
+        .popup-title {
+            font-size: 250%
+        }
+        
+        .popup-message {
+            font-size: 150%;
+            margin: 1em 0 1em 0;
+        }
+        
+        .popup-tag-line {
+            font-size: 250%;
+        }
+    }
+
+    .button {
+      font-size: 115%;
+      //width: 8em;
+      vertical-align: middle;
+      padding: 10px !important;
+      margin-right: 1em;
+    }
+    
+    p {
+      margin-top: 0.5em;
+    }
+
     .popup-icons {
         float: left;
         height: 100%;
         width: 7em;
         margin-left: 1em;
+        padding-top: 2.5em;
         
         img {
             width: 100%;

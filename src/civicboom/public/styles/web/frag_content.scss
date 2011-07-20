@@ -12,11 +12,6 @@
 			text-align: center;
 			font-weight: bold;
 			padding-top: 15px;
-			
-			a {
-				color: #333;
-				text-decoration: none;
-			}
 		}
 	
 		.frag_content {
@@ -25,6 +20,24 @@
 				
 				.frag_col {
 					margin-bottom: 0;
+				}
+				
+				.content_title {
+				    padding: 0;
+				    
+				    h1, .actions {
+				        margin: 4px 0 4px 0;
+				        padding-bottom: 0.5em;
+				    }
+				    
+				    h1 {
+			            float: left;
+			            max-width: 85%;
+				    }
+				    
+				    .actions {
+				        float: right;
+				    }
 				}
 				
 				.content_creator {
@@ -51,8 +64,8 @@
 				}
 				
 				h1 {
-					color: #333;
-					font-size: 200%;
+					//color: #333;
+					//font-size: 200%;
 				}
 				
 				.content_text {
@@ -119,6 +132,19 @@
 			.content_text {
 				word-wrap: break-word;
 			}
+			
+			/* --- guide --- */
+			TABLE.approve {
+			    background-image:    url('/images/misc/contenticons/lock.png');
+			    background-repeat:   no-repeat;
+			    background-position: 85% center;
+			}
+			
+			TABLE.disassociate {
+                background-image:    url('/images/misc/contenticons/disassociate.png');
+                background-repeat:   no-repeat;
+                background-position: 85% center;
+            }
 		
 			/*----------------------------Content Comments--------------------------------*/
 		
@@ -141,18 +167,22 @@
 				table {
 					width: 100%;
 				}
+				
 				h2 {
 					font-size: 150%;
 				}
+				
 				td {
 					vertical-align: top;
 					color: #444;
 					padding-bottom: 1em;
 				}
+				
 				textarea {
 					width: 100%;
 					min-height: 60px;
 				}
+				
 				input {
 					width: 100%;
 				}
@@ -168,6 +198,7 @@
 						font-weight: bold;
 						margin-bottom: 0.25em;
 					}
+					
 					.comment_content {
 						font-size:  88%;
 						line-height: 1em;

@@ -26,49 +26,51 @@
 ##------------------------------------------------------------------------------
 ## Guide (formerly adverts)
 ##------------------------------------------------------------------------------
-<%def name="advert(contents, ad_class=None, int=None, heading=None, config_key=None)">
+<%def name="advert(contents, ad_class=None, int=None, heading=None, config_key=None, disable_link=1)">
     % if config_key: ## and config_key in self.advert_list:
     <div class="advert">
         ## Display advert disable link
-        ${advert_disable_link(config_key)}
+        % if disable_link:
+            ${advert_disable_link(config_key)}
+        % endif
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
-	% if heading:
-	    <h1>${heading}</h1>
-	% endif
-	% if int:
-	    <p class="int">${int}.</p>
-	% endif
-	% for item in contents:
-	    % if item.get('href'):
-		<a href="${item['href']}">
-	    % endif
-	    % if item.get('advert_class'):
-		<div class="content ${item['advert_class']}">
-	    % else:
-		<div class="content">
-	    % endif
-		% if item.get('title'):
-		    <p class="advert_title">${item['title']}</p>
-		% endif
-		% if item.get('content_text'):
-		    <p class="advert_content">${item['content_text']}</p>
-		% endif
-		% if item.get('content_list'):
-		    <ul>
-			% for li in item['content_list']:
-			    <li>- ${li}</li>
-			% endfor
-		    </ul>
-		% endif
-		% if item.get('prompt'):
-		    ## <br /><i>Click here!</i>
-		% endif
-	    </div>
-	    % if item.get('href'):
-		</a>
-	    % endif
-	% endfor
+    	% if heading:
+    	    <h1>${heading}</h1>
+    	% endif
+    	% if int:
+    	    <p class="int">${int}.</p>
+    	% endif
+    	% for item in contents:
+    	    % if item.get('href'):
+    		<a href="${item['href']}">
+    	    % endif
+    	    % if item.get('advert_class'):
+    		<div class="content ${item['advert_class']}">
+    	    % else:
+    		<div class="content">
+    	    % endif
+    		% if item.get('title'):
+    		    <p class="advert_title">${item['title']}</p>
+    		% endif
+    		% if item.get('content_text'):
+    		    <p class="advert_content">${item['content_text']}</p>
+    		% endif
+    		% if item.get('content_list'):
+    		    <ul>
+    			% for li in item['content_list']:
+    			    <li>- ${li}</li>
+    			% endfor
+    		    </ul>
+    		% endif
+    		% if item.get('prompt'):
+    		    ## <br /><i>Click here!</i>
+    		% endif
+    	    </div>
+    	    % if item.get('href'):
+    		</a>
+    	    % endif
+    	% endfor
 
         <div class="separator" style="clear: both;"></div>
     </div>

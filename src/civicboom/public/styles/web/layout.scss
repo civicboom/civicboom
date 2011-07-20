@@ -57,8 +57,24 @@ BODY>DIV#app {
 	z-index: 0;
     top: $header_height + 5px;
     color: $text-colour;
-    .button { color: $button-txt; }
-    a { color: $link-colour; }
+    
+    .button {
+        color: $button-txt;
+        
+        &:hover {
+            color: $button-txt;
+        }
+    }
+    
+    a {
+        color: $link-colour;
+        text-decoration: none;
+        
+        &:hover {
+            color: $link-hover-colour;
+            text-decoration: underline;
+        }
+    }
 }
 
 FOOTER {
