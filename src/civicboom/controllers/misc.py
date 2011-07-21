@@ -243,8 +243,13 @@ Disallow: /*.frag$
     #---------------------------------------------------------------------------
     # Featured content query
     #---------------------------------------------------------------------------
+
+    #       - can't really be cashed because of the use of 'me'
+    # Shish - rather than 'me', pass a 'location' parameter to the frag; this
+    #         way a user with a location only gets feature updates every 10
+    #         mins, and users without locations all share one featured set
     @web
-    #@cacheable(time=600) # can't really be cashed because of the use of 'me'
+    @cacheable(time=600, anon_only=False)
     def featured(self):
         """
         Make a numer of querys to get the top interesting content
@@ -281,8 +286,8 @@ Disallow: /*.frag$
         f = {}
         f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
         f['most_responses'         ] = rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5)
-        if c.logged_in_user.location_current:
-            f['near_me'            ] = rnd_content_items(return_items=2, sort='distance'      , location=location_to_string(c.logged_in_user.location_current), limit=5)
+        if request.GET.get("location"):
+            f['near_me'            ] = rnd_content_items(return_items=2, sort='distance'      , location=request.GET.get("location"), limit=5)
         f['recent_assignments'     ] = rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5)
         f['recent'                 ] = rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5)
 
