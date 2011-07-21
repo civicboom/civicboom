@@ -9,7 +9,7 @@
         <div style="text-align: center;">
             <div style="text-align: left; width: 750px; margin-left: auto; margin-right: auto;">
             
-            <h1>Errr... sorry about this but <img src="/images/logo.png" alt="${_('_site_name')}" style="height: 1.5em; position: relative; top: 0.5em;" /> doesn't support Microsoft Internet Explorer 7</h1>
+            <h1>Errr... sorry about this but <img src="/images/logo-v2-128x32.png" alt="${_('_site_name')}" style="height: 1.5em; position: relative; top: 0.5em;" /> doesn't support Microsoft Internet Explorer 7</h1>
             <p>We do however support Internet Explorer 8 and 9!</p>
             
             <p>You can still access Civicboom with IE7, it's just really not that pretty. If you want to continue using the site in Internet Explorer 7 click <a href="${h.url(controller='misc', action='titlepage')}" onclick="allow_lt_ie8(); redirect('${h.url(controller='misc', action='titlepage')}'); return false;">here</a></p>
