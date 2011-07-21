@@ -131,7 +131,12 @@ class OrFilter(Filter):
         return "<div class='or'>any of:<p>" + "<p>or<p>".join([html(s) for s in self.subs]) + "</div>"
 
     def __sql__(self):
-        return "(" + (") OR (".join([sql(s) for s in self.subs])) + ")"
+        if len(self.subs) == 1:
+            return sql(self.subs[0])
+        elif len(self.subs) > 1:
+            return "(" + (") OR (".join([sql(s) for s in self.subs])) + ")"
+        else:
+            return "(1=1)"
 
 
 class AndFilter(Filter):
@@ -148,7 +153,9 @@ class AndFilter(Filter):
         return "<div class='and'>all of:<p>" + "<p>and<p>".join([html(s) for s in self.subs]) + "</div>"
 
     def __sql__(self):
-        if self.subs:
+        if len(self.subs) == 1:
+            return sql(self.subs[0])
+        elif len(self.subs) > 1:
             return "(" + (") AND (".join([sql(s) for s in self.subs])) + ")"
         else:
             return "(1=1)"
@@ -180,10 +187,10 @@ class IDFilter(Filter):
         self.id_list = ", ".join(["%d" % d for d in id_list])
 
     def __unicode__(self):
-        return "Content.id_list in [%s]" % self.id_list
+        return "Content.id in [%s]" % self.id_list
 
     def __repr__(self):
-        return "ParentIDFilter(%s)" % self.id_list
+        return "IDFilter(%s)" % self.id_list
 
     def __sql__(self):
         return "content.id IN (%s)" % self.id_list
@@ -264,6 +271,21 @@ class TypeFilter(Filter):
         return "content.__type__ = '%s'" % self.type
 
 
+class DueDateFilter(Filter):
+    def __init__(self, comparitor, date):
+        self.comparitor = comparitor
+        self.date = date
+
+    def __unicode__(self):
+        return "AssignmentContent.__type__ %s '%s'" % (self.comparitor, self.date)
+
+    def __repr__(self):
+        return "DueDateFilter(%s)" % (repr(self.comparitor), repr(self.date))
+
+    def __sql__(self):
+        return "content_assignment.due_date %s %s" % (self.comparitor, self.date)
+
+
 class ParentIDFilter(Filter):
     def __init__(self, parent_id):
         self.parent_id = parent_id
@@ -275,7 +297,12 @@ class ParentIDFilter(Filter):
         return "ParentIDFilter(%d)" % self.parent_id
 
     def __sql__(self):
-        return "content.parent_id = %d" % self.parent_id
+        if self.parent_id == False:
+            return "content.parent_id IS NULL"
+        elif self.parent_id == True:
+            return "content.parent_id IS NOT NULL"
+        else:
+            return "content.parent_id = %d" % self.parent_id
 
 
 class CreatorIDFilter(Filter):

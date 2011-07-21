@@ -71,14 +71,37 @@ class ContentCommentSchema(ContentSchema):
 #-------------------------------------------------------------------------------
 
 list_filters = {
-    'all'                 : lambda results: results ,
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=now(),AssignmentContent.due_date==null())) ,
-    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< now())) ,
-    'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
-    'not_drafts'          : lambda results: results.filter(Content.__type__!='draft'),
+    'all'                 : lambda: AndFilter([
+    ]),
+    'assignments_active'  : lambda: AndFilter([
+        TypeFilter('assignment'),
+        OrFilter([
+            DueDateFilter(">", "now()"),
+            DueDateFilter("IS", "NULL")
+        ])
+    ]),
+    'assignments_previous': lambda: AndFilter([
+        TypeFilter('assignment'),
+        DueDateFilter("<", "now()")
+    ]),
+    'assignments'         : lambda: AndFilter([
+        TypeFilter('assignment'),
+    ]),
+    'drafts'              : lambda: AndFilter([
+        TypeFilter('draft'),
+        CreatorFilter(c.logged_in_persona.username)
+    ]),
+    'articles'            : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(False)
+    ]),
+    'responses'           : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(True)
+    ]),
+    'not_drafts'          : lambda: AndFilter([
+        NotFilter(TypeFilter('draft')),
+    ]),
 }
 
 
@@ -171,6 +194,12 @@ class ContentsController(BaseController):
         if _filter:
             parts.append(_filter)
 
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                parts.append(list_filters[kwargs['list']]())
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+
         if 'feed' in kwargs and kwargs['feed']:
             parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
@@ -247,14 +276,6 @@ class ContentsController(BaseController):
                 logged_in_creator = True
             else:
                 trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
-
-        # hacky old thing to make tests pass -- rather than lists being SQLAlchemy expressions,
-        # we should migrate them to being pre-built feeds
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                results = list_filters[kwargs['list']](results)
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
 
         # Setup search criteria
         if 'include_fields' not in kwargs:
