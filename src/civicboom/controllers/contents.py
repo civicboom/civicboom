@@ -189,6 +189,59 @@ class ContentsController(BaseController):
         results = Session.query(Content).with_polymorphic('*') # TODO: list
         results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
 
+        ###############################
+        # BEGIN COPY & PASTE OLD BITS #
+        ###############################
+        trusted_follower  = False
+        logged_in_creator = False
+        creator = None
+
+        try:
+            # Try to get the creator of the whole parent chain or creator of self
+            # This models the same permission view enforcement as the 
+            parent_root = get_content(kwargs['response_to'])
+            parent_root = parent_root.root_parent or parent_root
+            creator = parent_root.creator
+            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
+        except:
+            pass
+        try:
+            creator = get_member(kwargs['creator'])
+            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
+        except:
+            pass
+        
+        if creator:
+            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
+            if c.logged_in_persona == creator:
+                logged_in_creator = True
+            else:
+                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
+
+        # Setup search criteria
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = "creator"
+
+        # Defaults
+        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
+        if kwargs.get('list') == 'responses':
+            kwargs['include_fields'] += ",parent"
+
+        if logged_in_creator:
+            pass # allow private content
+        else:
+            if not trusted_follower:
+                results = results.filter(Content.private==False) # public content only
+            results = results.filter(Content.__type__!='draft')
+
+        # TODO: how does this affect performance?
+        for col in ['creator', 'attachments', 'tags']:
+            if col in kwargs.get('include_fields', []):
+                results = results.options(joinedload(getattr(Content, col)))
+        ###############################
+        #  END COPY & PASTE OLD BITS  #
+        ###############################
+
         parts = []
 
         if _filter:
@@ -247,59 +300,6 @@ class ContentsController(BaseController):
         feed = AndFilter(parts)
 
         log.debug("Searching contents: %s" % sql(feed))
-
-        ###############################
-        # BEGIN COPY & PASTE OLD BITS #
-        ###############################
-        trusted_follower  = False
-        logged_in_creator = False
-        creator = None
-
-        try:
-            # Try to get the creator of the whole parent chain or creator of self
-            # This models the same permission view enforcement as the 
-            parent_root = get_content(kwargs['response_to'])
-            parent_root = parent_root.root_parent or parent_root
-            creator = parent_root.creator
-            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
-        except:
-            pass
-        try:
-            creator = get_member(kwargs['creator'])
-            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
-        except:
-            pass
-        
-        if creator:
-            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
-            if c.logged_in_persona == creator:
-                logged_in_creator = True
-            else:
-                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
-
-        # Setup search criteria
-        if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = "creator"
-
-        # Defaults
-        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
-        if kwargs.get('list') == 'responses':
-            kwargs['include_fields'] += ",parent"
-
-        if logged_in_creator:
-            pass # allow private content
-        else:
-            if not trusted_follower:
-                results = results.filter(Content.private==False) # public content only
-            results = results.filter(Content.__type__!='draft')
-
-        # TODO: how does this affect performance?
-        for col in ['creator', 'attachments', 'tags']:
-            if col in kwargs.get('include_fields', []):
-                results = results.options(joinedload(getattr(Content, col)))
-        ###############################
-        #  END COPY & PASTE OLD BITS  #
-        ###############################
 
         results = results.filter(sql(feed))
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
