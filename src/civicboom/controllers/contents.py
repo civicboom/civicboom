@@ -169,11 +169,9 @@ class ContentsController(BaseController):
             'draft'
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
-        @param before       update date before "%d/%m/%Y"
-        @param after        update date after  "%d/%m/%Y"
         @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
-        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default '-update_date')
         @param * (see common list return controls)
         
         @return 200      list ok
