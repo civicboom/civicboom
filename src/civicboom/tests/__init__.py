@@ -29,6 +29,7 @@ from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, em
 import re
 import json
 
+from civicboom.lib.form_validators.base import IsoFormatDateConverter
 
 import pylons.test
 
@@ -121,8 +122,8 @@ class TestController(TestCase):
             },
             status=200
         )
-        return json.loads(response.body)['datetime']
-
+        datetime_string = json.loads(response.body)['datetime']
+        return IsoFormatDateConverter().to_python(datetime_string, None)
 
 
     def log_in(self):

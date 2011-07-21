@@ -42,12 +42,16 @@ log      = logging.getLogger(__name__)
 class AutoPublishTriggerDatetimeValidator(civicboom.lib.form_validators.base.IsoFormatDateConverter):
     messages = {
         'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
+        'date_past'         : _('The auto publish date must be in the future'),
     }
 
     def _to_python(self, value, state):
-        if c.logged_in_persona.has_account_required('plus'):
+        auto_publish_trigger_datetime = super(AutoPublishTriggerDatetimeValidator, self)._to_python(value, state)
+        if not c.logged_in_persona.has_account_required('plus'):
             raise formencode.Invalid(self.message('require_upgrade', state), value, state)
-        return super(AutoPublishTriggerDatetimeValidator, self)._to_python(value, state)
+        if auto_publish_trigger_datetime <= now():
+            raise formencode.Invalid(self.message('date_past', state), value, state)
+        return auto_publish_trigger_datetime
 
 
 class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
@@ -691,7 +695,17 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
+                extra_fields = dict(content.extra_fields)
                 content = morph_content_to(content, kwargs['type'])
+                # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
+                #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator
+                #          but they are strings .. and need to be converted ... ARARARRA!!
+                for key, value in extra_fields.iteritems():
+                    if hasattr(content, key):
+                        try:
+                            setattr(content, key, value)
+                        except:
+                            log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -738,10 +752,12 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        # AllanC - not used yet .. but could be in future
-        for extra_field in []:
-            if extra_field in kwargs: # AllanC - could these have validators at somepoint?
-                content.extra_fields[extra_field] = kwargs[extra_field]
+        permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
+            content.extra_fields[extra_field] = str(kwargs[extra_field])
+            #AllanC - we need the str() here because when the extra_fields obj is serised to Json, it cant deal with objects.
+            #         This is NOT acceptable for int's float's and long's
+            #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \

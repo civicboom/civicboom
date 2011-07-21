@@ -210,7 +210,7 @@ class TaskController(BaseController):
         def get_content_to_publish(date_start, date_end):
             return Session.query(DraftContent).filter(and_(DraftContent.auto_publish_trigger_datetime >= date_start, DraftContent.auto_publish_trigger_datetime <= date_end)).all()
         
-        for content in get_assignments_to_publish(datetime_now - frequency_of_timed_task, datetime_now):
+        for content in get_content_to_publish(datetime_now - frequency_of_timed_task, datetime_now):
             log.info('Auto publishing content #%s - %s' % (content.id, content.title))
             # By calling the content:update method with no param with the content as a draft, it automatically pubishs the content
             content_publish(content)

@@ -380,11 +380,12 @@ class DraftContent(Content):
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
     target_type     = Column(_content_type, nullable=True, default='article')
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
-    auto_publish_trigger_date = Column(DateTime(), nullable=True)
+    auto_publish_trigger_datetime = Column(DateTime(), nullable=True)
 
     __to_dict__ = copy.deepcopy(Content.__to_dict__)
     _extra_draft_fields = {
             'target_type'     : None ,
+            'auto_publish_trigger_datetime': None ,
     }
     __to_dict__['default'     ].update(_extra_draft_fields)
     __to_dict__['full'        ].update(_extra_draft_fields)
