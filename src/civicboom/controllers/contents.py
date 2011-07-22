@@ -194,7 +194,7 @@ class ContentsController(BaseController):
         logged_in_creator = False
         creator = None
 
-        if kwargs['list'] == "drafts" and not c.logged_in_persona:
+        if kwargs.get('list') == "drafts" and not c.logged_in_persona:
             kwargs['list'] = 'all'
 
         try:
