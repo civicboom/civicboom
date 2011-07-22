@@ -159,11 +159,9 @@
             },
             "response":{
                 'title': _('Get involved!'),
-                ##'content_list':    [
-                ##            _("Post your story directly to a news organisation"),
-                ##            _("Post your story on _site_name"),
-                ##            _("Respond to a request")
-                ##            ],
+                'content_list':    [
+                            _("Post your story directly to a news organisation, on _site_name or respond to a _assignment!"),
+                            ],
                 'href': ''+h.url(controller='misc', action='new_article'),
             },
             "widget":{
