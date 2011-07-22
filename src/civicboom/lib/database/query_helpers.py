@@ -60,8 +60,11 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     if not results:
         return apilist([], obj_type=kwargs.get('obj_type'))
     
-    from cbutils.worker import config
-    limit_default = config['search.default.limit.contents']
+    # lakdsjghaldfkgjsd.
+    # using config variables in the middle of the libraries may be a bad idea
+    from cbutils.worker import config as w_config
+    from pylons import config as p_config
+    limit_default = w_config.get('search.default.limit.contents') or p_config.get('search.default.limit.contents')
 
     limit  = str_to_int(kwargs.get('limit' ), limit_default)
     offset = str_to_int(kwargs.get('offset')               )
