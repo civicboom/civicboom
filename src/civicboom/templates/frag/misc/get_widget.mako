@@ -139,7 +139,7 @@
 
 <%def name="what(member)">
 <div class="widget_creator"><div class="padding">
-    <h1>What is a _Widget?</h1>
+    <h1>What is a _widget?</h1>
     <p>
         ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
         ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
@@ -151,7 +151,7 @@
     <table class="what_table"><tr>
         
         <td>
-            <p>1. Standard design: Customizable</p>
+            <p>1. Standard design: Customisable</p>
             <ul>
                 <li>Size adaptable to fit website needs</li>
                 <li>Editable colours</li>

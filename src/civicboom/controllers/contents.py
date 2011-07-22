@@ -30,6 +30,7 @@ from dateutil.parser import parse as parse_date
 import re
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
+from time import time
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -260,6 +261,9 @@ class ContentsController(BaseController):
         if 'creator' in kwargs and kwargs['creator']:
             parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
 
+        if 'due_date' in kwargs and kwargs['due_date']:
+            parts.append(DueDateFilter.from_string(kwargs['due_date']))
+
         if 'term' in kwargs and kwargs['term']:
             parts.append(TextFilter(kwargs['term']))
             results = results.add_columns(
@@ -300,12 +304,18 @@ class ContentsController(BaseController):
 
         feed = AndFilter(parts)
 
-        log.debug("Searching contents: %s" % sql(feed))
+        time_start = time()
 
         results = results.filter(sql(feed))
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
-        return to_apilist(results, obj_type='content', **kwargs)
+        l = to_apilist(results, obj_type='content', **kwargs)
+
+        # hacky benchmarking just to get some basic idea of how each feed performs
+        time_end = time()
+        log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
+
+        return l
 
 
     @web
