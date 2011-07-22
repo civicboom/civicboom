@@ -25,14 +25,19 @@
             <br /><span class="error-message error">${d['invalid'][name]}</span>
         % endif
     </%def>
+    <%def name="show_errors(*names)">
+        % if 'invalid' in d and set(names).intersection(set(d['invalid'].keys())):
+            <br /><span class="error-message error">${_('Error')}</span>
+        % endif
+    </%def>
 
 
     ## Setup Form
     <%
-        if 'action' not in d:
+        if 'action' not in d or c.controller == 'groups':
             d['action'] = 'edit'
     %>
-    % if c.action != 'new':
+    % if c.action != 'new' and c.controller !='groups':
         ## Editing Form
         ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
     % else:
@@ -104,10 +109,9 @@
                     <div class="group-block">
                         <div onclick="toggle_edit_section($(this));" class="edit_input">
                             <span class="label">${_('When others join your _Group what default role do you want them to have?')}</span>
-                            <span class="icon16 i_plus"></span>
+                            <span class="icon16 i_plus"></span>${show_error('default_role')}
                         </div>
                         <div class="hideable">
-                            ${show_error('default_role')}
                             <ul>
                                 <li>
                                     <div class="fl">
@@ -160,9 +164,9 @@
                         <div onclick="toggle_edit_section($(this));" class="edit_input">
                             <span class="label">${_('How do you want others to join this _Group?')}</span>
                             <span class="icon16 i_plus"></span>
+                            ${show_error('join_mode')}
                         </div>
                         <div class="hideable">
-                            ${show_error('join_mode')}
                             <ul>
                                 <li>
                                     <div class="fl">
@@ -207,6 +211,7 @@
                                 <div onclick="toggle_edit_section($(this));" class="edit_input">
                                     <span class="label">${_('Member & content visibility')}</span>
                                     <span class="icon16 i_plus"></span>
+                                    ${show_errors('member_visibility', 'default_content_visibility')}
                                     % if not c.logged_in_persona.has_account_required('plus'):
                                         <div class="upgrade">
                                             ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
@@ -271,7 +276,7 @@
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
         </div>
         <div class="fr" style="padding-top: 1em;">
-            % if c.action != 'new':
+            % if c.action != 'new' and c.controller != 'groups':
                 <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
             % else:
                 <input type="submit" name="submit" value="${_('Create _Group')}" class="button" />
