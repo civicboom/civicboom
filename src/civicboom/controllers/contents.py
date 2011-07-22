@@ -194,6 +194,9 @@ class ContentsController(BaseController):
         logged_in_creator = False
         creator = None
 
+        if kwargs.get('list') == "drafts" and not c.logged_in_persona:
+            kwargs['list'] = 'all'
+
         try:
             # Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 
