@@ -269,6 +269,20 @@
         <div class="fl" style="width: 17em; padding-top: 1em;">
             ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
+            
+            ## AllanC - disabled for now .. still working on it, had other prioritys
+            % if c.controller == 'settings' and False:
+                ## AllanC - by vertue of the fact they can see this page, they are already an administrator
+                <br />
+                ${h.secure_link(
+                    ##h.args_to_tuple('group', id=d['username'], format='redirect'),
+                    h.url('group', id=d['username']),
+                    method = "DELETE",
+                    value           = _("Delete _group"),
+                    confirm_text    = _("Are your sure you want to delete this group? (All content published by this group will be deleted. All members will be notifyed)"),
+                    ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
+                )}
+            % endif
         </div>
         <div class="fr" style="padding-top: 1em;">
             % if c.action != 'new':

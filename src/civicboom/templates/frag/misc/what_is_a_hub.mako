@@ -12,14 +12,14 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
 <div style="background: white; border-radius: 16px; padding: 16px; margin: 1em; width: 722px; margin: auto;" class="frag_whitewrap">
-    <h1>${_('What is a hub?')}</h1>
+    <h1>${_('What is a _group?')}</h1>
     <p>&nbsp;</p>
     <p>
-        ${_('A _Group is a collection of registered users, unified under one "identity" - be it as an organisation, title or issue from which requests for stories can be created for others to reposed to. All _Groups can create a bespoke Boombox.')}
+        ${_('A _Group is a collection of registered users, unified under one "identity" - be it as an organisation, title or issue from which requests for _articles can be created for others to reposed to. All _Groups can create a bespoke _widget.')}
     </p>
     <p>&nbsp;</p>
     <p>
-        ${_('A Boombox is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for stories.')}
+        ${_('A _widget is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for _articles.')}
     </p>
     <p>&nbsp;</p>
     <h2>${_('How to get and use a _Group today:')}</h2>
