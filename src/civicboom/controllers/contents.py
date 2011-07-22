@@ -309,7 +309,9 @@ class ContentsController(BaseController):
 
         time_start = time()
 
-        results = results.filter(sql(feed))
+        # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
+        # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
+        results = results.filter("("+sql(feed)+")")
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
         l = to_apilist(results, obj_type='content', **kwargs)
