@@ -1,5 +1,6 @@
 from civicboom.lib.base import *
 from civicboom.model import User, Group, Media, Content
+from civicboom.model.meta import location_to_string
 from civicboom.lib.database.get_cached import get_member as _get_member
 
 from civicboom.lib.communication.email_lib import send_email
@@ -242,8 +243,13 @@ Disallow: /*.frag$
     #---------------------------------------------------------------------------
     # Featured content query
     #---------------------------------------------------------------------------
+
+    #       - can't really be cashed because of the use of 'me'
+    # Shish - rather than 'me', pass a 'location' parameter to the frag; this
+    #         way a user with a location only gets feature updates every 10
+    #         mins, and users without locations all share one featured set
     @web
-    #@cacheable(time=600) # can't really be cashed because of the use of 'me'
+    @cacheable(time=600, anon_only=False)
     def featured(self):
         """
         Make a numer of querys to get the top interesting content
@@ -258,7 +264,7 @@ Disallow: /*.frag$
                 kwargs['limit'] = 3
             if 'after' not in kwargs:
                 kwargs['after'] = now() - datetime.timedelta(days=7)
-            kwargs['exclude_content'] = [content['id'] for content in featured_content] #",".join([str(
+            kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
             content_items = content_search(**kwargs)['data']['list']['items']
             random.shuffle( content_items )
             return_list = []
@@ -272,21 +278,22 @@ Disallow: /*.frag$
         #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
         
         # Sponsored content dictionary
-        sponsored =  {
-            'sponsored_responded'   :   rnd_content_items(return_items=1, sort='-num_responses',              limit=3 ),
-            'sponsored_assignment'  :   rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 ),
-        }
+        s = {}
+        s['sponsored_responded'    ] = rnd_content_items(return_items=1, sort='-num_responses',              limit=3 )
+        s['sponsored_assignment'   ] = rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 )
+
         # Featured content dictionary
-        featured =  {
-            'top_viewed_assignments' : rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5),
-            'most_responses'         : rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5),
-            'near_me'                : rnd_content_items(return_items=2,                        location='me'    , limit=5),
-            'recent_assignments'     : rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5),
-            'recent'                 : rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5),
-        }
+        f = {}
+        f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
+        f['most_responses'         ] = rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5)
+        if request.GET.get("location"):
+            f['near_me'            ] = rnd_content_items(return_items=2, sort='distance'      , location=request.GET.get("location"), limit=5)
+        f['recent_assignments'     ] = rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5)
+        f['recent'                 ] = rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5)
+
         return action_ok(
             data={
-                'sponsored' : sponsored,
-                'featured' : featured,
+                'sponsored' : s,
+                'featured' : f,
             }
         )

@@ -50,7 +50,7 @@ def location_to_string(location):
     return None
 
 
-def to_dict(self, list_type='default', include_fields=None, exclude_fields=None, **kwargs):
+def to_dict(self, list_type='default', include_fields=None, **kwargs):
     """
     describe
     """
@@ -71,13 +71,6 @@ def to_dict(self, list_type='default', include_fields=None, exclude_fields=None,
     if isinstance(include_fields, list):
         for field in [field for field in include_fields if field in self.__to_dict__[master_list_name]]:
             fields[field] = self.__to_dict__[master_list_name][field]
-
-    # Exclude fields
-    if isinstance(exclude_fields, basestring):
-        exclude_fields = [field.strip() for field in exclude_fields.split(',')]
-    if isinstance(exclude_fields, list):
-        for field in [field for field in exclude_fields if field in fields]:
-            del fields[field]
 
     return obj_to_dict(self, fields)
 

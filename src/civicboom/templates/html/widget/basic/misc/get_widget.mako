@@ -24,5 +24,5 @@
 % endif
 
 <p>${_("Want to get a _widget for your community?")}</p>
-<a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_black">${_("Get started with ")}<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height: 1.5em; vertical-align: middle;"/></a>
+<a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_black">${_("Get started with ")}<img src="/images/logo-v2-128x32.png" alt="${_('_site_name')}" style="max-height: 1.5em; vertical-align: middle;"/></a>
 

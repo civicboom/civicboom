@@ -109,32 +109,11 @@
 	% endif
     ## --- redesign --- ##
     <div class="frag_top_row">
-	<div class="frag_col">
-	    % if self.content['parent']:
-		${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
-	    % endif
-	    
-	    ## New inline bar for actions
-	    % if config['development_mode']:
-    	    <div class="frag_list">
-    	       <div class="frag_list_contents">
-    	           <h3>Now you can...</h3>
-    	           <div style="padding-top: 5px; font-size: 110%">
-    	               <table style="width: 100%;">
-    	               <tr><td>
-    	                   ${actions_common()}
-    	               </td><td style="text-align: right;">
-    	                   ${content_actions_specific()}
-    	               </td><tr></table>
-    	           </div>
-    	       </div>
-    	    </div>
-	    % endif
-	    
-	    <% test_cont = {'content_text':'lol', 'config_key':'lol'} %>
-	    ${components.advert(
-	       contents = [test_cont],
-	    )}
+	<div class="frag_col">	    
+	    % if self.content.get('parent'):
+            ${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
+            ${response_guide()}
+    	% endif
 	    
 	    <div class="frag_list">
                 <div class="frag_list_contents">
@@ -233,14 +212,72 @@
 
 <%def name="content_title()">
     ##----Title----
-    <h1>${self.content['title']}</h1>
+    <div class="content_title">
+        <h1>${self.content['title']}</h1>
+        <div class="actions">
+            ${content_title_actions()}
+        </div>
+    </div>
     <div style="clear: both;"></div>
     <div class="creator_avatar">
 	   ${member_includes.avatar(self.content['creator'])}
     </div>
     <div class="content_creator">By: ${self.content['creator']['name']}</div>
     ## ${map_icon()}
-    <div style="clear: both; padding-bottom: 10px;"></div>
+    <div style="clear: both;"></div>
+</%def>
+
+<%def name="content_title_actions()">
+    % if 'edit' in self.actions:
+        <a href="${h.url('edit_content', id=self.id)}"
+           onclick="cb_frag_load($(this), '${h.url('edit_content', id=self.id, format='frag')}'); return false;"
+        ><span class="icon16 i_edit"></span>${_("Edit")}</a>
+        <div class="separator"></div>
+    % endif
+    
+    % if 'delete' in self.actions:
+        ${h.secure_link(
+            h.args_to_tuple('content', id=self.id, format='redirect'),
+            method = "DELETE",
+            value           = _("Delete"),
+            value_formatted = h.literal("<span class='icon16 i_delete'></span>&nbsp;%s") % _('Delete'),
+            confirm_text    = _("Are your sure you want to delete this content?"),
+            # AllanC -> GMeill - this is incorrect behaviour.
+            #  frag_reload can take a string to reload ALL frags with a reference to this content obj
+            #  reinstating old behaviour
+            #json_form_complete_actions = "cb_frag_reload(cb_frag_previous(current_element)); cb_frag_remove(current_element);", ## 'contents/%s' % self.id,
+            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
+            modal_params = dict(
+                title='Delete posting',
+                message='Are you sure you want to delete this posting?',
+                buttons=dict(
+                    yes="Yes. Delete",
+                    no="No. Take me back!",
+                )
+            ),
+        )}
+        <div class="separator"></div>
+    % endif
+    
+    % if 'boom' in self.actions:
+        <span class="mo-help">
+            ${h.secure_link(
+                h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
+                value           = _('Boom') ,
+                value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Boom') ,
+                json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            )}
+            <div class="mo-help-l mo-help-b">
+                ${_('Booming this content will recommend it to your followers and the rest of the community.')}
+            </div>
+        </span>
+        <div class="separator"></div>
+    % endif
+    
+    % if 'flag' in self.actions:
+        <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>&nbsp;Flag</a>
+        <div class="separator"></div>
+    % endif
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -402,13 +439,13 @@
     <div style="">
         <h2 class="hide_if_js">Share your story</h2>
         <h1 class="hide_if_nojs">Great you want to share your story...</h1>
-        <p>Would you like to respond to:</p>
+        <p style="padding-bottom: 1em;">Would you like to respond to:</p>
         <ul>
-            ${li_story(_('This story'), self.content)}
             ${li_story(_('The original request'), self.content.get('root_parent'))}
+            ${li_story(_('This story'), self.content)}
         </ul>
-        <div class="cb"></div>
     </div>
+    <div class="cb"></div>
     <div class="hide_if_nojs" style="padding-bottom: 6em;"></div>
 </%def>
 
@@ -719,9 +756,6 @@
 </%def>
 
 
-
-
-
 ##------------------------------------------------------------------------------
 ## Actions
 ##------------------------------------------------------------------------------
@@ -799,17 +833,17 @@
     ## --- Boom ----------------------------------------------------------------
     
     % if 'boom' in self.actions:
-    <span class="mo-help">
-        ${h.secure_link(
-            h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
-            value           = _('Boom') ,
-            value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Boom') ,
-            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-        )}
-        <div class="mo-help-r mo-help-b">
-            ${_('Booming this content will recommend it to your followers and the rest of the community.')}
-        </div>
-    </span>
+        <span class="mo-help">
+            ${h.secure_link(
+                h.args_to_tuple('content_action', action='boom', format='redirect', id=self.id) ,
+                value           = _('Boom') ,
+                value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Boom') ,
+                json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            )}
+            <div class="mo-help-r mo-help-b">
+                ${_('Booming this content will recommend it to your followers and the rest of the community.')}
+            </div>
+        </span>
     
 
         <span class="separtor">&nbsp;</span>
@@ -820,24 +854,26 @@
     % if 'approve' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
-            value           = _('Approve & Lock'),
-            value_formatted = h.literal("<span class='icon16 i_approved'></span>&nbsp;%s") % _('Approve & Lock'),
-            title           = _("Approve and lock this content so no further editing is possible"),
+            value           = _('Approve & _Lock'),
+            value_formatted = h.literal("<span class='icon16 i_approved'></span>&nbsp;%s") % _('Approve & _Lock'),
+            title           = _("Approve and _lock this content so no further editing is possible"),
             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
             modal_params = dict(
-                title   = 'Lock and approve this',
-                message = HTML.p("When something is locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free."),
+                title   = _('_Lock and approve this'),
+                message = HTML.p(_("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
                 buttons = dict(
-                    yes = 'Yes. Lock and approve',
-                    no  = 'No. Take me back',
+                    yes = _('Yes. _Lock and approve'),
+                    no  = _('No. Take me back'),
                 ),
                 icon_image = '/images/misc/contenticons/lock.png',
             ),
         )}
         <span class="separtor">&nbsp;</span>
     % endif
-    % if 'seen' in self.actions:
+    
+    ## Seen action removed 
+    <%doc>% if 'seen' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='seen'   , format='redirect', id=self.id),
             value           = _('Viewed') ,
@@ -855,21 +891,21 @@
             ),
         )}
         <span class="separtor">&nbsp;</span>
-    % endif
+    % endif</%doc>
     % if 'dissasociate' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
-            value           = _('Disassociate') ,
-            value_formatted = h.literal("<span class='icon16 i_disassociate'></span>&nbsp;%s") % _('Disassociate'),
-            title           = _("Disassociate your content from this response") ,
+            value           = _('_Disassociate') ,
+            value_formatted = h.literal("<span class='icon16 i_disassociate'></span>&nbsp;%s") % _('_Disassociate'),
+            title           = _("_Disassociate your content from this response") ,
             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
             modal_params = dict(
-                title   = 'Disassociate this post from your request',
-                message = HTML.p('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.'),
+                title   = _('_Disassociate this post from your request'),
+                message = HTML.p(_('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can _disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.')),
                 buttons = dict(
-                    yes = 'Yes. Disassociate',
-                    no  = 'No. Take me back',
+                    yes = _('Yes. _Disassociate'),
+                    no  = _('No. Take me back'),
                 ),
                 icon_image = '/images/misc/contenticons/disassociate.png',
             ),
@@ -904,7 +940,7 @@
 </%def>
 
     
-<%def name="actions_common()">
+<%def name="content_actions_common()">
     
     % if 'edit' in self.actions:
         <a href="${h.url('edit_content', id=self.id)}"
@@ -1061,4 +1097,68 @@ r = (d['content']['rating'] * 5)
         </li>
     % endif
 
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Response guide (this is a huge mess forgive me ;____;)
+##------------------------------------------------------------------------------
+<%def name="response_guide()">
+    % if c.logged_in_persona and self.content.get('parent').get('creator').get('username') == c.logged_in_persona.username:
+        % if 'approve' in self.actions or 'dissasociate' in self.actions:
+        ## --- Response guide ---
+        <div class="advert">
+           <h1>What now? You can:</h1>
+           <div class="content response_guide">
+               <table><tr><td style="width: 48%;">
+                   % if 'approve' in self.actions:
+                        ${h.secure_link(
+                            h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
+                            value           = _('Approve & _Lock'),
+                            value_formatted = h.literal("<table class=\"approve\"><tr><td class=\"int\">1.</td><td><p class=\"advert_title\">Grab it!</p><p class=\"advert_content\">Want to publish or use this content? Click here!</p></td></tr></table>"),
+                            title           = _("Approve and _lock this content so no further editing is possible"),
+                            confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
+                            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+                            modal_params = dict(
+                                title   = _('_Lock and approve this'),
+                                message = HTML.p(_("When something is grabbed and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
+                                buttons = dict(
+                                    yes = _('Yes. _Lock and approve'),
+                                    no  = _('No. Take me back'),
+                                ),
+                                icon_image = '/images/misc/contenticons/lock.png',
+                            ),
+                        )}
+                    % endif
+                </td>
+                <td style="width: 4%;"></td>
+                <td>
+                    % if 'dissasociate' in self.actions:
+                        ${h.secure_link(
+                            h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
+                            value           = _('_Disassociate') ,
+                            value_formatted = h.literal("<table class=\"disassociate\"><tr><td class=\"int\">2.</td><td class=\"advert_title\">Not appropriate or off brand?</td></tr><tr><td></td><td class=\"advert_content\">Click here to remove this from your list of responses!</td></tr></table>"),
+                            title           = _("_Disassociate your content from this response") ,
+                            confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
+                            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+                            modal_params = dict(
+                                title   = _('_Disassociate this post from your request'),
+                                message = HTML.p(_('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can _disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.')),
+                                buttons = dict(
+                                    yes = _('Yes. _Disassociate'),
+                                    no  = _('No. Take me back'),
+                                ),
+                                icon_image = '/images/misc/contenticons/disassociate.png',
+                            ),
+                        )}
+                    % endif
+               </td></tr>
+               <tr><td style="font-size: 80%;">
+                    Pst! Or you can do nothing
+               </tr></td></table>
+           </div>
+           <div style="clear: both;"></div>
+        </div>
+        % endif
+    % endif
 </%def>

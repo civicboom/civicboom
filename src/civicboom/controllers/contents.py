@@ -70,174 +70,66 @@ class ContentCommentSchema(ContentSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-
-#-------------------------------------------------------------------------------
-# Decorators
-#-------------------------------------------------------------------------------
-
-#@decorator
-#def can_publish(target, *args, **kwargs):
-#    #c.logged_in_persona_role
-#    result = target(*args, **kwargs) # Execute the wrapped function
-#    return result
-
-
-#-------------------------------------------------------------------------------
-# Search Filters
-#-------------------------------------------------------------------------------
-
-
-
-def _init_search_filters():
-    def append_search_text(query, text):
-        parts = []
-        for word in text.split():
-            word = re.sub("[^a-zA-Z0-9_-]", "", word)
-            if word:
-                parts.append(word)
-
-        if parts:
-            text = " | ".join(parts)
-            return query.filter("""
-                to_tsvector('english', title || ' ' || content) @@
-                to_tsquery(:text)
-            """).params(text=text)
-        else:
-            return query
-    
-    def append_search_location(query, location):
-        (lon, lat, radius) = (None, None, 10)
-        zoom = 10 # FIXME: inverse of radius? see bug #50
-
-        
-        if isinstance(location, basestring):
-            location = location.replace(",", " ")
-            location_tuple = [i.strip() for i in location.split()]
-            if   len(location_tuple) == 2:
-                (lon, lat        ) = location_tuple
-            elif len(location_tuple) == 3:
-                (lon, lat, radius) = location_tuple
-        else:
-        #if isinstance(location, Point):
-            log.warn('location search with objects is not implemented yet')
-        
-        if lon and lat and radius:
-            query = query.add_columns(func.st_distance(func.st_geomfromwkb(Content.location, 4326), 'SRID=4326;POINT(%f %f)' % (float(lon), float(lat))).label("distance"))
-            return query.filter("location IS NOT NULL").filter("ST_DWithin(location, 'SRID=4326;POINT(%f %f)', %f)" % (float(lon), float(lat), float(radius)))
-        else:
-            return query
-    
-    def append_search_id(query, id):
-        return query.filter(Content.id==int(id))
-
-    def append_search_type(query, type_text):
-        return query.filter(Content.__type__==type_text)
-    
-    def append_search_creator(query, creator):
-        return query.filter(Content.creator_id==normalize_member(creator))
-        #creator = 
-        #if isinstance(creator, int):
-        #else:
-            # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
-            # THIS WILL NOT WORK UNLESS - select_from(join(Content, Member, Content.creator)).
-            #return query.filter(Member.username==creator)
-            #raise Exception('unsuported search operation')
-    
-    def append_search_response_to(query, content_id):
-        if isinstance(content_id, Content):
-            content_id = content_id.id
-        try:
-            content_id = int(content_id)
-        except:
-            raise action_error('response_to must be an integer')
-        return query.filter(Content.parent_id==content_id).filter(or_(Content.__type__!='article', and_(Content.__type__=='article', ArticleContent.approval != 'dissassociated')))
-
-    def append_search_boomed_by(query, member):
-        member = normalize_member(member)
-        #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
-        return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
-
-    def append_search_before(query, date):
-        if isinstance(date, basestring):
-            date = parse_date(date, dayfirst=True).strftime("%d/%m/%Y")
-        return query.filter(Content.update_date <= date)
-    
-    def append_search_after(query, date):
-        if isinstance(date, basestring):
-            date = parse_date(date, dayfirst=True).strftime("%d/%m/%Y")
-        return query.filter(Content.update_date >= date)
-        
-    def append_exclude_content(query, ids):
-        if isinstance(ids, basestring):
-            ids = [int(id) for id in ids.split(',')]
-        return query.filter(~Content.id.in_(ids))
-
-    search_filters = {
-        'id'             : append_search_id          ,
-        'creator'        : append_search_creator     ,
-        'term'           : append_search_text        ,
-        'location'       : append_search_location    ,
-        'type'           : append_search_type        ,
-        'response_to'    : append_search_response_to ,
-        'boomed_by'      : append_search_boomed_by   ,
-        'before'         : append_search_before      ,
-        'after'          : append_search_after       ,
-        'exclude_content': append_exclude_content    ,
-    }
-    
-    return search_filters
-
-search_filters = _init_search_filters()
-
-
 list_filters = {
-    'all'                 : lambda results: results ,
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=now(),AssignmentContent.due_date==null())) ,
-    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< now())) ,
-    'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
-    'not_drafts'          : lambda results: results.filter(Content.__type__!='draft'),
+    'all'                 : lambda: AndFilter([
+    ]),
+    'assignments_active'  : lambda: AndFilter([
+        TypeFilter('assignment'),
+        OrFilter([
+            DueDateFilter(">", "now()"),
+            DueDateFilter("IS", "NULL")
+        ])
+    ]),
+    'assignments_previous': lambda: AndFilter([
+        TypeFilter('assignment'),
+        DueDateFilter("<", "now()")
+    ]),
+    'assignments'         : lambda: AndFilter([
+        TypeFilter('assignment'),
+    ]),
+    'drafts'              : lambda: AndFilter([
+        TypeFilter('draft'),
+        CreatorFilter(c.logged_in_persona.username)
+    ]),
+    'articles'            : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(False)
+    ]),
+    'responses'           : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(True)
+    ]),
+    'not_drafts'          : lambda: AndFilter([
+        NotFilter(TypeFilter('draft')),
+    ]),
 }
 
 
-def sqlalchemy_content_query(include_private=False, trusted_follower= False, **kwargs):
-    """
-    Returns an SQLAlchemy query object
-    This is used in the main contents/index and also to create a union stream of 2 querys
-    """
+def sort_results(results, sort_fields):
+    def valid_sort_field(field):
+        if field in [col["name"] for col in results.column_descriptions]:
+            return field
+        if hasattr(Content           , field):
+            return getattr(Content           , field)
+        if hasattr(UserVisibleContent, field):
+            return getattr(UserVisibleContent, field)
+        if hasattr(AssignmentContent, field):
+            return getattr(AssignmentContent, field)
+        return None
 
-    # Build Search
-    results = Session.query(Content)
-    results = results.with_polymorphic('*')
-    #results = results.options(defer(Content.content)) # exculude fetch of content field in this query return. we never need the full content in a list TODO: this will only become efficent IF content_short postgress trigger is implemented (issue #257)
-    results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
-    
-    #if 'private' in kwargs and logged_in_creator:
-    if include_private:
-        pass # allow private content
-    else:
-        if not trusted_follower:
-            results = results.filter(Content.private==False) # public content only
-        results = results.filter(Content.__type__!='draft')
-    
-    if 'creator' in kwargs.get('include_fields',[]):
-        #results = results.options(joinedload('creator'))
-        results = results.options(joinedload(Content.creator))
-    
-    if 'attachments' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('attachments'))
-    if 'tags' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('tags'))
-    for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-        if kwargs[key]:
-            results = search_filters[key](results, kwargs[key])
-    if 'list' in kwargs:
-        if kwargs['list'] in list_filters:
-            results = list_filters[kwargs['list']](results)
-        else:
-            raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+    for sort_field in sort_fields:
+        direction = asc
+        if sort_field[0] == "-":
+            direction = desc
+            sort_field = sort_field[1:]
+
+        # check that the sort string is the name of a column in the result
+        # set, rather than some random untrusted SQL statement
+        f = valid_sort_field(sort_field)
+        if f:
+            #log.debug("Sorting by %s %s" % (direction, f))
+            results = results.order_by(direction(f))
+
     return results
 
 
@@ -254,11 +146,11 @@ class ContentsController(BaseController):
 
     
     @web
-    def index(self, union_query=None, **kwargs):
+    def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
         @type list
-        @api contents 1.0 (WIP)        
+        @api contents 1.0 (WIP)
         
         @param list
             'all'                    (default) all content
@@ -277,11 +169,9 @@ class ContentsController(BaseController):
             'draft'
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
-        @param before       update date before "%d/%m/%Y"
-        @param after        update date after  "%d/%m/%Y"
         @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
-        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default '-update_date')
         @param * (see common list return controls)
         
         @return 200      list ok
@@ -289,20 +179,21 @@ class ContentsController(BaseController):
         
         @example https://test.civicboom.com/contents.json?creator=unittest&limit=2
         @example https://test.civicboom.com/contents.rss?list=assignments_active&limit=2
-        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
-        
         """
-        # url('contents')
-        
-        # Permissions
-        # AllanC - to aid cacheing we need permissions to potentially be a decorator
-        #          TODO: we need maybe a separte call, or something to identify a private call
+        results = Session.query(Content).with_polymorphic('*') # TODO: list
+        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
+
+        ###############################
+        # BEGIN COPY & PASTE OLD BITS #
+        ###############################
         trusted_follower  = False
         logged_in_creator = False
         creator = None
+
         try:
             # Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 
@@ -324,96 +215,92 @@ class ContentsController(BaseController):
                 logged_in_creator = True
             else:
                 trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
-        # If we've gone though the hassle of identifying if this is actually the user then show the private content ... this may not be the correct way, we may want to see always default to public .. need to consider
-        if trusted_follower or logged_in_creator:
-            kwargs['private'] = True
-        
-        
-        # Location - 'me' - replace 'me' with current location
-        # NOTE: Cache warning! this is not a public cacheable item
-        if kwargs.get('location') == 'me':
-            location = None
-            if c.logged_in_persona:
-                location = c.logged_in_persona.location_home
-            if hasattr(c.logged_in_persona, 'location_current') and c.logged_in_persona.location_updated > now() - datetime.timedelta(days=2):
-                location = c.logged_in_persona.location_current
-            if location:
-                kwargs['location'] = location
-            else:
-                return to_apilist(None, obj_type='content', **kwargs) # AllanC - if no location and 'me' specifyed return nothing as it would be confising to return seeming random content
-        
-        # --- the below should be publicly cacheable ---
-        
+
         # Setup search criteria
         if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = ""
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ""
-            
+            kwargs['include_fields'] = "creator"
+
         # Defaults
-        if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
-            kwargs['include_fields'] += ",creator"
-            kwargs['exclude_fields'] += ",creator_id"
         # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
         if kwargs.get('list') == 'responses':
             kwargs['include_fields'] += ",parent"
-        
-        
-        # AllanC - TEMP HACK!!!!! the line below means a trusted follower can see drafts!! this is NOT the correct behaviour.
-        #include_private_content = 'private' in kwargs and (logged_in_creator or trusted_follower)
-        results = sqlalchemy_content_query(include_private = logged_in_creator, trusted_follower=trusted_follower, **kwargs)
 
-        if union_query:
-            results = results.union(union_query)
+        if logged_in_creator:
+            pass # allow private content
+        else:
+            if not trusted_follower:
+                results = results.filter(Content.private==False) # public content only
+            results = results.filter(Content.__type__!='draft')
 
-        # union and add_column are mutually exclusive; union is functional while
-        # add_column is visual, so disable add_column if union is there
-        #if not union_query:
-        #    if 'term' in kwargs:
-        #        results = results.add_column(
-        #            func.ts_headline('pg_catalog.english',
-        #                func.strip_tags(Content.content),
-        #                func.plainto_tsquery(kwargs['term']),
-        #                'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
-        #                type_= Unicode
-        #            )
-        #        )
-        #    else:
-        #        results = results.add_column(
-        #            func.substr(func.strip_tags(Content.content), 0, 100)
-        #        )
+        # TODO: how does this affect performance?
+        for col in ['creator', 'attachments', 'tags']:
+            if col in kwargs.get('include_fields', []):
+                results = results.options(joinedload(getattr(Content, col)))
+        ###############################
+        #  END COPY & PASTE OLD BITS  #
+        ###############################
 
-        def valid_sort_field(field):
-            if field in [col["name"] for col in results.column_descriptions]:
-                return field
-            if hasattr(Content           , field):
-                return getattr(Content           , field)
-            if hasattr(UserVisibleContent, field):
-                return getattr(UserVisibleContent, field)
-            if hasattr(AssignmentContent, field):
-                return getattr(AssignmentContent, field)
-            return None
+        parts = []
 
-        for sort_field in kwargs.get('sort', '-update_date').split(','):
-            direction = asc
-            if sort_field[0] == "-":
-                direction = desc
-                sort_field = sort_field[1:]
+        if _filter:
+            parts.append(_filter)
 
-            # check that the sort string is the name of a column in the result
-            # set, rather than some random untrusted SQL statement
-            f = valid_sort_field(sort_field)
-            if f:
-                #log.debug("Sorting by %s %s" % (direction, f))
-                results = results.order_by(direction(f))
-        
-#        def merge_snippet(content, snippet):
-#            content = content.to_dict(**kwargs)
-#            content['content_short'] = snippet
-#            return content
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                parts.append(list_filters[kwargs['list']]())
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
 
-        #if not union_query:
-        #    results = [merge_snippet(co, sn) for co, sn in results]
+        if 'feed' in kwargs and kwargs['feed']:
+            parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
+
+        if 'creator' in kwargs and kwargs['creator']:
+            parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
+
+        if 'term' in kwargs and kwargs['term']:
+            parts.append(TextFilter(kwargs['term']))
+            results = results.add_columns(
+                func.ts_headline('pg_catalog.english',
+                    func.strip_tags(Content.content),
+                    func.plainto_tsquery(kwargs['term']),
+                    'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+                    type_= Unicode
+                ).label("content_short")
+            )
+
+
+        if 'location' in kwargs and kwargs['location']:
+            lf = LocationFilter.from_string(kwargs['location'])
+            if lf:
+                parts.append(lf)
+                results = results.add_columns(
+                    func.st_distance_sphere(
+                        func.st_geomfromwkb(Content.location, 4326),
+                        'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
+                    ).label("distance")
+                )
+
+        if 'type' in kwargs and kwargs['type']:
+            parts.append(TypeFilter(kwargs['type']))
+
+        if 'response_to' in kwargs and kwargs['response_to']:
+            parts.append(ParentIDFilter(int(kwargs['response_to'])))
+
+        if 'boomed_by' in kwargs and kwargs['boomed_by']:
+            parts.append(BoomedByFilter(get_member(kwargs['boomed_by']).id))
+
+        if 'include_content' in kwargs and kwargs['include_content']:
+            parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
+
+        if 'exclude_content' in kwargs and kwargs['exclude_content']:
+            parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+
+        feed = AndFilter(parts)
+
+        log.debug("Searching contents: %s" % sql(feed))
+
+        results = results.filter(sql(feed))
+        results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
         return to_apilist(results, obj_type='content', **kwargs)
 
@@ -894,7 +781,7 @@ class ContentsController(BaseController):
         
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
             if hasattr(content_actions_controller, list):
-                data[list] = getattr(content_actions_controller, list)(content, **kwargs)['data']['list']
+                data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
         
         # Increase content view count
         if hasattr(content,'views'):
