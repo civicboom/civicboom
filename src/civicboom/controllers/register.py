@@ -133,7 +133,7 @@ class RegisterController(BaseController):
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako', extra_vars={'registered_user':c.logged_in_persona}))
         
         # AllanC - Temp email alert for new user
-        send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_persona.email_normalized))
+        send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s - %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_persona.email_normalized, form['help_type']))
         
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
