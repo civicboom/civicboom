@@ -64,7 +64,7 @@
     </script>
     <div class="group_settings">
         <h1>
-            % if not c.action != 'new':
+            % if c.controller == 'groups':
                 ${_('Great! You want to create a _Group...')}<br />
                 ${_('To do this fill out the following:')}
             % endif
@@ -272,7 +272,7 @@
                    </div>
                 </fieldset>
         <div class="fl" style="width: 17em; padding-top: 1em;">
-            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
+            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' and c.controller != 'groups' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
         </div>
         <div class="fr" style="padding-top: 1em;">
