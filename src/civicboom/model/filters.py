@@ -276,6 +276,16 @@ class DueDateFilter(Filter):
         self.comparitor = comparitor
         self.date = date
 
+    @staticmethod
+    def from_string(s):
+        from dateutil.parser import parse
+        c = '='
+        d = s
+        if s[0] in ['<', '>']:
+            c = s[0]
+            d = s[1:]
+        return DueDateFilter(c, parse(d, dayfirst=True))
+
     def __unicode__(self):
         return "AssignmentContent.__type__ %s '%s'" % (self.comparitor, self.date)
 
@@ -283,7 +293,10 @@ class DueDateFilter(Filter):
         return "DueDateFilter(%s)" % (repr(self.comparitor), repr(self.date))
 
     def __sql__(self):
-        return "content_assignment.due_date %s %s" % (self.comparitor, self.date)
+        if type(self.date) == str:
+            return "content_assignment.due_date %s %s" % (self.comparitor, self.date)
+        else:
+            return "content_assignment.due_date %s '%s'" % (self.comparitor, self.date)
 
 
 class ParentIDFilter(Filter):
