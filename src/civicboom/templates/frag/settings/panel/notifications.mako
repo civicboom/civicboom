@@ -33,27 +33,33 @@
         user = get_user
         
         def check(name, tech, default):
-          if name in d['settings']:
-            route = d['settings'][name]
-          else:
-            route = ''
-          if tech in route:
-            return "checked"
-          else:
-            return ""
+            if name in d['settings']:
+                route = d['settings'][name]
+            else:
+                route = ''
+            if tech in route:
+                return "checked"
+            else:
+                return ""
         
         def select(name, tech, opt):
-          if name in d['settings']:
-            route = d['settings'][name]
-          else:
-            route = ''
-          if route:
-	          if (tech in route) and opt:
-	            return 'selected=selected'
-	          elif (not tech in route) and not opt:
-	            return 'selected=selected'
-	          else:
-	            return ''
+            print 'select', name, tech, opt
+            if name in d['settings']:
+                route = d['settings'][name]
+                print 'route1', route
+            else:
+                route = ''
+                print 'route2', route
+            if route:
+                print 'tir', (tech in route), 'opt', opt
+                if (tech in route) and opt:
+                    return 'selected=selected'
+                elif (not tech in route) and not opt:
+                    return 'selected=selected'
+                else:
+                    return ''
+            if not opt:
+                return 'selected=selected'
         
         notif_names = { 'n': 'Notification',
                          'e': 'Email'

@@ -1,3 +1,7 @@
+<%!
+    from webhelpers.html import HTML, literal
+%>
+
 <%def name="tabs(tab_id, titles, tab_contents, *args, **kwargs)">
     ## JQuery ui tabs - http://jqueryui.com/demos/tabs/
     <div id="${tab_id}">
@@ -24,51 +28,51 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Guide (formerly adverts)
+## Guidance (formerly advert)
 ##------------------------------------------------------------------------------
-<%def name="advert(contents, ad_class=None, int=None, heading=None, config_key=None)">
+<%def name="guidance(contents, ad_class=None, int=None, heading=None, config_key=None, disable_link=1)">
     % if config_key: ## and config_key in self.advert_list:
-    <div class="advert">
+    <div class="guidance">
         ## Display advert disable link
-        ${advert_disable_link(config_key)}
+        % if disable_link:
+            ${guidance_disable_link(config_key)}
+        % endif
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
-	% if heading:
-	    <h1>${heading}</h1>
-	% endif
-	% if int:
-	    <p class="int">${int}.</p>
-	% endif
-	% for item in contents:
-	    % if item.get('href'):
-		<a href="${item['href']}">
-	    % endif
-	    % if item.get('advert_class'):
-		<div class="content ${item['advert_class']}">
-	    % else:
-		<div class="content">
-	    % endif
-		% if item.get('title'):
-		    <p class="advert_title">${item['title']}</p>
-		% endif
-		% if item.get('content_text'):
-		    <p class="advert_content">${item['content_text']}</p>
-		% endif
-		% if item.get('content_list'):
-		    <ul>
-			% for li in item['content_list']:
-			    <li>- ${li}</li>
-			% endfor
-		    </ul>
-		% endif
-		% if item.get('prompt'):
-		    ## <br /><i>Click here!</i>
-		% endif
-	    </div>
-	    % if item.get('href'):
-		</a>
-	    % endif
-	% endfor
+    	% if heading:
+    	    <h1>${heading}</h1>
+    	% endif
+    	% if int:
+    	    <p class="int">${int}.</p>
+    	% endif
+    	% for item in contents:
+            <%
+                content_html = ''
+                if item.get('title'):
+                    content_html += HTML.p(item['title'], class_="guidance_title")
+                if item.get('content_text'):
+                    content_html += HTML.p(item['content_text'], class_="guidance_content")
+                if item.get('content_list'):
+                    content_list = ''
+                    for li in item['content_list']:
+                        content_list += HTML.li('- ' + li)
+                    content_html += HTML.ul(content_list)
+                # if item.get('prompt'):
+                #     content_html += HTML.br() + HTML.i(_('Click here!'))
+                _content_html = HTML.p(content_html, class_="content "+item.get('guidance_class', ''))
+            %>
+            % if item.get('secure_href'):
+                ${h.secure_link(item['secure_href'], item['title'], value_formatted = _content_html)}
+            % else:
+        	    % if item.get('href'):
+                    <a href="${item['href']}">
+        	    % endif
+        		${content_html | n}
+        	    % if item.get('href'):
+                    </a>
+        	    % endif
+            % endif
+    	% endfor
 
         <div class="separator" style="clear: both;"></div>
     </div>
@@ -80,14 +84,14 @@
 ##------------------------------------------------------------------------------
 
 ## Used for setting user settings to not display this chunk again
-<%def name="advert_disable_link(config_key)">
+<%def name="guidance_disable_link(config_key)">
     <div class="mo-help">
 	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
 	    ##${_("Don't show me this again")}
 	    ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
 	    ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
 	    <input type='hidden' name='${config_key}' value='True'/>
-	    <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
+	    <input class='hide_guidance_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
 	    <div class="mo-help-l">
 		Click here to permanently hide this
 	    </div>

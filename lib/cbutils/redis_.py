@@ -111,7 +111,7 @@ class RedisManager(NoSqlManager):
         self.db_conn = Redis(host=host, port=int(port), db=1, **params)
 
     def __contains__(self, key):
-        log.debug('%s contained in redis cache (as %s) : %s'%(key, self._format_key(key), self.db_conn.exists(self._format_key(key))))
+        #log.debug('%s contained in redis cache (as %s) : %s'%(key, self._format_key(key), self.db_conn.exists(self._format_key(key))))
         return self.db_conn.exists(self._format_key(key))
 
     def set_value(self, key, value):

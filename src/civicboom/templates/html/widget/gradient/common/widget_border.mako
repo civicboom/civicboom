@@ -24,7 +24,7 @@
         <div class="title">
             <div class="padding">
             Latest requests
-            <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo_com.png" /></a>
+            <a href="${h.url(controller='misc', action='titlepage', sub_domain='www')}" target="_blank"><img class="logo" src="/images/logo_com-v2-177x32.png" /></a>
             </div>
         </div>
 

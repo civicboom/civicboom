@@ -1,5 +1,10 @@
 #frag_containers {
 	.frag_container {
+	
+	   .ui-button {
+	       margin-right: 1em;
+	   }
+	
 		.what-next, .why-respond {
 		    color: #666;
 		    margin: 1.5em auto 0 0.5em;
@@ -12,11 +17,6 @@
 			text-align: center;
 			font-weight: bold;
 			padding-top: 15px;
-			
-			a {
-				color: #333;
-				text-decoration: none;
-			}
 		}
 	
 		.frag_content {
@@ -25,6 +25,28 @@
 				
 				.frag_col {
 					margin-bottom: 0;
+				}
+				
+				.content_title {
+				    padding: 0;
+				    
+				    h1, .actions {
+				        margin: 4px 0 4px 0;
+				        padding-bottom: 0.5em;
+				    }
+				    
+				    h1 {
+			            float: left;
+			            max-width: 85%;
+				    }
+				    
+				    .actions {
+				        float: right;
+				        
+				        .separator {
+				            padding: 2px;
+				        }
+				    }
 				}
 				
 				.content_creator {
@@ -51,8 +73,8 @@
 				}
 				
 				h1 {
-					color: #333;
-					font-size: 200%;
+					//color: #333;
+					//font-size: 200%;
 				}
 				
 				.content_text {
@@ -119,6 +141,21 @@
 			.content_text {
 				word-wrap: break-word;
 			}
+			
+			/* --- guide --- */
+			TABLE.approve {
+
+			}
+			
+			TABLE.disassociate {
+
+            }
+            
+            .response_guide {
+                background-image: url('/images/misc/contenticons/guide_separator.png');
+                background-repeat: repeat-y;
+                background-position: center;
+            }
 		
 			/*----------------------------Content Comments--------------------------------*/
 		
@@ -141,18 +178,22 @@
 				table {
 					width: 100%;
 				}
+				
 				h2 {
 					font-size: 150%;
 				}
+				
 				td {
 					vertical-align: top;
 					color: #444;
 					padding-bottom: 1em;
 				}
+				
 				textarea {
 					width: 100%;
 					min-height: 60px;
 				}
+				
 				input {
 					width: 100%;
 				}
@@ -168,6 +209,7 @@
 						font-weight: bold;
 						margin-bottom: 0.25em;
 					}
+					
 					.comment_content {
 						font-size:  88%;
 						line-height: 1em;
@@ -182,8 +224,12 @@
 				}
 			}
 		}
+        
 	}
 }
+
+
+
 
 HTML.no-js #frag_containers .frag_container .frag_content {
 	.new-comment {

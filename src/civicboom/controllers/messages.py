@@ -93,12 +93,6 @@ class MessagesController(BaseController):
                 kwargs['include_fields'] = "source, source_name"
             if kwargs.get('list') in ['sent']:
                 kwargs['include_fields'] = "target, target_name"
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ""
-            #if kwargs.get('list')=='to':
-            #    kwargs['exclude_fields'] = "content"
-            if kwargs.get('list') in ['sent']:
-                kwargs['exclude_fields'] = "read"
         
         results = Session.query(Message)
         
