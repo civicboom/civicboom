@@ -262,7 +262,9 @@ Disallow: /*.frag$
         def rnd_content_items(return_items=1, **kwargs):
             if 'limit' not in kwargs:
                 kwargs['limit'] = 3
-            if 'due_date' not in kwargs:
+            # searching due_date limits results to only assignments; if we want
+            # all articles, then we don't want to limit to assignments
+            if 'due_date' not in kwargs and kwargs.get('type') == "assignment":
                 kwargs['due_date'] = ">"+str(now() - datetime.timedelta(days=7))
             kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
             content_items = content_search(**kwargs)['data']['list']['items']
