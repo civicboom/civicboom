@@ -135,15 +135,15 @@
             ]
         
         # GregM: Hand holding adverts
-        hand_adverts = {
+        hand_guidance = {
             'ind': ['advert_hand_article', 'advert_hand_response', 'advert_hand_mobile'],
             'org': ['advert_hand_content', 'advert_hand_hub', 'advert_hand_mobile'],
             'hub': ['advert_hand_widget' , 'advert_hand_assignment'],
         }
         
-        self.adverts_content = {
+        self.guidance_content = {
             "assignment":{
-                'advert_class': 'long',
+                'guidance_class': 'long',
                 'title'       : _('Ask for _articles!'),
                 'href'        : h.url('new_content', target_type='assignment'),
                 ## 'content_text':    'You can ask your audience for their stories by clicking on the "Ask for stories" button in the header.',
@@ -167,13 +167,13 @@
                 'href': ''+h.url(controller='misc', action='new_article'),
             },
             "widget":{
-                'advert_class': 'small',
+                'guidance_class': 'small',
                 'title'       : _('Grab the _widget for your site!'),
                 'content_text': _('Click the "Get _widget" link below your avatar to grab the code!'),
                 ##'content_text':    _('A _widget is a simple audience engagement "widget", a window that can be embedded into your website or blog. A _Group or individual user can use it to let their readers directly post _content and _respond to _article _requests. You can get the _widget by clicking the "Get _widget" link under your avatar.'),
             },
             "hub":{
-                'advert_class': 'small',
+                'guidance_class': 'small',
                 'title'       : _('Create a _Group!'),
                 'href'        : h.url(controller='misc', action='what_is_a_hub')
                 ##'content_text':    _('A _Group is a user (or collection of users) unified under one "identity" - be it as as a professional journalist, an organisation, a title or issue which can issue _article _requests for others to _respond to. _Groups can also create a bespoke _widget.'),
@@ -188,7 +188,7 @@
         self.adverts_hand = []
         if self.current_user:
             my_type = 'hub' if c.logged_in_persona.__type__ == 'group' else (c.logged_in_persona.config.get('help_type') or 'ind')
-            self.adverts_hand = hand_adverts[my_type]
+            self.adverts_hand = hand_guidance[my_type]
     %>
 </%def>
 
@@ -480,8 +480,8 @@
 <%def name="guides()">
     ## Request advert (Hubs)
     % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
-    ${components.advert(
-        contents=[self.adverts_content['assignment']],
+    ${components.guidance(
+        contents=[self.guidance_content['assignment']],
         int=1,
         heading="What next?",
         config_key="advert_hand_assignment"
@@ -490,8 +490,8 @@
     
     ## Content advert (Journalists)
     % if "advert_hand_content" in self.adverts_hand and not c.logged_in_user.config["advert_hand_content"]:
-    ${components.advert(
-        contents=[self.adverts_content["assignment"], self.adverts_content["article"]],
+    ${components.guidance(
+        contents=[self.guidance_content["assignment"], self.guidance_content["article"]],
         int=1,
         heading=_("What next?"),
         config_key="advert_hand_content"
@@ -500,8 +500,8 @@
     
     ## Response advert (Individuals)
     % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
-    ${components.advert(
-        contents=[self.adverts_content["response"]],
+    ${components.guidance(
+        contents=[self.guidance_content["response"]],
         int=1,
         heading=_("What next?"),
         config_key="advert_hand_response"
@@ -510,8 +510,8 @@
 
     ## Widget advert (Hubs)
     % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
-    ${components.advert(
-        contents=[self.adverts_content['widget']],
+    ${components.guidance(
+        contents=[self.guidance_content['widget']],
         int=2,
         config_key="advert_hand_widget"
     )}
@@ -519,8 +519,8 @@
     
     ## Hub/widget hybrid advert (Journalists)
     % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
-    ${components.advert(
-        contents=[self.adverts_content['hub'], self.adverts_content['widget']],
+    ${components.guidance(
+        contents=[self.guidance_content['hub'], self.guidance_content['widget']],
         int=2,
         config_key="advert_hand_hub"
     )}
@@ -528,8 +528,8 @@
     
     ## Mobile advert (Individuals)
     % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
-    ${components.advert(
-        contents=[self.adverts_content['mobile']],
+    ${components.guidance(
+        contents=[self.guidance_content['mobile']],
         config_key="advert_hand_mobile"
     )}
     % endif

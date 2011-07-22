@@ -24,14 +24,14 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Guide (formerly adverts)
+## Guidance (formerly advert)
 ##------------------------------------------------------------------------------
-<%def name="advert(contents, ad_class=None, int=None, heading=None, config_key=None, disable_link=1)">
+<%def name="guidance(contents, ad_class=None, int=None, heading=None, config_key=None, disable_link=1)">
     % if config_key: ## and config_key in self.advert_list:
-    <div class="advert">
+    <div class="guidance">
         ## Display advert disable link
         % if disable_link:
-            ${advert_disable_link(config_key)}
+            ${guidance_disable_link(config_key)}
         % endif
         ## <a class="icon16 i_close"></a>
         ## Display content with href if supplied
@@ -45,16 +45,16 @@
     	    % if item.get('href'):
     		<a href="${item['href']}">
     	    % endif
-    	    % if item.get('advert_class'):
-    		<div class="content ${item['advert_class']}">
+    	    % if item.get('guidance_class'):
+    		<div class="content ${item['guidance_class']}">
     	    % else:
     		<div class="content">
     	    % endif
     		% if item.get('title'):
-    		    <p class="advert_title">${item['title']}</p>
+    		    <p class="guidance_title">${item['title']}</p>
     		% endif
     		% if item.get('content_text'):
-    		    <p class="advert_content">${item['content_text']}</p>
+    		    <p class="guidance_content">${item['content_text']}</p>
     		% endif
     		% if item.get('content_list'):
     		    <ul>
@@ -82,14 +82,14 @@
 ##------------------------------------------------------------------------------
 
 ## Used for setting user settings to not display this chunk again
-<%def name="advert_disable_link(config_key)">
+<%def name="guidance_disable_link(config_key)">
     <div class="mo-help">
 	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
 	    ##${_("Don't show me this again")}
 	    ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
 	    ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
 	    <input type='hidden' name='${config_key}' value='True'/>
-	    <input class='hide_advert_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
+	    <input class='hide_guidance_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
 	    <div class="mo-help-l">
 		Click here to permanently hide this
 	    </div>
