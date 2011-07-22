@@ -264,6 +264,9 @@ class ContentsController(BaseController):
         if 'due_date' in kwargs and kwargs['due_date']:
             parts.append(DueDateFilter.from_string(kwargs['due_date']))
 
+        if 'update_date' in kwargs and kwargs['update_date']:
+            parts.append(UpdateDateFilter.from_string(kwargs['update_date']))
+
         if 'term' in kwargs and kwargs['term']:
             parts.append(TextFilter(kwargs['term']))
             results = results.add_columns(
