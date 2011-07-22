@@ -145,7 +145,7 @@
             "assignment":{
                 'guidance_class': 'long',
                 'title'       : _('Ask for _articles!'),
-                'href'        : h.url('new_content', target_type='assignment'),
+                'secure_href'        : h.url('new_content', target_type='assignment'),
                 ## 'content_text':    'You can ask your audience for their stories by clicking on the "Ask for stories" button in the header.',
             },
             "article":{
