@@ -220,7 +220,7 @@ function countInputLength (event, textElement, maxLength, statusElement) {
 }
 
 function convertYesNoCheckbox() {
-  return;
+  //return;
 	var selects = $('select.yesno').filter(':visible');
 	if (selects.length == 0) return;
 	selects.after('<input type="checkbox" class="yesnocheck unproc" />');
@@ -228,9 +228,7 @@ function convertYesNoCheckbox() {
 	var checks = $('input.yesnocheck').filter('.unproc');
 	checks.each(function(index) {
 	    var value = $(this).prev('select.yesno').val();
-	    console.log ((value == '' || value == 'no')?'':'checked');
-	    $(this).attr('checked', (value == '' || value == 'no')?'':'checked');
-	    console.log ($(this).attr('checked'));
+	    $(this).attr('checked', !(value == '' || value == 'no'));
 	});
 	checks.unbind().change(function() {
 	    var yesno = $(this).prev('select.yesno');
