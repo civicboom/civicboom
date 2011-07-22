@@ -4,6 +4,7 @@ javascript/tiny_mce/*
 javascript/[a-zA-Z]*.js
 cdn-exclude.txt
 robots.txt
+*/.sass-cache/*
 */.gitignore
 */Makefile
 *.bak

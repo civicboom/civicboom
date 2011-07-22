@@ -11,7 +11,7 @@
 <h2> What does this mean?                     </h2>
 
 <p>
-<b>${_("Q: What is _site_name and how does it work")}</b>
+<b>${_("Q: What is _site_name and how does it work?")}</b>
 <br />${_("A: _site_name connects the people that need news stories with the the people that have them")}
 
 <br />${_("How Civicboom can help you depends on what you want to do")}
@@ -104,8 +104,8 @@
 </p>
 
 <p>
-<b>${_("Q: How do I access my settings.")}</b>
-<br />${_("A: Hover your mouse over your display picture in the top right hand corner of your screen. A bar will drop down containing a list of all your hubs. In the top left corner of this dropdown, click the link marked: \"my settings\". Alternatively, visit")} <a href="https://www.civicboom.com/settings/me/password">here</a>
+<b>${_("Q: How do I access my settings?")}</b>
+<br />${_("A: Hover your mouse over your display picture in the top right hand corner of your screen. A bar will drop down containing a list of all your Hubs. In the top left corner of this dropdown, click the link marked: \"my settings\". Alternatively, visit")} <a href="https://www.civicboom.com/settings/me/password">here</a>
 </p>
 
 <p>
@@ -129,12 +129,12 @@
 </p>
 
 <p>
-<b>${_("Q: How do I switch Hubs?")}</b>
-<br />${_("A: Hover your mouse over your profile picture in the top righthand corner of the screen. A list of Hubs you can access will be displayed, click one to switch into that Hub.")}
+<b>${_("Q: How do I switch between being a hub and a user?")}</b>
+<br />${_("A: Hover your mouse over your profile picture in the top righthand corner of the screen. A list of Hubs you can access will be displayed, click one to switch into that Hub. Your user profile will always be at the top of this list")}
 </p>
 
 <p>
-<b>${_("Q: What happens when I switch Hubs")}</b>
+<b>${_("Q: What happens when I switch between my user profile and my Hubs?")}</b>
 <br />${_("A: All your actions-your _article requests, _responses and content - will be posted under the name of that Hub.")}
 </p>
 
@@ -165,7 +165,7 @@
 </p>
 
 <p>
-<b>${_("Q: The invite function of hubs")}</b>
+<b>${_("Q: The invite function of Hubs")}</b>
 <ul>
     <li>${_("What: This allows you to invite others to join your hub.")}</li>
     <li>${_("How to: Go to the profile of the person you want to invite and click Invite")}</li>
