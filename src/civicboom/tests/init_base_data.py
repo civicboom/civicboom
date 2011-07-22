@@ -134,6 +134,7 @@ def init_base_data():
         u2_trans.status = "complete"
         
         Session.add(u2_trans)
+        u2_invoice1.status = "paid"
         Session.commit()
         
         

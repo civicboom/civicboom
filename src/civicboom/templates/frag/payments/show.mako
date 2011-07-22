@@ -18,6 +18,12 @@
         <h1>Details of your payment account</h1>
         <p>Payment account number: ${d['account_id']}</p>
         <p>Account type: ${_('_'+d['account_type']).capitalize()}</p>
+        <h2>Invoices</h2>
+        <ul>
+            % for invoice in d['invoices']:
+                <li><a href="${h.url('payment_action', action='invoice', id=d['account_id'], invoice_id=invoice['id'])}">${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}</a></li>
+            % endfor
+        </ul>
         <h2>Users and hubs associated with this account</h2>
         <ul>
             % for member in d['members']:

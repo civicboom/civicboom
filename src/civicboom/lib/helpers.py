@@ -287,7 +287,6 @@ def date_to_rss(date):
         date = api_datestr_to_datetime(date)
     return date.strftime("%a, %d %b %Y %H:%M:%S +0000")
 
-
 def time_ago(from_time):
     if not from_time:
         return None

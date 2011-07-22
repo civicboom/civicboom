@@ -92,6 +92,15 @@ class Invoice(Base):
         },
     })
     
+    __to_dict__.update({
+        'full': copy.deepcopy(__to_dict__['default'])
+    })
+    __to_dict__['full'].update({
+            'payment_account'     : lambda invoice: invoice.payment_account.to_dict(),
+            'lines'               : lambda invoice: [line.to_dict() for line in invoice.lines],
+            'transactions'        : lambda invoice: [trans.to_dict() for trans in invoice.transactions],
+    })
+    
     _config = None
 
     @property
@@ -177,6 +186,20 @@ class InvoiceLine(Base):
     
     service = relationship("Service")
     
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'invoice_id'        : None ,
+            'service_id'        : None ,
+            'title'             : None ,
+            'price'             : None ,
+            'quantity'          : None ,
+            'discount'          : None , 
+            'note'              : None ,
+        },
+    })
+    
     _config = None
     
     @property
@@ -223,6 +246,16 @@ class BillingAccount(Base):
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=False)
     
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'status'            : None ,
+            'provider'          : None ,
+            'payment_account_id': None ,
+        },
+    })
+    
     _config = None
     
     @property
@@ -245,6 +278,18 @@ class BillingTransaction(Base):
     
     billing_account    = relationship("BillingAccount", backref=backref('transactions') )
     invoice            = relationship("Invoice", backref=backref('transactions') )
+    
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'invoice_id'        : None ,
+            'status'            : None ,
+            'amount'            : None ,
+            'billing_account_id': None ,
+            'provider'          : lambda trans: trans.billing_account.provider,
+        },
+    })
     
     _config = None
     

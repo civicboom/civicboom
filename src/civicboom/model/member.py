@@ -812,6 +812,26 @@ class PaymentAccount(Base):
     extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
     start_date       = Column(DateTime(),     nullable=False, default=func.now())
     
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'type'              : None ,
+            'start_date'        : None ,
+            'name'              : lambda account: account.config.get('company') or account.config.get('name'),
+            'address'           : lambda account: [account.config[key] for key in account.config if key[:7] == 'address'],
+        },
+    })
+    
+    __to_dict__.update({
+        'full': copy.deepcopy(__to_dict__['default'])
+    })
+    __to_dict__['full'].update({
+            'members'          : lambda account: [member.to_dict() for member in account.members],
+            'invoices'         : lambda account: [invoice.to_dict() for invoice in account.invoices],
+            'billing_accounts' : lambda account: [billing.to_dict() for billing in account.billing_accounts],
+            'services'         : lambda account: [service.to_dict() for service in account.services],
+    })
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
     invoices = relationship("Invoice", backref=backref('payment_account') )
