@@ -262,8 +262,8 @@ Disallow: /*.frag$
         def rnd_content_items(return_items=1, **kwargs):
             if 'limit' not in kwargs:
                 kwargs['limit'] = 3
-            if 'after' not in kwargs:
-                kwargs['after'] = now() - datetime.timedelta(days=7)
+            if 'due_date' not in kwargs:
+                kwargs['due_date'] = ">"+str(now() - datetime.timedelta(days=7))
             kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
             content_items = content_search(**kwargs)['data']['list']['items']
             random.shuffle( content_items )
