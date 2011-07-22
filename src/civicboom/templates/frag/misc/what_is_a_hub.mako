@@ -22,7 +22,7 @@
         ${_('A Boombox is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for stories.')}
     </p>
     <p>&nbsp;</p>
-    <h2>${('How to get and use a _Group today:')}</h2>
+    <h2>${_('How to get and use a _Group today:')}</h2>
     <p>&nbsp;</p>
     <div style="position: relative;">
         <div class="cb">

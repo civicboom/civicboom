@@ -26,7 +26,7 @@
         <div style="padding: 1em 4em;">
             <h1 style="margin:0;">
                 <a href="${site_url}">
-                    <img src="${site_url}/images/logo.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
+                    <img src="${site_url}/images/logo-v2-128x32.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
                 </a>
             </h1>
         </div>
