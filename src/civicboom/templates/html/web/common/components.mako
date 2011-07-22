@@ -1,3 +1,7 @@
+<%!
+    from webhelpers.html import HTML, literal
+%>
+
 <%def name="tabs(tab_id, titles, tab_contents, *args, **kwargs)">
     ## JQuery ui tabs - http://jqueryui.com/demos/tabs/
     <div id="${tab_id}">
@@ -42,34 +46,32 @@
     	    <p class="int">${int}.</p>
     	% endif
     	% for item in contents:
-    	    % if item.get('href'):
-    		<a href="${item['href']}">
-    	    % endif
-    	    % if item.get('guidance_class'):
-    		<div class="content ${item['guidance_class']}">
-    	    % else:
-    		<div class="content">
-    	    % endif
-    		% if item.get('title'):
-    		    <p class="guidance_title">${item['title']}</p>
-    		% endif
-    		% if item.get('content_text'):
-    		    <p class="guidance_content">${item['content_text']}</p>
-    		% endif
-    		% if item.get('content_list'):
-    		    <ul>
-    			% for li in item['content_list']:
-    			    <li>- ${li}</li>
-    			% endfor
-    		    </ul>
-    		% endif
-    		% if item.get('prompt'):
-    		    ## <br /><i>Click here!</i>
-    		% endif
-    	    </div>
-    	    % if item.get('href'):
-    		</a>
-    	    % endif
+            <%
+                content_html = ''
+                if item.get('title'):
+                    content_html += HTML.p(item['title'], class_="guidance_title")
+                if item.get('content_text'):
+                    content_html += HTML.p(item['content_text'], class_="guidance_content")
+                if item.get('content_list'):
+                    content_list = ''
+                    for li in item['content_list']:
+                        content_list += HTML.li('- ' + li)
+                    content_html += HTML.ul(content_list)
+                # if item.get('prompt'):
+                #     content_html += HTML.br() + HTML.i(_('Click here!'))
+                _content_html = HTML.p(content_html, class_="content "+item.get('guidance_class', ''))
+            %>
+            % if item.get('secure_href'):
+                ${h.secure_link(item['secure_href'], item['title'], value_formatted = _content_html)}
+            % else:
+        	    % if item.get('href'):
+                    <a href="${item['href']}">
+        	    % endif
+        		${content_html | n}
+        	    % if item.get('href'):
+                    </a>
+        	    % endif
+            % endif
     	% endfor
 
         <div class="separator" style="clear: both;"></div>
