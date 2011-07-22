@@ -261,6 +261,9 @@ class ContentsController(BaseController):
         if 'creator' in kwargs and kwargs['creator']:
             parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
 
+        if 'due_date' in kwargs and kwargs['due_date']:
+            parts.append(DueDateFilter.from_string(kwargs['due_date']))
+
         if 'term' in kwargs and kwargs['term']:
             parts.append(TextFilter(kwargs['term']))
             results = results.add_columns(
