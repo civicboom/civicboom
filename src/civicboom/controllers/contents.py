@@ -30,6 +30,7 @@ from dateutil.parser import parse as parse_date
 import re
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
+from time import time
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -71,14 +72,37 @@ class ContentCommentSchema(ContentSchema):
 #-------------------------------------------------------------------------------
 
 list_filters = {
-    'all'                 : lambda results: results ,
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=now(),AssignmentContent.due_date==null())) ,
-    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< now())) ,
-    'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
-    'not_drafts'          : lambda results: results.filter(Content.__type__!='draft'),
+    'all'                 : lambda: AndFilter([
+    ]),
+    'assignments_active'  : lambda: AndFilter([
+        TypeFilter('assignment'),
+        OrFilter([
+            DueDateFilter(">", "now()"),
+            DueDateFilter("IS", "NULL")
+        ])
+    ]),
+    'assignments_previous': lambda: AndFilter([
+        TypeFilter('assignment'),
+        DueDateFilter("<", "now()")
+    ]),
+    'assignments'         : lambda: AndFilter([
+        TypeFilter('assignment'),
+    ]),
+    'drafts'              : lambda: AndFilter([
+        TypeFilter('draft'),
+        CreatorFilter(c.logged_in_persona.username)
+    ]),
+    'articles'            : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(False)
+    ]),
+    'responses'           : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(True)
+    ]),
+    'not_drafts'          : lambda: AndFilter([
+        NotFilter(TypeFilter('draft')),
+    ]),
 }
 
 
@@ -146,11 +170,9 @@ class ContentsController(BaseController):
             'draft'
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
-        @param before       update date before "%d/%m/%Y"
-        @param after        update date after  "%d/%m/%Y"
         @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
-        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default '-update_date')
         @param * (see common list return controls)
         
         @return 200      list ok
@@ -166,16 +188,84 @@ class ContentsController(BaseController):
         results = Session.query(Content).with_polymorphic('*') # TODO: list
         results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
 
+        ###############################
+        # BEGIN COPY & PASTE OLD BITS #
+        ###############################
+        trusted_follower  = False
+        logged_in_creator = False
+        creator = None
+
+        if kwargs.get('list') == "drafts" and not c.logged_in_persona:
+            kwargs['list'] = 'all'
+
+        try:
+            # Try to get the creator of the whole parent chain or creator of self
+            # This models the same permission view enforcement as the 
+            parent_root = get_content(kwargs['response_to'])
+            parent_root = parent_root.root_parent or parent_root
+            creator = parent_root.creator
+            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
+        except:
+            pass
+        try:
+            creator = get_member(kwargs['creator'])
+            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
+        except:
+            pass
+        
+        if creator:
+            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
+            if c.logged_in_persona == creator:
+                logged_in_creator = True
+            else:
+                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
+
+        # Setup search criteria
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = "creator"
+
+        # Defaults
+        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
+        if kwargs.get('list') == 'responses':
+            kwargs['include_fields'] += ",parent"
+
+        if logged_in_creator:
+            pass # allow private content
+        else:
+            if not trusted_follower:
+                results = results.filter(Content.private==False) # public content only
+            results = results.filter(Content.__type__!='draft')
+
+        # TODO: how does this affect performance?
+        for col in ['creator', 'attachments', 'tags']:
+            if col in kwargs.get('include_fields', []):
+                results = results.options(joinedload(getattr(Content, col)))
+        ###############################
+        #  END COPY & PASTE OLD BITS  #
+        ###############################
+
         parts = []
 
         if _filter:
             parts.append(_filter)
+
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                parts.append(list_filters[kwargs['list']]())
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
 
         if 'feed' in kwargs and kwargs['feed']:
             parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
         if 'creator' in kwargs and kwargs['creator']:
             parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
+
+        if 'due_date' in kwargs and kwargs['due_date']:
+            parts.append(DueDateFilter.from_string(kwargs['due_date']))
+
+        if 'update_date' in kwargs and kwargs['update_date']:
+            parts.append(UpdateDateFilter.from_string(kwargs['update_date']))
 
         if 'term' in kwargs and kwargs['term']:
             parts.append(TextFilter(kwargs['term']))
@@ -217,73 +307,20 @@ class ContentsController(BaseController):
 
         feed = AndFilter(parts)
 
-        log.debug("Searching contents: %s" % sql(feed))
+        time_start = time()
 
-        ###############################
-        # BEGIN COPY & PASTE OLD BITS #
-        ###############################
-        trusted_follower  = False
-        logged_in_creator = False
-        creator = None
-
-        try:
-            # Try to get the creator of the whole parent chain or creator of self
-            # This models the same permission view enforcement as the 
-            parent_root = get_content(kwargs['response_to'])
-            parent_root = parent_root.root_parent or parent_root
-            creator = parent_root.creator
-            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
-        except:
-            pass
-        try:
-            creator = get_member(kwargs['creator'])
-            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
-        except:
-            pass
-        
-        if creator:
-            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
-            if c.logged_in_persona == creator:
-                logged_in_creator = True
-            else:
-                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
-
-        # hacky old thing to make tests pass -- rather than lists being SQLAlchemy expressions,
-        # we should migrate them to being pre-built feeds
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                results = list_filters[kwargs['list']](results)
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-
-        # Setup search criteria
-        if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = "creator"
-
-        # Defaults
-        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
-        if kwargs.get('list') == 'responses':
-            kwargs['include_fields'] += ",parent"
-
-        if logged_in_creator:
-            pass # allow private content
-        else:
-            if not trusted_follower:
-                results = results.filter(Content.private==False) # public content only
-            results = results.filter(Content.__type__!='draft')
-
-        # TODO: how does this affect performance?
-        for col in ['creator', 'attachments', 'tags']:
-            if col in kwargs.get('include_fields', []):
-                results = results.options(joinedload(getattr(Content, col)))
-        ###############################
-        #  END COPY & PASTE OLD BITS  #
-        ###############################
-
-        results = results.filter(sql(feed))
+        # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
+        # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
+        results = results.filter("("+sql(feed)+")")
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
-        return to_apilist(results, obj_type='content', **kwargs)
+        l = to_apilist(results, obj_type='content', **kwargs)
+
+        # hacky benchmarking just to get some basic idea of how each feed performs
+        time_end = time()
+        log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
+
+        return l
 
 
     @web

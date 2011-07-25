@@ -381,6 +381,8 @@ class GroupsController(BaseController):
         group = get_group(id, is_current_persona_admin=True)
         user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
         group.delete()
+        c.html_action_fallback_url = url('/')
+        set_persona(c.logged_in_user)
         return action_ok(_("group deleted"), code=200)
 
 

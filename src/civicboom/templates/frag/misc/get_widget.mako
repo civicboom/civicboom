@@ -139,7 +139,7 @@
 
 <%def name="what(member)">
 <div class="widget_creator"><div class="padding">
-    <h1>What is a _Widget?</h1>
+    <h1>${_("What is a _widget?")}</h1>
     <p>
         ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
         ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
@@ -151,23 +151,23 @@
     <table class="what_table"><tr>
         
         <td>
-            <p>1. Standard design: Customizable</p>
+            <p>${_("1. Standard design: Customisable")}</p>
             <ul>
-                <li>Size adaptable to fit website needs</li>
-                <li>Editable colours</li>
-                <li>List your _assignments and _articles</li>
-                ##<li>Direct "Share your _article" button</li>
+                <li>${_("Size adaptable to fit website needs")}</li>
+                <li>${_("Editable colours")}</li>
+                <li>${_("List your _assignments and _articles")}</li>
+                ##<li>${_("Direct "Share your _article" button")}</li>
             </ul>
         </td>
         <td>
             <img src="/images/widget/preview_basic.png" alt="basic_widget_preview" style="margin-right: 2em;"/>
         </td>
         <td>
-            <p>2. Animated Design: Fixed size</p>
+            <p>${_("2. Animated Design: Fixed size")}</p>
             <ul>
-                <li>Requests appear on a carousel</li>
-                <li>Larger font for clear reading</li>
-                ##<li>Direct "Share your story" button</li>
+                <li>${_("Requests appear on a carousel")}</li>
+                <li>${_("Larger font for clear reading")}</li>
+                ##<li>${_("Direct "Share your story" button")}</li>
             </ul>
         </td>
         <td>
@@ -267,7 +267,7 @@
                 </fieldset>
             
             </form>
-            <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
+            <input type="button" value="${_("Preview _widget")}" onClick="preview_widget($(this));" />
         </td>
         
         <td class="preview" style="width: 280px;">

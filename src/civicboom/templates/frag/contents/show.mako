@@ -10,7 +10,7 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="media_includes"  file="/html/web/media/show.mako"        />
-<%namespace name="components"	   file="/html/web/common/components.mako" />
+<%namespace name="components"       file="/html/web/common/components.mako" />
 
 ## for deprication
 <%namespace name="loc"             file="/html/web/common/location.mako"     />
@@ -83,9 +83,9 @@
         # GregM: Removed popups as we have the janrain share popup now :D
         #if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and self.content['type']=='assignment' and not c.logged_in_user.config['help_popup_created_assignment']:
         #    self.attr.popup_url = url(controller='misc', action='help', id='created_assignment', format='frag')
-	
-	self.popup_link_class	= "get-involved-popup-" + str(self.content['id'])
-	self.popup_class	= "get-involved-" + str(self.content['id'])
+        
+        self.popup_link_class = "get-involved-popup-" + str(self.content['id'])
+        self.popup_class      = "get-involved-" + str(self.content['id'])
     %>
 </%def>
 
@@ -102,20 +102,20 @@
 ## Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-	% if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
-	<script>
-		${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }
-	</script>
-	% endif
+    % if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
+    <script>
+        ${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }
+    </script>
+    % endif
     ## --- redesign --- ##
     <div class="frag_top_row">
-	<div class="frag_col">	    
-	    % if self.content.get('parent'):
+    <div class="frag_col">        
+        % if self.content.get('parent'):
             ${frag_lists.content_list(self.content['parent'], _("This is a response to..."), creator=True)}
             ${response_guide()}
-    	% endif
-	    
-	    <div class="frag_list">
+        % endif
+        
+        <div class="frag_list">
                 <div class="frag_list_contents">
                     ${content_title()}
                     ${content_media()}
@@ -138,18 +138,18 @@
                     ${content_license()}
                     <div class="separator"></div>
                 </div>
-	    </div>
-	</div>
+        </div>
     </div>
-	
+    </div>
+    
     <div class="frag_left_col">
         <div class="frag_col">
-	    ${frag_lists.content_list(
-		d['responses'],
-		_("Responses"),
-		href=h.args_to_tuple('contents', response_to=self.id),
-		creator=True
-	    )}
+        ${frag_lists.content_list(
+            d['responses'],
+            _("Responses"),
+            href=h.args_to_tuple('contents', response_to=self.id),
+            creator=True
+        )}
         </div>
     </div>
     
@@ -171,12 +171,11 @@
                   ##% endif
                   ##Joined: ${self.member['join_date']}<br />
                 </div>
-				<div style="clear: both; height: 5px;"></div>
+                <div style="clear: both; height: 5px;"></div>
               </div>
             </div>
           </div>
-	</div></%doc>
-      
+    </div></%doc>
       <%doc>
         % if self.attr.share_kwargs:
             ${share.AddThisFragList(**self.attr.share_kwargs)}
@@ -220,7 +219,7 @@
     </div>
     <div style="clear: both;"></div>
     <div class="creator_avatar">
-	   ${member_includes.avatar(self.content['creator'])}
+       ${member_includes.avatar(self.content['creator'])}
     </div>
     <div class="content_creator">By: ${self.content['creator']['name']}</div>
     ## ${map_icon()}
@@ -286,18 +285,18 @@
 <%def name="map_icon()">
     <% content = self.content %>
     % if content.get('location'):
-	##<a href="" class="map_popup">
-	    <div class="media_icon">
-		<img src="/images/misc/contenticons/map.png" />
-	    </div>
-	##</a>
-	##<script>
-	##    $('.map_popup').click(function() {
-	##	$('#map-popup').modal({ onShow: function (dialog) {}});
-	##	return false;
-	##    });
-	##</script>
-	##${popup.popup_static('map', content_map, 'map-popup')}
+    ##<a href="" class="map_popup">
+        <div class="media_icon">
+        <img src="/images/misc/contenticons/map.png" />
+        </div>
+    ##</a>
+    ##<script>
+    ##    $('.map_popup').click(function() {
+    ##    $('#map-popup').modal({ onShow: function (dialog) {}});
+    ##    return false;
+    ##    });
+    ##</script>
+    ##${popup.popup_static('map', content_map, 'map-popup')}
     % endif
 </%def>
 
@@ -339,7 +338,7 @@
           <tr>
             <td>Booms</td>
             <td>${content['boom_count'] if 'boom_count' in content else '0'}</td>
-	    <td><span class="separator"></span></td>
+        <td><span class="separator"></span></td>
             <td>Views</td>
             <td>${content['views'] if 'views' in content else '0'}</td>
           </tr>
@@ -454,26 +453,26 @@
 ##------------------------------------------------------------------------------
 <%def name="content_action_buttons()">
     <div style="padding-top: 20px;" class="acceptrequest">
-	<table>
-	    <tr>
-		<td class="tip"></td>
-		<td>
-		## --- Publish -----------------------------------------------------------
-		% if 'publish' in self.actions:
-		    ${h.secure_link(
+    <table>
+        <tr>
+        <td class="tip"></td>
+        <td>
+        ## --- Publish -----------------------------------------------------------
+        % if 'publish' in self.actions:
+            ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
                 method    = "PUT" ,
                 css_class = 'button',
                 value     = _('Post') ,
                 json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
                 ## AllanC - the line above could refresh parent_id - it would be nice if cb_frag_reload could take a combination of string and jQuery objects
-		    )}
-		% endif
+            )}
+        % endif
       
-		## --- Respond -----------------------------------------------------------
-		% if 'respond' in self.actions:
-		    % if self.content.get('parent'):
-		    
+        ## --- Respond -----------------------------------------------------------
+        % if 'respond' in self.actions:
+            % if self.content.get('parent'):
+            
                 <div class="hide_if_nojs">
                     <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Share your story")}</a>
                 </div>
@@ -481,58 +480,56 @@
                     ${popup.popup_static('Share your story', respond_has_parent, 'popup_share')}
                 </div>
                 
-		    % else:
-    		    ${h.secure_link(
+            % else:
+                ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
                     css_class = 'button',
                     value     = _("Share your story") ,
                     json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-    		    )}
-		    ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
-		    ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
-		    % endif
-		% endif
-		
+                )}
+            ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
+            ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
+            % endif
+        % endif
 <%doc>
-	    ## --- Accept ------------------------------------------------------------
-		% if 'accept' in self.actions:
-		    ${h.secure_link(
-			h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
-			css_class = '',##'button',
-			value           = _('_Respond later') ,
-			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-		    )}
-		    ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
-		% endif
-		
-	      
-		## --- Withdraw ----------------------------------------------------------
-		% if 'withdraw' in self.actions:
-		    ${h.secure_link(
-			h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
-			css_class = '',##'button',
-			value           = _('Withdraw') ,
-			json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
-		    )}
-		% endif
+        ## --- Accept ------------------------------------------------------------
+        % if 'accept' in self.actions:
+            ${h.secure_link(
+            h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
+            css_class = '',##'button',
+            value           = _('_Respond later') ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            )}
+            ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
+        % endif
+        
+          
+        ## --- Withdraw ----------------------------------------------------------
+        % if 'withdraw' in self.actions:
+            ${h.secure_link(
+            h.args_to_tuple('content_action', action='withdraw', format='redirect', id=self.id) ,
+            css_class = '',##'button',
+            value           = _('Withdraw') ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            )}
+        % endif
 </%doc>
         
-		</td>
-		<td class="tip"><div>
-		    <%
-			
-		    %>
-		    <a href="" class="${self.popup_link_class}">Why should you get involved?</a>
-		    <script>
-			$(".${self.popup_link_class}").click(function() {
-			    $("#${self.popup_class}").modal({ onShow: function (dialog) {}});
-			    return false;
-			});
-		    </script>
-		    ${popup.popup_static('Why get involved?', get_involved, self.popup_class)}
-		</div></td>
-	    </tr>
-	</table>
+        </td>
+        <td class="tip"><div>
+            <%
+            %>
+            <a href="" class="${self.popup_link_class}">Why should you get involved?</a>
+            <script>
+            $(".${self.popup_link_class}").click(function() {
+                $("#${self.popup_class}").modal({ onShow: function (dialog) {}});
+                return false;
+            });
+            </script>
+            ${popup.popup_static('Why get involved?', get_involved, self.popup_class)}
+        </div></td>
+        </tr>
+    </table>
     </div>
 </%def>
 
@@ -583,26 +580,28 @@
     %>
     <div class="media_container">
     
-    % if config['development_mode']:
-	## Load the content carousel to display previews of all content media
-	<span class="carousel">${media_includes.media_carousel(content['attachments'], content['id'])}</span>
+    ## % if config['development_mode']:
+    ## Load the content carousel to display previews of all content media
+    <span class="carousel">${media_includes.media_carousel(content['attachments'], content['id'])}</span>
+    <%doc>
     % else:
-	<ul id="media_carousel_content_${content['id']}" class="media_carousel">
-	% for media in content['attachments']:
-	    <li>
-		${media_includes.preview(media)}
-		<p>
-		% if media.get('caption'):
-		    <span class="caption">${media['caption']}</span>
-		% endif
-		% if media.get('credit'):
-		    <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
-		% endif
-		</p>
-	    </li>
-	% endfor
-	</ul>
+    <ul id="media_carousel_content_${content['id']}" class="media_carousel">
+    % for media in content['attachments']:
+        <li>
+        ${media_includes.preview(media)}
+        <p>
+        % if media.get('caption'):
+            <span class="caption">${media['caption']}</span>
+        % endif
+        % if media.get('credit'):
+            <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
+        % endif
+        </p>
+        </li>
+    % endfor
+    </ul>
     % endif
+    </%doc>
     
     </div>
     
@@ -633,23 +632,23 @@
 <%def name="content_map()">
     <% content = self.content %>
     % if content.get('location'):
-	<%
-	lon = content['location'].split(' ')[0]
-	lat = content['location'].split(' ')[1]
-	%>
-	<p>
-	${loc.minimap(
-	    name=h.uniqueish_id("map", content['id']),
-	    width="100%", height="200px",
-	    lat = lat,
-	    lon = lon,
-	    feeds = [
-		dict(pin='gold',    url='/contents.rss?sort=distance&location=%s,%s&limit=10' % (lon,lat)     , focus=True ),
-		dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
-	    ],
-		#controls=True
-	)}
-	</p>
+    <%
+    lon = content['location'].split(' ')[0]
+    lat = content['location'].split(' ')[1]
+    %>
+    <p>
+    ${loc.minimap(
+        name=h.uniqueish_id("map", content['id']),
+        width="100%", height="200px",
+        lat = lat,
+        lon = lon,
+        feeds = [
+        dict(pin='gold',    url='/contents.rss?sort=distance&location=%s,%s&limit=10' % (lon,lat)     , focus=True ),
+        dict(pin='red',     url='/contents.rss?id=%s'          % content['id']              ),
+        ],
+        #controls=True
+    )}
+    </p>
     % endif
 </%def>
 
@@ -666,30 +665,30 @@
 
     <table>
         <tr style="display: none;">
-			<th>${_('Member')}</th>
-			<th>${_('Comment')}</th>
-			<th>${_('Actions')}</th>
-		</tr>
-	<tr>
-	    <td colspan="3">
-		<div class="comments-option comments-option-${self.id}">
-		    % if c.logged_in_user:
-		        ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments show-comments-${self.id}">Ask here...</span>
-		    % else:
-		        To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
-		    % endif
-		</div>
-	    </td>
-	    <script>
-		$(function() {
-			$('.new-comment-${self.id}').hide();
-			$('.show-comments-${self.id}').click(function() {
-			    $('.new-comment-${self.id}').toggle();
-			    $('.comment-${self.id}').focus();
-			});
-		});
-	    </script>
-	</tr>
+            <th>${_('Member')}</th>
+            <th>${_('Comment')}</th>
+            <th>${_('Actions')}</th>
+        </tr>
+    <tr>
+        <td colspan="3">
+        <div class="comments-option comments-option-${self.id}">
+            % if c.logged_in_user:
+                ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments show-comments-${self.id}">Ask here...</span>
+            % else:
+                To comment on this content, please <a href="${url(controller='account', action='signin')}">sign up or log in!</a>
+            % endif
+        </div>
+        </td>
+        <script>
+        $(function() {
+            $('.new-comment-${self.id}').hide();
+            $('.show-comments-${self.id}').click(function() {
+                $('.new-comment-${self.id}').toggle();
+                $('.comment-${self.id}').focus();
+            });
+        });
+        </script>
+    </tr>
         <tr class="new-comment new-comment-${self.id}">
             <td class="comment_avatar">
                 % if c.logged_in_user:
@@ -712,7 +711,7 @@
                     
                     ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}
                     
-		    If you want to share your story please use the "share your story" button above.<br />
+                    ${_('If you want to share your story please use the "share your story" button above.')}<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
                     <script type="text/javascript">
@@ -740,9 +739,9 @@
                 <p class="comment_content">${comment['content']}</p>
                 
                 <p style="float: right;">
-                ##	${comment['creator']['name']}
+                ##    ${comment['creator']['name']}
                     ##${relation(comment['creator'], c.logged_in_persona, d['content']['creator'], 'text')} --
-                	<i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
+                    <i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
                 </p>
             </td>
             <td>
@@ -1054,46 +1053,46 @@
         <li>
 <%
 def selif(r, n):
-	if round(r) == n:
-		return " selected"
-	else:
-		return ""
+    if round(r) == n:
+        return " selected"
+    else:
+        return ""
 r = (d['content']['rating'] * 5)
 %>
-		<form id="rating" action="${url('content_action', action='rate', id=d['content']['id'], format='redirect')}" method="POST">
-			<input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
-			<select name="rating" style="width: 120px">
-				<option value="0">Unrated</option>
-				<option value="1"${selif(r, 1)}>Very poor</option>
-				<option value="2"${selif(r, 2)}>Not that bad</option>
-				<option value="3"${selif(r, 3)}>Average</option>
-				<option value="4"${selif(r, 4)}>Good</option>
-				<option value="5"${selif(r, 5)}>Perfect</option>
-			</select>
-			<input type="submit" value="Rate!">
-		</form>
-		<script>
-		$(function() {
-			$("#rating").children().not("select").hide();
-			$("#rating").stars({
-				inputType: "select",
-				callback: function(ui, type, value) {
-					## $("#rating").submit();
-					$.ajax({
-						url: "${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}",
-						type: "POST",
-						data: {
-							"_authentication_token": "${h.authentication_token()}",
-							"rating": value
-						},
-						dataType: "json",
-						success: function(data) {flash_message(data);},
-						error: function(XMLHttpRequest, textStatus, errorThrown) {flash_message(textStatus);}
-					});
-				}
-			});
-		});
-		</script>
+        <form id="rating" action="${url('content_action', action='rate', id=d['content']['id'], format='redirect')}" method="POST">
+            <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
+            <select name="rating" style="width: 120px">
+                <option value="0">Unrated</option>
+                <option value="1"${selif(r, 1)}>Very poor</option>
+                <option value="2"${selif(r, 2)}>Not that bad</option>
+                <option value="3"${selif(r, 3)}>Average</option>
+                <option value="4"${selif(r, 4)}>Good</option>
+                <option value="5"${selif(r, 5)}>Perfect</option>
+            </select>
+            <input type="submit" value="Rate!">
+        </form>
+        <script>
+        $(function() {
+            $("#rating").children().not("select").hide();
+            $("#rating").stars({
+                inputType: "select",
+                callback: function(ui, type, value) {
+                    ## $("#rating").submit();
+                    $.ajax({
+                        url: "${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}",
+                        type: "POST",
+                        data: {
+                            "_authentication_token": "${h.authentication_token()}",
+                            "rating": value
+                        },
+                        dataType: "json",
+                        success: function(data) {flash_message(data);},
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {flash_message(textStatus);}
+                    });
+                }
+            });
+        });
+        </script>
         </li>
     % endif
 

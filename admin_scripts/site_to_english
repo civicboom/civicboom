@@ -57,7 +57,7 @@ def trans(text, locations):
         
         ("member",     "member"),
         ("user",       "user"),
-        ("group",      "hub"),
+        ("group",      "Hub"),
 
         ("free",       "basic"),
         ("plus",       "premium"),

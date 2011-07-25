@@ -686,10 +686,10 @@ Author: %(member_name)s
 
 --- Actions ---
 
-If the content is ok, visit the list of reports and delete this one:
+If the content is ok, click here to remove the flag:
   %(action_ignore)s
 
-If the content is not ok, go to the content list and delete it:
+If the content is not ok, click here to hide it from the site:
   %(action_delete)s
 """ % {
         "reporter"     : member_username,
@@ -700,8 +700,8 @@ If the content is not ok, go to the content list and delete it:
         "content_url"  : url('content', id=flag.content.id, qualified=True, sub_domain="www"),
         "content_title": flag.content.title,
         "content_body" : flag.content.content,
-        "action_ignore": url("admin/FlaggedContent/models?FlaggedContent--id="+str(flag.id), qualified=True, sub_domain="www"),
-        "action_delete": url("admin/Content/models?Content--id="+str(flag.content.id), qualified=True, sub_domain="www"),
+        "action_ignore": url("admin/moderate?kay=yay&content_id="+str(flag.content.id), qualified=True), #sub_domain="www"),
+        "action_delete": url("admin/moderate?kay=nay&content_id="+str(flag.content.id), qualified=True), #sub_domain="www"),
     }
     
     send_email(

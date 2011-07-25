@@ -84,7 +84,7 @@
 		<%doc><h2 class="headline">
 			${_("_site_name")}
 		</h2></%doc>
-		<img src="images/logo_new.png" alt="Civicboom.com"/>
+		<img src="images/logo-v3-684x150.png" alt="Civicboom.com"/>
 	</div>
 </%def>
 
