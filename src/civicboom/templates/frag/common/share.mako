@@ -526,9 +526,10 @@ share_data = {
 <%def name="janrain_social_call_content(content, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-share_data_type = share_data[c.logged_in_persona.__type__][share_type]['type'][share_object_type]
-share_data_tag  = share_data[c.logged_in_persona.__type__][share_type]['tag' ][share_object_type]
-share_data_desc = share_data[c.logged_in_persona.__type__][share_type]['desc'][share_object_type]
+persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
 
 from civicboom.lib.aggregation import aggregation_dict
 cd = aggregation_dict(content, safe_strings=True)
@@ -559,13 +560,14 @@ share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'o
 <%def name="janrain_social_call_member(member, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-share_data_type = share_data[c.logged_in_persona.__type__][share_type]['type'][share_object_type]
-share_data_tag  = share_data[c.logged_in_persona.__type__][share_type]['tag' ][share_object_type]
-share_data_desc = share_data[c.logged_in_persona.__type__][share_type]['desc'][share_object_type]
+persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
 cd = {
-        'url':                        h.url('member', id=member['username'], qualified=True),
+        'url':                      h.url('member', id=member['username'], qualified=True),
         'title':                    member['name'],
-        'user_generated_content':     member['description'],
+        'user_generated_content':   member['description'],
         'media':                    [ {
                                         'type': 'image',
                                         'src':  member['avatar_url'],
@@ -582,14 +584,14 @@ share_usergen_default = clean(_(share_data_type) % {'name': cd['title']})
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
         var url       = content.url;
         var variables = {
-            share_display:                '${clean(_(share_data_tag))}',
+            share_display:              '${clean(_(share_data_tag))}',
             action_share_description:   '${clean(_(share_data_desc))}',
-            share_usergen_default:        '${clean(_(share_usergen_default)) | n}',
-            action_page_title:           content.title,
-            action_page_description:     content.user_generated_content,
-            action_links:                 content.action_links,
-            action:                        content.action,
-            media:                        content.media,
+            share_usergen_default:      '${clean(_(share_usergen_default)) | n}',
+            action_page_title:          content.title,
+            action_page_description:    content.user_generated_content,
+            action_links:               content.action_links,
+            action:                     content.action,
+            media:                      content.media,
         };
         janrain_popup_share(url, ${janrain_options() | n}, variables);
     });
