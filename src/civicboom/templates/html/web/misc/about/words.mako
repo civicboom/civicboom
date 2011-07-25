@@ -76,7 +76,7 @@ share_data = {
                     'assignment': _("Check out %(title)s on _site_name and share your story now!"),
                     'response'  : _("Check out this response to a request for a story by %(owner)s on _site_name. Get involved & add your story!"),
                     'group'     : _("Check out %(name)s Hub on _site_name. Follow it now and get involved!"),
-                    'user'      : _("Check out %(title) on _site_name. They're getting their news published - and you can too!"),
+                    'user'      : _("Check out %(name) on _site_name. They're getting their news published - and you can too!"),
                     'article'   : _("Check out %(title)s on _site_name!"),
                 },
                 'tag': {
@@ -147,7 +147,7 @@ share_data = {
                     'assignment': _("Check out this story request %(title)s on _site_name. Take a look and respond now!"),
                     'response'  : _("Check out this response to a request by %(owner)s on _site_name. Get involved & add your story!"),
                     'group'     : _("Check out %(name)s Hub on _site_name. Get involved and follow it now!"),
-                    'user'      : _("Check out %(title) on _site_name. You too can sign up and get your news published!"),
+                    'user'      : _("Check out %(name) on _site_name. You too can sign up and get your news published!"),
                     'article'   : _("Check out %(title)s on _site_name!"),
                 },
                 'tag': {
