@@ -5,6 +5,7 @@ javascript/[a-zA-Z]*.js
 cdn-exclude.txt
 robots.txt
 */.sass-cache/*
+*.scss
 */.gitignore
 */Makefile
 *.bak
