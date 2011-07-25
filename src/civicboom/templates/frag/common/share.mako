@@ -64,7 +64,7 @@ share_data = {
                     'assignment': "Check out %(title)s on _site_name and share your story now!",
                     'response'  : "Check out this response to a request for a story by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Follow it now and get involved!",
-                    'user'      : "Check out %(title) on _site_name. They're getting their news published - and you can too!",
+                    'user'      : "Check out %(name)s on _site_name. They're getting their news published - and you can too!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
@@ -135,7 +135,7 @@ share_data = {
                     'assignment': "Check out this story request %(title)s on _site_name. Take a look and respond now!",
                     'response'  : "Check out this response to a request by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Get involved and follow it now!",
-                    'user'      : "Check out %(title) on _site_name. You too can sign up and get your news published!",
+                    'user'      : "Check out %(title)s on _site_name. You too can sign up and get your news published!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
@@ -526,19 +526,19 @@ share_data = {
 <%def name="janrain_social_call_content(content, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
-share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
-share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
-share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
-
-from civicboom.lib.aggregation import aggregation_dict
-cd = aggregation_dict(content, safe_strings=True)
-cd['url'] = h.url('content', id=content['id'], qualified=True)
-def clean(s):
-    if isinstance(s, basestring):
-        return s.replace("'", "\\'")
-    return ''
-share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        
+        from civicboom.lib.aggregation import aggregation_dict
+        cd = aggregation_dict(content, safe_strings=True)
+        cd['url'] = h.url('content', id=content['id'], qualified=True)
+        def clean(s):
+            if isinstance(s, basestring):
+                return s.replace("'", "\\'")
+            return ''
+        share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
     %>
     $(function() {
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
@@ -560,25 +560,25 @@ share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'o
 <%def name="janrain_social_call_member(member, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
-share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
-share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
-share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
-cd = {
-        'url':                      h.url('member', id=member['username'], qualified=True),
-        'title':                    member['name'],
-        'user_generated_content':   member['description'],
-        'media':                    [ {
-                                        'type': 'image',
-                                        'src':  member['avatar_url'],
-                                        'href': h.url('member', id=member['username'], qualified=True),
-                                    }, ],
-}
-def clean(s):
-    if isinstance(s, basestring):
-        return s.replace("'", "\\'")
-    return ''
-share_usergen_default = clean(_(share_data_type) % {'name': cd['title']})
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        cd = {
+                'url':                      h.url('member', id=member['username'], qualified=True),
+                'title':                    member['name'],
+                'user_generated_content':   member['description'],
+                'media':                    [ {
+                                                'type': 'image',
+                                                'src':  member['avatar_url'],
+                                                'href': h.url('member', id=member['username'], qualified=True),
+                                            }, ],
+        }
+        def clean(s):
+            if isinstance(s, basestring):
+                return s.replace("'", "\\'")
+            return ''
+        share_usergen_default = clean(_(share_data_type) % {'name': cd['title']})
     %>
     $(function() {
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
