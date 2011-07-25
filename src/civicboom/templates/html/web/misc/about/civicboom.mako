@@ -2,7 +2,7 @@
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
 
 <img src="/images/boom128.png" style="float:right;">
-<h1>Civicboom connects the people that have news want the </h1>
+<h1>Civicboom connects the people that have news to the people who want news</h1>
 
 <p><h2>${_('How does it work? Simple.')}</h2>
 <ol>
