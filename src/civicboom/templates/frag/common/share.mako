@@ -135,7 +135,7 @@ share_data = {
                     'assignment': "Check out this story request %(title)s on _site_name. Take a look and respond now!",
                     'response'  : "Check out this response to a request by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Get involved and follow it now!",
-                    'user'      : "Check out %(title)s on _site_name. You too can sign up and get your news published!",
+                    'user'      : "Check out %(name)s on _site_name. You too can sign up and get your news published!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
