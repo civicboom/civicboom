@@ -24,7 +24,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="custom_share()">
-    <a href="#" onclick="${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }; return false;" class="icon16 i_share"><span>Janrain</span></a> 
+    <a href="#" onclick="${share.janrain_social_call_content(self.content, 'existing' if c.logged_in_persona.username == self.content['creator']['username'] else 'other' , self.content['type'] if not self.content['parent'] else 'response') | n }; return false;" class="icon16 i_share"><span>Janrain</span></a> 
 </%def>
 
 <%def name="init_vars()">
@@ -104,7 +104,7 @@
 <%def name="body()">
     % if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
     <script>
-        ${share.janrain_social_call_content(self.content, 'new_'+(self.content['type'] if not self.content['parent'] else 'response')) | n }
+        ${share.janrain_social_call_content(self.content, 'new', self.content['type'] if not self.content['parent'] else 'response') | n }
     </script>
     % endif
     ## --- redesign --- ##
