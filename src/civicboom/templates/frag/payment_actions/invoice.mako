@@ -57,7 +57,7 @@
         <div class="invoice">
             <div class="header">
                 <div class="company fl">
-                    <img class="logo_img" src="http://localhost/images/logo_new_small.png?ut=1310987194" alt="Civicboom" /><br />
+                    <img class="logo_img" src="/images/logo_new_small.png?ut=1310987194" alt="Civicboom" /><br />
                     Enterprise Hub,<br />
                     University of Kent,<br />
                     Canterbury, Kent<br />
@@ -96,9 +96,9 @@
                         Overview:
                     </div>
                     <div class="fr detail">
-                        Amount due: £${d['total']}<br />
+                        Amount due: &pound;${d['total']}<br />
                         Due on receipt of invoice<br />
-                        Currency: GBP £<br />
+                        Currency: GBP &pound;<br />
                         Payment account #: ${d['payment_account']['id']}<br />
                         VAT #: N/A
                     </div>
@@ -139,7 +139,7 @@
                                 % endif
                             </td>
                             <td>
-                                £${line.get('price')}
+                                &pound;${line.get('price')}
                             </td>
                         </tr>
                     % endfor
@@ -150,15 +150,15 @@
                         </tr>
                         <tr>
                             <td colspan="3">Total Before Tax:</td>
-                            <td>£${d['total']}</td>
+                            <td>&pound;${d['total']}</td>
                         </tr>
                         <tr>
                             <td colspan="3">VAT (20.00%):</td>
-                            <td>£${d['total'] * 0.20}</td>
+                            <td>&pound;${d['total'] * 0.20}</td>
                         </tr>
                         <tr>
                             <td colspan="3">Total:</td>
-                            <td>£${d['total'] * 1.20}</td>
+                            <td>&pound;${d['total'] * 1.20}</td>
                         </tr>
                     </tfoot>
                 </table>

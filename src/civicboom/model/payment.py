@@ -32,24 +32,36 @@ class _ConfigManager(UserDict.DictMixin):
 
     def keys(self):
         return self.base.keys()
-
+    
+class ServicePrice(Base):
+    __tablename__      = "payment_service_price"
+    service_id         = Column(Integer(),     ForeignKey('payment_service.id'), nullable=False, primary_key=True)
+    _period            = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
+    period             = Column(_period,       nullable=False, default="month" , primary_key=True)
+    currency           = Column(Unicode(),     nullable=False, primary_key=True)
+    amount             = Column(Float(precision=2),     nullable=False)
+    
+    def __init__(self, service, period, currency, amount):
+        self.service = service
+        self.period = period
+        self.currency = currency
+        self.amount = amount
+    
 class Service(Base):
     __tablename__      = "payment_service"
     id                 = Column(Integer(),     primary_key=True)
     title              = Column(Unicode(),     nullable=False)
-    price              = Column(Float(precision=2),     nullable=False)
-    _period            = Enum("once", "day", "week", "month", "year", name="billing_period")
-    period             = Column(_period, nullable=False, default="month")
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
     payment_account_type = Column(_payment_account_types, nullable=True, unique=True)
     
+    prices = relationship("ServicePrice", backref=backref('service') )
+    
     _config = None
     
-    def __init__(self, id=None, title=None, price=None, period=None, extra_fields={}, payment_account_type=None):
+    def __init__(self, id=None, title=None, extra_fields={}, payment_account_type=None):
         self.id = id
         self.title = title
-        self.price = price
-        self.period = period
+                
         self.extra_fields = extra_fields
         self.payment_account_type = payment_account_type
     
@@ -60,6 +72,13 @@ class Service(Base):
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
+    
+    def get_price(self, currency, period):
+        price = Session.query(ServicePrice).filter(ServicePrice.service_id == self.id).filter(ServicePrice.currency == currency).filter(ServicePrice.period == period).one()
+        if price:
+            return price.amount
+        else:
+            return None
     
 class MemberService(Base):
     __tablename__ = "payment_member_service"
@@ -76,6 +95,7 @@ class Invoice(Base):
     timestamp          = Column(DateTime(),    nullable=False, default=func.now())
     copied_from_id     = Column(Integer(),   ForeignKey('payment_invoice.id'), nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
+    currency           = Column(Unicode(), default="GBP", nullable=False)
     
     lines = relationship("InvoiceLine", backref=backref('invoice') )
     

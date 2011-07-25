@@ -113,12 +113,14 @@ def init_base_data():
         u2_invoice1 = Invoice()
         u2_invoice1.payment_account = u2_account
         u2_invoice1.timestamp = (datetime.datetime.now() - datetime.timedelta(days=32)) + datetime.timedelta(minutes=1)
+        u2_service_price = u2_service.get_price('GBP', 'month')
         u2_invoice1line = InvoiceLine()
         u2_invoice1line.invoice = u2_invoice1
         
         u2_invoice1line.service = u2_service
         u2_invoice1line.title = u2_service.title
-        u2_invoice1line.price = u2_service.price
+        
+        u2_invoice1line.price = u2_service_price
         u2_invoice1line.extra_fields = u2_service.extra_fields
         
         Session.add_all([u2_invoice1, u2_invoice1line])
