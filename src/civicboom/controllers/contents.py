@@ -65,7 +65,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
-    creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
+    #creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused? # AllanC - The answer is .. YES IT COULD BE ABUSED!! ... dumbass ...
     #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
@@ -594,6 +594,7 @@ class ContentsController(BaseController):
         if isinstance(id, Content):
             content = id
             called_from_create_method = True # AllanC - see above - only create calls pass the id as a content object
+            # AllanC - note! normal users cannot pass a content object. passing an object does NOT check the c.logged_in_persona permissions, this is needed for some autopublish behaviour but should be kept in mind by other developers passing objects
         else:
             content = get_content(id, is_editable=True)
         assert content
@@ -659,7 +660,8 @@ class ContentsController(BaseController):
             permissions['can_publish'] = False
             error                      = errors.error_role()
         
-        if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
+        # If 'assignment' and creator has permissions to publish - it has to be 'creator' rather than c.logged_in_persona because this might be auto publishing and the user may not be logged in
+        if kwargs.get('type') == 'assignment' and not content.creator.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
             #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
