@@ -77,13 +77,13 @@ list_filters = {
     'assignments_active'  : lambda: AndFilter([
         TypeFilter('assignment'),
         OrFilter([
-            DueDateFilter(">", "now"),
+            DueDateFilter(">", "now()"),
             DueDateFilter("IS", "NULL")
         ])
     ]),
     'assignments_previous': lambda: AndFilter([
         TypeFilter('assignment'),
-        DueDateFilter("<", "now")
+        DueDateFilter("<", "now()")
     ]),
     'assignments'         : lambda: AndFilter([
         TypeFilter('assignment'),
