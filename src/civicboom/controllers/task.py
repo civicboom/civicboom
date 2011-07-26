@@ -217,7 +217,7 @@ class TaskController(BaseController):
         for content in get_content_to_publish(datetime_now, datetime_now + frequency_of_timed_task):
             log.info('Auto publishing content #%s - %s' % (content.id, content.title))
             # By calling the content:update method with no param with the content as a draft, it automatically pubishs the content
-            content_publish(content)
+            content_publish(content, submit_publish=True)
         
         return response_completed_ok
 

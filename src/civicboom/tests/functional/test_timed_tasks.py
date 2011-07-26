@@ -197,7 +197,7 @@ class TestTimedTasksController(TestController):
             content     = 'This should test the auto publish feature',
             type        = 'draft',
             target_type = 'assignment',
-            due_date    = now ,#+ datetime.timedelta(days=1), # set due_date in extra_fields so they can be reinstated on publish
+            due_date    = now + datetime.timedelta(days=1), # set due_date in extra_fields so they can be reinstated on publish
             auto_publish_trigger_datetime = now + datetime.timedelta(minutes=1),
         )
         
@@ -224,6 +224,7 @@ class TestTimedTasksController(TestController):
         
         response = self.app.get(url('member_action', id='unittest', action='assignments_active', format='json'))
         response_json = json.loads(response.body)
+        print response_json['data']['list']['items']
         self.assertEqual(content_id_1, response_json['data']['list']['items'][0]['id'])
         
         # Check Validators for auto_publish_trigger_datetime -------------------
