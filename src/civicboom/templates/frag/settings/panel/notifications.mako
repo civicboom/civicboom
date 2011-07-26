@@ -43,15 +43,11 @@
                 return ""
         
         def select(name, tech, opt):
-            print 'select', name, tech, opt
             if name in d['settings']:
                 route = d['settings'][name]
-                print 'route1', route
             else:
                 route = ''
-                print 'route2', route
             if route:
-                print 'tir', (tech in route), 'opt', opt
                 if (tech in route) and opt:
                     return 'selected=selected'
                 elif (not tech in route) and not opt:

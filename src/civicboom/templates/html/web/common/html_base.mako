@@ -57,7 +57,7 @@ css_all.sort()
 % else:
 	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/web.css")}" />
 % endif
-    <link rel="stylesheet" type="text/css" href="/styles/fonts/fam-pro.css" />
+    <link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
 ##-------------------
 ## Javascripts
 ##-------------------

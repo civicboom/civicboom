@@ -17,7 +17,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="custom_share()">
-    <a href="#" class="janrain_link" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p>Get others involved!</p></a>
+    <a href="#" class="janrain_link" onclick="${share.janrain_social_call_member(self.member, 'new', self.member['type']) | n }; return false;"><p>Get others involved!</p></a>
 </%def>
 
 <%def name="custom_share_widget()">
@@ -206,7 +206,7 @@
     ## AllanC!?! (c.logged_in_persona.username or c.logged_in_user.username) this is a meaninless statement because or returns one or the other? logged_in_persona always not null if logged_in_user
     % if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
     <script>
-    ${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }
+    ${share.janrain_social_call_member(self.member, 'new', self.member['type']) | n }
     </script>
     % endif
     
@@ -255,7 +255,7 @@
                 </p>
                 </a>
             </div>
-            <a href="#" onclick="${share.janrain_social_call_member(self.member, 'new_'+self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
+            <a href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">Get others involved!</p></a>
             </div>
             
             <div class="separator"></div>

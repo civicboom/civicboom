@@ -22,18 +22,18 @@ share_data = {
                     'article'   : "I just created the content %(title)s on _site_name, check it out here!",
                 },
                 'tag': {
-                    'new_assignment': "Share _assignment with your friends and followers:",
-                    'new_response'  : "Share your story with your friends and followers:",
-                    'new_group'     : "Share _group with your friends and followers:",
-                    'new_user'      : "Share your news story with your friends and followers:",
-                    'new_article'   : "Share _article with your friends and followers:",
+                    'assignment': "Share _assignment with your friends and followers:",
+                    'response'  : "Share your story with your friends and followers:",
+                    'group'     : "Share _group with your friends and followers:",
+                    'user'      : "Share your news story with your friends and followers:",
+                    'article'   : "Share _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'New _assignment on _site_name',
-                    'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _group on _site_name',
-                    'new_user'      : "I'm on _site_name",
-                    'new_article'   : 'New _article on _site_name',
+                    'assignment': 'New _assignment on _site_name',
+                    'response'  : 'New _article on _site_name',
+                    'group'     : 'New _group on _site_name',
+                    'user'      : "I'm on _site_name",
+                    'article'   : 'New _article on _site_name',
                 },
             },
             'existing': {
@@ -45,18 +45,18 @@ share_data = {
                     'article'   : "Check out my content %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share _assignment with your friends and followers:",
-                    'new_response'  : "Share this story response with your friends and followers:",
-                    'new_group'     : "Share _group with your friends and followers:",
-                    'new_user'      : "Share your profile with your friends and followers:",
-                    'new_article'   : "Share _article with your friends and followers:",
+                    'assignment': "Share _assignment with your friends and followers:",
+                    'response'  : "Share this story response with your friends and followers:",
+                    'group'     : "Share _group with your friends and followers:",
+                    'user'      : "Share your profile with your friends and followers:",
+                    'article'   : "Share _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'My _assignment on _site_name',
-                    'new_response'  : 'My _article on _site_name',
-                    'new_group'     : 'My _group on _site_name',
-                    'new_user'      : "I'm on _site_name",
-                    'new_article'   : 'My _article on _site_name',
+                    'assignment': 'My _assignment on _site_name',
+                    'response'  : 'My _article on _site_name',
+                    'group'     : 'My _group on _site_name',
+                    'user'      : "I'm on _site_name",
+                    'article'   : 'My _article on _site_name',
                 },
             },
             'other': {
@@ -64,22 +64,22 @@ share_data = {
                     'assignment': "Check out %(title)s on _site_name and share your story now!",
                     'response'  : "Check out this response to a request for a story by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Follow it now and get involved!",
-                    'user'      : "Check out %(title) on _site_name. They're getting their news published - and you can too!",
+                    'user'      : "Check out %(name)s on _site_name. They're getting their news published - and you can too!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share this _assignment with your friends and followers:",
-                    'new_response'  : "Share this response with your friends and followers:",
-                    'new_group'     : "Share this _group with your friends and followers:",
-                    'new_user'      : "Share this news with your friends and followers:",
-                    'new_article'   : "Share this _article with your friends and followers:",
+                    'assignment': "Share this _assignment with your friends and followers:",
+                    'response'  : "Share this response with your friends and followers:",
+                    'group'     : "Share this _group with your friends and followers:",
+                    'user'      : "Share this news with your friends and followers:",
+                    'article'   : "Share this _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': '_Assignment on _site_name',
-                    'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Group on _site_name',
-                    'new_user'      : "Profile on _site_name",
-                    'new_article'   : '_Article on _site_name',
+                    'assignment': '_Assignment on _site_name',
+                    'response'  : '_Article on _site_name',
+                    'group'     : '_Group on _site_name',
+                    'user'      : "Profile on _site_name",
+                    'article'   : '_Article on _site_name',
                 },
             },
         },
@@ -93,18 +93,18 @@ share_data = {
                     'article'   : "We just created the content %(title)s on _site_name, check it out here!",
                 },
                 'tag': {
-                    'new_assignment': "Share your _assignment with your friends and followers:",
-                    'new_response'  : "Share your response with your friends and followers:",
-                    'new_group'     : "Share your _group with your friends and followers:",
-                    'new_user'      : "Share your news with your friends and followers:",
-                    'new_article'   : "Share your _article with your friends and followers:",
+                    'assignment': "Share your _assignment with your friends and followers:",
+                    'response'  : "Share your response with your friends and followers:",
+                    'group'     : "Share your _group with your friends and followers:",
+                    'user'      : "Share your news with your friends and followers:",
+                    'article'   : "Share your _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'New _assignment on _site_name',
-                    'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _group on _site_name',
-                    'new_user'      : "We're on _site_name",
-                    'new_article'   : 'New _article on _site_name',
+                    'assignment': 'New _assignment on _site_name',
+                    'response'  : 'New _article on _site_name',
+                    'group'     : 'New _group on _site_name',
+                    'user'      : "We're on _site_name",
+                    'article'   : 'New _article on _site_name',
                 },
             },
             'existing': {
@@ -116,18 +116,18 @@ share_data = {
                     'article'   : "Check out our content %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share your _assignment with your friends and followers:",
-                    'new_response'  : "Share your response with your friends and followers:",
-                    'new_group'     : "Share your _group with your friends and followers:",
-                    'new_user'      : "Share your profile with your friends and followers:",
-                    'new_article'   : "Share your _article with your friends and followers:",
+                    'assignment': "Share your _assignment with your friends and followers:",
+                    'response'  : "Share your response with your friends and followers:",
+                    'group'     : "Share your _group with your friends and followers:",
+                    'user'      : "Share your profile with your friends and followers:",
+                    'article'   : "Share your _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'Our _assignment on _site_name',
-                    'new_response'  : 'Our _article on _site_name',
-                    'new_group'     : 'Our _group on _site_name',
-                    'new_user'      : "We're on _site_name",
-                    'new_article'   : 'Our _article on _site_name',
+                    'assignment': 'Our _assignment on _site_name',
+                    'response'  : 'Our _article on _site_name',
+                    'group'     : 'Our _group on _site_name',
+                    'user'      : "We're on _site_name",
+                    'article'   : 'Our _article on _site_name',
                 },
             },
             'other': {
@@ -135,48 +135,25 @@ share_data = {
                     'assignment': "Check out this story request %(title)s on _site_name. Take a look and respond now!",
                     'response'  : "Check out this response to a request by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Get involved and follow it now!",
-                    'user'      : "Check out %(title) on _site_name. You too can sign up and get your news published!",
+                    'user'      : "Check out %(name)s on _site_name. You too can sign up and get your news published!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share this _assignment with your friends and followers:",
-                    'new_response'  : "Share this response with your friends and followers:",
-                    'new_group'     : "Share this _group with your friends and followers:",
-                    'new_user'      : "Share this news with your friends and followers:",
-                    'new_article'   : "Share this _article with your friends and followers:",
+                    'assignment': "Share this _assignment with your friends and followers:",
+                    'response'  : "Share this response with your friends and followers:",
+                    'group'     : "Share this _group with your friends and followers:",
+                    'user'      : "Share this news with your friends and followers:",
+                    'article'   : "Share this _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': '_Assignment on _site_name',
-                    'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Group on _site_name',
-                    'new_user'      : "Profile on _site_name",
-                    'new_article'   : '_Article on _site_name',
+                    'assignment': '_Assignment on _site_name',
+                    'response'  : '_Article on _site_name',
+                    'group'     : '_Group on _site_name',
+                    'user'      : "Profile on _site_name",
+                    'article'   : '_Article on _site_name',
                 },
             },
         }
-    }
-        
-    
-    share_types = {
-        'new_assignment': "I just created the request %(title)s on _site_name. Respond now!",
-        'new_response'  : "I just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
-        'new_group'     : "I just created the %(name)s Hub on _site_name. Get involved and follow it now!",
-        'new_user'        : "I just signed up to _site_name to get my news published, you can too!",
-        'new_article'   : "I just created the content %(title)s on _site_name, check it out here!",
-    }
-    share_taglines = {
-        'new_assignment': "Share your _assignment with your friends and followers:",
-        'new_response'  : "Share your response with your friends and followers:",
-        'new_group'     : "Share your _group with your friends and followers:",
-        'new_user'        : "Share your news with your friends and followers:",
-        'new_article'   : "Share your _article with your friends and followers:",
-    }
-    share_descs = {
-        'new_assignment': 'New _assignment on _site_name',
-        'new_response'  : 'New _article on _site_name',
-        'new_group'     : 'New _group on _site_name',
-        'new_user'      : "I'm on _site_name",
-        'new_article'   : 'New _article on _site_name',
     }
 %>
 
@@ -546,24 +523,29 @@ share_data = {
     ${json.dumps(options).replace('\\\"', "\\\'").replace('"', "'")}
 </%def>
 
-<%def name="janrain_social_call_content(content, share_type)">
+<%def name="janrain_social_call_content(content, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-from civicboom.lib.aggregation import aggregation_dict
-cd = aggregation_dict(content, safe_strings=True)
-cd['url'] = h.url('content', id=content['id'], qualified=True)
-def clean(s):
-    if isinstance(s, basestring):
-        return s.replace("'", "\\'")
-    return ''
-share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        
+        from civicboom.lib.aggregation import aggregation_dict
+        cd = aggregation_dict(content, safe_strings=True)
+        cd['url'] = h.url('content', id=content['id'], qualified=True)
+        def clean(s):
+            if isinstance(s, basestring):
+                return s.replace("'", "\\'")
+            return ''
+        share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
     %>
     $(function() {
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
         var url       = content.url;
         var variables = {
-            share_display:                '${_(share_taglines[share_type])}',
-            action_share_description:   '${_(share_descs[share_type])}',
+            share_display:                '${_(share_data_tag)}',
+            action_share_description:   '${_(share_data_desc)}',
             share_usergen_default:        '${_(share_usergen_default) | n}',
             action_page_title:           content.title,
             action_page_description:     content.user_generated_content,
@@ -575,37 +557,41 @@ share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('tit
     });
 </%def>
 
-<%def name="janrain_social_call_member(member, share_type)">
+<%def name="janrain_social_call_member(member, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-cd = {
-        'url':                        h.url('member', id=member['username'], qualified=True),
-        'title':                    member['name'],
-        'user_generated_content':     member['description'],
-        'media':                    [ {
-                                        'type': 'image',
-                                        'src':  member['avatar_url'],
-                                        'href': h.url('member', id=member['username'], qualified=True),
-                                    }, ],
-}
-def clean(s):
-    if isinstance(s, basestring):
-        return s.replace("'", "\\'")
-    return ''
-share_usergen_default = clean(_(share_types[share_type]) % {'name': cd['title']})
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        cd = {
+                'url':                      h.url('member', id=member['username'], qualified=True),
+                'title':                    member['name'],
+                'user_generated_content':   member['description'],
+                'media':                    [ {
+                                                'type': 'image',
+                                                'src':  member['avatar_url'],
+                                                'href': h.url('member', id=member['username'], qualified=True),
+                                            }, ],
+        }
+        def clean(s):
+            if isinstance(s, basestring):
+                return s.replace("'", "\\'")
+            return ''
+        share_usergen_default = clean(_(share_data_type) % {'name': cd['title']})
     %>
     $(function() {
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
         var url       = content.url;
         var variables = {
-            share_display:                '${clean(_(share_taglines[share_type]))}',
-            action_share_description:   '${clean(_(share_descs[share_type]))}',
-            share_usergen_default:        '${clean(_(share_usergen_default)) | n}',
-            action_page_title:           content.title,
-            action_page_description:     content.user_generated_content,
-            action_links:                 content.action_links,
-            action:                        content.action,
-            media:                        content.media,
+            share_display:              '${clean(_(share_data_tag))}',
+            action_share_description:   '${clean(_(share_data_desc))}',
+            share_usergen_default:      '${clean(_(share_usergen_default)) | n}',
+            action_page_title:          content.title,
+            action_page_description:    content.user_generated_content,
+            action_links:               content.action_links,
+            action:                     content.action,
+            media:                      content.media,
         };
         janrain_popup_share(url, ${janrain_options() | n}, variables);
     });
