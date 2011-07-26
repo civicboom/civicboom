@@ -19,13 +19,18 @@
     ##style="width:61em;margin:auto;text-align:left;"
 	<h1>Just a few more details and you'll be booming!</h1>
 	
-	
+	<div id="reg_form">
     <form action="" method="post">
-	<table class="newform">
+	<table class="newform help">
 			
-		## Guidence type
-		${help_type()}
+            ## Guidence type
+            ${help_type()}
+            <tr><td><span class="button" id="help_type_continue">Continue</span></td></tr>
             
+        </table>
+        <table class="newform user">
+            
+            <tr><td><span class="button" id="user_details_back">Back</span></td></tr>
             % if 'username' in c.required_fields:
               ${username()}
             % endif
@@ -41,8 +46,6 @@
             % if 'dob' in c.required_fields:
               ${dob()}
             % endif
-            
-            
             
             ## recaptcha - if login account is not janrain
             % if config['online'] and 'password' in c.required_fields:
@@ -75,6 +78,21 @@
 			</td>
 		</table>
     </form>
+    </div>
+    
+    <script type="text/javascript">
+        $('#help_type_continue').click(function() {
+            $('.newform.help').fadeOut(function() {
+                $('.newform.user').fadeIn();
+            });
+        });
+        
+        $('#user_details_back').click(function() {
+            $('.newform.user').fadeOut(function() {
+                $('.newform.help').fadeIn();
+            });
+        });
+    </script>
 </div>
 
 </%def>
@@ -183,7 +201,7 @@
             <div class="user_type_option ${'selected' if radio_choices['ind'][1] else ''}" onclick="$('#help_type_ind').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
                 <img src="/images/default/thumbnail_response.png" alt="response"/>
                 
-                <h2 class="newformtitle">${_('Have _articles?')}</h2>
+                <h2 class="newformtitle">${_('Have _articles? Click here!')}</h2>
                 <p>${_('People like you are the eyes and ears of the news.')}</p>
                 <p>${_('Everyone has a story and now you have an outlet to share it with the world.')}</p>
                 
@@ -203,7 +221,7 @@
             <div class="or"><p>or</p></div>
             <div class="user_type_option ${'selected' if radio_choices['org'][1] else ''}" onclick="$('#help_type_org').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
                 <img src="/images/default/thumbnail_assignment.png" alt="request"/>
-                <h2 class="newformtitle">${_('Want _articles?')}</h2>
+                <h2 class="newformtitle">${_('Want _articles? Click here!')}</h2>
                 <p>${_('Journalists, blogger, publishers, news organisations.')}</p>
                 <p>${_('Your greatest resource is your audience.')}</p>
                 <p>${_('After all, news stories start with people - and now you have a tool to tap into those stories.')}</p>

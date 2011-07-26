@@ -1,6 +1,22 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+HTML.no-js {
+    #help_type_continue {
+        display: none;
+    }
+    
+    #user_details_back {
+        display: none;
+    }
+}
+
+HTML.js {
+    .newform.user {
+        display: none;
+    }
+}
+
 BODY.c-register.a-new_user.u-user {
 
     .layout {
@@ -12,10 +28,10 @@ BODY.c-register.a-new_user.u-user {
         text-align: center;
     }
 
-	.newform {
+    .newform {
         margin-top: 1em;
-		text-align:left;
-	}
+        text-align: left;
+    }
 
 	.newform tr td {
 		vertical-align: top !important;
