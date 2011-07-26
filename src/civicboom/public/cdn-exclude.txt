@@ -1,3 +1,4 @@
+fonts
 styles/*/*.css
 styles/common/icons/*
 javascript/tiny_mce/*
