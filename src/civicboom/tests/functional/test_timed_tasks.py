@@ -86,6 +86,7 @@ class TestTimedTasksController(TestController):
         self.delete_content(assignment_id)
 
     
+    
     #---------------------------------------------------------------------------
     # Remind and remove pending users
     #---------------------------------------------------------------------------
@@ -171,6 +172,7 @@ class TestTimedTasksController(TestController):
         num_pending += -1
 
 
+
     #---------------------------------------------------------------------------
     # Auto publish sceduled drafts
     #---------------------------------------------------------------------------
@@ -198,7 +200,7 @@ class TestTimedTasksController(TestController):
             type        = 'draft',
             target_type = 'assignment',
             due_date                      = now + datetime.timedelta(days=1   ), # set due_date in extra_fields so they can be reinstated on publish
-            auto_publish_trigger_datetime = now + datetime.timedelta(minutes=1),
+            auto_publish_trigger_datetime = now + datetime.timedelta(seconds=3), # have to add 3 seconds because date must be in future to pass validator
         )
         
         content_id_2 = self.create_content(
@@ -207,7 +209,7 @@ class TestTimedTasksController(TestController):
             type        = 'draft',
             target_type = 'assignment',
             due_date                      = now + datetime.timedelta(days=3), # set due_date in extra_fields so they can be reinstated on publish
-            auto_publish_trigger_datetime = now + datetime.timedelta(days=1, minutes=1),
+            auto_publish_trigger_datetime = now + datetime.timedelta(days=1),
         )
         
         # Execute timed task ---------------------------------------------------
