@@ -3,13 +3,14 @@
 
 BODY.c-register.a-new_user.u-user {
 
-	.layout {
+    .layout {
         margin-top: 1em;
-		margin-left: auto;
-		margin-right: auto;
-        
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 6em;
+          
         text-align: center;
-	}
+    }
 
 	.newform {
         margin-top: 1em;
@@ -51,7 +52,8 @@ BODY.c-register.a-new_user.u-user {
         position: relative;
         width: 40%;
         min-height: 165px;
-	font-size: 120%;
+	      font-size: 120%;
+	      cursor: pointer;
         
         background-color: $cb-light-inactive;
         border: 0.1em solid $cb-light-inactive;
@@ -72,6 +74,10 @@ BODY.c-register.a-new_user.u-user {
         }
         span {
             display: none;
+        }
+        
+        &:hover {
+            background-color: lighten($cb-light-inactive, 3%);
         }
     }
     
@@ -95,6 +101,10 @@ BODY.c-register.a-new_user.u-user {
             position: absolute;
             bottom: 1em;
             right: 1em;
+        }
+        
+        &:hover {
+            background-color: lighten($cb-lighterblue, 3%);
         }
     }
 }
