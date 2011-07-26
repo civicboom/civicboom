@@ -197,7 +197,7 @@ class TestTimedTasksController(TestController):
             content     = 'This should test the auto publish feature',
             type        = 'draft',
             target_type = 'assignment',
-            due_date    = now + datetime.timedelta(days=1), # set due_date in extra_fields so they can be reinstated on publish
+            due_date                      = now + datetime.timedelta(days=1   ), # set due_date in extra_fields so they can be reinstated on publish
             auto_publish_trigger_datetime = now + datetime.timedelta(minutes=1),
         )
         
@@ -206,26 +206,47 @@ class TestTimedTasksController(TestController):
             content     = 'This should test the auto publish feature. Not to be published, because the publish date is to far in the future',
             type        = 'draft',
             target_type = 'assignment',
-            due_date    = now ,#+ datetime.timedelta(days=1), # set due_date in extra_fields so they can be reinstated on publish
-            auto_publish_trigger_datetime = now + datetime.timedelta(days=1),
+            due_date                      = now + datetime.timedelta(days=3), # set due_date in extra_fields so they can be reinstated on publish
+            auto_publish_trigger_datetime = now + datetime.timedelta(days=1, minutes=1),
         )
         
         # Execute timed task ---------------------------------------------------
-        #  should only publish content_id_1
-        publish_sceduled_content()
+        publish_sceduled_content() # should only publish content_id_1
         
         # Check published ------------------------------------------------------
         
-        content = self.get_content(content_id_1)['content']
+        content = self.get_content(content_id_1)['content'] # Should have published because date auto_publish date was in correct range
         self.assertEqual(content['type'], 'assignment')
         
-        content = self.get_content(content_id_2)['content']
+        content = self.get_content(content_id_2)['content'] # Should NOT have published as auto_publish date was to far in the future
         self.assertEqual(content['type'], 'draft')
         
         response = self.app.get(url('member_action', id='unittest', action='assignments_active', format='json'))
         response_json = json.loads(response.body)
-        print response_json['data']['list']['items']
-        self.assertEqual(content_id_1, response_json['data']['list']['items'][0]['id'])
+        self.assertEqual(response_json['data']['list']['items'][0]['id'], content_id_1)
+        
+        assignment_count = response_json['data']['list']['count']
+        
+        
+        # Change server time to publish content_id_2 ---------------------------
+        
+        now = self.server_datetime(now + datetime.timedelta(hours=23))
+        publish_sceduled_content() #  should publish nothing
+        
+        # check no published assignments
+        response = self.app.get(url('member_action', id='unittest', action='assignments_active', format='json'))
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['list']['count']         , assignment_count    )
+        
+        now = self.server_datetime(now + datetime.timedelta(hours=1))
+        publish_sceduled_content() #  should publish content_id_2
+        
+        # check content_id_2 published assignments
+        response = self.app.get(url('member_action', id='unittest', action='assignments_active', format='json'))
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['list']['count']         , assignment_count + 1)
+        self.assertEqual(response_json['data']['list']['items'][0]['id'], content_id_2        )
+        
         
         # Check Validators for auto_publish_trigger_datetime -------------------
         
@@ -259,6 +280,8 @@ class TestTimedTasksController(TestController):
         self.assertIn('require a paid account', response.body)
         
         # Cleanup --------------------------------------------------------------
+        
+        self.server_datetime('now') # Reset date jibbling
         
         self.log_in_as('unittest')
         self.delete_content(content_id_1)

@@ -114,6 +114,8 @@ class TestController(TestCase):
     def server_datetime(self, new_datetime=None):
         """
         Used to get and set server date for tests
+        
+        passing the paramiter new_datetime='now' resets any date override for the test server
         """
         response = self.app.get(
             url(controller='test', action='server_datetime'),
