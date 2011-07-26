@@ -186,7 +186,7 @@ class TestTimedTasksController(TestController):
         
         def publish_sceduled_content():
             response = self.app.get(url(controller='task', action='publish_sceduled_content'))
-            self.assertIn(response_completed_ok, response)
+            self.assertIn(response_completed_ok, response.body)
         
         now = self.server_datetime()
         

@@ -210,6 +210,9 @@ class TaskController(BaseController):
         def get_content_to_publish(date_start, date_end):
             return Session.query(DraftContent).filter(and_(DraftContent.auto_publish_trigger_datetime >= date_start, DraftContent.auto_publish_trigger_datetime <= date_end)).all()
         
+        c.authenticated_form = True     # AllanC - Fake the authenticated status so that the auth decorator does not tigger
+        c.format             = 'python'
+        
         for content in get_content_to_publish(datetime_now, datetime_now + frequency_of_timed_task):
             log.info('Auto publishing content #%s - %s' % (content.id, content.title))
             # By calling the content:update method with no param with the content as a draft, it automatically pubishs the content

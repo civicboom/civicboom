@@ -820,13 +820,13 @@ class ContentsController(BaseController):
                 })
         
         # -- Redirect (if needed)-----------------------------------------------
-
+        
         # We raise any errors at the end because we still want to save any draft content even if the content is not published
         if error:
             #log.debug("raising the error")
             #log.debug(error)
             raise error
-
+        
         if not content_redirect:
             if   submit_type == 'publish' and permissions['can_publish']:
                 # Added prompt aggregate to new content url
