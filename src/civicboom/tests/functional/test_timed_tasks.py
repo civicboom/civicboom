@@ -212,6 +212,7 @@ class TestTimedTasksController(TestController):
             auto_publish_trigger_datetime = now + datetime.timedelta(days=1),
         )
         
+        
         # Execute timed task ---------------------------------------------------
         publish_sceduled_content() # should only publish content_id_1
         
@@ -228,6 +229,13 @@ class TestTimedTasksController(TestController):
         self.assertEqual(response_json['data']['list']['items'][0]['id'], content_id_1)
         
         assignment_count = response_json['data']['list']['count']
+        
+        # Check frag/html list item formatting ---------------------------------
+        
+        # There should be 1 item awaiting publishing
+        # Check that the html/frag lists contains the auto_publish icon for frag_lists
+        response = self.app.get(url('member', id='unittest', format='frag'))
+        self.assertIn('i_auto_publish', response.body)
         
         
         # Change server time to publish content_id_2 ---------------------------
