@@ -210,6 +210,7 @@ class TaskController(BaseController):
         def get_content_to_publish(date_start, date_end):
             return Session.query(DraftContent).filter(and_(DraftContent.auto_publish_trigger_datetime >= date_start, DraftContent.auto_publish_trigger_datetime <= date_end)).all()
         
+        # AllanC - calls will be made to content.py:update this will trigger the normal decorators, we need to ensure that these dont prohibit the update call's we are about to make
         c.authenticated_form = True     # AllanC - Fake the authenticated status so that the auth decorator does not tigger
         c.format             = 'python'
         

@@ -634,7 +634,7 @@ class ContentsController(BaseController):
             if len(submit_keys) == 1:
                 return submit_keys[0]
             raise action_error(_('Multiple submit types submitted'), code=400)
-            
+        
         if content.__type__ not in publishable_types and kwargs.get('type') in publishable_types:
             submit_type = 'publish'
             log.debug ( "AUTO PUBLISH! %s - %s" % (content.__type__, kwargs.get('type')) )
