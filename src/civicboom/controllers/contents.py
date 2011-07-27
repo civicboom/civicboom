@@ -106,7 +106,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.username)
+        CreatorFilter(c.logged_in_persona.id)
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),
@@ -219,17 +219,20 @@ class ContentsController(BaseController):
         try:
             # Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 
-            parent_root = get_content(kwargs['response_to'])
-            parent_root = parent_root.root_parent or parent_root
-            creator = parent_root.creator
-            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
-        except:
-            pass
+            if kwargs.get('response_to'):
+                parent_root = get_content(kwargs['response_to'])
+                parent_root = parent_root.root_parent or parent_root
+                creator = parent_root.creator
+                kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
+        except Exception as e:
+            user_log.exception("Error searching:")
+
         try:
-            creator = get_member(kwargs['creator'])
-            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
-        except:
-            pass
+            if kwargs.get('creator'):
+                creator = get_member(kwargs['creator'])
+                kwargs['creator'] = normalize_member(creator) # normalize creator param for search
+        except Exception as e:
+            user_log.exception("Error searching:")
         
         if creator:
             #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
@@ -264,64 +267,44 @@ class ContentsController(BaseController):
 
         parts = []
 
-        if _filter:
-            parts.append(_filter)
+        try:
+            if _filter:
+                parts.append(_filter)
 
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                parts.append(list_filters[kwargs['list']]())
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+            filter_map = {
+                'creator': CreatorFilter,
+                'due_date': DueDateFilter,
+                'update_date': UpdateDateFilter,
+                'type': TypeFilter,
+                'response_to': ParentIDFilter,
+                'boomed_by': BoomedByFilter,
+                'term': TextFilter,
+                'location': LocationFilter,
+            }
 
-        if 'feed' in kwargs and kwargs['feed']:
-            parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
+            if 'list' in kwargs:
+                if kwargs['list'] in list_filters:
+                    parts.append(list_filters[kwargs['list']]())
+                else:
+                    raise action_error(_('list %s not supported') % kwargs['list'], code=400)
 
-        if 'creator' in kwargs and kwargs['creator']:
-            parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
+            if 'feed' in kwargs and kwargs['feed']:
+                parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
-        if 'due_date' in kwargs and kwargs['due_date']:
-            parts.append(DueDateFilter.from_string(kwargs['due_date']))
+            for filter_name in filter_map:
+                if kwargs.get(filter_name):
+                    f = filter_map[filter_name].from_string(str(kwargs[filter_name]))
+                    if hasattr(f, 'mangle'):
+                        results = f.mangle(results)
+                    parts.append(f)
 
-        if 'update_date' in kwargs and kwargs['update_date']:
-            parts.append(UpdateDateFilter.from_string(kwargs['update_date']))
+            if 'include_content' in kwargs and kwargs['include_content']:
+                parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
 
-        if 'term' in kwargs and kwargs['term']:
-            parts.append(TextFilter(kwargs['term']))
-            results = results.add_columns(
-                func.ts_headline('pg_catalog.english',
-                    func.strip_tags(Content.content),
-                    func.plainto_tsquery(kwargs['term']),
-                    'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
-                    type_= Unicode
-                ).label("content_short")
-            )
-
-
-        if 'location' in kwargs and kwargs['location']:
-            lf = LocationFilter.from_string(kwargs['location'])
-            if lf:
-                parts.append(lf)
-                results = results.add_columns(
-                    func.st_distance_sphere(
-                        func.st_geomfromwkb(Content.location, 4326),
-                        'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
-                    ).label("distance")
-                )
-
-        if 'type' in kwargs and kwargs['type']:
-            parts.append(TypeFilter(kwargs['type']))
-
-        if 'response_to' in kwargs and kwargs['response_to']:
-            parts.append(ParentIDFilter(int(kwargs['response_to'])))
-
-        if 'boomed_by' in kwargs and kwargs['boomed_by']:
-            parts.append(BoomedByFilter(get_member(kwargs['boomed_by']).id))
-
-        if 'include_content' in kwargs and kwargs['include_content']:
-            parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
-
-        if 'exclude_content' in kwargs and kwargs['exclude_content']:
-            parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+            if 'exclude_content' in kwargs and kwargs['exclude_content']:
+                parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+        except FilterException as fe:
+            raise action_error(code=400, msg=str(fe))
 
         feed = AndFilter(parts)
 
