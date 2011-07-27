@@ -545,7 +545,7 @@
                 
                 ## http://trentrichardson.com/examples/timepicker/
                 % if c.logged_in_persona.has_account_required('plus'):
-                    <span class="padded"><label for="auto_publish_trigger_datetime">${_("Autotimaticalically publish on")}</label></span>
+                    <span class="padded"><label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label></span>
                     <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
                 % endif
                 
