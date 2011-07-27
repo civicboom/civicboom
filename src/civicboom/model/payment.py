@@ -96,7 +96,27 @@ class PaymentAccountService(Base):
     _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
     frequency          = Column(_frequency,    nullable=False, default="month")
     quantity           = Column(Integer(), nullable=False, default=1)
+    discount           = Column(Float(precision=2),     nullable=False, default=0)
+    note               = Column(Unicode(),     nullable=True)
     
+    service = relationship("Service")
+    
+    def __init__(self, payment_account, service, note=None, frequency=None, quantity=None, discount=None ):
+        self.payment_account = payment_account
+        self.service = service
+        
+        if note:
+            self.note = note
+        
+        if service.payment_account_type:
+            self.frequency = payment_account.frequency
+        elif frequency:
+            self.frequency = frequency
+        
+        if quantity:
+            self.quantity = quantity
+        if discount:
+            self.discount = discount
 
 class Invoice(Base):
     __tablename__      = "payment_invoice"
@@ -217,7 +237,7 @@ class InvoiceLine(Base):
     title              = Column(Unicode(),     nullable=False)
     price              = Column(Float(precision=2),     nullable=False)
     quantity           = Column(Integer(),     nullable=False, default=1)
-    discount           = Column(Integer(),     nullable=False, default=0)
+    discount           = Column(Float(precision=2),     nullable=False, default=0)
     start_date         = Column(Date(),        nullable=True)
     note               = Column(Unicode(),     nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
@@ -238,12 +258,25 @@ class InvoiceLine(Base):
         },
     })
     
-    def __init__(self, invoice, service, frequency, start_date=None):
+    def __init__(self, invoice, service=None, payment_account_service=None, frequency=None, start_date=None):
         self.invoice = invoice
-        self.service = service
-        self.title = service.title
-        self.price = service.get_price(invoice.currency, frequency)
-        self.extra_fields = service.extra_fields
+        
+        if payment_account_service:
+            self.service = payment_account_service.service
+            frequency = payment_account_service.frequency
+            self.note = payment_account_service.note
+            self.discount = payment_account_service.discount
+            
+        elif service:
+            self.service = service
+            
+        else:
+            assert "Error here"
+            
+        self.title = self.service.title
+        self.price = self.service.get_price(invoice.currency, frequency)
+
+        self.extra_fields = self.service.extra_fields
         self.start_date = start_date
     
     _config = None

@@ -841,7 +841,8 @@ class PaymentAccount(Base):
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
     invoices = relationship("Invoice", backref=backref('payment_account'), lazy='dynamic' )
     billing_accounts = relationship("BillingAccount", backref=backref('payment_account') )
-    services            = relationship("Service"          , primaryjoin="PaymentAccount.id==PaymentAccountService.payment_account_id"  , secondaryjoin="Service.id==PaymentAccountService.service_id", secondary='payment_account_service')
+    services = relationship("PaymentAccountService", backref=backref('payment_account') )
+    #services            = relationship("Service"          , primaryjoin="PaymentAccount.id==PaymentAccountService.payment_account_id"  , secondaryjoin="Service.id==PaymentAccountService.service_id", secondary='payment_account_service')
     
     _config = None
     

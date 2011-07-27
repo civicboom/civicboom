@@ -11,7 +11,9 @@ from civicboom.lib.base import *
 
 from cbutils.misc import timedelta_str
 
-from sqlalchemy import and_, or_, aliased
+from sqlalchemy import and_, or_
+
+from sqlalchemy.orm import aliased
 
 import datetime
 
@@ -194,14 +196,14 @@ class TaskController(BaseController):
     # GregM: Payment processing
     def run_payment_tasks(self):
         # Import 
-        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
         from civicboom.model.member import PaymentAccount
         
         time_now = datetime.datetime.now()
-        seven_days = time_now + datetime.timedelta(days=days_invoice_in)
         days_disable = 6
         days_remind = 3
         days_invoice_in = 7
+        seven_days = time_now + datetime.timedelta(days=days_invoice_in)
         
         def filter_start_dates(query, table=''):
             if table:
@@ -257,23 +259,33 @@ class TaskController(BaseController):
                 print account.start_date
                 print [member.username for member in account.members]
                 service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
-                service_price = service.get_price(account.currency, frequency)
                 
                 lines = []
                 invoice = Invoice(account)
-                line = InvoiceLine(invoice, service, frequency)
-                line.invoice = invoice
-                line.service = service
-                line.price = service_price
-                lines.append(line)
+                invoice.due_date = start_date
                 
-                for service in account.services:
-                    if service.payment_account_type != account.type:
-                        line = InvoiceLine(invoice, service, frequency)
-                        lines.append(line)
+                payment_account_service = Session.query(PaymentAccountService).filter(PaymentAccountService.payment_account_id == account.id)\
+                    .filter(PaymentAccountService.service_id == service.id).first()
+                
+                line = InvoiceLine(
+                       invoice,
+                       payment_account_service  = payment_account_service,
+                       service                  = service,
+                       frequency                = frequency,
+                       start_date               = start_date
+                   )
+                
+                invoice.lines.append(line)
+                #lines.append(line)
+                
+                for payment_account_service in account.services:
+                    if payment_account_service.service.payment_account_type != account.type:
+                        line = InvoiceLine(invoice, payment_account_service.service, frequency)
+                        invoice.lines.append(line)
+                        #lines.append(line)
                 
                 Session.add(invoice)
-                Session.add_all(lines)
+                #Session.add_all(lines)
                 Session.commit()
                 
                 invoice.status = "billed"

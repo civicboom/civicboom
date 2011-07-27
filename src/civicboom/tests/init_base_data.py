@@ -78,6 +78,10 @@ def init_base_data():
         assert u1.login_details[0].type == "password"
         assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
         assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
+        
+        u1_service = Session.query(Service).filter(Service.payment_account_type==u1.payment_account.type).one()
+        
+        u1.payment_account.services.append(PaymentAccountService(u1.payment_account, u1_service, discount=1.00))
 
 
         u2 = User()
@@ -113,7 +117,15 @@ def init_base_data():
         u2_invoice1 = Invoice(u2_account)
         u2_invoice1.due_date = u2_account.start_date
         u2_invoice1.timestamp = u2_account.start_date + datetime.timedelta(minutes=1)
-        u2_invoice1line = InvoiceLine(u2_invoice1, u2_service, 'month', u2_account.start_date)
+        
+        
+        u2_invoice1line = InvoiceLine(
+                u2_invoice1,
+                service                  = u2_service,
+                frequency                = 'month',
+                start_date               = u2_account.start_date
+            )
+        
         
         Session.add_all([u2_invoice1, u2_invoice1line])
         
