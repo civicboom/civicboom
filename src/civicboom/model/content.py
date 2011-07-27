@@ -148,12 +148,14 @@ class Content(Base):
             'creation_date': None ,
             'update_date'  : None ,
             'location'     : lambda content: location_to_string(content.location),
+            'distance'     : lambda content: None, # if we search for a location, the extra 'distance' column will overwrite this
             'num_responses': None ,
             'num_comments' : None ,
             'license_id'   : None ,
             'private'      : None ,
             'edit_lock'    : None ,
             'url'          : lambda content: content.__link__(),
+            'tags'         : lambda content: [tag.name for tag in content.tags], # TODO: turn this into an array column
         },
     })
     
@@ -169,9 +171,8 @@ class Content(Base):
             #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
             #'comments'    : lambda content: [ comment.to_dict(                        ) for comment  in content.comments   ] ,
             'license'     : lambda content: content.license.to_dict() ,
-            'tags'        : lambda content: [tag.name for tag in content.tags] ,
             'root_parent' : lambda content: content.root_parent.to_dict(include_fields='creator') if content.root_parent else None,
-            #'url'         : None ,
+            'extra_fields': None ,
     })
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
@@ -380,10 +381,12 @@ class DraftContent(Content):
     id              = Column(Integer(), ForeignKey('content.id'), primary_key=True)
     target_type     = Column(_content_type, nullable=True, default='article')
     #publish_id      = Column(Integer(), nullable=True, doc="if present will overwite the published content with this draft")
+    auto_publish_trigger_datetime = Column(DateTime(), nullable=True)
 
     __to_dict__ = copy.deepcopy(Content.__to_dict__)
     _extra_draft_fields = {
             'target_type'     : None ,
+            'auto_publish_trigger_datetime': None ,
     }
     __to_dict__['default'     ].update(_extra_draft_fields)
     __to_dict__['full'        ].update(_extra_draft_fields)

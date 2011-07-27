@@ -60,7 +60,7 @@ class TestPrivateResponse(TestController):
             response  = self.app.get(url('content' , id=assignment_id), status=403) # we cant get the content to get the listing
             response  = self.app.get(url('content' , id=response_id  ), status=403)
             
-            response  = self.app.get(url('contents', response_id=assignment_id, format='json'), status=200)
+            response  = self.app.get(url('contents', response_to=assignment_id, format='json'), status=200)
             response_json = json.loads(response.body)
             self.assertNotIn('private_response_test' , [response['title'] for response in response_json['data']['list']['items']])
         

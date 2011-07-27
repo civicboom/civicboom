@@ -12,17 +12,17 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
 <div style="background: white; border-radius: 16px; padding: 16px; margin: 1em; width: 722px; margin: auto;" class="frag_whitewrap">
-    <h1>${_('What is a hub?')}</h1>
+    <h1>${_('What is a _group?')}</h1>
     <p>&nbsp;</p>
     <p>
-        ${_('A _Group is a collection of registered users, unified under one "identity" - be it as an organisation, title or issue from which requests for stories can be created for others to reposed to. All _Groups can create a bespoke Boombox.')}
+        ${_('A _Group is a collection of registered users, unified under one "identity" - be it as an organisation, title or issue from which requests for _articles can be created for others to reposed to. All _Groups can create a bespoke _widget.')}
     </p>
     <p>&nbsp;</p>
     <p>
-        ${_('A Boombox is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for stories.')}
+        ${_('A _widget is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for _articles.')}
     </p>
     <p>&nbsp;</p>
-    <h2>${('How to get and use a _Group today:')}</h2>
+    <h2>${_('How to get and use a _Group today:')}</h2>
     <p>&nbsp;</p>
     <div style="position: relative;">
         <div class="cb">
@@ -43,10 +43,10 @@
             <div style="float: left"><h3>2.</h3></div>
             <div style="padding-left: 3em;">
                 <div class="fl" style="width: 20em;">
-                    <h3>${_('Create a name for the _Group. Eg: "The Daily Post", "Brentwood elections" or "Student protests".')}</h3>
+                    <h3>${_('Create a name for the _Group. E.g: "The Daily Post", "Brentwood elections" or "Student protests".')}</h3>
                     <br />
                     <p>
-                        ${_('Explain what the _Group is for. Eg: "Join us in making the news: Tell us your stories - send in videos, pictures and audio and help us report real news as it happens."')}
+                        ${_('Explain what the _Group is for. E.g: "Join us in making the news: Tell us your stories - send in videos, pictures and audio and help us report real news as it happens."')}
                     </p>
                     <br />
                     <p>
@@ -72,7 +72,7 @@
                     <br />
                     <div style="width: 20em" class="border_box">
                         <div style="width: 10em; margin:auto; margin-top: 1.5em; margin-bottom: 1.5em;">
-                            <h3>4. GET STARTED!</h3>
+                            <h3>4. ${_("GET STARTED!")}</h3>
                             <p style="font-size: 150%"><a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a></p>
                         </div>
                     </div>

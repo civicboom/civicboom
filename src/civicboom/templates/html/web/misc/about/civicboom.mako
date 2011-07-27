@@ -2,17 +2,15 @@
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
 
 <img src="/images/boom128.png" style="float:right;">
-<h1>Civicboom connects the people that have news want the </h1>
+<h1>${_("_site_name connects the people that have stories to the people who want stories. How does it work? Simple.")}</h1>
 
-<p><h2>${_('How does it work? Simple.')}</h2>
 <ol>
-	<li>${_('A news organisation or journalist asks for _articles.')}</li>
-	<li>${_('Their readers respond with videos, photo, audio and text.')}</li>
-	<li style="list-style: none;">${_('It really is that simple.')}</li>
-</ol>
+	<li>${_('A journalist, blogger, publisher or media organisation asks for stories.')}</li>
+	<li>${_('Their audience responds directly with videos, photo, audio and text.')}</li>
+	</ol>
 </p>
  
-<p><h2>${_('Civicboom for journalists, bloggers, publishers,  media organisations')}</h2>
+<p><h2>${_('Civicboom for journalists, bloggers, publishers,  media organisations:')}</h2>
 <ul>
 	<li>${_('Engage your audience')}</li>
 	<li>${_('Get relevant news _articles')}</li>
@@ -28,8 +26,8 @@
 </ul>
 </p>
 
-<p><h1><a href="/account/signin" class="button" style="float:right;"> Sign up </a></h1>
-<h1>Don't just read it. Feed it.</h1>
+<p><h1><a href="/account/signin" class="button" style="float:right;"> ${_("Sign up")} </a></h1>
+<h1>${_("_tagline")}</h1>
 
 
 <%def name="breadcrumbs()">

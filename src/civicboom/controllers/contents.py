@@ -30,6 +30,7 @@ from dateutil.parser import parse as parse_date
 import re
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
+from time import time
 
 # Logging setup
 log      = logging.getLogger(__name__)
@@ -38,6 +39,21 @@ log      = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 # Form Schema
 #-------------------------------------------------------------------------------
+
+class AutoPublishTriggerDatetimeValidator(civicboom.lib.form_validators.base.IsoFormatDateConverter):
+    messages = {
+        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
+        'date_past'         : _('The auto publish date must be in the future'),
+    }
+
+    def _to_python(self, value, state):
+        auto_publish_trigger_datetime = super(AutoPublishTriggerDatetimeValidator, self)._to_python(value, state)
+        if not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('require_upgrade', state), value, state)
+        if auto_publish_trigger_datetime <= now():
+            raise formencode.Invalid(self.message('date_past', state), value, state)
+        return auto_publish_trigger_datetime
+
 
 class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     allow_extra_fields  = True
@@ -50,13 +66,14 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
-    creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
+    #creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused? # AllanC - The answer is .. YES IT COULD BE ABUSED!! ... dumbass ...
     #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
     # Assignment Fields
     due_date    = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
     event_date  = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
+    auto_publish_trigger_datetime = AutoPublishTriggerDatetimeValidator(not_empty=False)
     default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
@@ -70,174 +87,66 @@ class ContentCommentSchema(ContentSchema):
 # Global Functions
 #-------------------------------------------------------------------------------
 
-
-#-------------------------------------------------------------------------------
-# Decorators
-#-------------------------------------------------------------------------------
-
-#@decorator
-#def can_publish(target, *args, **kwargs):
-#    #c.logged_in_persona_role
-#    result = target(*args, **kwargs) # Execute the wrapped function
-#    return result
-
-
-#-------------------------------------------------------------------------------
-# Search Filters
-#-------------------------------------------------------------------------------
-
-
-
-def _init_search_filters():
-    def append_search_text(query, text):
-        parts = []
-        for word in text.split():
-            word = re.sub("[^a-zA-Z0-9_-]", "", word)
-            if word:
-                parts.append(word)
-
-        if parts:
-            text = " | ".join(parts)
-            return query.filter("""
-                to_tsvector('english', title || ' ' || content) @@
-                to_tsquery(:text)
-            """).params(text=text)
-        else:
-            return query
-    
-    def append_search_location(query, location):
-        (lon, lat, radius) = (None, None, 10)
-        zoom = 10 # FIXME: inverse of radius? see bug #50
-
-        
-        if isinstance(location, basestring):
-            location = location.replace(",", " ")
-            location_tuple = [i.strip() for i in location.split()]
-            if   len(location_tuple) == 2:
-                (lon, lat        ) = location_tuple
-            elif len(location_tuple) == 3:
-                (lon, lat, radius) = location_tuple
-        else:
-        #if isinstance(location, Point):
-            log.warn('location search with objects is not implemented yet')
-        
-        if lon and lat and radius:
-            query = query.add_columns(func.st_distance(func.st_geomfromwkb(Content.location, 4326), 'SRID=4326;POINT(%f %f)' % (float(lon), float(lat))).label("distance"))
-            return query.filter("location IS NOT NULL").filter("ST_DWithin(location, 'SRID=4326;POINT(%f %f)', %f)" % (float(lon), float(lat), float(radius)))
-        else:
-            return query
-    
-    def append_search_id(query, id):
-        return query.filter(Content.id==int(id))
-
-    def append_search_type(query, type_text):
-        return query.filter(Content.__type__==type_text)
-    
-    def append_search_creator(query, creator):
-        return query.filter(Content.creator_id==normalize_member(creator))
-        #creator = 
-        #if isinstance(creator, int):
-        #else:
-            # AllanC - WARNING this is untested ... all creators should be normalized - I dont think this is ever called
-            # THIS WILL NOT WORK UNLESS - select_from(join(Content, Member, Content.creator)).
-            #return query.filter(Member.username==creator)
-            #raise Exception('unsuported search operation')
-    
-    def append_search_response_to(query, content_id):
-        if isinstance(content_id, Content):
-            content_id = content_id.id
-        try:
-            content_id = int(content_id)
-        except:
-            raise action_error('response_to must be an integer')
-        return query.filter(Content.parent_id==content_id).filter(or_(Content.__type__!='article', and_(Content.__type__=='article', ArticleContent.approval != 'dissassociated')))
-
-    def append_search_boomed_by(query, member):
-        member = normalize_member(member)
-        #return query.filter(Boom.member_id==member) #join(Member.boomed_content, Boom)
-        return query.filter(Content.id.in_(Session.query(Boom.content_id).filter(Boom.member_id==member)))
-
-    def append_search_before(query, date):
-        if isinstance(date, basestring):
-            date = parse_date(date, dayfirst=True).strftime("%d/%m/%Y")
-        return query.filter(Content.update_date <= date)
-    
-    def append_search_after(query, date):
-        if isinstance(date, basestring):
-            date = parse_date(date, dayfirst=True).strftime("%d/%m/%Y")
-        return query.filter(Content.update_date >= date)
-        
-    def append_exclude_content(query, ids):
-        if isinstance(ids, basestring):
-            ids = [int(id) for id in ids.split(',')]
-        return query.filter(~Content.id.in_(ids))
-
-    search_filters = {
-        'id'             : append_search_id          ,
-        'creator'        : append_search_creator     ,
-        'term'           : append_search_text        ,
-        'location'       : append_search_location    ,
-        'type'           : append_search_type        ,
-        'response_to'    : append_search_response_to ,
-        'boomed_by'      : append_search_boomed_by   ,
-        'before'         : append_search_before      ,
-        'after'          : append_search_after       ,
-        'exclude_content': append_exclude_content    ,
-    }
-    
-    return search_filters
-
-search_filters = _init_search_filters()
-
-
 list_filters = {
-    'all'                 : lambda results: results ,
-    'assignments_active'  : lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date>=now(),AssignmentContent.due_date==null())) ,
-    'assignments_previous': lambda results: results.filter(Content.__type__=='assignment').filter(or_(AssignmentContent.due_date< now())) ,
-    'assignments'         : lambda results: results.filter(Content.__type__=='assignment') ,
-    'drafts'              : lambda results: results.filter(Content.__type__=='draft').filter(Content.creator == c.logged_in_persona) ,
-    'articles'            : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id==null())),
-    'responses'           : lambda results: results.filter(and_(Content.__type__=='article', ArticleContent.parent_id!=null())),
-    'not_drafts'          : lambda results: results.filter(Content.__type__!='draft'),
+    'all'                 : lambda: AndFilter([
+    ]),
+    'assignments_active'  : lambda: AndFilter([
+        TypeFilter('assignment'),
+        OrFilter([
+            DueDateFilter(">", "now()"),
+            DueDateFilter("IS", "NULL")
+        ])
+    ]),
+    'assignments_previous': lambda: AndFilter([
+        TypeFilter('assignment'),
+        DueDateFilter("<", "now()")
+    ]),
+    'assignments'         : lambda: AndFilter([
+        TypeFilter('assignment'),
+    ]),
+    'drafts'              : lambda: AndFilter([
+        TypeFilter('draft'),
+        CreatorFilter(c.logged_in_persona.username)
+    ]),
+    'articles'            : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(False)
+    ]),
+    'responses'           : lambda: AndFilter([
+        TypeFilter('article'),
+        ParentIDFilter(True)
+    ]),
+    'not_drafts'          : lambda: AndFilter([
+        NotFilter(TypeFilter('draft')),
+    ]),
 }
 
 
-def sqlalchemy_content_query(include_private=False, trusted_follower= False, **kwargs):
-    """
-    Returns an SQLAlchemy query object
-    This is used in the main contents/index and also to create a union stream of 2 querys
-    """
+def sort_results(results, sort_fields):
+    def valid_sort_field(field):
+        if field in [col["name"] for col in results.column_descriptions]:
+            return field
+        if hasattr(Content           , field):
+            return getattr(Content           , field)
+        if hasattr(UserVisibleContent, field):
+            return getattr(UserVisibleContent, field)
+        if hasattr(AssignmentContent, field):
+            return getattr(AssignmentContent, field)
+        return None
 
-    # Build Search
-    results = Session.query(Content)
-    results = results.with_polymorphic('*')
-    #results = results.options(defer(Content.content)) # exculude fetch of content field in this query return. we never need the full content in a list TODO: this will only become efficent IF content_short postgress trigger is implemented (issue #257)
-    results = results.filter(and_(Content.__type__!='comment', Content.visible==True))
-    
-    #if 'private' in kwargs and logged_in_creator:
-    if include_private:
-        pass # allow private content
-    else:
-        if not trusted_follower:
-            results = results.filter(Content.private==False) # public content only
-        results = results.filter(Content.__type__!='draft')
-    
-    if 'creator' in kwargs.get('include_fields',[]):
-        #results = results.options(joinedload('creator'))
-        results = results.options(joinedload(Content.creator))
-    
-    if 'attachments' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('attachments'))
-    if 'tags' in kwargs.get('include_fields',[]):
-        results = results.options(joinedload('tags'))
-    for key in [key for key in search_filters.keys() if key in kwargs]: # Append filters to results query based on kwarg params
-        if kwargs[key]:
-            results = search_filters[key](results, kwargs[key])
-    if 'list' in kwargs:
-        if kwargs['list'] in list_filters:
-            results = list_filters[kwargs['list']](results)
-        else:
-            raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+    for sort_field in sort_fields:
+        direction = asc
+        if sort_field[0] == "-":
+            direction = desc
+            sort_field = sort_field[1:]
+
+        # check that the sort string is the name of a column in the result
+        # set, rather than some random untrusted SQL statement
+        f = valid_sort_field(sort_field)
+        if f:
+            #log.debug("Sorting by %s %s" % (direction, f))
+            results = results.order_by(direction(f))
+
     return results
 
 
@@ -254,11 +163,11 @@ class ContentsController(BaseController):
 
     
     @web
-    def index(self, union_query=None, **kwargs):
+    def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
         @type list
-        @api contents 1.0 (WIP)        
+        @api contents 1.0 (WIP)
         
         @param list
             'all'                    (default) all content
@@ -275,13 +184,13 @@ class ContentsController(BaseController):
             'article'
             'assignment'
             'draft'
+        @param due_date     find the due date of an assignment, eg "due_date=<2000/11/01" for old assignments, "due_date=>now" for open ones
+        @param update_date  search by most recent update date, eg "update_date=<2000/11/01" for old articles
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
-        @param before       update date before "%d/%m/%Y"
-        @param after        update date after  "%d/%m/%Y"
         @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
-        @param sort         comma separated list of fields, prefixed by '-' for decending order (default) '-update_date'
+        @param sort         comma separated list of fields, prefixed by '-' for decending order (default '-update_date')
         @param * (see common list return controls)
         
         @return 200      list ok
@@ -289,20 +198,24 @@ class ContentsController(BaseController):
         
         @example https://test.civicboom.com/contents.json?creator=unittest&limit=2
         @example https://test.civicboom.com/contents.rss?list=assignments_active&limit=2
-        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date&exclude_fields=creator
+        @example https://test.civicboom.com/contents.json?limit=1&list_type=empty&include_fields=id,views,title,update_date
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
-        
         """
-        # url('contents')
-        
-        # Permissions
-        # AllanC - to aid cacheing we need permissions to potentially be a decorator
-        #          TODO: we need maybe a separte call, or something to identify a private call
+        results = Session.query(Content).with_polymorphic('*') # TODO: list
+        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
+
+        ###############################
+        # BEGIN COPY & PASTE OLD BITS #
+        ###############################
         trusted_follower  = False
         logged_in_creator = False
         creator = None
+
+        if kwargs.get('list') == "drafts" and not c.logged_in_persona:
+            kwargs['list'] = 'all'
+
         try:
             # Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 
@@ -324,98 +237,108 @@ class ContentsController(BaseController):
                 logged_in_creator = True
             else:
                 trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
-        # If we've gone though the hassle of identifying if this is actually the user then show the private content ... this may not be the correct way, we may want to see always default to public .. need to consider
-        if trusted_follower or logged_in_creator:
-            kwargs['private'] = True
-        
-        
-        # Location - 'me' - replace 'me' with current location
-        # NOTE: Cache warning! this is not a public cacheable item
-        if kwargs.get('location') == 'me':
-            location = None
-            if c.logged_in_persona:
-                location = c.logged_in_persona.location_home
-            if hasattr(c.logged_in_persona, 'location_current') and c.logged_in_persona.location_updated > now() - datetime.timedelta(days=2):
-                location = c.logged_in_persona.location_current
-            if location:
-                kwargs['location'] = location
-            else:
-                return to_apilist(None, obj_type='content', **kwargs) # AllanC - if no location and 'me' specifyed return nothing as it would be confising to return seeming random content
-        
-        # --- the below should be publicly cacheable ---
-        
+
         # Setup search criteria
         if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = ""
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ""
-            
+            kwargs['include_fields'] = "creator"
+
         # Defaults
-        if 'creator' not in kwargs and 'creator' not in kwargs['exclude_fields']:
-            kwargs['include_fields'] += ",creator"
-            kwargs['exclude_fields'] += ",creator_id"
         # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
         if kwargs.get('list') == 'responses':
             kwargs['include_fields'] += ",parent"
-        
-        
-        # AllanC - TEMP HACK!!!!! the line below means a trusted follower can see drafts!! this is NOT the correct behaviour.
-        #include_private_content = 'private' in kwargs and (logged_in_creator or trusted_follower)
-        results = sqlalchemy_content_query(include_private = logged_in_creator, trusted_follower=trusted_follower, **kwargs)
 
-        if union_query:
-            results = results.union(union_query)
+        if logged_in_creator:
+            pass # allow private content
+        else:
+            if not trusted_follower:
+                results = results.filter(Content.private==False) # public content only
+            results = results.filter(Content.__type__!='draft')
 
-        # union and add_column are mutually exclusive; union is functional while
-        # add_column is visual, so disable add_column if union is there
-        #if not union_query:
-        #    if 'term' in kwargs:
-        #        results = results.add_column(
-        #            func.ts_headline('pg_catalog.english',
-        #                func.strip_tags(Content.content),
-        #                func.plainto_tsquery(kwargs['term']),
-        #                'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
-        #                type_= Unicode
-        #            )
-        #        )
-        #    else:
-        #        results = results.add_column(
-        #            func.substr(func.strip_tags(Content.content), 0, 100)
-        #        )
+        # TODO: how does this affect performance?
+        for col in ['creator', 'attachments', 'tags']:
+            if col in kwargs.get('include_fields', []):
+                results = results.options(joinedload(getattr(Content, col)))
+        ###############################
+        #  END COPY & PASTE OLD BITS  #
+        ###############################
 
-        def valid_sort_field(field):
-            if field in [col["name"] for col in results.column_descriptions]:
-                return field
-            if hasattr(Content           , field):
-                return getattr(Content           , field)
-            if hasattr(UserVisibleContent, field):
-                return getattr(UserVisibleContent, field)
-            if hasattr(AssignmentContent, field):
-                return getattr(AssignmentContent, field)
-            return None
+        parts = []
 
-        for sort_field in kwargs.get('sort', '-update_date').split(','):
-            direction = asc
-            if sort_field[0] == "-":
-                direction = desc
-                sort_field = sort_field[1:]
+        if _filter:
+            parts.append(_filter)
 
-            # check that the sort string is the name of a column in the result
-            # set, rather than some random untrusted SQL statement
-            f = valid_sort_field(sort_field)
-            if f:
-                #log.debug("Sorting by %s %s" % (direction, f))
-                results = results.order_by(direction(f))
-        
-#        def merge_snippet(content, snippet):
-#            content = content.to_dict(**kwargs)
-#            content['content_short'] = snippet
-#            return content
+        if 'list' in kwargs:
+            if kwargs['list'] in list_filters:
+                parts.append(list_filters[kwargs['list']]())
+            else:
+                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
 
-        #if not union_query:
-        #    results = [merge_snippet(co, sn) for co, sn in results]
+        if 'feed' in kwargs and kwargs['feed']:
+            parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
-        return to_apilist(results, obj_type='content', **kwargs)
+        if 'creator' in kwargs and kwargs['creator']:
+            parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
+
+        if 'due_date' in kwargs and kwargs['due_date']:
+            parts.append(DueDateFilter.from_string(kwargs['due_date']))
+
+        if 'update_date' in kwargs and kwargs['update_date']:
+            parts.append(UpdateDateFilter.from_string(kwargs['update_date']))
+
+        if 'term' in kwargs and kwargs['term']:
+            parts.append(TextFilter(kwargs['term']))
+            results = results.add_columns(
+                func.ts_headline('pg_catalog.english',
+                    func.strip_tags(Content.content),
+                    func.plainto_tsquery(kwargs['term']),
+                    'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+                    type_= Unicode
+                ).label("content_short")
+            )
+
+
+        if 'location' in kwargs and kwargs['location']:
+            lf = LocationFilter.from_string(kwargs['location'])
+            if lf:
+                parts.append(lf)
+                results = results.add_columns(
+                    func.st_distance_sphere(
+                        func.st_geomfromwkb(Content.location, 4326),
+                        'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
+                    ).label("distance")
+                )
+
+        if 'type' in kwargs and kwargs['type']:
+            parts.append(TypeFilter(kwargs['type']))
+
+        if 'response_to' in kwargs and kwargs['response_to']:
+            parts.append(ParentIDFilter(int(kwargs['response_to'])))
+
+        if 'boomed_by' in kwargs and kwargs['boomed_by']:
+            parts.append(BoomedByFilter(get_member(kwargs['boomed_by']).id))
+
+        if 'include_content' in kwargs and kwargs['include_content']:
+            parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
+
+        if 'exclude_content' in kwargs and kwargs['exclude_content']:
+            parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+
+        feed = AndFilter(parts)
+
+        time_start = time()
+
+        # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
+        # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
+        results = results.filter("("+sql(feed)+")")
+        results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
+
+        l = to_apilist(results, obj_type='content', **kwargs)
+
+        # hacky benchmarking just to get some basic idea of how each feed performs
+        time_end = time()
+        log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
+
+        return l
 
 
     @web
@@ -578,6 +501,7 @@ class ContentsController(BaseController):
         if isinstance(id, Content):
             content = id
             called_from_create_method = True # AllanC - see above - only create calls pass the id as a content object
+            # AllanC - note! normal users cannot pass a content object. passing an object does NOT check the c.logged_in_persona permissions, this is needed for some autopublish behaviour but should be kept in mind by other developers passing objects
         else:
             content = get_content(id, is_editable=True)
         assert content
@@ -607,7 +531,7 @@ class ContentsController(BaseController):
         #
         # Default
         #  Save + (if format = html or redirect -> redirect back to editor)
-        #  if no submit_???? is provided and the content type = draft -> article or assignment - pubmit type is set to 'publish'
+        #  if no submit_???? is provided and the content type = draft -> article or assignment - submit type is set to 'publish'
         #
         
         def normalise_form_submit(kwargs):
@@ -617,7 +541,7 @@ class ContentsController(BaseController):
             if len(submit_keys) == 1:
                 return submit_keys[0]
             raise action_error(_('Multiple submit types submitted'), code=400)
-            
+        
         if content.__type__ not in publishable_types and kwargs.get('type') in publishable_types:
             submit_type = 'publish'
             log.debug ( "AUTO PUBLISH! %s - %s" % (content.__type__, kwargs.get('type')) )
@@ -643,7 +567,8 @@ class ContentsController(BaseController):
             permissions['can_publish'] = False
             error                      = errors.error_role()
         
-        if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
+        # If 'assignment' and creator has permissions to publish - it has to be 'creator' rather than c.logged_in_persona because this might be auto publishing and the user may not be logged in
+        if kwargs.get('type') == 'assignment' and not content.creator.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
             #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
@@ -679,7 +604,17 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
+                extra_fields = dict(content.extra_fields)
                 content = morph_content_to(content, kwargs['type'])
+                # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
+                #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator
+                #          but they are strings .. and need to be converted ... ARARARRA!!
+                for key, value in extra_fields.iteritems():
+                    if hasattr(content, key):
+                        try:
+                            setattr(content, key, value)
+                        except:
+                            log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -726,10 +661,12 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        # AllanC - not used yet .. but could be in future
-        for extra_field in []:
-            if extra_field in kwargs: # AllanC - could these have validators at somepoint?
-                content.extra_fields[extra_field] = kwargs[extra_field]
+        permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
+            content.extra_fields[extra_field] = str(kwargs[extra_field])
+            #AllanC - we need the str() here because when the extra_fields obj is serised to Json, it cant deal with objects.
+            #         This is NOT acceptable for int's float's and long's
+            #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
@@ -790,13 +727,13 @@ class ContentsController(BaseController):
                 })
         
         # -- Redirect (if needed)-----------------------------------------------
-
+        
         # We raise any errors at the end because we still want to save any draft content even if the content is not published
         if error:
             #log.debug("raising the error")
             #log.debug(error)
             raise error
-
+        
         if not content_redirect:
             if   submit_type == 'publish' and permissions['can_publish']:
                 # Added prompt aggregate to new content url
@@ -894,7 +831,7 @@ class ContentsController(BaseController):
         
         for list in [list.strip() for list in kwargs['lists'].split(',')]:
             if hasattr(content_actions_controller, list):
-                data[list] = getattr(content_actions_controller, list)(content, **kwargs)['data']['list']
+                data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
         
         # Increase content view count
         if hasattr(content,'views'):

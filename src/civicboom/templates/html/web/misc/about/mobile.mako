@@ -41,7 +41,7 @@ ${_("Get your news")} <i>${_("in")}</i> ${_("the news")}
 <td>
 <h3>${_("Get the Android app now:")}</h3>
 <img src="/images/about/mobile/android.png" alt="android">
-<br><a class="button" href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">Download</a>
+<br><a class="button" href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">${_("Download")}</a>
 </td>
 
 </tr></table>

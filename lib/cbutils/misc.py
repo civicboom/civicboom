@@ -23,7 +23,8 @@ def now():
     if now_override:
         return now_override
     return datetime.datetime.now()
-def set_now(new_now_override):
+def set_now(new_now_override=None):
+    global now_override
     now_override = None
     if isinstance(new_now_override, datetime.datetime):
         now_override = new_now_override
@@ -161,6 +162,8 @@ def obj_to_dict(obj, dict_fields):
                 pass
             elif type(field_value)==types.IntType or type(field_value)==types.FloatType:
                 pass
+            elif type(field_value) == datetime.datetime:
+                field_value = field_value.strftime("%Y-%m-%d %H:%M:%S")
             else:
                 try:
                     field_value = unicode(field_value)

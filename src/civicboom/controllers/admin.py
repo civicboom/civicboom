@@ -155,8 +155,46 @@ class AdminControllerBase(BaseController):
         response.headers['Content-type'] = "text/csv; charset=utf-8"
         csv = []
         for user in Session.query(User).all():
-            csv.append(','.join([user.username, user.name or "", user.email_normalized or ""]))
+            csv.append(','.join([user.username, user.name or "", user.email_normalized or "", user.status]))
         return "\n".join(csv)
+
+    def moderate(self):
+        """
+        This is a hack and a minor security hole,
+        but it makes Lizzie happy.
+
+        The security hole is that it is an unchecked
+        GET request, so that it works straight from
+        the email client. It also works straight from
+        another site's IMG tag.
+
+        To minimise the impact of this, content is
+        only hidden, not removed.
+        """
+        k = request.params['kay']
+        c = get_content(request.params['content_id'])
+
+        if not c:
+            user_log.info("Admin tried to moderate content, it wasn't found")
+            return "Content not found"
+
+        if len(c.flags) == 0:
+            user_log.info("Admin tried to moderate content, it wasn't flagged")
+            return "Content is not flagged"
+
+        if k == "yay":
+            c.flags = []
+            Session.commit()
+            user_log.info("Admin moderated content as OK")
+            return "Flags removed"
+
+        if k == "nay":
+            c.visible = False
+            Session.commit()
+            user_log.info("Admin moderated content as Bad")
+            return "Content hidden"
+
+        return "Unknown status"
 
 
 AdminController = ModelsController(AdminControllerBase,

@@ -30,12 +30,25 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     def list_to_dict(results, list_to_dict_transform=None, **kwargs):
         def default_transform(results, **kwargs):
             r = []
-            for i in results:
-                if type(i) == NamedTuple:
-                    # we did query.add_column somewhere, so sqlalchemy gave us [(object, extra_column), ...] rather than [object, ...]
-                    r.append(i[0].to_dict(**kwargs))
+            for row in results:
+                if type(row) == NamedTuple:
+                    # we did query.add_column somewhere, so sqlalchemy gave us
+                    # [(object, extra_column), ...] rather than [object, ...]
+                    # here we turn
+                    #    [ ( Content, distance ), ... ]
+                    # into
+                    #    [ Content-with-distance-inserted, ... ]
+                    dic = None
+                    for column_id, column_name in enumerate(row.keys()):
+                        if column_id == 0:
+                            # first column is the object
+                            dic = row[column_id].to_dict(**kwargs)
+                        else:
+                            # latter columns are calculated fields to insert
+                            dic[column_name] = row[column_id]
+                    r.append(dic)
                 else:
-                    r.append(i.to_dict(**kwargs))
+                    r.append(row.to_dict(**kwargs))
             return r
         if not list_to_dict_transform:
             list_to_dict_transform = default_transform
@@ -47,8 +60,11 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     if not results:
         return apilist([], obj_type=kwargs.get('obj_type'))
     
-    from cbutils.worker import config
-    limit_default = config['search.default.limit.contents']
+    # lakdsjghaldfkgjsd.
+    # using config variables in the middle of the libraries may be a bad idea
+    from cbutils.worker import config as w_config
+    from pylons import config as p_config
+    limit_default = w_config.get('search.default.limit.contents') or p_config.get('search.default.limit.contents')
 
     limit  = str_to_int(kwargs.get('limit' ), limit_default)
     offset = str_to_int(kwargs.get('offset')               )

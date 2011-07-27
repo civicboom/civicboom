@@ -86,7 +86,7 @@
             <a href="${h.url(controller='account', action='signin', sub_domain='www')}" target="_blank">
                 ${_("Sign up/Sign in")}
                 ##to <span class="icon16 i_boom" title="${_('_site_name')}"></span>
-                ##<img src="/images/logo.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
+                ##<img src="/images/logo-v2-128x32.png" alt="${_('_site_name')}" style="max-height:1.2em; vertical-align: middle;"/>
             </a>
 
         % endif

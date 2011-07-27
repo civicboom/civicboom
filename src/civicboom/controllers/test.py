@@ -205,8 +205,12 @@ class TestController(BaseController):
         """
         Used to get set date for automated tests
         """
-        if new_now:
-            set_now(parse_date(new_datetime, dayfirst=True))
+        if new_datetime=='now':
+            set_now() # Reset any existing date
+        try:
+            set_now(parse_date(new_datetime, dayfirst=True, yearfirst=True))
+        except:
+            pass
         
         return '{"datetime":"%s"}' % now()
 

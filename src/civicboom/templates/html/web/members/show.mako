@@ -21,7 +21,10 @@
 </span>
 &rarr;
 <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-	<a href="${h.url('members', type=d['member']['type'])}" itemprop="url"><span itemprop="title">${_("_%ss" % d['member']['type'].capitalize())}</span></a>
+<%
+_mtype = "_%ss" % d['member']['type'].capitalize()
+%>
+	<a href="${h.url('members', type=d['member']['type'])}" itemprop="url"><span itemprop="title">${_(_mtype)}</span></a>
 </span>
 </%def>
 

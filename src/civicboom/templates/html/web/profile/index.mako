@@ -32,5 +32,12 @@
 </%def>
 
 <%def name="featured()">
-<!--#include file="${h.url(controller='misc', action='featured', format='frag')}"-->
+<%
+from civicboom.model.meta import location_to_string
+%>
+% if c.logged_in_user and c.logged_in_user.location_current:
+    <!--#include file="${h.url(controller='misc', action='featured', format='frag', location=location_to_string(c.logged_in_user.location_current))}"-->
+% else:
+    <!--#include file="${h.url(controller='misc', action='featured', format='frag')}"-->
+% endif
 </%def>

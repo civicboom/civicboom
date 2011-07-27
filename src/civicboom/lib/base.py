@@ -351,6 +351,7 @@ class BaseController(WSGIController):
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:
             self._set_lang(request.params['lang']) # If lang set in URL
+            session_set('lang', request.params['lang'])
         elif session_get('lang'):
             self._set_lang(session_get('lang')) # Lang set for this users session
         #elif c.logged_in_persona has lang:

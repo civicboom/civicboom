@@ -1,9 +1,12 @@
-styles/*/*.css
+fonts/*
+styles/*/*
 styles/common/icons/*
 javascript/tiny_mce/*
 javascript/[a-zA-Z]*.js
 cdn-exclude.txt
 robots.txt
+*/.sass-cache/*
+*.scss
 */.gitignore
 */Makefile
 *.bak

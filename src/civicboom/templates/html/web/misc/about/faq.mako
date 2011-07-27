@@ -8,10 +8,10 @@
 
 
 
-<h2> What does this mean?                     </h2>
+<h2>${_("What does this mean?")}</h2>
 
 <p>
-<b>${_("Q: What is _site_name and how does it work")}</b>
+<b>${_("Q: What is _site_name and how does it work?")}</b>
 <br />${_("A: _site_name connects the people that need news stories with the the people that have them")}
 
 <br />${_("How Civicboom can help you depends on what you want to do")}
@@ -29,7 +29,7 @@
 <p>
 <b>${_("Q: What is Creative Commons (CC) Attribution License?")}</b>
 <ul>
-    <li>${_("All content created has a Creative Commons License automatically attached to it when posted. The Creative Commons Attribution License 3.0 Unported means you are free:")}</li>
+    <li>${_("All content created has a Creative Commons License automatically attached to it when posted. The Creative Commons Attribution License means you are free:")}</li>
     <li>${_("To Share - to copy, distribute and transmit the work")}</li>
     <li>${_("To Remix - to adapt the work")}</li>
     <li>${_("To make commercial use of the work")}</li>
@@ -74,7 +74,7 @@
 
 <p>
 <b>${_("Q: What is embedding?")}</b>
-<br />${_("A: By embedding something you make it appear inside other webpages and blogs. For example, you might embed your request for news into your site so that your readers can use it to directly send you their _articles.")}
+<br />${_("A: By embedding something you make it appear inside other web pages and blogs. For example, you might embed your request for news into your site so that your readers can use it to directly send you their _articles.")}
 </p>
 
 <p>
@@ -90,7 +90,7 @@
 
 
 
-<h2> How do I do this...?                     </h2>
+<h2>${_("How do I do this...?")}</h2>
 
 
 <p>
@@ -104,23 +104,23 @@
 </p>
 
 <p>
-<b>${_("Q: How do I access my settings.")}</b>
-<br />${_("A: Hover your mouse over your display picture in the top right hand corner of your screen. A bar will drop down containing a list of all your hubs. In the top left corner of this dropdown, click the link marked: \"my settings\". Alternatively, visit")} <a href="https://www.civicboom.com/settings/me/password">here</a>
+<b>${_("Q: How do I access my settings?")}</b>
+<br />${_("A: Hover your mouse over your display picture in the top right hand corner of your screen. A bar will drop down containing a list of all your Hubs. In the top left corner of this drop-down menu, click the link marked: \"my settings\". Alternatively, visit")} <a href="https://www.civicboom.com/settings/me/password">here</a>
 </p>
 
 <p>
 <b>${_("Q: Where can I edit my description?")}</b>
-<br />${_("A: On the settings page which can be accessed")} <a href="https://www.civicboom.com/settings">here</a>
+<br />${_("A: On the settings page which can be accessed")} <a href="https://www.civicboom.com/settings">${_("here")}</a>
 </p>
 
 <p>
 <b>${_("Q: Where can I change my screen name?")}</b>
-<br />${_("A: On the settings page which can be accessed")} <a href="https://www.civicboom.com/settings">here</a>
+<br />${_("A: On the settings page which can be accessed")} <a href="https://www.civicboom.com/settings">${_("here")}</a>
 </p>
 
 <p>
 <b>${_("Q: Where can I change my password?")}</b>
-<br />${_("A: Either go to your settings and click the \"password and mobile access\" button on the left hand side or visit")} <a href="https://www.civicboom.com/settings/me/password">here</a>
+<br />${_("A: Either go to your settings and click the \"password and mobile access\" button on the left hand side or visit")} <a href="https://www.civicboom.com/settings/me/password">${_("here")}</a>
 </p>
 
 <p>
@@ -129,12 +129,12 @@
 </p>
 
 <p>
-<b>${_("Q: How do I switch Hubs?")}</b>
-<br />${_("A: Hover your mouse over your profile picture in the top righthand corner of the screen. A list of Hubs you can access will be displayed, click one to switch into that Hub.")}
+<b>${_("Q: How do I switch between being a hub and a user?")}</b>
+<br />${_("A: Hover your mouse over your profile picture in the top right corner of the screen. A list of Hubs you can access will be displayed, click one to switch into that Hub. Your user profile will always be at the top of this list")}
 </p>
 
 <p>
-<b>${_("Q: What happens when I switch Hubs")}</b>
+<b>${_("Q: What happens when I switch between my user profile and my Hubs?")}</b>
 <br />${_("A: All your actions-your _article requests, _responses and content - will be posted under the name of that Hub.")}
 </p>
 
@@ -165,7 +165,7 @@
 </p>
 
 <p>
-<b>${_("Q: The invite function of hubs")}</b>
+<b>${_("Q: The invite function of Hubs")}</b>
 <ul>
     <li>${_("What: This allows you to invite others to join your hub.")}</li>
     <li>${_("How to: Go to the profile of the person you want to invite and click Invite")}</li>
@@ -185,8 +185,8 @@
 </p>
 
 <p>
-<b>${_("Q: If you don't allow  HTML, how  do I include a link in my comment?")}</b>
-<br />${_("A: If you include a URL in your comment, it will automatically be converted to a link. We also support hyperlinks.")}
+<b>${_("Q: If you don't allow HTML, how do I include a link in my comment?")}</b>
+<br />${_("A: If you include a URL in your comment, it will automatically be converted to a link.")}
 </p>
 
 <p>
@@ -207,7 +207,7 @@
 
 <p>
 <b>${_("Q: How do I cancel my _site_name account?")}</b>
-<br />${_("A: Send us an email at cancelmyaccount@civicboom.com and we'll cancel it for you.")}
+<br />${_("A: Send an email to <a href='mailto:cancelmyaccount@civicboom.com'>this address</a> and we'll cancel it for you.")|n}
 </p>
 
 <p>
@@ -222,12 +222,12 @@
 
 <p>
 <b>${_("Q: How will _site_name use the information I provide when I sign up?")}</b>
-<br />${_("A: For full details of how your information will be used and stored, visit our privacy conditions https://www.civicboom.com/about/privacy")}
+<br />${_("A: For full details of how your information will be used and stored, visit <a href='https://www.civicboom.com/about/privacy'>our privacy conditions</a>")|n}
 </p>
 
 
 
-<h2> Terms, conditions and regulations?</h2>
+<h2>${_("Terms, conditions and regulations?")}</h2>
 
 <p>
 <b>${_("Q: What is the _site_name's account Policy?")}</b>
@@ -237,7 +237,7 @@
         <li>${_("You must be 13 years or older to use The Service. Visitors can browse and explore some elements of The Service without creating an Account.")} </li>
         <li>${_("Some functions are age-specific and anyone under the age of 18 will have automatic restrictions imposed on their use of The Service.")} </li>
         <li>${_("You must be a human. Accounts registered by \"bots\" or other automated methods are not permitted.")}</li>
-        <li>${_("You must provide your legal full name, a valid email address, and any other information requested in order to complete the signup process.")} </li>
+        <li>${_("You must provide your legal full name, a valid email address, and any other information requested in order to complete the sign-up process.")} </li>
         <li>${_("If you are creating a Hub or sub-Hub on behalf of a company, business or other formal or informal organisation you must have the relevant privileges or permission to do so. It is not the responsibility of The Service to ensure you have the necessary rights. However if The Service is made aware of a false account, action will be taken against the creator of the false account with view to suspend the account.")} </li>
         <li>${_("Your login may only be used by one person / a single login shared by multiple people is not permitted. You may however create separate Hubs and invite Administrator logins for as many people as you'd like to the Hubs.")} </li>
         <li>${_("You are responsible for maintaining the security of your account and password. The Service cannot and will not be liable for any loss or damage from your failure to comply with this security obligation.")} </li>

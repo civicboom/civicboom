@@ -139,7 +139,7 @@
 
 <%def name="what(member)">
 <div class="widget_creator"><div class="padding">
-    <h1>What is a _Widget?</h1>
+    <h1>${_("What is a _widget?")}</h1>
     <p>
         ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
         ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
@@ -151,23 +151,23 @@
     <table class="what_table"><tr>
         
         <td>
-            <p>1. Standard design: Customizable</p>
+            <p>${_("1. Standard design: Customisable")}</p>
             <ul>
-                <li>Size adaptable to fit website needs</li>
-                <li>Editable colours</li>
-                <li>List your _assignments and _articles</li>
-                ##<li>Direct "Share your _article" button</li>
+                <li>${_("Size adaptable to fit website needs")}</li>
+                <li>${_("Editable colours")}</li>
+                <li>${_("List your _assignments and _articles")}</li>
+                ##<li>${_("Direct "Share your _article" button")}</li>
             </ul>
         </td>
         <td>
             <img src="/images/widget/preview_basic.png" alt="basic_widget_preview" style="margin-right: 2em;"/>
         </td>
         <td>
-            <p>2. Animated Design: Fixed size</p>
+            <p>${_("2. Animated Design: Fixed size")}</p>
             <ul>
-                <li>Requests appear on a carousel</li>
-                <li>Larger font for clear reading</li>
-                ##<li>Direct "Share your story" button</li>
+                <li>${_("Requests appear on a carousel")}</li>
+                <li>${_("Larger font for clear reading")}</li>
+                ##<li>${_("Direct "Share your story" button")}</li>
             </ul>
         </td>
         <td>
@@ -194,7 +194,7 @@
             <h2>${_('Grab the _widget')}</h2>
             <ol>
                 <li>${_('Give your _widget a title')}</li>
-                <li>${_('Choose from the dropdown the content you want to show on the Boombox')}</li>
+                <li>${_('Choose from the drop-down menu the content you want to show on the _widget')}</li>
                 <li>${_('Add the right colours and set your size of the _widget (note the font size will remain the same).')}</li>
                 <li>${_('Click on preview')}</li>
                 <li>${_("When you're happy, copy and paste the code into an HTML page")}</li>
@@ -205,12 +205,12 @@
         <td class="params">
             <form action="">
                 
-                <feildset>
+                <fieldset>
                     <legend>${_("Title")}</legend>
                     <input type="text" name="title" value="${widget_default['title']}" size="30"/><br/>
-                </feildset>
+                </fieldset>
                 
-                <feildset>
+                <fieldset>
                     <legend>${_("Content to show on _widget")}</legend>
                     <%
                         base_lists = [
@@ -231,15 +231,15 @@
                         <option value="${list_name}" ${selected}>${list_description}</option>
                         % endfor
                     </select>
-                </feildset>
+                </fieldset>
                 
-                <feildset>
+                <fieldset>
                     <legend>${_("Size")}</legend>
                     <div class="params_extra">
                     <label>${_('Width')} </label><input type="text" name="width"  value="${widget_default['width' ]}" size="3" /><br/>
                     <label>${_('Height')}</label><input type="text" name="height" value="${widget_default['height']}" size="3" />
                     </div>
-                </feildset>
+                </fieldset>
                 
                 <fieldset>
                     <legend>${_("Colours")}</legend>
@@ -267,7 +267,7 @@
                 </fieldset>
             
             </form>
-            <input type="button" value=${_("Preview _widget")} onClick="preview_widget($(this));" />
+            <input type="button" value="${_("Preview _widget")}" onClick="preview_widget($(this));" />
         </td>
         
         <td class="preview" style="width: 280px;">

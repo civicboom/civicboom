@@ -7,10 +7,10 @@
     import base64
     import hmac
     import hashlib
-	
+    
     def __(s):
         return s
-		
+        
 share_data = {
         'user' : {
            'new': {
@@ -22,18 +22,18 @@ share_data = {
                     'article'   : "I just created the content %(title)s on _site_name, check it out here!",
                 },
                 'tag': {
-                    'new_assignment': "Share _assignment with your friends and followers:",
-                    'new_response'  : "Share your story with your friends and followers:",
-                    'new_group'     : "Share _group with your friends and followers:",
-                    'new_user'      : "Share your news story with your friends and followers:",
-                    'new_article'   : "Share _article with your friends and followers:",
+                    'assignment': "Share _assignment with your friends and followers:",
+                    'response'  : "Share your story with your friends and followers:",
+                    'group'     : "Share _group with your friends and followers:",
+                    'user'      : "Share your news story with your friends and followers:",
+                    'article'   : "Share _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'New _assignment on _site_name',
-                    'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _group on _site_name',
-                    'new_user'      : "I'm on _site_name",
-                    'new_article'   : 'New _article on _site_name',
+                    'assignment': 'New _assignment on _site_name',
+                    'response'  : 'New _article on _site_name',
+                    'group'     : 'New _group on _site_name',
+                    'user'      : "I'm on _site_name",
+                    'article'   : 'New _article on _site_name',
                 },
             },
             'existing': {
@@ -45,18 +45,18 @@ share_data = {
                     'article'   : "Check out my content %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share _assignment with your friends and followers:",
-                    'new_response'  : "Share this story response with your friends and followers:",
-                    'new_group'     : "Share _group with your friends and followers:",
-                    'new_user'      : "Share your profile with your friends and followers:",
-                    'new_article'   : "Share _article with your friends and followers:",
+                    'assignment': "Share _assignment with your friends and followers:",
+                    'response'  : "Share this story response with your friends and followers:",
+                    'group'     : "Share _group with your friends and followers:",
+                    'user'      : "Share your profile with your friends and followers:",
+                    'article'   : "Share _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'My _assignment on _site_name',
-                    'new_response'  : 'My _article on _site_name',
-                    'new_group'     : 'My _group on _site_name',
-                    'new_user'      : "I'm on _site_name",
-                    'new_article'   : 'My _article on _site_name',
+                    'assignment': 'My _assignment on _site_name',
+                    'response'  : 'My _article on _site_name',
+                    'group'     : 'My _group on _site_name',
+                    'user'      : "I'm on _site_name",
+                    'article'   : 'My _article on _site_name',
                 },
             },
             'other': {
@@ -64,22 +64,22 @@ share_data = {
                     'assignment': "Check out %(title)s on _site_name and share your story now!",
                     'response'  : "Check out this response to a request for a story by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Follow it now and get involved!",
-                    'user'      : "Check out %(title) on _site_name. They're getting their news published - and you can too!",
+                    'user'      : "Check out %(name)s on _site_name. They're getting their news published - and you can too!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share this _assignment with your friends and followers:",
-                    'new_response'  : "Share this response with your friends and followers:",
-                    'new_group'     : "Share this _group with your friends and followers:",
-                    'new_user'      : "Share this news with your friends and followers:",
-                    'new_article'   : "Share this _article with your friends and followers:",
+                    'assignment': "Share this _assignment with your friends and followers:",
+                    'response'  : "Share this response with your friends and followers:",
+                    'group'     : "Share this _group with your friends and followers:",
+                    'user'      : "Share this news with your friends and followers:",
+                    'article'   : "Share this _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': '_Assignment on _site_name',
-                    'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Group on _site_name',
-                    'new_user'      : "Profile on _site_name",
-                    'new_article'   : '_Article on _site_name',
+                    'assignment': '_Assignment on _site_name',
+                    'response'  : '_Article on _site_name',
+                    'group'     : '_Group on _site_name',
+                    'user'      : "Profile on _site_name",
+                    'article'   : '_Article on _site_name',
                 },
             },
         },
@@ -93,18 +93,18 @@ share_data = {
                     'article'   : "We just created the content %(title)s on _site_name, check it out here!",
                 },
                 'tag': {
-                    'new_assignment': "Share your _assignment with your friends and followers:",
-                    'new_response'  : "Share your response with your friends and followers:",
-                    'new_group'     : "Share your _group with your friends and followers:",
-                    'new_user'      : "Share your news with your friends and followers:",
-                    'new_article'   : "Share your _article with your friends and followers:",
+                    'assignment': "Share your _assignment with your friends and followers:",
+                    'response'  : "Share your response with your friends and followers:",
+                    'group'     : "Share your _group with your friends and followers:",
+                    'user'      : "Share your news with your friends and followers:",
+                    'article'   : "Share your _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'New _assignment on _site_name',
-                    'new_response'  : 'New _article on _site_name',
-                    'new_group'     : 'New _group on _site_name',
-                    'new_user'      : "We're on _site_name",
-                    'new_article'   : 'New _article on _site_name',
+                    'assignment': 'New _assignment on _site_name',
+                    'response'  : 'New _article on _site_name',
+                    'group'     : 'New _group on _site_name',
+                    'user'      : "We're on _site_name",
+                    'article'   : 'New _article on _site_name',
                 },
             },
             'existing': {
@@ -116,18 +116,18 @@ share_data = {
                     'article'   : "Check out our content %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share your _assignment with your friends and followers:",
-                    'new_response'  : "Share your response with your friends and followers:",
-                    'new_group'     : "Share your _group with your friends and followers:",
-                    'new_user'      : "Share your profile with your friends and followers:",
-                    'new_article'   : "Share your _article with your friends and followers:",
+                    'assignment': "Share your _assignment with your friends and followers:",
+                    'response'  : "Share your response with your friends and followers:",
+                    'group'     : "Share your _group with your friends and followers:",
+                    'user'      : "Share your profile with your friends and followers:",
+                    'article'   : "Share your _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': 'Our _assignment on _site_name',
-                    'new_response'  : 'Our _article on _site_name',
-                    'new_group'     : 'Our _group on _site_name',
-                    'new_user'      : "We're on _site_name",
-                    'new_article'   : 'Our _article on _site_name',
+                    'assignment': 'Our _assignment on _site_name',
+                    'response'  : 'Our _article on _site_name',
+                    'group'     : 'Our _group on _site_name',
+                    'user'      : "We're on _site_name",
+                    'article'   : 'Our _article on _site_name',
                 },
             },
             'other': {
@@ -135,48 +135,25 @@ share_data = {
                     'assignment': "Check out this story request %(title)s on _site_name. Take a look and respond now!",
                     'response'  : "Check out this response to a request by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Get involved and follow it now!",
-                    'user'      : "Check out %(title) on _site_name. You too can sign up and get your news published!",
+                    'user'      : "Check out %(name)s on _site_name. You too can sign up and get your news published!",
                     'article'   : "Check out %(title)s on _site_name!",
                 },
                 'tag': {
-                    'new_assignment': "Share this _assignment with your friends and followers:",
-                    'new_response'  : "Share this response with your friends and followers:",
-                    'new_group'     : "Share this _group with your friends and followers:",
-                    'new_user'      : "Share this news with your friends and followers:",
-                    'new_article'   : "Share this _article with your friends and followers:",
+                    'assignment': "Share this _assignment with your friends and followers:",
+                    'response'  : "Share this response with your friends and followers:",
+                    'group'     : "Share this _group with your friends and followers:",
+                    'user'      : "Share this news with your friends and followers:",
+                    'article'   : "Share this _article with your friends and followers:",
                 },
                 'desc': {
-                    'new_assignment': '_Assignment on _site_name',
-                    'new_response'  : '_Article on _site_name',
-                    'new_group'     : '_Group on _site_name',
-                    'new_user'      : "Profile on _site_name",
-                    'new_article'   : '_Article on _site_name',
+                    'assignment': '_Assignment on _site_name',
+                    'response'  : '_Article on _site_name',
+                    'group'     : '_Group on _site_name',
+                    'user'      : "Profile on _site_name",
+                    'article'   : '_Article on _site_name',
                 },
             },
         }
-    }
-        
-	
-    share_types = {
-        'new_assignment': "I just created the request %(title)s on _site_name. Respond now!",
-        'new_response'  : "I just responded to a request by %(owner)s on _site_name. Get involved & add your voice too!",
-        'new_group'     : "I just created the %(name)s Hub on _site_name. Get involved and follow it now!",
-        'new_user'		: "I just signed up to _site_name to get my news published, you can too!",
-        'new_article'   : "I just created the content %(title)s on _site_name, check it out here!",
-    }
-    share_taglines = {
-        'new_assignment': "Share your _assignment with your friends and followers:",
-        'new_response'  : "Share your response with your friends and followers:",
-        'new_group'     : "Share your _group with your friends and followers:",
-        'new_user'		: "Share your news with your friends and followers:",
-        'new_article'   : "Share your _article with your friends and followers:",
-    }
-    share_descs = {
-        'new_assignment': 'New _assignment on _site_name',
-        'new_response'  : 'New _article on _site_name',
-        'new_group'     : 'New _group on _site_name',
-        'new_user'      : "I'm on _site_name",
-        'new_article'   : 'New _article on _site_name',
     }
 %>
 
@@ -201,19 +178,19 @@ share_data = {
         "data_track_clickback":true,
         email_template: 'Check out {{url}} on Civicboom',
         templates: {
-			twitter: 'Check out {{url}} (from @civicboom)'
-		},
-		url_transforms : {
-			shorten: {      
-			    twitter: 'bitly'
-			},
-		},
-	    shorteners : {
-	        bitly : { 
-	            username: 'civicboom',
-	            apiKey: 'R_0bcb2a604c8a101cacff1fa70bbf19c8'
-	        }
-		},
+            twitter: 'Check out {{url}} (from @civicboom)'
+        },
+        url_transforms : {
+            shorten: {      
+                twitter: 'bitly'
+            },
+        },
+        shorteners : {
+            bitly : { 
+                username: 'civicboom',
+                apiKey: 'R_0bcb2a604c8a101cacff1fa70bbf19c8'
+            }
+        },
       };
     </script>
     <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
@@ -256,7 +233,7 @@ share_data = {
             % endfor
         ></a></div></li>
     </%def>
-	
+    
     <div class="frag_list">
         <h2>${_('Social sharing')}</h2>
         <div class="frag_list_contents">
@@ -308,35 +285,44 @@ share_data = {
             % endfor
         ></a></div></li>
     </%def>
-	
-	## <h2>${_('Share this profile')}</h2>
-	## <div class="frag_list_contents">
-	    <div class="social_sharing content note addthis_toolbox" style="padding-bottom: 0px;">
-		## Boombox link generation moved to show.mako (using custom_share directly)
-		<ul class="member">
-		    % for name in ['email', 'facebook', 'twitter', 'linkedin', 'compact']:
-			${sharebutton(name, **kwargs)}
-		    % endfor
-		    
-		## Janrain moved directly to show.mako too
-		## Possibly don't want to do these individually for both member and content
-		</ul>
-		<style>
-		    .link_more_hide span {
-			width:0; height:0;
-		    }
-		    .atclear {
-			clear: none;
-			display: none;
-		    }
-		</style>
-		<script>
-		    $(function(){
-			addthis.toolbox('.addthis_toolbox');
-		    });
-		</script>
-	    </div>
-	## </div>
+    
+    ## <h2>${_('Share this profile')}</h2>
+    ## <div class="frag_list_contents">
+        <div class="social_sharing content note addthis_toolbox" style="padding-bottom: 0px;">
+        ## Boombox link generation moved to show.mako (using custom_share directly)
+        <ul class="member">
+            % for name in ['email', 'facebook', 'twitter', 'linkedin', 'compact']:
+            ${sharebutton(name, **kwargs)}
+            % endfor
+            
+        ## Janrain moved directly to show.mako too
+        ## Possibly don't want to do these individually for both member and content
+        </ul>
+        <style>
+            .link_more_hide span {
+            width:0; height:0;
+            }
+            .atclear {
+            clear: none;
+            display: none;
+            }
+        </style>
+        <script>
+            $(function(){
+            addthis.toolbox('.addthis_toolbox');
+            });
+        </script>
+        
+        ## AllanC - had to add this back in. Why was it missing?
+        ##          what a hideious hideous copy paste botch .. this needs refactoring
+        % if custom_share_line:
+            <div style="height: 24px">
+                ${custom_share_line()}
+            </div>
+        % endif
+        
+        </div>
+    ## </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -346,17 +332,17 @@ share_data = {
 
 
 <%def name="share_this_js()">
-	<!-- ShareThis -->
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-	<script type="text/javascript">
-	$(function() {
-		stLight.options({
-			publisher:'${config['api_key.sharethis']}' ,
-			onhover  : false ,
-			embeds   : true ,
-		});
-	});
-	</script>
+    <!-- ShareThis -->
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        stLight.options({
+            publisher:'${config['api_key.sharethis']}' ,
+            onhover  : false ,
+            embeds   : true ,
+        });
+    });
+    </script>
 </%def>
 
 
@@ -375,12 +361,12 @@ share_data = {
         % endfor
     ></span>
     <script type="text/javascript">
-		$(function() {
-		  for (var stt in $(
-			stButtons.locateElements();
-			##stButtons.makeButtons();
-			##stWidget.init();
-		});
+        $(function() {
+          for (var stt in $(
+            stButtons.locateElements();
+            ##stButtons.makeButtons();
+            ##stWidget.init();
+        });
     </script>
     ##http://forums.sharethis.com/topic.php?id=3277&replies=1#post-6679
     
@@ -401,7 +387,7 @@ share_data = {
 
     <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
     <script type="text/javascript">
-	$(function() {
+    $(function() {
         stLight.options({
             publisher  : '${config['api_key.sharethis']}' ,
             onhover    : false ,
@@ -410,7 +396,7 @@ share_data = {
             st_title   : '${title.replace("'","")}' ,
             displayText: '${description.replace("'","")}',
         });
-	});
+    });
     </script>
     </%doc>
     
@@ -455,66 +441,66 @@ share_data = {
       RPXNOW.init({appId: '${config['app_id.janrain']}',
         xdReceiver: '/rpx_xdcomm.html'});
       
-		## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
-		function janrain_popup_share(url, options, variables) {
-			RPXNOW.loadAndRun(['Social'], function () {
-				if (typeof options != 'object') options = {};
-		        var activity = new RPXNOW.Social.Activity(variables.share_display,
-		                                                  variables.action_share_description,
-		                                                  url
-		                                                  );
-		        
-		        activity.setTitle               (variables.action_page_title);
-		        activity.setDescription         (variables.action_page_description);
-		        activity.setUserGeneratedContent(variables.share_usergen_default);
-		        
-		        if (typeof variables.action_links == 'object') {
-		        	for (i=0; i<variables.action_links.length; i++) {
-			            activity.addActionLink(variables.action_links[i].text, variables.action_links[i].href);
-			        }
-			    }
-			    
-		        ##if (typeof variables.properties == 'object') {
-		        ##	for (i=0; i<variables.properties.length; i++) {
-			    ##        activity.addTextProperty(variables.properties[i].text, variables.properties[i].value);
-			    ##    }
-			    ##}
-			    
-			    if (typeof variables.media == 'object') {
-			    	var rpx_images;
-			    	for (i=0; i<variables.media.length; i++) {
-			    		var media = variables.media[i];
-			    		if (media.type=='image') {
-			    			if (typeof rpx_images == 'undefined')
-			    				rpx_images = new RPXNOW.Social.ImageMediaCollection();
-			    			rpx_images.addImage(media.src, media.href);
-			    		} else if (media.type=='audio') {
-			    			activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem(media.src));
-			    		} else if (media.type=='video') {
-			        		var rpx_video = new RPXNOW.Social.VideoMediaItem(
-			        			media.original_url,
-			        			media.thumbnail_url
-			        		);
-			        		rpx_video.setVideoTitle(variables.video[i].caption);
-			        		activity.setMediaItem(rpx_video);
-			        	}
-			        }
-			        if (typeof rpx_images != 'undefined')
-			        	activity.setMediaItem(rpx_images); 
-			    }
-		        
-		        var finished = function(results) {
-		          // Process results of publishing.
-		        }
-		        
-		        options.finishCallback = finished;
-		        options.urlShortening = true;
-		        
-		        RPXNOW.Social.publishActivity(activity, options);
-		
-		    });
-		}
-	</script>
+        ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+        function janrain_popup_share(url, options, variables) {
+            RPXNOW.loadAndRun(['Social'], function () {
+                if (typeof options != 'object') options = {};
+                var activity = new RPXNOW.Social.Activity(variables.share_display,
+                                                          variables.action_share_description,
+                                                          url
+                                                          );
+                
+                activity.setTitle               (variables.action_page_title);
+                activity.setDescription         (variables.action_page_description);
+                activity.setUserGeneratedContent(variables.share_usergen_default);
+                
+                if (typeof variables.action_links == 'object') {
+                    for (i=0; i<variables.action_links.length; i++) {
+                        activity.addActionLink(variables.action_links[i].text, variables.action_links[i].href);
+                    }
+                }
+                
+                ##if (typeof variables.properties == 'object') {
+                ##    for (i=0; i<variables.properties.length; i++) {
+                ##        activity.addTextProperty(variables.properties[i].text, variables.properties[i].value);
+                ##    }
+                ##}
+                
+                if (typeof variables.media == 'object') {
+                    var rpx_images;
+                    for (i=0; i<variables.media.length; i++) {
+                        var media = variables.media[i];
+                        if (media.type=='image') {
+                            if (typeof rpx_images == 'undefined')
+                                rpx_images = new RPXNOW.Social.ImageMediaCollection();
+                            rpx_images.addImage(media.src, media.href);
+                        } else if (media.type=='audio') {
+                            activity.setMediaItem(new RPXNOW.Social.Mp3MediaItem(media.src));
+                        } else if (media.type=='video') {
+                            var rpx_video = new RPXNOW.Social.VideoMediaItem(
+                                media.original_url,
+                                media.thumbnail_url
+                            );
+                            rpx_video.setVideoTitle(variables.video[i].caption);
+                            activity.setMediaItem(rpx_video);
+                        }
+                    }
+                    if (typeof rpx_images != 'undefined')
+                        activity.setMediaItem(rpx_images); 
+                }
+                
+                var finished = function(results) {
+                  // Process results of publishing.
+                }
+                
+                options.finishCallback = finished;
+                options.urlShortening = true;
+                
+                RPXNOW.Social.publishActivity(activity, options);
+        
+            });
+        }
+    </script>
 </%def>
 
 <%def name="janrain_social(content, value='Janrain Social', class_='')">
@@ -537,69 +523,78 @@ share_data = {
     ${json.dumps(options).replace('\\\"', "\\\'").replace('"', "'")}
 </%def>
 
-<%def name="janrain_social_call_content(content, share_type)">
-	## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+<%def name="janrain_social_call_content(content, share_type, share_object_type)">
+    ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-from civicboom.lib.aggregation import aggregation_dict
-cd = aggregation_dict(content, safe_strings=True)
-cd['url'] = h.url('content', id=content['id'], qualified=True)
-def clean(s):
-	if isinstance(s, basestring):
-		return s.replace("'", "\\'")
-	return ''
-share_usergen_default = clean(_(share_types[share_type]) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        
+        from civicboom.lib.aggregation import aggregation_dict
+        cd = aggregation_dict(content, safe_strings=True)
+        cd['url'] = h.url('content', id=content['id'], qualified=True)
+        def clean(s):
+            if isinstance(s, basestring):
+                return s.replace("'", "\\'")
+            return ''
+        share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
     %>
-	$(function() {
-		var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
-		var url       = content.url;
-		var variables = {
-			share_display:				'${_(share_taglines[share_type])}',
-			action_share_description:   '${_(share_descs[share_type])}',
-			share_usergen_default:		'${_(share_usergen_default) | n}',
-			action_page_title:       	content.title,
-			action_page_description: 	content.user_generated_content,
-			action_links: 				content.action_links,
-			action:						content.action,
-			media:						content.media,
-		};
-		janrain_popup_share(url, ${janrain_options()}, variables);
-	});
+    $(function() {
+        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
+        var url       = content.url;
+        var variables = {
+            share_display:                '${_(share_data_tag)}',
+            action_share_description:   '${_(share_data_desc)}',
+            share_usergen_default:        '${_(share_usergen_default) | n}',
+            action_page_title:           content.title,
+            action_page_description:     content.user_generated_content,
+            action_links:                 content.action_links,
+            action:                        content.action,
+            media:                        content.media,
+        };
+        janrain_popup_share(url, ${janrain_options()}, variables);
+    });
 </%def>
 
-<%def name="janrain_social_call_member(member, share_type)">
-	## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+<%def name="janrain_social_call_member(member, share_type, share_object_type)">
+    ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
-cd = {
-		'url':						h.url('member', id=member['username'], qualified=True),
-		'title':					member['name'],
-		'user_generated_content': 	member['description'],
-		'media':					[ {
-										'type': 'image',
-										'src':  member['avatar_url'],
-										'href': h.url('member', id=member['username'], qualified=True),
-									}, ],
-}
-def clean(s):
-	if isinstance(s, basestring):
-		return s.replace("'", "\\'")
-	return ''
-share_usergen_default = clean(_(share_types[share_type]) % {'name': cd['title']})
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        cd = {
+                'url':                      h.url('member', id=member['username'], qualified=True),
+                'title':                    member['name'],
+                'user_generated_content':   member['description'],
+                'media':                    [ {
+                                                'type': 'image',
+                                                'src':  member['avatar_url'],
+                                                'href': h.url('member', id=member['username'], qualified=True),
+                                            }, ],
+        }
+        def clean(s):
+            if isinstance(s, basestring):
+                return s.replace("'", "\\'")
+            return ''
+        share_usergen_default = clean(_(share_data_type) % {'name': cd['title']})
     %>
-	$(function() {
-		var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
-		var url       = content.url;
-		var variables = {
-			share_display:				'${clean(_(share_taglines[share_type]))}',
-			action_share_description:   '${clean(_(share_descs[share_type]))}',
-			share_usergen_default:		'${clean(_(share_usergen_default)) | n}',
-			action_page_title:       	content.title,
-			action_page_description: 	content.user_generated_content,
-			action_links: 				content.action_links,
-			action:						content.action,
-			media:						content.media,
-		};
-		janrain_popup_share(url, ${janrain_options() | n}, variables);
-	});
+    $(function() {
+        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
+        var url       = content.url;
+        var variables = {
+            share_display:              '${clean(_(share_data_tag))}',
+            action_share_description:   '${clean(_(share_data_desc))}',
+            share_usergen_default:      '${clean(_(share_usergen_default)) | n}',
+            action_page_title:          content.title,
+            action_page_description:    content.user_generated_content,
+            action_links:               content.action_links,
+            action:                     content.action,
+            media:                      content.media,
+        };
+        janrain_popup_share(url, ${janrain_options() | n}, variables);
+    });
 </%def>
 
 <%doc>

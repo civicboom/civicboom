@@ -25,14 +25,19 @@
             <br /><span class="error-message error">${d['invalid'][name]}</span>
         % endif
     </%def>
+    <%def name="show_errors(*names)">
+        % if 'invalid' in d and set(names).intersection(set(d['invalid'].keys())):
+            <br /><span class="error-message error">${_('Error')}</span>
+        % endif
+    </%def>
 
 
     ## Setup Form
     <%
-        if 'action' not in d:
+        if 'action' not in d or c.controller == 'groups':
             d['action'] = 'edit'
     %>
-    % if c.action != 'new':
+    % if c.action != 'new' and c.controller !='groups':
         ## Editing Form
         ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
     % else:
@@ -59,7 +64,7 @@
     </script>
     <div class="group_settings">
         <h1>
-            % if not c.action != 'new':
+            % if c.controller == 'groups':
                 ${_('Great! You want to create a _Group...')}<br />
                 ${_('To do this fill out the following:')}
             % endif
@@ -104,10 +109,9 @@
                     <div class="group-block">
                         <div onclick="toggle_edit_section($(this));" class="edit_input">
                             <span class="label">${_('When others join your _Group what default role do you want them to have?')}</span>
-                            <span class="icon16 i_plus"></span>
+                            <span class="icon16 i_plus"></span>${show_error('default_role')}
                         </div>
                         <div class="hideable">
-                            ${show_error('default_role')}
                             <ul>
                                 <li>
                                     <div class="fl">
@@ -160,9 +164,9 @@
                         <div onclick="toggle_edit_section($(this));" class="edit_input">
                             <span class="label">${_('How do you want others to join this _Group?')}</span>
                             <span class="icon16 i_plus"></span>
+                            ${show_error('join_mode')}
                         </div>
                         <div class="hideable">
-                            ${show_error('join_mode')}
                             <ul>
                                 <li>
                                     <div class="fl">
@@ -207,6 +211,7 @@
                                 <div onclick="toggle_edit_section($(this));" class="edit_input">
                                     <span class="label">${_('Member & content visibility')}</span>
                                     <span class="icon16 i_plus"></span>
+                                    ${show_errors('member_visibility', 'default_content_visibility')}
                                     % if not c.logged_in_persona.has_account_required('plus'):
                                         <div class="upgrade">
                                             ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
@@ -267,11 +272,12 @@
                    </div>
                 </fieldset>
         <div class="fl" style="width: 17em; padding-top: 1em;">
-            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
+            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' and c.controller != 'groups' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
             ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
+            
         </div>
         <div class="fr" style="padding-top: 1em;">
-            % if c.action != 'new':
+            % if c.action != 'new' and c.controller != 'groups':
                 <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
             % else:
                 <input type="submit" name="submit" value="${_('Create _Group')}" class="button" />
@@ -281,6 +287,20 @@
     </div>
     
     ${h.end_form()}
+    
+    ## AllanC - disabled for now .. still working on it, had other prioritys
+    % if c.controller == 'settings':
+        ## AllanC - by vertue of the fact they can see this page, they are already an administrator
+        <br />
+        ${h.secure_link(
+            ##h.args_to_tuple('group', id=d['username'], format='redirect'),
+            h.url('group', id=d['username']),
+            method = "DELETE",
+            value           = _("Delete _group"),
+            confirm_text    = _("Are your sure you want to delete this group? (All content published by this group will be deleted. All members will be notified)"),
+            ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
+        )}
+    % endif
 </%def>
 
 <%def name="terms_and_conds()">
@@ -290,7 +310,7 @@
         </div>
         <div class="popup-message" style="white-space: nowrap; padding-right:1.5em;">
             ${_('''
-            I warrant to Indiconews Ltd (owner of Civicboom.com) that I have permissions<br />
+            I warrant to Indiconews Ltd (owner of _site_name) that I have permissions<br />
             and rights to create this _Group. I also confirm that any logo/image I upload does<br />
             not infringe upon any trademarks, third party copyrights, other such rights or<br />
             violate the user agreement. I hereby grant to Indiconews Ltd a non-exclusive,<br />

@@ -146,8 +146,6 @@ class MembersController(BaseController):
         # Setup search criteria
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
-        if 'exclude_fields' not in kwargs:
-            kwargs['exclude_fields'] = ""
         
         list_to_dict_transform = None
 

@@ -7,7 +7,7 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img  class='logo_img'     src='${h.wh_url("public", "images/logo_new_small.png")}'              alt='${_("_site_name")}' />
+		<img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-128x28.png")}'              alt='${_("_site_name")}' />
         <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}'       />
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
@@ -149,11 +149,11 @@
 ##------------------------------------------------------------------------------
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
-        <input type="search" name="term" placeholder="Search" class="search_input" id="search_input">
+        <input type="search" name="term" placeholder="${_("Search")}" class="search_input" id="search_input">
         <input type="submit" name="type" class="button b0" value="All" id="search_default">
-        <input type="submit" name="type" class="button b1" value="Requests">
-        <input type="submit" name="type" class="button b2" value="Stories">
-        <input type="submit" name="type" class="button b3" value="Members">
+        <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
+        <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
+        <input type="submit" name="type" class="button b3" value="${_("_Members")}">
     </form>
 </div>
 
