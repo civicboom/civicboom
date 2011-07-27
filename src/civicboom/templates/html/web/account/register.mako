@@ -201,10 +201,11 @@
                 <img src="/images/default/thumbnail_response.png" alt="response"/>
                 
                 <h2 class="newformtitle">${_('Want to share your _articles?')}</h2>
+                <b>${_('Are you the eyes and ears of your community?')}</b>
                 <ul>
-                    <li><b>${_('Are you the eyes and ears of your community?')}</b></li>
-                    <li>${_('Everyone has a story and now you have an outlet to share it with the world')}</li>
-                    <li>${_('So upload your content - from pictures and videos to audio clips and text - for journalists, bloggers, publishers and news organisations to use!')}</li>
+                    <li>${_('Everyone has stories - _site_name makes it easy to share them with the world')}</li>
+                    <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
+                    <li><b>${_('Click here if this is you!')}</b></li>
                 </ul>
                 
                 <%doc>
@@ -223,10 +224,11 @@
             <div class="user_type_option ${'selected' if radio_choices['org'][1] else ''}" onclick="$('#help_type_org').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
                 <img src="/images/default/thumbnail_assignment.png" alt="request"/>
                 <h2 class="newformtitle">${_('Need _articles?')}</h2>
+                <b>${_('Journalists, bloggers, publishers and news organisations:')}</b>
                 <ul>
-                <li><b>${_('Journalists, bloggers, publishers and news organisations:')}</b></li>
-                <li>${_('Your greatest resource is your audience. After all, news starts with people and now you have a tool to tap into those stories')}</li>
-                <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
+                    <li>${_('Your greatest resource is your audience because news starts with people')}</li>
+                    <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
+                    <li><b>${_('Click here if this is you!')}</b></li>
                 </ul>
                 
                 <%doc>
