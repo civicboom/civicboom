@@ -295,10 +295,14 @@ class DueDateFilter(Filter):
         return "AssignmentContent.due_date %s '%s'" % (self.comparitor, self.date)
 
     def __repr__(self):
-        return "DueDateFilter(%s)" % (repr(self.comparitor), repr(self.date))
+        return "DueDateFilter(%s, %s)" % (repr(self.comparitor), repr(self.date))
 
     def __sql__(self):
-        return "content_assignment.due_date %s '%s'" % (self.comparitor, self.date)
+        if type(self.date) == str:
+            return "content_assignment.due_date %s %s" % (self.comparitor, self.date)
+        else:
+            return "content_assignment.due_date %s '%s'" % (self.comparitor, self.date)
+
 
 
 class UpdateDateFilter(Filter):
@@ -324,10 +328,13 @@ class UpdateDateFilter(Filter):
         return "Content.update_date %s '%s'" % (self.comparitor, self.date)
 
     def __repr__(self):
-        return "UpdateDateFilter(%s)" % (repr(self.comparitor), repr(self.date))
+        return "UpdateDateFilter(%s, %s)" % (repr(self.comparitor), repr(self.date))
 
     def __sql__(self):
-        return "content.update_date %s '%s'" % (self.comparitor, self.date)
+        if type(self.date) == str:
+            return "content.update_date %s %s" % (self.comparitor, self.date)
+        else:
+            return "content.update_date %s '%s'" % (self.comparitor, self.date)
 
 
 class ParentIDFilter(Filter):

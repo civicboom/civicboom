@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
+import babel.messages.pofile as po
+import sys
+import re
+import random
+
+chars = [
+    u"進",
+    u"階",
+    u"選",
+    u"項",
+    u"本",
+    u"任",
+    u"何",
+]
+
+def trans(text, locations):
+    ws = []
+    for word in text.split():
+        if "%" in word:
+            ws.append(word)
+        else:
+            ws.append("".join([
+                random.choice(chars) for n in range(0, len(word)/2+1)
+            ]))
+    return " ".join(ws)
+
+def trans_cat(cat):
+    for n, msg in enumerate(cat):
+        #if n % 10 == 0:
+        #    print "\rParsing message %d" % n,
+        #    print ".",
+        if type(msg.id) == tuple:
+            msg.string = tuple([trans(i, msg.locations) for i in msg.id])
+        else:
+            msg.string = trans(msg.id, msg.locations)
+    #print
+
+
+def main():
+    cat = po.read_po(file(sys.argv[1], "r"))
+    trans_cat(cat)
+    po.write_po(file(sys.argv[1], "w"), cat)
+
+
+if __name__ == "__main__":
+    main()

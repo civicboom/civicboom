@@ -21,7 +21,7 @@
     )}
 
 	${_(u"Website © Indiconews Ltd, articles © their respective authors")}
-    - Version:
+    - ${_("Version:")}
     % if config['development_mode']:
         <b>Dev</b>
     % else:

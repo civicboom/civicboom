@@ -144,7 +144,7 @@ $(function() {
 
 <%def name="forgot()">
 <section>
-	<a class="button" style="float: right; margin: 16px;" href="#" id="iforgot" onclick="$('#iforgot').hide(); $('#reminder').show();">Forgotten your password?</a>
+	<a class="button" style="float: right; margin: 16px;" href="#" id="iforgot" onclick="$('#iforgot').hide(); $('#reminder').show();">${_("Forgotten your password?")}</a>
 	
 	<div id="reminder" class="hideable">
 	<p>&nbsp;

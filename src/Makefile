@@ -47,20 +47,32 @@ release:
 
 site: i18n js css
 
-i18n:
+i18n: i18n-en
+
+i18n-base:
 	python setup.py extract_messages
+
+i18n-en: i18n-base
 	#python setup.py update_catalog
 	python setup.py init_catalog -l en
 	../admin_scripts/site_to_english civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
-i18n-fr: i18n
+i18n-zh: i18n-base
+	python setup.py init_catalog -l zh
+	../admin_scripts/site_to_x civicboom/i18n/zh/LC_MESSAGES/civicboom.po
+	python setup.py compile_catalog
+
+i18n-fr: i18n-base
+	python setup.py init_catalog -l fr
 	curl \
 		-F pofile=@civicboom/i18n/en/LC_MESSAGES/civicboom.po \
 		-F language=fr \
 		-F output=pofile  \
 		--output civicboom/i18n/fr/LC_MESSAGES/civicboom.po \
 		http://pepipopum.dixo.net
+	python setup.py compile_catalog
+
 js:
 	cd civicboom/public/javascript && $(MAKE)
 

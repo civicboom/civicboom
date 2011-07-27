@@ -15,6 +15,7 @@
 		<!-- non-urgent bits -->
 		<script src="/javascript/jquery.ui.js"></script>
 		<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
+		<script src="/javascript/jquery.ui.timepicker-addon.js"></script>
 		<script src="/javascript/jquery.html5-0.0.1.js"></script>
 		<script src="/javascript/jquery.scrollTo.js"></script>
 		<script src="/javascript/jquery.simplemodal-1.4.1.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->

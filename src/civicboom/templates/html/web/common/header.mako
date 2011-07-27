@@ -149,11 +149,11 @@
 ##------------------------------------------------------------------------------
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
-        <input type="search" name="term" placeholder="Search" class="search_input" id="search_input">
+        <input type="search" name="term" placeholder="${_("Search")}" class="search_input" id="search_input">
         <input type="submit" name="type" class="button b0" value="All" id="search_default">
-        <input type="submit" name="type" class="button b1" value="Requests">
-        <input type="submit" name="type" class="button b2" value="Stories">
-        <input type="submit" name="type" class="button b3" value="Members">
+        <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
+        <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
+        <input type="submit" name="type" class="button b3" value="${_("_Members")}">
     </form>
 </div>
 

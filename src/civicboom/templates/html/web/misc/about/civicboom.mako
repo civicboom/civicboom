@@ -2,7 +2,7 @@
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
 
 <img src="/images/boom128.png" style="float:right;">
-<h1>Civicboom connects the people that have stories to the people who want stories. How does it work? Simple. </h1>
+<h1>${_("_site_name connects the people that have stories to the people who want stories. How does it work? Simple.")}</h1>
 
 <ol>
 	<li>${_('A journalist, blogger, publisher or media organisation asks for stories.')}</li>
@@ -26,8 +26,8 @@
 </ul>
 </p>
 
-<p><h1><a href="/account/signin" class="button" style="float:right;"> Sign up </a></h1>
-<h1>Don't just read it. Feed it.</h1>
+<p><h1><a href="/account/signin" class="button" style="float:right;"> ${_("Sign up")} </a></h1>
+<h1>${_("_tagline")}</h1>
 
 
 <%def name="breadcrumbs()">
