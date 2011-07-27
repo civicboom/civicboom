@@ -32,10 +32,10 @@
 		<form class="form" id="form_search" action="${url('contents')}" method="GET"
               onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_2'); return false;">
             <fieldset>
-				<p><label>Search for</label><br>
-                <input type="search" name="term" placeholder="Enter key words" value="${kwargs.get('term')}"/>
+				<p><label>${_("Search for")}</label><br>
+                <input type="search" name="term" placeholder="${_("Enter key words")}" value="${kwargs.get('term')}"/>
 
-				<p><label>Type</label><br>
+				<p><label>${_("Type")}</label><br>
 				<select name="list" style="width: 100%;">
 				<%
 				types = [
@@ -52,11 +52,11 @@
                 % endfor
 				</select>
 
-                <p><label>Near to</label>
+                <p><label>${_("Near to")}</label>
                 ${loc.location_picker(width='100%', height="213px")}
 
                 <p>&nbsp;<br>
-				<input type="submit" value="Search" class="button"/>
+				<input type="submit" value="${_("Search")}" class="button"/>
             </fieldset>
         </form>
 	    </div>

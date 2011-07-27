@@ -55,11 +55,11 @@
     <div class="pagination">
         % if offset > 0:
             <% kwargs['offset'] = offset - limit %>
-            <a href="${h.url('current', format='html', **kwargs)}" class="prev" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">Prev</a>
+            <a href="${h.url('current', format='html', **kwargs)}" class="prev" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">${_("Previous")}</a>
         % endif
         % if offset + items < count:
             <% kwargs['offset'] = offset + limit %>
-            <a href="${h.url('current', format='html', **kwargs)}" class="next" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">Next</a>
+            <a href="${h.url('current', format='html', **kwargs)}" class="next" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">${_("Next")}</a>
         % endif
         <div style="clear: both;"></div>
     </div>
@@ -178,7 +178,7 @@
                 % endif
             </${type_[0]}>
             % if href and show_heading and len(items) < count:
-            <a href="${href}" ${js_link_to_frag_list} class="link_more">${count-len(items)} more</a>
+            <a href="${href}" ${js_link_to_frag_list} class="link_more">${_("%d more") % (count-len(items))}</a>
             % endif
             % if paginate:
                 ${pagination()}
@@ -563,9 +563,9 @@
         </div>
         % if content and 'content_short' in content:
             ${h.truncate(content['content_short'], length=140, indicator='...', whole_word=True)}
-            <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} style="font-size: 75%;">learn more</a>
+            <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} style="font-size: 75%;">${_("learn more")}</a>
         % endif
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} class="prompt">Click here to participate <img src="/images/settings/arrow.png" style="vertical-align: middle;" /></a>
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag} class="prompt">${_("Click here to participate")} <img src="/images/settings/arrow.png" style="vertical-align: middle;" /></a>
     </div>
 
     <div class="separator"></div>
@@ -573,7 +573,7 @@
     <div class="content-info">
         % if content and 'creator' in content:
             <div class="creator">
-                <small class="content_by">By: ${content['creator']['name']}</small>
+                <small class="content_by">${_("By: %s") % content['creator']['name']}</small>
             </div>
         % endif
         
@@ -583,19 +583,19 @@
         
         % if content and 'views' in content:
             <div class="views">
-                <small>${content['views']} views</small>
+                <small>${_("%d views") % content['views']}</small>
             </div>
         % endif
         
         % if content and 'num_responses' in content:
             <div class="responses">
-                <small>${content['num_responses']} responses</small>
+                <small>${_("%d responses") % content['num_responses']}</small>
             </div>
         % endif
         
         <%doc>% if content and 'num_comments' in content:
             <div class="comments">
-                <small>${content['num_comments']} comments</small>
+                <small>${_("%d comments") % content['num_comments']}</small>
             </div>
         % endif</%doc>
     </div>

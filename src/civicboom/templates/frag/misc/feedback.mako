@@ -79,13 +79,13 @@ ${_('What did you expect to happen:')}
                 <td>${_('Prove you are human:')}</td>
                 <td>
                     <input type="text" name="simple_captcha" />
-                    <p>${_('type "xyz" into this box')}</p>
+                    <p>${_('type "%s" into this box') % "xyz"}</p>
                 </td>
             </tr>
             % endif
 
 			<tr>
-		        <td style="padding: 3px 0 0 3px" colspan="2"><input type="submit" name="submit" value="Send message"/></td>
+		        <td style="padding: 3px 0 0 3px" colspan="2"><input type="submit" name="submit" value="${_("Send message")}"/></td>
 			</tr>
         </table>
     </form>

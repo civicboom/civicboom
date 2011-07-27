@@ -310,7 +310,7 @@
         </div>
         <div class="popup-message" style="white-space: nowrap; padding-right:1.5em;">
             ${_('''
-            I warrant to Indiconews Ltd (owner of Civicboom.com) that I have permissions<br />
+            I warrant to Indiconews Ltd (owner of _site_name) that I have permissions<br />
             and rights to create this _Group. I also confirm that any logo/image I upload does<br />
             not infringe upon any trademarks, third party copyrights, other such rights or<br />
             violate the user agreement. I hereby grant to Indiconews Ltd a non-exclusive,<br />
