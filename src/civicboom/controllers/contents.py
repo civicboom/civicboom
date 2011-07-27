@@ -184,6 +184,8 @@ class ContentsController(BaseController):
             'article'
             'assignment'
             'draft'
+        @param due_date     find the due date of an assignment, eg "due_date=<2000/11/01" for old assignments, "due_date=>now" for open ones
+        @param update_date  search by most recent update date, eg "update_date=<2000/11/01" for old articles
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
         @param exclude_content a list of comma separated content id's to exclude from the content returned

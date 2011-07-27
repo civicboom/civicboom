@@ -139,6 +139,8 @@ cdnpush: js css
 		civicboom/public
 	scp static-${GIT_TAG}.zip static.civicboom.com:~/
 	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
+	ssh static.civicboom.com rm -f static-${GIT_TAG}.zip
+	rm -f static-${GIT_TAG}.zip
 
 schemadiff:
 	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql

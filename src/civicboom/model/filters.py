@@ -279,24 +279,30 @@ class DueDateFilter(Filter):
     @staticmethod
     def from_string(s):
         from dateutil.parser import parse
+        from datetime import datetime
         c = '='
         d = s
         if s[0] in ['<', '>']:
             c = s[0]
             d = s[1:]
-        return DueDateFilter(c, parse(d, dayfirst=True))
+        if d == "now":
+            pd = datetime.now()
+        else:
+            pd = parse(d, dayfirst=True)
+        return DueDateFilter(c, pd)
 
     def __unicode__(self):
         return "AssignmentContent.due_date %s '%s'" % (self.comparitor, self.date)
 
     def __repr__(self):
-        return "DueDateFilter(%s)" % (repr(self.comparitor), repr(self.date))
+        return "DueDateFilter(%s, %s)" % (repr(self.comparitor), repr(self.date))
 
     def __sql__(self):
         if type(self.date) == str:
             return "content_assignment.due_date %s %s" % (self.comparitor, self.date)
         else:
             return "content_assignment.due_date %s '%s'" % (self.comparitor, self.date)
+
 
 
 class UpdateDateFilter(Filter):
@@ -312,13 +318,17 @@ class UpdateDateFilter(Filter):
         if s[0] in ['<', '>']:
             c = s[0]
             d = s[1:]
-        return UpdateDateFilter(c, parse(d, dayfirst=True))
+        if d == "now":
+            pd = datetime.now()
+        else:
+            pd = parse(d, dayfirst=True)
+        return UpdateDateFilter(c, pd)
 
     def __unicode__(self):
         return "Content.update_date %s '%s'" % (self.comparitor, self.date)
 
     def __repr__(self):
-        return "UpdateDateFilter(%s)" % (repr(self.comparitor), repr(self.date))
+        return "UpdateDateFilter(%s, %s)" % (repr(self.comparitor), repr(self.date))
 
     def __sql__(self):
         if type(self.date) == str:
