@@ -71,9 +71,10 @@
                     <br />
                     <br />
                     <div style="width: 20em" class="border_box">
-                        <div style="width: 10em; margin:auto; margin-top: 1.5em; margin-bottom: 1.5em;">
+                        <div style="width: 10em; margin:auto; margin-top: 1.5em; margin-bottom: 1.5em; text-align: center;">
                             <h3>4. GET STARTED!</h3>
                             <p style="font-size: 150%"><a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a></p>
+                            <a style="font-size: 80%;" href="${url(controller='profile', action='index')}">No thanks, take me back to my profile</a>
                         </div>
                     </div>
                 </div>
