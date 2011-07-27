@@ -50,8 +50,14 @@ function html5ize (jqContainer) {
     
 	if (!Modernizr.inputtypes.datetime) {
 		jqContainer.find("input[type='datetime']").datetimepicker({
+			dateFormat: 'yy-mm-dd',
+			changeYear: true,
+			changeMonth: true,
+			yearRange: '1920:2020',
+            
             timeFormat: 'hh:mm',
-            separator: ' '
+            separator: ' ',
+            showMinute: false
 		});
 	}
 }

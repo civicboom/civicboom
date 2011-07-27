@@ -533,8 +533,8 @@
             ## See CSS for "active" class
             <div id="type_assignment_extras" class="hideable, additional_fields">
                 <%
-                    due_date                      = str(self.content.get('due_date'  )                    or '')[:10]
-                    event_date                    = str(self.content.get('event_date')                    or '')[:10]
+                    due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:10]
+                    event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:10]
                     auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime') or '')
                 %>
                 <span class="padded"><label for="due_date">${_("Due Date")}</label></span>

@@ -171,7 +171,7 @@ class Content(Base):
             'license'     : lambda content: content.license.to_dict() ,
             'tags'        : lambda content: [tag.name for tag in content.tags] ,
             'root_parent' : lambda content: content.root_parent.to_dict(include_fields='creator') if content.root_parent else None,
-            #'url'         : None ,
+            'extra_fields': None ,
     })
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
