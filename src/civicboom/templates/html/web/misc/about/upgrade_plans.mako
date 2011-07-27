@@ -126,8 +126,8 @@
                         <td></td>
                     % endfor
                 % endif
-                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">Upgrade Now</a></td>
-                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">Learn More</a></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">${_("Upgrade Now")}</a></td>
+                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">${_("Learn More")}</a></td>
             </tr>
         </tfoot>
     </table>

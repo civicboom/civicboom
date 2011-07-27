@@ -105,9 +105,9 @@ for gen in generators:
 add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=300, type='location' )
 add_setting('location_home_name'        , _('Home Location' )            , group='location/location'  , weight=301, type='string_location' )
 
-add_setting('help_popup_created_user', _('Hide the help popup shown upon login to the site'), group='help_adverts/help_popups', weight=400, type='boolean')
-add_setting('help_popup_created_group', _('Hide the help popup shown upon switching to a group'), group='help_adverts/help_popups', weight=401, type='boolean')
-add_setting('help_popup_created_assignment', _('Hide the help popup shown upon creating an assignment'), group='help_adverts/help_popups', weight=402, type='boolean')
+add_setting('help_popup_created_user', _('Hide the help pop-up shown upon login to the site'), group='help_adverts/help_popups', weight=400, type='boolean')
+add_setting('help_popup_created_group', _('Hide the help pop-up shown upon switching to a group'), group='help_adverts/help_popups', weight=401, type='boolean')
+add_setting('help_popup_created_assignment', _('Hide the help pop-up shown upon creating an assignment'), group='help_adverts/help_popups', weight=402, type='boolean')
 
 add_setting('advert_hand_response', _('Hide the info box encouraging users to start responding to requests'), group='help_adverts/guides', weight=403, type='boolean')
 add_setting('advert_hand_assignment', _('Hide the info box encouraging _groups to create _assignments'), group='help_adverts/guides', weight=404, type='boolean')

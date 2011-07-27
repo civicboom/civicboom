@@ -232,7 +232,7 @@
 		<%
 		area_id = h.uniqueish_id("content")
 		%>
-		<label for="${area_id}">Add more detail and supporting links, etc</label>
+		<label for="${area_id}">${_("Add more detail and supporting links, etc")}</label>
 		<textarea class="editor edit_input" name="content" id="${area_id}">${self.content['content']}</textarea>
         <!-- http://tinymce.moxiecode.com/ -->
         
@@ -342,9 +342,9 @@
     <fieldset>
         <label>
             % if self.selected_type == 'assignment':
-                Add media to help build a better request!
+                ${_("Add media to help build a better request!")}
             % elif self.selected_type == 'article':
-                Add media to help build a better story!
+                ${_("Add media to help build a better story!")}
             % endif
         </label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
@@ -522,7 +522,7 @@
         </%doc>
             
     <fieldset>
-        <label>Click here to set a deadline!</label>
+        <label>${_("Click here to set a deadline!")}</label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
@@ -609,7 +609,7 @@
 <%def name="location()">
     <!-- Licence -->
     <fieldset>
-        <label>Add a location?</label>
+        <label>${_("Add a location?")}</label>
         <legend onclick="toggle_edit_section($(this));" class="edit_input">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/map.png" alt="Location" />
@@ -679,7 +679,7 @@
 	</%def>
 	<div class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
         <fieldset>
-            <label>Want to tell the world, or just a select few?</label>
+            <label>${_("Want to tell the world, or just a select few?")}</label>
             <legend onclick="toggle_edit_section($(this));" class="edit_input">
                 <span class="icon16 i_plus"></span>
                 <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
@@ -691,11 +691,11 @@
             </legend>
             <div class="hideable">
                 % if c.logged_in_persona.has_account_required('plus'):
-                  <div class="padded">You can choose to make your ${_('_'+self.selected_type)} either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.</div>
+                  <div class="padded">${_("You can choose to make your content either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.")|n}</div>
                   <div class="padded">
                       <div class="jqui-radios">
-                          <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">Public</label>
-                          <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">Private</label>
+                          <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
+                          <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                       </div>
                       <script type="text/javascript">
                         $(function() {

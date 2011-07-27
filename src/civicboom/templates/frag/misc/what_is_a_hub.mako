@@ -43,10 +43,10 @@
             <div style="float: left"><h3>2.</h3></div>
             <div style="padding-left: 3em;">
                 <div class="fl" style="width: 20em;">
-                    <h3>${_('Create a name for the _Group. Eg: "The Daily Post", "Brentwood elections" or "Student protests".')}</h3>
+                    <h3>${_('Create a name for the _Group. E.g: "The Daily Post", "Brentwood elections" or "Student protests".')}</h3>
                     <br />
                     <p>
-                        ${_('Explain what the _Group is for. Eg: "Join us in making the news: Tell us your stories - send in videos, pictures and audio and help us report real news as it happens."')}
+                        ${_('Explain what the _Group is for. E.g: "Join us in making the news: Tell us your stories - send in videos, pictures and audio and help us report real news as it happens."')}
                     </p>
                     <br />
                     <p>
@@ -72,7 +72,7 @@
                     <br />
                     <div style="width: 20em" class="border_box">
                         <div style="width: 10em; margin:auto; margin-top: 1.5em; margin-bottom: 1.5em;">
-                            <h3>4. GET STARTED!</h3>
+                            <h3>4. ${_("GET STARTED!")}</h3>
                             <p style="font-size: 150%"><a href="${h.url('new_group')}" class="button">${_('Create _Group')}</a></p>
                         </div>
                     </div>

@@ -2,7 +2,7 @@
 
 <%def name="body()">
     ## See companion JS misc.js:popup to populate this div
-    ${popup_static(_('Dialog'), "", "popup", display_none=True)}
+    ${popup_static(_('Information'), "", "popup", display_none=True)}
 </%def>
 
 <%def name="popup_static(title, content, html_id, display_none=False, html_class='')">
@@ -19,7 +19,7 @@
             ##</div>
             <div class="common_actions">
                 ## <a href='' title='${_('Close popup')}' class="icon16 i_close simplemodalClose"><span>Close</span></a>
-                <a href='' title='${_('Close popup')}' class="simplemodalClose">Close</a>
+                <a href='' title='${_('Close pop-up')}' class="simplemodalClose">${_("Close")}</a>
             </div>
         </div>
         
