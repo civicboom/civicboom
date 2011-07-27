@@ -40,6 +40,21 @@ log      = logging.getLogger(__name__)
 # Form Schema
 #-------------------------------------------------------------------------------
 
+class AutoPublishTriggerDatetimeValidator(civicboom.lib.form_validators.base.IsoFormatDateConverter):
+    messages = {
+        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
+        'date_past'         : _('The auto publish date must be in the future'),
+    }
+
+    def _to_python(self, value, state):
+        auto_publish_trigger_datetime = super(AutoPublishTriggerDatetimeValidator, self)._to_python(value, state)
+        if not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('require_upgrade', state), value, state)
+        if auto_publish_trigger_datetime <= now():
+            raise formencode.Invalid(self.message('date_past', state), value, state)
+        return auto_publish_trigger_datetime
+
+
 class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     allow_extra_fields  = True
     filter_extra_fields = False
@@ -51,13 +66,14 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
-    creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
+    #creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused? # AllanC - The answer is .. YES IT COULD BE ABUSED!! ... dumbass ...
     #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
     # Assignment Fields
     due_date    = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
     event_date  = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
+    auto_publish_trigger_datetime = AutoPublishTriggerDatetimeValidator(not_empty=False)
     default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
@@ -485,6 +501,7 @@ class ContentsController(BaseController):
         if isinstance(id, Content):
             content = id
             called_from_create_method = True # AllanC - see above - only create calls pass the id as a content object
+            # AllanC - note! normal users cannot pass a content object. passing an object does NOT check the c.logged_in_persona permissions, this is needed for some autopublish behaviour but should be kept in mind by other developers passing objects
         else:
             content = get_content(id, is_editable=True)
         assert content
@@ -514,7 +531,7 @@ class ContentsController(BaseController):
         #
         # Default
         #  Save + (if format = html or redirect -> redirect back to editor)
-        #  if no submit_???? is provided and the content type = draft -> article or assignment - pubmit type is set to 'publish'
+        #  if no submit_???? is provided and the content type = draft -> article or assignment - submit type is set to 'publish'
         #
         
         def normalise_form_submit(kwargs):
@@ -524,7 +541,7 @@ class ContentsController(BaseController):
             if len(submit_keys) == 1:
                 return submit_keys[0]
             raise action_error(_('Multiple submit types submitted'), code=400)
-            
+        
         if content.__type__ not in publishable_types and kwargs.get('type') in publishable_types:
             submit_type = 'publish'
             log.debug ( "AUTO PUBLISH! %s - %s" % (content.__type__, kwargs.get('type')) )
@@ -550,7 +567,8 @@ class ContentsController(BaseController):
             permissions['can_publish'] = False
             error                      = errors.error_role()
         
-        if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
+        # If 'assignment' and creator has permissions to publish - it has to be 'creator' rather than c.logged_in_persona because this might be auto publishing and the user may not be logged in
+        if kwargs.get('type') == 'assignment' and not content.creator.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
             #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
@@ -586,7 +604,17 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
+                extra_fields = dict(content.extra_fields)
                 content = morph_content_to(content, kwargs['type'])
+                # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
+                #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator
+                #          but they are strings .. and need to be converted ... ARARARRA!!
+                for key, value in extra_fields.iteritems():
+                    if hasattr(content, key):
+                        try:
+                            setattr(content, key, value)
+                        except:
+                            log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -633,10 +661,12 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        # AllanC - not used yet .. but could be in future
-        for extra_field in []:
-            if extra_field in kwargs: # AllanC - could these have validators at somepoint?
-                content.extra_fields[extra_field] = kwargs[extra_field]
+        permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
+            content.extra_fields[extra_field] = str(kwargs[extra_field])
+            #AllanC - we need the str() here because when the extra_fields obj is serised to Json, it cant deal with objects.
+            #         This is NOT acceptable for int's float's and long's
+            #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
@@ -697,13 +727,13 @@ class ContentsController(BaseController):
                 })
         
         # -- Redirect (if needed)-----------------------------------------------
-
+        
         # We raise any errors at the end because we still want to save any draft content even if the content is not published
         if error:
             #log.debug("raising the error")
             #log.debug(error)
             raise error
-
+        
         if not content_redirect:
             if   submit_type == 'publish' and permissions['can_publish']:
                 # Added prompt aggregate to new content url
