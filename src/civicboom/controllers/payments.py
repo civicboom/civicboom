@@ -82,6 +82,7 @@ class PaymentsController(BaseController):
         data = {
             'account_id':       account.id,
             'account_type':     account.type,
+            'billing_status':   account.billing_status,
             'members':          [member.to_dict() for member in account.members],
             'invoices':         [invoice.to_dict() for invoice in account.invoices],
             #'billing_accounts': [billing.to_dict() for billing in account.billing_accounts]

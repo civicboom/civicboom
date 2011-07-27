@@ -110,18 +110,10 @@ def init_base_data():
         
         Session.commit()
         
-        u2_invoice1 = Invoice()
-        u2_invoice1.payment_account = u2_account
-        u2_invoice1.timestamp = (datetime.datetime.now() - datetime.timedelta(days=32)) + datetime.timedelta(minutes=1)
-        u2_service_price = u2_service.get_price('GBP', 'month')
-        u2_invoice1line = InvoiceLine()
-        u2_invoice1line.invoice = u2_invoice1
-        
-        u2_invoice1line.service = u2_service
-        u2_invoice1line.title = u2_service.title
-        
-        u2_invoice1line.price = u2_service_price
-        u2_invoice1line.extra_fields = u2_service.extra_fields
+        u2_invoice1 = Invoice(u2_account)
+        u2_invoice1.due_date = u2_account.start_date
+        u2_invoice1.timestamp = u2_account.start_date + datetime.timedelta(minutes=1)
+        u2_invoice1line = InvoiceLine(u2_invoice1, u2_service, 'month', u2_account.start_date)
         
         Session.add_all([u2_invoice1, u2_invoice1line])
         
@@ -155,6 +147,7 @@ def init_base_data():
         u3.status        = "active"
         u3.email         = u"test+kitten@civicboom.com"
         u3.avatar        = u"f86c68ccab304eb232102ac27ba5da061559fde5"
+        u3.set_payment_account('free', delay_commit=True)
 
         u3_login = UserLogin()
         u3_login.user   = u3

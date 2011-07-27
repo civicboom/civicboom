@@ -6,7 +6,7 @@ from civicboom.lib.helpers import wh_url
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
-from sqlalchemy import Enum, Integer, DateTime, Boolean, Interval
+from sqlalchemy import Enum, Integer, DateTime, Date, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
@@ -809,8 +809,13 @@ class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id               = Column(Integer(), primary_key=True)
     type             = Column(account_types, nullable=False, default="free")
+    _billing_status  = Enum("ok", "waiting", "error", name="billing_status")
+    billing_status   = Column(_billing_status, nullable=False, default="ok")
     extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
-    start_date       = Column(DateTime(),     nullable=False, default=func.now())
+    start_date       = Column(Date(),     nullable=False, default=func.now())
+    currency         = Column(Unicode(), default="GBP", nullable=False)
+    _frequency       = Enum("month", "year", name="billing_period")
+    frequency        = Column(_frequency,     nullable=False, default="month")
     
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
@@ -834,9 +839,9 @@ class PaymentAccount(Base):
     })
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
-    invoices = relationship("Invoice", backref=backref('payment_account') )
+    invoices = relationship("Invoice", backref=backref('payment_account'), lazy='dynamic' )
     billing_accounts = relationship("BillingAccount", backref=backref('payment_account') )
-    services            = relationship("Service"          , primaryjoin="Service.id==MemberService.service_id"  , secondaryjoin="Member.id==MemberService.member_id", secondary='payment_service')
+    services            = relationship("Service"          , primaryjoin="PaymentAccount.id==PaymentAccountService.payment_account_id"  , secondaryjoin="Service.id==PaymentAccountService.service_id", secondary='payment_account_service')
     
     _config = None
     
@@ -856,6 +861,9 @@ class PaymentAccount(Base):
         from civicboom.lib.database.actions import payment_member_remove
         return payment_member_remove(self, member)
         
+DDL("CREATE INDEX payment_account_start_year_idx  ON payment_account USING btree(extract(year  from start_date));").execute_at('after-create', PaymentAccount.__table__)
+DDL("CREATE INDEX payment_account_start_month_idx ON payment_account USING btree(extract(month from start_date));").execute_at('after-create', PaymentAccount.__table__)
+DDL("CREATE INDEX payment_account_start_day_idx   ON payment_account USING btree(extract(day   from start_date));").execute_at('after-create', PaymentAccount.__table__)
     #cascade="all,delete-orphan"
     
     

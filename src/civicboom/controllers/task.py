@@ -11,7 +11,7 @@ from civicboom.lib.base import *
 
 from cbutils.misc import timedelta_str
 
-from sqlalchemy import and_
+from sqlalchemy import and_, or_, aliased
 
 import datetime
 
@@ -191,6 +191,119 @@ class TaskController(BaseController):
         
         return response_completed_ok
 
+    # GregM: Payment processing
+    def run_payment_tasks(self):
+        # Import 
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction
+        from civicboom.model.member import PaymentAccount
+        
+        time_now = datetime.datetime.now()
+        seven_days = time_now + datetime.timedelta(days=days_invoice_in)
+        days_disable = 6
+        days_remind = 3
+        days_invoice_in = 7
+        
+        def filter_start_dates(query, table=''):
+            if table:
+                table += '.'
+            filter = ""
+            if frequency == "month":
+                # start day:
+                filter += "date_part('day', start_date) >= %(day_s)i " % {'day_s':time_now.day}
+                # and if end day in same month, else or:
+                filter += "and" if seven_days.day > time_now.day else "or"
+                # end day:
+                filter += " date_part('day', start_date) < %(day_e)i" % {'day_e':seven_days.day}
+                
+            elif frequency == "year":
+                ## Month 1! & start day:
+                filter += "(date_part('month', start_date) = %(month_s)i and date_part('day', start_date) >= %(day_s)i) or " % {'month_s': time_now.month, 'day_s': time_now.day}
+                ## Month 2?:
+                filter += "(date_part('month', start_date) = %(month_e)i and " % {'month_e': seven_days.month if time_now.month < seven_days.month else date_now.month}
+                ##          & end day:
+                filter += "date_part('day', start_date) < %(day_e)i)" % {'day_e': seven_days.day}
+                
+            return query.filter("(%s)" % (filter))
+        
+        def check_timestamp(timestamp, days):
+            return timestamp > (time_now - datetime.timedelta(days=days)) and timestamp < (time_now - datetime.timedelta(days=days-1))
+        
+        for frequency in ["month", "year"]:
+            # Get accounts due in the next x days and have paid services:
+            unbilled_accounts = filter_start_dates(
+                    Session.query(PaymentAccount)\
+                    .filter(PaymentAccount.frequency == frequency)
+                )\
+                .join((Service, Service.payment_account_type == PaymentAccount.type))\
+                .join((ServicePrice, ServicePrice.service_id == Service.id and ServicePrice.frequency == frequency))\
+                .filter(ServicePrice.amount > 0)\
+                .all()
+            for account in unbilled_accounts:
+                currency = account.currency
+                
+                start_date = account.start_date
+                start_date.replace(day=1, month=start_date.month+1, year=time_now.year) - datetime.timedelta(days=1)
+                if account.start_date.day < start_date.day:
+                    start_date.day = account.start_date.day
+                    
+                if account.invoices.filter(Invoice.status != "disregarded")\
+                    .join((InvoiceLine, InvoiceLine.invoice_id == Invoice.id))\
+                    .filter(InvoiceLine.start_date == start_date)\
+                    .join((Service, Service.id == InvoiceLine.service_id))\
+                    .filter(Service.payment_account_type == account.type).first():
+                    continue
+                
+                print account.type
+                print account.start_date
+                print [member.username for member in account.members]
+                service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
+                service_price = service.get_price(account.currency, frequency)
+                
+                lines = []
+                invoice = Invoice(account)
+                line = InvoiceLine(invoice, service, frequency)
+                line.invoice = invoice
+                line.service = service
+                line.price = service_price
+                lines.append(line)
+                
+                for service in account.services:
+                    if service.payment_account_type != account.type:
+                        line = InvoiceLine(invoice, service, frequency)
+                        lines.append(line)
+                
+                Session.add(invoice)
+                Session.add_all(lines)
+                Session.commit()
+                
+                invoice.status = "billed"
+                
+                Session.commit()
+        
+        billed_invoices = Session.query(Invoice).filter(Invoice.status == "billed").all()
+        for invoice in billed_invoices:
+            if invoice.paid_total >= invoice.total:
+                invoice.status = "paid"
+                if invoice.payment_account.billing_status != "ok":
+                    invoice.payment_account.billing_status = "ok"
+                # if invoice.paid_total > invoice.total:
+                #    refund overpayment
+            elif check_timestamp(invoice.timestamp, days_disable):
+                if invoice.payment_account.billing_status != "error":
+                    # Send account disabled email
+                    invoice.payment_account.billing_status == "error"
+                else:
+                    # Send account disabled reminder email
+                    pass
+            elif check_timestamp(invoice.timestamp, days_remind):
+                # Send reminder email
+                pass
+            else:
+                if invoice.payment_account.billing_status != "waiting":
+                    invoice.payment_account.billing_status = "waiting"
+                    # Send invoice due email
+        Session.commit()
+        pass
 
     def purge_unneeded_warehouse_media(self):
         """
@@ -207,7 +320,6 @@ class TaskController(BaseController):
 
     def test(self):
         return "<task happened>"
-
 
     #---------------------------------------------------------------------------
     # One-off things

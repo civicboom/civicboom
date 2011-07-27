@@ -4,7 +4,7 @@ from civicboom.model.member import account_types as _payment_account_types
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText
-from sqlalchemy import Enum, Integer, Float, DateTime, Boolean
+from sqlalchemy import Enum, Integer, Float, DateTime, Date, Boolean
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL, CheckConstraint
@@ -12,6 +12,13 @@ from sqlalchemy.schema import DDL, CheckConstraint
 import UserDict
 import copy
 from ConfigParser import SafeConfigParser, NoOptionError
+
+
+currency_symbols = {
+    'GBP':  u"&pound;",
+    'USD':  u"$",
+    'EUR':  u"&euro;",
+}
 
 
 class _ConfigManager(UserDict.DictMixin):
@@ -36,14 +43,14 @@ class _ConfigManager(UserDict.DictMixin):
 class ServicePrice(Base):
     __tablename__      = "payment_service_price"
     service_id         = Column(Integer(),     ForeignKey('payment_service.id'), nullable=False, primary_key=True)
-    _period            = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
-    period             = Column(_period,       nullable=False, default="month" , primary_key=True)
+    _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
+    frequency          = Column(_frequency,    nullable=False, default="month" , primary_key=True)
     currency           = Column(Unicode(),     nullable=False, primary_key=True)
     amount             = Column(Float(precision=2),     nullable=False)
     
-    def __init__(self, service, period, currency, amount):
+    def __init__(self, service, frequency, currency, amount):
         self.service = service
-        self.period = period
+        self.frequency = frequency
         self.currency = currency
         self.amount = amount
     
@@ -73,17 +80,22 @@ class Service(Base):
             self._config = _ConfigManager(self.extra_fields)
         return self._config
     
-    def get_price(self, currency, period):
-        price = Session.query(ServicePrice).filter(ServicePrice.service_id == self.id).filter(ServicePrice.currency == currency).filter(ServicePrice.period == period).one()
+    def get_price(self, currency, frequency):
+        price = Session.query(ServicePrice).filter(ServicePrice.service_id == self.id).filter(ServicePrice.currency == currency).filter(ServicePrice.frequency == frequency).one()
         if price:
             return price.amount
         else:
             return None
     
-class MemberService(Base):
-    __tablename__ = "payment_member_service"
-    member_id     = Column(Integer(), ForeignKey('member.id')      , primary_key=True)
-    service_id    = Column(Integer(), ForeignKey('payment_service.id'), primary_key=True)
+class PaymentAccountService(Base):
+    __tablename__      = "payment_account_service"
+    id                 = Column(Integer(), primary_key=True)
+    payment_account_id = Column(Integer(), ForeignKey('payment_account.id')      , nullable=False)
+    service_id         = Column(Integer(), ForeignKey('payment_service.id')      , nullable=False)
+    start_date         = Column(DateTime(), nullable=False, default=func.now())
+    _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
+    frequency          = Column(_frequency,    nullable=False, default="month")
+    quantity           = Column(Integer(), nullable=False, default=1)
     
 
 class Invoice(Base):
@@ -93,6 +105,7 @@ class Invoice(Base):
     _invoice_status    = Enum("unbilled", "processing", "billed", "disregarded", "paid", name="invoice_status")
     status             = Column(_invoice_status, nullable=False, default="unbilled")
     timestamp          = Column(DateTime(),    nullable=False, default=func.now())
+    due_date           = Column(Date(), nullable=False)
     copied_from_id     = Column(Integer(),   ForeignKey('payment_invoice.id'), nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
     currency           = Column(Unicode(), default="GBP", nullable=False)
@@ -120,6 +133,10 @@ class Invoice(Base):
             'lines'               : lambda invoice: [line.to_dict() for line in invoice.lines],
             'transactions'        : lambda invoice: [trans.to_dict() for trans in invoice.transactions],
     })
+    
+    def __init__(self, payment_account):
+        self.payment_account_id = payment_account.id
+        self.currency = payment_account.currency
     
     _config = None
 
@@ -201,6 +218,7 @@ class InvoiceLine(Base):
     price              = Column(Float(precision=2),     nullable=False)
     quantity           = Column(Integer(),     nullable=False, default=1)
     discount           = Column(Integer(),     nullable=False, default=0)
+    start_date         = Column(Date(),        nullable=True)
     note               = Column(Unicode(),     nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
     
@@ -220,6 +238,14 @@ class InvoiceLine(Base):
         },
     })
     
+    def __init__(self, invoice, service, frequency, start_date=None):
+        self.invoice = invoice
+        self.service = service
+        self.title = service.title
+        self.price = service.get_price(invoice.currency, frequency)
+        self.extra_fields = service.extra_fields
+        self.start_date = start_date
+    
     _config = None
     
     @property
@@ -229,6 +255,10 @@ class InvoiceLine(Base):
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
+    
+DDL("CREATE INDEX payment_invoice_line_start_year_idx  ON payment_invoice_line USING btree(extract(year  from start_date));").execute_at('after-create', InvoiceLine.__table__)
+DDL("CREATE INDEX payment_invoice_line_start_month_idx ON payment_invoice_line USING btree(extract(month from start_date));").execute_at('after-create', InvoiceLine.__table__)
+DDL("CREATE INDEX payment_invoice_line_start_day_idx   ON payment_invoice_line USING btree(extract(day   from start_date));").execute_at('after-create', InvoiceLine.__table__)
     
 DDL('DROP TRIGGER IF EXISTS update_create_payment_invoice_line ON payment_invoice_line').execute_at('before-drop', InvoiceLine.__table__)
 DDL("""
