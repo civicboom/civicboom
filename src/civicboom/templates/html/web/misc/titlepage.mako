@@ -30,7 +30,7 @@
 	<div class="special_button">
 		<a href="${url(controller='account', action='signin')}">
 			<span class="button">
-				START
+				${_("START")}
 			</span>
 		</a>
 	</div>

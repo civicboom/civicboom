@@ -39,7 +39,7 @@
         <div class="frag_col">
             ## Featured content title
             <div class="frag_list">
-                <h1>Featured content</h1>
+                <h1>${_("Featured content")}</h1>
             </div>
         
             % for (title, cb_list) in d['sponsored'].iteritems():

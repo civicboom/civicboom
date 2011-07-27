@@ -194,7 +194,7 @@
             <h2>${_('Grab the _widget')}</h2>
             <ol>
                 <li>${_('Give your _widget a title')}</li>
-                <li>${_('Choose from the dropdown the content you want to show on the Boombox')}</li>
+                <li>${_('Choose from the drop-down menu the content you want to show on the _widget')}</li>
                 <li>${_('Add the right colours and set your size of the _widget (note the font size will remain the same).')}</li>
                 <li>${_('Click on preview')}</li>
                 <li>${_("When you're happy, copy and paste the code into an HTML page")}</li>
@@ -205,12 +205,12 @@
         <td class="params">
             <form action="">
                 
-                <feildset>
+                <fieldset>
                     <legend>${_("Title")}</legend>
                     <input type="text" name="title" value="${widget_default['title']}" size="30"/><br/>
-                </feildset>
+                </fieldset>
                 
-                <feildset>
+                <fieldset>
                     <legend>${_("Content to show on _widget")}</legend>
                     <%
                         base_lists = [
@@ -231,15 +231,15 @@
                         <option value="${list_name}" ${selected}>${list_description}</option>
                         % endfor
                     </select>
-                </feildset>
+                </fieldset>
                 
-                <feildset>
+                <fieldset>
                     <legend>${_("Size")}</legend>
                     <div class="params_extra">
                     <label>${_('Width')} </label><input type="text" name="width"  value="${widget_default['width' ]}" size="3" /><br/>
                     <label>${_('Height')}</label><input type="text" name="height" value="${widget_default['height']}" size="3" />
                     </div>
-                </feildset>
+                </fieldset>
                 
                 <fieldset>
                     <legend>${_("Colours")}</legend>
