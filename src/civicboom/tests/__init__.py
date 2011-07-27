@@ -29,6 +29,7 @@ from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, em
 import re
 import json
 
+from civicboom.lib.form_validators.base import IsoFormatDateConverter
 
 import pylons.test
 
@@ -113,6 +114,8 @@ class TestController(TestCase):
     def server_datetime(self, new_datetime=None):
         """
         Used to get and set server date for tests
+        
+        passing the paramiter new_datetime='now' resets any date override for the test server
         """
         response = self.app.get(
             url(controller='test', action='server_datetime'),
@@ -121,8 +124,8 @@ class TestController(TestCase):
             },
             status=200
         )
-        return json.loads(response.body)['datetime']
-
+        datetime_string = json.loads(response.body)['datetime']
+        return IsoFormatDateConverter().to_python(datetime_string, None)
 
 
     def log_in(self):
