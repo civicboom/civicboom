@@ -11,6 +11,9 @@ src/civicboom/public/warehouse
 src/civicboom/public/doc
 src/.sass-cache
 
+# Auto generated documents
+docs/milestones.html
+
 # files created while package building
 debian/*.deb
 debian/fs-*
