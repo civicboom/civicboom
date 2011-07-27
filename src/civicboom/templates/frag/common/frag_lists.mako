@@ -417,7 +417,9 @@
         % if content.get('approval') and content.get('approval') != 'none':
             ${h.icon(content.get('approval'))}
         % endif
-        
+        % if content.get('auto_publish_trigger_datetime'):
+            ${h.icon('auto_publish')}
+        % endif
         ## Media icons
         % if content.get('location'):
             ${h.icon('map')}
@@ -437,6 +439,9 @@
         % endif
         % if content.get('approval') and content.get('approval') != 'none':
             ${h.icon(content.get('approval'))}
+        % endif
+        % if content.get('auto_publish_trigger_datetime'):
+            ${h.icon('auto_publish')}
         % endif
     </div>
 </%def>
