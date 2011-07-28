@@ -138,7 +138,7 @@ api-doc:
 	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
 
 milestone-doc:
-	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/website/issues.json?query_id=2 -o ../docs/milestone.html
+	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
 
 py-libs:
 	make -C ../lib

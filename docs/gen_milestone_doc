@@ -39,14 +39,19 @@ def get_url_data(url, username=None, password=None):
     if http_response:
         http_response.close()
     
-    return json.loads(response)
+    return response
 
 
 def main(source_url, output):
-    username = getpass.getuser()
-    password = getpass.getpass("authentication for %s required - password:" % source_url)
-    
-    redmine_data = get_url_data(source_url, username, password)
+    redmine_data = "[]"
+    cached_filename = os.path.relpath(__file__)+".json"
+    if os.path.exists(cached_filename):
+        redmine_data = open(cached_filename, 'r').read()
+    else:
+        username = getpass.getuser()
+        password = getpass.getpass("authentication for %s required - password:" % source_url)
+        redmine_data = get_url_data(source_url, username, password)
+    redmine_data = json.loads(redmine_data)
     
     template_filename = os.path.relpath(__file__)+".mako"
     
