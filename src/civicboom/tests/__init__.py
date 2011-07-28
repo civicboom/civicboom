@@ -227,6 +227,7 @@ class TestController(TestCase):
                 'dob'             : dob       ,
                 'terms'           : u'checked',
                 'name'            : username + "'s Full Name",
+                'help_type'       : u'ind',
             },
         )
         self.assertEqual(getNumEmails(), num_emails + 2) # AllanC - this has been botched .. Lizzie wants emails personaly to her for EVERY signup ... this is throwing off the tests and we need a 2 here instead of a 1
