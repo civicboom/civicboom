@@ -86,7 +86,7 @@ class PaymentActionsController(BaseController):
         invoice = Session.query(Invoice).filter(Invoice.id==invoice_id and Invoice.payment_account_id==account.id).one()
         
         if not invoice or invoice.status not in ['billed', 'paid']:
-            raise action_error(_('This invoice does not exist'))
+            raise action_error(_('This invoice does not exist'), code=404)
         
         data = invoice.to_dict(list_type='full')
         

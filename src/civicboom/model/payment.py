@@ -139,9 +139,11 @@ class Invoice(Base):
             'payment_account_id': None ,
             'status'            : None ,
             'timestamp'         : None ,
+            'due_date'          : None ,
             'copied_from_id'    : None ,
             'total'             : None ,
-            'paid_total'        : None, 
+            'paid_total'        : None ,
+            'currency'          : None , 
         },
     })
     
@@ -162,7 +164,7 @@ class Invoice(Base):
 
     @property
     def total(self):
-        return sum ([line.price for line in self.lines])
+        return sum ([line.price_final for line in self.lines])
     
     @property
     def paid_total(self):
@@ -255,6 +257,7 @@ class InvoiceLine(Base):
             'quantity'          : None ,
             'discount'          : None , 
             'note'              : None ,
+            'price_final'       : None ,
         },
     })
     
@@ -280,6 +283,10 @@ class InvoiceLine(Base):
         self.start_date = start_date
     
     _config = None
+    
+    @property
+    def price_final(self):
+        return self.price * (1-self.discount) * self.quantity
     
     @property
     def config(self):

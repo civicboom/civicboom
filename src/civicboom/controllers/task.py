@@ -193,18 +193,20 @@ class TaskController(BaseController):
         
         return response_completed_ok
 
-    # GregM: Payment processing
-    def run_payment_tasks(self):
-        # Import 
+    # GregM: Invoice processing
+    def run_invoice_tasks(self):
+        # Import model objects
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
         from civicboom.model.member import PaymentAccount
         
+        # Set variables
         time_now = datetime.datetime.now()
         days_disable = 6
         days_remind = 3
         days_invoice_in = 7
         seven_days = time_now + datetime.timedelta(days=days_invoice_in)
         
+        # Create sql where clauses for checking start dates (SQL used as date_part functions are indexed in postgres)
         def filter_start_dates(query, table=''):
             if table:
                 table += '.'
@@ -230,6 +232,23 @@ class TaskController(BaseController):
         def check_timestamp(timestamp, days):
             return timestamp > (time_now - datetime.timedelta(days=days)) and timestamp < (time_now - datetime.timedelta(days=days-1))
         
+        # Calculate the next bill date for a service based on the service's start date (rounding down to nearest day, e.g. start 29/02/2000 -> 28/02/2010)
+        def next_start_date(start_date, frequency, offset=0):
+            _start_date = start_date
+            for i in range(10):
+                try:
+                    if frequency == "year":
+                        _start_date = _start_date.replace(year=time_now.year+offset)
+                    elif frequency == "month":
+                        _start_date = _start_date.replace(year=time_now.year, month=time_now.month+offset)
+                    break
+                except ValueError:
+                    start_date = _start_date.replace(day=_start_date.day-1)
+            if _start_date < time_now.date():
+                _start_date = next_start_date(start_date, frequency, 1)
+            return _start_date
+        
+        # For each billing frequency get accounts likely to be due in the next x days
         for frequency in ["month", "year"]:
             # Get accounts due in the next x days and have paid services:
             unbilled_accounts = filter_start_dates(
@@ -240,33 +259,34 @@ class TaskController(BaseController):
                 .join((ServicePrice, ServicePrice.service_id == Service.id and ServicePrice.frequency == frequency))\
                 .filter(ServicePrice.amount > 0)\
                 .all()
+            # For each account found determine if invoice already exists & if not produces an invoice
             for account in unbilled_accounts:
                 currency = account.currency
                 
-                start_date = account.start_date
-                start_date.replace(day=1, month=start_date.month+1, year=time_now.year) - datetime.timedelta(days=1)
-                if account.start_date.day < start_date.day:
-                    start_date.day = account.start_date.day
-                    
-                if account.invoices.filter(Invoice.status != "disregarded")\
+                # Calculate the start date we are going to try and invoice for
+                start_date = next_start_date(account.start_date, frequency)
+                
+                #Check for invoices with the start date already in the system (not disregarded though!)
+                check = account.invoices.filter(Invoice.status != "disregarded")\
                     .join((InvoiceLine, InvoiceLine.invoice_id == Invoice.id))\
                     .filter(InvoiceLine.start_date == start_date)\
                     .join((Service, Service.id == InvoiceLine.service_id))\
-                    .filter(Service.payment_account_type == account.type).first():
+                    .filter(Service.payment_account_type == account.type).first()
+                if check:
                     continue
                 
-                print account.type
-                print account.start_date
-                print [member.username for member in account.members]
+                # Get the service object applicable for this account
                 service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
                 
-                lines = []
+                # Create a new Invoice object & set the due date to the service start date
                 invoice = Invoice(account)
                 invoice.due_date = start_date
                 
+                # Check if there is a payment account service set-up for this account (allows discount, etc. to be applied)
                 payment_account_service = Session.query(PaymentAccountService).filter(PaymentAccountService.payment_account_id == account.id)\
                     .filter(PaymentAccountService.service_id == service.id).first()
                 
+                # Create billing line for the account's main service type
                 line = InvoiceLine(
                        invoice,
                        payment_account_service  = payment_account_service,
@@ -274,36 +294,41 @@ class TaskController(BaseController):
                        frequency                = frequency,
                        start_date               = start_date
                    )
-                
                 invoice.lines.append(line)
-                #lines.append(line)
                 
+                # Loop through the rest of the services and create billing lines
+                # TODO: This needs to take into account service frequency / account frequency, etc.
                 for payment_account_service in account.services:
                     if payment_account_service.service.payment_account_type != account.type:
                         line = InvoiceLine(invoice, payment_account_service.service, frequency)
                         invoice.lines.append(line)
                         #lines.append(line)
                 
+                # Commit the invoice before changing status or the commit will fail db level security check!
                 Session.add(invoice)
-                #Session.add_all(lines)
                 Session.commit()
                 
-                invoice.status = "billed"
+                # TODO: Any Invoice changes need to go here!
                 
+                # Change invoice status to billed, no further changes can be made to invoice and related lines from now onwards!
+                invoice.status = "billed"
                 Session.commit()
         
+        ## Process 2: Check all billed invoices & update accounts accordingly
         billed_invoices = Session.query(Invoice).filter(Invoice.status == "billed").all()
         for invoice in billed_invoices:
             if invoice.paid_total >= invoice.total:
+                # This shouldn't really happen, invoices should be marked as paid when payments are successful, but just in case:
                 invoice.status = "paid"
                 if invoice.payment_account.billing_status != "ok":
                     invoice.payment_account.billing_status = "ok"
-                # if invoice.paid_total > invoice.total:
+                    # Send invoice cleared thanks email
+                # TODO: if invoice.paid_total > invoice.total:
                 #    refund overpayment
             elif check_timestamp(invoice.timestamp, days_disable):
-                if invoice.payment_account.billing_status != "error":
+                if invoice.payment_account.billing_status != "failed":
                     # Send account disabled email
-                    invoice.payment_account.billing_status == "error"
+                    invoice.payment_account.billing_status == "failed"
                 else:
                     # Send account disabled reminder email
                     pass
@@ -311,11 +336,16 @@ class TaskController(BaseController):
                 # Send reminder email
                 pass
             else:
-                if invoice.payment_account.billing_status != "waiting":
-                    invoice.payment_account.billing_status = "waiting"
-                    # Send invoice due email
+                if invoice.due_date > time_now.date():
+                    if invoice.payment_account.billing_status != "invoiced":
+                        invoice.payment_account.billing_status = "invoiced"
+                        # Send invoice created email
+                else:
+                    if invoice.payment_account.billing_status != "waiting":
+                        invoice.payment_account.billing_status = "waiting"
+                        # Send invoice due email
         Session.commit()
-        pass
+        return response_completed_ok
 
     #---------------------------------------------------------------------------
     # Publish Sceduled Assignments

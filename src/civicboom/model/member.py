@@ -809,7 +809,7 @@ class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id               = Column(Integer(), primary_key=True)
     type             = Column(account_types, nullable=False, default="free")
-    _billing_status  = Enum("ok", "waiting", "error", name="billing_status")
+    _billing_status  = Enum("ok", "invoiced","waiting", "failed", name="billing_status")
     billing_status   = Column(_billing_status, nullable=False, default="ok")
     extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
     start_date       = Column(Date(),     nullable=False, default=func.now())

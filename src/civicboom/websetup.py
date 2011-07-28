@@ -195,8 +195,8 @@ CREATE TRIGGER update_rating
     corp = Service(payment_account_type="corp", title="Pro Premium" )
     
     free_price_GBP_monthly = ServicePrice(free, "month", "GBP",   0.00)
-    plus_price_GBP_monthly = ServicePrice(plus, "month", "GBP",  10.00)
-    corp_price_GBP_monthly = ServicePrice(corp, "month", "GBP", 200.00)
+    plus_price_GBP_monthly = ServicePrice(plus, "month", "GBP",   8.33)
+    corp_price_GBP_monthly = ServicePrice(corp, "month", "GBP", 166.67)
     
     Session.add_all([
         free, plus, corp,

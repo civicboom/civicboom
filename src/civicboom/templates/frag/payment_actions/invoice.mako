@@ -1,5 +1,9 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    from civicboom.model.payment import currency_symbols
+%>
+
 ##------------------------------------------------------------------------------
 ##
 ##------------------------------------------------------------------------------
@@ -10,9 +14,17 @@
     %>
 </%def>
 
-##------------------------------------------------------------------------------
-## Signin Fragment
-##------------------------------------------------------------------------------
+<%def name="format_currency(full_currency)">
+    % if full_currency:
+        ${d['currency']}
+    % endif
+    ${currency_symbols[d['currency']] | n}
+</%def>
+<%def name="format_price(price, full_currency=False)">
+    ${format_currency(full_currency)}
+    ${'%.2f' % price}
+</%def>
+
 <%def name="body()">
     <style type="text/css">
         .invoice .header, .invoice .customer {
@@ -96,9 +108,9 @@
                         Overview:
                     </div>
                     <div class="fr detail">
-                        Amount due: &pound;${d['total']}<br />
+                        Amount due: ${format_price(d['total'])}<br />
                         Due on receipt of invoice<br />
-                        Currency: GBP &pound;<br />
+                        Currency:${format_currency(True)}<br />
                         Payment account #: ${d['payment_account']['id']}<br />
                         VAT #: N/A
                     </div>
@@ -130,35 +142,36 @@
                                 ${line.get('title')}
                             </td>
                             <td>
-                                ${line.get('price')}
+                                ${format_price(line['price'])}
                             </td>
                             <td>
                                 ${line.get('quantity')}
                                 % if int(line.get('discount',0)) > 0:
-                                    (${line.get('discount')}% discount)
+                                    (${_('with %d%% discount') % (line.get('discount')*100)})
                                 % endif
                             </td>
                             <td>
-                                &pound;${line.get('price')}
+                                ${format_price(line['price_final'])}
                             </td>
                         </tr>
                     % endfor
                     </tbody>
                     <tfoot>
                         <tr class="thead">
-                            <td colspan="4">Totals</td>
+                            <td colspan="3">&nbsp;</td>
+                            <td colspan="1">Totals</td>
                         </tr>
                         <tr>
                             <td colspan="3">Total Before Tax:</td>
-                            <td>&pound;${d['total']}</td>
+                            <td>${format_price(d['total'])}</td>
                         </tr>
                         <tr>
                             <td colspan="3">VAT (20.00%):</td>
-                            <td>&pound;${d['total'] * 0.20}</td>
+                            <td>${format_price(d['total'] * 0.20)}</td>
                         </tr>
                         <tr>
                             <td colspan="3">Total:</td>
-                            <td>&pound;${d['total'] * 1.20}</td>
+                            <td>${format_price(d['total'] * 1.20)}</td>
                         </tr>
                     </tfoot>
                 </table>

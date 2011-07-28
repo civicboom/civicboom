@@ -97,7 +97,7 @@ def init_base_data():
 
         u2_account         = PaymentAccount()
         u2_account.type    = 'plus'
-        u2_account.start_date = datetime.datetime.now() - datetime.timedelta(days=32)
+        u2_account.start_date = datetime.datetime.now() - datetime.timedelta(days=27)
 
         u2.set_payment_account(u2_account, delay_commit=True)
 
