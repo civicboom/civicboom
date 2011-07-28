@@ -1,3 +1,4 @@
+## -*- coding: utf-8 -*-
 <%!
     import textile
     import re
@@ -62,22 +63,23 @@
                 <td>
                     ${item['subject']}
                     
-                    ## Check number of times <h?> occours
-                    <%
-                        html = textile.textile(item['description'])
-                        num_headings = html.count('<h') or 1
-                    %>
-                    % if num_headings > 1:
-                        ## Put each h2 in an individual cell
-                        ${re.sub(r'<h\d>(.*?)</h\d>', '<td>', html) |n}
-                        ## Fill in any empty trailing cells
-                        % for i in range(num_cols-num_headings-1):
-                            <td></td>
-                        % endfor
-                    % else:
-                        ## No headings to split by, put all data in one epic cell
-                        <td colspan="${num_cols-num_headings}">${html |n}</td>
-                    % endif
+                ## Check number of times <h?> occours
+                ## AllanC - Enhancement: Maybe we should be specifically looking for H2's so we can have lower level headings in the sections?
+                <%
+                    html = textile.textile(item['description'])
+                    num_headings = html.count('<h') or 1
+                %>
+                % if num_headings > 1:
+                    ## Put each h2 in an individual cell
+                    ${re.sub(r'<h\d>(.*?)</h\d>', '<td>', html) |n}
+                    ## Fill in any empty trailing cells
+                    % for i in range(num_cols-num_headings-1):
+                        <td></td>
+                    % endfor
+                % else:
+                    ## No headings to split by, put all data in one epic cell
+                    <td colspan="${num_cols-num_headings}">${html |n}</td>
+                % endif
             </tr>
         % endfor
         </table>
