@@ -2,6 +2,8 @@
     from webhelpers.html import HTML, literal
 %>
 
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+
 <%def name="tabs(tab_id, titles, tab_contents, *args, **kwargs)">
     ## JQuery ui tabs - http://jqueryui.com/demos/tabs/
     <div id="${tab_id}">
@@ -46,6 +48,7 @@
     	    <p class="int">${int}.</p>
     	% endif
     	% for item in contents:
+    	   <div style="padding: 3px;"></div>
             <%
                 content_html = ''
                 if item.get('title'):
@@ -63,6 +66,8 @@
             %>
             % if item.get('secure_href'):
                 ${h.secure_link(item['secure_href'], item['title'], value_formatted = _content_html)}
+            % elif item.get('popup_href'):
+                ${popup.link(item['popup_href'], title=item.get('title'))}
             % else:
         	    % if item.get('href'):
                     <a href="${item['href']}">

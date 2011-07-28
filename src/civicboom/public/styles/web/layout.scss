@@ -73,6 +73,10 @@ BODY>DIV#app {
         &:hover {
             color: $link-hover-colour;
             text-decoration: underline;
+            
+            p, span {
+                text-decoration: inherit;
+            }
         }
     }
 }

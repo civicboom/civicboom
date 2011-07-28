@@ -226,6 +226,7 @@ explicit_replacement  = '[Explicit]'
 part_explicits = set([
     'cunt',
     'fuck',
+    'fcuk',
     'shit',
 ])
 whole_explicits = set([

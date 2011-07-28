@@ -155,7 +155,7 @@ class AdminControllerBase(BaseController):
         response.headers['Content-type'] = "text/csv; charset=utf-8"
         csv = []
         for user in Session.query(User).all():
-            csv.append(','.join([user.username, user.name or "", user.email_normalized or ""]))
+            csv.append(','.join([user.username, user.name or "", user.email_normalized or "", user.status]))
         return "\n".join(csv)
 
     def moderate(self):

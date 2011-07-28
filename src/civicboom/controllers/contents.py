@@ -40,6 +40,21 @@ log      = logging.getLogger(__name__)
 # Form Schema
 #-------------------------------------------------------------------------------
 
+class AutoPublishTriggerDatetimeValidator(civicboom.lib.form_validators.base.IsoFormatDateConverter):
+    messages = {
+        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
+        'date_past'         : _('The auto publish date must be in the future'),
+    }
+
+    def _to_python(self, value, state):
+        auto_publish_trigger_datetime = super(AutoPublishTriggerDatetimeValidator, self)._to_python(value, state)
+        if not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('require_upgrade', state), value, state)
+        if auto_publish_trigger_datetime <= now():
+            raise formencode.Invalid(self.message('date_past', state), value, state)
+        return auto_publish_trigger_datetime
+
+
 class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     allow_extra_fields  = True
     filter_extra_fields = False
@@ -51,13 +66,14 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
-    creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused?
+    #creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused? # AllanC - The answer is .. YES IT COULD BE ABUSED!! ... dumbass ...
     #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
     # Draft Fields
     target_type = formencode.validators.OneOf(content_types.enums, not_empty=False)
     # Assignment Fields
     due_date    = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
     event_date  = civicboom.lib.form_validators.base.IsoFormatDateConverter(not_empty=False)
+    auto_publish_trigger_datetime = AutoPublishTriggerDatetimeValidator(not_empty=False)
     default_response_license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     # TODO: need date validators to check date is in future (and not too far in future as well)
 
@@ -90,7 +106,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.username)
+        CreatorFilter(c.logged_in_persona.id)
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),
@@ -168,6 +184,8 @@ class ContentsController(BaseController):
             'article'
             'assignment'
             'draft'
+        @param due_date     find the due date of an assignment, eg "due_date=<2000/11/01" for old assignments, "due_date=>now" for open ones
+        @param update_date  search by most recent update date, eg "update_date=<2000/11/01" for old articles
         @param response_to  content_id of parent
         @param boomed_by    username or user_id of booming user
         @param exclude_content a list of comma separated content id's to exclude from the content returned
@@ -201,17 +219,20 @@ class ContentsController(BaseController):
         try:
             # Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 
-            parent_root = get_content(kwargs['response_to'])
-            parent_root = parent_root.root_parent or parent_root
-            creator = parent_root.creator
-            kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
-        except:
-            pass
+            if kwargs.get('response_to'):
+                parent_root = get_content(kwargs['response_to'])
+                parent_root = parent_root.root_parent or parent_root
+                creator = parent_root.creator
+                kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
+        except Exception as e:
+            user_log.exception("Error searching:")
+
         try:
-            creator = get_member(kwargs['creator'])
-            kwargs['creator'] = normalize_member(creator) # normalize creator param for search
-        except:
-            pass
+            if kwargs.get('creator'):
+                creator = get_member(kwargs['creator'])
+                kwargs['creator'] = normalize_member(creator) # normalize creator param for search
+        except Exception as e:
+            user_log.exception("Error searching:")
         
         if creator:
             #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
@@ -246,64 +267,44 @@ class ContentsController(BaseController):
 
         parts = []
 
-        if _filter:
-            parts.append(_filter)
+        try:
+            if _filter:
+                parts.append(_filter)
 
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                parts.append(list_filters[kwargs['list']]())
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+            filter_map = {
+                'creator': CreatorFilter,
+                'due_date': DueDateFilter,
+                'update_date': UpdateDateFilter,
+                'type': TypeFilter,
+                'response_to': ParentIDFilter,
+                'boomed_by': BoomedByFilter,
+                'term': TextFilter,
+                'location': LocationFilter,
+            }
 
-        if 'feed' in kwargs and kwargs['feed']:
-            parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
+            if 'list' in kwargs:
+                if kwargs['list'] in list_filters:
+                    parts.append(list_filters[kwargs['list']]())
+                else:
+                    raise action_error(_('list %s not supported') % kwargs['list'], code=400)
 
-        if 'creator' in kwargs and kwargs['creator']:
-            parts.append(CreatorIDFilter(get_member(kwargs['creator']).id))
+            if 'feed' in kwargs and kwargs['feed']:
+                parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
-        if 'due_date' in kwargs and kwargs['due_date']:
-            parts.append(DueDateFilter.from_string(kwargs['due_date']))
+            for filter_name in filter_map:
+                if kwargs.get(filter_name):
+                    f = filter_map[filter_name].from_string(str(kwargs[filter_name]))
+                    if hasattr(f, 'mangle'):
+                        results = f.mangle(results)
+                    parts.append(f)
 
-        if 'update_date' in kwargs and kwargs['update_date']:
-            parts.append(UpdateDateFilter.from_string(kwargs['update_date']))
+            if 'include_content' in kwargs and kwargs['include_content']:
+                parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
 
-        if 'term' in kwargs and kwargs['term']:
-            parts.append(TextFilter(kwargs['term']))
-            results = results.add_columns(
-                func.ts_headline('pg_catalog.english',
-                    func.strip_tags(Content.content),
-                    func.plainto_tsquery(kwargs['term']),
-                    'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
-                    type_= Unicode
-                ).label("content_short")
-            )
-
-
-        if 'location' in kwargs and kwargs['location']:
-            lf = LocationFilter.from_string(kwargs['location'])
-            if lf:
-                parts.append(lf)
-                results = results.add_columns(
-                    func.st_distance_sphere(
-                        func.st_geomfromwkb(Content.location, 4326),
-                        'SRID=4326;POINT(%f %f)' % (float(lf.lon), float(lf.lat))
-                    ).label("distance")
-                )
-
-        if 'type' in kwargs and kwargs['type']:
-            parts.append(TypeFilter(kwargs['type']))
-
-        if 'response_to' in kwargs and kwargs['response_to']:
-            parts.append(ParentIDFilter(int(kwargs['response_to'])))
-
-        if 'boomed_by' in kwargs and kwargs['boomed_by']:
-            parts.append(BoomedByFilter(get_member(kwargs['boomed_by']).id))
-
-        if 'include_content' in kwargs and kwargs['include_content']:
-            parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
-
-        if 'exclude_content' in kwargs and kwargs['exclude_content']:
-            parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+            if 'exclude_content' in kwargs and kwargs['exclude_content']:
+                parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+        except FilterException as fe:
+            raise action_error(code=400, msg=str(fe))
 
         feed = AndFilter(parts)
 
@@ -483,6 +484,7 @@ class ContentsController(BaseController):
         if isinstance(id, Content):
             content = id
             called_from_create_method = True # AllanC - see above - only create calls pass the id as a content object
+            # AllanC - note! normal users cannot pass a content object. passing an object does NOT check the c.logged_in_persona permissions, this is needed for some autopublish behaviour but should be kept in mind by other developers passing objects
         else:
             content = get_content(id, is_editable=True)
         assert content
@@ -512,7 +514,7 @@ class ContentsController(BaseController):
         #
         # Default
         #  Save + (if format = html or redirect -> redirect back to editor)
-        #  if no submit_???? is provided and the content type = draft -> article or assignment - pubmit type is set to 'publish'
+        #  if no submit_???? is provided and the content type = draft -> article or assignment - submit type is set to 'publish'
         #
         
         def normalise_form_submit(kwargs):
@@ -522,7 +524,7 @@ class ContentsController(BaseController):
             if len(submit_keys) == 1:
                 return submit_keys[0]
             raise action_error(_('Multiple submit types submitted'), code=400)
-            
+        
         if content.__type__ not in publishable_types and kwargs.get('type') in publishable_types:
             submit_type = 'publish'
             log.debug ( "AUTO PUBLISH! %s - %s" % (content.__type__, kwargs.get('type')) )
@@ -548,7 +550,8 @@ class ContentsController(BaseController):
             permissions['can_publish'] = False
             error                      = errors.error_role()
         
-        if kwargs.get('type') == 'assignment' and not c.logged_in_persona.can_publish_assignment():
+        # If 'assignment' and creator has permissions to publish - it has to be 'creator' rather than c.logged_in_persona because this might be auto publishing and the user may not be logged in
+        if kwargs.get('type') == 'assignment' and not content.creator.can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
             #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
@@ -584,7 +587,17 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
+                extra_fields = dict(content.extra_fields)
                 content = morph_content_to(content, kwargs['type'])
+                # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
+                #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator
+                #          but they are strings .. and need to be converted ... ARARARRA!!
+                for key, value in extra_fields.iteritems():
+                    if hasattr(content, key):
+                        try:
+                            setattr(content, key, value)
+                        except:
+                            log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -631,10 +644,12 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        # AllanC - not used yet .. but could be in future
-        for extra_field in []:
-            if extra_field in kwargs: # AllanC - could these have validators at somepoint?
-                content.extra_fields[extra_field] = kwargs[extra_field]
+        permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
+            content.extra_fields[extra_field] = str(kwargs[extra_field])
+            #AllanC - we need the str() here because when the extra_fields obj is serised to Json, it cant deal with objects.
+            #         This is NOT acceptable for int's float's and long's
+            #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
         # -- Publishing --------------------------------------------------------
         if  submit_type=='publish'     and \
@@ -695,13 +710,13 @@ class ContentsController(BaseController):
                 })
         
         # -- Redirect (if needed)-----------------------------------------------
-
+        
         # We raise any errors at the end because we still want to save any draft content even if the content is not published
         if error:
             #log.debug("raising the error")
             #log.debug(error)
             raise error
-
+        
         if not content_redirect:
             if   submit_type == 'publish' and permissions['can_publish']:
                 # Added prompt aggregate to new content url

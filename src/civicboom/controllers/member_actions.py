@@ -225,7 +225,7 @@ class MemberActionsController(BaseController):
         @return 200    list generated ok
                 list   array of content objects
         """
-        q = CreatorIDFilter(get_member(id).id)
+        q = CreatorFilter.from_string(id)
         return content_search(_filter=q, **kwargs)
 
 
@@ -246,7 +246,7 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        q = BoomedByFilter(get_member(id).id)
+        q = BoomedByFilter.from_string(id)
         return content_search(_filter=q, **kwargs)
 
 
@@ -267,8 +267,8 @@ class MemberActionsController(BaseController):
         @comment AllanC special list union of content?boomed_by={name} and content?creator={name}
         """
         q = OrFilter([
-            BoomedByFilter(get_member(id).id),
-            CreatorIDFilter(get_member(id).id),
+            BoomedByFilter.from_string(id),
+            CreatorFilter.from_string(id),
         ])
         return content_search(_filter=q, **kwargs)
 

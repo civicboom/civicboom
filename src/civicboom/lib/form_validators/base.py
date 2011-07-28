@@ -9,10 +9,6 @@ from formencode import validators
 from pylons.i18n.translation import _
 
 
-from pylons import tmpl_context as c #for current user password validator
-
-from civicboom.lib.authentication import encode_plain_text_password, get_user_and_check_password
-
 from cbutils.text import clean_html_markup, strip_html_tags
 
 # Misc Imports
@@ -177,6 +173,8 @@ class CurrentUserPasswordValidator(validators.FancyValidator):
     }
 
     def _to_python(self, value, state):
+        from pylons import tmpl_context as c
+        from civicboom.lib.authentication import get_user_and_check_password
         if get_user_and_check_password(c.logged_in_persona.username, value):
             return value
         raise formencode.Invalid(self.message("invalid", state), value, state)
@@ -194,6 +192,7 @@ class PasswordValidator(validators.FancyValidator):
     }
 
     def _to_python(self, value, state):
+        from civicboom.lib.authentication import encode_plain_text_password
         value = value.strip()
         if len(value) < self.min:
             raise formencode.Invalid(self.message("too_few", state, min=self.min), value, state)
@@ -204,18 +203,19 @@ class PasswordValidator(validators.FancyValidator):
 
 
 # http://osdir.com/ml/python.formencode/2008-09/msg00003.html
-class IsoFormatDateConverter(validators.DateConverter):
+#class IsoFormatDateConverter(validators.DateConverter):
+class IsoFormatDateConverter(validators.FancyValidator):
     """
     Like formencode.validators.DateConverter, but accepts ISO 8601 YYYY-mm-dd
     """
-    month_style = 'dd/mm/yyyy'
+    #month_style = 'dd/mm/yyyy'
 
     def _to_python(self, value, state):
         try:
-            value = parse_date(value, dayfirst=True).strftime("%d/%m/%Y")
+            value = parse_date(value, dayfirst=True, yearfirst=True)#.strftime("%d/%m/%Y")
         except ValueError:
             raise formencode.Invalid("Invalid date", value, state)
-        return super(IsoFormatDateConverter, self)._to_python(value, state)
+        return value #super(IsoFormatDateConverter, self)._to_python(value, state)
 
 
 class SetValidator(validators.FancyValidator):
