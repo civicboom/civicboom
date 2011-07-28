@@ -15,11 +15,11 @@
     <h1>${_('What is a _group?')}</h1>
     <p>&nbsp;</p>
     <p>
-        ${_('A _Group is a collection of registered users, unified under one "identity" - be it as an organisation, title or issue from which requests for _articles can be created for others to reposed to. All _Groups can create a bespoke _widget.')}
+        ${_('A _Group is a group of users unified under one identity such as a publication title, blog, issue or news org. When a user switches "in" to a _Group, all their actions - _article _assignments, _responses, etc - are made in the name of that _Group rather than of the individual user. Every _Group has a _Widget.')}
     </p>
     <p>&nbsp;</p>
     <p>
-        ${_('A _widget is a simple audience engagement "widget" that lives on a site through which people can directly post their stories and respond to requests for _articles.')}
+        ${_('A _widget is a simple "widget" - a window - that can be embedded into your website or blod. It allows your audience to directly post their content and respond to _assignments for _articles.')}
     </p>
     <p>&nbsp;</p>
     <h2>${_('How to get and use a _Group today:')}</h2>

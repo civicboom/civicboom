@@ -134,7 +134,7 @@ BODY.c-register.a-new_user.u-user {
     
     .selected {
         background-color: $cb-lighterblue;
-        background-image: url('/images/misc/registration_tick.png');
+        background-image: url('/images/misc/registration/registration_tick.png');
         background-repeat: no-repeat;
         background-position: center center;
         border: 0.1em solid $cb-lightblue;
@@ -142,5 +142,9 @@ BODY.c-register.a-new_user.u-user {
         &:hover {
             background-color: lighten($cb-lighterblue, 3%);
         }
+    }
+    
+    .ui-datapicker {
+        display: none !important;
     }
 }

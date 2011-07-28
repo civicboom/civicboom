@@ -23,7 +23,7 @@
     <form action="" method="post">
 	<table class="newform help" style="margin: auto;">
 			
-			<tr><td><span class="step">1. Please choose one of the following. Do you:</span></td></tr>
+			<tr><td><p class="step">1. Please choose one of the following. Do you:</p></td></tr>
             ## Guidence type
             ${help_type()}
             <tr><td style="text-align: center;"><span class="button" id="help_type_continue">Continue to step 2</span></td></tr>
@@ -186,7 +186,6 @@
         """for radio_key, radio_tuple in radio_choices.iteritems():
            if h.get_data_value('help_type','register', radio_choices.keys()[0]) == radio_key:
                radio_tuple[1] = True"""
-        
     %>
 
     <tr>

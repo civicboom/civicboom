@@ -6,21 +6,24 @@
 ## Body
 ##------------------------------------------------------------------------------
 <%def name="body()">
-    <div style="background: white; border-radius: 16px; padding: 16px; margin: 1em; width: 722px; margin: auto;" class="frag_whitewrap">
-        <h1>How to use your profile</h1>
-        <p>images go here and stuff is explained, high fives</p>
+    <div class="frag_whitewrap layout">
+        <p class="step">${_("3. Your profile: the basics to getting started")}</p>
         
         <%
-            my_type = ''
+            my_type = 'ind'
             if c.logged_in_user:
                 my_type = 'hub' if c.logged_in_persona.__type__ == 'group' else (c.logged_in_persona.config.get('help_type') or 'ind')
         %>
         
+        <div class="getting_started">
+            <img src="/images/misc/registration/reg_step3_${my_type}.png" />
+        </div>
+        
         <div class="special_button">
             % if my_type in ['org', 'hub']:
-                <a class="button" href="${url(controller='misc', action='what_is_a_hub')}">Okay, I'm ready to learn about hubs!</a>
+                <a class="button" href="${url(controller='misc', action='what_is_a_hub')}">${_("Okay, I'm ready to learn about _groups!")}</a>
             % else:
-                <a class="button" href="${url(controller='profile', action='index')}">Okay, I'm ready!</a>
+                <a class="button" href="${url(controller='profile', action='index')}">${_("Okay, I'm ready!")}</a>
             % endif
         </div>
     </div>
