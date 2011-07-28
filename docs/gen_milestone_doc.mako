@@ -55,19 +55,29 @@
                 <th>Description</th>
                 <th>Benefit/Revolution</th>
                 <th>Time and Resorces</th>
+                <% num_cols = 4 %>
             </tr>
         % for item in redmine_data:
             <tr>
                 <td>
                     ${item['subject']}
-                ##</td>
-                ##<td>
+                    
+                    ## Check number of times <h?> occours
                     <%
                         html = textile.textile(item['description'])
-                        html = re.sub(r'<h2>', '<td><h2>', html)
+                        num_headings = html.count('<h') or 1
                     %>
-                    ${html |n}
-                ##</td>
+                    % if num_headings > 1:
+                        ## Put each h2 in an individual cell
+                        ${re.sub(r'<h\d>(.*?)</h\d>', '<td>', html) |n}
+                        ## Fill in any empty trailing cells
+                        % for i in range(num_cols-num_headings-1):
+                            <td></td>
+                        % endfor
+                    % else:
+                        ## No headings to split by, put all data in one epic cell
+                        <td colspan="${num_cols-num_headings}">${html |n}</td>
+                    % endif
             </tr>
         % endfor
         </table>
