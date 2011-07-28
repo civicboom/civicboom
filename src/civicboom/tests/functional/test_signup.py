@@ -70,14 +70,41 @@ class TestSignup(TestController):
             link,
             params={
                 'password'        : u'password',
-                'password_confirm': u'password2', # Passwords dont match
+                'password_confirm': u'password',
                 'dob'             : u'01-01-1980',
-                'terms'           : u'checked'
+                'terms'           : u'checked',
+                #'help_type'       : u'ind', # Must have a help_type
             },
             status=400
         )
-        self.assertNotIn('Invalid date'   , response)
-        self.assertIn   ('do not match'   , response)
+        self.assertIn   ('help_type', response)
+
+        response = self.app.post(
+            link,
+            params={
+                'password'        : u'password',
+                'password_confirm': u'password', 
+                'dob'             : u'01-01-1980',
+                'terms'           : u'checked',
+                'help_type'       : u'individual', # Must have a help_type ind or org
+            },
+            status=400
+        )
+        self.assertIn   ('help_type', response)
+        
+        response = self.app.post(
+            link,
+            params={
+                'password'        : u'password',
+                'password_confirm': u'password2', # Passwords dont match
+                'dob'             : u'01-01-1980',
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
+            },
+            status=400
+        )
+        self.assertNotIn('Invalid date'      , response)
+        self.assertIn   ('do not match'      , response)
         
         response = self.app.post(
             link,
@@ -85,7 +112,8 @@ class TestSignup(TestController):
                 'password'        : u'password',
                 'password_confirm': u'password',
                 'dob'             : u'2009-01-01', # Too young
-                'terms'           : u'checked'
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
             },
             status=400
         )
@@ -111,11 +139,11 @@ class TestSignup(TestController):
                 'password'        : u'password',
                 'password_confirm': u'password',
                 'dob'             : u'1980-01-01',
-                'terms'           : u'checked'
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
             },
             status=400
         )
-
         self.assertIn('Please give us your full name', response)
 
         num_emails = getNumEmails()
@@ -126,7 +154,8 @@ class TestSignup(TestController):
                 'password_confirm': u'password',
                 'dob'             : u'1980-01-01',
                 'name'            : u'This is my full name',
-                'terms'           : u'checked'
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
             },
         )
         self.assertEqual(getNumEmails(), num_emails + 2) # Check welcome email sent # and lizzies email for every member signup

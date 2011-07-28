@@ -94,7 +94,8 @@ class RegisterController(BaseController):
         schema = build_schema(*c.required_fields)
         schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
         schema.fields['name']  = validators.NotEmpty(messages={'missing': 'Please give us your full name as you wish it to appear on your profile'})
-        schema.fields['help_type'] = formencode.validators.OneOf(['org','ind'], if_missing='ind')
+        schema.fields['help_type'] = formencode.validators.OneOf(['org','ind']) #, if_missing='ind'
+        # schema.fields['help_type'] = validators.NotEmpty(messages={'missing': 'Please select a user type'})
         data = {'register':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='register', template_error='account/register')
         form = data['register']
@@ -138,7 +139,8 @@ class RegisterController(BaseController):
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         # GregM: prompt_aggregate on new user :D
-        signin_user_and_redirect(c.logged_in_persona, 'registration', prompt_aggregate=True)
+        ##signin_user_and_redirect(c.logged_in_persona, 'registration', prompt_aggregate=True)
+        signin_user_and_redirect(c.logged_in_persona, 'registration', redirect_url=url(controller='misc', action='how_to'))
         ##redirect('/')
 
     @web

@@ -11,7 +11,7 @@ HEAD=\
 FOOT=\
 	jquery.ui.js \
 	jquery.ui.stars-3.0.1.js \
-	jquery-ui-timepicker-addon.js \
+	jquery.ui.timepicker-addon.js \
 	jquery.html5-0.0.1.js \
 	jquery.scrollTo.js \
 	jquery.simplemodal-1.4.1.js \

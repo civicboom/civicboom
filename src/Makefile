@@ -29,6 +29,7 @@ help2:
 	# pep8          -- strict syntax checking
 	# i18n-fr       -- generate a machine-translated french site
 	# api-doc       -- build civicboom/public/api.html
+	# milestone-doc -- build /docs/milestone.html
 	# shell         -- python shell with the pylons environment loaded
 	# test-coverage -- run all nosetests and produce coverage html docs
 	# test-profile  -- run the test suite with profiling enabled (slow)
@@ -134,7 +135,10 @@ pep8:
 
 api-doc:
 	mkdir -p civicboom/public/doc/
-	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
+	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
+
+milestone-doc:
+	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
 
 py-libs:
 	make -C ../lib

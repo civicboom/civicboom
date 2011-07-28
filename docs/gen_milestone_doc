@@ -1,0 +1,81 @@
+#!/usr/bin/python
+
+"""
+A script to extract JSON data from Redmine issue tracker and construct a HTML upcomming features document using the paired MAKO template
+"""
+
+import sys
+import os.path
+from optparse import OptionParser
+import getpass
+
+import urllib
+import urllib2
+import json
+
+from mako.template import Template
+
+
+def get_url_data(url, username=None, password=None):
+    http_response = None
+    response     = '{}'
+    
+    if username and password:
+        # Authentication
+        # http://www.voidspace.org.uk/python/articles/authentication.shtml
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm() # this creates a password manager
+        passman.add_password(None, url, username, password) # because we have put None at the start it will always use this username/password combination for  urls for which `theurl` is a super-url
+        authhandler = urllib2.HTTPBasicAuthHandler(passman) # create the AuthHandler
+        urllib2.install_opener( urllib2.build_opener(authhandler) ) # All calls to urllib2.urlopen will now use our handler. Make sure not to include the protocol in with the URL, or HTTPPasswordMgrWithDefaultRealm will be very confused. You must (of course) use it when fetching the page though.
+    
+    try:
+        http_response = urllib2.urlopen(url, timeout=10) #urllib.urlencode(kargs)
+        response = http_response.read()
+    except urllib2.HTTPError as http_error:
+        response = http_error.read()
+    except:
+        print 'unable to get url: %s' % url
+    
+    if http_response:
+        http_response.close()
+    
+    return response
+
+
+def main(source_url, output):
+    # For development check to see if there is a .json file named the same as this script for use in a test enviroment
+    redmine_data = "[]"
+    cached_filename = os.path.relpath(__file__)+".json"
+    if os.path.exists(cached_filename):
+        redmine_data = open(cached_filename, 'r').read()
+    # Else aquire data from url provided
+    else:
+        username = getpass.getuser()
+        password = getpass.getpass("authentication for %s required - password:" % source_url)
+        redmine_data = get_url_data(source_url, username, password)
+    # Decode JSON data into a Python data structure
+    redmine_data = json.loads(redmine_data)
+    
+    # Render Template
+    template_filename = os.path.relpath(__file__)+".mako"
+    html = Template(filename=template_filename).render_unicode(redmine_data=redmine_data).encode('utf-8', 'replace')
+    
+    # Output .html file
+    file(output, "w").write(html)
+
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    #parser.add_option("-i", "--input-dir", dest="input_dir",
+    #    help="scan this controllers DIR", metavar="DIR")
+    parser.add_option("-s", "--source", dest="source_url",
+        help="url of data source, expected in json format", metavar="URL")
+    parser.add_option("-o", "--output", dest="output",
+        help="write output to FILE", metavar="FILE")
+    (options, args) = parser.parse_args()
+
+    if options.source_url and options.output:
+        sys.exit(main(options.source_url, options.output))
+    else:
+        print "Missing option"
+        sys.exit(1)
