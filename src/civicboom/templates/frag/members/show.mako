@@ -144,42 +144,31 @@
         self.guidance_content = {
             "assignment":{
                 'guidance_class': 'long',
-                'title'       : _('Ask for _articles!'),
-                'secure_href'        : h.url('new_content', target_type='assignment'),
-                ## 'content_text':    'You can ask your audience for their stories by clicking on the "Ask for stories" button in the header.',
+                'title'         : _('Ask for _articles!'),
+                'secure_href'   : h.url('new_content', target_type='assignment'),
             },
             "article":{
-               'title': 'Post stories!',
-                ##'content_list':    [
-                ##    _("Send your stories directly to media organisations and publishers"),
-                ##    _("Respond to a specific request"),
-                ##    _("Post your news on Civicboom")
-                ##],
-                'href': h.secure_link(h.url(controller='misc', action='new_article')),
+                'title'         : 'Post stories!',
+                'href'          : h.url(controller='misc', action='new_article'),
             },
             "response":{
-                'title': _('Get involved!'),
-                'content_list':    [
-                            _("Post your story directly to a news organisation, on _site_name or respond to a _assignment!"),
-                            ],
-                'href': ''+h.url(controller='misc', action='new_article'),
+                'title'         : _('Get involved!'),
+                'content_text'  : _("Post your story directly to a news organisation, on _site_name or respond to a _assignment!"),
+                'href'          : h.url(controller='misc', action='new_article'),
             },
             "widget":{
                 'guidance_class': 'small',
-                'title'       : _('Grab the _widget for your site!'),
-                'content_text': _('Click the "Get _widget" link below your avatar to grab the code!'),
-                ##'content_text':    _('A _widget is a simple audience engagement "widget", a window that can be embedded into your website or blog. A _Group or individual user can use it to let their readers directly post _content and _respond to _article _requests. You can get the _widget by clicking the "Get _widget" link under your avatar.'),
+                'title'         : _('Grab the _widget for your site!'),
+                'popup_href'    : h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
             },
             "hub":{
                 'guidance_class': 'small',
-                'title'       : _('Create a _Group!'),
-                'href'        : h.url(controller='misc', action='what_is_a_hub')
-                ##'content_text':    _('A _Group is a user (or collection of users) unified under one "identity" - be it as as a professional journalist, an organisation, a title or issue which can issue _article _requests for others to _respond to. _Groups can also create a bespoke _widget.'),
+                'title'         : _('Create a _Group!'),
+                'href'          : h.url(controller='misc', action='what_is_a_hub'),
             },
             "mobile":{
-                'title'       : 'Make the news with the Civicboom mobile app!',
-                'content_text': 'Grab the app and share your stories from the scene...',
-                'href'        : h.url(controller="misc", action="about", id="mobile"),
+                'title'         : 'Make the news with the Civicboom mobile app!',
+                'href'          : h.url(controller="misc", action="about", id="mobile"),
             }
         }
         
@@ -248,9 +237,9 @@
                 <a href="#">
                 <p class="boombox_link">
                     ${popup.link(
-                    h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-                    title = _('Get _widget'),
-                    text  = h.literal("%s") % _("Get _widget"),
+                        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+                        title = _('Get _widget'),
+                        text  = h.literal("%s") % _("Get _widget"),
                     )}
                 </p>
                 </a>
@@ -476,60 +465,69 @@
 ## Guides
 ##------------------------------------------------------------------------------
 <%def name="guides()">
-    ## Request advert (Hubs)
+    <% guide_count = 1 %>
+    
+    ## Request advert
     % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
-    ${components.guidance(
-        contents=[self.guidance_content['assignment']],
-        int=1,
-        heading="What next?",
-        config_key="advert_hand_assignment"
-    )}
+        ${components.guidance(
+            contents=[self.guidance_content['assignment']],
+            int=guide_count,
+            heading="What next?",
+            config_key="advert_hand_assignment"
+        )}
+        <% guide_count += 1 %>
     % endif
     
-    ## Content advert (Journalists)
+    ## Content advert
     % if "advert_hand_content" in self.adverts_hand and not c.logged_in_user.config["advert_hand_content"]:
-    ${components.guidance(
-        contents=[self.guidance_content["assignment"], self.guidance_content["article"]],
-        int=1,
-        heading=_("What next?"),
-        config_key="advert_hand_content"
-    )}
+        ${components.guidance(
+            contents=[self.guidance_content["assignment"], self.guidance_content["article"]],
+            int=guide_count,
+            heading=_("What next?"),
+            config_key="advert_hand_content"
+        )}
+        <% guide_count += 1 %>
     % endif
     
-    ## Response advert (Individuals)
+    ## Response advert
     % if "advert_hand_response" in self.adverts_hand and not c.logged_in_user.config["advert_hand_response"]:
-    ${components.guidance(
-        contents=[self.guidance_content["response"]],
-        int=1,
-        heading=_("What next?"),
-        config_key="advert_hand_response"
-    )}
+        ${components.guidance(
+            contents=[self.guidance_content["response"]],
+            int=guide_count,
+            heading=_("What next?"),
+            config_key="advert_hand_response"
+        )}
+        <% guide_count += 1 %>
     % endif
 
-    ## Widget advert (Hubs)
+    ## Widget advert
     % if "advert_hand_widget" in self.adverts_hand and not c.logged_in_user.config["advert_hand_widget"]:
-    ${components.guidance(
-        contents=[self.guidance_content['widget']],
-        int=2,
-        config_key="advert_hand_widget"
-    )}
+        ${components.guidance(
+            contents=[self.guidance_content['widget']],
+            int=guide_count,
+            config_key="advert_hand_widget"
+        )}
+        <% guide_count += 1 %>
     % endif
     
-    ## Hub/widget hybrid advert (Journalists)
+    ## Hub/widget hybrid advert
     % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
-    ${components.guidance(
-        contents=[self.guidance_content['hub'], self.guidance_content['widget']],
-        int=2,
-        config_key="advert_hand_hub"
-    )}
+        ${components.guidance(
+            contents=[self.guidance_content['hub'], self.guidance_content['widget']],
+            int=guide_count,
+            config_key="advert_hand_hub"
+        )}
+        <% guide_count += 1 %>
     % endif
     
-    ## Mobile advert (Individuals)
+    ## Mobile advert
     % if "advert_hand_mobile" in self.adverts_hand and not c.logged_in_user.config["advert_hand_mobile"]:
-    ${components.guidance(
-        contents=[self.guidance_content['mobile']],
-        config_key="advert_hand_mobile"
-    )}
+        ${components.guidance(
+            contents=[self.guidance_content['mobile']],
+            config_key="advert_hand_mobile",
+            int=guide_count,
+        )}
+        <% guide_count += 1 %>
     % endif
 </%def>
     

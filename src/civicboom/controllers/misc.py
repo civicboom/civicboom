@@ -138,6 +138,10 @@ class MiscController(BaseController):
     @web
     def what_is_a_hub(self):
         return action_ok()
+    
+    @web
+    def how_to(self):
+        return action_ok()
 
     def opensearch(self, format="xml"):
         import base64
