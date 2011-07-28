@@ -304,7 +304,7 @@ class ContentsController(BaseController):
             if 'exclude_content' in kwargs and kwargs['exclude_content']:
                 parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
         except FilterException as fe:
-            raise action_error(code=400, msg=str(fe))
+            raise action_error(code=400, message=str(fe))
 
         feed = AndFilter(parts)
 
