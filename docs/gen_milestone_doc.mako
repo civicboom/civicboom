@@ -44,6 +44,10 @@
                 margin-left: 2em;
                 list-style: circle;
             }
+            
+            .maintinence {
+                background-color: #eee;
+            }
         </style>
     </head>
     
@@ -59,7 +63,12 @@
                 <% num_cols = 4 %>
             </tr>
         % for item in redmine_data:
-            <tr>
+            <%
+                item_class = 'feature'
+                if item['tracker_id']!=2:
+                    item_class = 'maintinence'
+            %>
+            <tr class="${item_class}">
                 <td>
                     ${item['subject']}
                     
