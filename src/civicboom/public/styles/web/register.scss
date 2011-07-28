@@ -1,20 +1,42 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+HTML.no-js {
+    #help_type_continue {
+        display: none;
+    }
+    
+    #user_details_back {
+        display: none;
+    }
+}
+
 BODY.c-register.a-new_user.u-user {
 
-	.layout {
+    .step {
+      font-size: 300%;
+      text-align: center;
+    }
+    
+    .layout {
         margin-top: 1em;
-		margin-left: auto;
-		margin-right: auto;
-        
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 6em;
+          
         text-align: center;
-	}
+    }
 
-	.newform {
+    .newform {
         margin-top: 1em;
-		text-align:left;
-	}
+        margin: auto;
+        text-align: left;
+        width: 850px;
+        
+        .button {
+            
+        }
+    }
 
 	.newform tr td {
 		vertical-align: top !important;
@@ -22,18 +44,20 @@ BODY.c-register.a-new_user.u-user {
         p {
             margin-top: 0.5em;
         }
+        
+        #user_details_back {
+            cursor: pointer;
+            text-align: center;
+        }
 	}
 
-	.newform th {
+    .newform th {
         vertical-align: top !important;
-		font-size: 110%;
-		font-weight: bold;
+        font-size: 110%;
+        font-weight: bold;
         width: 140px;
-	
-		.step {
-			font-size: 300%;
-		}
-	}
+    }
+    
     .newform th:after {
         content: ":";
     }
@@ -51,10 +75,13 @@ BODY.c-register.a-new_user.u-user {
         position: relative;
         width: 40%;
         min-height: 165px;
-	font-size: 120%;
+	      font-size: 120%;
+	      cursor: pointer;
+	      
+	      @include drop_shadow(1px, 1px, 3px, #333);
         
         background-color: $cb-light-inactive;
-        border: 0.1em solid $cb-light-inactive;
+        border: 0.1em solid #666; //$cb-light-inactive;
 	
         img {
             float: right;
@@ -73,12 +100,30 @@ BODY.c-register.a-new_user.u-user {
         span {
             display: none;
         }
+        
+        &:hover {
+            background-color: lighten($cb-light-inactive, 3%);
+        }
+        
+        .newformtitle {
+            font-size: 120%;
+        }
+        
+        ul {
+            list-style: circle outside;
+            padding-left: 1.5em;
+            
+            li {
+                padding: 5px 0 5px 0;
+                list-style: disc outside;
+            }
+        }
     }
     
     .or {
 	display: inline-block;
 	position: relative;
-	width: 10%;
+	width: 11%;
 	font-size: 300%;
 	text-align: center;
 	
@@ -89,12 +134,17 @@ BODY.c-register.a-new_user.u-user {
     
     .selected {
         background-color: $cb-lighterblue;
+        background-image: url('/images/misc/registration/registration_tick.png');
+        background-repeat: no-repeat;
+        background-position: center center;
         border: 0.1em solid $cb-lightblue;
-        span {
-            display: block;
-            position: absolute;
-            bottom: 1em;
-            right: 1em;
+        
+        &:hover {
+            background-color: lighten($cb-lighterblue, 3%);
         }
+    }
+    
+    .ui-datapicker {
+        display: none !important;
     }
 }

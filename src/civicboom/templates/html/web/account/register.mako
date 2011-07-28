@@ -19,13 +19,19 @@
     ##style="width:61em;margin:auto;text-align:left;"
 	<h1>Just a few more details and you'll be booming!</h1>
 	
-	
+	<div id="reg_form">
     <form action="" method="post">
-	<table class="newform">
+	<table class="newform help" style="margin: auto;">
 			
-		## Guidence type
-		${help_type()}
+			<tr><td><p class="step">1. Please choose one of the following. Do you:</p></td></tr>
+            ## Guidence type
+            ${help_type()}
+            <tr><td style="text-align: center;"><span class="button" id="help_type_continue">Continue to step 2</span></td></tr>
             
+        </table>
+        <table class="newform user hide_if_js">
+            
+            <tr><td colspan="2"><p class="step">2. Fill in the following:</p><p id="user_details_back"><a>Or return to step 1 if you think you made a mistake!</a></p></td></tr>
             % if 'username' in c.required_fields:
               ${username()}
             % endif
@@ -42,12 +48,10 @@
               ${dob()}
             % endif
             
-            
-            
             ## recaptcha - if login account is not janrain
             % if config['online'] and 'password' in c.required_fields:
             <tr>
-                <th>${_("Show us that you're a real person")} </th>
+                <th>${_("Show us that you're a real person")}</th>
                 <td>
                     ${h.get_captcha(c.lang, 'white')}
                     ##<br/>
@@ -75,6 +79,21 @@
 			</td>
 		</table>
     </form>
+    </div>
+    
+    <script type="text/javascript">
+        $('#help_type_continue').click(function() {
+            $('.newform.help').fadeOut(function() {
+                $('.newform.user').fadeIn();
+            });
+        });
+        
+        $('#user_details_back').click(function() {
+            $('.newform.user').fadeOut(function() {
+                $('.newform.help').fadeIn();
+            });
+        });
+    </script>
 </div>
 
 </%def>
@@ -164,18 +183,15 @@
             'org':[_('Organisation'), False],
         }
         # Iterate to set checked flag
-        for radio_key, radio_tuple in radio_choices.iteritems():
-            if h.get_data_value('help_type','register', radio_choices.keys()[0]) == radio_key:
-                radio_tuple[1] = True
-        
+        """for radio_key, radio_tuple in radio_choices.iteritems():
+           if h.get_data_value('help_type','register', radio_choices.keys()[0]) == radio_key:
+               radio_tuple[1] = True"""
     %>
 
     <tr>
-        <th>
-		## <p class="step">1.</p>
-		${_('Do you...')}
-        </th>
-        <td style="width: 750px;">
+        <td>${invalid('help_type')}</td>
+    </tr><tr>
+        <td>
             
             
             ##<p>${_('To help you make the best of _site_name, please tell us if ... ')}</p>
@@ -183,9 +199,13 @@
             <div class="user_type_option ${'selected' if radio_choices['ind'][1] else ''}" onclick="$('#help_type_ind').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
                 <img src="/images/default/thumbnail_response.png" alt="response"/>
                 
-                <h2 class="newformtitle">${_('Have _articles?')}</h2>
-                <p>${_('People like you are the eyes and ears of the news.')}</p>
-                <p>${_('Everyone has a story and now you have an outlet to share it with the world.')}</p>
+                <h2 class="newformtitle">${_('Want to share your _articles?')}</h2>
+                <b>${_('Are you the eyes and ears of your community?')}</b>
+                <ul>
+                    <li>${_('Everyone has stories - _site_name makes it easy to share them with the world')}</li>
+                    <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
+                    <li><b>${_('Click here if this is you!')}</b></li>
+                </ul>
                 
                 <%doc>
                 <div class="hideable">
@@ -198,15 +218,17 @@
                     </ol>
                 </div>
                 </%doc>
-                <span class="icon16 i_accept"></span>
             </div>
             <div class="or"><p>or</p></div>
             <div class="user_type_option ${'selected' if radio_choices['org'][1] else ''}" onclick="$('#help_type_org').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
                 <img src="/images/default/thumbnail_assignment.png" alt="request"/>
-                <h2 class="newformtitle">${_('Want _articles?')}</h2>
-                <p>${_('Journalists, blogger, publishers, news organisations.')}</p>
-                <p>${_('Your greatest resource is your audience.')}</p>
-                <p>${_('After all, news stories start with people - and now you have a tool to tap into those stories.')}</p>
+                <h2 class="newformtitle">${_('Need _articles?')}</h2>
+                <b>${_('Journalists, bloggers, publishers and news organisations:')}</b>
+                <ul>
+                    <li>${_('Your greatest resource is your audience because news starts with people')}</li>
+                    <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
+                    <li><b>${_('Click here if this is you!')}</b></li>
+                </ul>
                 
                 <%doc>
                 <div class="hideable">
@@ -219,8 +241,6 @@
                     </ol>
                 </div>
                 </%doc>
-                
-                <span class="icon16 i_accept"></span>
             </div>
             
             ##<div style="clear:both;"></div>

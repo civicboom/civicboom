@@ -23,7 +23,8 @@ def now():
     if now_override:
         return now_override
     return datetime.datetime.now()
-def set_now(new_now_override):
+def set_now(new_now_override=None):
+    global now_override
     now_override = None
     if isinstance(new_now_override, datetime.datetime):
         now_override = new_now_override

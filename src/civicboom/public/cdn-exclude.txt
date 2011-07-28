@@ -1,4 +1,5 @@
-styles/*/*.css
+fonts/*
+styles/*/*
 styles/common/icons/*
 javascript/tiny_mce/*
 javascript/[a-zA-Z]*.js

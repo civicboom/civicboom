@@ -29,6 +29,7 @@ help2:
 	# pep8          -- strict syntax checking
 	# i18n-fr       -- generate a machine-translated french site
 	# api-doc       -- build civicboom/public/api.html
+	# milestone-doc -- build /docs/milestone.html
 	# shell         -- python shell with the pylons environment loaded
 	# test-coverage -- run all nosetests and produce coverage html docs
 	# test-profile  -- run the test suite with profiling enabled (slow)
@@ -47,20 +48,32 @@ release:
 
 site: i18n js css
 
-i18n:
+i18n: i18n-en
+
+i18n-base:
 	python setup.py extract_messages
+
+i18n-en: i18n-base
 	#python setup.py update_catalog
 	python setup.py init_catalog -l en
 	../admin_scripts/site_to_english civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
-i18n-fr: i18n
+i18n-zh: i18n-base
+	python setup.py init_catalog -l zh
+	../admin_scripts/site_to_x civicboom/i18n/zh/LC_MESSAGES/civicboom.po
+	python setup.py compile_catalog
+
+i18n-fr: i18n-base
+	python setup.py init_catalog -l fr
 	curl \
 		-F pofile=@civicboom/i18n/en/LC_MESSAGES/civicboom.po \
 		-F language=fr \
 		-F output=pofile  \
 		--output civicboom/i18n/fr/LC_MESSAGES/civicboom.po \
 		http://pepipopum.dixo.net
+	python setup.py compile_catalog
+
 js:
 	cd civicboom/public/javascript && $(MAKE)
 
@@ -122,7 +135,10 @@ pep8:
 
 api-doc:
 	mkdir -p civicboom/public/doc/
-	../admin_scripts/gendoc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
+	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
+
+milestone-doc:
+	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/website/issues.json?query_id=2 -o ../docs/milestone.html
 
 py-libs:
 	make -C ../lib
@@ -139,6 +155,8 @@ cdnpush: js css
 		civicboom/public
 	scp static-${GIT_TAG}.zip static.civicboom.com:~/
 	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
+	ssh static.civicboom.com rm -f static-${GIT_TAG}.zip
+	rm -f static-${GIT_TAG}.zip
 
 schemadiff:
 	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql

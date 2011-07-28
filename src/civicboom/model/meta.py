@@ -37,7 +37,6 @@ class JSONType(PickleType):
         PickleType.__init__(self, pickler=json, mutable=mutable)
 
 
-
 #-------------------------------------------------------------------------------
 # Object to Dict Conversion
 #-------------------------------------------------------------------------------
