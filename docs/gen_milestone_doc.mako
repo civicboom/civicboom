@@ -1,5 +1,6 @@
 <%!
     import textile
+    import re
 %>
 <html>
     <head>
@@ -59,12 +60,14 @@
             <tr>
                 <td>
                     ${item['subject']}
-                </td>
-                <td>
-                    ${textile.textile(item['description']) |n}
-                </td>
-                <td></td>
-                <td></td>
+                ##</td>
+                ##<td>
+                    <%
+                        html = textile.textile(item['description'])
+                        html = re.sub(r'<h2>', '<td><h2>', html)
+                    %>
+                    ${html |n}
+                ##</td>
             </tr>
         % endfor
         </table>
