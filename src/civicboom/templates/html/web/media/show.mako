@@ -118,6 +118,8 @@
                     function() {carousel.stopAuto();    },
                     function() {carousel.startAuto();   } 
                 );
+
+                console.log(carousel);
             };
             
             function get_item_details(item) {
@@ -140,7 +142,7 @@
 <%def name="carousel_item(content)">
     <li class="preview_item">
         ## Media preview/link to full
-        <a href="${h.url('medium', id=content['hash'])}" class="${content['hash']}-popup">
+        <a href="${h.url('medium', id=content['hash'])}" class="item-popup-link ${content['hash']}-popup">
             <div>
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />

@@ -9,13 +9,16 @@
         self.content = d['content']
         self.id = self.content['id']
         self.title = self.content['title']
+        self.creator = self.content['creator']
+        self.media = self.content['attachments']
+        self.responses = d['responses']
     %>
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="content-main-${self.id}" class="content_page">
         <div data-role="header" data-position="inline">
             <h1>${self.title}</h1>
             <a href="#content-info-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
         </div>
-        ${content_main(self.content)}
+        ${content_main()}
     </div>
     
     <div data-role="page" data-title="${page_title()} - info" data-theme="b" id="content-info-${self.content['id']}" class="content_page">
@@ -23,7 +26,15 @@
             <a href="#content-main-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
             <h1>${self.title} - info</h1>
         </div>
-        ${content_info(d)}
+        ${content_info()}
+    </div>
+    
+    <div data-role="page" data-title="${page_title()} - media" data-theme="b" id="content-media-${self.content['id']}" class="content_page">
+        <div data-role="header" data-position="inline">
+            <a href="#content-main-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
+            <h1>${self.title} - media</h1>
+        </div>
+        ${content_media()}
     </div>
 </%def>
 
@@ -31,43 +42,68 @@
     ${_("_site_name Mobile - %s") % d['content']['title']}
 </%def>
 
-<%def name="content_main(content)">
-    % if content:
+<%def name="content_main()">
+    <div data-role="content">
+        ##----Media----
+        <div class="top_media">
+            <% count = len(self.media) %>
+            % if count > 1:
+                <a href="#content-media-${self.id}" alt="more">
+            % elif count:
+                <a href="${self.media[1]['original_url']}">       
+            % endif
+            <img src="${self.media[1]['thumbnail_url']}" alt="${self.media[1]['caption']}" /></a>
+        </div>
+        
+        ##----Content----
+        <div class="content_text">
+            ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
+        </div>
+        
+        ##----Details----
+        % if hasattr(self.content,'views'):
+            <p>views: ${self.content['views']}</p>
+        % endif
+    </div>
+</%def>
+
+<%def name="content_info()">
+    <div data-role="content">
+        <div class="content_details">
+            <ul data-role="listview">
+                <li data-role="list-divider" role="heading">Creator information</li>
+                ${member_includes.member_details_short(self.creator, li_only=1)}
+                ${list_responses()}
+            </ul>
+        </div>
+    </div>
+</%def>
+
+<%def name="content_media()">
+    % if len(self.media):
         <div data-role="content">
-            ##----Media----
-            <div class="top_media">
-                % for media in content['attachments']:
-                    % if media['type'] == "image":
-                        <img src="${media['media_url']}" alt="${media['caption']}" />
-                    % endif
+            <div class="media_list">
+                % for item in self.media:
+                    <a href="${item['original_url']}"><img class="media_item" src="${item['thumbnail_url']}" /></a>
                 % endfor
             </div>
-            
-            ##----Content----
-            <div class="content_text">
-                ${h.literal(h.scan_for_embedable_view_and_autolink(content['content']))}
-            </div>
-            
-            ##----Details----
-            % if hasattr(content,'views'):
-                <p>views: ${content['views']}</p>
-            % endif
         </div>
     % endif
 </%def>
 
-<%def name="content_info(data)">
-    % if data:
-    <%
-        content = data['content']
-        creator = content['creator']
-    %>
-        <div data-role="content">
-            <div class="content_details">
-                <ul data-role="listview">
-                    ${member_includes.member_details_short(creator, li_only=1)}
-                </ul>
-            </div>
-        </div>
+<%def name="list_responses()">
+    <li data-role="list-divider" role="heading">Responses</li>
+    % if self.responses['count']:
+        % for item in self.responses['items']:
+            <li>
+                <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}" rel="external">
+                    <img src="${item['thumbnail_url']}" class="thumbnail" />
+                    <h3>${item['title']}</h3>
+                    <p>${item['content_short']}</p>
+                </a>
+            </li>
+        % endfor
+    % else:
+        <li>This ${self.content['type']} has no responses to show</li>
     % endif
 </%def>
