@@ -1,3 +1,4 @@
+## -*- coding: utf-8 -*-
 <%!
     import textile
     import re
@@ -43,6 +44,10 @@
                 margin-left: 2em;
                 list-style: circle;
             }
+            
+            .maintinence {
+                background-color: #eee;
+            }
         </style>
     </head>
     
@@ -55,19 +60,35 @@
                 <th>Description</th>
                 <th>Benefit/Revolution</th>
                 <th>Time and Resorces</th>
+                <% num_cols = 4 %>
             </tr>
         % for item in redmine_data:
-            <tr>
+            <%
+                item_class = 'feature'
+                if item['tracker_id']!=2:
+                    item_class = 'maintinence'
+            %>
+            <tr class="${item_class}">
                 <td>
                     ${item['subject']}
-                ##</td>
-                ##<td>
-                    <%
-                        html = textile.textile(item['description'])
-                        html = re.sub(r'<h2>', '<td><h2>', html)
-                    %>
-                    ${html |n}
-                ##</td>
+                    
+                ## Check number of times <h?> occours
+                ## AllanC - Enhancement: Maybe we should be specifically looking for H2's so we can have lower level headings in the sections?
+                <%
+                    html = textile.textile(item['description'])
+                    num_headings = html.count('<h') or 1
+                %>
+                % if num_headings > 1:
+                    ## Put each h2 in an individual cell
+                    ${re.sub(r'<h\d>(.*?)</h\d>', '<td>', html) |n}
+                    ## Fill in any empty trailing cells
+                    % for i in range(num_cols-num_headings-1):
+                        <td></td>
+                    % endfor
+                % else:
+                    ## No headings to split by, put all data in one epic cell
+                    <td colspan="${num_cols-num_headings}">${html |n}</td>
+                % endif
             </tr>
         % endfor
         </table>
