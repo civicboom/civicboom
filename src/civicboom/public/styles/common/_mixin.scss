@@ -2,7 +2,7 @@
     background: $bot;
     background: -moz-linear-gradient(top, $top 20%, $bot 100% );
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.20, $top), color-stop(1.00, $bot));
-    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$top', endColorstr='$bot');
+    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$top}', endColorstr='#{$bot}');
 }
 
 @mixin border_radius($rad) {
