@@ -48,23 +48,23 @@ release:
 
 site: i18n js css
 
-i18n: i18n-en
-
-i18n-base:
+civicboom/i18n/civicboom.pot: $(shell find -name "*.py" -or -name "*.mako")
 	python setup.py extract_messages
 
-i18n-en: i18n-base
+i18n: i18n-en
+
+i18n-en: civicboom/i18n/civicboom.pot
 	#python setup.py update_catalog
 	python setup.py init_catalog -l en
 	../admin_scripts/site_to_english civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
-i18n-zh: i18n-base
+i18n-zh: civicboom/i18n/civicboom.pot
 	python setup.py init_catalog -l zh
 	../admin_scripts/site_to_x civicboom/i18n/zh/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
-i18n-fr: i18n-base
+i18n-fr: civicboom/i18n/civicboom.pot
 	python setup.py init_catalog -l fr
 	curl \
 		-F pofile=@civicboom/i18n/en/LC_MESSAGES/civicboom.po \
