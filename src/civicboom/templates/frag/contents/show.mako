@@ -270,7 +270,6 @@
                 ${_('Booming this content will recommend it to your followers and the rest of the community.')}
             </div>
         </span>
-        <div class="separator"></div>
     % endif
     
     % if 'flag' in self.actions:

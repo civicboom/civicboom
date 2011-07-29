@@ -154,12 +154,12 @@
             count = content['count']
         %>
         
+        <li data-role="list-divider" role="heading">
+            ${title}
+            <span class="ui-li-count">${count}</span>
+        </li>
+        
         % if items and count:
-            <li data-role="list-divider" role="heading">
-                ${title}
-                <span class="ui-li-count">${count}</span>
-            </li>
-            
             % for item in items:
                 <li>
                     <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}">
@@ -169,6 +169,10 @@
                     </a>
                 </li>
             % endfor
+        % else:
+            <li>
+                This user has no ${title.lower()} to show!
+            </li>
         % endif
     % endif
 </%def>
