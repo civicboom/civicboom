@@ -12,7 +12,7 @@ of themselves
 ...             LocationFilter(1, 51, 10),
 ...             TagFilter("Science & Nature")
 ...         ]),
-...         CreatorIDFilter(1)
+...         CreatorFilter(1)
 ...     ]),
 ...     NotFilter(OrFilter([
 ...         TextFilter("waffles"),
@@ -34,14 +34,14 @@ and_(or_(
 AndFilter([OrFilter([
     TextFilter('terrorists'),
     AndFilter([LocationFilter(1.000000, 51.000000, 10.000000), TagFilter('Science & Nature')]),
-    CreatorIDFilter(1)
+    CreatorFilter(1)
 ]), NotFilter(OrFilter([
     TextFilter('waffles'),
     TagFilter('Business')
 ]))])
 
 >>> print html(query)
-<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorIDFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
+<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
 
 >>> print sql(query)
 ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
@@ -74,6 +74,32 @@ Filter()
 (1=1)
 """
 
+from civicboom.lib.database.get_cached import get_content, get_member
+from civicboom.model import Content
+from civicboom.model.meta import location_to_string
+from pylons import tmpl_context as c
+import re
+from dateutil.parser import parse
+from datetime import datetime
+from sqlalchemy import func, Unicode
+
+
+__all__ = [
+    "html", "sql",
+    "FilterException",
+    "Filter", "LabelFilter",
+    "OrFilter", "AndFilter", "NotFilter",
+    "IDFilter",
+    "TextFilter",
+    "LocationFilter",
+    "TypeFilter",
+    "DueDateFilter", "UpdateDateFilter",
+    "ParentIDFilter",
+    "CreatorFilter",
+    "BoomedByFilter",
+    "TagFilter",
+]
+
 
 ##############################################################################
 # meta bits
@@ -85,6 +111,10 @@ def html(o):
 
 def sql(o):
     return o.__sql__()
+
+
+class FilterException(Exception):
+    pass
 
 
 class Filter(object):
@@ -163,6 +193,7 @@ class AndFilter(Filter):
 
 class NotFilter(Filter):
     def __init__(self, sub):
+        # FIXME: assert
         self.sub = sub
 
     def __unicode__(self):
@@ -184,6 +215,7 @@ class NotFilter(Filter):
 
 class IDFilter(Filter):
     def __init__(self, id_list):
+        assert all([type(n) == int for n in id_list])
         self.id_list = ", ".join(["%d" % d for d in id_list])
 
     def __unicode__(self):
@@ -198,28 +230,40 @@ class IDFilter(Filter):
 
 class TextFilter(Filter):
     def __init__(self, text):
+        # FIXME: assert?
         self.text = text
 
-    def __unicode__(self):
-        return "Content.content.matches('%s')" % self.text
-
-    def __repr__(self):
-        return "TextFilter(%s)" % repr(self.text)
-
-    def __sql__(self):
-        import re
-
+    @staticmethod
+    def from_string(s):
         parts = []
-        for word in self.text.split():
+        for word in s.split():
             word = re.sub("[^a-zA-Z0-9_-]", "", word)
             if word:
                 parts.append(word)
 
         if parts:
-            text = " | ".join(parts)
-            return "to_tsvector('english', title || ' ' || content) @@ to_tsquery('%s')" % text
-        else:
-            return query
+            return TextFilter(" | ".join(parts))
+
+        raise FilterException("Invalid text search: %s" % s)
+
+    def mangle(self, results):
+        return results.add_columns(
+            func.ts_headline('pg_catalog.english',
+                func.strip_tags(Content.content),
+                func.plainto_tsquery(self.text),
+                'MaxFragments=3, FragmentDelimiter=" ... ", StartSel="<b>", StopSel="</b>", MinWords=7, MaxWords=15',
+                type_= Unicode
+            ).label("content_short")
+        )
+
+    def __unicode__(self):
+        return "Content.content.matches(%s)" % repr(self.text)
+
+    def __repr__(self):
+        return "TextFilter(%s)" % repr(self.text)
+
+    def __sql__(self):
+        return "to_tsvector('english', title || ' ' || content) @@ to_tsquery('%s')" % self.text
 
 
 class LocationFilter(Filter):
@@ -230,10 +274,14 @@ class LocationFilter(Filter):
 
     @staticmethod
     def from_string(s):
-        if s == "me":
-            return None # LabelFilter("location=me not supported yet") # FIXME
-
         (lon, lat, radius) = (None, None, 10)
+
+        if s == "me":
+            if c.logged_in_user and c.logged_in_user.location:
+                (lon, lat) = location_to_string(c.logged_in_user.location).split()
+            else:
+                raise FilterException("location=me when user has no location")
+
         zoom = 10 # FIXME: inverse of radius? see bug #50
 
         location = s.replace(",", " ")
@@ -245,6 +293,16 @@ class LocationFilter(Filter):
 
         if lon and lat and radius:
             return LocationFilter(lon, lat, radius)
+
+        raise FilterException("Invalid location")
+
+    def mangle(self, results):
+        return results.add_columns(
+            func.st_distance_sphere(
+                func.st_geomfromwkb(Content.location, 4326),
+                'SRID=4326;POINT(%f %f)' % (self.lon, self.lat)
+            ).label("distance")
+        )
 
     def __unicode__(self):
         return "Content.location.near((%f, %f), %f)" % (self.lon, self.lat, self.rad)
@@ -258,8 +316,12 @@ class LocationFilter(Filter):
 
 class TypeFilter(Filter):
     def __init__(self, type):
-        if type in ['article', 'assignment', 'draft']:
-            self.type = type
+        assert type in ['article', 'assignment', 'draft']
+        self.type = type
+
+    @staticmethod
+    def from_string(s):
+        return TypeFilter(s)
 
     def __unicode__(self):
         return "Content.__type__ = '%s'" % self.type
@@ -273,13 +335,13 @@ class TypeFilter(Filter):
 
 class DueDateFilter(Filter):
     def __init__(self, comparitor, date):
+        assert comparitor in ["<", ">", "IS"]
+        # FIXME: validate date
         self.comparitor = comparitor
         self.date = date
 
     @staticmethod
     def from_string(s):
-        from dateutil.parser import parse
-        from datetime import datetime
         c = '='
         d = s
         if s[0] in ['<', '>']:
@@ -307,12 +369,13 @@ class DueDateFilter(Filter):
 
 class UpdateDateFilter(Filter):
     def __init__(self, comparitor, date):
+        assert comparitor in ["<", ">", "IS"]
+        # FIXME: validate date
         self.comparitor = comparitor
         self.date = date
 
     @staticmethod
     def from_string(s):
-        from dateutil.parser import parse
         c = '='
         d = s
         if s[0] in ['<', '>']:
@@ -339,7 +402,15 @@ class UpdateDateFilter(Filter):
 
 class ParentIDFilter(Filter):
     def __init__(self, parent_id):
+        assert type(parent_id) in [int, bool]
         self.parent_id = parent_id
+
+    @staticmethod
+    def from_string(s):
+        if s.isdigit():
+            return ParentIDFilter(int(s))
+
+        raise FilterException("Content not found: %s" % s)
 
     def __unicode__(self):
         return "Content.parent_id = %d" % self.parent_id
@@ -356,37 +427,44 @@ class ParentIDFilter(Filter):
             return "content.parent_id = %d" % self.parent_id
 
 
-class CreatorIDFilter(Filter):
+class CreatorFilter(Filter):
     def __init__(self, creator_id):
+        assert type(creator_id) == int
         self.creator_id = creator_id
+
+    @staticmethod
+    def from_string(s):
+        if s == "me":
+            m = c.logged_in_persona
+        else:
+            m = get_member(s)
+        if m:
+            return CreatorFilter(m.id)
+
+        raise FilterException("Member not found: %s" % s)
 
     def __unicode__(self):
         return "Content.creator_id = %d" % self.creator_id
 
     def __repr__(self):
-        return "CreatorIDFilter(%d)" % self.creator_id
+        return "CreatorFilter(%d)" % self.creator_id
 
     def __sql__(self):
         return "content.creator_id = %d" % self.creator_id
 
 
-class CreatorFilter(Filter):
-    def __init__(self, creator_name):
-        self.creator_name = creator_name
-
-    def __unicode__(self):
-        return "Content.creator_name = '%s'" % self.creator_name
-
-    def __repr__(self):
-        return "CreatorFilter(%s)" % repr(self.creator_name)
-
-    def __sql__(self):
-        return "content.creator_id = (SELECT id FROM member WHERE username='%s')" % self.creator_name
-
-
 class BoomedByFilter(Filter):
     def __init__(self, boomer_id):
+        assert type(boomer_id) == int
         self.boomer_id = boomer_id
+
+    @staticmethod
+    def from_string(s):
+        m = get_member(s)
+        if m:
+            return BoomedByFilter(m.id)
+
+        raise FilterException("Member not found: %s" % s)
 
     def __unicode__(self):
         return "FIXME" # Content.id in '%s'" % self.boomer_id
@@ -400,10 +478,16 @@ class BoomedByFilter(Filter):
 
 class TagFilter(Filter):
     def __init__(self, tag):
+        # FIXME: assert validity
         self.tag = tag
 
+    @staticmethod
+    def from_string(s):
+        # FIXME: validate as a-z0-9
+        return TagFilter(s)
+
     def __unicode__(self):
-        return "Content.tags.contains('%s')" % self.tag
+        return "Content.tags.contains(%s)" % repr(self.tag)
 
     def __repr__(self):
         return "TagFilter(%s)" % repr(self.tag)

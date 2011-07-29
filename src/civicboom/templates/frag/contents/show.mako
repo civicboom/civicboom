@@ -1105,7 +1105,7 @@ r = (d['content']['rating'] * 5)
     % if c.logged_in_persona and self.content.get('parent').get('creator').get('username') == c.logged_in_persona.username:
         % if 'approve' in self.actions or 'dissasociate' in self.actions:
         ## --- Response guide ---
-        <div class="advert">
+        <div class="guidance">
            <h1>What now? You can:</h1>
            <div class="content response_guide">
                <table><tr><td style="width: 48%;">
@@ -1113,7 +1113,7 @@ r = (d['content']['rating'] * 5)
                         ${h.secure_link(
                             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
                             value           = _('Approve & _Lock'),
-                            value_formatted = h.literal("<table class=\"approve\"><tr><td class=\"int\">1.</td><td><p class=\"advert_title\">Grab it!</p><p class=\"advert_content\">Want to publish or use this content? Click here!</p></td></tr></table>"),
+                            value_formatted = h.literal("<table class=\"approve\"><tr><td class=\"int\">1.</td><td><p class=\"guidance_title\">Grab it!</p><p class=\"guidance_text\">Want to publish or use this content? Click here!</p></td></tr></table>"),
                             title           = _("Approve and _lock this content so no further editing is possible"),
                             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
                             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
@@ -1135,7 +1135,7 @@ r = (d['content']['rating'] * 5)
                         ${h.secure_link(
                             h.args_to_tuple('content_action', action='disassociate', format='redirect', id=self.id),
                             value           = _('_Disassociate') ,
-                            value_formatted = h.literal("<table class=\"disassociate\"><tr><td class=\"int\">2.</td><td class=\"advert_title\">Not appropriate or off brand?</td></tr><tr><td></td><td class=\"advert_content\">Click here to remove this from your list of responses!</td></tr></table>"),
+                            value_formatted = h.literal("<table class=\"disassociate\"><tr><td class=\"int\">2.</td><td class=\"guidance_title\">Not appropriate or off brand?</td></tr><tr><td></td><td class=\"guidance_text\">Click here to remove this from your list of responses!</td></tr></table>"),
                             title           = _("_Disassociate your content from this response") ,
                             confirm_text    = _('This content with no longer be associated with your content, are you sure?') ,
                             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,

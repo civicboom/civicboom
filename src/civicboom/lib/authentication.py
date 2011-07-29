@@ -197,7 +197,8 @@ def signin_user(user, login_provider=None):
 
 
 # GregM: Added prompt_aggregate to allow new users to be prompted with janrain
-def signin_user_and_redirect(user, login_provider=None, prompt_aggregate=None):
+# Proto: Added redirect_url for redirection after registering
+def signin_user_and_redirect(user, login_provider=None, prompt_aggregate=None, redirect_url=None):
     """
     Perform the sigin for a user
     """
@@ -208,7 +209,9 @@ def signin_user_and_redirect(user, login_provider=None, prompt_aggregate=None):
 
     # If no redirect send them to private profile
     #return redirect(url(controller="profile", action="index"))
-    if prompt_aggregate:
+    if redirect_url:
+        return redirect(redirect_url)
+    elif prompt_aggregate:
         return redirect("/profile?prompt_aggregate=%s" % (prompt_aggregate))
     else:
         return redirect("/profile")
