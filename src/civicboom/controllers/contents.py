@@ -595,7 +595,12 @@ class ContentsController(BaseController):
                 for key, value in extra_fields.iteritems():
                     if hasattr(content, key):
                         try:
-                            setattr(content, key, value)
+                            if value == "None": # hacky hack, because due_date=None was being stored as extra_fields={"due_date": "None"}
+                                setattr(content, key, None)
+                            elif value.isdigit(): # digits should be stored as digits to start with >_<
+                                setattr(content, key, int(value))
+                            else:
+                                setattr(content, key, value)
                         except:
                             log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
         
