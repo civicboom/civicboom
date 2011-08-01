@@ -65,11 +65,18 @@ FlaggedContentGrid.configure(include=[
         FlaggedContentGrid.comment.readonly(),
         ])
 
+MemberGrid = Grid(model.Member)
+MemberGrid.configure(include=[
+        #MemberGrid.id.readonly(),
+        MemberGrid.username,
+        MemberGrid.name,
+        ])
+
 UserGrid = Grid(model.User)
 UserGrid.configure(include=[
         #UserGrid.id.readonly(),
-        UserGrid.name,
         UserGrid.username,
+        UserGrid.name,
         UserGrid.email,
         UserGrid.join_date.readonly(),
         UserGrid.status,
@@ -77,8 +84,8 @@ UserGrid.configure(include=[
 
 GroupGrid = Grid(model.Group)
 GroupGrid.configure(include=[
-        GroupGrid.name,
         GroupGrid.username,
+        GroupGrid.name,
         GroupGrid.join_date.readonly(),
         GroupGrid.num_members,
         ])
