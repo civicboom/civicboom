@@ -18,7 +18,7 @@ class TemplateEngine(templates.TemplateEngine):
         return render('/admin/formalchemy/%s.mako' % name, extra_vars=kwargs)
 
 
-class CustomTemplateEngine(TemplateEngine):
+class CustomTemplateEngine(templates.TemplateEngine):
     def __init__(self, template):
         self.template = template
 
