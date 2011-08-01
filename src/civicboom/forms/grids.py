@@ -1,10 +1,6 @@
 from civicboom import model
 
-from formalchemy import tables
-
-
-class Grid(tables.Grid):
-    pass
+from formalchemy.tables import Grid
 
 
 ## Initialize grids
