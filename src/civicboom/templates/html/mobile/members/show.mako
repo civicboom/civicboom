@@ -162,7 +162,7 @@
         % if items and count:
             % for item in items:
                 <li>
-                    <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}">
+                    <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}" rel="external">
                         <img src="${item['thumbnail_url']}" class="thumbnail" />
                         <h3>${item['title']}</h3>
                         <p>${item['content_short']}</p>

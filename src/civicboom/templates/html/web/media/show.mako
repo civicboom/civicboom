@@ -97,7 +97,7 @@
                     animation   :   'slow',
                     scroll  :   1,
                     visible :   1,
-                    auto    :   5,
+                    auto    :   3,
                     wrap    :   'both',
                     initCallback    :   media_carousel_initCallback,
                     buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
@@ -118,7 +118,7 @@
                     function() {carousel.stopAuto();    },
                     function() {carousel.startAuto();   } 
                 );
-
+                
                 console.log(carousel);
             };
             
