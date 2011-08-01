@@ -23,7 +23,7 @@
         </ul>
     
     <h2>${_("Add Account")}</h2>
-        ${h.get_janrain(lang=c.lang, return_url=h.url('account/link_janrain', id=c.result.get('username'), qualified=True))}
+        ${h.get_janrain(lang=c.lang, return_url=h.url('account/link_janrain', id=d['username'], qualified=True))}
     <br />
 ##    <a class="button" href    = "${h.url('settings')}" title   = "${_('Back to Settings')}">
 ##      <span>${_('Back to Settings')}</span>

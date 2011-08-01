@@ -51,11 +51,11 @@ class AdminControllerBase(BaseController):
     @https()
     def __before__(self):
         BaseController.__before__(self)
-        if config['debug']:
-            # allow tests to see admin?
-            # this could be done better when we have a proper admin definiton
-            return
-        if not (c.logged_in_persona and c.logged_in_persona.username == "civicboom"):  # pragma: no cover - tests take the shortcut above
+        admins = config['setting.admin_users'].split(",")
+        if not (
+            c.logged_in_persona and
+            c.logged_in_persona.username in admins
+        ):
             abort(403)
 
     # this is used by the superclass somehow
