@@ -33,8 +33,9 @@ class SecurifyCookiesMiddleware(object):
             for k, v in headers:
                 if k.lower() == "cache-control" and "public" in v:
                     static = True
-                if k.lower() == "host" and "widget" in v:
-                    static = True
+
+            if "widget" in environ.get("HTTP_HOST", ""):
+                static = True
 
             new_headers = []
             for k, v in headers:
