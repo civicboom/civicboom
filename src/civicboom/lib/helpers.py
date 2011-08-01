@@ -407,17 +407,14 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
       - An invisible pretty-looking plain-text link which calls form.submit()
+    Then use javascript to hide the form and show the pretty link
     
     @param href      - can be supplied as a string or a tuple in the format (args, kwargs), this tuple will then be used to automatically create href_json
     @param href_json - an optional JSON url to post to can be provided, this will then activate an AJAX call, this is normally set automatically by providing a tuple for href (see above)
     @param javascript_json_complete_actions - a string of javascript that is activated on a successful AJAX call. Normally used to refresh parts of the page that have been updated from the successful AJAX call.
-    
-    Then use javascript to hide the form and show the pretty link
     """
     if not value_formatted:
         value_formatted = value
-
-
 
     # Setup Get string href ----
     # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
@@ -528,6 +525,7 @@ def confirmed_link (title, icon='', **kwargs):
     
     return HTML.span(link+confirm, class_='confirmed_link')
 
+
 def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = None, buttons = [{'href':'#', 'onClick':'', 'title':'Yes' }, {'href':'#', 'onClick':'$.modal.close(); return false;', 'title':'No'}] ):
     content = ''
     if icon:
@@ -564,6 +562,7 @@ def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = No
     content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'));
     
     return HTML.div(content, class_="popup_hidden")
+
 
 #-------------------------------------------------------------------------------
 # Frag DIV's and Links - for Static and AJAX compatability
