@@ -46,31 +46,23 @@ class TestAdminController(TestController):
         response = self.app.get("/admin/Group/models?Group--num_members=1")
 
 
-    def test_license_list(self):
-        response = self.app.get("/admin/License/models")
+    types = [
+        "License", "Tags", "Media",
+        "Member", "User", "Group",
+        "Content", "ArticleContent",
+    ]
 
-    def test_license_edit(self):
-        response = self.app.get("/admin/License/models/1/edit?")
+    def test_lists(self):
+        for t in self.types:
+            response = self.app.get("/admin/%s/models" % t)
 
+    def test_news(self):
+        for t in self.types:
+            response = self.app.get("/admin/%s/models/new" % t)
 
-    def test_user_list(self):
-        response = self.app.get("/admin/User/models")
-
-    def test_user_new(self):
-        response = self.app.get("/admin/User/models/new")
-
-    def test_user_edit(self):
-        response = self.app.get("/admin/User/models/1/edit?")
-
-
-    def test_group_list(self):
-        response = self.app.get("/admin/Group/models")
-
-    def test_group_new(self):
-        response = self.app.get("/admin/Group/models/new")
-
-    def test_group_edit(self):
-        response = self.app.get("/admin/Group/models/9/edit?")
+    def test_edits(self):
+        for t in self.types:
+            response = self.app.get("/admin/%s/models/1/edit?" % t)
 
 
     # FIXME: these error out when the pages are empty ._.?
