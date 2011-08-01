@@ -84,6 +84,11 @@ def init_base_data():
         u3.email         = u"test+kitten@civicboom.com"
         u3.avatar        = u"f86c68ccab304eb232102ac27ba5da061559fde5"
 
+        u3_login = UserLogin()
+        u3_login.user   = u3
+        u3_login.type   = "password"
+        u3_login.token  = hashlib.sha1("password").hexdigest()
+
         u4 = User()
         u4.username      = u"puppy"
         u4.name          = u"Jamie L. Puppy"
@@ -105,7 +110,7 @@ def init_base_data():
         g2.join(u4)
         g2.join(u5)
 
-        Session.add_all([g2, u3, u4, u5])
+        Session.add_all([g2, u3, u3_login, u4, u5])
         Session.commit()
 
 
