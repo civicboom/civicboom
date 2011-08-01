@@ -163,6 +163,7 @@ for setting in settings_base.values():
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
 
+
 def build_meta(user, user_type, panel):
     settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
     panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title': setting_titles.get(setting['group'].split('/')[0]) if setting_titles.get(setting['group'].split('/')[0]) else setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
@@ -391,7 +392,8 @@ class SettingsController(BaseController):
         # id will always contain me if it was passed
         
         private = kwargs.get('private')
-        if private: del kwargs['private']
+        if private:
+            del kwargs['private']
         #username = id
         #if not username or username == 'me':
         #    username = c.logged_in_persona.username

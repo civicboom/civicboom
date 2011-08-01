@@ -291,6 +291,7 @@ def get_content(content):
         return content
     return get_content_nocache(content)
 
+
 def find_content_root(content):
     content = get_content(content)
     
@@ -314,6 +315,7 @@ def find_content_root(content):
         return get_content(ev.id) or False
     else:
         return False
+
 
 def get_tag(tag):
     """
