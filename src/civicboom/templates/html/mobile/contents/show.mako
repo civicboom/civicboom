@@ -48,11 +48,10 @@
         <div class="top_media">
             <% count = len(self.media) %>
             % if count > 1:
-                <a href="#content-media-${self.id}" alt="more">
+                <a href="#content-media-${self.id}" alt="more"><img src="${self.media[0]['thumbnail_url']}" alt="${self.media[0]['caption']}" /></a>
             % elif count:
-                <a href="${self.media[1]['original_url']}">       
+                <a href="${self.media[0]['original_url']}"><img src="${self.media[0]['thumbnail_url']}" alt="${self.media[0]['caption']}" /></a>
             % endif
-            <img src="${self.media[1]['thumbnail_url']}" alt="${self.media[1]['caption']}" /></a>
         </div>
         
         ##----Content----
@@ -71,8 +70,17 @@
     <div data-role="content">
         <div class="content_details">
             <ul data-role="listview">
+                ## Creator info
                 <li data-role="list-divider" role="heading">Creator information</li>
                 ${member_includes.member_details_short(self.creator, li_only=1)}
+                
+                ## Content info
+                <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
+                <li><h3>Published:</h3> ${self.content['publish_date']}</li>
+                <li><h3>Views:</h3> ${self.content['views']}</li>
+                <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
+                
+                ## Responses
                 ${list_responses()}
             </ul>
         </div>
@@ -92,8 +100,12 @@
 </%def>
 
 <%def name="list_responses()">
-    <li data-role="list-divider" role="heading">Responses</li>
-    % if self.responses['count']:
+    <% count = self.responses['count'] %>
+    <li data-role="list-divider" role="heading">
+        Responses
+        <span class="ui-li-count">${count}</span>    
+    </li>
+    % if count:
         % for item in self.responses['items']:
             <li>
                 <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}" rel="external">

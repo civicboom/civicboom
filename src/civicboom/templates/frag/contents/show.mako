@@ -211,19 +211,24 @@
 
 <%def name="content_title()">
     ##----Title----
-    <div class="content_title">
+    <table class="content_title_table"><tr>
+    
+    <td class="content_title">
         <h1>${self.content['title']}</h1>
-        <div class="actions">
-            ${content_title_actions()}
-        </div>
-    </div>
-    <div style="clear: both;"></div>
-    <div class="creator_avatar">
-       ${member_includes.avatar(self.content['creator'])}
-    </div>
-    <div class="content_creator">By: ${self.content['creator']['name']}</div>
-    ## ${map_icon()}
-    <div style="clear: both;"></div>
+    </td>
+
+    <td rowspan="2" class="actions">
+        ${content_title_actions()}
+    </td>
+    
+    </tr><tr>
+    
+    <td class="creator_avatar">
+        ${member_includes.avatar(self.content['creator'], class_="thumbnail_small")}
+        By: ${self.content['creator']['name']}
+    </td>
+    
+    </tr></table>
 </%def>
 
 <%def name="content_title_actions()">
@@ -270,6 +275,7 @@
                 ${_('Booming this content will recommend it to your followers and the rest of the community.')}
             </div>
         </span>
+        <div class="separator"></div>
     % endif
     
     % if 'flag' in self.actions:
