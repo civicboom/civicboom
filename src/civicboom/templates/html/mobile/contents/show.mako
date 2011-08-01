@@ -2,6 +2,7 @@
 
 ## includes
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
+<%namespace name="list_includes" file="/html/mobile/common/lists.mako" />
 
 ## page structure defs
 <%def name="body()">
@@ -79,9 +80,12 @@
                 <li><h3>Published:</h3> ${self.content['publish_date']}</li>
                 <li><h3>Views:</h3> ${self.content['views']}</li>
                 <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
+
+                ## Parent
+                ${list_includes.parent_content(self.content)}
                 
                 ## Responses
-                ${list_responses()}
+                ${list_includes.list_contents(self.responses, "Responses")}
             </ul>
         </div>
     </div>
@@ -96,26 +100,5 @@
                 % endfor
             </div>
         </div>
-    % endif
-</%def>
-
-<%def name="list_responses()">
-    <% count = self.responses['count'] %>
-    <li data-role="list-divider" role="heading">
-        Responses
-        <span class="ui-li-count">${count}</span>    
-    </li>
-    % if count:
-        % for item in self.responses['items']:
-            <li>
-                <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}" rel="external">
-                    <img src="${item['thumbnail_url']}" class="thumbnail" />
-                    <h3>${item['title']}</h3>
-                    <p>${item['content_short']}</p>
-                </a>
-            </li>
-        % endfor
-    % else:
-        <li>This ${self.content['type']} has no responses to show</li>
     % endif
 </%def>
