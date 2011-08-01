@@ -98,7 +98,7 @@
 	    <input type='hidden' name='${config_key}' value='True'/>
 	    <input class='hide_guidance_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
 	    <div class="mo-help-l">
-		Click here to permanently hide this
+		${_("Click here to permanently hide this")}
 	    </div>
 	</form>
     </div>
