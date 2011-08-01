@@ -497,6 +497,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     
     return HTML.span(hf+hl+hs+popup, class_="secure_link") #+json_submit_script
 
+
 # This will create an html a link with our popup.
 def confirmed_link (title, icon='', **kwargs):
     modal_params = kwargs.get('modal_params', {})
@@ -529,9 +530,9 @@ def confirmed_link (title, icon='', **kwargs):
 def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = None, buttons = [{'href':'#', 'onClick':'', 'title':'Yes' }, {'href':'#', 'onClick':'$.modal.close(); return false;', 'title':'No'}] ):
     content = ''
     if icon:
-        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon");
+        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon")
     elif icon_image:
-        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon");
+        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon")
     content = content + HTML.div(title or '', class_="popup-title")
     
     if message:
@@ -559,7 +560,7 @@ def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = No
     
     content = HTML.div(content, class_="popup_content")
     
-    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'));
+    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'))
     
     return HTML.div(content, class_="popup_hidden")
 

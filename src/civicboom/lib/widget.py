@@ -47,6 +47,7 @@ def setup_widget_env():
     #referer = current_referer()
     #if referer:
     #    referer = unquote_plus(referer)+'&'
+
     def get_widget_varibles_from_env():
         #def get_env_from_referer(var_name):
         #    try:
