@@ -393,7 +393,7 @@
 
     <%doc>
         % if creator and 'creator' in content:
-          <p><small class="content_by">By: ${content['creator']['name']}</small>
+          <p><small class="content_by">${_("By: %s") % content['creator']['name']}</small>
         % endif
     </%doc>
 </tr>
