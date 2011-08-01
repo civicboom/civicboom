@@ -29,14 +29,5 @@
   
     <body class="c-${c.controller} a-${c.action}">
         ${next.body()}
-        
-        <div data-role="footer">
-            <div data-role="navbar">
-                <ul>
-                    <li><a href="a.html" class="ui-btn-active">One</a></li>
-                    <li><a href="b.html">Two</a></li>
-                </ul>
-            </div>
-        </div>
     </body>
 </html>

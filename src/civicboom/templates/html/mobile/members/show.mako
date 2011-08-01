@@ -21,6 +21,8 @@
         </div>
         
         ${member_details_full(self.member)}
+        
+        ${control_bar()}
     </div>
     
     ## Extra info (content/boomed/etc)
@@ -31,6 +33,16 @@
         </div>
         
         ${member_content_list(d)}
+    </div>
+</%def>
+
+<%def name="control_bar()">
+    <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+            <ul>
+                <li><a>One</a></li>
+            </ul>
+        </div>
     </div>
 </%def>
 

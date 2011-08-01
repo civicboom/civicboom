@@ -70,9 +70,19 @@ HTML.js {
             top: 65px;
         }
         
-        .play-icon {
-            filter: alpha(opacity=50);
-            opacity: 0.5;
+        .item_preview {
+            .play_icon {
+                position: absolute;
+                left: 125px;
+                top: 25px;
+                filter: alpha(opacity=50);
+                opacity: 0.5;
+                
+                img {
+                    height: 100px;
+                    width: 100px;
+                }
+            }
         }
         
     }
