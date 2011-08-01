@@ -1,8 +1,10 @@
 from civicboom.tests import *
+import logging
 
 
 class TestAdminController(TestController):
     def get_https(self, url):
+        logging.debug(url)
         return self.app.get(url, extra_environ={'HTTP_X_URL_SCHEME': 'https'})
 
 
@@ -51,22 +53,27 @@ class TestAdminController(TestController):
 
 
     types = [
-        "License", "Tags", "Media",
-        "Member", "User", "Group",
-        "Content", "ArticleContent",
+        ("License",   "CC-BY"),
+        # ("Tag",
+        # ("Media",   # these are blank
+        ("Member",          1),
+        ("User",            1),
+        ("Group",           3),
+        ("Content",         1),
+        ("ArticleContent",  3),
     ]
 
     def test_lists(self):
-        for t in self.types:
+        for t,i in self.types:
             response = self.get_https("/admin/%s/models" % t)
 
     def test_news(self):
-        for t in self.types:
+        for t,i in self.types:
             response = self.get_https("/admin/%s/models/new" % t)
 
     def test_edits(self):
-        for t in self.types:
-            response = self.get_https("/admin/%s/models/1/edit?" % t)
+        for t,i in self.types:
+            response = self.get_https("/admin/%s/models/%s/edit?" % (t,i))
 
 
     # FIXME: these error out when the pages are empty ._.?
@@ -82,4 +89,4 @@ class TestAdminController(TestController):
     #    response = self.get_https("/admin/User/models?User--status=suspended")
 
     def test_datepicker_and_enummer_and_usercompleter(self):
-        response = self.get_https("/admin/ArticleContent/models/2/edit?")
+        response = self.get_https("/admin/ArticleContent/models/3/edit?")

@@ -485,22 +485,25 @@ class SettingsController(BaseController):
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
         # GregM: check kwargs as if no new avatar and has current avatar this FAILS!
         if kwargs.get('avatar') != None:
-            with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
-                a = settings['avatar']
-                wh.copy_cgi_file(a, original.name)
-                h = wh.hash_file(original.name)
-                wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
+            try:
+                with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
+                    a = settings['avatar']
+                    wh.copy_cgi_file(a, original.name)
+                    h = wh.hash_file(original.name)
+                    wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
 
-                with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
-                    size = (160, 160)
-                    im = Image.open(original.name)
-                    if im.mode != "RGB":
-                        im = im.convert("RGB")
-                    im.thumbnail(size, Image.ANTIALIAS)
-                    im.save(processed.name, "JPEG")
-                    wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+                    with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
+                        size = (160, 160)
+                        im = Image.open(original.name)
+                        if im.mode != "RGB":
+                            im = im.convert("RGB")
+                        im.thumbnail(size, Image.ANTIALIAS)
+                        im.save(processed.name, "JPEG")
+                        wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
 
-            user.avatar = h
+                user.avatar = h
+            except IOError as e:
+                raise action_error(code=400, message="Unable to read avatar image file")
             del settings['avatar']
 
         if settings.get('location_home'):
