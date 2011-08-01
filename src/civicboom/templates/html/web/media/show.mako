@@ -52,7 +52,6 @@
         <a href="${media['original_url']}"><img src="${media['original_url']}" alt="${media['caption']}"/></a>
     % elif type == "audio" or type == "video":
         ${preview(media)}
-        <p>Download ${type} <a href="${media['original_url']}">${media['caption']}</a> (${filesize}MB)</p>
     % else:
         ${_("unrecognised media type: %s") % type}
     % endif
@@ -71,12 +70,17 @@
             caption = media['caption']
             credit  = media['credit']
     %>
-    % if not caption == "":
-        <p class="caption">${caption}</p>
-    % endif
-    % if not credit == "":
-        <p class="credit">Credited to <b>${credit}</b></p>
-    % endif
+    <table><tr>
+    <td>
+        % if caption:
+            <p class="caption">${caption}</p>
+        % endif
+        % if credit:
+            <p class="credit">Credited to <b>${credit}</b></p>
+        % endif
+    </td><td class="media_type">
+        <img src="/images/misc/shareicons/carousel_${media['type']}_icon.png" class="type_icon" />
+    </tr></table>
 </%def>
     
 ## ---
