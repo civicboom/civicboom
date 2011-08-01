@@ -123,7 +123,11 @@
                     function() {carousel.startAuto();   } 
                 );
                 
-                console.log(carousel);
+                $('.play_icon').fadeTo("fast", 0.75);
+                $('.item_preview').hover(
+                    function() { $(this).find('.play_icon').fadeTo(400, 1.0); },
+                    function() { $(this).find('.play_icon').fadeTo(400, 0.75); }
+                );
             };
             
             function get_item_details(item) {
@@ -147,11 +151,12 @@
     <li class="preview_item">
         ## Media preview/link to full
         <a href="${h.url('medium', id=content['hash'])}" class="item-popup-link ${content['hash']}-popup">
-            <div>
+            <div class="item_preview">
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
                 % elif content['type'] == "video":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    <span class="play_icon"><img src="/images/misc/contenticons/play_icon.png" /></span>
                 % elif content['type'] == "audio":
                     <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
                 % else:
@@ -159,6 +164,7 @@
                 % endif
             </div>
         </a>
+        
         
         ## Popup
         <script>
