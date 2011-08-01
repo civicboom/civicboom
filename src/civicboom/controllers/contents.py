@@ -646,10 +646,13 @@ class ContentsController(BaseController):
         # Extra fields
         permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
         for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
-            if kwargs[extra_field]: # if due_date=None, we don't want to store due_date="None"
+            if kwargs[extra_field] == None: # if due_date=None, we don't want to store due_date="None"
+                if extra_field in content.extra_fields:
+                    del content.extra_fields[extra_field]
+            else:
                 content.extra_fields[extra_field] = str(kwargs[extra_field])
             #AllanC - we need the str() here because when the extra_fields obj is serised to Json, it cant deal with objects.
-            #         This is NOT acceptable for int's float's and long's
+            #         This is NOT acceptable for ints, floats, longs, or None
             #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
         # -- Publishing --------------------------------------------------------
