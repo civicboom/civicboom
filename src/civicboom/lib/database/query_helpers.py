@@ -52,7 +52,7 @@ def __list_to_dict(results, list_to_dict_transform=None, **kwargs):
 
 
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
-    assert type(results) in [list, sqlalchemy.orm.query.Query]
+    assert type(results) in [list, sqlalchemy.orm.query.Query, sqlalchemy.orm.collections.InstrumentedList]
     
     if not results:
         return __apilist([], obj_type=kwargs.get('obj_type'))
