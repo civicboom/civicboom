@@ -1,8 +1,10 @@
 from civicboom.tests import *
+import logging
 
 
 class TestAdminController(TestController):
     def get_https(self, url):
+        logging.debug(url)
         return self.app.get(url, extra_environ={'HTTP_X_URL_SCHEME': 'https'})
 
 
@@ -51,7 +53,7 @@ class TestAdminController(TestController):
 
 
     types = [
-        "License", "Tags", "Media",
+        "License", "Tag", "Media",
         "Member", "User", "Group",
         "Content", "ArticleContent",
     ]
