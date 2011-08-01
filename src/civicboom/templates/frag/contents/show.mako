@@ -997,11 +997,11 @@
                 ${_("Why should you get involved?")}
             </div>
             <div class="popup-message">
-                By sharing your story with <b>${self.content['creator']['name']}</b> as video, images or audio, you can:
+                ${_("By sharing your story with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}
                 <ol>
-                    <li>Get published</li>
-                    <li>Get recognition</li>
-                    <li>Make the news!</li>
+                    <li>${_("Get published")}</li>
+                    <li>${_("Get recognition")}</li>
+                    <li>${_("Make the news!")}</li>
                 </ol>
             </div>
             <div class="popup-tag-line">
