@@ -816,6 +816,9 @@ class PaymentAccount(Base):
     currency         = Column(Unicode(), default="GBP", nullable=False)
     _frequency       = Enum("month", "year", name="billing_period")
     frequency        = Column(_frequency,     nullable=False, default="month")
+    taxable          = Column(Boolean(), nullable=False, default=True)
+    _tax_rate_code   = Enum("GB", "EU", "US", name="tax_rate_code")
+    tax_rate_code    = Column(_tax_rate_code, nullable=True, default="GB")
     
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({

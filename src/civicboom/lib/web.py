@@ -9,7 +9,7 @@ from civicboom.lib.widget import widget_defaults
 
 import os
 import time
-import json
+import simplejson as json
 import re
 from decorator import decorator
 import logging
@@ -452,7 +452,7 @@ def setup_format_processors():
             if n not in ['status', 'message', 'data']:
                 del result[n]
         cb = request.GET.get("callback")
-        json_data = json.dumps(result)
+        json_data = json.dumps(result, use_decimal=True)
         if cb and re.match("^[a-zA-Z][a-zA-Z0-9_]*$", cb):
             json_data = u"%s(%s)" % (cb, json_data)
         return json_data

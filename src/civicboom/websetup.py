@@ -7,6 +7,8 @@ from civicboom.model.meta import Base, Session
 from civicboom.model import License, Tag
 from civicboom.model.payment import Service, ServicePrice
 
+from decimal import *
+
 import pylons.test
 
 import logging
@@ -194,9 +196,9 @@ CREATE TRIGGER update_rating
     plus = Service(payment_account_type="plus", title="Pro Lite"    )
     corp = Service(payment_account_type="corp", title="Pro Premium" )
     
-    free_price_GBP_monthly = ServicePrice(free, "month", "GBP",   0.00)
-    plus_price_GBP_monthly = ServicePrice(plus, "month", "GBP",   8.33)
-    corp_price_GBP_monthly = ServicePrice(corp, "month", "GBP", 166.67)
+    free_price_GBP_monthly = ServicePrice(free, "month", "GBP", Decimal(  '0')                   )
+    plus_price_GBP_monthly = ServicePrice(plus, "month", "GBP", Decimal( '10') / Decimal('1.20') ) 
+    corp_price_GBP_monthly = ServicePrice(corp, "month", "GBP", Decimal('200') / Decimal('1.20') )
     
     Session.add_all([
         free, plus, corp,

@@ -223,7 +223,7 @@ class TaskController(BaseController):
                 ## Month 1! & start day:
                 filter += "(date_part('month', start_date) = %(month_s)i and date_part('day', start_date) >= %(day_s)i) or " % {'month_s': time_now.month, 'day_s': time_now.day}
                 ## Month 2?:
-                filter += "(date_part('month', start_date) = %(month_e)i and " % {'month_e': seven_days.month if time_now.month < seven_days.month else date_now.month}
+                filter += "(date_part('month', start_date) = %(month_e)i and " % {'month_e': seven_days.month if time_now.month < seven_days.month else time_now.month}
                 ##          & end day:
                 filter += "date_part('day', start_date) < %(day_e)i)" % {'day_e': seven_days.day}
                 

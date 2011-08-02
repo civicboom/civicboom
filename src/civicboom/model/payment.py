@@ -4,7 +4,7 @@ from civicboom.model.member import account_types as _payment_account_types
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText
-from sqlalchemy import Enum, Integer, Float, DateTime, Date, Boolean
+from sqlalchemy import Enum, Integer, Numeric, DateTime, Date, Boolean
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL, CheckConstraint
@@ -13,11 +13,19 @@ import UserDict
 import copy
 from ConfigParser import SafeConfigParser, NoOptionError
 
+from decimal import *
+
 
 currency_symbols = {
     'GBP':  u"&pound;",
     'USD':  u"$",
     'EUR':  u"&euro;",
+}
+
+tax_rates = {
+    'GB':    0.2,
+    'EU':    0.2,
+    'US':    0.2,
 }
 
 
@@ -46,7 +54,7 @@ class ServicePrice(Base):
     _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
     frequency          = Column(_frequency,    nullable=False, default="month" , primary_key=True)
     currency           = Column(Unicode(),     nullable=False, primary_key=True)
-    amount             = Column(Float(precision=2),     nullable=False)
+    amount             = Column(Numeric(precision=10, scale=2),     nullable=False)
     
     def __init__(self, service, frequency, currency, amount):
         self.service = service
@@ -96,7 +104,7 @@ class PaymentAccountService(Base):
     _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
     frequency          = Column(_frequency,    nullable=False, default="month")
     quantity           = Column(Integer(), nullable=False, default=1)
-    discount           = Column(Float(precision=2),     nullable=False, default=0)
+    discount           = Column(Numeric(precision=10, scale=2),     nullable=False, default=0)
     note               = Column(Unicode(),     nullable=True)
     
     service = relationship("Service")
@@ -122,13 +130,17 @@ class Invoice(Base):
     __tablename__      = "payment_invoice"
     id                 = Column(Integer(),     primary_key=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=False)
-    _invoice_status    = Enum("unbilled", "processing", "billed", "disregarded", "paid", name="invoice_status")
+    _invoice_status    = Enum("unbilled", "processing", "billed", "waiting_payment_processing", "disregarded", "paid", name="invoice_status")
     status             = Column(_invoice_status, nullable=False, default="unbilled")
     timestamp          = Column(DateTime(),    nullable=False, default=func.now())
     due_date           = Column(Date(), nullable=False)
     copied_from_id     = Column(Integer(),   ForeignKey('payment_invoice.id'), nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
     currency           = Column(Unicode(), default="GBP", nullable=False)
+    taxable            = Column(Boolean(), nullable=False, default=True)
+    _tax_rate_code     = Enum("GB", "EU", "US", name="tax_rate_code")
+    tax_rate_code      = Column(_tax_rate_code, nullable=True, default="GB")
+    tax_rate           = Column(Numeric(precision=10, scale=4),     nullable=False, default=0)
     
     lines = relationship("InvoiceLine", backref=backref('invoice') )
     
@@ -141,9 +153,12 @@ class Invoice(Base):
             'timestamp'         : None ,
             'due_date'          : None ,
             'copied_from_id'    : None ,
+            'total_pre_tax'     : None ,
+            'total_tax'         : None ,
             'total'             : None ,
             'paid_total'        : None ,
-            'currency'          : None , 
+            'total_due'         : None ,
+            'currency'          : None ,
         },
     })
     
@@ -159,16 +174,32 @@ class Invoice(Base):
     def __init__(self, payment_account):
         self.payment_account_id = payment_account.id
         self.currency = payment_account.currency
+        self.taxable = payment_account.taxable
+        self.tax_rate_code = payment_account.tax_rate_code
+        if payment_account.taxable:
+            self.tax_rate = tax_rates.get(self.tax_rate_code)
     
     _config = None
 
     @property
+    def total_pre_tax(self):
+        return sum ([line.price_final for line in self.lines]).quantize(Decimal('1.00'))
+
+    @property
+    def total_tax(self):
+        return (self.total_pre_tax * self.tax_rate).quantize(Decimal('1.00'))
+
+    @property
     def total(self):
-        return sum ([line.price_final for line in self.lines])
+        return self.total_pre_tax + self.total_tax
     
     @property
     def paid_total(self):
-        return sum([trans.amount for trans in self.transactions if trans.status == "complete"])
+        return sum ([trans.amount for trans in self.transactions if trans.status == "complete"])
+    
+    @property
+    def total_due(self):
+        return self.total - self.paid_total
 
     @property
     def config(self):
@@ -197,22 +228,45 @@ CREATE OR REPLACE FUNCTION update_create_payment_invoice() RETURNS TRIGGER AS $$
             IF (OLD.status != 'unbilled') THEN
                 IF (OLD.payment_account_id != NEW.payment_account_id) THEN
                     RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
                 ELSIF (OLD.timestamp != NEW.timestamp) THEN
                     RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
                 ELSIF (OLD.copied_from_id != NEW.copied_from_id) THEN
                     RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
                 ELSIF (OLD.extra_fields != NEW.extra_fields) THEN
                     RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
+                ELSIF (OLD.currency != NEW.currency) THEN
+                    RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
+                ELSIF (OLD.taxable != NEW.taxable) THEN
+                    RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
+                ELSIF (OLD.tax_rate_code != NEW.tax_rate_code) THEN
+                    RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
+                ELSIF (OLD.tax_rate != NEW.tax_rate) THEN
+                    RAISE EXCEPTION 'Cant update %%%% invoice', OLD.status;
+                    
                 END IF;
                 
                 IF (OLD.status = 'processing' AND (NEW.status NOT IN ('unbilled','billed','disregarded'))) THEN
                     RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
-                ELSIF (OLD.status = 'billed' AND (NEW.status NOT IN ('disregarded','paid'))) THEN
+                    
+                ELSIF (OLD.status = 'billed' AND (NEW.status NOT IN ('disregarded','paid','waiting_payment_processing'))) THEN
                     RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
+                    
                 ELSIF (OLD.status = 'disregarded') THEN
                     RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
+                    
                 ELSIF (OLD.status = 'paid') THEN
                     RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
+                    
+                ELSIF (OLD.status = 'waiting_payment_processing' AND (NEW.status NOT IN ('disregarded','paid','billed'))) THEN
+                    RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
+                    
                 END IF;
             END IF;
             RETURN NULL;
@@ -237,9 +291,9 @@ class InvoiceLine(Base):
     invoice_id         = Column(Integer(),     ForeignKey('payment_invoice.id'), nullable=False)
     service_id         = Column(Integer(),     ForeignKey('payment_service.id'), nullable=False)
     title              = Column(Unicode(),     nullable=False)
-    price              = Column(Float(precision=2),     nullable=False)
+    price              = Column(Numeric(precision=10, scale=2),     nullable=False)
     quantity           = Column(Integer(),     nullable=False, default=1)
-    discount           = Column(Float(precision=2),     nullable=False, default=0)
+    discount           = Column(Numeric(precision=10, scale=2),     nullable=False, default=0)
     start_date         = Column(Date(),        nullable=True)
     note               = Column(Unicode(),     nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
@@ -286,7 +340,7 @@ class InvoiceLine(Base):
     
     @property
     def price_final(self):
-        return self.price * (1-self.discount) * self.quantity
+        return (self.price * (Decimal('1.00')-self.discount) * Decimal(self.quantity)).quantize(Decimal('1.00'))
     
     @property
     def config(self):
@@ -360,10 +414,12 @@ class BillingTransaction(Base):
     __tablename__ = "payment_billing_transaction"
     id                 = Column(Integer(),     primary_key=True)
     invoice_id         = Column(Integer(),     ForeignKey('payment_invoice.id'), nullable=False)
-    _transaction_status= Enum("created", "pending", "complete", "error", "refunded", name="billing_transaction_status")
+    _transaction_status= Enum("created", "pending", "complete", "failed", "cancelled", "error", "refunded", name="billing_transaction_status")
     status             = Column(_transaction_status, nullable=False, default="created")
-    amount             = Column(Float(precision=2),     nullable=False)
-    billing_account_id = Column(Integer(),     ForeignKey('payment_billing_account.id'), nullable=False)
+    amount             = Column(Numeric(precision=10, scale=2),     nullable=False)
+    billing_account_id = Column(Integer(),     ForeignKey('payment_billing_account.id'), nullable=True)
+    provider           = Column(Unicode(),     nullable=True)
+    reference          = Column(Unicode(),     nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
     
     billing_account    = relationship("BillingAccount", backref=backref('transactions') )
@@ -377,7 +433,7 @@ class BillingTransaction(Base):
             'status'            : None ,
             'amount'            : None ,
             'billing_account_id': None ,
-            'provider'          : lambda trans: trans.billing_account.provider,
+            'provider'          : None ,
         },
     })
     

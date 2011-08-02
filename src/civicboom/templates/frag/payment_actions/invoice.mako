@@ -1,6 +1,7 @@
 <%inherit file="/frag/common/frag.mako"/>
 
 <%!
+    from decimal import Decimal
     from civicboom.model.payment import currency_symbols
 %>
 
@@ -22,7 +23,7 @@
 </%def>
 <%def name="format_price(price, full_currency=False)">
     ${format_currency(full_currency)}
-    ${'%.2f' % price}
+    ${price}
 </%def>
 
 <%def name="body()">
@@ -108,7 +109,7 @@
                         Overview:
                     </div>
                     <div class="fr detail">
-                        Amount due: ${format_price(d['total'])}<br />
+                        Amount due: ${format_price(d['total_due'])}<br />
                         Due on receipt of invoice<br />
                         Currency:${format_currency(True)}<br />
                         Payment account #: ${d['payment_account']['id']}<br />
@@ -163,15 +164,15 @@
                         </tr>
                         <tr>
                             <td colspan="3">Total Before Tax:</td>
-                            <td>${format_price(d['total'])}</td>
+                            <td>${format_price(d['total_pre_tax'])}</td>
                         </tr>
                         <tr>
                             <td colspan="3">VAT (20.00%):</td>
-                            <td>${format_price(d['total'] * 0.20)}</td>
+                            <td>${format_price(d['total_tax'])}</td>
                         </tr>
                         <tr>
                             <td colspan="3">Total:</td>
-                            <td>${format_price(d['total'] * 1.20)}</td>
+                            <td>${format_price(d['total'])}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -183,10 +184,31 @@
             </div>
         </div>
     </div>
+    % if Decimal(d['total_due']) > 0:
+        <div class="frag_whitewrap">
+            <h2>Payment Options</h2>
+            <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left" />
+            <div style="float:left;text-align:center">
+                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'])}">
+                    <img src="https://www.paypalobjects.com/en_GB/i/btn/btn_paynowCC_LG.gif" alt="We accept PayPal" />
+                </a><br />
+                Pay this invoice
+            </div>
+        <!--
+            <div style="float:left;text-align:center">
+                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'])}">
+                    <img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" alt="We accept PayPal" />
+                </a><br />
+                Set up a regular payment
+            </div>
+        -->
+            <div style="clear:both"></div>
+        </div>
+    % endif
     <div class="frag_whitewrap">
         <h2>Payments applied</h2>
         % for trans in d['transactions']:
-            ${trans['provider']} - ${trans['status']} - ${trans['amount']}
+            ${trans['provider']} - ${trans['status']} - ${trans['amount']}<br />
         % endfor
     </div>
 </%def>
