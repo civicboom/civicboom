@@ -36,6 +36,10 @@ help2:
 	# run-worker    -- run a local worker
 	# stopsys       -- stop the system cb-website and cb-worker
 
+
+##############################################################################
+# release
+
 releasetest:
 	git tag
 	echo "What is the new release tag?"; read NEW_TAG; git checkout master && git pull && git checkout develop && git flow release start $$NEW_TAG && echo "git flow release finish $$NEW_TAG" && echo "git push origin master $$NEW_TAG"
@@ -46,25 +50,25 @@ release:
 	echo "What is the new release tag?"; read NEW_TAG; git checkout master && git pull && git checkout develop && git flow release start $$NEW_TAG && git flow release finish $$NEW_TAG && git push origin master $$NEW_TAG
 	git checkout develop
 
-site: i18n js css
 
+##############################################################################
+# i18n
+
+# Phase 1: extract messages into template
 civicboom/i18n/civicboom.pot: $(shell find -name "*.py" -or -name "*.mako")
 	python setup.py extract_messages
-
-i18n: i18n-en
-
-i18n-en: civicboom/i18n/civicboom.pot
 	#python setup.py update_catalog
+
+# Phase 2: convert template into translated files
+civicboom/i18n/en/LC_MESSAGES/civicboom.po: civicboom/i18n/civicboom.pot
 	python setup.py init_catalog -l en
 	../admin_scripts/site_to_english civicboom/i18n/en/LC_MESSAGES/civicboom.po
-	python setup.py compile_catalog
 
-i18n-zh: civicboom/i18n/civicboom.pot
+civicboom/i18n/zh/LC_MESSAGES/civicboom.po: civicboom/i18n/civicboom.pot
 	python setup.py init_catalog -l zh
 	../admin_scripts/site_to_x civicboom/i18n/zh/LC_MESSAGES/civicboom.po
-	python setup.py compile_catalog
 
-i18n-fr: civicboom/i18n/civicboom.pot
+civicboom/i18n/fr/LC_MESSAGES/civicboom.po: civicboom/i18n/civicboom.pot
 	python setup.py init_catalog -l fr
 	curl \
 		-F pofile=@civicboom/i18n/en/LC_MESSAGES/civicboom.po \
@@ -72,17 +76,40 @@ i18n-fr: civicboom/i18n/civicboom.pot
 		-F output=pofile  \
 		--output civicboom/i18n/fr/LC_MESSAGES/civicboom.po \
 		http://pepipopum.dixo.net
+
+# Phase 3: compile translations
+i18n-en: civicboom/i18n/en/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
+i18n-fr: civicboom/i18n/fr/LC_MESSAGES/civicboom.po
+	python setup.py compile_catalog
+
+i18n-zh: civicboom/i18n/zh/LC_MESSAGES/civicboom.po
+	python setup.py compile_catalog
+
+i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAGES/civicboom.po civicboom/i18n/zh/LC_MESSAGES/civicboom.po
+	python setup.py compile_catalog
+
+# shortcuts
+i18n: i18n-en
+
+
+##############################################################################
+# static files
+
 js:
-	cd civicboom/public/javascript && $(MAKE)
+	$(MAKE) -C civicboom/public/javascript
 
 css:
-	cd civicboom/public/styles && $(MAKE)
+	$(MAKE) -C civicboom/public/styles
 
 sass:
 	cd civicboom/public/styles
 	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
+
+
+##############################################################################
+# testing
 
 test:
 	nosetests --verbose
@@ -106,11 +133,21 @@ live-db: skel-db
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
+
+##############################################################################
+# run
+
 run:
 	paster serve --reload development.ini
 
 run-worker:
 	./cb-worker
+
+
+##############################################################################
+# other
+
+site: i18n js css api-doc
 
 clean:
 	git clean -d -f -x
@@ -133,15 +170,17 @@ pep8:
 	# 501 = line too long
 	pep8 -r --ignore=E2,E303,E501,W291 civicboom
 
-api-doc:
+civicboom/public/doc/index.html: ../docs/api.*.html civicboom/controllers/*.py
 	mkdir -p civicboom/public/doc/
 	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
+
+api-doc: civicboom/public/doc/index.html
 
 milestone-doc:
 	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
 
 py-libs:
-	make -C ../lib
+	$(MAKE) -C ../lib
 
 libs: py-libs
 

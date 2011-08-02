@@ -52,7 +52,8 @@ def __list_to_dict(results, list_to_dict_transform=None, **kwargs):
 
 
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
-    assert isinstance(results, list) or isinstance(results, sqlalchemy.orm.query.Query)
+    # fixme: what else is there?
+    #assert isinstance(results, list) or isinstance(results, sqlalchemy.orm.query.Query)
     
     if not results:
         return __apilist([], obj_type=kwargs.get('obj_type'))

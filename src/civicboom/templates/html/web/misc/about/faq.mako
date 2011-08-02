@@ -39,7 +39,7 @@
 
 <p>
 <b>${_("Q: What is the _widget?")}</b>
-<br />${_("A: The _widget is a simple audience engagement \"widget\", a window that can be embedded into your website or blog. It allows your readers to directly post their stories and respond to news requests.")}
+<br />${_("A: The _widget is a simple audience engagement \"widget\", a window that can be embedded into your website or blog. It allows your audience to directly post their stories and respond to news requests.")}
 </p>
 
 <p>
@@ -74,7 +74,7 @@
 
 <p>
 <b>${_("Q: What is embedding?")}</b>
-<br />${_("A: By embedding something you make it appear inside other web pages and blogs. For example, you might embed your request for news into your site so that your readers can use it to directly send you their _articles.")}
+<br />${_("A: By embedding something you make it appear inside other web pages and blogs. For example, you might embed your request for news into your site so that your audience can use it to directly send you their _articles.")}
 </p>
 
 <p>
