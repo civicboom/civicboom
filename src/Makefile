@@ -46,7 +46,7 @@ release:
 	echo "What is the new release tag?"; read NEW_TAG; git checkout master && git pull && git checkout develop && git flow release start $$NEW_TAG && git flow release finish $$NEW_TAG && git push origin master $$NEW_TAG
 	git checkout develop
 
-site: i18n js css
+site: i18n js css api-doc
 
 civicboom/i18n/civicboom.pot: $(shell find -name "*.py" -or -name "*.mako")
 	python setup.py extract_messages

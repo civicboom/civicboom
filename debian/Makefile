@@ -22,7 +22,6 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 
 cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium ../src ./api -type f)
 	cd ../src/ && $(MAKE) site
-	cd ../src/ && $(MAKE) api-doc
 	rm -rf fs-api
 	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
 	$(call mdcp, api/cb-website.conf      , fs-api/etc/init/                 )
