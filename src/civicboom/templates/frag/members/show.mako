@@ -148,7 +148,7 @@
                 'secure_href'   : h.url('new_content', target_type='assignment'),
             },
             "article":{
-                'title'         : 'Post stories!',
+                'title'         : _('Post stories!'),
                 'href'          : h.url(controller='misc', action='new_article'),
             },
             "response":{
@@ -167,7 +167,7 @@
                 'href'          : h.url(controller='misc', action='what_is_a_hub'),
             },
             "mobile":{
-                'title'         : 'Make the news with the Civicboom mobile app!',
+                'title'         : _('Make the news with the Civicboom mobile app!'),
                 'href'          : h.url(controller="misc", action="about", id="mobile"),
             }
         }

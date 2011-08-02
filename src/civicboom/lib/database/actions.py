@@ -899,6 +899,7 @@ def payment_member_add(payment_account, member):
     Session.commit()
     return True
 
+
 def payment_member_remove(payment_account, member):
     member = get_member(member)
     if not member.payment_account == payment_account:

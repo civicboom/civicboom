@@ -10,6 +10,7 @@ Javascript
 
 Lite
 GeoRSS
+RSS
 
 barcode
 username
@@ -18,6 +19,8 @@ timeline
 app
 API
 inbox
+login
+logins
 personas
 geo
 Unfollow

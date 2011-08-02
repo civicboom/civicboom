@@ -163,6 +163,7 @@ for setting in settings_base.values():
     else:
         settings_validators[setting['name']] = type_validators.get(setting['type'])
 
+
 def build_meta(user, user_type, panel):
     settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
     panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title': setting_titles.get(setting['group'].split('/')[0]) if setting_titles.get(setting['group'].split('/')[0]) else setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
@@ -391,7 +392,8 @@ class SettingsController(BaseController):
         # id will always contain me if it was passed
         
         private = kwargs.get('private')
-        if private: del kwargs['private']
+        if private:
+            del kwargs['private']
         #username = id
         #if not username or username == 'me':
         #    username = c.logged_in_persona.username
@@ -483,22 +485,25 @@ class SettingsController(BaseController):
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
         # GregM: check kwargs as if no new avatar and has current avatar this FAILS!
         if kwargs.get('avatar') != None:
-            with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
-                a = settings['avatar']
-                wh.copy_cgi_file(a, original.name)
-                h = wh.hash_file(original.name)
-                wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
+            try:
+                with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
+                    a = settings['avatar']
+                    wh.copy_cgi_file(a, original.name)
+                    h = wh.hash_file(original.name)
+                    wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
 
-                with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
-                    size = (160, 160)
-                    im = Image.open(original.name)
-                    if im.mode != "RGB":
-                        im = im.convert("RGB")
-                    im.thumbnail(size, Image.ANTIALIAS)
-                    im.save(processed.name, "JPEG")
-                    wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
+                    with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
+                        size = (160, 160)
+                        im = Image.open(original.name)
+                        if im.mode != "RGB":
+                            im = im.convert("RGB")
+                        im.thumbnail(size, Image.ANTIALIAS)
+                        im.save(processed.name, "JPEG")
+                        wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
 
-            user.avatar = h
+                user.avatar = h
+            except IOError as e:
+                raise action_error(code=400, message="Unable to read avatar image file")
             del settings['avatar']
 
         if settings.get('location_home'):

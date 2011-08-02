@@ -533,18 +533,18 @@
             ## See CSS for "active" class
             <div id="type_assignment_extras" class="hideable, additional_fields">
                 <%
-                    due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:10]
-                    event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:10]
+                    due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
+                    event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
                     auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime') or '')
                 %>
                 <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
-                <input class="detail" type="date" name="due_date"   value="${due_date}" />
+                <input class="detail" type="datetime" name="due_date"   value="${due_date}" />
                 
                 ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
                 ##<input class="detail" type="date" name="event_date" value="${event_date}">
                 
                 ## http://trentrichardson.com/examples/timepicker/
-                % if c.logged_in_persona.has_account_required('plus'):
+                % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
                     <span class="padded"><label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label></span>
                     <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
                 % endif
