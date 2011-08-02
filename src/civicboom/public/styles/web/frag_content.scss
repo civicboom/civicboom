@@ -27,33 +27,33 @@
 					margin-bottom: 0;
 				}
 				
-				.content_title {
-				    padding: 0;
+				.content_title_table {
+				    width: 100%;
 				    
-				    h1, .actions {
-				        margin: 4px 0 4px 0;
-				        padding-bottom: 0.5em;
-				    }
-				    
-				    h1 {
-			            float: left;
-			            max-width: 85%;
-				    }
-				    
+    				.content_title {
+    				    padding: 0;
+    				    
+    				    h1, .actions {
+    				        margin: 4px 0 4px 0;
+    				        padding-bottom: 0.5em;
+    				    }
+    				    
+    				    h1 {
+    			            float: left;
+    			            max-width: 85%;
+    				    }
+    				    
+    				}
+    				
 				    .actions {
-				        float: right;
+				        max-width: 80px;
+				        padding-top: 10px;
 				        
 				        .separator {
 				            padding: 2px;
 				        }
 				    }
 				}
-				
-				.content_creator {
-					margin: 0 0 1em 0.5em;
-					float: left;
-				}
-				
 				.media_icon {
 					padding: 0;
 					width: 40px;

@@ -406,17 +406,14 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
       - An invisible pretty-looking plain-text link which calls form.submit()
+    Then use javascript to hide the form and show the pretty link
     
     @param href      - can be supplied as a string or a tuple in the format (args, kwargs), this tuple will then be used to automatically create href_json
     @param href_json - an optional JSON url to post to can be provided, this will then activate an AJAX call, this is normally set automatically by providing a tuple for href (see above)
     @param javascript_json_complete_actions - a string of javascript that is activated on a successful AJAX call. Normally used to refresh parts of the page that have been updated from the successful AJAX call.
-    
-    Then use javascript to hide the form and show the pretty link
     """
     if not value_formatted:
         value_formatted = value
-
-
 
     # Setup Get string href ----
     # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
@@ -499,6 +496,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     
     return HTML.span(hf+hl+hs+popup, class_="secure_link") #+json_submit_script
 
+
 # This will create an html a link with our popup.
 def confirmed_link (title, icon='', **kwargs):
     modal_params = kwargs.get('modal_params', {})
@@ -527,12 +525,13 @@ def confirmed_link (title, icon='', **kwargs):
     
     return HTML.span(link+confirm, class_='confirmed_link')
 
+
 def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = None, buttons = [{'href':'#', 'onClick':'', 'title':'Yes' }, {'href':'#', 'onClick':'$.modal.close(); return false;', 'title':'No'}] ):
     content = ''
     if icon:
-        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon");
+        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon")
     elif icon_image:
-        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon");
+        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon")
     content = content + HTML.div(title or '', class_="popup-title")
     
     if message:
@@ -560,9 +559,10 @@ def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = No
     
     content = HTML.div(content, class_="popup_content")
     
-    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'));
+    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'))
     
     return HTML.div(content, class_="popup_hidden")
+
 
 #-------------------------------------------------------------------------------
 # Frag DIV's and Links - for Static and AJAX compatability

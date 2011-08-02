@@ -10,16 +10,34 @@ ${_('_group')}
 ${_('_Group')}
 ${_('_groups')}
 ${_('_Groups')}
+
 ${_("_free")}
 ${_("_Free")}
+${_("_plus")}
+${_("_Plus")}
+
 ${_("_article")}
 ${_("_Article")}
 ${_("_assignment")}
 ${_("_Assignment")}
 ${_("_request")}
 ${_("_Request")}
-${_("_free")}
-${_("_plus")}
+
+${_("Offensive")}
+${_("Spam")}
+${_("Copyright")}
+
+${_("Role")}
+${_("Members")}
+
+${_("admin")}
+${_("Admin")}
+${_("editor")}
+${_("Editor")}
+${_("contributor")}
+${_("Contributor")}
+${_("observer")}
+${_("Observer")}
 
 <%
 

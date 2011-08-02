@@ -393,7 +393,7 @@
 
     <%doc>
         % if creator and 'creator' in content:
-          <p><small class="content_by">By: ${content['creator']['name']}</small>
+          <p><small class="content_by">${_("By: %s") % content['creator']['name']}</small>
         % endif
     </%doc>
 </tr>
@@ -573,7 +573,10 @@
     <div class="content-info">
         % if content and 'creator' in content:
             <div class="creator">
-                <small class="content_by">${_("By: %s") % content['creator']['name']}</small>
+                % if creator and 'creator' in content:
+                    ${member_includes.avatar(content['creator'], class_="thumbnail_small", show_name=True)}
+                    <small class="content_by">${_("%s") % content['creator']['name']}</small>
+                % endif
             </div>
         % endif
         
@@ -610,11 +613,6 @@
     % if stats:
     <td>
         rating <br/> comments
-    </td>
-    % endif
-    % if creator and 'creator' in content:
-    <td class="creator">
-        ${member_includes.avatar(content['creator'], class_="thumbnail_small")}
     </td>
     % endif
 </tr>

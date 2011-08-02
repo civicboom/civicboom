@@ -307,7 +307,7 @@
                     <p class="name">${member.name or member.username}</p>
                     % for k,v in kwargs.iteritems():
                         % if v:
-                        <p class="info">${k.capitalize()}: ${str(v).capitalize()}</p>
+                        <p class="info">${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
                         % endif
                     % endfor
                 </td>
