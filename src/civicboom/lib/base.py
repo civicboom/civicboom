@@ -35,6 +35,7 @@ import civicboom.lib.errors as errors
 
 import json
 import platform
+import formencode
 
 import logging
 log      = logging.getLogger(__name__)
@@ -359,10 +360,9 @@ class BaseController(WSGIController):
         else:
             _lang = config['lang'] # Default lang in config file
 
-        #import formencode
         c.lang = _lang
         set_lang(_lang)
-        #formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+        formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
     
         
         # User pending regisration? --------------------------------------------
