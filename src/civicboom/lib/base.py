@@ -67,7 +67,8 @@ __all__ = [
     "errors",
     
     # i18n
-    "_", "ungettext", "set_lang",
+    "_", "x_",
+    "ungettext", "set_lang",
 
     # session managemnet - is is prefered that all access to the session is via accessors
     "session_get", "session_remove", "session_set", "session_keys", "session_delete",
@@ -97,13 +98,24 @@ __all__ = [
     "current_url", "current_referer",
     "to_apilist",
     "now", # passthough to get datetime.datetime.now() but can be overridden by automted tests and is the prefered way of getting now()
-    
 ]
+
+
+def x_(s):
+    """
+    Mark a string as needing translation, but don't actually do anything
+    with it at the time
+
+    Useful for formencode, where error strings need to be defined globally,
+    then formencode will call _(s) internally at a later date
+    """
+    return s
 
 
 #-------------------------------------------------------------------------------
 # Render
 #-------------------------------------------------------------------------------
+
 def render(*args, **kwargs):
     if not app_globals.cache_enabled:
         if 'cache_key'    in kwargs:
