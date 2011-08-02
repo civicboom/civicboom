@@ -19,7 +19,7 @@
     </p>
     <p>&nbsp;</p>
     <p>
-        ${_('A _widget is a simple "widget" - a window - that can be embedded into your website or blod. It allows your audience to directly post their content and respond to _assignments for _articles.')}
+        ${_('A _widget is a simple "widget" - a window - that can be embedded into your website or blog. It allows your audience to directly post their content and respond to _assignments for _articles.')}
     </p>
     <p>&nbsp;</p>
     <h2>${_('How to get and use a _Group today:')}</h2>
