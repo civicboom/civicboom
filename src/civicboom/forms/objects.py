@@ -18,7 +18,7 @@ class TemplateEngine(templates.TemplateEngine):
         return render('/admin/formalchemy/%s.mako' % name, extra_vars=kwargs)
 
 
-class CustomTemplateEngine(TemplateEngine):
+class CustomTemplateEngine(templates.TemplateEngine):
     def __init__(self, template):
         self.template = template
 
@@ -88,7 +88,7 @@ AssignmentContent.configure(include=[
 DraftContent = FieldSet(model.DraftContent)
 DraftContent.engine = CustomTemplateEngine("content")
 DraftContent.configure(include=[
-        DraftContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
+        DraftContent.creator.with_renderer(create_autocompleter("/members.json")),
         DraftContent.title,
         #DraftContent.status,
         DraftContent.edit_lock,
@@ -108,7 +108,7 @@ DraftContent.configure(include=[
 CommentContent = FieldSet(model.CommentContent)
 CommentContent.engine = CustomTemplateEngine("comment")
 CommentContent.configure(include=[
-        CommentContent.creator.with_renderer(create_autocompleter("/members.json?list=all")),
+        CommentContent.creator.with_renderer(create_autocompleter("/members.json")),
         CommentContent.title,
         CommentContent.parent,
         CommentContent.content,
@@ -126,6 +126,14 @@ FlaggedContent.configure(include=[
         FlaggedContent.timestamp.readonly(),
         FlaggedContent.type.readonly(),
         FlaggedContent.comment.readonly(),
+        ])
+
+Member = FieldSet(model.Member)
+Member.engine = CustomTemplateEngine("member")
+Member.configure(include=[
+        Member.username,
+        Member.name,
+        Member.join_date,
         ])
 
 User = FieldSet(model.User)

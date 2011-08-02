@@ -48,22 +48,22 @@ class TestMembersController(TestController):
 
         # can follow someone else; refollow is error?
         response = self.app.post(
-            url('member_action', id='mobiletest', action='follow', format='json'),
+            url('member_action', id='puppy', action='follow', format='json'),
             params={'_authentication_token': self.auth_token},
         )
         response = self.app.post(
-            url('member_action', id='mobiletest', action='follow', format='json'),
+            url('member_action', id='puppy', action='follow', format='json'),
             params={'_authentication_token': self.auth_token},
             status=400
         )
 
         # can unfollow a followed person; re-unfollow is error?
         response = self.app.post(
-            url('member_action', id='mobiletest', action='unfollow', format='json'),
+            url('member_action', id='puppy', action='unfollow', format='json'),
             params={'_authentication_token': self.auth_token},
         )
         response = self.app.post(
-            url('member_action', id='mobiletest', action='unfollow', format='json'),
+            url('member_action', id='puppy', action='unfollow', format='json'),
             params={'_authentication_token': self.auth_token},
             status=400
         )

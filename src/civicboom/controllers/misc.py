@@ -159,9 +159,7 @@ class MiscController(BaseController):
     def robots(self):
         response.headers['Content-type'] = "text/plain"
         subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
-        if subdomain in ["api-v1", ]:
-            return "User-agent: *\nDisallow: /\n"
-        else:
+        if subdomain == "www":
             return """
 User-agent: *
 Disallow: /misc/get_widget/
@@ -170,6 +168,8 @@ Disallow: /misc/help/
 Disallow: /media/
 Disallow: /*.frag$
 """
+        else:
+            return "User-agent: *\nDisallow: /\n"
 
     @web
     def upgrade_request(self, **kwargs):

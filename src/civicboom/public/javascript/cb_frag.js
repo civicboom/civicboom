@@ -9,9 +9,18 @@ var fragment_containers_id            = '#frag_containers';
 var fragment_container_class          = 'frag_container';  // container for a full JSON object 500px
 //var fragment_col_class                = 'frag_col_1';      // container for a bridge list 250px (half width)
 var fragment_source_class             = 'frag_source';
-var fragment_div_loading_placeholder  = '<div class="title_bar gradient">Loading...</div>'+
-                                        '<div class="action_bar"></div>'+
-                                        '<p class="loading_placeholder">loading</p>';
+var fragment_div_loading_placeholder  = ''+
+'    <div class="frag_bars">'+
+'        <div class="title_bar"></div>'+
+'        <div class="action_bar"></div>'+
+'        <div style="clear: both;"></div>'+
+'    </div>'+
+'    <div class="frag_data frag_content" style="overflow-y: hidden;">'+
+'		<table style="height: 100%; text-align: center; margin: auto;"><tbody><tr><td>'+
+'			Loading'+
+'			<br>&nbsp;<br><img src="/images/ajax-loader.gif">'+
+'		</td></tr></tbody></table>'+
+'	</div>';
 var fragment_help_class               = 'frag_help';
 var scroll_duration = 600;
 
