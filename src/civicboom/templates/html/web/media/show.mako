@@ -123,10 +123,10 @@
                     function() {carousel.startAuto();   } 
                 );
                 
-                $('.play_icon').fadeTo("fast", 0.75);
+                $('.play_icon').fadeTo("fast", 0.5);
                 $('.item_preview').hover(
                     function() { $(this).find('.play_icon').fadeTo(400, 1.0); },
-                    function() { $(this).find('.play_icon').fadeTo(400, 0.75); }
+                    function() { $(this).find('.play_icon').fadeTo(400, 0.5); }
                 );
             };
             
@@ -159,6 +159,7 @@
                     <span class="play_icon"><img src="/images/misc/contenticons/play_icon.png" /></span>
                 % elif content['type'] == "audio":
                     <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
+                    <span class="play_icon"><img src="/images/misc/contenticons/play_icon.png" /></span>
                 % else:
                     ${_("unrecognised media type: %s") % type}
                 % endif
