@@ -52,7 +52,6 @@
         <a href="${media['original_url']}"><img src="${media['original_url']}" alt="${media['caption']}"/></a>
     % elif type == "audio" or type == "video":
         ${preview(media)}
-        <p>Download ${type} <a href="${media['original_url']}">${media['caption']}</a> (${filesize}MB)</p>
     % else:
         ${_("unrecognised media type: %s") % type}
     % endif
@@ -71,12 +70,17 @@
             caption = media['caption']
             credit  = media['credit']
     %>
-    % if not caption == "":
-        <p class="caption">${caption}</p>
-    % endif
-    % if not credit == "":
-        <p class="credit">Credited to <b>${credit}</b></p>
-    % endif
+    <table><tr>
+    <td>
+        % if caption:
+            <p class="caption">${caption}</p>
+        % endif
+        % if credit:
+            <p class="credit">Credited to <b>${credit}</b></p>
+        % endif
+    </td><td class="media_type">
+        <img src="/images/misc/shareicons/carousel_${media['type']}_icon.png" class="type_icon" />
+    </tr></table>
 </%def>
     
 ## ---
@@ -97,7 +101,7 @@
                     animation   :   'slow',
                     scroll  :   1,
                     visible :   1,
-                    auto    :   5,
+                    auto    :   3,
                     wrap    :   'both',
                     initCallback    :   media_carousel_initCallback,
                     buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
@@ -117,6 +121,12 @@
                 carousel.clip.hover(
                     function() {carousel.stopAuto();    },
                     function() {carousel.startAuto();   } 
+                );
+                
+                $('.play_icon').fadeTo("fast", 0.5);
+                $('.item_preview').hover(
+                    function() { $(this).find('.play_icon').fadeTo(400, 1.0); },
+                    function() { $(this).find('.play_icon').fadeTo(400, 0.5); }
                 );
             };
             
@@ -140,19 +150,22 @@
 <%def name="carousel_item(content)">
     <li class="preview_item">
         ## Media preview/link to full
-        <a href="${h.url('medium', id=content['hash'])}" class="${content['hash']}-popup">
-            <div>
+        <a href="${h.url('medium', id=content['hash'])}" class="item-popup-link ${content['hash']}-popup">
+            <div class="item_preview">
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
                 % elif content['type'] == "video":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
+                    <span class="play_icon"><img src="/images/misc/contenticons/play_icon.png" /></span>
                 % elif content['type'] == "audio":
                     <img src="/images/misc/shareicons/audio_icon.png" alt="${content['caption']}" />
+                    <span class="play_icon"><img src="/images/misc/contenticons/play_icon.png" /></span>
                 % else:
                     ${_("unrecognised media type: %s") % type}
                 % endif
             </div>
         </a>
+        
         
         ## Popup
         <script>

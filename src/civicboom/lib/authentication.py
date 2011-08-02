@@ -40,13 +40,6 @@ user_log = logging.getLogger("user")
 
 
 #-------------------------------------------------------------------------------
-# Constants
-#-------------------------------------------------------------------------------
-
-login_expire_time = config['setting.session.login_expire_time']
-
-
-#-------------------------------------------------------------------------------
 # Standard Tools
 #-------------------------------------------------------------------------------
 
@@ -132,6 +125,8 @@ def authorize(_target, *args, **kwargs):
 
     # ELSE: not logged in
     else:
+        login_expire_time = config['setting.session.login_expire_time']
+
         # If request was a browser - prompt for login
             #raise action_error(message="implement me, redirect authentication needs session handling of http_referer")
         if c.format == "redirect":

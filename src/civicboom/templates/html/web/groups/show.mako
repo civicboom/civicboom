@@ -36,7 +36,7 @@
     <h2>Members</h2>
     
     % if group['member_visibility']=="private" and not d['members']:
-        <p>members are private</p>
+        <p>${_("Members are private")}</p>
     % else:
         ## members are public
         <%
@@ -47,11 +47,11 @@
         %>
         % for status in member_status:
             % if len(members[status])>0:
-                <h3>${status}</h3>
+                <h3>${_(status)}</h3>
                 <ul>
                 % for member in members[status]:
                     <li>
-                        ${member['name']} (${member['username']}) [${member['role']}]
+                        ${member['name']} (${member['username']}) [${_(member['role'])}]
                         % if permission_set_role:
                             ${h.form(h.url('group_action', id=group['id'], action='set_role', format='redirect'), method='post')}
                                 <input type="hidden" name="member" value="${member['username']}"/>
@@ -77,8 +77,6 @@
         % endfor
     % endif
     
-    <h2>Followers</h2>
+    <h2>${_("Followers")}</h2>
     ${member_includes.member_list(d['followers'], show_avatar=False, show_name=True)}
-
-
 </%def>

@@ -2,6 +2,7 @@
 
 ## includes
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
+<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
 ## page structure defs
@@ -20,6 +21,8 @@
         </div>
         
         ${member_details_full(self.member)}
+        
+        ${control_bar()}
     </div>
     
     ## Extra info (content/boomed/etc)
@@ -30,6 +33,16 @@
         </div>
         
         ${member_content_list(d)}
+    </div>
+</%def>
+
+<%def name="control_bar()">
+    <div data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+            <ul>
+                <li><a>One</a></li>
+            </ul>
+        </div>
     </div>
 </%def>
 
@@ -138,37 +151,10 @@
         %>
         <div class="member_content">
             <ul data-role="listview">
-                ${list_contents(requests, "Active requests")}
-                ${list_contents(responses, "Responses")}
-                ${list_contents(articles, "Stories")}
+                ${list_includes.list_contents(requests, "Active requests")}
+                ${list_includes.list_contents(responses, "Responses")}
+                ${list_includes.list_contents(articles, "Stories")}
             </ul>
         </div>
-    % endif
-</%def>
-
-## Create li elements for each item in the given list
-<%def name="list_contents(content, title)">
-    % if content:
-        <%
-            items = content['items']
-            count = content['count']
-        %>
-        
-        % if items and count:
-            <li data-role="list-divider" role="heading">
-                ${title}
-                <span class="ui-li-count">${count}</span>
-            </li>
-            
-            % for item in items:
-                <li>
-                    <a href="${h.url(controller='contents', action='show', id=item['id'], title=h.make_username(item['title']))}">
-                        <img src="${item['thumbnail_url']}" class="thumbnail" />
-                        <h3>${item['title']}</h3>
-                        <p>${item['content_short']}</p>
-                    </a>
-                </li>
-            % endfor
-        % endif
     % endif
 </%def>

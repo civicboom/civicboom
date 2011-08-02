@@ -304,7 +304,7 @@ class ContentsController(BaseController):
             if 'exclude_content' in kwargs and kwargs['exclude_content']:
                 parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
         except FilterException as fe:
-            raise action_error(code=400, msg=str(fe))
+            raise action_error(code=400, message=str(fe))
 
         feed = AndFilter(parts)
 
@@ -595,7 +595,12 @@ class ContentsController(BaseController):
                 for key, value in extra_fields.iteritems():
                     if hasattr(content, key):
                         try:
-                            setattr(content, key, value)
+                            if value == "None": # hacky hack, because due_date=None was being stored as extra_fields={"due_date": "None"}
+                                setattr(content, key, None)
+                            elif value.isdigit(): # digits should be stored as digits to start with >_<
+                                setattr(content, key, int(value))
+                            else:
+                                setattr(content, key, value)
                         except:
                             log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
         
@@ -646,9 +651,13 @@ class ContentsController(BaseController):
         # Extra fields
         permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
         for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
-            content.extra_fields[extra_field] = str(kwargs[extra_field])
+            if kwargs[extra_field] == None: # if due_date=None, we don't want to store due_date="None"
+                if extra_field in content.extra_fields:
+                    del content.extra_fields[extra_field]
+            else:
+                content.extra_fields[extra_field] = str(kwargs[extra_field])
             #AllanC - we need the str() here because when the extra_fields obj is serised to Json, it cant deal with objects.
-            #         This is NOT acceptable for int's float's and long's
+            #         This is NOT acceptable for ints, floats, longs, or None
             #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
         # -- Publishing --------------------------------------------------------

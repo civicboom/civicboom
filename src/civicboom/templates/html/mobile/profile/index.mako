@@ -1,0 +1,1 @@
+<%include file="/html/mobile/members/show.mako"/>

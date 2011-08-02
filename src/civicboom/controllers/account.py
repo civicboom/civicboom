@@ -293,4 +293,3 @@ class AccountController(BaseController):
             set_password(user, kwargs['password_new'])
             set_flash_message(_('password has been set'))
             redirect(url(controller='account', action='signin'))
-    
