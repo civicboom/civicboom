@@ -49,7 +49,7 @@ release:
 site: i18n js css
 
 civicboom/i18n/civicboom.pot: $(shell find -name "*.py" -or -name "*.mako")
-	python setup.py extract_messages --keywords "_ x_"
+	python setup.py extract_messages
 
 i18n: i18n-en
 
