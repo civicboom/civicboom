@@ -254,10 +254,6 @@ def normalize_member(member):
 #-------------------------------------------------------------------------------
 class BaseController(WSGIController):
     
-    def _set_lang(self, lang):
-        c.lang = lang
-        set_lang(lang)
-    
     def __before__(self):
         
         # If this is a multiple call to base then abort
@@ -350,10 +346,10 @@ class BaseController(WSGIController):
         # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:
-            self._set_lang(request.params['lang']) # If lang set in URL
+            _lang = request.params['lang'] # If lang set in URL
             session_set('lang', request.params['lang'])
         elif session_get('lang'):
-            self._set_lang(session_get('lang')) # Lang set for this users session
+            _lang = session_get('lang') # Lang set for this users session
         #elif c.logged_in_persona has lang:
         #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         #elif request.environ.get("Accept-Language"):
@@ -361,7 +357,13 @@ class BaseController(WSGIController):
         #   for lang in langs:
         #       ...
         else:
-            self._set_lang(        config['lang']) # Default lang in config file
+            _lang = config['lang'] # Default lang in config file
+
+        #import formencode
+        c.lang = _lang
+        set_lang(_lang)
+        #formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+    
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process
