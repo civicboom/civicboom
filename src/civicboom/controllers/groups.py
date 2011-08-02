@@ -43,8 +43,8 @@ log      = logging.getLogger(__name__)
 # This also appears in Setting Controller
 class PrivateGroupValidator(formencode.validators.FancyValidator):
     messages = {
-        'invalid'           : _('Value must be one of: public; private'),
-        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
+        'invalid'           : x_('Value must be one of: public; private'),
+        'require_upgrade'   : x_('You require a paid account to use this feature, please contact us!'),
         }
 
     def _to_python(self, value, state):
