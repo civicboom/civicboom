@@ -4,9 +4,13 @@ styles/common/icons/*
 javascript/tiny_mce/*
 javascript/[a-zA-Z]*.js
 cdn-exclude.txt
+crossdomain.xml
 robots.txt
+rpx_xdcomm.html
 */.sass-cache/*
 *.scss
 */.gitignore
 */Makefile
 *.bak
+*.cfg
+*.patch

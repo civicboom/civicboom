@@ -233,7 +233,7 @@
                 ##<div style="clear: both;"></div>
             % endif
             <div class="mo-help">
-                <div class="mo-help-l">${_("The Boombox is a widget that lets your readers post their content and respond to requests for stories")}</div>
+                <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their content and respond to requests for stories")}</div>
                 <a href="#">
                 <p class="boombox_link">
                     ${popup.link(
