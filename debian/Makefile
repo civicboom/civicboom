@@ -21,7 +21,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
 cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium ../src ./api -type f)
-	cd ../src/ && $(MAKE) site
+	$(MAKE) -C ../src/ site
 	rm -rf fs-api
 	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
 	$(call mdcp, api/cb-website.conf      , fs-api/etc/init/                 )
@@ -69,7 +69,7 @@ python-cbmisc.deb: Makefile ../lib/Makefile ../lib/cbutils/
 	echo "Description: a package with some non-debian-packaged python bits in" >> fs-env/DEBIAN/control
 	echo ================================================ >/dev/null
 	mkdir -p fs-env/usr/local/lib/python2.7/dist-packages
-	make -C ../lib
+	$(MAKE) -C ../lib
 	cp -r ../lib/* fs-env/usr/local/lib/python2.7/dist-packages/
 	echo ================================================ >/dev/null
 	fakeroot dpkg -b fs-env python-cbmisc_${VERSION}.deb
