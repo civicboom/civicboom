@@ -78,4 +78,4 @@ python-cbmisc.deb: Makefile ../lib/Makefile ../lib/cbutils/
 
 clean:
 	rm -rf fs-* *.deb *.css *.js distribute*
-
+	cd ../src/ && $(MAKE) clean
