@@ -53,7 +53,16 @@ class TestGroupsController(TestController):
 
 
     def test_subtests(self):
-        self.subtest_create()
+        self.group_id = self.create_group(
+            username          = 'test_group',
+            name              = 'Test group for unit tests',
+            description       = 'This group should not be visible once the tests have completed because it will be removed',
+            join_mode                  = 'invite_and_request',
+            default_role               = 'editor',
+            member_visibility          = 'public',
+            default_content_visibility = 'public',
+        )
+
         self.subtest_create_invalid_groupname()
         self.subtest_edit()
         #self.subtest_update() # AllanC - TODO!!!! URGENT! Fails validation!!!!
@@ -62,33 +71,6 @@ class TestGroupsController(TestController):
         self.subtest_setrole()
         self.subtest_delete()
 
-    def subtest_create(self):
-        response = self.app.post(
-            url('groups', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'username'     : 'test_group',
-                'name'         : 'Test group for unit tests' ,
-                'description'  : 'This group should not be visible once the tests have completed because it will be removed' ,
-                'default_role' : 'editor' ,
-                'join_mode'    : 'invite_and_request' ,
-                'member_visibility'         : 'public' , #required to test join request later
-                'default_content_visibility': 'public' ,
-            },
-            status=201
-        )
-        c = json.loads(response.body)
-        #
-        self.group_id = int(c['data']['id'])
-        self.assertNotEqual(self.group_id, 0)
-        
-        response = self.app.get(url('group', id='test_group', format='json'))
-        response_json = json.loads(response.body)
-        self.assertEqual(response_json['data']['member']['username']                  , 'test_group')
-        self.assertEqual(response_json['data']['member']['join_mode']                 , 'invite_and_request')
-        self.assertEqual(response_json['data']['member']['default_role']              , 'editor')
-        self.assertEqual(response_json['data']['member']['member_visibility']         , 'public')
-        self.assertEqual(response_json['data']['member']['default_content_visibility'], 'public' )
         
         
 
@@ -327,11 +309,12 @@ class TestGroupsController(TestController):
         
         # AllanC - it appears that the delete cascades are slightly differnt for groups? .. got a server error 3/8/2011 14:00 - follower map?
         # Setup mutual follow for delete cascade
-        self.log_in_as('unitfriend')
-        self.set_persona('test_group')
-        self.follow('kitten')
-        self.log_in_as('kitten')
-        self.follow('test_group')
+        #self.log_in_as('unitfriend')
+        #self.set_persona('test_group')
+        #self.follow('kitten')
+        #self.log_in_as('kitten')
+        #self.follow('test_group')
+        # humm ... this appears to work .. will create a dedicated cascade test to do this
         
         self.log_in_as('unitfriend')
         self.set_persona('test_group')

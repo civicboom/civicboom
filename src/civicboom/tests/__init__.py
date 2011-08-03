@@ -189,6 +189,37 @@ class TestController(TestCase):
         )
         #self.assertIn('request', response) # successful "join request" in response
 
+    def create_group(self, username, name=None, description='', join_mode='invite_and_request', default_role='editor', member_visibility='public', default_content_visibility='public'):
+        if not name:
+            name = username
+        response = self.app.post(
+            url('groups', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'username'     : username,
+                'name'         : name ,
+                'description'  : description ,
+                'default_role' : default_role ,
+                'join_mode'    : join_mode ,
+                'member_visibility'         : member_visibility , 
+                'default_content_visibility': default_content_visibility ,
+            },
+            status=201
+        )
+        response_json = json.loads(response.body)
+        
+        group_id = int(response_json['data']['id'])
+        self.assertNotEqual(group_id, 0)
+        
+        response = self.app.get(url('group', id=username, format='json'))
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['member']['username']                  , username                   )
+        self.assertEqual(response_json['data']['member']['join_mode']                 , join_mode                  )
+        self.assertEqual(response_json['data']['member']['default_role']              , default_role               )
+        self.assertEqual(response_json['data']['member']['member_visibility']         , member_visibility          )
+        self.assertEqual(response_json['data']['member']['default_content_visibility'], default_content_visibility )
+        return group_id
+
 
     def sign_up_as(self, username, password=u'password', dob=u'1/1/1980'):
         """
@@ -242,6 +273,7 @@ class TestController(TestCase):
             response_json = json.loads(response.body)
             return response_json['data']
         return response
+
 
     def get_content(self, content_id, format='json'):
         response      = self.app.get(url('content', id=content_id, format=format), status=200)
