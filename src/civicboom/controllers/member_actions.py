@@ -361,7 +361,7 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_accepted]
-        return to_apilist(contents, obj_type='content') #TODO transform .. WTF!!? full? is this needed by mobile?
+        return to_apilist(contents, obj_type='content', **kwargs) #TODO transform .. WTF!!? full? is this needed by mobile?
 
 
     @web
@@ -383,7 +383,7 @@ class MemberActionsController(BaseController):
         #if member != c.logged_in_user:
         #    raise action_error(_("Users may only view their own assignments (for now)"), code=403)
         contents = [content.to_dict("full") for content in member.assignments_invited]
-        return to_apilist(contents, obj_type='content') #TODO transform .. full? again?
+        return to_apilist(contents, obj_type='content', **kwargs) #TODO transform .. full? again?
     
     # the mobile app uses "unaccepted" for "things that have been inited to and not accepted yet",
     # remove this once the mobile is updated to not use it (and customers get the update)
