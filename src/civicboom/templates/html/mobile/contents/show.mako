@@ -70,22 +70,29 @@
 <%def name="content_info()">
     <div data-role="content">
         <div class="content_details">
-            <ul data-role="listview">
                 ## Creator info
-                <li data-role="list-divider" role="heading">Creator information</li>
-                ${member_includes.member_details_short(self.creator, li_only=1)}
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider" role="heading">Creator</li>
+                    ${member_includes.member_details_short(self.creator, li_only=1)}
+                </ul>
                 
-                ## Content info
-                <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
-                <li><h3>Published:</h3> ${self.content['publish_date']}</li>
-                <li><h3>Views:</h3> ${self.content['views']}</li>
-                <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
-
                 ## Parent
-                ${list_includes.parent_content(self.content)}
+                <ul data-role="listview" data-inset="true">
+                    ${list_includes.parent_content(self.content)}
+                </ul>
+
+                ## Content info
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
+                    <li><h3>Published:</h3> ${self.content['publish_date']}</li>
+                    <li><h3>Views:</h3> ${self.content['views']}</li>
+                    <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
+                </ul>
                 
                 ## Responses
-                ${list_includes.list_contents(self.responses, "Responses")}
+                <ul data-role="listview" data-inset="true">
+                    ${list_includes.list_contents(self.responses, "Responses")}
+                </ul>
             </ul>
         </div>
     </div>
@@ -96,7 +103,7 @@
         <div data-role="content">
             <div class="media_list">
                 % for item in self.media:
-                    <a href="${item['original_url']}"><img class="media_item" src="${item['thumbnail_url']}" /></a>
+                    <a href="${item['original_url']}" data-rel="dialog"><img class="media_item" src="${item['thumbnail_url']}" /></a>
                 % endfor
             </div>
         </div>

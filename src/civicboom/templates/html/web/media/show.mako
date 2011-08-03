@@ -88,7 +88,9 @@
 ## ---
 <%def name="media_carousel(contents, content_id)">
     % if len(contents):
-        <% uid = h.uniqueish_id(content_id) %>
+        <%
+            uid = h.uniqueish_id(content_id)
+        %>
         <ul id="media_carousel-${uid}" class="jcarousel-skin-content-media">
             % for content in contents:
                 ${carousel_item(content)}

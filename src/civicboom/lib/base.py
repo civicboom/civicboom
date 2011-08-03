@@ -35,6 +35,7 @@ import civicboom.lib.errors as errors
 
 import json
 import platform
+import formencode
 
 import logging
 log      = logging.getLogger(__name__)
@@ -66,7 +67,8 @@ __all__ = [
     "errors",
     
     # i18n
-    "_", "ungettext", "set_lang",
+    "_", "x_",
+    "ungettext", "set_lang",
 
     # session managemnet - is is prefered that all access to the session is via accessors
     "session_get", "session_remove", "session_set", "session_keys", "session_delete",
@@ -96,13 +98,24 @@ __all__ = [
     "current_url", "current_referer",
     "to_apilist",
     "now", # passthough to get datetime.datetime.now() but can be overridden by automted tests and is the prefered way of getting now()
-    
 ]
+
+
+def x_(s):
+    """
+    Mark a string as needing translation, but don't actually do anything
+    with it at the time
+
+    Useful for formencode, where error strings need to be defined globally,
+    then formencode will call _(s) internally at a later date
+    """
+    return s
 
 
 #-------------------------------------------------------------------------------
 # Render
 #-------------------------------------------------------------------------------
+
 def render(*args, **kwargs):
     if not app_globals.cache_enabled:
         if 'cache_key'    in kwargs:
@@ -254,10 +267,6 @@ def normalize_member(member):
 #-------------------------------------------------------------------------------
 class BaseController(WSGIController):
     
-    def _set_lang(self, lang):
-        c.lang = lang
-        set_lang(lang)
-    
     def __before__(self):
         
         # If this is a multiple call to base then abort
@@ -350,10 +359,10 @@ class BaseController(WSGIController):
         # Setup Langauge -------------------------------------------------------
         #  - there is a way of setting fallback langauges, investigate?
         if 'lang' in request.params:
-            self._set_lang(request.params['lang']) # If lang set in URL
+            _lang = request.params['lang'] # If lang set in URL
             session_set('lang', request.params['lang'])
         elif session_get('lang'):
-            self._set_lang(session_get('lang')) # Lang set for this users session
+            _lang = session_get('lang') # Lang set for this users session
         #elif c.logged_in_persona has lang:
         #    self._set_lang(c.logged_in_persona.?)     # Lang in user preferences
         #elif request.environ.get("Accept-Language"):
@@ -361,7 +370,12 @@ class BaseController(WSGIController):
         #   for lang in langs:
         #       ...
         else:
-            self._set_lang(        config['lang']) # Default lang in config file
+            _lang = config['lang'] # Default lang in config file
+
+        c.lang = _lang
+        set_lang(_lang)
+        formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+    
         
         # User pending regisration? --------------------------------------------
         # redirect to complete registration process

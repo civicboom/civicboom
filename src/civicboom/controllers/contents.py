@@ -42,8 +42,8 @@ log      = logging.getLogger(__name__)
 
 class AutoPublishTriggerDatetimeValidator(civicboom.lib.form_validators.base.IsoFormatDateConverter):
     messages = {
-        'require_upgrade'   : _('You require a paid account to use this feature, please contact us!'),
-        'date_past'         : _('The auto publish date must be in the future'),
+        'require_upgrade'   : x_('You require a paid account to use this feature, please contact us!'),
+        'date_past'         : x_('The auto publish date must be in the future'),
     }
 
     def _to_python(self, value, state):

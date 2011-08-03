@@ -76,11 +76,12 @@
                 ## AllanC - Enhancement: Maybe we should be specifically looking for H2's so we can have lower level headings in the sections?
                 <%
                     html = textile.textile(item['description'])
-                    num_headings = html.count('<h') or 1
+                    num_headings = html.count('<h2') or 1
+                    ##rem used to be  - '<h' for all headings
                 %>
                 % if num_headings > 1:
-                    ## Put each h2 in an individual cell
-                    ${re.sub(r'<h\d>(.*?)</h\d>', '<td>', html) |n}
+                    ## Put each h2 in an individual cell - used to be '<h\d>(.*?)</h\d>'
+                    ${re.sub(r'<h2>(.*?)</h2>', '<td>', html) |n}
                     ## Fill in any empty trailing cells
                     % for i in range(num_cols-num_headings-1):
                         <td></td>

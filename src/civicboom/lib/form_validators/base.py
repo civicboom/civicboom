@@ -15,6 +15,7 @@ from cbutils.text import clean_html_markup, strip_html_tags
 from dateutil.parser import parse as parse_date
 import re
 
+def x_(s): return s # see lib/base:x_
 
 class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
@@ -30,8 +31,8 @@ class UnicodeStripHTMLValidator(validators.UnicodeString):
 class MemberValidator(validators.FancyValidator):
     not_empty = True
     messages = {
-        'empty'     : _('You must specify a member'),
-        'not_member': _('Not a valid member'),
+        'empty'     : x_('You must specify a member'),
+        'not_member': x_('Not a valid member'),
     }
 
     def __init__(self, return_object=False, *args, **kwargs):
@@ -53,7 +54,7 @@ class LocationValidator(validators.FancyValidator):
     not_empty = True
     strip     = True
     messages = {
-        'not_in_range': _('location is out of range'),
+        'not_in_range': x_('location is out of range'),
     }
 
     def _to_python(self, value, state):
@@ -70,11 +71,11 @@ class ContentObjectValidator(validators.FancyValidator):
     #if_missing = ''
     #if_empty   = ''
     messages = {
-        'empty'       : _('You must specify content'),
-        'not_content' : _('Not valid content'),
-        'not_viewable': _('content not viewable by your user'),
-        'not_owner'   : _('You are not the owner of this piece of content'),
-        'not_type'    : _('This piece of content is not: %(content_type)s')
+        'empty'       : x_('You must specify content'),
+        'not_content' : x_('Not valid content'),
+        'not_viewable': x_('content not viewable by your user'),
+        'not_owner'   : x_('You are not the owner of this piece of content'),
+        'not_type'    : x_('This piece of content is not: %(content_type)s')
     }
 
     def __init__(self, return_object=False, persona_owner=False, content_type=None, *args, **kwargs):
@@ -134,8 +135,8 @@ class ContentTagsValidator(validators.FancyValidator):
 class LicenseValidator(validators.FancyValidator):
     not_empty = False
     messages = {
-        'empty'      : _('you must specify a licence type'),
-        'not_license': _('not a valid licence type'),
+        'empty'      : x_('you must specify a licence type'),
+        'not_license': x_('not a valid licence type'),
     }
 
     def __init__(self, return_object=False, *args, **kwargs):
@@ -154,7 +155,7 @@ class LicenseValidator(validators.FancyValidator):
 
 class PrivateContentValidator(validators.StringBool):
     messages = {
-        'not_account_type': _('unable to use private content features without account upgrade'),
+        'not_account_type': x_('unable to use private content features without account upgrade'),
     }
 
     def _to_python(self, value, state):
@@ -168,8 +169,8 @@ class PrivateContentValidator(validators.StringBool):
 class CurrentUserPasswordValidator(validators.FancyValidator):
     not_empty    = True
     messages = {
-        'empty'     : _('You must enter your current password'),
-        'invalid'   : _('Invalid password'),
+        'empty'     : x_('You must enter your current password'),
+        'invalid'   : x_('Invalid password'),
     }
 
     def _to_python(self, value, state):
@@ -186,9 +187,9 @@ class PasswordValidator(validators.FancyValidator):
     letter_regex = re.compile(r'[a-zA-Z]')
     not_empty    = True
     messages = {
-        'empty'     : _('You must enter a password'),
-        'too_few'   : _('Your password must be longer than %(min)i characters'),
-        'non_letter': _('You must include at least %(non_letter)i non-letter in your password'),
+        'empty'     : x_('You must enter a password'),
+        'too_few'   : x_('Your password must be longer than %(min)i characters'),
+        'non_letter': x_('You must include at least %(non_letter)i non-letter in your password'),
     }
 
     def _to_python(self, value, state):
@@ -223,8 +224,8 @@ class SetValidator(validators.FancyValidator):
     separator    = ','
     set=[]
     messages = {
-        'invalid'   : _('Some item(s) not in set'),
-        'empty'     : _('Set cannot be empty'),
+        'invalid'   : x_('Some item(s) not in set'),
+        'empty'     : x_('Set cannot be empty'),
     }
 
     def _to_python(self, value, state):
@@ -243,7 +244,7 @@ class SetValidator(validators.FancyValidator):
 
 class EmptyValidator(validators.FancyValidator):
     messages = {
-        'invalid'   : _('You cannot enter a value here due to other errors'),
+        'invalid'   : x_('You cannot enter a value here due to other errors'),
     }
 
     def _to_python(self, value, state):

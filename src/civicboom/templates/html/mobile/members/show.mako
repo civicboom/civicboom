@@ -20,7 +20,9 @@
             <a href="#member-extra-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
         </div>
         
-        ${member_details_full(self.member)}
+        <div data-role="content">
+            ${member_details_full(self.member)}
+        </div>
         
         ${control_bar()}
     </div>
@@ -32,18 +34,30 @@
             <h1>${self.name} - extra</h1>
         </div>
         
-        ${member_content_list(d)}
+        <div data-role="content">
+            ${member_content_list(d)}
+        </div>
     </div>
 </%def>
 
 <%def name="control_bar()">
-    <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-            <ul>
-                <li><a>One</a></li>
-            </ul>
+    % if c.logged_in_user:
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar" class="ui-navbar">
+                <ul>
+                    <li>
+                        <a href="${h.url(controller='profile', action='index')}" rel="external">My profile</a>
+                    </li>
+                    <li>
+                        ${h.secure_link(
+                            h.url(controller='account', action='signout'),
+                            _('Sign out')
+                        )}
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
+    % endif
 </%def>
 
 <%def name="page_title()">
@@ -58,7 +72,7 @@
                 member = member.to_dict()
         %>
         <div class="member_details">
-            <ul data-role="listview">
+            <ul data-role="listview" data-inset="true">
                 <li>
                     % if as_link:
                     <a href="${h.url('member', id=member['username'])}" title="${member['name']}" rel="external">
@@ -83,22 +97,21 @@
         <%
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
+            username = member['username']
             website = member['website']
         %>
         <div class="member_details">
-            <ul data-role="listview">
-                ## Avatar/name
-                <li>
-                    ${member_includes.avatar(member, as_link=0, img_class="thumbnail")}
-                    <h3>${member['name']}</h3>
-                    <p>Username: <b>${member['username']}</b></p>
-                    <p>Type: <b>${member['type'].capitalize()}</b></p>
-                </li>
+            ## Avatar/name
+            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
+            <h3>${member['name']}</h3>
+            <p>Username: <b>${username}</b></p>
+            <p>Type: <b>${member['type'].capitalize()}</b></p>
                 
+            <ul data-role="listview" data-inset="true">
                 ## User website
                 % if member['website']:
                     <li data-role="list-divider" role="heading">
-                        User's website
+                        ${username}'s website
                     </li>
                     <li>
                         <a href="${website}" alt="${member['id']}'s website">
@@ -109,31 +122,33 @@
                 
                 ## User description
                 <li data-role="list-divider" role="heading">
-                    User's description
+                    ${username}'s description
                 </li>
                 <li>
                     ${member['description']}
                 </li>
+            </ul>
                 
-                ## User description
-                <li data-role="list-divider" role="heading">
-                    Following
-                    <span class="ui-li-count">${d['following']['count']}</span>
-                </li>
-                <li class="ui-li ui-li-static ui-body-c">
-                    ${member_includes.member_thumbnail_list(d['following'])}
-                </li>
-                
-                ## User description
-                <li data-role="list-divider" role="heading">
-                    Followers
-                    <span class="ui-li-count">${d['followers']['count']}</span>
-                </li>
-                <li class="ui-li ui-li-static ui-body-c">
-                    ${member_includes.member_thumbnail_list(d['followers'])}
-                </li>
+                ${member_list("following")}
+                ${member_list("followers")}
+                ${member_list("members")}
             </ul>
         </div>
+    % endif
+</%def>
+
+<%def name="member_list(list_title)">
+    <% count = d[list_title]['count'] %>
+    % if count:
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider" role="heading">
+                ${list_title.capitalize()}
+                <span class="ui-li-count">${count}</span>
+            </li>
+            <li class="ui-li ui-li-static ui-body-c">
+                ${member_includes.member_thumbnail_list(d[list_title])}
+            </li>
+        </ul>
     % endif
 </%def>
 
@@ -150,11 +165,9 @@
             articles = data['articles']
         %>
         <div class="member_content">
-            <ul data-role="listview">
-                ${list_includes.list_contents(requests, "Active requests")}
-                ${list_includes.list_contents(responses, "Responses")}
-                ${list_includes.list_contents(articles, "Stories")}
-            </ul>
+            ${list_includes.list_contents(requests, "Active requests")}
+            ${list_includes.list_contents(responses, "Responses")}
+            ${list_includes.list_contents(articles, "Stories")}
         </div>
     % endif
 </%def>
