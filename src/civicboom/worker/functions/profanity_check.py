@@ -41,7 +41,8 @@ def profanity_check(content_id, url_base):
             # AllanC - really didnt want this crashing the live server, so wrapped it all in a try except
             try:
                 from civicboom.lib.aggregation import twitter_global
-                twitter_global(content)
+                live = config['online'] and config['feature.aggregate.twitter_global']
+                twitter_global(content, live)
             except Exception as e:
                 log.exception('Global twitter failed')
     

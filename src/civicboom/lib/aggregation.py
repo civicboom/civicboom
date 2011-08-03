@@ -111,7 +111,7 @@ def aggregate_via_user(content, user):
 
 
 
-def twitter_global(content):
+def twitter_global(content, live=False):
     """
     Twitter content via Civicbooms global feed
     
@@ -121,7 +121,7 @@ def twitter_global(content):
     #    content = content.to_dict('full')
     #content_dict = aggregation_dict(content, safe_strings=True)
 
-    if config['online'] and config['feature.aggregate.twitter_global']:
+    if live:
         link = tiny_url(content.__link__())
     else:
         link = 'http://tinyurl.com/xxxxxxx'
@@ -148,7 +148,7 @@ def twitter_global(content):
     # t['trim_user'] = False? default?
     # t['place_id']  = "" #need reverse Geocode using the twitter api call geo/reverse_geocode
     # t['include_entities'] = True
-    if config['online'] and config['feature.aggregate.twitter_global']:
+    if live:
         twitter_global_status(twitter_post)
     else:
         log.info('twitter_global aggregation disabled: \n%s' % twitter_post)
