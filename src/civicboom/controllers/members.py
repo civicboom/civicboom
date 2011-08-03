@@ -78,6 +78,9 @@ def _init_search_filters():
             members = [member.strip() for member in members.split(',')]
         return query.filter(not_(Member.username.in_(members)))
 
+    def append_search_group_join_mode(query, join_mode):
+        return query.filter(Group.join_mode==join_mode)
+
     def append_search_followed_by(query, member):
         member_id = normalize_member(member)
         return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id).filter(Follow.type!='trusted_invite') ))
@@ -94,6 +97,7 @@ def _init_search_filters():
         'type'           : append_search_type        ,
         'location'       : append_search_location    ,
         'exclude_members': append_exclude_members    ,
+        'group_join_mode': append_search_group_join_mode ,
         #'followed_by'  : append_search_followed_by ,
         #'follower_of'  : append_search_follower_of ,
     }

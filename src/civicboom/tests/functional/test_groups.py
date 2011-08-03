@@ -324,6 +324,15 @@ class TestGroupsController(TestController):
             status=403
         )
         
+        
+        # AllanC - it appears that the delete cascades are slightly differnt for groups? .. got a server error 3/8/2011 14:00 - follower map?
+        # Setup mutual follow for delete cascade
+        self.log_in_as('unitfriend')
+        self.set_persona('test_group')
+        self.follow('kitten')
+        self.log_in_as('kitten')
+        self.follow('test_group')
+        
         self.log_in_as('unitfriend')
         self.set_persona('test_group')
         

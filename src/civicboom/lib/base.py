@@ -184,6 +184,8 @@ def get_group(id, is_current_persona_admin=False, is_current_persona_member=Fals
     group = get_member(id, set_html_action_fallback=set_html_action_fallback)
     if group.__type__ != 'group':
         raise action_error(_("%s is not a group" % id), code=404)
+    if group.status != "active":
+        raise action_error(_("group %s is inactive" % group.username) , code=404)
     if is_current_persona_admin:
         raise_if_current_role_insufficent('admin', group)
     if is_current_persona_member and not group.get_membership(c.logged_in_persona):
