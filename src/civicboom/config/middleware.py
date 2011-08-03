@@ -58,6 +58,17 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     # The Pylons WSGI app
     app = PylonsApp(config=config)
 
+    if config['profile']:
+        from repoze.profiler import AccumulatingProfileMiddleware
+        app = AccumulatingProfileMiddleware(
+            app,
+            log_filename='/tmp/cb-website.prof',
+            discard_first_request=True,
+            flush_at_shutdown=True,
+            path='/__profile__'
+        )
+
+
     # Routing/Session/Cache Middleware
     app = RoutesMiddleware(app, config['routes.map'])
     app = SessionMiddleware(app, config)
