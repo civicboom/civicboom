@@ -77,8 +77,19 @@ def init_base_data():
 
         Session.add_all([g1, u1, u1_login, u2, u2_login])
         Session.commit()
-<<<<<<< HEAD
-        assert u2.id == 2
+
+        u1.follow(u2)
+        u2.follow(u1)
+
+        assert u1.id == 1
+        assert u1.login_details[0].type == "password"
+        assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
+        assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
+
+        assert u2.id == 3
+
+        assert g1.id == 2
+
         
         u2_service = Session.query(Service).filter(Service.payment_account_type==u2_account.type).one()
         
@@ -118,23 +129,6 @@ def init_base_data():
         u2_invoice1.status = "paid"
         Session.commit()
         
-        
-        
-=======
->>>>>>> develop
-
-        u1.follow(u2)
-        u2.follow(u1)
-
-        assert u1.id == 1
-        assert u1.login_details[0].type == "password"
-        assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
-        assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
-
-        assert u2.id == 2
-
-        assert g1.id == 3
-
 
         u3 = User()
         u3.username      = u"kitten"

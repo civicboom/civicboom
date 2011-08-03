@@ -857,6 +857,10 @@ class PaymentAccount(Base):
             self._config = _PaymentConfigManager(self.extra_fields)
         return self._config
     
+    @property
+    def total_value(self):
+        discount
+    
     def member_add(self, member, **kwargs):
         from civicboom.lib.database.actions import payment_member_add
         return payment_member_add(self, member)

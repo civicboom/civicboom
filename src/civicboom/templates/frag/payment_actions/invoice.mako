@@ -184,7 +184,7 @@
             </div>
         </div>
     </div>
-    % if Decimal(d['total_due']) > 0:
+    % if Decimal(d['total_due']) > 0 and not d['processing']:
         <div class="frag_whitewrap">
             <h2>Payment Options</h2>
             <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left" />

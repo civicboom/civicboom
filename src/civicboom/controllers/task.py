@@ -218,7 +218,6 @@ class TaskController(BaseController):
                 filter += "and" if seven_days.day > time_now.day else "or"
                 # end day:
                 filter += " date_part('day', start_date) < %(day_e)i" % {'day_e':seven_days.day}
-                
             elif frequency == "year":
                 ## Month 1! & start day:
                 filter += "(date_part('month', start_date) = %(month_s)i and date_part('day', start_date) >= %(day_s)i) or " % {'month_s': time_now.month, 'day_s': time_now.day}
@@ -320,15 +319,17 @@ class TaskController(BaseController):
             if invoice.paid_total >= invoice.total:
                 # This shouldn't really happen, invoices should be marked as paid when payments are successful, but just in case:
                 invoice.status = "paid"
+                Session.commit()
                 if invoice.payment_account.billing_status != "ok":
-                    invoice.payment_account.billing_status = "ok"
+                    if len([inv for inv in invoices.payment_account.invoices if inv.status == 'billed']) == 0:
+                        invoice.payment_account.billing_status = "ok"
                     # Send invoice cleared thanks email
                 # TODO: if invoice.paid_total > invoice.total:
                 #    refund overpayment
             elif check_timestamp(invoice.timestamp, days_disable):
                 if invoice.payment_account.billing_status != "failed":
                     # Send account disabled email
-                    invoice.payment_account.billing_status == "failed"
+                    invoice.payment_account.billing_status = "failed"
                 else:
                     # Send account disabled reminder email
                     pass
@@ -346,6 +347,33 @@ class TaskController(BaseController):
                         # Send invoice due email
         Session.commit()
         return response_completed_ok
+    
+    # GregM: Invoice processing
+    def run_transaction_tasks(self):
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
+        from civicboom.controllers.payment_actions import paypal_interface
+        from civicboom.model.member import PaymentAccount
+        transactions = Session.query(BillingTransaction).filter(BillingTransaction.status=='pending').all()
+        
+        for txn in transactions:
+            if txn.provider == 'paypal_express':
+                try:
+                    response = paypal_interface.get_transaction_details(
+                        transactionid = txn.config['transaction_id'],
+                    )
+                except:
+                    pass
+                else:
+                    if response.PAYMENTSTATUS in ('Completed',):
+                        txn.status = 'complete'
+                        if txn.invoice.total_paid >= txn.invoice.total:
+                            txn.invoice.status = 'paid'
+                    pass
+            pass
+        
+        Session.commit()
+        return response_completed_ok
+        pass
 
     #---------------------------------------------------------------------------
     # Publish Sceduled Assignments

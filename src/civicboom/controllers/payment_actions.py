@@ -127,15 +127,25 @@ class PaymentActionsController(BaseController):
         
         #response = express_checkout_single_auth(invoice.total_due, invoice.currency, h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True))
         
-        response = paypal_interface.set_express_checkout(
-            PAYMENTREQUEST_0_PAYMENTACTION  = 'Sale',
-            PAYMENTREQUEST_0_AMT            = invoice.total_due,
-            PAYMENTREQUEST_0_CURRENCYCODE   = invoice.currency,
-            RETURNURL                       = h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True),
-            CANCELURL                       = h.url(controller='payment_actions', id=id, action='paypal_cancel', qualified=True),
-            NOSHIPPING                      = 1,
-            USERACTION                      = 'commit',
-        )
+        params = {
+            'PAYMENTREQUEST_0_PAYMENTACTION'                   : 'Sale', #'PAYMENTREQUEST_0_PAYMENTACTION' 'PAYMENTACTION'
+            'PAYMENTREQUEST_0_AMT'                             : invoice.total_due, #'PAYMENTREQUEST_0_AMT' 'AMT'
+            'PAYMENTREQUEST_0_CURRENCYCODE'                    : invoice.currency, #'PAYMENTREQUEST_0_CURRENCYCODE' 'CURRENCYCODE'
+            'RETURNURL'                       : h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True),
+            'CANCELURL'                       : h.url(controller='payment_actions', id=id, action='paypal_cancel', qualified=True),
+            'NOSHIPPING'                      : 1,
+            'USERACTION'                      : 'commit',
+        }
+        
+        if kwargs.get('recurring'):
+            params.update({
+                #'MAXAMT': invoice.total_due,
+                'L_BILLINGTYPE0': 'RecurringPayments',
+                'L_BILLINGAGREEMENTDESCRIPTION0': 'Civicboom Subscription'
+            })
+            pass
+        
+        response = paypal_interface.set_express_checkout(**params)
         
         if 'Success' not in response.ack:
             return action_error(_('There was an error starting your payment with PayPal, please try again later'))
@@ -146,6 +156,8 @@ class PaymentActionsController(BaseController):
         txn.provider = 'paypal_express'
         txn.config.update({'set_express_checkout': response.raw})
         txn.config['PAYMENTREQUEST_0_PAYMENTACTION'] = 'Sale'
+        if kwargs.get('recurring'):
+            txn.config['recurring'] = 'Civicboom Subscription'
         txn.reference = response.token
         Session.add(txn)
         Session.commit()
@@ -173,6 +185,8 @@ class PaymentActionsController(BaseController):
             return action_error(_('Need token to continue'), code=404)
         if 'PayerID' not in kwargs:
             return action_error(_('Need PayerID to continue'), code=404)
+        token = kwargs['token']
+        payerid = kwargs['PayerID']
         
         txn = Session.query(BillingTransaction).filter(BillingTransaction.provider=='paypal_express').filter(BillingTransaction.reference==kwargs['token']).first()
         
@@ -184,37 +198,71 @@ class PaymentActionsController(BaseController):
         if 'Success' not in details_response.ack:
             return action_error(_('There was an error starting your payment with PayPal, please try again later'))
         
-        print '###', details_response
-        
-        response = paypal_interface.do_express_checkout_payment(
-            token = kwargs['token'],
-            PayerID = kwargs['PayerID'],
-            PAYMENTREQUEST_0_PAYMENTACTION  = txn.config.get('PAYMENTREQUEST_0_PAYMENTACTION', 'Sale'),
-            PAYMENTREQUEST_0_AMT            = details_response.PAYMENTREQUEST_0_AMT,
-            PAYMENTREQUEST_0_CURRENCYCODE   = details_response.PAYMENTREQUEST_0_CURRENCYCODE,
-            )
+        try:
+            response = paypal_interface.do_express_checkout_payment(
+                token = kwargs['token'],
+                PayerID = kwargs['PayerID'],
+                PAYMENTREQUEST_0_PAYMENTACTION  = txn.config.get('PAYMENTREQUEST_0_PAYMENTACTION', 'Sale'),
+                PAYMENTREQUEST_0_AMT            = details_response.PAYMENTREQUEST_0_AMT,
+                PAYMENTREQUEST_0_CURRENCYCODE   = details_response.PAYMENTREQUEST_0_CURRENCYCODE,
+                )
+        except PayPalAPIResponseError:
+            txn.status = 'error'
+            # Alert admins to payment error
+            Session.commit()
+            return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
 
         if 'Success' not in response.ack:
             return action_error(_('There was an error starting your payment with PayPal, please try again later'))
         
-        print '###', details_responsel
-        
         txn.config['transaction_id'] = response.PAYMENTINFO_0_TRANSACTIONID
         txn.config['payment_type'] = response.PAYMENTINFO_0_PAYMENTTYPE
-        
         txn.config['payment_status'] = response.PAYMENTINFO_0_PAYMENTSTATUS
+        txn.config['PayerID'] = kwargs['PayerID']
         
         if response.PAYMENTINFO_0_PAYMENTSTATUS in ('Completed',):
             txn.status = 'complete'
         elif response.PAYMENTINFO_0_PAYMENTSTATUS == 'Pending':
-            txn.status = 'processing'
+            txn.status = 'pending'
             if response.PAYMENTINFO_0_PENDINGREASON in ('address', 'intl', 'multi-currency', 'other'):
                 #alert admins to payment needing manual intervention
                 pass
         elif response.PAYMENTINFO_0_PAYMENTSTATUS in ('In-Progress', 'Processed'):
-            txn.status = 'processing'
+            txn.status = 'pending'
         else:
             txn.status = 'failed'
         Session.commit()
+
+        if txn.config.get('recurring'):
+            try:
+                # Set up recurring payment profile (begin next day date)
+                recurring_params = {
+                    'token'             : token,
+                    'profileStartDate'  : '2011-09-03T00:00:00Z',
+                    'desc'              : txn.config['recurring'],
+                    'maxFailedPayments' : '0',
+                    'billingPeriod'     : txn.invoice.payment_account.frequency,
+                    'billingFrequency'  : '1',
+                    'amt'               : '10.00',
+                    'currencyCode'      : 'GBP', 
+                    }
+                recurring_response = paypal_interface.create_recurring_payments_profile(recurring_params)
+            except:
+                return action_error(_('There was an error creating your recurring billing, please try again later'))
+            else:
+                try:
+                    if recurring_response.PROFILESTATUS == 'ActiveProfile':
+                        bacct = BillingAccount()
+                        bacct.status = 'active'
+                        bacct.provider = 'paypal-recurring'
+                        bacct.reference = recurring_response.PROFILE_ID 
+                        bacct.payment_account = txn.invoice.payment_account
+                        Session.add(bacct)
+                    else:
+                        return action_error(_('There was an error creating your recurring billing, please try again later'))
+                except:
+                    return action_error(_('There was an error creating your recurring billing, please try again later'))
+                
+            Session.commit()
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
         

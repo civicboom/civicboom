@@ -117,3 +117,14 @@ MediaGrid.configure(include=[
         MediaGrid.type,
         MediaGrid.attached_to,
         ])
+
+PaymentAccountGrid = Grid(model.PaymentAccount)
+PaymentAccountGrid.configure(include=[
+        PaymentAccountGrid.type,
+        PaymentAccountGrid.billing_status,
+        PaymentAccountGrid.start_date,
+        PaymentAccountGrid.currency,
+        PaymentAccountGrid.frequency,
+        PaymentAccountGrid.taxable,
+        PaymentAccountGrid.tax_rate_code,
+        ])

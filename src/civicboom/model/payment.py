@@ -22,6 +22,11 @@ currency_symbols = {
     'EUR':  u"&euro;",
 }
 
+frequency_multipliers = {
+    'month': 1,
+    'year' : 12,
+}
+
 tax_rates = {
     'GB':    0.2,
     'EU':    0.2,
@@ -51,16 +56,20 @@ class _ConfigManager(UserDict.DictMixin):
 class ServicePrice(Base):
     __tablename__      = "payment_service_price"
     service_id         = Column(Integer(),     ForeignKey('payment_service.id'), nullable=False, primary_key=True)
-    _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
+    _frequency         = Enum("once", "month", "year", name="billing_period")
     frequency          = Column(_frequency,    nullable=False, default="month" , primary_key=True)
     currency           = Column(Unicode(),     nullable=False, primary_key=True)
     amount             = Column(Numeric(precision=10, scale=2),     nullable=False)
     
-    def __init__(self, service, frequency, currency, amount):
-        self.service = service
-        self.frequency = frequency
-        self.currency = currency
-        self.amount = amount
+    def __init__(self, service=None, frequency=None, currency=None, amount=None):
+        if service:
+            self.service = service
+        if frequency:
+            self.frequency = frequency
+        if currency:
+            self.currency = currency
+        if amount != None:
+            self.amount = amount
     
 class Service(Base):
     __tablename__      = "payment_service"
@@ -101,7 +110,7 @@ class PaymentAccountService(Base):
     payment_account_id = Column(Integer(), ForeignKey('payment_account.id')      , nullable=False)
     service_id         = Column(Integer(), ForeignKey('payment_service.id')      , nullable=False)
     start_date         = Column(DateTime(), nullable=False, default=func.now())
-    _frequency         = Enum("once", "hour", "day", "week", "month", "year", name="billing_period")
+    _frequency         = Enum("once", "month", "year", name="billing_period")
     frequency          = Column(_frequency,    nullable=False, default="month")
     quantity           = Column(Integer(), nullable=False, default=1)
     discount           = Column(Numeric(precision=10, scale=2),     nullable=False, default=0)
@@ -109,14 +118,20 @@ class PaymentAccountService(Base):
     
     service = relationship("Service")
     
-    def __init__(self, payment_account, service, note=None, frequency=None, quantity=None, discount=None ):
-        self.payment_account = payment_account
-        self.service = service
+    @property
+    def price(self):
+        return self.service.get_price(self.payment_account.currency, self.frequency)
+    
+    def __init__(self, payment_account=None, service=None, note=None, frequency=None, quantity=None, discount=None ):
+        if payment_account:
+            self.payment_account = payment_account
+        if service:
+            self.service = service
         
         if note:
             self.note = note
         
-        if service.payment_account_type:
+        if service and service.payment_account_type:
             self.frequency = payment_account.frequency
         elif frequency:
             self.frequency = frequency
@@ -169,15 +184,17 @@ class Invoice(Base):
             'payment_account'     : lambda invoice: invoice.payment_account.to_dict(),
             'lines'               : lambda invoice: [line.to_dict() for line in invoice.lines],
             'transactions'        : lambda invoice: [trans.to_dict() for trans in invoice.transactions],
+            'processing'          : None, 
     })
     
-    def __init__(self, payment_account):
-        self.payment_account_id = payment_account.id
-        self.currency = payment_account.currency
-        self.taxable = payment_account.taxable
-        self.tax_rate_code = payment_account.tax_rate_code
-        if payment_account.taxable:
-            self.tax_rate = tax_rates.get(self.tax_rate_code)
+    def __init__(self, payment_account=None):
+        if payment_account:
+            self.payment_account_id = payment_account.id
+            self.currency = payment_account.currency
+            self.taxable = payment_account.taxable
+            self.tax_rate_code = payment_account.tax_rate_code
+            if payment_account.taxable:
+                self.tax_rate = tax_rates.get(self.tax_rate_code)
     
     _config = None
 
@@ -200,6 +217,10 @@ class Invoice(Base):
     @property
     def total_due(self):
         return self.total - self.paid_total
+    
+    @property
+    def processing(self):
+        return len([txn for txn in self.transactions if txn.status == 'pending']) != 0
 
     @property
     def config(self):
@@ -315,8 +336,9 @@ class InvoiceLine(Base):
         },
     })
     
-    def __init__(self, invoice, service=None, payment_account_service=None, frequency=None, start_date=None):
-        self.invoice = invoice
+    def __init__(self, invoice=None, service=None, payment_account_service=None, frequency=None, start_date=None):
+        if invoice:
+            self.invoice = invoice
         
         if payment_account_service:
             self.service = payment_account_service.service
@@ -324,16 +346,12 @@ class InvoiceLine(Base):
             self.note = payment_account_service.note
             self.discount = payment_account_service.discount
             
-        elif service:
+        if service:
             self.service = service
-            
-        else:
-            assert "Error here"
-            
-        self.title = self.service.title
-        self.price = self.service.get_price(invoice.currency, frequency)
+            self.title = self.service.title
+            self.price = self.service.get_price(invoice.currency, frequency)
+            self.extra_fields = self.service.extra_fields
 
-        self.extra_fields = self.service.extra_fields
         self.start_date = start_date
     
     _config = None
