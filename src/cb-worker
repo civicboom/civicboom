@@ -40,7 +40,14 @@ def main(argv):
     w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
     if ("error_email_from" in w.config) and ("email_to" in w.config):
-        smtp = logging.handlers.SMTPHandler("localhost", w.config["error_email_from"], w.config["email_to"].split(","), "Worker Error")
+        smtp = logging.handlers.SMTPHandler(
+            (w.config['smtp_server'], w.config['smtp_port']),
+            w.config["error_email_from"],
+            w.config["email_to"].split(","),
+            "Worker Error",
+            (w.config['smtp_username'], w.config['smtp_password']),
+            ()
+        )
         smtp.setLevel(logging.WARNING)
         logging.getLogger('').addHandler(smtp)
 

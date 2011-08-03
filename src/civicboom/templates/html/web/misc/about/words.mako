@@ -22,6 +22,8 @@ ${_("_assignment")}
 ${_("_Assignment")}
 ${_("_request")}
 ${_("_Request")}
+${_("_draft")}
+${_("_Draft")}
 
 ${_("Offensive")}
 ${_("Spam")}
