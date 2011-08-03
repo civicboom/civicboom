@@ -143,7 +143,7 @@ class AdminControllerBase(BaseController):
         query = "SELECT * FROM events WHERE "
         where = " AND ".join(wheres)
         order = " ORDER BY date_sent DESC"
-        offset = " OFFSET %d" % int(request.params.get("offset", "0"))
+        offset = " OFFSET %d" % max(int(request.params.get("offset", "0")), 0)
         limit = " LIMIT 50"
         result = get_engine().execute(query + where + order + offset + limit, args).fetchall()
         return render(prefix + "eventlog.mako", extra_vars={"events": result})
