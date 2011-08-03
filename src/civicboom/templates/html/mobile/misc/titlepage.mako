@@ -9,5 +9,9 @@
 </%def>
 
 <%def name="body()">
-	<%inherit file="/html/mobile/account/signin.mako"/>
+    <div data-role="page">
+        <div data-role="content">
+	        <a href="${url(controller='account', action='signin')}" rel="external">sign in</a>
+	    </div>
+	</div>
 </%def>
