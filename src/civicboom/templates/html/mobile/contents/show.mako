@@ -47,11 +47,17 @@
     <div data-role="content">
         ##----Media----
         <div class="top_media">
-            <% count = len(self.media) %>
+            <%
+                count = len(self.media)
+                thumb = None
+                for item in self.media:
+                    thumb = item['thumbnail_url'] if item['type'] in ["image", "video"] else None
+                thumb = "/images/misc/shareicons/audio_icon.png" if not thumb else None
+            %>
             % if count > 1:
-                <a href="#content-media-${self.id}" alt="more"><img src="${self.media[0]['thumbnail_url']}" alt="${self.media[0]['caption']}" /></a>
+                <a href="#content-media-${self.id}" alt="more"><img src="${thumb}" /></a>
             % elif count:
-                <a href="${self.media[0]['original_url']}"><img src="${self.media[0]['thumbnail_url']}" alt="${self.media[0]['caption']}" /></a>
+                <a href="${self.media[0]['original_url']}"><img src="${thumb}" /></a>
             % endif
         </div>
         
@@ -103,7 +109,24 @@
         <div data-role="content">
             <div class="media_list">
                 % for item in self.media:
-                    <a href="${item['original_url']}" data-rel="dialog"><img class="media_item" src="${item['thumbnail_url']}" /></a>
+                    <div class="media_item">
+                        <a href="${item['original_url']}">
+                            % if item['type'] == "audio":
+                                <img src="/images/misc/shareicons/audio_icon.png" />
+                            % else:
+                                <img src="${item['thumbnail_url']}" />
+                            % endif
+                        </a>
+                        <p class="media_item_data">
+                            % if item['caption']:
+                                ${item['caption']}
+                            % endif
+                            <br />
+                            % if item['credit']:
+                                Credited to ${item['credit']}
+                            % endif
+                        </p>
+                    </div>
                 % endfor
             </div>
         </div>
