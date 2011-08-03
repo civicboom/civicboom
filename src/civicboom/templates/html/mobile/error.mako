@@ -1,1 +1,1 @@
-<% inherit file="/html/web/error.mako" %>
+<%inherit file="/html/web/error.mako"/>
