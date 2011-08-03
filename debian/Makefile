@@ -21,8 +21,7 @@ cb-website.deb: cb-website-web.deb cb-website-api.deb cb-website-db.deb
 	ln -sf cb-website_${VERSION}_all.deb cb-website.deb
 
 cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium ../src ./api -type f)
-	cd ../src/ && $(MAKE) site
-	cd ../src/ && $(MAKE) api-doc
+	$(MAKE) -C ../src/ site
 	rm -rf fs-api
 	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
 	$(call mdcp, api/cb-website.conf      , fs-api/etc/init/                 )
@@ -42,8 +41,8 @@ cb-website-web.deb: Makefile $(shell find ../nginx ./web)
 	$(call mdcp, ../nginx/civicboom.com         , fs-web/etc/nginx/sites-available/ )
 	$(call mdcp, ../nginx/errors                , fs-web/opt/cb/share/website-web/  )
 	$(call mdcp, ../nginx/civicboom.com         , fs-web/opt/cb/share/website-web/  )
-	$(call mdcp, ../ssl/wild.civicboom.com.key  , fs-web/opt/cb/etc/ssl/            )
-	cat ../ssl/wild.civicboom.com.crt ../ssl/rapidssl-ca.crt ../ssl/rapidssl-ca-cross.crt > fs-web/opt/cb/etc/ssl/wild.civicboom.com.pem
+	$(call mdcp, ../nginx/ssl/wild.c*m.com.key  , fs-web/opt/cb/etc/ssl/            )
+	cat ../nginx/ssl/wild.civicboom.com.crt ../nginx/ssl/rapidssl-ca.crt ../nginx/ssl/rapidssl-ca-cross.crt > fs-web/opt/cb/etc/ssl/wild.civicboom.com.pem
 	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
 	ln -sf cb-website-web_${VERSION}_all.deb cb-website-web.deb
@@ -70,7 +69,7 @@ python-cbmisc.deb: Makefile ../lib/Makefile ../lib/cbutils/
 	echo "Description: a package with some non-debian-packaged python bits in" >> fs-env/DEBIAN/control
 	echo ================================================ >/dev/null
 	mkdir -p fs-env/usr/local/lib/python2.7/dist-packages
-	make -C ../lib
+	$(MAKE) -C ../lib
 	cp -r ../lib/* fs-env/usr/local/lib/python2.7/dist-packages/
 	echo ================================================ >/dev/null
 	fakeroot dpkg -b fs-env python-cbmisc_${VERSION}.deb
@@ -78,4 +77,4 @@ python-cbmisc.deb: Makefile ../lib/Makefile ../lib/cbutils/
 
 clean:
 	rm -rf fs-* *.deb *.css *.js distribute*
-
+	cd ../src/ && $(MAKE) clean

@@ -541,7 +541,7 @@
                 <input class="detail" type="datetime" name="due_date"   value="${due_date}" />
                 
                 ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
-                ##<input class="detail" type="date" name="event_date" value="${event_date}">
+                ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
                 
                 ## http://trentrichardson.com/examples/timepicker/
                 % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):

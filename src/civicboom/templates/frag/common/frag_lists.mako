@@ -586,13 +586,13 @@
         
         % if content and 'views' in content:
             <div class="views">
-                <small>${_("%d views") % content['views']}</small>
+                <small>${ungettext("%d view", "%d views", content['views']) % content['views']}</small>
             </div>
         % endif
         
         % if content and 'num_responses' in content:
             <div class="responses">
-                <small>${_("%d responses") % content['num_responses']}</small>
+                <small>${ungettext("%d response", "%d responses", content['num_responses']) % content['num_responses']}</small>
             </div>
         % endif
         

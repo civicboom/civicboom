@@ -270,7 +270,7 @@ Disallow: /*.frag$
             # all articles, then we don't want to limit to assignments
             if 'due_date' not in kwargs and kwargs.get('type') == "assignment":
                 kwargs['due_date'] = ">now"
-            kwargs['update_date'] = ">"+str(now() - datetime.timedelta(weeks=4))
+            kwargs['update_date'] = ">"+str(now() - datetime.timedelta(days=5))
             kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
             content_items = content_search(**kwargs)['data']['list']['items']
             random.shuffle( content_items )
