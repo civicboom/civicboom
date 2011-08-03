@@ -233,10 +233,10 @@ class MembersController(BaseController):
 
         else:
             results = Session.query(Member)
-            results = results.filter(Member.status=='active')
             # TODO
-            if False: # if fields in include_fields are in User or Group only
+            if 'group_join_mode' in kwargs: #AllanC - was if False: so I bolted my group_join_mode hack on :( ... HACK ... # Could - if fields in include_fields are in User or Group only
                 results = results.with_polymorphic('*')
+            results = results.filter(Member.status=='active')
             for key in [key for key in search_filters if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
         

@@ -306,8 +306,8 @@ Disallow: /*.frag$
         
         # New members
         m ={}
-        m['new_members'] = member_search(sort='-join_date', type='user' , limit=10)['data']['list']['items']
-        m['new_groups' ] = member_search(sort='-join_date', type='group', limit=10)['data']['list']['items']
+        m['new_members'] = member_search(sort='-join_date', type='user'             , limit=10)['data']['list']['items']
+        m['new_groups' ] = member_search(sort='-join_date', group_join_mode='public', limit=10)['data']['list']['items']
         
         return action_ok(
             data={
