@@ -64,6 +64,8 @@
     <h1 id="header" class="ui-widget-header ui-corner-all">
 		<div class="breadcrumb"> 
 			/<a href="/admin">admin</a>/<a href="/admin/event_log">event log</a>
+            <br><a href="${url.current(offset=int(request.params.get('offset', 0))-50)}">Prev</a>
+            | <a href="${url.current(offset=int(request.params.get('offset', 0))+50)}">Next</a>
 		</div> 
 		Event Log
 	</h1>
