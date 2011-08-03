@@ -26,8 +26,7 @@
 			<tr><td><p class="step">1. Please choose one of the following. Do you:</p></td></tr>
             ## Guidence type
             ${help_type()}
-            <tr><td style="text-align: center;"><span class="button" id="help_type_continue">Continue to step 2</span></td></tr>
-            
+            <tr><td style="text-align: center;"><span class="button" id="help_type_continue">Continue to step 2</span><p class="error hideable">Please select a help type before continuing</p></td></tr>
         </table>
         <table class="newform user hide_if_js">
             
@@ -82,10 +81,16 @@
     </div>
     
     <script type="text/javascript">
+        help_type_error = $('#help_type_continue').parent().find('.error');
         $('#help_type_continue').click(function() {
-            $('.newform.help').fadeOut(function() {
-                $('.newform.user').fadeIn();
-            });
+            if (!$('#help_type_ind').is(':checked') && !$('#help_type_org').is(':checked')) {
+                help_type_error.slideDown();
+            } else {
+                help_type_error.slideUp();
+                $('.newform.help').fadeOut(function() {
+                    $('.newform.user').fadeIn();
+                });
+            }
         });
         
         $('#user_details_back').click(function() {
@@ -254,7 +259,7 @@
             <div class="hide_if_js">
                 % for radio_key, (display_text, checked) in radio_choices.iteritems():
                     <%
-                        checked = ''
+                        print (display_text+" :: "+str(checked))
                         if checked:
                             checked = 'checked'
                     %>
@@ -264,9 +269,4 @@
             ${invalid('help_value')}
         </td>
     </tr>
-
-
-
-
 </%def>
-

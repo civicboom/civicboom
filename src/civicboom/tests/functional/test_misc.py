@@ -29,6 +29,15 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='titlepage'))
         # FIXME: test that generated-but-static content has cache headers set
 
+    def test_new_article(self):
+        response = self.app.get(url(controller='misc', action='new_article'))
+
+    def test_search_redirector(self):
+        response = self.app.get(url(controller='misc', action='search_redirector', type='Members'), status=302)
+        response = self.app.get(url(controller='misc', action='search_redirector', type='Requests'), status=302)
+        response = self.app.get(url(controller='misc', action='search_redirector', type='Stories'), status=302)
+        response = self.app.get(url(controller='misc', action='search_redirector'                ), status=302)
+
     def test_upgrade_popup(self):
         response = self.app.get(url(controller='misc', action='upgrade_popup', format='frag'))
 
@@ -53,22 +62,28 @@ class TestMiscController(TestController):
     def test_qr(self):
         response = self.app.get(url(controller='misc', action='qr'))
 
-    def test_upgrade_plans(self):
-        response = self.app.get(url(controller='misc', action='upgrade_plans'))
+    def test_upgrade_request(self):
+        response = self.app.get(url(controller='misc', action='upgrade_request'))
 
     def test_get_widget(self):
         # FIXME: check for things in response
         response = self.app.get(url(controller='misc', action='get_widget'))
 
-    def test_upgrade_plans(self):
-        # FIXME: check for things in response
-        # FIXME: no html template?
-        #response = self.app.get(url(controller='misc', action='upgrade_plans'))
-        pass
-
     def test_feedback(self):
         # FIXME: check POST
         response = self.app.get(url(controller='misc', action='feedback'))
+
+    def test_upgrade_request(self):
+        # FIXME: check POST
+        response = self.app.get(url(controller='misc', action='upgrade_request'))
+
+    def test_featured(self):
+        # FIXME: check that articles appear and are recent
+        response = self.app.get(url(controller='misc', action='featured', format='frag'))
+
+    def test_browser_unsupported(self):
+        # FIXME: check that the user is redirected here if they have a bad browser
+        response = self.app.get(url(controller='misc', action='browser_unsupported'))
 
     def test_robots(self):
         response = self.app.get("/robots.txt", extra_environ={'HTTP_HOST': 'www.civicboom.com'})

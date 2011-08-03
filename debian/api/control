@@ -4,7 +4,7 @@ Architecture: all
 Maintainer: Shish <shish@civicboom.com>
 Pre-Depends: python, python-cbmisc(>=0.3.18-75), debconf(>=0.2.17),
  python-pylons(>=1.0), python-sqlalchemy(>=0.6.5), python-webhelpers(>=1.0),
- python-psycopg2, python-imaging, python-boto,
+ python-psycopg2, python-imaging, python-boto, python-meld3,
  python-nose, python-coverage, python-dns, python-decorator, python-dateutil,
  python-lxml, python-pybabel, python-mako(>=0.3.6), python-redis, python-beautifulsoup,
  ffmpeg(>=4:0.6)

@@ -1,30 +1,8 @@
-BODY.c-members.a-show {
+BODY.c-members.a-show, BODY.c-profile {
 
-    .thumbnail {
-        $size: 80px;
-        min-width: $size;
-        min-height: $size;
-        max-width: $size;
-        max-height: $size;
-    }
-    
-    .thumbnail_small {
-        $size: 40px;
-        min-width: $size;
-        min-height: $size;
-        max-width: $size;
-        max-height: $size;
-    }
-    
-    /* Content page styles */
-    .content_page {
-        
-        .top_media {
-            text-align: center;
-            
-            img {
-                max-width: 320px;
-            }
-        }
+    .avatar {
+        width: 100px;
+        float: left;
+        margin-right: 15px;
     }
 }

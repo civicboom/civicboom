@@ -1,5 +1,5 @@
 
-all: magic.py pexif.py twitter formalchemy geoalchemy
+all: magic.py pexif.py twitter formalchemy geoalchemy repoze
 
 magic.py:
 	wget --no-check-certificate https://github.com/ahupp/python-magic/raw/a75cf0a4a7790eb106155c947af9612f15693b6e/magic.py
@@ -27,6 +27,13 @@ geoalchemy:
 	rm -rf geoalchemy/tests
 	rm -rf GeoAlchemy-0.5.tar.gz GeoAlchemy-0.5
 
+repoze:
+	mkdir repoze
+	wget https://raw.github.com/civicboom/repoze.profile/filename_filter/repoze/profile/__init__.py -O repoze/__init__.py
+	wget https://raw.github.com/civicboom/repoze.profile/filename_filter/repoze/profile/profiler.py -O repoze/profiler.py
+	wget https://raw.github.com/civicboom/repoze.profile/filename_filter/repoze/profile/profiler.html -O repoze/profiler.html
+	patch -p0 repoze/profiler.py < profiler.fixtag.patch
+
 clean:
-	rm -rf magic.py twitter formalchemy geoalchemy
+	rm -rf twitter formalchemy geoalchemy repoze
 	rm -f *.py *.pyc *.tar.gz*

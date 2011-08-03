@@ -77,6 +77,7 @@ def load_environment(global_conf, app_conf):
                         'online',
                         'test_mode',
                         'demo_mode',
+                        'profile',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config.get(varname))
