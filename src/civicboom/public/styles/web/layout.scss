@@ -343,6 +343,14 @@ HEADER #search {
 		top: 20px;
 		width: $search_width/$search_buttons;
 
+		&.bA {
+			top: 0px;
+			right: 0px;
+			height: 18px;
+			width: 18px;
+			box-shadow: none;
+			background: lighten($cb-lightblue, 30%);
+		}
 		&.b0 {display: none;}
 		&.b1 {left: $search_width/$search_buttons*0;}
 		&.b2 {left: $search_width/$search_buttons*1;}
