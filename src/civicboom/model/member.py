@@ -353,6 +353,9 @@ class Member(Base):
         from civicboom.lib.web import url
         return url('member', id=self.username, sub_domain='www', qualified=True)
 
+    def __db_index__(self):
+        return self.username
+
     def hash(self):
         h = hashlib.md5()
         for field in ("id", "username", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
