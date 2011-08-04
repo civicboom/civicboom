@@ -4,8 +4,24 @@ from sqlalchemy.util import NamedTuple
 from cbutils.misc import str_to_int
 from civicboom.lib.web import action_ok
 
+import logging
+log  = logging.getLogger(__name__)
 
-def __apilist(results, count=0, limit=0, offset=0, obj_type=None):
+kwargs_to_exclude_in_api_output = ['limit','offset','obj_type']
+
+
+def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):
+    kwargs = {}
+    for key, value in source_kwargs.iteritems():
+        if key not in kwargs_to_exclude_in_api_output:
+            try:
+                value = value.__db_index__()
+            except Exception as e:
+                pass
+            value = unicode(value)
+            if value:
+                kwargs[key] = value
+
     return action_ok(
         data = {'list': {
             'items' : results   ,
@@ -13,6 +29,7 @@ def __apilist(results, count=0, limit=0, offset=0, obj_type=None):
             'limit' : limit     ,
             'offset': offset    ,
             'type'  : obj_type  ,
+            'kwargs': kwargs    , # AllanC - we include the kwargs so that the source of this list can be reporduced by 3rd party clients if needed
             }
         }
     )
@@ -52,6 +69,8 @@ def __list_to_dict(results, list_to_dict_transform=None, **kwargs):
 
 
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
+    """
+    """
     # fixme: what else is there?
     #assert isinstance(results, list) or isinstance(results, sqlalchemy.orm.query.Query)
     
@@ -72,7 +91,7 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
         results = results.limit(limit).offset(offset)
         return __apilist(
             __list_to_dict(results.all(), list_to_dict_transform, **kwargs),
-            count=count, limit=limit, offset=offset, obj_type=kwargs.get('obj_type')
+            count=count, limit=limit, offset=offset, obj_type=kwargs.get('obj_type'), source_kwargs=kwargs
         )
     
     if isinstance(results, list):
@@ -83,5 +102,5 @@ def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
         results = results[offset:end_point]
         return __apilist(
             __list_to_dict(results, list_to_dict_transform, **kwargs),
-            count=count, limit=limit, offset=offset, obj_type=kwargs.get('obj_type')
+            count=count, limit=limit, offset=offset, obj_type=kwargs.get('obj_type'), source_kwargs=kwargs
         )
