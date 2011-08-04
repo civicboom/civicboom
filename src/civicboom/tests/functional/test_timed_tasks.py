@@ -186,8 +186,8 @@ class TestTimedTasksController(TestController):
         Note this is a paid for feature and can only be set by plus users
         """
         
-        def publish_sceduled_content():
-            response = self.app.get(url(controller='task', action='publish_sceduled_content'))
+        def publish_scheduled_content():
+            response = self.app.get(url(controller='task', action='publish_scheduled_content'))
             self.assertIn(response_completed_ok, response.body)
         
         now = self.server_datetime()
@@ -214,7 +214,7 @@ class TestTimedTasksController(TestController):
         
         
         # Execute timed task ---------------------------------------------------
-        publish_sceduled_content() # should only publish content_id_1
+        publish_scheduled_content() # should only publish content_id_1
         
         # Check published ------------------------------------------------------
         
@@ -241,7 +241,7 @@ class TestTimedTasksController(TestController):
         # Change server time to publish content_id_2 ---------------------------
         
         now = self.server_datetime(now + datetime.timedelta(hours=23))
-        publish_sceduled_content() #  should publish nothing
+        publish_scheduled_content() #  should publish nothing
         
         # check no published assignments
         response = self.app.get(url('member_action', id='unittest', action='assignments_active', format='json'))
@@ -249,7 +249,7 @@ class TestTimedTasksController(TestController):
         self.assertEqual(response_json['data']['list']['count']         , assignment_count    )
         
         now = self.server_datetime(now + datetime.timedelta(hours=1))
-        publish_sceduled_content() #  should publish content_id_2
+        publish_scheduled_content() #  should publish content_id_2
         
         # check content_id_2 published assignments
         response = self.app.get(url('member_action', id='unittest', action='assignments_active', format='json'))
