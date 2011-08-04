@@ -150,6 +150,7 @@
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
         <input type="search" name="term" placeholder="${_("Search")}" class="search_input" id="search_input">
+        <span class="button bA">V</span>
         <input type="submit" name="type" class="button b0" value="All" id="search_default">
         <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
         <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
@@ -262,19 +263,19 @@
 </div>
 </%doc>
 <div id="persona_select">
-    <div id="persona_holder" style="vertical-align: center;">
-      <a class="name" href="${url(controller='profile', action='index')}"><!--
+    <div id="persona_holder" style="vertical-align: center;" onclick="window.location='/profile';">
+      <a id="persona_avatar" href="${url(controller='profile', action='index')}"><!--
         --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
       --></a>
       <div id="persona_details">
         ${c.logged_in_persona.name}
       </div>
       <div id="message_holder">
-##        <a class   = "icon16 i_message"
-##           href    = "${h.url('messages',list='to')}"
-##           title   = "${_('Messages')}"
-##           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
-##        ><span>${_('Messages')}</span>
+        <a class   = "icon16 i_message"
+           href    = "${h.url('messages',list='to')}"
+           title   = "${_('Messages')}"
+           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+        ><span>${_('Messages')}</span>
         </a>
         ${messageIcon(c.logged_in_persona.num_unread_messages + c.logged_in_persona.num_unread_notifications, "msg_c_o")}
       </div>

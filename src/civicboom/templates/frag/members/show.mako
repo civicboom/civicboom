@@ -208,10 +208,10 @@
             <div class="col_left">
             <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
             % if self.member.get('website'):
-                <p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
+                <p class="website"><a href="${self.member['website']}">${h.nicen_url(self.member['website'])}</a></p>
             % endif
             % if self.member.get('description'):
-                <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+                <p class="description">${self.member['description']}</p>
             % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
                 <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
             % else:
@@ -232,7 +232,14 @@
                 )}
                 ##<div style="clear: both;"></div>
             % endif
-            <div class="mo-help">
+            </div>
+            
+            <div class="separator"></div>
+        </div>
+        % if self.attr.share_kwargs:
+            ${share.AddThisLine(**self.attr.share_kwargs)}
+        % endif
+            <span style="float: right; font-size: 1.25em; padding-right: 1.1em;" class="mo-help">
                 <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their content and respond to requests for stories")}</div>
                 <a href="#">
                 <p class="boombox_link">
@@ -243,16 +250,11 @@
                     )}
                 </p>
                 </a>
-            </div>
-            <a href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
-            </div>
-            
+            </span>
+
+            <a style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
+
             <div class="separator"></div>
-        </div>
-        % if self.attr.share_kwargs:
-            ${share.AddThisLine(**self.attr.share_kwargs)}
-        % endif
-        <div class="separator"></div>
         </div>    
         
         ## My requests
