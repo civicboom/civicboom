@@ -1,8 +1,14 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 BODY.c-members.a-show, BODY.c-profile {
 
     .avatar {
         width: 100px;
         float: left;
         margin-right: 15px;
+        
+        border: 10px solid #ccc;
+        @include border_radius(3px);
     }
 }

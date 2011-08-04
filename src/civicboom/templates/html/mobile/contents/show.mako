@@ -46,19 +46,22 @@
 <%def name="content_main()">
     <div data-role="content">
         ##----Media----
-        <div class="top_media">
+        <div class="top_media media_list">
             <%
                 count = len(self.media)
                 thumb = None
                 for item in self.media:
-                    thumb = item['thumbnail_url'] if item['type'] in ["image", "video"] else None
-                thumb = "/images/misc/shareicons/audio_icon.png" if not thumb else None
+                    if item['type'] in ["image", "video"]:
+                        thumb = item['thumbnail_url']
+                if not thumb:
+                    thumb = "/images/misc/shareicons/audio_icon.png"
             %>
             % if count > 1:
-                <a href="#content-media-${self.id}" alt="more"><img src="${thumb}" /></a>
+                <a href="#content-media-${self.id}" alt="more">
             % elif count:
-                <a href="${self.media[0]['original_url']}"><img src="${thumb}" /></a>
+                <a href="${self.media[0]['original_url']}">
             % endif
+            <img src="${thumb}" /></a>
         </div>
         
         ##----Content----
