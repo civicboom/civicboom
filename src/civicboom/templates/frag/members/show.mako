@@ -232,7 +232,14 @@
                 )}
                 ##<div style="clear: both;"></div>
             % endif
-            <div class="mo-help">
+            </div>
+            
+            <div class="separator"></div>
+        </div>
+        % if self.attr.share_kwargs:
+            ${share.AddThisLine(**self.attr.share_kwargs)}
+        % endif
+            <span style="float: right; font-size: 1.25em; padding-right: 1.1em;" class="mo-help">
                 <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their content and respond to requests for stories")}</div>
                 <a href="#">
                 <p class="boombox_link">
@@ -243,16 +250,11 @@
                     )}
                 </p>
                 </a>
-            </div>
-            <a href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
-            </div>
-            
+            </span>
+
+            <a style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
+
             <div class="separator"></div>
-        </div>
-        % if self.attr.share_kwargs:
-            ${share.AddThisLine(**self.attr.share_kwargs)}
-        % endif
-        <div class="separator"></div>
         </div>    
         
         ## My requests
