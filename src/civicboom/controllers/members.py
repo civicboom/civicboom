@@ -78,6 +78,12 @@ def _init_search_filters():
             members = [member.strip() for member in members.split(',')]
         return query.filter(not_(Member.username.in_(members)))
 
+    def append_search_group_join_mode(query, join_mode):
+        return query.filter(Group.join_mode==join_mode)
+
+    def append_search_group_default_content_visibility(query, default_content_visibility):
+        return query.filter(Group.default_content_visibility==default_content_visibility)
+
     def append_search_followed_by(query, member):
         member_id = normalize_member(member)
         return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id).filter(Follow.type!='trusted_invite') ))
@@ -94,6 +100,8 @@ def _init_search_filters():
         'type'           : append_search_type        ,
         'location'       : append_search_location    ,
         'exclude_members': append_exclude_members    ,
+        'group_join_mode': append_search_group_join_mode ,
+        'default_content_visibility': append_search_group_default_content_visibility,
         #'followed_by'  : append_search_followed_by ,
         #'follower_of'  : append_search_follower_of ,
     }
@@ -229,10 +237,10 @@ class MembersController(BaseController):
 
         else:
             results = Session.query(Member)
-            results = results.filter(Member.status=='active')
             # TODO
-            if False: # if fields in include_fields are in User or Group only
+            if 'group_join_mode' in kwargs: #AllanC - was if False: so I bolted my group_join_mode hack on :( ... HACK ... # Could - if fields in include_fields are in User or Group only
                 results = results.with_polymorphic('*')
+            results = results.filter(Member.status=='active')
             for key in [key for key in search_filters if key in kwargs]: # Append filters to results query based on kwarg params
                 results = search_filters[key](results, kwargs[key])
         

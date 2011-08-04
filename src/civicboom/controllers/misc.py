@@ -14,6 +14,11 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 
 from civicboom.controllers.contents import ContentsController
 content_search = ContentsController().index
+
+from civicboom.controllers.members import MembersController
+member_search = MembersController().index
+
+
 import datetime
 import random
 
@@ -282,25 +287,32 @@ Disallow: /*.frag$
                     return_list     .append(content_item)
             return return_list
         
+        
         #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
         
         # Sponsored content dictionary
-        s = {}
-        s['sponsored_responded'    ] = rnd_content_items(return_items=1, sort='-num_responses',              limit=3 )
-        s['sponsored_assignment'   ] = rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 )
-
+        #s = {}
+        #s['sponsored_responded'    ] = rnd_content_items(return_items=1, sort='-num_responses',              limit=3 )
+        #s['sponsored_assignment'   ] = rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 )
+        
         # Featured content dictionary
         f = {}
-        f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
+        ##f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
         f['most_responses'         ] = rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5)
         if request.GET.get("location"):
             f['near_me'            ] = rnd_content_items(return_items=2, sort='distance'      , location=request.GET.get("location"), limit=5)
         f['recent_assignments'     ] = rnd_content_items(return_items=2, sort='-update_date'  , type='assignment', limit=5)
         f['recent'                 ] = rnd_content_items(return_items=2, sort='-update_date'  , type='article'   , limit=5)
-
+        
+        # New members
+        m ={}
+        m['new_members'] = member_search(sort='-join_date', type='user'                        , limit=5)['data']['list']['items']
+        m['new_groups' ] = member_search(sort='-join_date', default_content_visibility='public', limit=5)['data']['list']['items']
+        
         return action_ok(
             data={
-                'sponsored' : s,
-                'featured' : f,
+                #'sponsored' : s,
+                'featured'  : f,
+                'members'   : m,
             }
         )
