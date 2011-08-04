@@ -835,10 +835,14 @@ class PaymentAccount(Base):
         'full': copy.deepcopy(__to_dict__['default'])
     })
     __to_dict__['full'].update({
+            'currency'         : None ,
+            'frequency'        : None ,
             'members'          : lambda account: [member.to_dict() for member in account.members],
             'invoices'         : lambda account: [invoice.to_dict() for invoice in account.invoices],
             'billing_accounts' : lambda account: [billing.to_dict() for billing in account.billing_accounts],
             'services'         : lambda account: [service.to_dict() for service in account.services],
+            'services_full'    : None ,
+            'cost_frequency'   : None ,
     })
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
@@ -848,6 +852,24 @@ class PaymentAccount(Base):
     #services            = relationship("Service"          , primaryjoin="PaymentAccount.id==PaymentAccountService.payment_account_id"  , secondaryjoin="Service.id==PaymentAccountService.service_id", secondary='payment_account_service')
     
     _config = None
+    
+    @property
+    def cost_frequency(self):
+        freq_map = {0:1}
+        def mapper(tup):
+            if freq_map.get(tup[0]) == None:
+                freq_map[tup[0]] = 0
+            freq_map[tup[0]] += tup[1]
+            
+        map(mapper, [(pac.frequency, pac.price) for pac in self.services_full])    
+        
+        print '###', freq_map
+        return freq_map
+    
+    @property
+    def services_full(self):
+        from civicboom.lib.database.actions import payment_account_services_normalised
+        return payment_account_services_normalised(self)
     
     @property
     def config(self):

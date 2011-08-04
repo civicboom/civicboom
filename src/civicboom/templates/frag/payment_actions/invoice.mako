@@ -70,7 +70,7 @@
         <div class="invoice">
             <div class="header">
                 <div class="company fl">
-                    <img class="logo_img" src="/images/logo_new_small.png?ut=1310987194" alt="Civicboom" /><br />
+                    <img class="logo_img" src="/images/logo-v3-128x28.png?ut=1310987194" alt="Civicboom" /><br />
                     Enterprise Hub,<br />
                     University of Kent,<br />
                     Canterbury, Kent<br />
@@ -187,21 +187,21 @@
     % if Decimal(d['total_due']) > 0 and not d['processing']:
         <div class="frag_whitewrap">
             <h2>Payment Options</h2>
-            <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left" />
-            <div style="float:left;text-align:center">
+            <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left;padding-right:2em" />
+            <div style="float:left;text-align:center;padding-right:2em">
                 <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'])}">
                     <img src="https://www.paypalobjects.com/en_GB/i/btn/btn_paynowCC_LG.gif" alt="We accept PayPal" />
                 </a><br />
                 Pay this invoice
             </div>
-        <!--
+        
             <div style="float:left;text-align:center">
-                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'])}">
+                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'], recurring=True)}">
                     <img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" alt="We accept PayPal" />
                 </a><br />
                 Set up a regular payment
             </div>
-        -->
+        
             <div style="clear:both"></div>
         </div>
     % endif

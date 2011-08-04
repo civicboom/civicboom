@@ -15,13 +15,23 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_whitewrap">
-        <h1>Details of your payment account</h1>
-        <p>Payment account number: ${d['account_id']}</p>
-        <p>Account type: ${_('_'+d['account_type']).capitalize()}</p>
+        <h1>Manage your payment account</h1>
+        <p>Payment account number: ${d['id']}</p>
+        <p>Account type: ${_('_'+d['type']).capitalize()}</p>
+        <h2>Services</h2>
+        <p>The following services have been applied to your account:</p>
+        <ul>
+            % for service in d['services_full']:
+                <li>
+                    ${service['service']['title']} - ${d['currency']} ${service['price']} (ex VAT) per ${service['frequency']}
+                </li>
+            % endfor
+        </ul>
+        Total ${d['frequency']} cost: ${d['currency']}
         <h2>Invoices</h2>
         <ul>
             % for invoice in d['invoices']:
-                <li><a href="${h.url('payment_action', action='invoice', id=d['account_id'], invoice_id=invoice['id'])}">${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}</a></li>
+                <li><a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}">${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}</a></li>
             % endfor
         </ul>
         <h2>Users and hubs associated with this account</h2>
@@ -31,7 +41,7 @@
                     <a href="${h.url('member', id=member.get('username'))}">${member.get('name')}</a>
                     <div class="fr">
                         ${h.secure_link(
-                            h.args_to_tuple('payment_action', action='member_remove', id=d['account_id'], username=member.get('username'), format='redirect') ,
+                            h.args_to_tuple('payment_action', action='member_remove', id=d['id'], username=member.get('username'), format='redirect') ,
                             value           = _('Remove') ,
                             title           = _("Remove %s") % member.get('name', '') ,
                         )}
@@ -41,6 +51,6 @@
             % endfor
         </ul>
         <br />
-        ${h.frag_link(value='Add members', title='Add members', href_tuple=h.args_to_tuple('invite', id=d['account_id'], invite='payment_add_user'))}
+        ${h.frag_link(value='Add members', title='Add members', href_tuple=h.args_to_tuple('invite', id=d['id'], invite='payment_add_user'))}
     </div>
 </%def>

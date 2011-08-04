@@ -21,15 +21,14 @@ paypal_config = PayPalConfig(
 paypal_interface = PayPalInterface(config=paypal_config)
 
 class PaymentActionsController(BaseController):
-    
+        
     @web
     @auth
+    @role_required('admin')
     def member_remove(self, id, **kwargs):
         """
         """
         # url('payment', id=ID)
-        
-        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         
@@ -53,12 +52,11 @@ class PaymentActionsController(BaseController):
     
     @web
     @auth
+    @role_required('admin')
     def member_add(self, id, **kwargs):
         """
         """
         # url('payment', id=ID)
-        
-        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         
@@ -80,13 +78,13 @@ class PaymentActionsController(BaseController):
     
     @web
     @authorize
+    @role_required('admin')
     def invoice(self, id, **kwargs):
         """
         """
         
         invoice_id = kwargs.get('invoice_id')
         
-        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)
@@ -104,13 +102,13 @@ class PaymentActionsController(BaseController):
     
     @web
     @authorize
+    @role_required('admin')
     def paypal_begin(self, id, **kwargs):
         """
         """
         
         invoice_id = kwargs.get('invoice_id')
         
-        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)
@@ -128,13 +126,16 @@ class PaymentActionsController(BaseController):
         #response = express_checkout_single_auth(invoice.total_due, invoice.currency, h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True))
         
         params = {
-            'PAYMENTREQUEST_0_PAYMENTACTION'                   : 'Sale', #'PAYMENTREQUEST_0_PAYMENTACTION' 'PAYMENTACTION'
-            'PAYMENTREQUEST_0_AMT'                             : invoice.total_due, #'PAYMENTREQUEST_0_AMT' 'AMT'
-            'PAYMENTREQUEST_0_CURRENCYCODE'                    : invoice.currency, #'PAYMENTREQUEST_0_CURRENCYCODE' 'CURRENCYCODE'
+            'PAYMENTREQUEST_0_PAYMENTACTION'  : 'Sale', #'PAYMENTREQUEST_0_PAYMENTACTION' 'PAYMENTACTION'
+            'PAYMENTREQUEST_0_AMT'            : invoice.total_due, #'PAYMENTREQUEST_0_AMT' 'AMT'
+            'PAYMENTREQUEST_0_CURRENCYCODE'   : invoice.currency, #'PAYMENTREQUEST_0_CURRENCYCODE' 'CURRENCYCODE'
+            'PAYMENTREQUEST_n_INVNUM'         : 'Civicboom_' + str(invoice.id),
             'RETURNURL'                       : h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True),
             'CANCELURL'                       : h.url(controller='payment_actions', id=id, action='paypal_cancel', qualified=True),
             'NOSHIPPING'                      : 1,
             'USERACTION'                      : 'commit',
+            'BRANDNAME'                       : _('_site_name'),
+            
         }
         
         if kwargs.get('recurring'):
@@ -234,6 +235,7 @@ class PaymentActionsController(BaseController):
         Session.commit()
 
         if txn.config.get('recurring'):
+            print '### Trying recurring'
             try:
                 # Set up recurring payment profile (begin next day date)
                 recurring_params = {
@@ -241,26 +243,33 @@ class PaymentActionsController(BaseController):
                     'profileStartDate'  : '2011-09-03T00:00:00Z',
                     'desc'              : txn.config['recurring'],
                     'maxFailedPayments' : '0',
-                    'billingPeriod'     : txn.invoice.payment_account.frequency,
+                    'billingPeriod'     : txn.invoice.payment_account.frequency.capitalize(),
                     'billingFrequency'  : '1',
                     'amt'               : '10.00',
                     'currencyCode'      : 'GBP', 
                     }
-                recurring_response = paypal_interface.create_recurring_payments_profile(recurring_params)
-            except:
+                recurring_response = paypal_interface.create_recurring_payments_profile(**recurring_params)
+            except Exception as error:
                 return action_error(_('There was an error creating your recurring billing, please try again later'))
             else:
-                try:
-                    if recurring_response.PROFILESTATUS == 'ActiveProfile':
-                        bacct = BillingAccount()
-                        bacct.status = 'active'
-                        bacct.provider = 'paypal-recurring'
-                        bacct.reference = recurring_response.PROFILE_ID 
-                        bacct.payment_account = txn.invoice.payment_account
-                        Session.add(bacct)
-                    else:
+                print '###', recurring_response
+                if 'Success' in recurring_response.ACK:
+                    try:
+                        if recurring_response.PROFILESTATUS == 'ActiveProfile':
+                            bacct = BillingAccount()
+                            bacct.status = 'active'
+                            bacct.provider = 'paypal-recurring'
+                            bacct.reference = recurring_response.PROFILEID 
+                            bacct.payment_account = txn.invoice.payment_account
+                            bacct.config.update(recurring_response.raw)
+                            Session.add(bacct)
+                        else:
+                            return action_error(_('There was an error creating your recurring billing, please try again later'))
+                    except:
+                        print '3'
                         return action_error(_('There was an error creating your recurring billing, please try again later'))
-                except:
+                else:
+                    print '4'
                     return action_error(_('There was an error creating your recurring billing, please try again later'))
                 
             Session.commit()

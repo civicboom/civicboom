@@ -88,4 +88,5 @@ class PaymentsController(BaseController):
             'invoices':         [invoice.to_dict() for invoice in account.invoices],
             #'billing_accounts': [billing.to_dict() for billing in account.billing_accounts]
             }
+        data = account.to_dict('full')
         return action_ok(code=200, data=data)

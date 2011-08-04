@@ -5,6 +5,7 @@ from civicboom.model.meta import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
 from civicboom.model.member  import *
+from civicboom.model.payment import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, update_content, update_accepted_assignment, update_member
 
@@ -907,3 +908,26 @@ def payment_member_remove(payment_account, member):
     member.payment_account = None
     Session.commit()
     return True
+
+#-------------------------------------------------------------------------------
+# Payment actions
+#-------------------------------------------------------------------------------
+def payment_account_services_normalised(payment_account):
+        pacs = [pac.to_dict() for pac in payment_account.services]
+        payment_account_types = [pac['service']['payment_account_type'] for pac in pacs]
+        if payment_account.type not in payment_account_types:
+            this_service = Session.query(Service).filter(Service.payment_account_type == payment_account.type).first()
+            if this_service:
+                this_service_dict = dict(
+                    id                  = -1, 
+                    payment_account_id  = payment_account.id, 
+                    note                = None, 
+                    discount            = '0.00', 
+                    frequency           = payment_account.frequency, 
+                    service_id          = this_service.id, 
+                    service             = this_service.to_dict(),
+                    #start_date          = payment_account.start_date,
+                    price               = this_service.get_price(payment_account.currency, payment_account.frequency) 
+                )
+                pacs.append( this_service_dict )
+        return pacs

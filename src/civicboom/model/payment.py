@@ -82,6 +82,15 @@ class Service(Base):
     
     _config = None
     
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'title'             : None ,
+            'payment_account_type': None ,
+        },
+    })
+    
     def __init__(self, id=None, title=None, extra_fields={}, payment_account_type=None):
         self.id = id
         self.title = title
@@ -117,6 +126,22 @@ class PaymentAccountService(Base):
     note               = Column(Unicode(),     nullable=True)
     
     service = relationship("Service")
+    
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                : None ,
+            'payment_account_id': None ,
+            'service_id'        : None ,
+            'service'           : lambda pac: pac.service.to_dict() ,
+            'start_date'        : None ,
+            'frequency'         : None ,
+            'quantity'          : None ,
+            'discount'          : None ,
+            'note'              : None ,
+            'price'             : None ,
+        },
+    })
     
     @property
     def price(self):
