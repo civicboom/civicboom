@@ -25,8 +25,8 @@
     <body style="border:0; margin:0; padding:0; font-family: sans-serif;">
         <div style="padding: 1em 4em;">
             <h1 style="margin:0;">
-                <a href="${site_url}">
-                    <img src="${site_url}/images/logo-v2-128x32.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
+                <a href="${site_url}?r=e_l">
+                    <img src="${site_url}/images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
                 </a>
             </h1>
         </div>
@@ -38,7 +38,7 @@
                 </p>
             </div>
             <h2>
-                <a style="color: #005493; font: normal normal bold sans-serif;" href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True)}">Post a story</a>
+                <a style="color: #005493; font: normal normal bold sans-serif;" href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a>
             </h2>
             <div style="float: right; text-align: right:">
                 <a style="color: #005493; text-decoration: none; font: normal normal bold 125% sans-serif;" href="http://twitter.com/civicboom">
