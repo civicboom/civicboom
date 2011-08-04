@@ -27,8 +27,8 @@ def status(**kargs):
         domain='api.twitter.com'
     )
     kargs['status'] = kargs['status'].encode('utf8', 'replace')
-    log.warn('global twitter disabled')
-    ##t.statuses.update(**kargs)
+    #log.warn('global twitter disabled')
+    t.statuses.update(**kargs)
 
 # Old custom ideas
 """
