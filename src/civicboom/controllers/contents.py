@@ -292,8 +292,9 @@ class ContentsController(BaseController):
                 parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
             for filter_name in filter_map:
-                if kwargs.get(filter_name):
-                    f = filter_map[filter_name].from_string(str(kwargs[filter_name]))
+                val = str(kwargs.get(filter_name, '')).strip()
+                if val:
+                    f = filter_map[filter_name].from_string(val)
                     if hasattr(f, 'mangle'):
                         results = f.mangle(results)
                     parts.append(f)

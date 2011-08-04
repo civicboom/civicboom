@@ -294,7 +294,7 @@ class LocationFilter(Filter):
         if lon and lat and radius:
             return LocationFilter(lon, lat, radius)
 
-        raise FilterException("Invalid location")
+        raise FilterException("Invalid location '%s'" % s)
 
     def mangle(self, results):
         return results.add_columns(
