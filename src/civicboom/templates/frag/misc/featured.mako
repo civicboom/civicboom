@@ -57,12 +57,17 @@
                 ${frag_list.content_list(cb_list, title, creator=1)}
             % endfor
             
-            <table width="100%" class="frag_list"><tr>
+            <%doc>
+            <table width="100%" style="margin-top: 1em;"><tr>
             % for (title, cb_list) in d['members'].iteritems():
                 <% title = list_names.get(title, title) %>
                 <td style="vertical-align: top;">${frag_list.member_list(cb_list, title)}</td>
             % endfor
             </tr></table>
+            </%doc>
+            
+            <div style="float:left;  width:48%; margin-top: 0.6em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'))}</div>
+            <div style="float:right; width:48%; margin-top: 0.6em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
             
         </div>
         <div style="padding: 0.15em"></div>
