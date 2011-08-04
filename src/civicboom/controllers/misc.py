@@ -291,13 +291,13 @@ Disallow: /*.frag$
         #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
         
         # Sponsored content dictionary
-        s = {}
-        s['sponsored_responded'    ] = rnd_content_items(return_items=1, sort='-num_responses',              limit=3 )
-        s['sponsored_assignment'   ] = rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 )
+        #s = {}
+        #s['sponsored_responded'    ] = rnd_content_items(return_items=1, sort='-num_responses',              limit=3 )
+        #s['sponsored_assignment'   ] = rnd_content_items(return_items=1, sort='-views',  type='assignment',  limit=3 )
         
         # Featured content dictionary
         f = {}
-        f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
+        ##f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
         f['most_responses'         ] = rnd_content_items(return_items=2, sort='-num_responses'                   , limit=5)
         if request.GET.get("location"):
             f['near_me'            ] = rnd_content_items(return_items=2, sort='distance'      , location=request.GET.get("location"), limit=5)
@@ -306,12 +306,12 @@ Disallow: /*.frag$
         
         # New members
         m ={}
-        m['new_members'] = member_search(sort='-join_date', type='user'             , limit=10)['data']['list']['items']
-        m['new_groups' ] = member_search(sort='-join_date', group_join_mode='public', limit=10)['data']['list']['items']
+        m['new_members'] = member_search(sort='-join_date', type='user'                        , limit=5)['data']['list']['items']
+        m['new_groups' ] = member_search(sort='-join_date', default_content_visibility='public', limit=5)['data']['list']['items']
         
         return action_ok(
             data={
-                'sponsored' : s,
+                #'sponsored' : s,
                 'featured'  : f,
                 'members'   : m,
             }

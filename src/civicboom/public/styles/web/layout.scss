@@ -244,7 +244,7 @@ HEADER #persona_select {
 		#persona_details {
 			vertical-align: middle;
 			display: inline-block;
-			width: 13.5em;
+			width: 14.5em;
 			overflow: hidden;
 			white-space: nowrap;
 			#settings {
@@ -343,6 +343,19 @@ HEADER #search {
 		top: 20px;
 		width: $search_width/$search_buttons;
 
+		&.bA {
+			top: 0px;
+			right: 0px;
+			height: 18px;
+			width: 18px;
+			box-shadow: none;
+			background: lighten($cb-lightblue, 30%);
+
+			-webkit-transition: background 0.15s ease-in;
+			-moz-transition: background 0.15s ease-in;
+			-o-transition: background 0.15s ease-in;
+			transition: background 0.15s ease-in;
+		}
 		&.b0 {display: none;}
 		&.b1 {left: $search_width/$search_buttons*0;}
 		&.b2 {left: $search_width/$search_buttons*1;}
@@ -408,6 +421,9 @@ HEADER #search {
 		}
 
 		.button {
+			&.bA {
+				background: $button-top;
+			}
 			&.b1, &.b2, &.b3 {
 				opacity: 1.0;
 				filter: alpha(opacity=100);

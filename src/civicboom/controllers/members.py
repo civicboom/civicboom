@@ -81,6 +81,9 @@ def _init_search_filters():
     def append_search_group_join_mode(query, join_mode):
         return query.filter(Group.join_mode==join_mode)
 
+    def append_search_group_default_content_visibility(query, default_content_visibility):
+        return query.filter(Group.default_content_visibility==default_content_visibility)
+
     def append_search_followed_by(query, member):
         member_id = normalize_member(member)
         return query.filter(Member.id.in_( Session.query(Follow.member_id  ).filter(Follow.follower_id==member_id).filter(Follow.type!='trusted_invite') ))
@@ -98,6 +101,7 @@ def _init_search_filters():
         'location'       : append_search_location    ,
         'exclude_members': append_exclude_members    ,
         'group_join_mode': append_search_group_join_mode ,
+        'default_content_visibility': append_search_group_default_content_visibility,
         #'followed_by'  : append_search_followed_by ,
         #'follower_of'  : append_search_follower_of ,
     }
