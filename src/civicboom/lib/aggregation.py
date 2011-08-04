@@ -149,6 +149,6 @@ def twitter_global(content, live=False):
     # t['place_id']  = "" #need reverse Geocode using the twitter api call geo/reverse_geocode
     # t['include_entities'] = True
     if live:
-        twitter_global_status(twitter_post)
+        twitter_global_status(**twitter_post)
     else:
         log.info('twitter_global aggregation disabled: \n%s' % twitter_post)
