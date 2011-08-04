@@ -44,7 +44,7 @@
 	${h.form(h.args_to_tuple('messages', format='redirect'), json_form_complete_actions="cb_frag_remove(current_element);")}
 		<table class="message_composer" style="width:100%">
 	        
-	        <input type="hidden" name="target" value="${message['source']}"/>
+	        <input type="hidden" name="target" value="${message['source']['username']}"/>
 
 			<tr>
 				<td>${_("Subject")}&nbsp;</td>
