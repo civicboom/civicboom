@@ -277,7 +277,7 @@
         <div class="frag_col hideable vcard">
         <div class="user-details">
             
-            <span class="name" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
+            <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
             <span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
                 <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
