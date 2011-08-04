@@ -274,13 +274,22 @@
     ## Left col
     <div class="frag_left_col">
     <div class="frag_col">
+        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ## this class attributes in this section are rather important; rather
+        ## than being used for CSS, they are part of the hCard standard, they
+        ## need to stay the same in order for search engines to recognise the
+        ## current page as being a person or organisation's profile
+        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         <div class="frag_col hideable vcard">
         <div class="user-details">
             
-            <span class="name" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
+            <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
             <span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-                <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
+                <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
+            % endif
+            % if self.member.get('google_profile'):
+                <span class="detail-title">${_('Google Profile')}:</span> <a href="${self.member['google_profile']}" rel="me" target="_blank">${self.member['google_profile']}</a><br />
             % endif
             <span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
             % if self.current_user:
