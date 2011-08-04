@@ -350,6 +350,11 @@ HEADER #search {
 			width: 18px;
 			box-shadow: none;
 			background: lighten($cb-lightblue, 30%);
+
+			-webkit-transition: background 0.15s ease-in;
+			-moz-transition: background 0.15s ease-in;
+			-o-transition: background 0.15s ease-in;
+			transition: background 0.15s ease-in;
 		}
 		&.b0 {display: none;}
 		&.b1 {left: $search_width/$search_buttons*0;}
@@ -416,6 +421,9 @@ HEADER #search {
 		}
 
 		.button {
+			&.bA {
+				background: $button-top;
+			}
 			&.b1, &.b2, &.b3 {
 				opacity: 1.0;
 				filter: alpha(opacity=100);
