@@ -117,7 +117,7 @@
         if not count:
             count = len(items)
         
-        # If HREF is a dict then generate two URL's from it
+        # If HREF is a tuple of *args **kwargs then generate two URL's from it
         #  1.) the original compatable call
         #  2.) a json formatted version for the AJAX call
         js_link_to_frag_list = ''
