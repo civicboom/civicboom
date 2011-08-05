@@ -289,7 +289,7 @@
                 <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
             % endif
             % if self.member.get('google_profile'):
-                <span class="detail-title">${_('Google Profile')}:</span> <a href="${self.member['google_profile']}" rel="me" target="_blank">${self.member['google_profile']}</a><br />
+                <span class="detail-title">${_('Google Profile')}:</span> <a href="${self.member['google_profile']}" rel="me" target="_blank">${self.member['name']}</a><br />
             % endif
             <span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
             % if self.current_user:
