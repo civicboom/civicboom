@@ -7,7 +7,7 @@ from civicboom.lib.web import action_ok
 import logging
 log  = logging.getLogger(__name__)
 
-kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format']
+kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format','exclude_content','exclude_members']
 
 
 def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):
