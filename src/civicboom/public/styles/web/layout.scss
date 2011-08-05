@@ -343,11 +343,12 @@ HEADER #search {
 		top: 20px;
 		width: $search_width/$search_buttons;
 
-		&.bA {
+		&.b0 {
 			top: 0px;
 			right: 0px;
-			height: 18px;
-			width: 18px;
+			width: 20px;
+			height: 20px;
+			padding-top: 1px;
 			box-shadow: none;
 			background: lighten($cb-lightblue, 30%);
 
@@ -356,12 +357,11 @@ HEADER #search {
 			-o-transition: background 0.15s ease-in;
 			transition: background 0.15s ease-in;
 		}
-		&.b0 {display: none;}
 		&.b1 {left: $search_width/$search_buttons*0;}
 		&.b2 {left: $search_width/$search_buttons*1;}
 		&.b3 {left: $search_width/$search_buttons*2;}
 
-		&.b0, &.b1, &.b2, &.b3 {
+		&.b1, &.b2, &.b3 {
 			-webkit-transition: opacity 0.15s ease-in;
 			-moz-transition: opacity 0.15s ease-in;
 			-o-transition: opacity 0.15s ease-in;
@@ -421,7 +421,7 @@ HEADER #search {
 		}
 
 		.button {
-			&.bA {
+			&.b0 {
 				background: $button-top;
 			}
 			&.b1, &.b2, &.b3 {
