@@ -79,10 +79,10 @@ def _init_search_filters():
         return query.filter(not_(Member.username.in_(members)))
 
     def append_search_group_join_mode(query, join_mode):
-        return query.filter(Group.join_mode==join_mode)
+        return query.filter(Member.__type__=='group').filter(Group.join_mode==join_mode)
 
     def append_search_group_default_content_visibility(query, default_content_visibility):
-        return query.filter(Group.default_content_visibility==default_content_visibility)
+        return query.filter(Member.__type__=='group').filter(Group.default_content_visibility==default_content_visibility)
 
     def append_search_followed_by(query, member):
         member_id = normalize_member(member)
