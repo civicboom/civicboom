@@ -7,7 +7,7 @@ from civicboom.lib.web import action_ok
 import logging
 log  = logging.getLogger(__name__)
 
-kwargs_to_exclude_in_api_output = ['limit','offset','obj_type']
+kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format']
 
 
 def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):
@@ -18,6 +18,7 @@ def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs=
                 value = value.__db_index__()
             except Exception as e:
                 pass
+            # AllanC - it may be wise here to look to all objects that are ok .. like int, float, date ... but raise warnings on actual objects that arrive at this point
             value = unicode(value)
             if value:
                 kwargs[key] = value
