@@ -18,6 +18,8 @@
         <h1>Manage your payment account</h1>
         <p>Payment account number: ${d['id']}</p>
         <p>Account type: ${_('_'+d['type']).capitalize()}</p>
+    </div>
+    <div class="frag_whitewrap" style="float:left;width:42%">
         <h2>Services</h2>
         <p>The following services have been applied to your account:</p>
         <ul>
@@ -27,13 +29,23 @@
                 </li>
             % endfor
         </ul>
-        Total ${d['frequency']} cost: ${d['currency']}
+        <p>
+            Total cost:<br />
+            % for freq, cost in d['cost_frequency'].items():
+            ${cost} billed every ${freq}<br />
+            % endfor
+        </p>
+    </div>
+    <div class="frag_whitewrap" style="float:right;width:42%">
         <h2>Invoices</h2>
         <ul>
             % for invoice in d['invoices']:
                 <li><a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}">${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}</a></li>
             % endfor
         </ul>
+    </div>
+    <div class="cb"></div>
+    <div class="frag_whitewrap">
         <h2>Users and hubs associated with this account</h2>
         <ul>
             % for member in d['members']:

@@ -855,13 +855,11 @@ class PaymentAccount(Base):
     
     @property
     def cost_frequency(self):
-        freq_map = {0:1}
-        def mapper(tup):
-            if freq_map.get(tup[0]) == None:
-                freq_map[tup[0]] = 0
-            freq_map[tup[0]] += tup[1]
-            
-        map(mapper, [(pac.frequency, pac.price) for pac in self.services_full])    
+        freq_map = {}
+        for pac in self.services_full:
+            if freq_map.get(pac['frequency']) == None:
+                freq_map[pac['frequency']] = 0
+            freq_map[pac['frequency']] += pac['price']
         
         print '###', freq_map
         return freq_map
