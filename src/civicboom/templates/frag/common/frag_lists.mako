@@ -121,9 +121,18 @@
         #  1.) the original compatable call
         #  2.) a json formatted version for the AJAX call
         js_link_to_frag_list = ''
+        href_args   = []
+        href_kwargs = {}
         if isinstance(href, tuple):
             href_args   = href[0]
             href_kwargs = href[1]
+            
+        # If CB list is an API list, it could have kwargs as to how the list is generated, we can recreate the url automatically with these kwargs
+        if not href and isinstance(cb_list, dict) and cb_list.get('kwargs'):
+            href_args   = [cb_list.get('type')] # AllanC - hack - we know the list type 'content' or 'member' we need to put this string in an arg list but also the controllers are called 'contents' and 'members' .. the propper way would be to use the singular pluran data in the url_routing stuff, but this works for now. It may even be worth changing the name on the list from 'content' to 'contents' to match
+            href_kwargs = cb_list.get('kwargs')
+        
+        if href_args or href_kwargs:
             href_kwargs['private'] = True # AllanC - short term hack - infuture this will only be needed on private profile pages, it may help caching if it's not included every time, future investigation needed as private=true may disabled the public cache
             href      = h.url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'

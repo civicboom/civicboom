@@ -259,7 +259,7 @@ class MembersController(BaseController):
         # The link has some tips as how to use add_colums - it is very lightly documented in SQLA docs        
         
         
-        return to_apilist(results, obj_type='member', list_to_dict_transform=list_to_dict_transform, **kwargs)
+        return to_apilist(results, obj_type='members', list_to_dict_transform=list_to_dict_transform, **kwargs)
 
 
 

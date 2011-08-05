@@ -114,7 +114,7 @@ class MessagesController(BaseController):
         # Sort
         results = results.order_by(Message.timestamp.desc())
         
-        return to_apilist(results, obj_type='message', **kwargs)
+        return to_apilist(results, obj_type='messages', **kwargs)
 
 
     @web
