@@ -163,6 +163,7 @@ class ContentsController(BaseController):
 
     
     @web
+    @normalize_kwargs
     def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
@@ -292,7 +293,8 @@ class ContentsController(BaseController):
                 parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
             for filter_name in filter_map:
-                val = str(kwargs.get(filter_name, '')).strip()
+                val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired
+                #val = str(kwargs.get(filter_name, '')).strip()
                 if val:
                     f = filter_map[filter_name].from_string(val)
                     if hasattr(f, 'mangle'):
@@ -316,7 +318,7 @@ class ContentsController(BaseController):
         results = results.filter("("+sql(feed)+")")
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
-        l = to_apilist(results, obj_type='content', **kwargs)
+        l = to_apilist(results, obj_type='contents', **kwargs)
 
         # hacky benchmarking just to get some basic idea of how each feed performs
         time_end = time()

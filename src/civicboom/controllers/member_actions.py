@@ -225,8 +225,9 @@ class MemberActionsController(BaseController):
         @return 200    list generated ok
                 list   array of content objects
         """
-        q = CreatorFilter.from_string(id)
-        return content_search(_filter=q, **kwargs)
+        #q = CreatorFilter.from_string(id)
+        #return content_search(_filter=q, **kwargs)
+        return content_search(creator=id, **kwargs)
 
 
     #---------------------------------------------------------------------------
@@ -246,8 +247,9 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        q = BoomedByFilter.from_string(id)
-        return content_search(_filter=q, **kwargs)
+        #q = BoomedByFilter.from_string(id)
+        #return content_search(_filter=q, **kwargs)
+        return content_search(boomed_by=id, **kwargs)
 
 
     #---------------------------------------------------------------------------

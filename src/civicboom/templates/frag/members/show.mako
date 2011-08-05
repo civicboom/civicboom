@@ -355,8 +355,8 @@
     ${frag_list.member_list_thumbnails(
         d['following'],
         _('Following'),
-        #h.args_to_tuple('member_action', id=self.id, action='following'),
-        h.args_to_tuple('members', followed_by=self.id),
+        ##h.args_to_tuple('member_action', id=self.id, action='following'),
+        #h.args_to_tuple('members', followed_by=self.id), # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
         icon =  'follow'
     )}
     
@@ -368,12 +368,12 @@
            help_classes='mo-help-r mo-help-b'
         )}
     </%def>
-    
+
     ${frag_list.member_list_thumbnails(
         d['followers'] ,
         _('Followers') ,
-        #h.args_to_tuple('member_action', id=self.id, action='followers') ,
-        h.args_to_tuple('members', follower_of=self.id),
+        ##h.args_to_tuple('member_action', id=self.id, action='followers') ,
+        #h.args_to_tuple('members', follower_of=self.id), # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
         icon    = 'follow',
         actions = invite_members_trusted if 'invite_trusted_followers' in self.actions else None ,
     )}
@@ -448,7 +448,7 @@
         ${frag_list.content_list(
             d[list] ,
             description ,
-            h.args_to_tuple('contents', creator=self.id, list=list),
+            #h.args_to_tuple('contents', creator=self.id, list=list), # AllanC - this is no longer needed as the kwargs are provided in the api_list output
             icon = icon ,
             extra_info = True ,
         )}
@@ -460,8 +460,8 @@
         ${frag_list.content_list(
             d['boomed'],
             _('Boomed _content'),
-            #h.args_to_tuple('member_action', id=self.id, action='boomed') ,
-            h.args_to_tuple('contents', boomed_by=self.id) ,
+            #h.args_to_tuple('member_action', id=self.id, action='boomed') , 
+            #h.args_to_tuple('contents', boomed_by=self.id) , # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
             creator = True ,
             icon = 'boom' ,
             extra_info = True ,
