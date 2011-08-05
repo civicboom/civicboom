@@ -78,12 +78,13 @@ add_setting('member_visibility'         , _('Member Visibility')         , group
 add_setting('default_content_visibility', _('Default Content Visibility'), group='general/group'      , weight=6  , type='enum'            , who='group' , value=group_content_visibility.enums              )
 
 add_setting('website'                   , _('Website'      )             , group='general/contact'    , weight=7  , type='url'             , info=_('Optional: add your website or blog etc. to your profile'))
-add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=8  , type='email'           , who='user'                                                      )
+add_setting('google_profile'         , _('Google Plus or Google Profile'), group='general/contact'    , weight=8  , type='url'             , info=_('Add your profile so Google can link your content to it'))
+add_setting('email'                     , _('Email Address')             , group='general/contact'    , weight=9  , type='email'           , who='user'                                                      )
 #add_setting('twitter_username'          , _('Twitter username')          , group='aggregation')
 #add_setting('twitter_auth_key'          , _('Twitter authkey' )          , group='aggregation')
 #add_setting('broadcast_instant_news'    , _('Twitter instant news')      , group='aggregation', type='boolean')
 #add_setting('broadcast_content_posts'   , _('Twitter content' )          , group='aggregation', type='boolean')
-add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=9 , type='file'                                                                              )
+add_setting('avatar'                    , _('Avatar' )                   , group='general/avatar'     , weight=10 , type='file'                                                                              )
 
 add_setting('password_current'          , _('Current password')          , group='password/password'  , weight=100, type='password_current', who='user'                                                      )
 add_setting('password_new'              , _('New password')              , group='password/password'  , weight=101, type='password'        , who='user'                                                      )
