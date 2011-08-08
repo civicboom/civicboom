@@ -468,12 +468,22 @@ class Member(Base):
 
     @property
     def avatar_url(self, size=80):
+        # if specified, use specified avatar
         if self.avatar:
             return wh_url("avatars", self.avatar)
-        if self.__type__ == "user":
-            return wh_url("public", "images/default/avatar_user.png")
-        else:
-            return wh_url("public", "images/default/avatar_group.png")
+
+        # for members with email addresses, fall back to gravatar
+        if hasattr(self, "email"):
+            email = self.email or self.email_unverified
+            if email:
+                hash    = hashlib.md5(email.lower()).hexdigest()
+                #default = "identicon"
+                default =  wh_url("public", "images/default/avatar_%s.png" % self.__type__)
+                args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
+                return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
+
+        # last resort, fall back to our own default
+        return wh_url("public", "images/default/avatar_%s.png" % self.__type__)
 
     def delete(self):
         from civicboom.lib.database.actions import del_member
@@ -616,19 +626,6 @@ class User(Member):
     @property
     def email_normalized(self):
         return self.email or self.email_unverified
-
-    @property
-    def avatar_url(self, size=80):
-        if self.avatar:
-            return wh_url("avatars", self.avatar)
-        email = self.email or self.email_unverified
-        if email:
-            hash    = hashlib.md5(email.lower()).hexdigest()
-            #default = "identicon"
-            default =  wh_url("public", "images/default/avatar_user.png")
-            args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
-            return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
-        return Member.avatar_url
 
 DDL('DROP TRIGGER IF EXISTS update_location_time ON member_user').execute_at('before-drop', User.__table__)
 GeometryDDL(User.__table__)
