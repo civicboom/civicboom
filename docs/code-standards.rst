@@ -8,24 +8,31 @@ Shish - it seems that we (Shish + AllanC) have our editors set up the same
 
 tl;dr
 ~~~~~
-Python  : Follow python's standards (PEP8)
-          Line length of 79 characters seems ignored a lot, but having lines
-          go off the end of widescreen displays seems excessive. Perhaps 120?
-          Shish - In particular, have "if" and the effect on separate lines,
-		          so the code coverage tool can tell them apart. Otherwise,
-				  the coverage tool will see "I hit the if statement (the
-				  variable was false)" and mark the whole line as "tested"
-          Shish - I like to have two code windows side by side; 1366px / 2 =
-		          ~115 characters per window
-HTML    : We did discuss tabs vs spaces at some point, can't remember the
-          conclusion, other than "thanks to gzip, web page size isn't really
-          affected either way"...
-JScript : ?
-CSS     : ?
 
-Shish - for HTML / JS / CSS, I'm in favour of the standard "tabs to indent,
-        spaces to align", because "tab" effectively means "one indentation
-		level", and the user can choose how they want that to be displayed
+Python:
+-------
+Follow python's standards (PEP8):
+
+Line length of 79 characters seems ignored a lot, but having lines
+go off the end of widescreen displays seems excessive. Perhaps 120?
+
+Shish - In particular, have "if" and the effect on separate lines,
+        so the code coverage tool can tell them apart. Otherwise,
+        the coverage tool will see "I hit the if statement (the
+        variable was false)" and mark the whole line as "tested"
+Shish - I like to have two code windows side by side; 1366px / 2 =
+        ~115 characters per window
+
+in the src dir you can "make pep8" to have the code checked
+
+Makefiles:
+----------
+Makefiles give very different meanings to tabs and spaces; as long as
+the makefile has valid syntax it should be ok
+
+HTML, JScript, CSS (Everything else):
+-------------------------------------
+4 spaces for indentation
 
 
 code comment keywords
@@ -45,4 +52,3 @@ Not set in stone, but consistency makes it easier to spot:
   ???? - workarounds for bugs in IE, this code can be removed when IE is dead
   name - a developer's login name followed by a dash indicates that they are
          voicing an opinion.
-

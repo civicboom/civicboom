@@ -27,9 +27,8 @@
 ##------------------------------------------------------------------------------
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
-        <input type="search" name="term" placeholder="${_("Find _assignments, _articles and _members")}" class="search_input" id="search_input">
-        <span class="button bA">V</span>
-        <input type="submit" name="type" class="button b0" value="All" id="search_default">
+        <input type="search" name="term" placeholder="${_("Find _assignments, _articles and _members")}" class="search_input">
+        <input type="submit" name="type" class="button b0" value="V">
         <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
         <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
         <input type="submit" name="type" class="button b3" value="${_("_Members")}">

@@ -73,7 +73,7 @@ class RegisterController(BaseController):
             c.logged_in_user    = c.new_user #fake logged in user for rendering template
             c.logged_in_persona = c.new_user
         else:
-            abort(403)
+            raise action_error(code=403, message="Unable to verify email hash - it may already have been validated?")
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','name','dob']
