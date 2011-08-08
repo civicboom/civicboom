@@ -1,11 +1,13 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
+##-----------------------------------------------------------------------------
 ## includes
+##-----------------------------------------------------------------------------
+<%namespace name="components"      file="/html/mobile/common/components.mako" />
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
-## page structure defs
 <%def name="body()">
     <%
         self.member    = d['member']
@@ -15,7 +17,10 @@
     
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
-        <div data-role="header" data-position="inline">
+        <div data-role="header" data-position="inline" data-theme="b">
+            <a href="/" rel="external">
+                <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />
+            </a>
             <h1>${self.name}</h1>
             <a href="#member-extra-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
         </div>
@@ -24,12 +29,12 @@
             ${member_details_full(self.member)}
         </div>
         
-        ${control_bar()}
+        ${components.control_bar()}
     </div>
     
     ## Extra info (content/boomed/etc)
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
-        <div data-role="header" data-position="inline">
+        <div data-role="header" data-position="inline" data-theme="b">
             <a href="#member-details-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
             <h1>${self.name} - extra</h1>
         </div>
@@ -37,34 +42,18 @@
         <div data-role="content">
             ${member_content_list(d)}
         </div>
+        
+        ${components.control_bar()}
     </div>
 </%def>
 
-<%def name="control_bar()">
-    % if c.logged_in_user:
-        <div data-role="footer" data-position="fixed">
-            <div data-role="navbar" class="ui-navbar">
-                <ul>
-                    <li>
-                        <a href="${h.url(controller='profile', action='index')}" rel="external">My profile</a>
-                    </li>
-                    <li>
-                        ${h.secure_link(
-                            h.url(controller='account', action='signout'),
-                            _('Sign out')
-                        )}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    % endif
-</%def>
-
 <%def name="page_title()">
-    ${_("_site_name Mobile - " + self.name)}
+    ${_(self.name)}
 </%def>
 
+##-----------------------------------------------------------------------------
 ## Short member details - Username, real name and user type + avatar
+##-----------------------------------------------------------------------------
 <%def name="member_details_short(member, as_link=True)">
     % if member:
         <%
@@ -90,8 +79,10 @@
     % endif
 </%def>
 
+##-----------------------------------------------------------------------------
 ## Full user details for member/profile pages
 ## Includes username/etc, description, followers/etc
+##-----------------------------------------------------------------------------
 <%def name="member_details_full(member)">
     % if member:
         <%

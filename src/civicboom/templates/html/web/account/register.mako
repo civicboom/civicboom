@@ -26,7 +26,7 @@
 			<tr><td><p class="step">1. Please choose one of the following. Do you:</p></td></tr>
             ## Guidence type
             ${help_type()}
-            <tr><td style="text-align: center;"><span class="button" id="help_type_continue">Continue to step 2</span><p class="error hideable">Please select a help type before continuing</p></td></tr>
+            <tr><td style="text-align: center;"><p class="error hideable" style="padding-bottom: 1em;">${_("Great you're so eager - but you need to choose one of the above first!")}</p><span class="button" id="help_type_continue">Continue to step 2</span></td></tr>
         </table>
         <table class="newform user hide_if_js">
             
@@ -197,10 +197,6 @@
         <td>${invalid('help_type')}</td>
     </tr><tr>
         <td>
-            
-            
-            ##<p>${_('To help you make the best of _site_name, please tell us if ... ')}</p>
-            
             <div class="user_type_option ${'selected' if radio_choices['ind'][1] else ''}" onclick="$('#help_type_ind').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
                 <img src="/images/default/thumbnail_response.png" alt="response"/>
                 
@@ -211,18 +207,6 @@
                     <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
                     <li><b>${_('Click here if this is you!')}</b></li>
                 </ul>
-                
-                <%doc>
-                <div class="hideable">
-                    <p>${_('You can get your stories directly to journalists, news organisations and media outlets in three ways:')}</p>
-                    
-                    <ol>
-                        <li>${_('Respond to their _assignments for your news stories by Following them on _site_name')}</li>
-                        <li>${_('Upload your _articles directly to your chosen journalists, publications and news organisations via the _widget - as video, images, audio... as it happens.')}</li>
-                        <li>${_('Grab the mobile app and share your stories from source, out in the field directly as it happens.')}</li>
-                    </ol>
-                </div>
-                </%doc>
             </div>
             <div class="or"><p>or</p></div>
             <div class="user_type_option ${'selected' if radio_choices['org'][1] else ''}" onclick="$('#help_type_org').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
@@ -234,26 +218,7 @@
                     <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
                     <li><b>${_('Click here if this is you!')}</b></li>
                 </ul>
-                
-                <%doc>
-                <div class="hideable">
-                    <p>${_('You can get stories directly from your audience in two ways:')}
-                    
-                    <ol>
-                        <li>${_('Post requests for _articles - they are automatically pushed to your _widget and Followers as alerts for them to respond to')}</li>
-                        <li>${_('Add the _widget to your site - get video, images, audio from your audience')}</li>
-                        <li>${_('Push the mobile app to your users - get news from source, out in the field directly as it happens')}</li>
-                    </ol>
-                </div>
-                </%doc>
             </div>
-            
-            ##<div style="clear:both;"></div>
-            
-            ##<p>${_('Help shape the news and together make it relevant and meaningful. ')}</p>
-            
-            ##<p>${_('Why do I need to choose?')}</p>
-            ##<p>${_("There are different ways in which you can use _site_name - so to make sure you get the right kind of hand holding as you navigate and learn how to use _site_name we need to know whether you're going to be responding to _assignments for _articles, or asking for _articles. ")}</p>
             
             ## Radio buttons - hidden if js is enabled
             <div class="hide_if_js">

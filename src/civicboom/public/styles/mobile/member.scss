@@ -7,8 +7,5 @@ BODY.c-members.a-show, BODY.c-profile {
         width: 100px;
         float: left;
         margin-right: 15px;
-        
-        border: 10px solid #ccc;
-        @include border_radius(3px);
     }
 }
