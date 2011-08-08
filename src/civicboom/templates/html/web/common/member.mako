@@ -36,7 +36,7 @@
 	% if as_link:
 		<a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}>
 	% endif
-          <img src="${member['avatar_url']}" alt="${member['username']}" class="img ${img_class}" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+          <img src="${member['avatar_url']}" alt="${member['username']}" class="img ${img_class}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
 	% if as_link:
 		</a>
 	% endif
@@ -51,7 +51,7 @@
 		% if show_avatar:
 		<div class="clipper">
             <a href="${h.url('member', id=member['username'])}" title="${member['name']}">
-			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+			  <img src="${member['avatar_url']}" alt="${member['username']}" class="img" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
             </a>
 			##<img src="/images/badges/user.png" alt="User" class="type">
             ##% if member['type']=="user":

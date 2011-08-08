@@ -471,7 +471,7 @@ class Member(Base):
         if self.avatar:
             return wh_url("avatars", self.avatar)
         if self.__type__ == "user":
-            return wh_url("public", "images/default/avatar.png")
+            return wh_url("public", "images/default/avatar_user.png")
         else:
             return wh_url("public", "images/default/avatar_group.png")
 
@@ -625,7 +625,7 @@ class User(Member):
         if email:
             hash    = hashlib.md5(email.lower()).hexdigest()
             #default = "identicon"
-            default =  wh_url("public", "images/default/avatar.png")
+            default =  wh_url("public", "images/default/avatar_user.png")
             args    = urllib.urlencode({'d':default, 's':str(size), 'r':"pg"})
             return "https://secure.gravatar.com/avatar/%s?%s" % (hash, args)
         return Member.avatar_url
