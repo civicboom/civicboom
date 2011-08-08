@@ -33,7 +33,7 @@
             <td>
                 <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
                     % if owner_name:
-                    <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default/avatar.png'" />
+                    <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default/avatar_user.png'" />
                     % else:
                     <img src="/images/boom128.png"  alt="${_('_site_name')}" style="height:${size_avatar}px;" />
                     % endif
@@ -76,7 +76,7 @@
         % if c.logged_in_persona:
             <a href="${h.url(controller='profile', action='index')}" target="_blank">
                 ${c.logged_in_persona.name or c.logged_in_persona.username}
-                <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+                <img src="${c.logged_in_persona.avatar_url}" style="max-height:1em;" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
             </a>
         % elif owner['username']:
             <a href="${h.url('member_action', id=owner['username'], action='follow', sub_domain='www')}" target="_blank">
