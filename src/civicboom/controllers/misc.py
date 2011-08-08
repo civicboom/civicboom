@@ -289,7 +289,7 @@ Disallow: /*.frag$
             return content_list
         
         
-        #return to_apilist(featured_content, obj_type='content') # AllanC - a liniear list of featured contebt
+        #return to_apilist(featured_content, obj_type='contents') # AllanC - a liniear list of featured contebt
         
         # Sponsored content dictionary
         #s = {}

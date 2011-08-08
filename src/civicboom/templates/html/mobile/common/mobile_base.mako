@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>${next.page_title()}</title>
+        ${page_title()}
         <link rel="shortcut icon" href="/images/favicon.ico" />
         
         ## --- CSS imports ---
@@ -21,7 +21,7 @@
         ## ------
         
         <script type="text/javascript" src="/javascript/jquery-1.6.2.js"></script>
-        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b1.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
         <script type="text/javascript">
             // $.mobile.page.prototype.options.addBackBtn = "true";
         </script>
@@ -31,3 +31,12 @@
         ${next.body()}
     </body>
 </html>
+
+<%def name="page_title()">
+    <%
+        title = _('_site_name Mobile')
+        if next.page_title():
+            title += " - "+next.page_title()
+    %>
+    <title>${_(title)}</title>
+</%def>

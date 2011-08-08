@@ -78,7 +78,7 @@
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;" onclick="window.location='/profile';">
       <a id="persona_avatar" href="${url(controller='profile', action='index')}"><!--
-        --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
+        --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"' /><!--
       --></a>
       <div id="persona_details">
         ${c.logged_in_persona.name}
@@ -115,7 +115,7 @@
                 % endif
             >
                 <td>
-                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
                 </td>
                 <td>
                     <p class="name">${member.name or member.username}</p>

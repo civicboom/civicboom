@@ -17,7 +17,7 @@
                         ${signin()}
                     </td>
                     <td width="10%" rowspan="3">
-                        <b>or &rarr;</b>
+                        <b style="font-size: 3em;">&nbsp;or&nbsp;&rarr;</b>
                     </td>
                     <td width="45%" rowspan="3">
                         ${janrain()}
