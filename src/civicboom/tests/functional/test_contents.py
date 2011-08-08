@@ -31,7 +31,7 @@ class TestContentsController(TestController):
         # AllanC -- humm .. this fails .. they should be the same list .. investigate
         #           could be to do with trusted followers
         # remmed for now
-        #self.assertEquals(json_string_1, json_string_2)
+        self.assertEquals(json_string_1, json_string_2)
         
         #-----
         # Lists of drafts should not have other article types in them .. especially not for logged out users!!!
