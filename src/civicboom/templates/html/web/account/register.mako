@@ -22,10 +22,6 @@
     <form action="" method="post">
         ${help_type()}
         <table class="newform user hide_if_js">
-            
-            <tr><td colspan="2">
-                <p class="step">2. Fill in the following:</p>
-            </td></tr>
             % if 'username' in c.required_fields:
               ${username()}
             % endif
@@ -51,9 +47,10 @@
             
             ## Submit button
 			<tr>
-				<td></td>
 				<td>
-                    <p class="button" id="user_details_back"><a>Back</a></p>
+                    <a class="button" id="user_details_back">${_("Go Back")}</a>
+                </td>
+				<td>
                     <input type="submit" name="submit" class="button" value="${_("Register")}"/>
                 </td>
 			</td>
@@ -62,18 +59,13 @@
     </div>
     
     <script type="text/javascript">
-        help_type_error = $('#help_type_continue').parent().find('.error');
-        $('#help_type_continue').click(function() {
-            if (!$('#help_type_ind').is(':checked') && !$('#help_type_org').is(':checked')) {
-                help_type_error.slideDown();
-            } else {
-                help_type_error.slideUp();
-                $('.newform.help').fadeOut(function() {
-                    $('.newform.user').fadeIn();
-                });
-            }
-        });
-        
+        function pick_help(type) {
+            $('#help_type_'+type).click();
+            $('.newform.help').fadeOut(function() {
+                $('.newform.user').fadeIn();
+            });
+        }
+
         $('#user_details_back').click(function() {
             $('.newform.user').fadeOut(function() {
                 $('.newform.help').fadeIn();
@@ -145,7 +137,7 @@
 		<td>
             <input type="password" name="password"         value="" />
             <br/>
-            <p class="smaller">(minimum of 5 characters):</p>
+            <p class="smaller">(minimum of 5 characters)</p>
             ${invalid('password')}
         </td>
     </tr>
@@ -185,12 +177,6 @@
 ## help_type - radio buttons
 ##------------------------------------------------------------------------------
 <%def name="help_type()">
-<%
-    radio_choices = {
-        'ind':[_('Individual')  , False],
-        'org':[_('Organisation'), False],
-    }
-%>
 <table class="newform help" style="margin: auto;">
     <tr>
         <td>${invalid('help_type')}</td>
@@ -207,7 +193,7 @@
                     <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
                 </ul>
 
-                <input class="button" style="width: 100%" type="button" name="help_type" value="I want to share my stories">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="Help me share my stories">
             </div>
             <div class="or"></div>
             <div class="user_type_option">
@@ -218,10 +204,17 @@
                     <li>${_('Your greatest resource is your audience because news starts with people')}</li>
                     <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
                 </ul>
-                <input class="button" style="width: 100%" type="button" name="help_type" value="I want to find stories">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="Help me find stories">
             </div>
             
             <div class="hide_if_js">
+<%
+    radio_choices = {
+        'ind':[_('Individual')  , False],
+        'org':[_('Organisation'), False],
+        'ind':[_('Just browsing'), False],
+    }
+%>
                 % for radio_key, (display_text, checked) in radio_choices.iteritems():
                     <%
                         if checked:
@@ -234,7 +227,10 @@
         </td>
     </tr>
     <tr>
-        <td style="text-align: center;"><span id="help_type_continue">If you just want to explore, click here to continue without guides</span></td>
+        <td style="text-align: center;">
+            These options only affect which guides you will see, and won't affect which features
+            <br>are available - if you just want to explore, <a href="#" onclick="pick_help('ind')">click here to continue without guides</a>
+        </td>
     </tr>
 </table>
 </%def>
