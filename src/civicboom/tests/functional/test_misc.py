@@ -111,6 +111,13 @@ class TestMiscController(TestController):
         # FIXME: test that "Cache-Control: public" IS set for anonymous
 
 
+    def test_template_guess(self):
+        # this has no explicit template, but because the API returns
+        # "type = list of content" it should automagically guess
+        # the right template
+        response = self.app.get("/members/unittest/content_and_boomed")
+
+
     def test_mobile_detection(self):
         # test non-mobile
         response = self.app.get(
