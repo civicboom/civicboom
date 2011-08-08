@@ -386,11 +386,11 @@ def _find_template(result, type):
     if 'data' in result and 'list' in result['data'] and 'type' in result['data']['list']:
         list_type = result['data']['list']['type']
         list_part = None
-        if   list_type == 'content':
+        if   list_type == 'contents':
             list_part = 'contents/index'
-        elif list_type == 'member':
+        elif list_type == 'members':
             list_part = 'members/index'
-        elif list_type == 'message':
+        elif list_type == 'messages':
             list_part = 'messages/index'
         if list_part:
             paths = paths + [
