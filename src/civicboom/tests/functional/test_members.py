@@ -37,6 +37,21 @@ class TestMembersController(TestController):
 
         # badly named content lists should give "bad paramaters" error
         response = self.app.get(url('member_action', id='unittest', action='content', list='cake', format='json'), status=400)
+        
+        # list equality - members show should be the same for anon users and non trusted followers
+        self.log_out()
+        response = self.app.get(url('member', id='unittest', format='json'))
+        json_string_1 = response.body
+        
+        self.log_in_as('kitten')
+        response = self.app.get(url('member', id='unittest', format='json'))
+        json_string_2 = response.body
+        
+        self.assertEquals(json_string_1, json_string_2)
+        # AllanC -- humm .. this fails .. they should be the same list .. investigate
+        #           could be to do with trusted followers
+        # NOTE: This should be fixed when shish updates the draft index behaviour
+
 
     def test_member_follow(self):
         # no following self
