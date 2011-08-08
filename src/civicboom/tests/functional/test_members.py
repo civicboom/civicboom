@@ -37,6 +37,26 @@ class TestMembersController(TestController):
 
         # badly named content lists should give "bad paramaters" error
         response = self.app.get(url('member_action', id='unittest', action='content', list='cake', format='json'), status=400)
+        
+        # list equality - members show should be the same for anon users and non trusted followers
+        # AllanC - comparing output strings failed origninaly - because logged in users have differnt 'action' lists
+        #          solution - remove the action lists and redump to string to check comparison
+        
+        self.log_out()
+        response = self.app.get(url('member', id='unittest', format='json'))
+        response_json = json.loads(response.body)
+        del response_json['data']['actions']
+        json_string_1 = json.dumps(response_json)
+        
+        self.log_in_as('kitten')
+        response = self.app.get(url('member', id='unittest', format='json'))
+        response_json = json.loads(response.body)
+        del response_json['data']['actions']
+        json_string_2 = json.dumps(response_json)
+        
+        self.assertEquals(json_string_1, json_string_2)
+
+
 
     def test_member_follow(self):
         # no following self

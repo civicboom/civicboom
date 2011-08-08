@@ -106,7 +106,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.id)
+        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else None)
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),
@@ -214,8 +214,8 @@ class ContentsController(BaseController):
         logged_in_creator = False
         creator = None
 
-        if kwargs.get('list') == "drafts" and not c.logged_in_persona:
-            kwargs['list'] = 'all'
+        #if kwargs.get('list') == "drafts" and not c.logged_in_persona:
+        #    kwargs['list'] = 'all'
 
         try:
             # Try to get the creator of the whole parent chain or creator of self

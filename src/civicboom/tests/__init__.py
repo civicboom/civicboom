@@ -12,8 +12,6 @@ from unittest import TestCase
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
 from pylons import url
-#from pylons import url as url_pylons
-#from civicboom.lib.web import url
 from routes.util import URLGenerator
 
 from civicboom.model      import Message

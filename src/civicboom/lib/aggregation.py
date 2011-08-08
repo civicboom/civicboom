@@ -128,7 +128,7 @@ def twitter_global(content, live=False):
 
     title           = strip_html_tags(content.title  )
     content_preview = strip_html_tags(content.content)
-
+    
     # Create Twitter message with tiny URL
     if len(title) > 70:
         title           = truncate(title          , length=70)
@@ -138,7 +138,7 @@ def twitter_global(content, live=False):
     
     twitter_post = {}
     twitter_post['status'] = "%s: %s (%s)" % (title, content_preview, link)
-
+    
     # Add location if avalable
     if content.location:
         twitter_post['lat']                 = content.location.coords(Session)[1]
