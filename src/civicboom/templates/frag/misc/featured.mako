@@ -30,7 +30,10 @@
             most_responses          = _('What people are getting involved in'),
             near_me                 = _('Near me'),
             recent_assignments      = _('Recent _assignments'),
-            recent                  = _('Just happened'),
+            recent                  = _('Stories that just happened'),
+            
+            new_members             = _('Latest Members'),
+            new_groups              = _('Latest Hubs'),
         )
     %>
     
@@ -41,16 +44,31 @@
             <div class="frag_list">
                 <h1>${_("Featured content")}</h1>
             </div>
-        
+            
+            <%doc>
+            ## AllanC - this was remmed because it was taking up to much space. We wanted to show new users and hubs and needed space.
             % for (title, cb_list) in d['sponsored'].iteritems():
                 <% title = list_names.get(title, title) %>
                 ${frag_list.sponsored_list(cb_list, title, creator=1)}
             % endfor
-            
+            </%doc>
             % for (title, cb_list) in d['featured'].iteritems():
                 <% title = list_names.get(title, title) %>
                 ${frag_list.content_list(cb_list, title, creator=1)}
             % endfor
+            
+            <%doc>
+            <table width="100%" style="margin-top: 1em;"><tr>
+            % for (title, cb_list) in d['members'].iteritems():
+                <% title = list_names.get(title, title) %>
+                <td style="vertical-align: top;">${frag_list.member_list(cb_list, title)}</td>
+            % endfor
+            </tr></table>
+            </%doc>
+            
+            <div style="float:left;  width:48%; margin-top: 0.6em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'))}</div>
+            <div style="float:right; width:48%; margin-top: 0.2em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
+            
         </div>
         <div style="padding: 0.15em"></div>
     </div>

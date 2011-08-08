@@ -250,15 +250,3 @@ function init_validation(element, validator) {
 		check_timer = setTimeout(validator, 500);
 	});
 }
-
-$(function() {
-	$("#search_input").bind("keydown", function(event) {
-		var keycode = (event.keyCode ? event.keyCode : (event.which ? event.which : event.charCode));
-		if (keycode == 13) {
-			$('#search_default').click();
-			return false;
-		} else  {
-			return true;
-		}
-	});
-});

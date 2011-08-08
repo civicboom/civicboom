@@ -8,5 +8,7 @@ The package build process creates src/.version with the git version
 
 In app_globals, we check for .version
 
-If app_globals.version is set, we load static files from bm1:/$version/,
+If app_globals.version is set, load static files from cloudfront:/$version/,
 if not, we load from $host/
+
+cloudfront is a caching reverse proxy for bm1

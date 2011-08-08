@@ -20,7 +20,8 @@ Using the site
 - Setup hosts file
   Add the following line to the bottom of the /etc/hosts file
   127.1.0.1	widget.c.localhost m.c.localhost www.c.localhost
-  (netman overwrites 127.0.0.1 and *.c.localhost with a 3 part domain will map closer to the production env)
+  (netman overwrites 127.0.0.1, and .c.localhost with a 3 part domain
+  will map closer to the production env)
   (note: you will need to toggle the cache for each of these domains)
 - Connecting
   http://www.c.localhost/

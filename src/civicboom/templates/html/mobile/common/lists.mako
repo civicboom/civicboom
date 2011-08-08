@@ -12,15 +12,17 @@
 ## Generate li elements for a list of contents
 <%def name="list_contents(list, title=None)">
     % if list.get('count') and list['count']:
-        % if title:
-            <li data-role="list-divider" role="heading">
-                ${title}
-                <span class="ui-li-count">${list['count']}</span>    
-            </li>
-        % endif
-        % for item in list['items']:
-            ${content_li(item)}
-        % endfor
+        <ul data-role="listview" data-inset="true">
+            % if title:
+                <li data-role="list-divider" role="heading">
+                    ${title}
+                    <span class="ui-li-count">${list['count']}</span>    
+                </li>
+            % endif
+            % for item in list['items']:
+                ${content_li(item)}
+            % endfor
+        </ul>
     % endif
 </%def>
 

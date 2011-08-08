@@ -320,6 +320,7 @@ class Member(Base):
             'utc_offset'          : lambda member: (member.utc_offset.days * 86400 + member.utc_offset.days),
             'join_date'           : None ,
             'website'             : lambda member: member.extra_fields.get('website') ,
+            'google_profile'      : lambda member: member.extra_fields.get('google_profile') ,
             'description'         : None ,
             'push_assignment'     : lambda member: member.extra_fields.get('push_assignment') ,
             
@@ -351,6 +352,9 @@ class Member(Base):
     def __link__(self):
         from civicboom.lib.web import url
         return url('member', id=self.username, sub_domain='www', qualified=True)
+
+    def __db_index__(self):
+        return self.username
 
     def hash(self):
         h = hashlib.md5()

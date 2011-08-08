@@ -2,19 +2,30 @@
 
 import math
 
+limit_vhost = "www.civicboom.com"
+
 timings = {}
+anon_y = 0
+anon_n = 0
 
 def tryfloat(n):
+    if ":" in n: n = n.split(":")[1]
     return (0 if n=="-" else float(n))
 
-for line in file("/var/log/nginx/civicboom.timing.log"):
+for line in file("civicboom.timing.log"):
     #192.168.0.6 - - [17/Feb/2011:10:26:12 +0000] "GET /styles/common/uploadify.css HTTP/1.1" 200 1327 0.208 0.208
     try:
-        (ip, vhost, user, date, offset, method, uri, proto, status, size, upstream, downstream) = line.split()
+        (ip, vhost, user, date, offset, method, uri, proto, status, size, upstream, downstream, logged_in) = line.split()
+        if limit_vhost and limit_vhost != vhost:
+            continue
         if uri not in timings:
             timings[uri] = {"up":[], "dn":[]}
         timings[uri]["up"].append(tryfloat(upstream))
         timings[uri]["dn"].append(tryfloat(downstream))
+        if logged_in.split(":")[1] == "True":
+            anon_n = anon_n + 1
+        else:
+            anon_y = anon_y + 1
     except:
         print
 
@@ -25,3 +36,5 @@ for uri in timings:
 for uri in timings:
     if len(timings[uri]["up"]) > 1:
         print "%5.3f %d %s" % (timings[uri]["up-avg"], len(timings[uri]["up"]), uri)
+
+print "Anon/not:",anon_y,anon_n
