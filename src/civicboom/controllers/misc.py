@@ -258,7 +258,7 @@ Disallow: /*.frag$
     #         way a user with a location only gets feature updates every 10
     #         mins, and users without locations all share one featured set
     @web
-    @cacheable(time=600, anon_only=False)
+    @cacheable(time=120, anon_only=False)
     def featured(self):
         """
         Make a numer of querys to get the top interesting content
