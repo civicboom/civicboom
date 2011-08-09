@@ -73,7 +73,7 @@ BODY.c-register.a-new_user.u-user {
     .user_type_option {
         display: inline-block;
         position: relative;
-        width: 40%;
+        width: 39%;
         min-height: 165px;
 	      font-size: 120%;
 	      cursor: pointer;
@@ -134,7 +134,7 @@ BODY.c-register.a-new_user.u-user {
     
     .selected {
         background-color: $cb-lighterblue;
-        background-image: url('/images/misc/registration/registration_tick.png');
+        background-image: url('registration_tick.png');
         background-repeat: no-repeat;
         background-position: center center;
         border: 0.1em solid $cb-lightblue;
