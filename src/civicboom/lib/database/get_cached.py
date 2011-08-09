@@ -4,13 +4,13 @@ from civicboom.model.media   import Media
 from civicboom.model.message import Message
 from civicboom.model.meta    import Session
 
+from sqlalchemy         import and_,  select
 from sqlalchemy.orm     import joinedload
-from sqlalchemy         import and_
 from sqlalchemy.orm.exc import NoResultFound
 
-from sqlalchemy import select
-
 from sqla_hierarchy import *
+
+from civicboom.lib.cache.caching_query import FromCache
 
 from cbutils.misc import make_username
 
