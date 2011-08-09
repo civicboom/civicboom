@@ -127,7 +127,7 @@
         <li class="current_persona">
             <div class="persona_detail">
                 <a class="name" href="${url(controller='profile', action='index')}">
-                    <img src="${c.logged_in_persona.avatar_url}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' />
+                    <img src="${c.logged_in_persona.avatar_url}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"' />
                 </a>
                 ##RAR<br />
                 ${c.logged_in_persona.name}
@@ -150,7 +150,7 @@
                 % endif
             class="hover">
                 <div class="persona_detail">
-                    <img src="${member.avatar_url}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' />
+                    <img src="${member.avatar_url}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"' />
                     ${member.name}
                 </div>
                 <div class="message_holder">

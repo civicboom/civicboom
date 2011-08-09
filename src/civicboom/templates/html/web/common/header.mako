@@ -27,9 +27,8 @@
 ##------------------------------------------------------------------------------
 <div id="search">
     <form action="${url(controller='misc', action='search_redirector')}">
-        <input type="search" name="term" placeholder="${_("Find _assignments, _articles and _members")}" class="search_input" id="search_input">
-        <span class="button bA">V</span>
-        <input type="submit" name="type" class="button b0" value="All" id="search_default">
+        <input type="search" name="term" placeholder="${_("Find _assignments, _articles and _members")}" class="search_input">
+        <input type="submit" name="type" class="button b0" value="V">
         <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
         <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
         <input type="submit" name="type" class="button b3" value="${_("_Members")}">
@@ -79,7 +78,7 @@
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;" onclick="window.location='/profile';">
       <a id="persona_avatar" href="${url(controller='profile', action='index')}"><!--
-        --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar.png"' /><!--
+        --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"' /><!--
       --></a>
       <div id="persona_details">
         ${c.logged_in_persona.name}
@@ -116,7 +115,7 @@
                 % endif
             >
                 <td>
-                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar.png"'/>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
                 </td>
                 <td>
                     <p class="name">${member.name or member.username}</p>

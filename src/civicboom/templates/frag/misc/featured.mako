@@ -67,7 +67,7 @@
             </%doc>
             
             <div style="float:left;  width:48%; margin-top: 0.6em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'))}</div>
-            <div style="float:right; width:48%; margin-top: 0.6em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
+            <div style="float:right; width:48%; margin-top: 0.2em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
             
         </div>
         <div style="padding: 0.15em"></div>

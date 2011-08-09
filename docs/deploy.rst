@@ -4,7 +4,7 @@ Deployment process
 SSH Config for easy access to hosts
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - vim ~/.ssh/config and add the following:
-----
+
 host webapi1
 	User ubuntu
 	HostName webapi1.civicboom.com
@@ -12,14 +12,14 @@ host webapi1
 
 host webapi2
 	User ubuntu
-        HostName webapi2.civicboom.com
-        IdentityFile ~/.ec2/civicboom-key.pem
+    HostName webapi2.civicboom.com
+    IdentityFile ~/.ec2/civicboom-key.pem
 
 host db1
 	User ubuntu
-        HostName db1.civicboom.com
-        IdentityFile ~/.ec2/civicboom-key.pem
-----
+    HostName db1.civicboom.com
+    IdentityFile ~/.ec2/civicboom-key.pem
+
 - This means you will be able to ssh webapi1 or ssh webapi2 etc.
 
 Push to master to build packages

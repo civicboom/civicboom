@@ -61,6 +61,7 @@ __all__ = [
     "web",
     "auth",
     "account_type", "role_required", "age_required",
+    "normalize_kwargs",
     #"account_types", #types for use with with account_type decorator
     
     #errors

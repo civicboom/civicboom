@@ -328,7 +328,7 @@ class ContentActionsController(BaseController):
         
         if hasattr(content, 'assigned_to'):
             assigned_to = [update_dict(a.member.to_dict(), {'status': a.status}) for a in content.assigned_to]  # 'update_date':a.update_date
-            return to_apilist(assigned_to, obj_type='content', **kwargs) #TODO transform
+            return to_apilist(assigned_to, obj_type='contents', **kwargs) #TODO transform
         return to_apilist()
 
 

@@ -429,6 +429,8 @@ class ParentIDFilter(Filter):
 
 class CreatorFilter(Filter):
     def __init__(self, creator_id):
+        if not creator_id:
+            creator_id = 0 # AllanC - if no creator, set the id to 0. There is no user_id 0 .. so nothing with be returned
         assert type(creator_id) == int
         self.creator_id = creator_id
 

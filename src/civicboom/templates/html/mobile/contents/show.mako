@@ -1,8 +1,9 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 ## includes
+<%namespace name="components"      file="/html/mobile/common/components.mako" />
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
-<%namespace name="list_includes" file="/html/mobile/common/lists.mako" />
+<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 
 ## page structure defs
 <%def name="body()">
@@ -13,50 +14,60 @@
         self.creator = self.content['creator']
         self.media = self.content['attachments']
         self.responses = d['responses']
+        self.actions   = d.get('actions', [])
     %>
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="content-main-${self.id}" class="content_page">
-        <div data-role="header" data-position="inline">
+        <div data-role="header" data-position="inline" data-theme="b">
             <h1>${self.title}</h1>
             <a href="#content-info-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
         </div>
         ${content_main()}
+        
+        ${components.control_bar()}
     </div>
     
     <div data-role="page" data-title="${page_title()} - info" data-theme="b" id="content-info-${self.content['id']}" class="content_page">
-        <div data-role="header" data-position="inline">
+        <div data-role="header" data-position="inline" data-theme="b">
             <a href="#content-main-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
             <h1>${self.title} - info</h1>
         </div>
         ${content_info()}
+        
+        ${components.control_bar()}
     </div>
     
     <div data-role="page" data-title="${page_title()} - media" data-theme="b" id="content-media-${self.content['id']}" class="content_page">
-        <div data-role="header" data-position="inline">
+        <div data-role="header" data-position="inline" data-theme="b">
             <a href="#content-main-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
             <h1>${self.title} - media</h1>
         </div>
         ${content_media()}
+        
+        ${components.control_bar()}
     </div>
 </%def>
 
 <%def name="page_title()">
-    ${_("_site_name Mobile - %s") % d['content']['title']}
+    ${_(d['content']['title'])}
 </%def>
 
 <%def name="content_main()">
     <div data-role="content">
         ##----Media----
-        <div class="top_media">
+        <div class="top_media media_list">
             <%
                 count = len(self.media)
                 thumb = None
-                for item in self.media:
-                    thumb = item['thumbnail_url'] if item['type'] in ["image", "video"] else None
-                thumb = "/images/misc/shareicons/audio_icon.png" if not thumb else None
+                if count:
+                    for item in self.media:
+                        if item['type'] in ["image", "video"]:
+                            thumb = item['thumbnail_url']
+                    if not thumb:
+                        thumb = "/images/misc/shareicons/audio_icon.png"
             %>
-            % if count > 1:
+            % if thumb and count > 1:
                 <a href="#content-media-${self.id}" alt="more"><img src="${thumb}" /></a>
-            % elif count:
+            % elif thumb and count:
                 <a href="${self.media[0]['original_url']}"><img src="${thumb}" /></a>
             % endif
         </div>
@@ -65,11 +76,6 @@
         <div class="content_text">
             ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
         </div>
-        
-        ##----Details----
-        % if hasattr(self.content,'views'):
-            <p>views: ${self.content['views']}</p>
-        % endif
     </div>
 </%def>
 

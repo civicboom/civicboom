@@ -32,8 +32,8 @@ def profanity_check(content_id, url_base):
         content.flag(comment=u"automatic profanity check failed, please manually inspect", url_base=url_base, moderator_address=config['email.moderator'])
     elif profanity_response['FoundProfanity']:
         log.debug("Profanity found")
-        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True, moderator_address=config['email.moderator'])
         content.content = profanity_response['CleanText']
+        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, moderator_address=config['email.moderator']) # delay_commit=True, # this flag cmd should commit the Session
     else:
         log.debug("No profanity found")
         if content.__type__ != 'comment' and content.__type__ != 'draft':
