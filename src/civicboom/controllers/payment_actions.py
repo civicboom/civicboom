@@ -104,7 +104,7 @@ class PaymentActionsController(BaseController):
     @web
     @auth
     @role_required('admin')
-    def billing_account_deactivate(self, id, **kwargs):
+    def billing_account_remove(self, id, **kwargs):
         billing_account_id = kwargs.get('billing_account_id')
         
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
@@ -121,9 +121,10 @@ class PaymentActionsController(BaseController):
             raise action_error(_('This billing account does not exist'), code=404)
         
         if billing_account.provider == 'paypal-recurring':
-            response = paypal_interface.manage_recurring_payments_profile_status(billing_account.reference, 'Cancel')
-            if 'Success' not in recurring_response.ACK:
-                raise action_error(_('Error cancelling recurring payment with PayPal'), code=400)
+            try:
+                response = cancel_recurrings['paypal'](billing_account.reference)
+            except cbPaymentError as e:
+                raise action_error(e.value, code=400)
         
         billing_account.status = 'deactivated'
         Session.commit()
@@ -172,10 +173,8 @@ class PaymentActionsController(BaseController):
         if service not in api_calls.begins:
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
-        api_call = api_calls.begins[service]
-        
         try:
-            response = api_call(
+            response = api_calls.begins[service](
                 payment_account_id  = id,
                 amount              = amount,
                 currency            = currency,
@@ -213,10 +212,8 @@ class PaymentActionsController(BaseController):
         if service not in api_calls.cancels:
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
-        api_call = api_calls.cancels[service]
-        
         try:
-            response = api_call(
+            response = api_calls.cancels[service](
                 payment_account_id  = id,
                 **kwargs
             )
@@ -249,12 +246,10 @@ class PaymentActionsController(BaseController):
         txn = Session.query(BillingTransaction).filter(BillingTransaction.provider==response['provider']).filter(BillingTransaction.reference==response['reference']).first()
         
         if not txn:
-            return action_error(_('PayPal transaction not found'), code=404)
-        
-        api_call = api_calls.returns[service]
+            return action_error(_('Transaction not found'), code=404)
         
         try:
-            response = api_call(
+            response = api_calls.returns[service](
                 payment_account_id  = id,
                 recurring = txn.config.get('recurring'),
                 frequency = txn.invoice.payment_account.frequency.capitalize(),

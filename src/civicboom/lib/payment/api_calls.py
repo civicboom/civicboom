@@ -28,27 +28,13 @@ class cbPaymentError(Exception):
         return repr(self.value)
 
 class cbPaymentAPIError(cbPaymentError):
-    def __init__(self, value):
-        self.value = value
-        
-    def __str__(self):
-        return repr(self.value)
+    pass
     
 class cbPaymentArgumentError(cbPaymentError):
-    def __init__(self, value):
-        self.value = value
-        
-    def __str__(self):
-        return repr(self.value)
+    pass
     
 class cbPaymentTransactionError(cbPaymentError):
-    def __init__(self, value):
-        self.value = value
-        
-    def __str__(self):
-        return repr(self.value)
-    
-
+    pass
 
 def paypal_begin(payment_account_id, amount, currency, invoice_id=None, recurring=None, **kwargs):
     
@@ -192,25 +178,32 @@ def paypal_return(**kwargs):
         else:
             print '###', recurring_response
             if 'Success' in recurring_response.ACK:
-                try:
-                    if recurring_response.PROFILESTATUS == 'ActiveProfile':
-                        result.update({
-                            'billing_account_create': {
-                                'status'        : 'active',
-                                'title'         : 'PayPal Subscription **%s' % recurring_response.PROFILEID[-4:],
-                                'provider'      : 'paypal-recurring',
-                                'reference'     : recurring_response.PROFILEID,
-                                'config_update' : recurring_response.raw,
-                            }
-                        })
-                    else:
-                        raise action_error(_('There was an error creating your recurring billing, please try again later'))
-                except:
-                    return action_error(_('There was an error creating your recurring billing, please try again later'))
+                if recurring_response.PROFILESTATUS == 'ActiveProfile':
+                    result.update({
+                        'billing_account_create': {
+                            'status'        : 'active',
+                            'title'         : 'PayPal Subscription **%s' % recurring_response.PROFILEID[-4:],
+                            'provider'      : 'paypal-recurring',
+                            'reference'     : recurring_response.PROFILEID,
+                            'config_update' : recurring_response.raw,
+                        }
+                    })
+                else:
+                    raise cbPaymentTransactionError('There was an error creating recurring billing profile with PayPal, please try again later')
             else:
-                return action_error(_('There was an error creating your recurring billing, please try again later'))
-    
+                raise cbPaymentTransactionError('There was an error communicating with PayPal, please try again later')
     return result
+
+def paypal_cancel_recurring(reference):
+    try:
+        response = paypal_interface.manage_recurring_payments_profile_status(reference, 'Cancel')
+    except:
+        raise cbPaymentAPIError('There was an error communicating with PayPal, please try again later')
+    if 'Success' not in recurring_response.ACK:
+        raise cbPaymentTransactionError('Error cancelling recurring payment with PayPal')
+    return {
+        'status'    : 'deactivated'
+    }
 # GregM: Integrating all payment services into one set of calls
 #    @web
 #    @authorize
@@ -276,7 +269,8 @@ def paypal_return(**kwargs):
 #        
 #        return redirect(paypal_interface.generate_express_checkout_redirect_url(response.token))
 
-begins =  {'paypal': paypal_begin}
-cancels = {'paypal': paypal_cancel}
-returns = {'paypal': paypal_return}
-lookups = {'paypal': paypal_lookup}
+begins              = {'paypal': paypal_begin}
+cancels             = {'paypal': paypal_cancel}
+returns             = {'paypal': paypal_return}
+lookups             = {'paypal': paypal_lookup}
+cancel_recurrings   = {'paypal': paypal_cancel_recurring}
