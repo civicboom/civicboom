@@ -140,12 +140,16 @@ class PaymentAccountService(Base):
             'discount'          : None ,
             'note'              : None ,
             'price'             : None ,
+            'price_taxed'       : None ,
         },
     })
     
     @property
     def price(self):
         return self.service.get_price(self.payment_account.currency, self.frequency)
+    
+    def price_taxed(self):
+        return self.price * (1 + (tax_rates[self.payment_account.tax_rate_code] if self.payment_account.taxable else 0))
     
     def __init__(self, payment_account=None, service=None, note=None, frequency=None, quantity=None, discount=None ):
         if payment_account:
@@ -427,6 +431,7 @@ class BillingAccount(Base):
     __tablename__      = "payment_billing_account"
     id                 = Column(Integer(),     primary_key=True)
     _billing_status    = Enum("active", "deactivated", "error", "flagged", name="billing_account_status")
+    title              = Column(Unicode(),     nullable=False)
     status             = Column(_billing_status, nullable=False, default="active")
     provider           = Column(Unicode(),     nullable=False)
     reference          = Column(Unicode(),     nullable=False)
@@ -437,6 +442,7 @@ class BillingAccount(Base):
     __to_dict__.update({
         'default': {
             'id'                : None ,
+            'title'             : None ,
             'status'            : None ,
             'provider'          : None ,
             'payment_account_id': None ,
@@ -456,7 +462,7 @@ class BillingAccount(Base):
 class BillingTransaction(Base):
     __tablename__ = "payment_billing_transaction"
     id                 = Column(Integer(),     primary_key=True)
-    invoice_id         = Column(Integer(),     ForeignKey('payment_invoice.id'), nullable=False)
+    invoice_id         = Column(Integer(),     ForeignKey('payment_invoice.id'), nullable=True)
     _transaction_status= Enum("created", "pending", "complete", "failed", "cancelled", "error", "refunded", name="billing_transaction_status")
     status             = Column(_transaction_status, nullable=False, default="created")
     amount             = Column(Numeric(precision=10, scale=2),     nullable=False)

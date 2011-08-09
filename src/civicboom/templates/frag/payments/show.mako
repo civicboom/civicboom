@@ -6,7 +6,7 @@
 <%def name="init_vars()">
     <%
         self.attr.title     = _('Payment accounts')
-        self.attr.icon_type = 'boom'
+        self.id             = d['id']
     %>
 </%def>
 
@@ -21,11 +21,10 @@
     </div>
     <div class="frag_whitewrap" style="float:left;width:42%">
         <h2>Services</h2>
-        <p>The following services have been applied to your account:</p>
         <ul>
             % for service in d['services_full']:
                 <li>
-                    ${service['service']['title']} - ${d['currency']} ${service['price']} (ex VAT) per ${service['frequency']}
+                    ${service['service']['title']} - ${d['currency']} ${service['price_taxed']} per ${service['frequency']}
                 </li>
             % endfor
         </ul>
@@ -37,10 +36,34 @@
         </p>
     </div>
     <div class="frag_whitewrap" style="float:right;width:42%">
+        <h2>Payment Methods</h2>
+        <ul>
+            % for billing_account in d['billing_accounts']:
+                % if billing_account['status'] == 'active':
+                <li>
+                    ${billing_account['title']}
+                    <div class="fr">
+                        ${h.secure_link(
+                            h.args_to_tuple('payment_action', action='billing_account_deactivate', format='redirect', id=self.id, billing_account_id=billing_account['id']) ,
+                            value           = _('Deactivate') ,
+                            value_formatted = h.literal("<span class='icon16 i_delete'><span>%s</span></span>" %_('Deactivate')) ,
+                            json_form_complete_actions = "cb_frag_reload(current_element);" ,
+                        )}
+                    </div>
+                </li>
+                % endif
+            % endfor
+        </ul>
+    </div>
+    <div class="frag_whitewrap" style="float:right;width:42%">
         <h2>Invoices</h2>
         <ul>
             % for invoice in d['invoices']:
-                <li><a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}">${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}</a></li>
+                <li>
+                    <a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}" onclick="cb_frag($(this), '${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}'); return false;">
+                        ${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}
+                    </a>
+                </li>
             % endfor
         </ul>
     </div>

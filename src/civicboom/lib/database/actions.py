@@ -913,21 +913,23 @@ def payment_member_remove(payment_account, member):
 # Payment actions
 #-------------------------------------------------------------------------------
 def payment_account_services_normalised(payment_account):
-        pacs = [pac.to_dict() for pac in payment_account.services]
-        payment_account_types = [pac['service']['payment_account_type'] for pac in pacs]
-        if payment_account.type not in payment_account_types:
-            this_service = Session.query(Service).filter(Service.payment_account_type == payment_account.type).first()
-            if this_service:
-                this_service_dict = dict(
-                    id                  = -1, 
-                    payment_account_id  = payment_account.id, 
-                    note                = None, 
-                    discount            = '0.00', 
-                    frequency           = payment_account.frequency, 
-                    service_id          = this_service.id, 
-                    service             = this_service.to_dict(),
-                    #start_date          = payment_account.start_date,
-                    price               = this_service.get_price(payment_account.currency, payment_account.frequency) 
-                )
-                pacs.append( this_service_dict )
-        return pacs
+    from civicboom.model.payment import tax_rates
+    pacs = [pac.to_dict() for pac in payment_account.services]
+    payment_account_types = [pac['service']['payment_account_type'] for pac in pacs]
+    if payment_account.type not in payment_account_types:
+        this_service = Session.query(Service).filter(Service.payment_account_type == payment_account.type).first()
+        if this_service:
+            this_service_dict = dict(
+                id                  = -1, 
+                payment_account_id  = payment_account.id, 
+                note                = None, 
+                discount            = '0.00', 
+                frequency           = payment_account.frequency, 
+                service_id          = this_service.id, 
+                service             = this_service.to_dict(),
+                #start_date          = payment_account.start_date,
+                price               = this_service.get_price(payment_account.currency, payment_account.frequency),
+                price_taxed         = (this_service.get_price(payment_account.currency, payment_account.frequency) * Decimal((1 + (tax_rates[payment_account.tax_rate_code] if payment_account.taxable else 0)))).quantize(Decimal('1.00'))
+            )
+            pacs.append( this_service_dict )
+    return pacs

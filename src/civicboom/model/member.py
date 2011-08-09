@@ -859,9 +859,7 @@ class PaymentAccount(Base):
         for pac in self.services_full:
             if freq_map.get(pac['frequency']) == None:
                 freq_map[pac['frequency']] = 0
-            freq_map[pac['frequency']] += pac['price']
-        
-        print '###', freq_map
+            freq_map[pac['frequency']] += pac['price_taxed']
         return freq_map
     
     @property

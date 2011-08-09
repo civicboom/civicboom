@@ -189,14 +189,14 @@
             <h2>Payment Options</h2>
             <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left;padding-right:2em" />
             <div style="float:left;text-align:center;padding-right:2em">
-                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'])}">
+                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='payment_begin', service='paypal', invoice_id=d['id'])}">
                     <img src="https://www.paypalobjects.com/en_GB/i/btn/btn_paynowCC_LG.gif" alt="We accept PayPal" />
                 </a><br />
                 Pay this invoice
             </div>
         
             <div style="float:left;text-align:center">
-                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='paypal_begin', invoice_id=d['id'], recurring=True)}">
+                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='payment_begin', service='paypal', invoice_id=d['id'], recurring=True)}">
                     <img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" alt="We accept PayPal" />
                 </a><br />
                 Set up a regular payment

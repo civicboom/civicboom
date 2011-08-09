@@ -95,7 +95,8 @@ def init_base_data():
         
         u2_billing = BillingAccount()
         u2_billing.provider = "manual"
-        u2_billing.reference= "BACS"
+        u2_billing.reference= "Card payment 45647874445678745"
+        u2_billing.title    = "Manual VISA **8745"
         u2_billing.payment_account = u2.payment_account
         
         Session.commit()

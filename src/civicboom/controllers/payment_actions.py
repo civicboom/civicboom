@@ -8,6 +8,7 @@ from sqlalchemy           import or_, and_, null
 #from civicboom.lib.payment.paypal import express_checkout_single_auth, express_checkout_get_details
 from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount, BillingTransaction
 from civicboom.lib.payment.paypal import *
+import civicboom.lib.payment.api_calls as api_calls
 #from civicboom.controllers.groups import _get_group
 
 log      = logging.getLogger(__name__)
@@ -101,13 +102,10 @@ class PaymentActionsController(BaseController):
         return action_ok(code=200, data=data)
     
     @web
-    @authorize
+    @auth
     @role_required('admin')
-    def paypal_begin(self, id, **kwargs):
-        """
-        """
-        
-        invoice_id = kwargs.get('invoice_id')
+    def billing_account_deactivate(self, id, **kwargs):
+        billing_account_id = kwargs.get('billing_account_id')
         
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         if not account:
@@ -115,163 +113,171 @@ class PaymentActionsController(BaseController):
         if not c.logged_in_persona in account.members:
             raise action_error(_('You do not have permission to view this account'), code=404)
         
-        invoice = Session.query(Invoice).filter(Invoice.id==invoice_id and Invoice.payment_account_id==account.id).first()
+        billing_account = Session.query(BillingAccount).filter(and_(BillingAccount.id==billing_account_id, BillingAccount.payment_account_id==account.id)).first()
         
-        if not invoice or invoice.status not in ['billed', 'paid']:
-            raise action_error(_('This invoice does not exist'), code=404)
+        print billing_account
         
-        if invoice.total_due <= 0:
-            return action_error(_('This invoice does not have an outstanding balance'), code=404)
+        if not billing_account or billing_account.status == 'error':
+            raise action_error(_('This billing account does not exist'), code=404)
         
-        #response = express_checkout_single_auth(invoice.total_due, invoice.currency, h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True))
+        if billing_account.provider == 'paypal-recurring':
+            response = paypal_interface.manage_recurring_payments_profile_status(billing_account.reference, 'Cancel')
+            if 'Success' not in recurring_response.ACK:
+                raise action_error(_('Error cancelling recurring payment with PayPal'), code=400)
         
-        params = {
-            'PAYMENTREQUEST_0_PAYMENTACTION'  : 'Sale', #'PAYMENTREQUEST_0_PAYMENTACTION' 'PAYMENTACTION'
-            'PAYMENTREQUEST_0_AMT'            : invoice.total_due, #'PAYMENTREQUEST_0_AMT' 'AMT'
-            'PAYMENTREQUEST_0_CURRENCYCODE'   : invoice.currency, #'PAYMENTREQUEST_0_CURRENCYCODE' 'CURRENCYCODE'
-            'PAYMENTREQUEST_n_INVNUM'         : 'Civicboom_' + str(invoice.id),
-            'RETURNURL'                       : h.url(controller='payment_actions', id=id, action='paypal_return', qualified=True),
-            'CANCELURL'                       : h.url(controller='payment_actions', id=id, action='paypal_cancel', qualified=True),
-            'NOSHIPPING'                      : 1,
-            'USERACTION'                      : 'commit',
-            'BRANDNAME'                       : _('_site_name'),
+        billing_account.status = 'deactivated'
+        Session.commit()
+        
+        return action_ok(code=200)
+    
+    @web
+    @auth
+    @role_required('admin')
+    def billing_account_add(self, id, **kwargs):
+        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        if not account:
+            raise action_error(_('Payment account does not exist'), code=404)
+        if not c.logged_in_persona in account.members:
+            raise action_error(_('You do not have permission to view this account'), code=404)
+        
+        
+        return action_ok(code=200)
+    
+    @web
+    @authorize
+    @role_required('admin')
+    def payment_begin(self, id, **kwargs):
+        invoice_id = kwargs.get('invoice_id')
+        service    = kwargs.get('service')
+        if not (invoice_id and service):
+            raise action_error(_('Invalid parameters, need invoice_id and service'), code=400)
+        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        if not account:
+            raise action_error(_('Payment account does not exist'), code=404)
+        if not c.logged_in_persona in account.members:
+            raise action_error(_('You do not have permission to view this account'), code=404)
+        
+        amount = 0
+        currency = account.currency
+        
+        if invoice_id:
+            invoice = Session.query(Invoice).filter(and_(Invoice.id==invoice_id, Invoice.payment_account_id==account.id)).first()
+            if not invoice or invoice.status not in ['billed', 'paid']:
+                raise action_error(_('This invoice does not exist'), code=404)
+            if invoice.total_due <= 0:
+                raise action_error(_('This invoice does not have an outstanding balance'), code=404)
+            amount = invoice.total_due
+            currency = invoice.currency
             
-        }
+        if service not in api_calls.begins:
+            raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
-        if kwargs.get('recurring'):
-            params.update({
-                #'MAXAMT': invoice.total_due,
-                'L_BILLINGTYPE0': 'RecurringPayments',
-                'L_BILLINGAGREEMENTDESCRIPTION0': 'Civicboom Subscription'
-            })
-            pass
+        api_call = api_calls.begins[service]
         
-        response = paypal_interface.set_express_checkout(**params)
-        
-        if 'Success' not in response.ack:
-            return action_error(_('There was an error starting your payment with PayPal, please try again later'))
+        try:
+            response = api_call(
+                payment_account_id  = id,
+                amount              = amount,
+                currency            = currency,
+                invoice_id          = invoice_id,
+                recurring           = kwargs.get('recurring'),
+            )
+        except api_calls.cbPaymentAPIError as e:
+            raise action_error(e.value, code=400)
         
         txn = BillingTransaction()
-        txn.invoice = invoice
-        txn.amount = invoice.total_due
-        txn.provider = 'paypal_express'
-        txn.config.update({'set_express_checkout': response.raw})
-        txn.config['PAYMENTREQUEST_0_PAYMENTACTION'] = 'Sale'
-        if kwargs.get('recurring'):
-            txn.config['recurring'] = 'Civicboom Subscription'
-        txn.reference = response.token
+        
+        txn.invoice_id = invoice_id
+        txn.amount = amount
+        txn.provider = response['provider']
+        if response['config_update']:
+            txn.config.update(response['config_update'])
+        txn.reference = response['reference']
+        
         Session.add(txn)
         Session.commit()
         
-        return redirect(paypal_interface.generate_express_checkout_redirect_url(response.token))
-        
+        if response.get('redirect'):
+            return redirect(response['redirect'])
+        if response.get('template'):
+            return action_ok(code=200, template=template)
+        return action_ok(code=200)
+    
     @web
     @authorize
-    def paypal_cancel(self, **kwargs):
-        if 'token' not in kwargs:
-            return action_error(_('Need token to continue'), code=404)
-        txn = Session.query(BillingTransaction).filter(BillingTransaction.provider=='paypal_express').filter(BillingTransaction.reference==kwargs['token']).first()
+    def payment_cancel(self, id, **kwargs):
+        service    = kwargs.get('service')
+        if not service:
+            raise action_error(_('Invalid parameters, need service'), code=400)
         
-        if not txn:
-            return action_error(_('PayPal transaction not found'), code=404)
+        if service not in api_calls.cancels:
+            raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
-        txn.status = 'cancelled'
-        Session.commit()
-        return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
-        
-    @web
-    @authorize
-    def paypal_return(self, id, **kwargs):
-        if 'token' not in kwargs:
-            return action_error(_('Need token to continue'), code=404)
-        if 'PayerID' not in kwargs:
-            return action_error(_('Need PayerID to continue'), code=404)
-        token = kwargs['token']
-        payerid = kwargs['PayerID']
-        
-        txn = Session.query(BillingTransaction).filter(BillingTransaction.provider=='paypal_express').filter(BillingTransaction.reference==kwargs['token']).first()
-        
-        if not txn:
-            return action_error(_('PayPal transaction not found'), code=404)
-        
-        details_response = paypal_interface.get_express_checkout_details(token=kwargs['token'])
-        
-        if 'Success' not in details_response.ack:
-            return action_error(_('There was an error starting your payment with PayPal, please try again later'))
+        api_call = api_calls.cancels[service]
         
         try:
-            response = paypal_interface.do_express_checkout_payment(
-                token = kwargs['token'],
-                PayerID = kwargs['PayerID'],
-                PAYMENTREQUEST_0_PAYMENTACTION  = txn.config.get('PAYMENTREQUEST_0_PAYMENTACTION', 'Sale'),
-                PAYMENTREQUEST_0_AMT            = details_response.PAYMENTREQUEST_0_AMT,
-                PAYMENTREQUEST_0_CURRENCYCODE   = details_response.PAYMENTREQUEST_0_CURRENCYCODE,
-                )
-        except PayPalAPIResponseError:
-            txn.status = 'error'
-            # Alert admins to payment error
-            Session.commit()
-            return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
-
-        if 'Success' not in response.ack:
-            return action_error(_('There was an error starting your payment with PayPal, please try again later'))
+            response = api_call(
+                payment_account_id  = id,
+                **kwargs
+            )
+        except api_calls.cbPaymentAPIError as e:
+            raise action_error(e.value, code=400)
         
-        txn.config['transaction_id'] = response.PAYMENTINFO_0_TRANSACTIONID
-        txn.config['payment_type'] = response.PAYMENTINFO_0_PAYMENTTYPE
-        txn.config['payment_status'] = response.PAYMENTINFO_0_PAYMENTSTATUS
-        txn.config['PayerID'] = kwargs['PayerID']
+        txn = Session.query(BillingTransaction).filter(BillingTransaction.provider==response['provider']).filter(BillingTransaction.reference==response['reference']).first()
         
-        if response.PAYMENTINFO_0_PAYMENTSTATUS in ('Completed',):
-            txn.status = 'complete'
-        elif response.PAYMENTINFO_0_PAYMENTSTATUS == 'Pending':
-            txn.status = 'pending'
-            if response.PAYMENTINFO_0_PENDINGREASON in ('address', 'intl', 'multi-currency', 'other'):
-                #alert admins to payment needing manual intervention
-                pass
-        elif response.PAYMENTINFO_0_PAYMENTSTATUS in ('In-Progress', 'Processed'):
-            txn.status = 'pending'
-        else:
-            txn.status = 'failed'
+        if not txn:
+            return action_error(_('Payment transaction not found'), 404)
+        txn.status = response.status
         Session.commit()
-
-        if txn.config.get('recurring'):
-            print '### Trying recurring'
-            try:
-                # Set up recurring payment profile (begin next day date)
-                recurring_params = {
-                    'token'             : token,
-                    'profileStartDate'  : '2011-09-03T00:00:00Z',
-                    'desc'              : txn.config['recurring'],
-                    'maxFailedPayments' : '0',
-                    'billingPeriod'     : txn.invoice.payment_account.frequency.capitalize(),
-                    'billingFrequency'  : '1',
-                    'amt'               : '10.00',
-                    'currencyCode'      : 'GBP', 
-                    }
-                recurring_response = paypal_interface.create_recurring_payments_profile(**recurring_params)
-            except Exception as error:
-                return action_error(_('There was an error creating your recurring billing, please try again later'))
-            else:
-                print '###', recurring_response
-                if 'Success' in recurring_response.ACK:
-                    try:
-                        if recurring_response.PROFILESTATUS == 'ActiveProfile':
-                            bacct = BillingAccount()
-                            bacct.status = 'active'
-                            bacct.provider = 'paypal-recurring'
-                            bacct.reference = recurring_response.PROFILEID 
-                            bacct.payment_account = txn.invoice.payment_account
-                            bacct.config.update(recurring_response.raw)
-                            Session.add(bacct)
-                        else:
-                            return action_error(_('There was an error creating your recurring billing, please try again later'))
-                    except:
-                        print '3'
-                        return action_error(_('There was an error creating your recurring billing, please try again later'))
-                else:
-                    print '4'
-                    return action_error(_('There was an error creating your recurring billing, please try again later'))
-                
+        
+        if response.get('redirect'):
+            return redirect(response['redirect'])
+        return action_ok(code=200)
+        
+    @web
+    @authorize
+    def payment_return(self, id, **kwargs):
+        service    = kwargs.get('service')
+        if not service:
+            raise action_error(_('Invalid parameters, need service'), code=400)
+        
+        if service not in api_calls.returns or service not in api_calls.lookups:
+            raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
+        
+        response = api_calls.lookups[service]
+        
+        txn = Session.query(BillingTransaction).filter(BillingTransaction.provider==response['provider']).filter(BillingTransaction.reference==response['reference']).first()
+        
+        if not txn:
+            return action_error(_('PayPal transaction not found'), code=404)
+        
+        api_call = api_calls.returns[service]
+        
+        try:
+            response = api_call(
+                payment_account_id  = id,
+                recurring = txn.config.get('recurring'),
+                frequency = txn.invoice.payment_account.frequency.capitalize(),
+                **kwargs
+            )
+        except api_calls.cbPaymentError as e:
+            txn.status = 'error'
             Session.commit()
+            raise action_error(e.value, code=400)
+        
+        txn.status = response['status']
+        txn.config.update(response.get('config_update', {}))
+        
+        if response.get('billing_account_create'):
+            b_a_c = response['billing_account_create']
+            bacct = BillingAccount()
+            bacct.status = b_a_c['status']
+            bacct.title = b_a_c['title']
+            bacct.provider = b_a_c['provider']
+            bacct.reference = b_a_c['reference'] 
+            bacct.payment_account = txn.invoice.payment_account
+            bacct.config.update(b_a_c.get('config_update', {}))
+            Session.add(bacct)
+        
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
         
