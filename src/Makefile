@@ -145,6 +145,26 @@ run-worker:
 
 
 ##############################################################################
+# CDN
+
+cdnpush-ssh: js css
+	../admin_scripts/upload-cdn-ssh.py \
+		--ini production.ini \
+		--version ${GIT_TAG} \
+		--exclude-file civicboom/public/cdn-exclude.txt \
+		civicboom/public
+
+cdnpush-rs: js css
+	../admin_scripts/upload-cdn-rs.py \
+		--ini production.ini \
+		--version ${GIT_TAG} \
+		--exclude-file civicboom/public/cdn-exclude.txt \
+		civicboom/public
+
+cdnpush: cdnpush-ssh cdnpush-rs
+
+
+##############################################################################
 # other
 
 site: i18n js css api-doc
@@ -186,16 +206,6 @@ libs: py-libs
 
 shell:
 	paster shell
-
-cdnpush: js css
-	./bundle-static.py \
-		--output static-${GIT_TAG}.zip \
-		--exclude-file civicboom/public/cdn-exclude.txt \
-		civicboom/public
-	scp static-${GIT_TAG}.zip static.civicboom.com:~/
-	ssh static.civicboom.com unzip -o static-${GIT_TAG}.zip -d /opt/cb/var/www/static/${GIT_TAG}
-	ssh static.civicboom.com rm -f static-${GIT_TAG}.zip
-	rm -f static-${GIT_TAG}.zip
 
 schemadiff:
 	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql
