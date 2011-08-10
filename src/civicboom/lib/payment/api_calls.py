@@ -21,8 +21,9 @@ paypal_config = PayPalConfig(
 paypal_interface = PayPalInterface(config=paypal_config)
 
 class cbPaymentError(Exception):
-    def __init__(self, value):
+    def __init__(self, value, saved_dict=None):
         self.value = value
+        self.dict  = saved_dict
         
     def __str__(self):
         return repr(self.value)
@@ -36,7 +37,10 @@ class cbPaymentArgumentError(cbPaymentError):
 class cbPaymentTransactionError(cbPaymentError):
     pass
 
-def paypal_begin(payment_account_id, amount, currency, invoice_id=None, recurring=None, **kwargs):
+class cbPaymentRecurringTransactionError(cbPaymentError):
+    pass
+
+def paypal_express_begin(payment_account_id, amount, currency, invoice_id=None, recurring=None, **kwargs):
     
     if amount == 0 and not recurring:
         raise cbPaymentAPIError('Need amount or recurring')
@@ -45,8 +49,8 @@ def paypal_begin(payment_account_id, amount, currency, invoice_id=None, recurrin
         'PAYMENTREQUEST_0_PAYMENTACTION'  : 'Sale', #'PAYMENTREQUEST_0_PAYMENTACTION' 'PAYMENTACTION'
         'PAYMENTREQUEST_0_AMT'            : amount, #'PAYMENTREQUEST_0_AMT' 'AMT'
         'PAYMENTREQUEST_0_CURRENCYCODE'   : currency, #'PAYMENTREQUEST_0_CURRENCYCODE' 'CURRENCYCODE'
-        'RETURNURL'                       : h.url(controller='payment_actions', id=payment_account_id, action='payment_return', service="paypal", qualified=True),
-        'CANCELURL'                       : h.url(controller='payment_actions', id=payment_account_id, action='payment_cancel', service="paypal", qualified=True),
+        'RETURNURL'                       : h.url(controller='payment_actions', id=payment_account_id, action='payment_return', service="paypal_express", qualified=True),
+        'CANCELURL'                       : h.url(controller='payment_actions', id=payment_account_id, action='payment_cancel', service="paypal_express", qualified=True),
         'NOSHIPPING'                      : 1,
         'USERACTION'                      : 'commit',
         'BRANDNAME'                       : _('_site_name'),
@@ -68,7 +72,7 @@ def paypal_begin(payment_account_id, amount, currency, invoice_id=None, recurrin
     if 'Success' not in response.ack:
         raise cbPaymentTransactionError(_('There was an error starting your payment with PayPal, please try again later'))
     
-    result = paypal_lookup(token = response.token)
+    result = paypal_express_lookup(token = response.token)
     result.update({
         'config_update'         : {
             'set_express_checkout'  : response.raw,
@@ -81,7 +85,7 @@ def paypal_begin(payment_account_id, amount, currency, invoice_id=None, recurrin
     
     return result
 
-def paypal_lookup(**kwargs):
+def paypal_express_lookup(**kwargs):
     if 'token' not in kwargs:
         raise cbPaymentArgumentError(_('Need token to continue'))
     result = {
@@ -90,15 +94,15 @@ def paypal_lookup(**kwargs):
     }
     return result
 
-def paypal_cancel(**kwargs):
-    result = paypal_lookup(**kwargs)
+def paypal_express_cancel(**kwargs):
+    result = paypal_express_lookup(**kwargs)
     result.update({
         'status'   : 'cancelled',
-        'redirect' : h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id), 
+        'redirect' : h.url(controller='payment_actions', id=kwargs.get('payment_account_id'), action='invoice', invoice_id=kwargs.get('invoice_id')), 
     })
     return result
 
-def paypal_return(**kwargs):
+def paypal_express_return(**kwargs):
     if 'PayerID' not in kwargs:
         raise cbPaymentArgumentError(_('Need PayerID to continue'))
     payerid = kwargs['PayerID']
@@ -113,6 +117,7 @@ def paypal_return(**kwargs):
         return {
             'status' : 'error'
         }
+    print '###', details_response
     # Check action was successful!
     if 'Success' not in details_response.ack:
         return action_error(_('There was an error starting your payment with PayPal'))
@@ -164,42 +169,41 @@ def paypal_return(**kwargs):
             # Set up recurring payment profile (begin next day date)
             recurring_params = {
                 'token'             : token,
-                'profileStartDate'  : '2011-09-03T00:00:00Z',   # FIXME: Should not be hard coded!!!!!
+                'profileStartDate'  : kwargs['next_date'].strftime('%Y-%m-%dT00:00:00Z'),
                 'desc'              : kwargs['recurring'],
                 'maxFailedPayments' : '0',
                 'billingPeriod'     : kwargs['frequency'],
                 'billingFrequency'  : '1',
-                'amt'               : '10.00',                  # FIXME: Should not be hard coded!!!!!
-                'currencyCode'      : 'GBP',                    # FIXME: Should not be hard coded!!!!!
+                'amt'               : kwargs['amount'],
+                'currencyCode'      : kwargs['currency'],
                 }
+            print '###rp###', recurring_params
             recurring_response = paypal_interface.create_recurring_payments_profile(**recurring_params)
         except Exception as error:
-            raise cbPaymentAPIError(_('There was an error creating your recurring billing, please try again later'))
+            raise cbPaymentRecurringTransactionError(_('There was an error creating your recurring billing, please try again later'), result)
         else:
             print '###', recurring_response
             if 'Success' in recurring_response.ACK:
-                if recurring_response.PROFILESTATUS == 'ActiveProfile':
-                    result.update({
-                        'billing_account_create': {
-                            'status'        : 'active',
-                            'title'         : 'PayPal Subscription **%s' % recurring_response.PROFILEID[-4:],
-                            'provider'      : 'paypal-recurring',
-                            'reference'     : recurring_response.PROFILEID,
-                            'config_update' : recurring_response.raw,
-                        }
-                    })
-                else:
-                    raise cbPaymentTransactionError('There was an error creating recurring billing profile with PayPal, please try again later')
+                result.update({
+                    'billing_account_create': {
+                        'status'        : 'active' if recurring_response.PROFILESTATUS == 'ActiveProfile' else 'pending',
+                        'title'         : 'PayPal Subscription **%s' % recurring_response.PROFILEID[-4:],
+                        'provider'      : 'paypal_recurring',
+                        'reference'     : recurring_response.PROFILEID,
+                        'config_update' : recurring_response.raw,
+                    }
+                })
             else:
-                raise cbPaymentTransactionError('There was an error communicating with PayPal, please try again later')
+                raise cbPaymentRecurringTransactionError('There was an error communicating with PayPal, please try again later', result)
+    Session.commit()
     return result
 
-def paypal_cancel_recurring(reference):
+def paypal_express_cancel_recurring(reference):
     try:
         response = paypal_interface.manage_recurring_payments_profile_status(reference, 'Cancel')
     except:
         raise cbPaymentAPIError('There was an error communicating with PayPal, please try again later')
-    if 'Success' not in recurring_response.ACK:
+    if 'Success' not in response.ACK:
         raise cbPaymentTransactionError('Error cancelling recurring payment with PayPal')
     return {
         'status'    : 'deactivated'
@@ -269,8 +273,8 @@ def paypal_cancel_recurring(reference):
 #        
 #        return redirect(paypal_interface.generate_express_checkout_redirect_url(response.token))
 
-begins              = {'paypal': paypal_begin}
-cancels             = {'paypal': paypal_cancel}
-returns             = {'paypal': paypal_return}
-lookups             = {'paypal': paypal_lookup}
-cancel_recurrings   = {'paypal': paypal_cancel_recurring}
+begins              = {'paypal_express':    paypal_express_begin}
+cancels             = {'paypal_express':    paypal_express_cancel}
+returns             = {'paypal_express':    paypal_express_return}
+lookups             = {'paypal_express':    paypal_express_lookup}
+cancel_recurrings   = {'paypal_recurring':  paypal_express_cancel_recurring}
