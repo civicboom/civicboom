@@ -342,11 +342,11 @@ def get_tag(tag):
 # Cache Management - Part 2 - Invalidating the Cache
 #-------------------------------------------------------------------------------
 
-def update_member(member):
+def invalidate_member(member):
     etag_key_incement("member",member.id)
 
 
-def update_content(content):
+def invalidate_content(content):
     if not issubclass(content.__class__, Content):
         content = get_content_nocache(content)
     
@@ -366,13 +366,13 @@ def update_content(content):
         pass
 
 
-def update_member_messages(member):
+def invalidate_member_messages(member):
     pass
 
 
-def update_accepted_assignment(member):
+def invalidate_accepted_assignment(member):
     pass
 
 
-def update_member_assignments_active(member):
+def invalidate_member_assignments_active(member):
     pass

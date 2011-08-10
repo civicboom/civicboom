@@ -362,6 +362,10 @@ class Member(Base):
             h.update(str(getattr(self, field)))
         return h.hexdigest()
 
+    def invalidate_cache(self):
+        from civicboom.lib.database.get_cached import invalidate_member
+        invalidate_member(self)
+
     def action_list_for(self, member, **kwargs):
         action_list = []
         #if self.can_message(member):
