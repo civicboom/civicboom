@@ -307,7 +307,7 @@ class TaskController(BaseController):
                 invoice.status = "paid"
                 Session.commit()
                 if invoice.payment_account.billing_status != "ok":
-                    if len([inv for inv in invoices.payment_account.invoices if inv.status == 'billed']) == 0:
+                    if len([inv for inv in invoice.payment_account.invoices if inv.status == 'billed']) == 0:
                         invoice.payment_account.billing_status = "ok"
                     # Send invoice cleared thanks email
                 # TODO: if invoice.paid_total > invoice.total:
