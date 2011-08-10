@@ -30,7 +30,7 @@
             most_responses          = _('What people are getting involved in'),
             near_me                 = _('Near me'),
             recent_assignments      = _('Recent _assignments'),
-            recent                  = _('Stories that just happened'),
+            recent                  = _('Just happened!'),
             
             new_members             = _('Latest Members'),
             new_groups              = _('Latest Hubs'),
@@ -51,13 +51,7 @@
                 <% title = list_names.get(title, title) %>
                 ${frag_list.sponsored_list(cb_list, title, creator=1)}
             % endfor
-            </%doc>
-            % for (title, cb_list) in d['featured'].iteritems():
-                <% title = list_names.get(title, title) %>
-                ${frag_list.content_list(cb_list, title, creator=1)}
-            % endfor
             
-            <%doc>
             <table width="100%" style="margin-top: 1em;"><tr>
             % for (title, cb_list) in d['members'].iteritems():
                 <% title = list_names.get(title, title) %>
@@ -65,9 +59,25 @@
             % endfor
             </tr></table>
             </%doc>
+
+            <%def name="featured_list(title)">
+                <%
+                    cb_list = d['featured'][title]
+                    title   = list_names.get(title,title)
+                %>
+                ${frag_list.content_list(cb_list, title, creator=1)}
+            </%def>
             
-            <div style="float:left;  width:48%; margin-top: 0.6em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'))}</div>
-            <div style="float:right; width:48%; margin-top: 0.2em; margin-bottom: 1em;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
+            ${featured_list('recent'            )}
+            
+            
+            <div style="clear:both; margin-top   : 1.4em;"></div>
+            <div style="float:left;  width:48%;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'))}</div>
+            <div style="float:right; width:48%;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
+            <div style="clear:both; margin-bottom: 0em;"></div>
+            
+            ${featured_list('recent_assignments')}
+            ${featured_list('most_responses'    )}
             
         </div>
         <div style="padding: 0.15em"></div>

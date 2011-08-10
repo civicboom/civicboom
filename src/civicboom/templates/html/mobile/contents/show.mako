@@ -17,13 +17,9 @@
         self.actions   = d.get('actions', [])
     %>
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="content-main-${self.id}" class="content_page">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <h1>${self.title}</h1>
-            <a href="#content-info-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
-        </div>
+        ${components.header(title=self.title)}
+    
         ${content_main()}
-        
-        ${components.control_bar()}
     </div>
     
     <div data-role="page" data-title="${page_title()} - info" data-theme="b" id="content-info-${self.content['id']}" class="content_page">
