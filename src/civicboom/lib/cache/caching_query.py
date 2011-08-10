@@ -1,8 +1,12 @@
 """
 http://www.sqlalchemy.org/docs/orm/examples.html#beaker-caching
 http://www.sqlalchemy.org/trac/browser/examples/beaker_caching/caching_query.py
+http://www.sqlalchemy.org/trac/browser/examples/beaker_caching/caching_query.py?rev=7667%3A6bf675d91a56
 
-caching_query.py
+sqlalchemy 0.7 example is differnt, this is th 0.6.8 version
+"""
+
+"""caching_query.py
 
 Represent persistence structures which allow the usage of
 Beaker caching with SQLAlchemy.
@@ -125,11 +129,8 @@ def _get_cache_parameters(query):
 
     if cache_key is None:
         # cache key - the value arguments from this query's parameters.
-        args = [str(x) for x in _params_from_query(query)]
-        args.extend([str(query._limit), str(query._offset)])
-        cache_key = " ".join(args)
-
-    assert cache_key is not None, "Cache key was None !"
+        args = _params_from_query(query)
+        cache_key = " ".join([str(x) for x in args])
 
     # get cache
     cache = query.cache_manager.get_cache_region(namespace, region)
@@ -260,20 +261,15 @@ def _params_from_query(query):
     """
     v = []
     def visit_bindparam(bind):
+        value = query._params.get(bind.key, bind.value)
 
-        if bind.key in query._params:
-            value = query._params[bind.key]
-        elif bind.callable:
-            # lazyloader may dig a callable in here, intended
-            # to late-evaluate params after autoflush is called.
-            # convert to a scalar value.
-            value = bind.callable()
-        else:
-            value = bind.value
+        # lazyloader may dig a callable in here, intended
+        # to late-evaluate params after autoflush is called.
+        # convert to a scalar value.
+        if callable(value):
+            value = value()
 
         v.append(value)
     if query._criterion is not None:
         visitors.traverse(query._criterion, {}, {'bindparam':visit_bindparam})
-    for f in query._from_obj:
-        visitors.traverse(f, {}, {'bindparam':visit_bindparam})
     return v

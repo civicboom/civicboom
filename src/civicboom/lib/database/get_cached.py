@@ -74,7 +74,7 @@ def get_license(license):
 
 
 # TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
-def get_member(member, search_email=False, cache=False, **kwargs):
+def get_member(member, search_email=False, cache=True, **kwargs):
     if not member:
         return None
     if isinstance(member, Member):
