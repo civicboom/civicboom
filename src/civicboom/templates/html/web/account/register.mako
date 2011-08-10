@@ -224,7 +224,6 @@
             <div class="hide_if_js">
                 % for radio_key, (display_text, checked) in radio_choices.iteritems():
                     <%
-                        print (display_text+" :: "+str(checked))
                         if checked:
                             checked = 'checked'
                     %>

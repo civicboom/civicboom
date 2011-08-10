@@ -29,7 +29,7 @@
         </%doc>
         
         % if len(d['list']['items']):
-            ${parent.content_list(d['list']['items'], list_title, show_heading=False, paginate=True, creator=creator)}
+            ${parent.content_list(d['list']['items'], list_title, show_heading=False, paginate=True, creator=creator, extra_info=True)}
         % endif
     </div>
 </%def>
