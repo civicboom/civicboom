@@ -23,27 +23,26 @@ Session = scoped_session(
 metadata = MetaData()
 
 
+# AllanC - Testing various SQLAlchemy Events
+"""
 # Cache Additions
 #   We need to be able to recive notifications on any data object changes so that we can invalidate the cache
 #   Add receive_change_event to base
 #
 # Reference:
-#  - http://www.java2s.com/Open-Source/Python/Database/SQLAlchemy/SQLAlchemy-0.6.0/examples/custom_attributes/listen_for_events.py.htm
+#  - http://www.sqlalchemy.org/trac/browser/examples/custom_attributes/listen_for_events.py?rev=7667%3A6bf675d91a56
 
 from sqlalchemy.orm.interfaces import AttributeExtension,InstrumentationManager
 
 class InstallListeners(InstrumentationManager):
     def post_configure_attribute(self, class_, key, inst):
-        """Add an event listener to an InstrumentedAttribute."""
-        
+        # Add an event listener to an InstrumentedAttribute.
         inst.impl.extensions.insert(0, AttributeListener(key))
         
 class AttributeListener(AttributeExtension):
-    """Generic event listener.  
+    # Generic event listener.  
+    # Propigates attribute change events to a "receive_change_event()" method on the target instance.
     
-    Propigates attribute change events to a "receive_change_event()" method on the target instance.
-    
-    """
     def __init__(self, key):
         self.key = key
     
@@ -65,17 +64,20 @@ class Base(object):
     __sa_instrumentation_manager__ = InstallListeners
     
     def receive_change_event(self, verb, key, value, oldvalue):
+        return 
         s = "Value '%s' %s on attribute '%s', " % (value, verb, key)
         if oldvalue:
             s += "which replaced the value '%s', " % oldvalue
         s += "on object %s" % self
         print s
+        
+Base = declarative_base(cls=Base)
+"""
 
 # Shish - 0.9.7 had this included, 1.0 doesn't?
 # Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
 from sqlalchemy.ext.declarative import declarative_base
-#Base = declarative_base()
-Base = declarative_base(cls=Base)
+Base = declarative_base()
 
 
 # types

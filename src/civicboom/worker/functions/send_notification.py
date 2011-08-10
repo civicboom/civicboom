@@ -6,7 +6,7 @@ from civicboom.lib.database.get_cached import get_member, get_members
 
 from civicboom.model.meta              import Session
 from civicboom.model.message           import Message
-from civicboom.lib.database.get_cached import update_member_messages
+from civicboom.lib.database.get_cached import invalidate_member_messages
 from civicboom.lib.communication.email_lib import send_email
 import civicboom.lib.helpers as helpers
 

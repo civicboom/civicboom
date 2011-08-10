@@ -17,6 +17,11 @@ import hashlib
 import copy
 
 
+from sqlalchemy.orm.interfaces import MapperExtension
+class MyExtension(MapperExtension):
+    def after_update(self, mapper, connection, instance):
+        print "instance %s after_update !" % instance
+
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
 member_type              = Enum("user", "group",                     name="member_type"  )
@@ -232,7 +237,7 @@ class Member(Base):
     "Abstract class"
     __tablename__   = "member"
     __type__        = Column(member_type)
-    __mapper_args__ = {'polymorphic_on': __type__}
+    __mapper_args__ = {'polymorphic_on': __type__, 'extension': MyExtension()}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54

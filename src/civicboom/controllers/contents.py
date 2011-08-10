@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
-from civicboom.lib.database.get_cached import update_content, get_license, get_tag, get_assigned_to, get_content as _get_content
+from civicboom.lib.database.get_cached import invalidate_content, get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
@@ -709,7 +709,7 @@ class ContentsController(BaseController):
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        update_content(content)  # Invalidate any cache associated with this content
+        invalidate_content(content)  # Invalidate any cache associated with this content
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------
@@ -837,7 +837,7 @@ class ContentsController(BaseController):
                 Session.commit()
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
-                #update_content(content)
+                #invalidate_content(content)
         
         # Corporate plus customers want to be able to see what members have looked at an assignment
         if content.__type__=='assignment' and content.closed==True:
