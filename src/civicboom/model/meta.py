@@ -10,13 +10,10 @@ __all__ = ['Session', 'engine', 'metadata', 'Base']
 # SQLAlchemy database engine. Updated by model.init_model()
 engine = None
 
-from civicboom.lib.cache import cache_manager, caching_query
 # SQLAlchemy session manager. Updated by model.init_model()
-Session = scoped_session(
-            sessionmaker(
-                query_cls = caching_query.query_callable(cache_manager) # Cache addition
-            )
-        )
+#Session = scoped_session(sessionmaker())
+from civicboom.lib.cache import cache_manager, caching_query
+Session = scoped_session(sessionmaker(  query_cls=caching_query.query_callable(cache_manager) )) # Cache addition
 
 # Global metadata. If you have multiple databases with overlapping table
 # names, you'll need a metadata for each database

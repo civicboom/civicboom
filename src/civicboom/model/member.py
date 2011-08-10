@@ -22,9 +22,11 @@ import copy
 from sqlalchemy.orm.interfaces import MapperExtension
 class MemberChangeListener(MapperExtension):
     def after_update(self, mapper, connection, instance):
-        print "instance %s after_update" % instance
+        pass
+        #print "instance %s after_update" % instance
     def after_delete(self, mapper, connection, instance):
-        print "instance %s after_delete" % instance
+        pass
+        #print "instance %s after_delete" % instance
 
 
 # many-to-many mappings need to be at the top, so that other classes can

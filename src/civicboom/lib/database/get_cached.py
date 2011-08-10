@@ -72,34 +72,39 @@ def get_license(license):
     return None
 
 
-def get_member_nocache(member, search_email=False):
-    assert type(member) in [int, str, unicode]
 
-    if type(member) == int or member.isdigit():
-        try:
-            return Session.query(Member).with_polymorphic('*').filter_by(id=int(member)).one()
-        except NoResultFound:
-            pass
-    else:
-        try:
-            return Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)).one()
-        except NoResultFound:
-            if search_email:
-                try:
-                    return Session.query(User).filter_by(email=member).one()
-                except NoResultFound:
-                    pass
-    return None
-
-
-#@cache_test.cache() #Cache decorator to go here
 # TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
-def get_member(member, **kwargs):
+def get_member(member, search_email=False, cache=False, **kwargs):
     if not member:
         return None
     if isinstance(member, Member):
         return member
-    return get_member_nocache(member, **kwargs)
+
+    assert type(member) in [int, str, unicode]
+
+    get_member_querys = []
+
+    if type(member) == int or member.isdigit():
+        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=int(member)) )
+    else:
+        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)) )
+        if search_email:
+            get_member_querys.append( Session.query(User).filter_by(email=member) )
+
+    for query in get_member_querys:
+        if cache:
+            query = query.options(FromCache("default", "members"))
+        if cache == 'invalidate':
+            # Invalidate has to be called in the same order as the get_member query
+            # Reference - http://www.sqlalchemy.org/trac/browser/examples/beaker_caching/helloworld.py
+            # As we were aquireing the member by a varity of methods and querys, I decided to put the invalidate method as part of the get method to reduce the duplucation between the get and invaidate methods
+            try   : query.invalidate()
+            except: pass # May fail if invalidate is called before item is cached - we dont care in this case - surely, we have to read it before we update it? can this be removed?
+        else:
+            try                 : return query.one()
+            except NoResultFound: pass
+    
+    return None
 
 
 def get_group(group):
@@ -343,6 +348,11 @@ def get_tag(tag):
 #-------------------------------------------------------------------------------
 
 def invalidate_member(member):
+    get_member(member.id      , cache='invalidate')
+    get_member(member.username, cache='invalidate')
+    try   : get_member(member.email, cache='invalidate')
+    except: pass
+    
     etag_key_incement("member",member.id)
 
 
