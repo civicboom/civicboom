@@ -16,11 +16,15 @@ import urllib
 import hashlib
 import copy
 
-
+# Listener for Member object events
+# This is subject to change in sqlalchemy 0.7
+# Reference - http://www.sqlalchemy.org/docs/06/orm/interfaces.html#mapper-events
 from sqlalchemy.orm.interfaces import MapperExtension
-class MyExtension(MapperExtension):
+class MemberChangeListener(MapperExtension):
     def after_update(self, mapper, connection, instance):
-        print "instance %s after_update !" % instance
+        print "instance %s after_update" % instance
+    def after_delete(self, mapper, connection, instance):
+        print "instance %s after_delete" % instance
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
@@ -237,7 +241,7 @@ class Member(Base):
     "Abstract class"
     __tablename__   = "member"
     __type__        = Column(member_type)
-    __mapper_args__ = {'polymorphic_on': __type__, 'extension': MyExtension()}
+    __mapper_args__ = {'polymorphic_on': __type__, 'extension': MemberChangeListener()}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
@@ -342,7 +346,7 @@ class Member(Base):
 
     @property
     def config(self):
-        if not self.extra_fields:
+        if self.extra_fields == None:
             self.extra_fields = {}
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)

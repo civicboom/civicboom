@@ -22,8 +22,15 @@ Session = scoped_session(
 # names, you'll need a metadata for each database
 metadata = MetaData()
 
+# Shish - 0.9.7 had this included, 1.0 doesn't?
+# Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
+from sqlalchemy.ext.declarative import declarative_base
+Base = declarative_base()
+
+
 
 # AllanC - Testing various SQLAlchemy Events
+#          I left it hear because it's a useful tool, getting alerts to every field change
 """
 # Cache Additions
 #   We need to be able to recive notifications on any data object changes so that we can invalidate the cache
@@ -60,24 +67,23 @@ class AttributeListener(AttributeExtension):
     def _report(self, state, value, oldvalue, verb):
         state.obj().receive_change_event(verb, self.key, value, oldvalue)
 
+
 class Base(object):
     __sa_instrumentation_manager__ = InstallListeners
     
     def receive_change_event(self, verb, key, value, oldvalue):
-        return 
-        s = "Value '%s' %s on attribute '%s', " % (value, verb, key)
-        if oldvalue:
-            s += "which replaced the value '%s', " % oldvalue
-        s += "on object %s" % self
-        print s
+        try:
+            s = "Value '%s' %s on attribute '%s', " % (value, verb, key)
+            if oldvalue:
+                s += "which replaced the value '%s', " % oldvalue
+            s += "on object %s" % self
+            print s
+        except:
+            pass
         
 Base = declarative_base(cls=Base)
 """
 
-# Shish - 0.9.7 had this included, 1.0 doesn't?
-# Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
-from sqlalchemy.ext.declarative import declarative_base
-Base = declarative_base()
 
 
 # types
