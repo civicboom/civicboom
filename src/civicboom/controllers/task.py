@@ -15,6 +15,8 @@ from sqlalchemy import and_, or_
 
 from sqlalchemy.orm import aliased
 
+from civicboom.lib.payment.functions import *
+
 import datetime
 
 log = logging.getLogger(__name__)
@@ -231,22 +233,6 @@ class TaskController(BaseController):
         def check_timestamp(timestamp, days):
             return timestamp > (time_now - datetime.timedelta(days=days)) and timestamp < (time_now - datetime.timedelta(days=days-1))
         
-        # Calculate the next bill date for a service based on the service's start date (rounding down to nearest day, e.g. start 29/02/2000 -> 28/02/2010)
-        def next_start_date(start_date, frequency, offset=0):
-            _start_date = start_date
-            for i in range(10):
-                try:
-                    if frequency == "year":
-                        _start_date = _start_date.replace(year=time_now.year+offset)
-                    elif frequency == "month":
-                        _start_date = _start_date.replace(year=time_now.year, month=time_now.month+offset)
-                    break
-                except ValueError:
-                    start_date = _start_date.replace(day=_start_date.day-1)
-            if _start_date < time_now.date():
-                _start_date = next_start_date(start_date, frequency, 1)
-            return _start_date
-        
         # For each billing frequency get accounts likely to be due in the next x days
         for frequency in ["month", "year"]:
             # Get accounts due in the next x days and have paid services:
@@ -263,7 +249,7 @@ class TaskController(BaseController):
                 currency = account.currency
                 
                 # Calculate the start date we are going to try and invoice for
-                start_date = next_start_date(account.start_date, frequency)
+                start_date = next_start_date(account.start_date, frequency, time_now)
                 
                 #Check for invoices with the start date already in the system (not disregarded though!)
                 check = account.invoices.filter(Invoice.status != "disregarded")\
@@ -280,6 +266,8 @@ class TaskController(BaseController):
                 # Create a new Invoice object & set the due date to the service start date
                 invoice = Invoice(account)
                 invoice.due_date = start_date
+                Session.add(invoice)
+                Session.commit()
                 
                 # Check if there is a payment account service set-up for this account (allows discount, etc. to be applied)
                 payment_account_service = Session.query(PaymentAccountService).filter(PaymentAccountService.payment_account_id == account.id)\
@@ -290,7 +278,6 @@ class TaskController(BaseController):
                        invoice,
                        payment_account_service  = payment_account_service,
                        service                  = service,
-                       frequency                = frequency,
                        start_date               = start_date
                    )
                 invoice.lines.append(line)
@@ -299,12 +286,11 @@ class TaskController(BaseController):
                 # TODO: This needs to take into account service frequency / account frequency, etc.
                 for payment_account_service in account.services:
                     if payment_account_service.service.payment_account_type != account.type:
-                        line = InvoiceLine(invoice, payment_account_service.service, frequency)
+                        line = InvoiceLine(invoice, payment_account_service.service)
                         invoice.lines.append(line)
                         #lines.append(line)
                 
                 # Commit the invoice before changing status or the commit will fail db level security check!
-                Session.add(invoice)
                 Session.commit()
                 
                 # TODO: Any Invoice changes need to go here!
@@ -348,7 +334,7 @@ class TaskController(BaseController):
         Session.commit()
         return response_completed_ok
     
-    # GregM: Invoice processing
+    # GregM: Transaction processing
     def run_transaction_tasks(self):
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
         from civicboom.controllers.payment_actions import paypal_interface
@@ -373,8 +359,45 @@ class TaskController(BaseController):
         
         Session.commit()
         return response_completed_ok
-        pass
-
+    
+    def run_billing_account_tasks(self):
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
+        from civicboom.controllers.payment_actions import paypal_interface
+        from civicboom.model.member import PaymentAccount
+        
+        paypal_to_civicboom_status = {
+            'Active'     :'active',
+            'Pending'    :'pending',
+            'Cancelled'  :'deactivated',
+            'Suspended'  :'flagged',
+            'Expired'    :'deactivated',
+        }
+        
+        billing_accounts = Session.query(BillingAccount).filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active')).all()
+        
+        for billing_account in billing_accounts:
+            print billing_account.provider
+            if billing_account.provider == 'paypal_recurring' or billing_account.provider == 'paypal-recurring':
+                try:
+                    response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
+                except Exception as e:
+                    pass
+                else:
+                    if response.STATUS in paypal_to_civicboom_status.keys():
+                        billing_account.status = paypal_to_civicboom_status[response.STATUS]
+                    if 'LASTPAYMENTDATE' in response.raw:
+                        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
+                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider=='paypal_recurring', BillingTransaction.timestamp==last_date)).first():
+                            txn = BillingTransaction()
+                            txn.timestamp = last_date
+                            txn.status = 'complete'
+                            txn.amount = response.LASTPAYMENTAMT
+                            txn.billing_account = billing_account
+                            txn.provider = 'paypal_recurring'
+                            txn.reference = response.PROFILEID
+                            Session.add(txn)
+        Session.commit()
+        return response_completed_ok
     #---------------------------------------------------------------------------
     # Publish Sceduled Assignments
     #---------------------------------------------------------------------------

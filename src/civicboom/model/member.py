@@ -12,7 +12,7 @@ from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL, CheckConstraint
 
-import urllib
+import urllib, datetime
 import hashlib
 import copy
 
@@ -874,6 +874,18 @@ class PaymentAccount(Base):
         if not self._config:
             self._config = _PaymentConfigManager(self.extra_fields)
         return self._config
+    
+    @property
+    def next_start_date(self):
+        from civicboom.lib.payment.functions import next_start_date
+        return next_start_date(self.start_date, self.frequency, datetime.datetime.now())
+    
+    @property
+    def next_start_date_unbilled(self):
+        from civicboom.lib.payment.functions import next_start_date
+        not_found = True
+        while not_found:
+            break
     
     @property
     def total_value(self):

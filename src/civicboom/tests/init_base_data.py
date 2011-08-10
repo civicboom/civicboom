@@ -105,16 +105,17 @@ def init_base_data():
         u2_invoice1.due_date = u2_account.start_date
         u2_invoice1.timestamp = u2_account.start_date + datetime.timedelta(minutes=1)
         
+        Session.add(u2_invoice1)
+        Session.commit()
         
         u2_invoice1line = InvoiceLine(
                 u2_invoice1,
                 service                  = u2_service,
-                frequency                = 'month',
                 start_date               = u2_account.start_date
             )
         
         
-        Session.add_all([u2_invoice1, u2_invoice1line])
+        Session.add_all([u2_invoice1line])
         
         Session.commit()
         u2_invoice1.status = "billed"

@@ -104,7 +104,7 @@ class PaymentActionsController(BaseController):
     @web
     @auth
     @role_required('admin')
-    def billing_account_remove(self, id, **kwargs):
+    def billing_account_deactivate(self, id, **kwargs):
         billing_account_id = kwargs.get('billing_account_id')
         
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
@@ -121,9 +121,12 @@ class PaymentActionsController(BaseController):
             raise action_error(_('This billing account does not exist'), code=404)
         
         if billing_account.provider == 'paypal-recurring':
+            billing_account.provider = 'paypal_recurring'
+        if billing_account.provider in api_calls.cancel_recurrings:
             try:
-                response = cancel_recurrings['paypal'](billing_account.reference)
-            except cbPaymentError as e:
+                response = api_calls.cancel_recurrings[billing_account.provider](billing_account.reference)
+                #response = api_calls.cancel_recurrings['paypal_express'](billing_account.reference)
+            except api_calls.cbPaymentError as e:
                 raise action_error(e.value, code=400)
         
         billing_account.status = 'deactivated'
@@ -213,8 +216,7 @@ class PaymentActionsController(BaseController):
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
         try:
-            response = api_calls.cancels[service](
-                payment_account_id  = id,
+            response = api_calls.lookups[service](
                 **kwargs
             )
         except api_calls.cbPaymentAPIError as e:
@@ -224,7 +226,16 @@ class PaymentActionsController(BaseController):
         
         if not txn:
             return action_error(_('Payment transaction not found'), 404)
-        txn.status = response.status
+        
+        try:
+            response = api_calls.cancels[service](
+                payment_account_id  = id,
+                invoice_id          = txn.invoice.id,
+                **kwargs
+            )
+        except api_calls.cbPaymentAPIError as e:
+            raise action_error(e.value, code=400)
+        txn.status = response['status']
         Session.commit()
         
         if response.get('redirect'):
@@ -241,21 +252,35 @@ class PaymentActionsController(BaseController):
         if service not in api_calls.returns or service not in api_calls.lookups:
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
-        response = api_calls.lookups[service]
+        response = api_calls.lookups[service](**kwargs)
         
         txn = Session.query(BillingTransaction).filter(BillingTransaction.provider==response['provider']).filter(BillingTransaction.reference==response['reference']).first()
         
         if not txn:
             return action_error(_('Transaction not found'), code=404)
         
+        args = dict(
+            payment_account_id=id ,
+            **kwargs
+        )
+        
+        if txn.config.get('recurring'):
+            args.update({
+                'recurring' : txn.config['recurring'],
+                'next_date' : txn.invoice.payment_account.next_start_date,
+                'frequency' : txn.invoice.payment_account.frequency.capitalize(),
+                'amount'    : txn.invoice.payment_account.cost_frequency[txn.invoice.payment_account.frequency],
+                'currency'  : txn.invoice.payment_account.currency,
+            })
         try:
             response = api_calls.returns[service](
-                payment_account_id  = id,
-                recurring = txn.config.get('recurring'),
-                frequency = txn.invoice.payment_account.frequency.capitalize(),
-                **kwargs
+                **args
             )
+        except api_calls.cbPaymentRecurringTransactionError as e:
+            response = e.dict
+            #response_message = e.value
         except api_calls.cbPaymentError as e:
+            print args
             txn.status = 'error'
             Session.commit()
             raise action_error(e.value, code=400)
@@ -273,6 +298,6 @@ class PaymentActionsController(BaseController):
             bacct.payment_account = txn.invoice.payment_account
             bacct.config.update(b_a_c.get('config_update', {}))
             Session.add(bacct)
-        
+        Session.commit()
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
         

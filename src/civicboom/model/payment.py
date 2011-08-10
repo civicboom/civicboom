@@ -119,8 +119,6 @@ class PaymentAccountService(Base):
     payment_account_id = Column(Integer(), ForeignKey('payment_account.id')      , nullable=False)
     service_id         = Column(Integer(), ForeignKey('payment_service.id')      , nullable=False)
     start_date         = Column(DateTime(), nullable=False, default=func.now())
-    _frequency         = Enum("once", "month", "year", name="billing_period")
-    frequency          = Column(_frequency,    nullable=False, default="month")
     quantity           = Column(Integer(), nullable=False, default=1)
     discount           = Column(Numeric(precision=10, scale=2),     nullable=False, default=0)
     note               = Column(Unicode(),     nullable=True)
@@ -135,7 +133,6 @@ class PaymentAccountService(Base):
             'service_id'        : None ,
             'service'           : lambda pac: pac.service.to_dict() ,
             'start_date'        : None ,
-            'frequency'         : None ,
             'quantity'          : None ,
             'discount'          : None ,
             'note'              : None ,
@@ -146,12 +143,12 @@ class PaymentAccountService(Base):
     
     @property
     def price(self):
-        return self.service.get_price(self.payment_account.currency, self.frequency)
+        return self.service.get_price(self.payment_account.currency, self.payment_account.frequency)
     
     def price_taxed(self):
         return self.price * (1 + (tax_rates[self.payment_account.tax_rate_code] if self.payment_account.taxable else 0))
     
-    def __init__(self, payment_account=None, service=None, note=None, frequency=None, quantity=None, discount=None ):
+    def __init__(self, payment_account=None, service=None, note=None,quantity=None, discount=None ):
         if payment_account:
             self.payment_account = payment_account
         if service:
@@ -159,11 +156,6 @@ class PaymentAccountService(Base):
         
         if note:
             self.note = note
-        
-        if service and service.payment_account_type:
-            self.frequency = payment_account.frequency
-        elif frequency:
-            self.frequency = frequency
         
         if quantity:
             self.quantity = quantity
@@ -365,21 +357,20 @@ class InvoiceLine(Base):
         },
     })
     
-    def __init__(self, invoice=None, service=None, payment_account_service=None, frequency=None, start_date=None):
-        if invoice:
-            self.invoice = invoice
-        
+    def __init__(self, invoice=None, service=None, payment_account_service=None, start_date=None):
         if payment_account_service:
             self.service = payment_account_service.service
-            frequency = payment_account_service.frequency
             self.note = payment_account_service.note
             self.discount = payment_account_service.discount
             
         if service:
             self.service = service
             self.title = self.service.title
-            self.price = self.service.get_price(invoice.currency, frequency)
+            self.price = self.service.get_price(invoice.currency, invoice.payment_account.frequency)
             self.extra_fields = self.service.extra_fields
+
+        if invoice:
+            self.invoice = invoice
 
         self.start_date = start_date
     
@@ -430,7 +421,8 @@ CREATE TRIGGER update_create_payment_invoice_line
 class BillingAccount(Base):
     __tablename__      = "payment_billing_account"
     id                 = Column(Integer(),     primary_key=True)
-    _billing_status    = Enum("active", "deactivated", "error", "flagged", name="billing_account_status")
+    _billing_status    = Enum("active", "pending", "deactivated", "error", "flagged", name="billing_account_status")
+    timestamp          = Column(DateTime(),    nullable=False, default=func.now())
     title              = Column(Unicode(),     nullable=False)
     status             = Column(_billing_status, nullable=False, default="active")
     provider           = Column(Unicode(),     nullable=False)
@@ -463,6 +455,7 @@ class BillingTransaction(Base):
     __tablename__ = "payment_billing_transaction"
     id                 = Column(Integer(),     primary_key=True)
     invoice_id         = Column(Integer(),     ForeignKey('payment_invoice.id'), nullable=True)
+    timestamp          = Column(DateTime(),    nullable=False, default=func.now())
     _transaction_status= Enum("created", "pending", "complete", "failed", "cancelled", "error", "refunded", name="billing_transaction_status")
     status             = Column(_transaction_status, nullable=False, default="created")
     amount             = Column(Numeric(precision=10, scale=2),     nullable=False)
