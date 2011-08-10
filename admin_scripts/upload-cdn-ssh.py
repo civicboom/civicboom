@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     c = SafeConfigParser()
     c.read(options.ini)
-    host = c.get("DEFAULT", "ssh_host"),
+    host = c.get("DEFAULT", "ssh_host")
 
     excludes = []
     if options.exclude:
