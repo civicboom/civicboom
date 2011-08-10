@@ -106,7 +106,7 @@ def send_notification(members, message): #members, rendered_message
                 m.target  = member
                 Session.add(m)
                 #member.messages_to.append(m)
-                update_member_messages(member)
+                invalidate_member_messages(member)
             
             # ------------------------------------------------------------------
         
@@ -201,7 +201,7 @@ def temp():
         m.content = message.get('content')
         m.target  = member
         Session.add(m)
-        update_member_messages(member)
+        invalidate_member_messages(member)
         
         # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
         message['subject'] = str(member)+': '+message.get('subject')

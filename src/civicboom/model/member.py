@@ -16,7 +16,7 @@ import urllib
 import hashlib
 import copy
 
-# Listener for Member object events
+# Listener for Member object events - this triggers invalidate cache
 # This is subject to change in sqlalchemy 0.7
 # Reference - http://www.sqlalchemy.org/docs/06/orm/interfaces.html#mapper-events
 from sqlalchemy.orm.interfaces import MapperExtension
@@ -25,6 +25,7 @@ class MemberChangeListener(MapperExtension):
         print "instance %s after_update" % instance
     def after_delete(self, mapper, connection, instance):
         print "instance %s after_delete" % instance
+
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"

@@ -361,7 +361,7 @@ def invalidate_content(content):
     #cache_test.invalidate(get_content_from, '', article.member.id)
     
     if content.parent:               # If content has parent
-        #update_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
+        #invalidate_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
         # dissasociate has code to separately update the parent, could thoese lines be ignored?
         pass
 
