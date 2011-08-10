@@ -17,15 +17,11 @@
     %>
 
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="explore_content" class="">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <h1>Explore contents</h1>
-        </div>
+        ${components.header(title="Explore contents")}
         
         <div data-role="content">
             ${content_main(self.list)}
         </div>
-        
-        ${components.control_bar()}
     </div>
 </%def>
 

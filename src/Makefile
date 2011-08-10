@@ -129,7 +129,7 @@ test-db: skel-db
 
 live-db: skel-db
 	mkdir -p data
-	ssh -i ~/.ec2/civicboom-key.pem -C ubuntu@db1.civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
+	ssh db1.civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
@@ -199,7 +199,7 @@ cdnpush: js css
 
 schemadiff:
 	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql
-	ssh -i ~/.ec2/civicboom-key.pem ubuntu@db1.civicboom.com sudo -u postgres pg_dump -s civicboom > civicboom_live.sql
+	ssh db1.civicboom.com sudo -u postgres pg_dump -s civicboom > civicboom_live.sql
 	java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction civicboom_live.sql civicboom_dev.sql > update.sql
 
 stopsys:

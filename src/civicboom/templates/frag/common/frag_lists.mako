@@ -137,7 +137,7 @@
             href      = h.url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'
             href_frag = h.url(*href_args, **href_kwargs)
-            js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_1'); return false;" """ % href_frag)
+            js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_2'); return false;" """ % href_frag)
     %>
     % if hide_if_empty and not count:
       % if empty_message:

@@ -17,19 +17,11 @@
     
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <a href="/" rel="external">
-                <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />
-            </a>
-            <h1>${self.name}</h1>
-            <a href="#member-extra-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
-        </div>
+        ${components.header(title=self.name)}
         
         <div data-role="content">
             ${member_details_full(self.member)}
         </div>
-        
-        ${components.control_bar()}
     </div>
     
     ## Extra info (content/boomed/etc)
@@ -42,8 +34,6 @@
         <div data-role="content">
             ${member_content_list(d)}
         </div>
-        
-        ${components.control_bar()}
     </div>
 </%def>
 
@@ -128,6 +118,9 @@
     % endif
 </%def>
 
+##-----------------------------------------------------------------------------
+## 
+##-----------------------------------------------------------------------------
 <%def name="member_list(list_title)">
     <% count = d[list_title]['count'] %>
     % if count:
@@ -143,8 +136,10 @@
     % endif
 </%def>
 
+##-----------------------------------------------------------------------------
 ## List the content relating to this user
 ## Includes assignments, articles, responses, etc
+##-----------------------------------------------------------------------------
 <%def name="member_content_list(data)">
     % if data:
         <%
@@ -159,6 +154,30 @@
             ${list_includes.list_contents(requests, "Active requests")}
             ${list_includes.list_contents(responses, "Responses")}
             ${list_includes.list_contents(articles, "Stories")}
+        </div>
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Creates the control bar/footer
+##-----------------------------------------------------------------------------
+<%def name="control_bar()">
+    % if c.logged_in_user:
+        <div data-role="navbar" class="ui-navbar">
+            <ul>
+                <li>
+                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
+                </li>
+                <li>
+                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
+                </li>
+                <li>
+                    ${h.secure_link(
+                        h.url(controller='account', action='signout'),
+                        _('Sign out')
+                    )}
+                </li>
+            </ul>
         </div>
     % endif
 </%def>
