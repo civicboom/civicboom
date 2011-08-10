@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     arch.close()
 
-	os.system("scp static-%s.zip %s:~/" % (options.version, host))
-	os.system("ssh %s unzip -o static-%s.zip -d /opt/cb/var/www/static/%s" % (host, options.version, options.version))
-	os.system("ssh %s rm -f static-%s.zip" % (host, options.version))
-	os.system("rm -f static-%s.zip" % (options.version, ))
+    os.system("scp static-%s.zip %s:~/" % (options.version, host))
+    os.system("ssh %s unzip -o static-%s.zip -d /opt/cb/var/www/static/%s" % (host, options.version, options.version))
+    os.system("ssh %s rm -f static-%s.zip" % (host, options.version))
+    os.system("rm -f static-%s.zip" % (options.version, ))

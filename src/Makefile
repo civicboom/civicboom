@@ -148,14 +148,14 @@ run-worker:
 # CDN
 
 cdnpush-ssh: js css
-	../admin-scripts/upload-cdn-ssh.py \
+	../admin_scripts/upload-cdn-ssh.py \
 		--ini production.ini \
 		--version ${GIT_TAG} \
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
 
 cdnpush-rs: js css
-	../admin-scripts/upload-cdn-rs.py \
+	../admin_scripts/upload-cdn-rs.py \
 		--ini production.ini \
 		--version ${GIT_TAG} \
 		--exclude-file civicboom/public/cdn-exclude.txt \
