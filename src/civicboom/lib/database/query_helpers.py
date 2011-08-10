@@ -7,10 +7,13 @@ from civicboom.lib.web import action_ok
 import logging
 log  = logging.getLogger(__name__)
 
+valid_obj_types = ['contents', 'members', 'messages']
 kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format','exclude_content','exclude_members']
 
 
 def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):
+    if obj_type:
+        assert obj_type in valid_obj_types
     kwargs = {}
     for key, value in source_kwargs.iteritems():
         if key not in kwargs_to_exclude_in_api_output:
