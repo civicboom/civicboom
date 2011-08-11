@@ -11,12 +11,6 @@
                 <li>
                     <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
                 </li>
-                <li>
-                    ${h.secure_link(
-                        h.url(controller='account', action='signout'),
-                        _('Sign out')
-                    )}
-                </li>
             </ul>
         </div>
     % endif
@@ -47,7 +41,7 @@
 ## Render header bar incl. control panel + extra links
 ##-----------------------------------------------------------------------------
 <%def name="header(title=None, back_link=None, next_link=None, control_override=None)">
-    <div data-role="header" data-position="inline" data-theme="b">
+    <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
         <div class="header">
             % if back_link:
                 <a href="${back_link}" class="back_link" data-direction="reverse">

@@ -22,6 +22,8 @@
         <div data-role="content">
             ${member_details_full(self.member)}
         </div>
+        
+        ${signout_navbar()}
     </div>
     
     ## Extra info (content/boomed/etc)
@@ -36,6 +38,26 @@
 
 <%def name="page_title()">
     ${_(self.name)}
+</%def>
+
+##-----------------------------------------------------------------------------
+## Signout nav bar link
+##-----------------------------------------------------------------------------
+<%def name="signout_navbar()">
+    % if c.logged_in_user and c.logged_in_user.username == self.id:
+        <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
+            <div data-role="navbar" class="ui-navbar">
+                <ul>
+                    <li>
+                        ${h.secure_link(
+                            h.url(controller='account', action='signout'),
+                            _('Sign out')
+                        )}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    % endif
 </%def>
 
 ##-----------------------------------------------------------------------------
