@@ -306,9 +306,15 @@ class TestController(TestCase):
         response_json = json.loads(response.body)
         content_id = int(response_json['data']['id'])
         self.assertGreater(content_id, 0)
-        # Todo
-        #   Check notifications are generated
-        #   to followers? notification of correct type
+        
+        # Check notifications are generated
+        follower_id = json.loads(self.app.get(url('member_action', action='followers', id=self.logged_in_as, limit=1, format='json'), status=200).body)['data']['list']['items'][0]['id'] #   get a follower of the creator of this item of content
+        notification = self.getLastNotification(user_id=follower_id) # Get the followers most recent notification
+        if type=='article' or type=='assignment':
+            self.assertIn('new'              , notification['title']  ) # Check the text expected in the notification
+            self.assertIn('new'              , notification['content'])
+            self.assertIn('/'+str(content_id), notification['content']) # Check there is a reference to the parent content id
+        
         return content_id
 
     def update_content(self, id, **kwargs):
@@ -321,6 +327,7 @@ class TestController(TestCase):
             params = params ,
             status = 200    ,
         )
+        # Todo - check notifications
 
     def delete_content(self, id):
         response = self.app.delete(
@@ -355,6 +362,7 @@ class TestController(TestCase):
             self.log_in_as(username)
             self.follower_trust(original_username)
             self.log_in_as(original_username)
+        # Todo - check notifications
             
     
     def unfollow(self, username):
@@ -423,6 +431,7 @@ class TestController(TestCase):
         if len(message_id_list)==1:
             return message_id_list[0]
         return message_id_list
+        # Todo - check email with message content sent?
 
     def get_messages(self, username=None):
         if not username:
@@ -456,11 +465,18 @@ class TestController(TestCase):
             status=201
         )
         comment_id = json.loads(response.body)["data"]["id"]
+        
+        # Check comment is listed in parent as the latest comment
         parent_content = self.get_content(content_id)
         self.assertEqual(parent_content['comments']['items'][-1]['id'], comment_id)
-        #self.assertEqual(self.get_comments(content_id)['list']['items'][-1]['id'], comment_id)
+        
+        # Check the comment notification was generated for the creator of the content being commented on
+        #self.assertEqual(self.get_comments(content_id)['list']['items'][-1]['id'], comment_id) # AllanC - no need to re-get just the comments, we got the whole content object above
         last_parent_creator_notification = self.getLastNotification(user_id=parent_content['content']['creator']['id'])
-        self.assertIn('commented on', last_parent_creator_notification['content'])
+        self.assertIn('comment'          , last_parent_creator_notification['subject'])
+        self.assertIn('commented'        , last_parent_creator_notification['content'])
+        self.assertIn('/'+str(comment_id), last_parent_creator_notification['content'])
+        
         return comment_id
 
     def accept_assignment(self, id):
