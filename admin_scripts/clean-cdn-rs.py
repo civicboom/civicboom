@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import cloudfiles
+import optparse
+import fnmatch
+from ConfigParser import SafeConfigParser
+
+import logging
+logging.basicConfig(
+    level   = logging.INFO,
+    format  = "%(asctime)s %(levelname)-5.5s %(message)s",
+    datefmt = "%H:%M:%S"
+)
+log = logging.getLogger(__name__)
+
+if __name__ == "__main__":
+    option_parser = optparse.OptionParser()
+    option_parser.add_option('--ini',
+        help='INI file to use for pylons settings',
+        type='str', default='development.ini')
+    option_parser.add_option('--version',
+        help='version tag to use as a prefix',
+        type='str', default='test')
+    options, args = option_parser.parse_args()
+
+    c = SafeConfigParser()
+    c.read(options.ini)
+
+    log.info("Connecting to cloudfiles")
+    conn = cloudfiles.get_connection(
+        c.get("DEFAULT", "rack_username"),
+        c.get("DEFAULT", "rack_api_key"),
+        authurl = 'https://lon.auth.api.rackspacecloud.com/v1.0'
+    )
+    cont = conn.get_container('static')
+    if cont.is_public == False:
+        cont.make_public()
+
+    for obj in cont.list_objects(prefix=options.version):
+        log.info("Deleting %s" % obj)
+        cont.delete_object(obj)
