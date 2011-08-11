@@ -6,6 +6,7 @@ import os
 import zipfile
 import fnmatch
 import gzip
+from ConfigParser import SafeConfigParser
 
 import logging
 logging.basicConfig(
@@ -18,19 +19,26 @@ log = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     option_parser = optparse.OptionParser()
-    option_parser.add_option('--output',
-        help='zip file to write to',
-        type='str', default=None)
+    option_parser.add_option('--ini',
+        help='INI file to use for pylons settings',
+        type='str', default='development.ini')
+    option_parser.add_option('--version',
+        help='version tag to use as a prefix',
+        type='str', default='test')
     option_parser.add_option('--exclude-file',
         help='list of files to exclude', dest="exclude",
         type='str', default=None)
     options, args = option_parser.parse_args()
 
+    c = SafeConfigParser()
+    c.read(options.ini)
+    host = c.get("DEFAULT", "ssh_host")
+
     excludes = []
     if options.exclude:
         excludes = [n.strip() for n in file(options.exclude).readlines()]
 
-    arch = zipfile.ZipFile(options.output, "w")
+    arch = zipfile.ZipFile("static-%s.zip" % options.version, "w")
 
     # walk through all dirs and all files in the specified folder
     for root, dirnames, filenames in os.walk(args[0]):
@@ -65,3 +73,8 @@ if __name__ == '__main__':
                     os.unlink(fullpath+".gz")
 
     arch.close()
+
+    os.system("scp static-%s.zip %s:~/" % (options.version, host))
+    os.system("ssh %s unzip -o static-%s.zip -d /opt/cb/var/www/static/%s" % (host, options.version, options.version))
+    os.system("ssh %s rm -f static-%s.zip" % (host, options.version))
+    os.system("rm -f static-%s.zip" % (options.version, ))

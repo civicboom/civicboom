@@ -1,6 +1,23 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+.header {
+    .logo_img {
+        margin: 0.5em;
+        float: left;
+    }
+    
+    .header_title {
+        font-size: 130%;
+        margin: 0.5em;
+        float: right;
+    }
+    
+    .separator {
+        clear: both;
+    }
+}
+
 .thumbnail {
     $size: 80px;
     min-width: $size;
