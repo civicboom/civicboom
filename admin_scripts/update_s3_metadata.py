@@ -19,8 +19,8 @@ log = logging.getLogger(__name__)
 def upload(prefix):
     config = pylons.config
 
-    connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-    bucket = connection.get_bucket(config["s3_bucket_name"])
+    connection = S3Connection(config["api_key.aws.access"], config["api_key.aws.secret"])
+    bucket = connection.get_bucket(config["warehouse.s3.bucket"])
 
     for key in bucket.list(prefix=prefix):
         print key,
