@@ -17,19 +17,18 @@
     
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
-        ${components.header(title=self.name)}
+        ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
             ${member_details_full(self.member)}
         </div>
+        
+        ${signout_navbar()}
     </div>
     
     ## Extra info (content/boomed/etc)
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <a href="#member-details-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
-            <h1>${self.name} - extra</h1>
-        </div>
+        ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
             ${member_content_list(d)}
@@ -39,6 +38,26 @@
 
 <%def name="page_title()">
     ${_(self.name)}
+</%def>
+
+##-----------------------------------------------------------------------------
+## Signout nav bar link
+##-----------------------------------------------------------------------------
+<%def name="signout_navbar()">
+    % if c.logged_in_user and c.logged_in_user.username == self.id:
+        <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
+            <div data-role="navbar" class="ui-navbar">
+                <ul>
+                    <li>
+                        ${h.secure_link(
+                            h.url(controller='account', action='signout'),
+                            _('Sign out')
+                        )}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    % endif
 </%def>
 
 ##-----------------------------------------------------------------------------
@@ -79,6 +98,7 @@
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
             username = member['username']
+            description = member['description']
             website = member['website']
         %>
         <div class="member_details">
@@ -90,7 +110,7 @@
                 
             <ul data-role="listview" data-inset="true">
                 ## User website
-                % if member['website']:
+                % if website:
                     <li data-role="list-divider" role="heading">
                         ${username}'s website
                     </li>
@@ -102,12 +122,14 @@
                 % endif
                 
                 ## User description
-                <li data-role="list-divider" role="heading">
-                    ${username}'s description
-                </li>
-                <li>
-                    ${member['description']}
-                </li>
+                % if description:
+                    <li data-role="list-divider" role="heading">
+                        ${username}'s description
+                    </li>
+                    <li>
+                        ${description}
+                    </li>
+                % endif
             </ul>
                 
                 ${member_list("following")}
