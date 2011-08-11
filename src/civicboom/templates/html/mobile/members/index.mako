@@ -27,5 +27,5 @@
 
 <%def name="content_main(list)">
     ${components.search_form()}
-    ${list_includes.list_members(list, "woo")}
+    ${list_includes.list_members(list)}
 </%def>
