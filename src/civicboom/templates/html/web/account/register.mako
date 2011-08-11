@@ -229,7 +229,7 @@
     <tr>
         <td style="text-align: center;">
             These options only affect which guides you will see, and won't affect which features
-            <br>are available - if you just want to explore, <a href="#" onclick="pick_help('ind')">click here to continue without guides</a>
+            <br>are available - if you just want to explore, <a href="#" onclick="pick_help('ind')">click here to continue</a>
         </td>
     </tr>
 </table>
