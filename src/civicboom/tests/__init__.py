@@ -321,7 +321,9 @@ class TestController(TestCase):
                 elif type=='article' or type=='assignment':
                     self.assertIn('new'              , notification['subject']) # Check the text expected in the notification
                     self.assertIn('new'              , notification['content'])
-                self.assertIn('/'+str(content_id), notification['content']) # Check there is a reference to the parent content id
+                if kwargs.get('parent_id'):
+                    self.assertIn('/'+kwargs.get('parent_id'), notification['content']) # Check there is a reference to the parent content id
+                self.assertIn('/'+str(content_id), notification['content']) # Check there is a reference to this content id
         
         return content_id
 
