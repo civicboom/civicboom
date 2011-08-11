@@ -161,7 +161,7 @@ cdnpush-rs: js css
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
 
-cdnpush: cdnpush-ssh cdnpush-rs
+cdnpush: cdnpush-rs
 
 
 ##############################################################################
