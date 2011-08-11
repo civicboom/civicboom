@@ -8,10 +8,10 @@ Dependencies:
 Use:
   import warehouse as wh
   wh.configure({
-      "warehouse":      "s3",
-      "aws_access_key": "q456w5ysh54dgrtg",
-      "aws_secret_key": "1345etywertywr65",
-      "s3_bucket_name": "my-bucket",
+      "warehouse.type": "s3",
+      "warehouse.s3.bucket": "my-bucket",
+      "api_key.aws.access": "q456w5ysh54dgrtg",
+      "api_key.aws.secret": "1345etywertywr65",
   })
   key = wh.copy_to_warehouse("/home/shish/demo.avi", "movies")
   print "Uploaded to my-bucket.s3.amazonaws.com/movies/%s" % key
@@ -60,17 +60,17 @@ def copy_to_warehouse(src, warehouse, hash=None, filename=None, placeholder=Fals
     if not hash:
         hash = hash_file(src)
 
-    log.info("Copying %s/%s (%s) to %s warehouse" % (warehouse, hash, filename, config["warehouse"]))
+    log.info("Copying %s/%s (%s) to %s warehouse" % (warehouse, hash, filename, config["warehouse.type"]))
 
-    if config["warehouse"] == "local":  #  or not config.get('online', True):  # hrm, tests with s3 access are nice, sometimes...
+    if config["warehouse.type"] == "local":  #  or not config.get('online', True):  # hrm, tests with s3 access are nice, sometimes...
         dest = "/tmp/warehouse/%s/%s" % (warehouse, hash)
         if not os.path.exists(os.path.dirname(dest)):
             os.makedirs(os.path.dirname(dest))
         shutil.copy(src, dest)
 
-    elif config["warehouse"] == "s3":  # pragma: no cover - online services aren't active in test mode
-        connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-        bucket = connection.get_bucket(config["s3_bucket_name"])
+    elif config["warehouse.type"] == "s3":  # pragma: no cover - online services aren't active in test mode
+        connection = S3Connection(config["api_key.aws.access"], config["api_key.aws.secret"])
+        bucket = connection.get_bucket(config["warehouse.s3.bucket"])
 
         key = Key(bucket)
         key.key = warehouse+"/"+hash
@@ -89,16 +89,16 @@ def copy_to_warehouse(src, warehouse, hash=None, filename=None, placeholder=Fals
             key.set_contents_from_filename(src, headers=metadata)
             key.set_acl('public-read')
 
-    elif config["warehouse"] == "ssh":  # pragma: no cover - online services aren't active in test mode
+    elif config["warehouse.type"] == "ssh":  # pragma: no cover - online services aren't active in test mode
         log.error("SSH warehouse not implemented")
         #scp = SCPClient(SSHTransport("static.civicboom.com"))
         #scp.put(src, "~/staticdata/%s/%s/%s/%s" % (warehouse, hash[0:1], hash[2:3], hash))
 
-    elif config["warehouse"] == "null":  # pragma: no cover - online services aren't active in test mode
+    elif config["warehouse.type"] == "null":  # pragma: no cover - online services aren't active in test mode
         pass
 
     else:  # pragma: no cover - online services aren't active in test mode
-        log.warning("Unknown warehouse type: "+config["warehouse"])
+        log.warning("Unknown warehouse type: "+config["warehouse.type"])
 
     return hash
 

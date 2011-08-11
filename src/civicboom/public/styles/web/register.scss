@@ -76,7 +76,7 @@ BODY.c-register.a-new_user.u-user {
         width: 39%;
         min-height: 165px;
 	      font-size: 120%;
-	      cursor: pointer;
+	      //cursor: pointer;
 	      
 	      @include drop_shadow(1px, 1px, 3px, #333);
         
@@ -101,9 +101,9 @@ BODY.c-register.a-new_user.u-user {
             display: none;
         }
         
-        &:hover {
-            background-color: lighten($cb-light-inactive, 3%);
-        }
+        //&:hover {
+        //    background-color: lighten($cb-light-inactive, 3%);
+        //}
         
         .newformtitle {
             font-size: 120%;

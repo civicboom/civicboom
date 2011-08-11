@@ -37,8 +37,8 @@ if __name__ == "__main__":
 
     log.info("Connecting to cloudfiles")
     conn = cloudfiles.get_connection(
-        c.get("DEFAULT", "rack_username"),
-        c.get("DEFAULT", "rack_api_key"),
+        c.get("DEFAULT", "api_key.rs.username"),
+        c.get("DEFAULT", "api_key.rs.api_key"),
         authurl = 'https://lon.auth.api.rackspacecloud.com/v1.0'
     )
     cont = conn.get_container('static')
