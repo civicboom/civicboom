@@ -10,12 +10,16 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from sqla_hierarchy import *
 
-from civicboom.lib.cache.caching_query import FromCache
 
 from cbutils.misc import make_username
 
 import logging
 log = logging.getLogger(__name__)
+
+# This global variable is set by parent calling modles. If this is set, the module will use the cache
+#  cache regions instances are added to the cache dictonary
+_cache = {}
+
 
 #-------------------------------------------------------------------------------
 # Cashe Management - Part 1
@@ -74,7 +78,7 @@ def get_license(license):
 
 
 # TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
-def get_member(member, search_email=False, cache=True, **kwargs):
+def get_member(member, search_email=False, **kwargs):
     if not member:
         return None
     if isinstance(member, Member):
@@ -82,29 +86,29 @@ def get_member(member, search_email=False, cache=True, **kwargs):
 
     assert type(member) in [int, str, unicode]
 
-    get_member_querys = []
-
-    if type(member) == int or member.isdigit():
-        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=int(member)) )
-    else:
-        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)) )
-        if search_email:
-            get_member_querys.append( Session.query(User).filter_by(email=member) )
-
-    for query in get_member_querys:
-        if cache:
-            query = query.options(FromCache("default", "members"))
-        if cache == 'invalidate':
-            # Invalidate has to be called in the same order as the get_member query
-            # Reference - http://www.sqlalchemy.org/trac/browser/examples/beaker_caching/helloworld.py
-            # As we were aquireing the member by a varity of methods and querys, I decided to put the invalidate method as part of the get method to reduce the duplucation between the get and invaidate methods
-            try   : query.invalidate()
-            except: pass # May fail if invalidate is called before item is cached - we dont care in this case - surely, we have to read it before we update it? can this be removed?
+    def get_member_nocache(member):
+        get_member_querys = []
+        if type(member) == int or member.isdigit():
+            get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=int(member)) )
         else:
+            get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)) )
+            if search_email:
+                get_member_querys.append( Session.query(User).filter_by(email=member) )
+        
+        for query in get_member_querys:
             try                 : return query.one()
             except NoResultFound: pass
+        
+        return None
     
-    return None
+    createfunc = lambda: get_member_nocache(member)
+    
+    if _cache.get('members'):
+        result = _cache.get('members').get(key=str(member), createfunc=createfunc)
+    else:
+        result = createfunc()
+    
+    return result
 
 
 def get_group(group):
@@ -347,12 +351,19 @@ def get_tag(tag):
 # Cache Management - Part 2 - Invalidating the Cache
 #-------------------------------------------------------------------------------
 
+def _invalidate_cache(region, obj, fields=['id']):
+    assert obj
+    cache = _cache.get(region)
+    if cache:
+        if isinstance(obj, basestring):
+            cache.remove_value(key=obj)
+        else:
+            for field in fields:
+                try   : cache.remove_value(key=str(getattr(obj, field)))
+                except: pass
+
 def invalidate_member(member):
-    get_member(member.id      , cache='invalidate')
-    get_member(member.username, cache='invalidate')
-    try   : get_member(member.email, cache='invalidate')
-    except: pass
-    
+    _invalidate_cache('members', member, ['id','username', 'email'])
     etag_key_incement("member",member.id)
 
 
@@ -363,6 +374,8 @@ def invalidate_content(content):
     if not content:
         # need to invalidate
         return
+    
+    _invalidate_cache('contents', content)
     
     etag_key_incement("content",content.id)
     #cache_test.invalidate(get_content, '', content.id)

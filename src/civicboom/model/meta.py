@@ -83,6 +83,19 @@ Base = declarative_base(cls=Base)
 """
 
 
+# Listener for Member object events - this triggers invalidate cache
+# This is subject to change in sqlalchemy 0.7
+# Reference - http://www.sqlalchemy.org/docs/06/orm/interfaces.html#mapper-events
+from sqlalchemy.orm.interfaces import MapperExtension
+class CacheChangeListener(MapperExtension):
+    def after_update(self, mapper, connection, instance):
+        instance.invalidate_cache()
+        #print "instance %s after_update" % instance
+    def before_delete(self, mapper, connection, instance):
+        instance.invalidate_cache()
+        #print "instance %s before_delete" % instance
+
+
 
 # types
 

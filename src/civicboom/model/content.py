@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType
+from civicboom.model.meta import Base, location_to_string, JSONType, CacheChangeListener
 from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
@@ -89,7 +89,7 @@ class Content(Base):
     """
     __tablename__   = "content"
     __type__        = Column(_content_type, nullable=False, index=True)
-    __mapper_args__ = {'polymorphic_on': __type__}
+    __mapper_args__ = {'polymorphic_on': __type__ , 'extension': CacheChangeListener()}
     #_visiability = Enum("pending", "show", name="content_")
     _edit_lock   = Enum("parent_owner", "group", "system", name="edit_lock_level")
     id              = Column(Integer(),        primary_key=True)
