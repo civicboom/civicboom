@@ -185,7 +185,10 @@ def wh_url(folder, filename):
     if folder == "public":
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
-            return proto+config['cdn_url']+"/"+app_globals.version+"/"+filename
+            cdn_url = config['cdn_url']
+            if proto == "https://": # rackspace CDN uses different hostnames for SSL and regular
+                cdn_url = re.sub("\.r\d\d\.", ".ssl.", cdn_url)
+            return proto+cdn_url+"/"+app_globals.version+"/"+filename
         else:  # pragma: no cover - only the production setup is tested
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
