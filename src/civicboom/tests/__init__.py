@@ -23,6 +23,8 @@ from sqlalchemy           import or_, and_, not_, null
 from paste.fixture import TestApp
 import cbutils.worker as worker
 
+from civicboom.lib.database.query_helpers import to_apilist
+
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
 import re
 import json
@@ -272,14 +274,19 @@ class TestController(TestCase):
             return response_json['data']
         return response
 
-
     def get_content(self, content_id, format='json'):
         response      = self.app.get(url('content', id=content_id, format=format), status=200)
         if format=='json':
             response_json = json.loads(response.body)
             return response_json['data']
         return response
-
+    
+    def get_comments(self, content_id, format='json'):
+        response      = self.app.get(url('content_action', action='comments', id=content_id, format=format), status=200)
+        if format=='json':
+            response_json = json.loads(response.body)
+            return response_json['data']
+        return response
     
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
@@ -299,6 +306,9 @@ class TestController(TestCase):
         response_json = json.loads(response.body)
         content_id = int(response_json['data']['id'])
         self.assertGreater(content_id, 0)
+        # Todo
+        #   Check notifications are generated
+        #   to followers? notification of correct type
         return content_id
 
     def update_content(self, id, **kwargs):
@@ -445,7 +455,13 @@ class TestController(TestCase):
             },
             status=201
         )
-        return json.loads(response.body)["data"]["id"]
+        comment_id = json.loads(response.body)["data"]["id"]
+        parent_content = self.get_content(content_id)
+        self.assertEqual(parent_content['comments']['items'][-1]['id'], comment_id)
+        #self.assertEqual(self.get_comments(content_id)['list']['items'][-1]['id'], comment_id)
+        last_parent_creator_notification = self.getLastNotification(user_id=parent_content['content']['creator']['id'])
+        self.assertIn('commented on', last_parent_creator_notification['content'])
+        return comment_id
 
     def accept_assignment(self, id):
         response = self.app.post( # Accept assignment
@@ -494,24 +510,26 @@ class TestController(TestCase):
                 self.log_in_as(old_user, old_password)
         return int(response_json['data']['list']['count'])
     
-    def getLastNotification(self, username=None, password=None):
-        if username:
-            if self.logged_in_as != username:
-                old_user = self.logged_in_as
-                old_password = self.logged_in_password
-                self.log_in_as(username, password)
-        response = self.app.get(
-            url('messages', format='json'),
-            params={
-                'list': 'notification',
-            },
-            status=200
-        )
-        response_json = json.loads(response.body)
-        if username:
-            if self.logged_in_as != old_user:
-                self.log_in_as(old_user, old_password)
-        return response_json['data']['list']['items'][0]
+    def getLastNotification(self, user_id=None):
+        # If user ID given - Get notifications directly from db for that user - we do this because if the user is persona we cant just log in and out to get there notifications
+        if user_id:
+            notification_list = to_apilist(
+                Session.query(Message).filter(and_(Message.source_id==null(), Message.target_id==user_id)).order_by(Message.timestamp.desc()) ,
+                obj_type = 'messages' ,
+                limit    = 3 ,
+            )
+        # Else - get notifications using API for currently logged in user
+        else:
+            response = self.app.get(
+                url('messages', format='json'),
+                params={
+                    'list' : 'notification',
+                    'limit': 3 ,
+                },
+                status=200
+            )
+            notification_list = json.loads(response.body)
+        return notification_list['data']['list']['items'][0]
     
     def invite_user_to(self, type, id, user):
         # Test that we can access the invite page
