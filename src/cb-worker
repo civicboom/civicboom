@@ -43,9 +43,9 @@ def main(argv):
         import platform
         smtp = logging.handlers.SMTPHandler(
             (w.config['smtp_server'], w.config['smtp_port']),
-            w.config["error_email_from"],
+            "Worker <noreply+errors@civicboom.com>", #w.config["error_email_from"],
             w.config["email_to"].split(","),
-            "Worker Error [%s]" % platform.node(),
+            "Error on %s" % platform.node(),
             (w.config['smtp_username'], w.config['smtp_password']),
             ()
         )
