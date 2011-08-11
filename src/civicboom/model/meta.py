@@ -11,9 +11,7 @@ __all__ = ['Session', 'engine', 'metadata', 'Base']
 engine = None
 
 # SQLAlchemy session manager. Updated by model.init_model()
-#Session = scoped_session(sessionmaker())
-from civicboom.lib.cache import cache_manager, caching_query
-Session = scoped_session(sessionmaker(  query_cls=caching_query.query_callable(cache_manager) )) # Cache addition
+Session = scoped_session(sessionmaker())
 
 # Global metadata. If you have multiple databases with overlapping table
 # names, you'll need a metadata for each database
@@ -28,6 +26,9 @@ Base = declarative_base()
 
 # AllanC - Testing various SQLAlchemy Events
 #          I left it hear because it's a useful tool, getting alerts to every field change
+
+#from civicboom.lib.cache import cache_manager, caching_query
+#Session = scoped_session(sessionmaker(  query_cls=caching_query.query_callable(cache_manager) )) # Cache addition
 """
 # Cache Additions
 #   We need to be able to recive notifications on any data object changes so that we can invalidate the cache
