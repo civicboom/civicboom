@@ -307,13 +307,21 @@ class TestController(TestCase):
         content_id = int(response_json['data']['id'])
         self.assertGreater(content_id, 0)
         
-        # Check notifications are generated
-        follower_id = json.loads(self.app.get(url('member_action', action='followers', id=self.logged_in_as, limit=1, format='json'), status=200).body)['data']['list']['items'][0]['id'] #   get a follower of the creator of this item of content
-        notification = self.getLastNotification(user_id=follower_id) # Get the followers most recent notification
-        if type=='article' or type=='assignment':
-            self.assertIn('new'              , notification['title']  ) # Check the text expected in the notification
-            self.assertIn('new'              , notification['content'])
-            self.assertIn('/'+str(content_id), notification['content']) # Check there is a reference to the parent content id
+        # Check public notifications are generated (for public content)
+        if not kwargs.get('private'):
+            try:
+                follower_id = json.loads(self.app.get(url('member_action', action='followers', id=self.logged_in_as, limit=1, format='json'), status=200).body)['data']['list']['items'][0]['id'] #   get a follower of the creator of this item of content
+                notification = self.getLastNotification(user_id=follower_id) # Get the followers most recent notification
+            except:
+                pass
+            if notification:
+                if type=='article' and kwargs.get('parent_id'):
+                    self.assertIn('response'         , notification['subject'])
+                    self.assertIn('response'         , notification['content'])
+                elif type=='article' or type=='assignment':
+                    self.assertIn('new'              , notification['subject']) # Check the text expected in the notification
+                    self.assertIn('new'              , notification['content'])
+                self.assertIn('/'+str(content_id), notification['content']) # Check there is a reference to the parent content id
         
         return content_id
 
