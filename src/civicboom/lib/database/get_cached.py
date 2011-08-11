@@ -102,7 +102,6 @@ def get_member(member, search_email=False, **kwargs):
         return None
     
     createfunc = lambda: get_member_nocache(member)
-    
     if _cache.get('members'):
         result = _cache.get('members').get(key=str(member), createfunc=createfunc)
     else:

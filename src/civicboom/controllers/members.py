@@ -13,6 +13,7 @@ from sqlalchemy.orm       import join, joinedload, defer
 
 log      = logging.getLogger(__name__)
 
+_cache = {}
 
 #-------------------------------------------------------------------------------
 # Global Functions

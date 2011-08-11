@@ -35,6 +35,7 @@ from time import time
 # Logging setup
 log      = logging.getLogger(__name__)
 
+_cache = {}
 
 #-------------------------------------------------------------------------------
 # Form Schema

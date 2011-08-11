@@ -118,7 +118,7 @@ def x_(s):
 #-------------------------------------------------------------------------------
 
 def render(*args, **kwargs):
-    if not app_globals.cache_enabled:
+    if not config['beaker.cache.enabled']:
         if 'cache_key'    in kwargs:
             del kwargs['cache_key']
         if 'cache_expire' in kwargs:

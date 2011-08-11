@@ -47,7 +47,7 @@ def load_environment(global_conf, app_conf):
     config['routes.map']         = make_map(config)
     config['pylons.app_globals'] = app_globals.Globals(config)
 
-    pylons.cache._push_object(config['pylons.app_globals'].cache)
+    #pylons.cache._push_object(config['pylons.app_globals'].cache)
 
     config['pylons.h'] = civicboom.lib.helpers
 
@@ -78,6 +78,7 @@ def load_environment(global_conf, app_conf):
                         'test_mode',
                         'demo_mode',
                         'profile',
+                        'beaker.cache.enabled',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config.get(varname))
@@ -128,6 +129,24 @@ def load_environment(global_conf, app_conf):
         worker.init_queue(redis_.RedisQueue(Redis(config['service.redis.server']), platform.node()))
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
+
+    # set up cache
+    from beaker.cache import CacheManager
+    from beaker.util import parse_cache_config_options
+    cache_manager = CacheManager(**parse_cache_config_options(config))
+    
+    if config['beaker.cache.enabled']:
+        _cache = {}
+        for region in ['members', 'contents', 'contents_index', 'members_index']:
+            _cache[region] = cache_manager.get_cache(region)
+            
+        #from civicboom.lib.database.get_cached import _cache #???
+        #import civicboom.controllers.contents
+        #import civicboom.controllers.members
+        civicboom.lib.database.get_cached._cache = _cache
+        #civicboom.controllers.contents._cache    = _cache
+        #civicboom.controllers.members._cache     = _cache
+
 
     init_model_extra() # This will trigger a set of additional initalizers
 
