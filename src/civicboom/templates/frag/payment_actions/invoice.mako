@@ -84,6 +84,10 @@
                             <td>${d['id']}</td>
                         </tr>
                         <tr>
+                            <td>Status:</td>
+                            <td>${d['status'].capitalize()}</td>
+                        </tr>
+                        <tr>
                             <td>Date:</td>
                             <td>${h.api_datestr_to_datetime(d['timestamp']).strftime('%a, %d %b %Y')}</td>
                         </tr>
