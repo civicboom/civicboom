@@ -107,7 +107,19 @@
             <h3>${member['name']}</h3>
             <p>Username: <b>${username}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
-                
+            
+            <div class="messages ui-grid-b" data-theme="b">
+                <div class="ui-block-a">
+                    <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages</a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
+                </div>
+                <div class="ui-block-c">
+                    <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications</a>
+                </div>
+            </div>
+            
             <ul data-role="listview" data-inset="true">
                 ## User website
                 % if website:
@@ -132,10 +144,9 @@
                 % endif
             </ul>
                 
-                ${member_list("following")}
-                ${member_list("followers")}
-                ${member_list("members")}
-            </ul>
+            ${member_list("following")}
+            ${member_list("followers")}
+            ${member_list("members")}
         </div>
     % endif
 </%def>

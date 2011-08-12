@@ -76,7 +76,11 @@
 
 		@include border_radius($frag-radius);
 
-		td, li, ul {
+    td {
+        padding-bottom: 0.5em;
+    }
+
+		li, ul {
 			padding-bottom: 1em;
 		}
 
