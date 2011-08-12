@@ -45,10 +45,14 @@ if __name__ == "__main__":
     if cont.is_public == False:
         cont.make_public()
 
+    obj = cont.create_object(options.version)
+    obj.content_type = "application/directory"
+    obj.write("")
+
     # walk through all dirs and all files in the specified folder
     log.info("Walking files in %s" % args[0])
     for root, dirnames, filenames in os.walk(args[0]):
-        for filename in filenames:
+        for filename in filenames + dirnames:
             fullpath = os.path.join(root, filename)
             relpath = fullpath[len(args[0]):]
             if relpath[0] == "/":
@@ -63,9 +67,14 @@ if __name__ == "__main__":
 
             # if the file is to be included, add it
             if included:
-                log.info("Adding %s" % relpath)
-
-                obj  = cont.create_object(os.path.join(options.version, relpath))
-                obj.load_from_filename(fullpath)
+                if filename in filenames:
+                    log.info("Adding file %s" % relpath)
+                    obj = cont.create_object(os.path.join(options.version, relpath))
+                    obj.load_from_filename(fullpath)
+                else:
+                    log.info("Adding directory %s" % relpath)
+                    obj = cont.create_object(os.path.join(options.version, relpath))
+                    obj.content_type = "application/directory"
+                    obj.write("")
 
 #    sys.exit(main(sys.argv))
