@@ -45,6 +45,13 @@
 </%def>
 
 ##------------------------------------------------------------------------------
+## Generate li elements for a list of messages
+##------------------------------------------------------------------------------
+<%def name="list_messages(list, title=None)">
+    ${generate_list(list, message_li, title)}
+</%def>
+
+##------------------------------------------------------------------------------
 ## Generate a single li element for the given content item
 ##------------------------------------------------------------------------------
 <%def name="content_li(item)">
@@ -60,12 +67,25 @@
 ##------------------------------------------------------------------------------
 ## Generate a single li element for the given member
 ##------------------------------------------------------------------------------
-<%def name="member_li(member)">
+<%def name="member_li(item)">
     <li>
-        <a href="${h.url('member', id=member['username'])}" title="${member['name']}" rel="external">
-            <h3>${member['name']}</h3>
-            <p>Username: <b>${member['username']}</b></p>
-            <p>Type: <b>${member['type'].capitalize()}</b></p>
+        <a href="${h.url('member', id=item['username'])}" title="${item['name']}" rel="external">
+            <h3>${item['name']}</h3>
+            <p>Username: <b>${item['username']}</b></p>
+            <p>Type: <b>${item['type'].capitalize()}</b></p>
         </a>
+    </li>
+</%def>
+
+##------------------------------------------------------------------------------
+## Generate a single li element for the given member
+##------------------------------------------------------------------------------
+<%def name="message_li(item)">
+    <li>
+        ## <a href="${h.url('member', id=item['username'])}" title="${item['name']}" rel="external">
+            <h3>${item['content']}</h3>
+            <p>${item['subject']}</p>
+            <p>${item['timestamp']}</p>
+        ## </a>
     </li>
 </%def>
