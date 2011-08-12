@@ -11,6 +11,9 @@ from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
 
+# Cache
+from civicboom.lib.cache import _cache
+
 # Validation
 import formencode
 import civicboom.lib.form_validators.base
@@ -35,7 +38,8 @@ from time import time
 # Logging setup
 log      = logging.getLogger(__name__)
 
-_cache = {}
+
+
 
 #-------------------------------------------------------------------------------
 # Form Schema
@@ -350,7 +354,7 @@ class ContentsController(BaseController):
             return results
         
         cache_func = lambda: contents_index(_filter, **kwargs)
-        if _cache.get('contents_index'):
+        if _cache.get('contents_index') and cache_key:
             return _cache.get('contents_index').get(key=cache_key, createfunc=cache_func)
         return cache_func()
 

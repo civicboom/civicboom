@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 # This global variable is set by parent calling modles. If this is set, the module will use the cache
 #  cache regions instances are added to the cache dictonary
-_cache = {}
+from civicboom.lib.cache import _cache
 
 
 #-------------------------------------------------------------------------------

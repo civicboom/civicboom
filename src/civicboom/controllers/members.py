@@ -13,7 +13,8 @@ from sqlalchemy.orm       import join, joinedload, defer
 
 log      = logging.getLogger(__name__)
 
-_cache = {}
+# Cache
+from civicboom.lib.cache import _cache
 
 #-------------------------------------------------------------------------------
 # Global Functions

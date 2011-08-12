@@ -25,11 +25,13 @@ from redis import Redis
 import cbutils.worker as worker
 
 
+
 def load_environment(global_conf, app_conf):
     """
     Configure the Pylons environment via the ``pylons.config``
     object
     """
+    
     config = PylonsConfig()
 
     beaker.cache.clsmap['ext:redis'] = redis_.RedisManager
@@ -131,22 +133,8 @@ def load_environment(global_conf, app_conf):
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 
     # set up cache
-    from beaker.cache import CacheManager
-    from beaker.util import parse_cache_config_options
-    cache_manager = CacheManager(**parse_cache_config_options(config))
-    
-    if config['beaker.cache.enabled']:
-        _cache = {}
-        for region in ['members', 'contents', 'contents_index', 'members_index', 'content_show', 'members_show']:
-            _cache[region] = cache_manager.get_cache(region)
-            
-        #from civicboom.lib.database.get_cached import _cache #???
-        #import civicboom.controllers.contents
-        #import civicboom.controllers.members
-        #civicboom.lib.database.get_cached._cache = _cache
-        #civicboom.controllers.contents._cache    = _cache
-        #civicboom.controllers.members._cache     = _cache
-
+    from civicboom.lib.cache import init_cache
+    init_cache(config)
 
     init_model_extra() # This will trigger a set of additional initalizers
 
