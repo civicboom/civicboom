@@ -1,5 +1,10 @@
 <%inherit file="/frag/common/frag.mako"/>
 
+<%!
+    from decimal import Decimal
+    from civicboom.model.payment import currency_symbols
+%>
+
 ##------------------------------------------------------------------------------
 ##
 ##------------------------------------------------------------------------------
@@ -8,6 +13,17 @@
         self.attr.title     = _('Payment accounts')
         self.id             = d['id']
     %>
+</%def>
+
+<%def name="format_currency(full_currency)">
+    % if full_currency:
+        ${d['currency']}
+    % endif
+    ${currency_symbols[d['currency']] | n}
+</%def>
+<%def name="format_price(price, full_currency=False)">
+    ${format_currency(full_currency)}
+    ${price}
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -19,23 +35,23 @@
         <p>Payment account number: ${d['id']}</p>
         <p>Account type: ${_('_'+d['type']).capitalize()}</p>
     </div>
-    <div class="frag_whitewrap" style="float:left;width:42%">
+    <div class="frag_whitewrap" style="float:left;width:42%; margin-right:0;">
         <h2>Services</h2>
         <ul>
             % for service in d['services_full']:
                 <li>
-                    ${service['service']['title']} - ${d['currency']} ${service['price_taxed']} per ${service['frequency']}
+                    ${service['service']['title']} - ${format_price(service['price_taxed'])} per ${service['frequency']}
                 </li>
             % endfor
         </ul>
+        <h2>Total cost:</h2>
         <p>
-            Total cost:<br />
             % for freq, cost in d['cost_frequency'].items():
-            ${cost} billed every ${freq}<br />
+            ${format_price(cost)} billed every ${freq}<br />
             % endfor
         </p>
     </div>
-    <div class="frag_whitewrap" style="float:right;width:42%">
+    <div class="frag_whitewrap" style="float:right;width:42%; margin-left:0;">
         <h2>Payment Methods</h2>
         <ul>
             % for billing_account in d['billing_accounts']:
@@ -55,12 +71,12 @@
             % endfor
         </ul>
     </div>
-    <div class="frag_whitewrap" style="float:right;width:42%">
+    <div class="frag_whitewrap" style="float:right;width:42%; margin-left:0;">
         <h2>Invoices</h2>
         <ul>
             % for invoice in d['invoices']:
                 <li>
-                    <a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}" onclick="cb_frag($(this), '${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}'); return false;">
+                    <a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}" onclick="cb_frag($(this), '${h.url('payment_action', format='frag', action='invoice', id=d['id'], invoice_id=invoice['id'])}'); return false;">
                         ${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}
                     </a>
                 </li>
