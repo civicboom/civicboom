@@ -7,19 +7,10 @@ import civicboom.lib.helpers as h
 from sqlalchemy           import or_, and_, null
 #from civicboom.lib.payment.paypal import express_checkout_single_auth, express_checkout_get_details
 from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount, BillingTransaction
-from civicboom.lib.payment.paypal import *
-import civicboom.lib.payment.api_calls as api_calls
+import civicboom.lib.payment as payment
 #from civicboom.controllers.groups import _get_group
 
 log      = logging.getLogger(__name__)
-
-paypal_config = PayPalConfig(
-    API_USERNAME  = config['api_key.paypal.username'],
-    API_PASSWORD  = config['api_key.paypal.password'],
-    API_SIGNATURE = config['api_key.paypal.signature'],
-    DEBUG_LEVEL   = 0)
-
-paypal_interface = PayPalInterface(config=paypal_config)
 
 class PaymentActionsController(BaseController):
         
@@ -45,6 +36,9 @@ class PaymentActionsController(BaseController):
         
         if not member:
             raise action_error(_('The user does not exist'), code=404)
+        
+        if len(account.members) <= 1:
+            raise action_error(_("You can't remove the last member from the account"), code=400)
         
         if not account.member_remove(member):
             raise action_error(_('Member not in this payment account'), code=404)
@@ -83,7 +77,6 @@ class PaymentActionsController(BaseController):
     def invoice(self, id, **kwargs):
         """
         """
-        
         invoice_id = kwargs.get('invoice_id')
         
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
@@ -117,16 +110,16 @@ class PaymentActionsController(BaseController):
         
         print billing_account
         
-        if not billing_account or billing_account.status == 'error':
+        if not billing_account or billing_account.status in ('error', 'deactivated'):
             raise action_error(_('This billing account does not exist'), code=404)
         
         if billing_account.provider == 'paypal-recurring':
             billing_account.provider = 'paypal_recurring'
-        if billing_account.provider in api_calls.cancel_recurrings:
+        if billing_account.provider in payment.cancel_recurrings:
             try:
-                response = api_calls.cancel_recurrings[billing_account.provider](billing_account.reference)
-                #response = api_calls.cancel_recurrings['paypal_express'](billing_account.reference)
-            except api_calls.cbPaymentError as e:
+                response = payment.cancel_recurrings[billing_account.provider](billing_account.reference)
+                #response = payment.cancel_recurrings['paypal_express'](billing_account.reference)
+            except payment.cbPaymentError as e:
                 raise action_error(e.value, code=400)
         
         billing_account.status = 'deactivated'
@@ -173,18 +166,18 @@ class PaymentActionsController(BaseController):
             amount = invoice.total_due
             currency = invoice.currency
             
-        if service not in api_calls.begins:
+        if service not in payment.begins:
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
         try:
-            response = api_calls.begins[service](
+            response = payment.begins[service](
                 payment_account_id  = id,
                 amount              = amount,
                 currency            = currency,
                 invoice_id          = invoice_id,
                 recurring           = kwargs.get('recurring'),
             )
-        except api_calls.cbPaymentAPIError as e:
+        except payment.cbPaymentAPIError as e:
             raise action_error(e.value, code=400)
         
         txn = BillingTransaction()
@@ -212,14 +205,14 @@ class PaymentActionsController(BaseController):
         if not service:
             raise action_error(_('Invalid parameters, need service'), code=400)
         
-        if service not in api_calls.cancels:
+        if service not in payment.cancels:
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
         try:
-            response = api_calls.lookups[service](
+            response = payment.lookups[service](
                 **kwargs
             )
-        except api_calls.cbPaymentAPIError as e:
+        except payment.cbPaymentAPIError as e:
             raise action_error(e.value, code=400)
         
         txn = Session.query(BillingTransaction).filter(BillingTransaction.provider==response['provider']).filter(BillingTransaction.reference==response['reference']).first()
@@ -228,12 +221,12 @@ class PaymentActionsController(BaseController):
             return action_error(_('Payment transaction not found'), 404)
         
         try:
-            response = api_calls.cancels[service](
+            response = payment.cancels[service](
                 payment_account_id  = id,
                 invoice_id          = txn.invoice.id,
                 **kwargs
             )
-        except api_calls.cbPaymentAPIError as e:
+        except payment.cbPaymentAPIError as e:
             raise action_error(e.value, code=400)
         txn.status = response['status']
         Session.commit()
@@ -249,10 +242,10 @@ class PaymentActionsController(BaseController):
         if not service:
             raise action_error(_('Invalid parameters, need service'), code=400)
         
-        if service not in api_calls.returns or service not in api_calls.lookups:
+        if service not in payment.returns or service not in payment.lookups:
             raise action_error(_('Sorry there is a problem with the payment service you requested'), code=400)
         
-        response = api_calls.lookups[service](**kwargs)
+        response = payment.lookups[service](**kwargs)
         
         txn = Session.query(BillingTransaction).filter(BillingTransaction.provider==response['provider']).filter(BillingTransaction.reference==response['reference']).first()
         
@@ -273,13 +266,13 @@ class PaymentActionsController(BaseController):
                 'currency'  : txn.invoice.payment_account.currency,
             })
         try:
-            response = api_calls.returns[service](
+            response = payment.returns[service](
                 **args
             )
-        except api_calls.cbPaymentRecurringTransactionError as e:
+        except payment.cbPaymentRecurringTransactionError as e:
             response = e.dict
             #response_message = e.value
-        except api_calls.cbPaymentError as e:
+        except payment.cbPaymentError as e:
             print args
             txn.status = 'error'
             Session.commit()
