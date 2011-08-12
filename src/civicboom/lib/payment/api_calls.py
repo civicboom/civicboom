@@ -198,7 +198,7 @@ def paypal_express_return(**kwargs):
     Session.commit()
     return result
 
-def paypal_express_cancel_recurring(reference):
+def paypal_recurring_cancel(reference):
     try:
         response = paypal_interface.manage_recurring_payments_profile_status(reference, 'Cancel')
     except:
@@ -208,6 +208,55 @@ def paypal_express_cancel_recurring(reference):
     return {
         'status'    : 'deactivated'
     }
+    
+def paypal_express_check_transaction(reference):
+    try:
+        response = paypal_interface.get_transaction_details(
+            transactionid = reference,
+        )
+    except:
+        raise cbPaymentAPIError('There was an error communicating with PayPal, please try again later')
+    if 'Success' not in response.ACK:
+        raise cbPaymentTransactionError('Error finding the PayPal transaction')
+    result = {}
+    if response.PAYMENTSTATUS in ('Completed','Canceled-Reversal'):
+        result['status'] = 'complete'
+    elif response.PAYMENTSTATUS in ('Denied', 'Expired', 'Failed', 'Refunded', 'Reversed', 'Voided'):
+        result['status'] = 'cancelled'
+    else:
+        result['status'] = 'pending'
+    return result
+
+def paypal_recurring_check(reference):
+    paypal_to_civicboom_status = {
+        'Active'     :'active',
+        'Pending'    :'pending',
+        'Cancelled'  :'deactivated',
+        'Suspended'  :'flagged',
+        'Expired'    :'deactivated',
+    }
+    try:
+        response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
+    except:
+        raise cbPaymentAPIError('There was an error communicating with PayPal, please try again later')
+    if 'Success' not in response.ACK:
+        raise cbPaymentTransactionError('Error finding the PayPal subscription')
+    
+    result = {}
+    if response.STATUS in paypal_to_civicboom_status.keys():
+        result['status'] = paypal_to_civicboom_status[response.STATUS]
+    else:
+        result['status'] = 'error'
+    if 'LASTPAYMENTDATE' in response.raw:
+        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
+        result['create_transaction'] = {
+            'timestamp' : last_date,
+            'status'    : 'complete',
+            'amount'    : response.LASTPAYMENTAMT,
+            'provider'  : 'paypal_recurring',
+            'reference' : response.PROFILEID
+        }
+    return result
 # GregM: Integrating all payment services into one set of calls
 #    @web
 #    @authorize
@@ -277,4 +326,6 @@ begins              = {'paypal_express':    paypal_express_begin}
 cancels             = {'paypal_express':    paypal_express_cancel}
 returns             = {'paypal_express':    paypal_express_return}
 lookups             = {'paypal_express':    paypal_express_lookup}
-cancel_recurrings   = {'paypal_recurring':  paypal_express_cancel_recurring}
+cancel_recurrings   = {'paypal_recurring':  paypal_recurring_cancel}
+check_transactions  = {'paypal_express':    paypal_express_check_transaction}
+check_recurrings    = {'paypal_recurring':  paypal_recurring_check}
