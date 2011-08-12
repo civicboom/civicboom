@@ -732,8 +732,15 @@ class ContentsController(BaseController):
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
+                
             if message_to_all_creator_followers:
                 content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
+        
+        # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
+        if content.__type__ == "comment":
+            content.parent.creator.send_notification(
+                messages.comment(member=content.creator, content=content, you=content.parent.creator)
+            )
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)

@@ -84,7 +84,15 @@
 		<%doc><h2 class="headline">
 			${_("_site_name")}
 		</h2></%doc>
-		<img src="images/logo-v3-684x150.png" alt="Civicboom.com"/>
+		<img
+            width="684" height="150"
+            src="${h.wh_url("public", "images/logo-v3-684x150.png")}"
+            ## try to load the image really fast from the CDN, but for double
+            ## reliability (because the logo is really important), fall back
+            ## to the local copy
+            onerror='this.onerror=null;this.src="/images/logo-v3-684x150.png"'
+            alt="Civicboom"
+        />
 	</div>
 </%def>
 
@@ -101,7 +109,7 @@
 		
 		<div class="window_wrapper">
 			<span class="symbol">=</span>
-			${make_window("right", "/images/misc/titlepage/last_panel.png", "Get published",
+			${make_window("right", "/images/misc/titlepage/last_panel.png", "Result",
 				content="Publish and get published: Get news stories from source. Get closer to your audience. Work together.")}
 		</div>
 	

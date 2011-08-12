@@ -17,33 +17,18 @@
         self.actions   = d.get('actions', [])
     %>
     <div data-role="page" data-title="${page_title()}" data-theme="b" id="content-main-${self.id}" class="content_page">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <h1>${self.title}</h1>
-            <a href="#content-info-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
-        </div>
+        ${components.header(next_link="#content-info-"+str(self.id))}
         ${content_main()}
-        
-        ${components.control_bar()}
     </div>
     
-    <div data-role="page" data-title="${page_title()} - info" data-theme="b" id="content-info-${self.content['id']}" class="content_page">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <a href="#content-main-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
-            <h1>${self.title} - info</h1>
-        </div>
+    <div data-role="page" data-title="${page_title()} - info" data-theme="b" id="content-info-${self.id}" class="content_page">
+        ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_info()}
-        
-        ${components.control_bar()}
     </div>
     
-    <div data-role="page" data-title="${page_title()} - media" data-theme="b" id="content-media-${self.content['id']}" class="content_page">
-        <div data-role="header" data-position="inline" data-theme="b">
-            <a href="#content-main-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
-            <h1>${self.title} - media</h1>
-        </div>
+    <div data-role="page" data-title="${page_title()} - media" data-theme="b" id="content-media-${self.id}" class="content_page">
+        ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_media()}
-        
-        ${components.control_bar()}
     </div>
 </%def>
 

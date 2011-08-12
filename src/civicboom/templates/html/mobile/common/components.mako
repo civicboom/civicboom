@@ -3,23 +3,15 @@
 ##-----------------------------------------------------------------------------
 <%def name="control_bar()">
     % if c.logged_in_user:
-        <div data-role="footer" data-position="fixed" data-theme="b">
-            <div data-role="navbar" class="ui-navbar">
-                <ul>
-                    <li>
-                        <a href="${h.url(controller='profile', action='index')}" rel="external">My profile</a>
-                    </li>
-                    <li>
-                        <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
-                    </li>
-                    <li>
-                        ${h.secure_link(
-                            h.url(controller='account', action='signout'),
-                            _('Sign out')
-                        )}
-                    </li>
-                </ul>
-            </div>
+        <div data-role="navbar" class="ui-navbar">
+            <ul>
+                <li>
+                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
+                </li>
+                <li>
+                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
+                </li>
+            </ul>
         </div>
     % endif
 </%def>
@@ -42,5 +34,30 @@
                 <input type="submit" value="${_("Search")}">
             </form>
         </p>
+    </div>
+</%def>
+
+##-----------------------------------------------------------------------------
+## Render header bar incl. control panel + extra links
+##-----------------------------------------------------------------------------
+<%def name="header(title=None, back_link=None, next_link=None, control_override=None)">
+    <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
+        <div class="header">
+            % if back_link:
+                <a href="${back_link}" class="back_link" data-direction="reverse">
+                    <span><</span>
+                </a>
+            % endif
+            <a href="/" rel="external">
+                <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />
+            </a>
+            % if next_link:
+                <a href="${next_link}" class="next_link">
+                    <span>></span>
+                </a>
+            % endif
+            <div class="separator"></div>
+        </div>
+        ${control_override() if control_override else control_bar()}
     </div>
 </%def>

@@ -16,21 +16,12 @@
 ##    <pre>${c.result['data']['invalid']}</pre>
 ##    % endif
 <div class="layout page_border">
-    ##style="width:61em;margin:auto;text-align:left;"
 	<h1>Just a few more details and you'll be booming!</h1>
 	
 	<div id="reg_form">
     <form action="" method="post">
-	<table class="newform help" style="margin: auto;">
-			
-			<tr><td><p class="step">1. Please choose one of the following. Do you:</p></td></tr>
-            ## Guidence type
-            ${help_type()}
-            <tr><td style="text-align: center;"><p class="error hideable" style="padding-bottom: 1em;">${_("Great you're so eager - but you need to choose one of the above first!")}</p><span class="button" id="help_type_continue">Continue to step 2</span></td></tr>
-        </table>
+        ${help_type()}
         <table class="newform user hide_if_js">
-            
-            <tr><td colspan="2"><p class="step">2. Fill in the following:</p><p id="user_details_back"><a>Or return to step 1 if you think you made a mistake!</a></p></td></tr>
             % if 'username' in c.required_fields:
               ${username()}
             % endif
@@ -46,32 +37,19 @@
             % if 'dob' in c.required_fields:
               ${dob()}
             % endif
-            
             ## recaptcha - if login account is not janrain
             % if config['online'] and 'password' in c.required_fields:
-            <tr>
-                <th>${_("Show us that you're a real person")}</th>
-                <td>
-                    ${h.get_captcha(c.lang, 'white')}
-                    ##<br/>
-                    ##<span class="smaller">${_('Please type the text in the box')}</span>'
-                    ${invalid('recaptcha_response_field')}
-                </td>
-            </tr>
+              ${captcha()}
             % endif
-            
-            ## Terms and conditions checkbox
-			<tr>
-				<th>Agree to <a href="/about/terms" target="_blank">terms</a></th>
-				<td>
-                    <input type="checkbox" name="terms" value="checked" style="width: 16px;" />
-                    ${invalid('terms')}
-                </td>
-			</tr>
+            % if True:
+              ${terms()}
+            % endif
             
             ## Submit button
 			<tr>
-				<td></td>
+				<td>
+                    <a class="button" id="user_details_back">${_("Go Back")}</a>
+                </td>
 				<td>
                     <input type="submit" name="submit" class="button" value="${_("Register")}"/>
                 </td>
@@ -81,18 +59,13 @@
     </div>
     
     <script type="text/javascript">
-        help_type_error = $('#help_type_continue').parent().find('.error');
-        $('#help_type_continue').click(function() {
-            if (!$('#help_type_ind').is(':checked') && !$('#help_type_org').is(':checked')) {
-                help_type_error.slideDown();
-            } else {
-                help_type_error.slideUp();
-                $('.newform.help').fadeOut(function() {
-                    $('.newform.user').fadeIn();
-                });
-            }
-        });
-        
+        function pick_help(type) {
+            $('#help_type_'+type).click();
+            $('.newform.help').fadeOut(function() {
+                $('.newform.user').fadeIn();
+            });
+        }
+
         $('#user_details_back').click(function() {
             $('.newform.user').fadeOut(function() {
                 $('.newform.help').fadeIn();
@@ -159,45 +132,58 @@
 </%def>
 
 <%def name="password()">
-  <tr>
+    <tr>
 		<th>Password</th>
 		<td>
             <input type="password" name="password"         value="" />
             <br/>
-            <p class="smaller">(minimum of 5 characters):</p>
+            <p class="smaller">(minimum of 5 characters)</p>
             ${invalid('password')}
         </td>
-  </tr>
-  <tr>
+    </tr>
+    <tr>
 		<th>Confirm password</th>
 		<td>
             <input type="password" name="password_confirm" value="" />
             ${invalid('password_confirm')}
         </td>
-  </tr>
+    </tr>
+</%def>
+
+<%def name="captcha()">
+    <tr>
+        <th>${_("Show us that you're a real person")}</th>
+        <td>
+            ${h.get_captcha(c.lang, 'white')}
+            ##<br/>
+            ##<span class="smaller">${_('Please type the text in the box')}</span>'
+            ${invalid('recaptcha_response_field')}
+        </td>
+    </tr>
+</%def>
+            
+<%def name="terms()">
+    ## Terms and conditions checkbox
+    <tr>
+        <th>Agree to <a href="/about/terms" target="_blank">terms</a></th>
+        <td>
+            <input type="checkbox" name="terms" value="checked" style="width: 16px;" />
+            ${invalid('terms')}
+        </td>
+    </tr>
 </%def>
 
 ##------------------------------------------------------------------------------
 ## help_type - radio buttons
 ##------------------------------------------------------------------------------
 <%def name="help_type()">
-
-    <%
-        radio_choices = {
-            'ind':[_('Individual')  , False],
-            'org':[_('Organisation'), False],
-        }
-        # Iterate to set checked flag
-        """for radio_key, radio_tuple in radio_choices.iteritems():
-           if h.get_data_value('help_type','register', radio_choices.keys()[0]) == radio_key:
-               radio_tuple[1] = True"""
-    %>
-
+<table class="newform help" style="margin: auto;">
     <tr>
         <td>${invalid('help_type')}</td>
-    </tr><tr>
+    </tr>
+    <tr>
         <td>
-            <div class="user_type_option ${'selected' if radio_choices['ind'][1] else ''}" onclick="$('#help_type_ind').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
+            <div class="user_type_option">
                 <img src="/images/default/thumbnail_response.png" alt="response"/>
                 
                 <h2 class="newformtitle">${_('Want to share your _articles?')}</h2>
@@ -205,26 +191,32 @@
                 <ul>
                     <li>${_('Everyone has stories - _site_name makes it easy to share them with the world')}</li>
                     <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
-                    <li><b>${_('Click here if this is you!')}</b></li>
                 </ul>
+
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="Help me share my stories">
             </div>
-            <div class="or"><p>or</p></div>
-            <div class="user_type_option ${'selected' if radio_choices['org'][1] else ''}" onclick="$('#help_type_org').click(); $(this).parent().children().removeClass('selected'); $(this).addClass('selected')">
+            <div class="or"></div>
+            <div class="user_type_option">
                 <img src="/images/default/thumbnail_assignment.png" alt="request"/>
                 <h2 class="newformtitle">${_('Need _articles?')}</h2>
                 <b>${_('Journalists, bloggers, publishers and news organisations:')}</b>
                 <ul>
                     <li>${_('Your greatest resource is your audience because news starts with people')}</li>
                     <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
-                    <li><b>${_('Click here if this is you!')}</b></li>
                 </ul>
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="Help me find stories">
             </div>
             
-            ## Radio buttons - hidden if js is enabled
             <div class="hide_if_js">
+<%
+    radio_choices = {
+        'ind':[_('Individual')  , False],
+        'org':[_('Organisation'), False],
+        'ind':[_('Just browsing'), False],
+    }
+%>
                 % for radio_key, (display_text, checked) in radio_choices.iteritems():
                     <%
-                        print (display_text+" :: "+str(checked))
                         if checked:
                             checked = 'checked'
                     %>
@@ -234,4 +226,11 @@
             ${invalid('help_value')}
         </td>
     </tr>
+    <tr>
+        <td style="text-align: center;">
+            These options only affect which guides you will see, and won't affect which features
+            <br>are available - if you just want to explore, <a href="#" onclick="pick_help('ind')">click here to continue</a>
+        </td>
+    </tr>
+</table>
 </%def>

@@ -401,6 +401,12 @@
         % endif
         ${format_date_if(_('Event Date'), content.get('event_date'), False, 'bold')}
         ${format_date_if(_('Due By')    , content.get('due_date'), False, 'bold'  )}
+        % if content.get('tags'):
+            <tr${' class=%s' % trclass if trclass else ''}>
+                <td>${_('Tags')}</td>
+                <td>${", ".join(content['tags'])}</td>
+            </tr>
+        % endif
       </table>
     </div>
 </%def>
@@ -433,14 +439,14 @@
             ${h.secure_link(
                 h.args_to_tuple('new_content', parent_id=content_dict['id']) ,
                 css_class = 'button',
-                value     = _("Share your story") ,
+                value     = _("Respond with your story") ,
                 json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); $.modal.close(); """),
             )}
             </div>
         </li>
     </%def>
     <div style="">
-        <h2 class="hide_if_js">${_("Share your story")}</h2>
+        <h2 class="hide_if_js">${_("Respond with your story")}</h2>
         <h1 class="hide_if_nojs">${_("Great you want to share your story...")}</h1>
         <p style="padding-bottom: 1em;">${_("Would you like to respond to:")}</p>
         <ul>
@@ -478,17 +484,17 @@
             % if self.content.get('parent'):
             
                 <div class="hide_if_nojs">
-                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Share your story")}</a>
+                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your story")}</a>
                 </div>
                 <div class="hide_if_js">
-                    ${popup.popup_static(_('Share your story'), respond_has_parent, 'popup_share')}
+                    ${popup.popup_static(_('Respond with your story'), respond_has_parent, 'popup_share')}
                 </div>
                 
             % else:
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
                     css_class = 'button',
-                    value     = _("Share your story") ,
+                    value     = _("Respond with your story") ,
                     json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """),
                 )}
             ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
@@ -715,7 +721,7 @@
                     
                     ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}
                     
-                    ${_('If you want to share your story please use the "share your story" button above.')}<br />
+                    ${_('If you want to respond with your story please use the "Respond with your story" button above.')}<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
                     <script type="text/javascript">

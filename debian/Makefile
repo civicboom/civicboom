@@ -27,6 +27,7 @@ cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium .
 	$(call mdcp, api/cb-website.conf      , fs-api/etc/init/                 )
 	$(call mdcp, api/cb-worker.conf       , fs-api/etc/init/                 )
 	$(call mdcp, ../admin_scripts/cb-task , fs-api/opt/cb/bin/               )
+	$(call mdcp, ../admin_scripts/nosete* , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../docs/*                , fs-api/opt/cb/share/doc/website/ )
 	$(call mdcp, ../src/*                 , fs-api/opt/cb/share/website/     )
 	$(call mdcp, ../src/production.ini    , fs-api/opt/cb/share/website-api/ )
@@ -50,7 +51,7 @@ cb-website-web.deb: Makefile $(shell find ../nginx ./web)
 cb-website-db.deb: Makefile $(shell find ./db ../admin_scripts)
 	rm -rf fs-db
 	$(call mdcp, ../admin_scripts/init_cbdb      , fs-db/opt/cb/bin/   )
-	$(call mdcp, ../admin_scripts/clean_sessions , fs-db/opt/cb/bin/   )
+	$(call mdcp, ../admin_scripts/clean-sess*    , fs-db/opt/cb/bin/   )
 	$(call mdcp, db/*                            , fs-db/DEBIAN/       )
 	sed -i s/VERSION/${VERSION}/ fs-db/DEBIAN/control
 	fakeroot dpkg -b fs-db cb-website-db_${VERSION}_all.deb 
