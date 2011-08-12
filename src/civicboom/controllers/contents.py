@@ -164,7 +164,6 @@ class ContentsController(BaseController):
 
     
     @web
-    @normalize_kwargs
     def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
@@ -205,127 +204,156 @@ class ContentsController(BaseController):
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
         """
-        results = Session.query(Content).with_polymorphic('*') # TODO: list
-        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
 
-        ###############################
-        # BEGIN COPY & PASTE OLD BITS #
-        ###############################
-        trusted_follower  = False
-        logged_in_creator = False
+        # Pre-process kwargs ---------------------------------------------------
+        #
+        # This must be done before caching - we assertain if private content can be shown to this user
+
+        kwargs['_is_logged_in_as_creator'] = False # Setup placeholder kwargs for permissions options - this must be done because a cheeky user might try and pass them
+        kwargs['_is_trusted_follower'    ] = False
+
+        # Setup default search criteria
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = "creator"
+        if kwargs.get('list') == 'responses': # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
+            kwargs['include_fields'] += ",parent"
+
+
         creator = None
 
-        #if kwargs.get('list') == "drafts" and not c.logged_in_persona:
-        #    kwargs['list'] = 'all'
-
         try:
-            # Try to get the creator of the whole parent chain or creator of self
-            # This models the same permission view enforcement as the 
+            # If displaying responses - Try to get the creator of the whole parent chain or creator of self
+            # This models the same permission view enforcement as the 'show' private content API call
             if kwargs.get('response_to'):
                 parent_root = get_content(kwargs['response_to'])
                 parent_root = parent_root.root_parent or parent_root
-                creator = parent_root.creator
+                creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
         except Exception as e:
             user_log.exception("Error searching:")
 
-        try:
-            if kwargs.get('creator'):
-                creator = get_member(kwargs['creator'])
-                kwargs['creator'] = normalize_member(creator) # normalize creator param for search
-        except Exception as e:
-            user_log.exception("Error searching:")
+        #try:
+        if kwargs.get('creator'):
+            creator = get_member(kwargs['creator'])
+            if creator:
+                kwargs['creator'] = creator.username
+            #kwargs['creator'] = normalize_member(creator) # normalize creator param for search # AllanC - will be normalize with the other fields later
+        #except Exception as e:
+        #    user_log.exception("Error searching:")
         
         if creator:
-            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
             if c.logged_in_persona == creator:
-                logged_in_creator = True
+                kwargs['_is_logged_in_as_creator'] = True
             else:
-                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
+                kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
 
-        # Setup search criteria
-        if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = "creator"
 
-        # Defaults
-        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
-        if kwargs.get('list') == 'responses':
-            kwargs['include_fields'] += ",parent"
+        # Normalize kwargs -----------------------------------------------------
+        #  do not allow db objects to be used as params
+        
+        for key, value in kwargs.iteritems():
+            if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
+                #try   : value = value.__db_index__() # AllanC if it has an id use it. This should work for all db objects and not require the __db_index__ function
+                try   : value = value.id
+                except: pass
+                # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
+                value = str(value).strip()
+            kwargs[key] = value
+        
+        cache_key = ''
+        keys_sorted = [k for k in kwargs.keys()]
+        keys_sorted.sort()
+        for key in keys_sorted:
+            cache_key += str(kwargs[key]) + '|'
+        if _filter:
+            cache_key += sql(_filter) # Create a string representation of the passed filters so that they form part of the cache key
+        
 
-        if logged_in_creator:
-            pass # allow private content
-        else:
-            if not trusted_follower:
-                results = results.filter(Content.private==False) # public content only
-            results = results.filter(Content.__type__!='draft')
+        # Construct Query with provided kwargs ---------------------------------
+        # Everything past here can be cached based on the kwargs state
 
-        # TODO: how does this affect performance?
-        for col in ['creator', 'attachments', 'tags']:
-            if col in kwargs.get('include_fields', []):
-                results = results.options(joinedload(getattr(Content, col)))
-        ###############################
-        #  END COPY & PASTE OLD BITS  #
-        ###############################
+        def contents_index(_filter=None, **kwargs):
 
-        parts = []
+            time_start = time()
+            
+            results = Session.query(Content).with_polymorphic('*') # TODO: list
+            results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
+    
+            if kwargs['_is_logged_in_as_creator']:
+                pass # allow private content
+            else:
+                if not kwargs['_is_trusted_follower']:
+                    results = results.filter(Content.private==False) # public content only
+                results = results.filter(Content.__type__!='draft') # Don't show drafts to anyone other than the creator
+    
+            # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
+            for col in ['creator', 'attachments', 'tags']:
+                if col in kwargs.get('include_fields', []):
+                    results = results.options(joinedload(getattr(Content, col)))
+    
+            parts = []
+    
+            try:
+                if _filter:
+                    parts.append(_filter)
+    
+                filter_map = {
+                    'creator'    : CreatorFilter   ,
+                    'due_date'   : DueDateFilter   ,
+                    'update_date': UpdateDateFilter,
+                    'type'       : TypeFilter      ,
+                    'response_to': ParentIDFilter  ,
+                    'boomed_by'  : BoomedByFilter  ,
+                    'term'       : TextFilter      ,
+                    'location'   : LocationFilter  ,
+                }
+    
+                if 'list' in kwargs:
+                    if kwargs['list'] in list_filters:
+                        parts.append(list_filters[kwargs['list']]())
+                    else:
+                        raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+    
+                if 'feed' in kwargs and kwargs['feed']:
+                    parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
+    
+                for filter_name in filter_map:
+                    val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired - this strips and strings the input arguments
+                    #val = str(kwargs.get(filter_name, '')).strip()
+                    if val:
+                        f = filter_map[filter_name].from_string(val)
+                        if hasattr(f, 'mangle'):
+                            results = f.mangle(results)
+                        parts.append(f)
+    
+                if 'include_content' in kwargs and kwargs['include_content']:
+                    parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
+    
+                if 'exclude_content' in kwargs and kwargs['exclude_content']:
+                    parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+            except FilterException as fe:
+                raise action_error(code=400, message=str(fe))
+    
+            feed = AndFilter(parts)
+    
+            # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
+            # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
+            results = results.filter("("+sql(feed)+")")
+            results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
+            
+            results = to_apilist(results, obj_type='contents', **kwargs)
+            
+            # hacky benchmarking just to get some basic idea of how each feed performs
+            time_end = time()
+            log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
+    
+            return results
+        
+        cache_func = lambda: contents_index(_filter, **kwargs)
+        if _cache.get('contents_index'):
+            return _cache.get('contents_index').get(key=cache_key, createfunc=cache_func)
+        return cache_func()
 
-        try:
-            if _filter:
-                parts.append(_filter)
-
-            filter_map = {
-                'creator': CreatorFilter,
-                'due_date': DueDateFilter,
-                'update_date': UpdateDateFilter,
-                'type': TypeFilter,
-                'response_to': ParentIDFilter,
-                'boomed_by': BoomedByFilter,
-                'term': TextFilter,
-                'location': LocationFilter,
-            }
-
-            if 'list' in kwargs:
-                if kwargs['list'] in list_filters:
-                    parts.append(list_filters[kwargs['list']]())
-                else:
-                    raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-
-            if 'feed' in kwargs and kwargs['feed']:
-                parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
-
-            for filter_name in filter_map:
-                val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired
-                #val = str(kwargs.get(filter_name, '')).strip()
-                if val:
-                    f = filter_map[filter_name].from_string(val)
-                    if hasattr(f, 'mangle'):
-                        results = f.mangle(results)
-                    parts.append(f)
-
-            if 'include_content' in kwargs and kwargs['include_content']:
-                parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
-
-            if 'exclude_content' in kwargs and kwargs['exclude_content']:
-                parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
-        except FilterException as fe:
-            raise action_error(code=400, message=str(fe))
-
-        feed = AndFilter(parts)
-
-        time_start = time()
-
-        # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
-        # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
-        results = results.filter("("+sql(feed)+")")
-        results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
-
-        l = to_apilist(results, obj_type='contents', **kwargs)
-
-        # hacky benchmarking just to get some basic idea of how each feed performs
-        time_end = time()
-        log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
-
-        return l
 
 
     @web

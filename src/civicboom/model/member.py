@@ -354,8 +354,9 @@ class Member(Base):
         from civicboom.lib.web import url
         return url('member', id=self.username, sub_domain='www', qualified=True)
 
-    def __db_index__(self):
-        return self.username
+    #def __db_index__(self):
+    #    #return self.username  # AllanC - we cant use username for querys in the index actions
+    #    return self.id
 
     def hash(self):
         h = hashlib.md5()

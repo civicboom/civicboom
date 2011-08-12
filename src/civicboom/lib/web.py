@@ -764,26 +764,4 @@ def web_params_to_kwargs(_target, *args, **kwargs):
 
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function
-
-
-
-@decorator
-def normalize_kwargs(_target, *args, **kwargs):
-    """
-    Controller action can be called with a varity of kwargs
-    often these kwargs can be a combination of primitive types and objects
-    For caching and simplification of both calling and the body of these methods the kwargs can be normalize to primitive types
     
-    Performance TODO investigation:
-    This could create serious ineffiencys by converting from objects to strings and then re-getting the objects again in the methods
-    We need to check if SQLAlchemy is smart enough to realise it already has the object in memory and does not need to perform a GET again from the DB
-    """
-    for key, value in kwargs.iteritems():
-        if not key.startswith('_'):
-            try   : value = value.__db_index__()
-            except: pass
-            # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-            value = str(value).strip()
-        kwargs[key] = value
-    
-    return _target(*args, **kwargs)

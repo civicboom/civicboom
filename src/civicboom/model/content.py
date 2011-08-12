@@ -188,8 +188,8 @@ class Content(Base):
         from civicboom.lib.web import url
         return url('content', id=self.id, sub_domain='www', qualified=True)
 
-    def __db_index__(self):
-        return self.id
+    #def __db_index__(self):
+    #    return self.id
 
     def clone(self, content):
         if content and content.id:

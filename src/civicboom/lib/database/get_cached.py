@@ -101,13 +101,10 @@ def get_member(member, search_email=False, **kwargs):
         
         return None
     
-    createfunc = lambda: get_member_nocache(member)
+    cache_func = lambda: get_member_nocache(member)
     if _cache.get('members'):
-        result = _cache.get('members').get(key=str(member), createfunc=createfunc)
-    else:
-        result = createfunc()
-    
-    return result
+        return _cache.get('members').get(key=str(member), createfunc=cache_func)
+    return cache_func()
 
 
 def get_group(group):

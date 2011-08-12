@@ -137,13 +137,13 @@ def load_environment(global_conf, app_conf):
     
     if config['beaker.cache.enabled']:
         _cache = {}
-        for region in ['members', 'contents', 'contents_index', 'members_index']:
+        for region in ['members', 'contents', 'contents_index', 'members_index', 'content_show', 'members_show']:
             _cache[region] = cache_manager.get_cache(region)
             
         #from civicboom.lib.database.get_cached import _cache #???
         #import civicboom.controllers.contents
         #import civicboom.controllers.members
-        civicboom.lib.database.get_cached._cache = _cache
+        #civicboom.lib.database.get_cached._cache = _cache
         #civicboom.controllers.contents._cache    = _cache
         #civicboom.controllers.members._cache     = _cache
 
