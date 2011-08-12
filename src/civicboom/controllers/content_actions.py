@@ -369,3 +369,21 @@ class ContentActionsController(BaseController):
         """
         content = get_content(id, is_viewable=True)
         return to_apilist()
+
+
+    #-----------------------------------------------------------------------------
+    # List - Boomed by
+    #-----------------------------------------------------------------------------
+    @web
+    def boomed_by(self, id, **kwargs):
+        """
+        GET /contents/{id}/boomed_by: Get list of members that have boomed this content (unimplemented)
+
+        shortcut to /members?boomed={id}
+
+        @type list
+        @api contents 1.0 (WIP)
+        
+        @comment AllanC will currently return empty list - unimplemented
+        """
+        return to_apilist()
