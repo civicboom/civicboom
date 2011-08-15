@@ -41,7 +41,7 @@ if __name__ == "__main__":
         c.get("DEFAULT", "api_key.rs.api_key"),
         authurl = 'https://lon.auth.api.rackspacecloud.com/v1.0'
     )
-    cont = conn.get_container('static')
+    cont = conn.get_container(c.get("DEFAULT", "cdn.rs.container"))
     if cont.is_public == False:
         cont.make_public()
 
