@@ -63,12 +63,11 @@
         <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', qualified=True)}</wfw:commentRss>
         ##<!-- <creativeCommons:license>license url here</creativeCommons:license> -->
         % if 'thumbnail_url' in content:
-        <media:thumbnail url="${content['thumbnail_url']}" />
-        ##width="80" height="60"
+        <media:thumbnail url="${content['thumbnail_url']}" /> <!-- width="80" height="60" -->
         % endif
         % if 'attachments' in content:
             % for media in content['attachments']:
-            ## http://video.search.yahoo.com/mrss
+            <!-- http://video.search.yahoo.com/mrss -->
             <media:content url="${media['media_url']}" fileSize="${media['filesize']}" type="${media['type']}/${media['subtype']}" expression="full">
                 <media:thumbnail url="${media['thumbnail_url']}" />
                 <media:title     type="plain"                 >${media['caption']}</media:title>
@@ -80,7 +79,7 @@
                     % if 'views' in content:
                     <media:statistics views="${content.get('rating')}" favorites="${content.get('boom_count')}" />
                     % endif
-                    ##<media:tags>news: 5, abc:3, reuters </media:tags>
+                    <!-- <media:tags>news: 5, abc:3, reuters </media:tags> -->
                 </media:community>
             % if content['location']:
                 <media:location>
@@ -100,7 +99,7 @@
         % endif
 		##
         % if content['location']:
-        <% lon, lat = content['location'].split(' ') %>
+        <!-- <% lon, lat = content['location'].split(' ') %> -->
         <georss:point>${lat} ${lon}</georss:point>
         <geo:lat>${lat}</geo:lat><geo:long>${lon}</geo:long>
         % endif
