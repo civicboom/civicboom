@@ -26,6 +26,7 @@ geoalchemy:
 	mv GeoAlchemy-0.5/geoalchemy ./
 	rm -rf geoalchemy/tests
 	rm -rf GeoAlchemy-0.5.tar.gz GeoAlchemy-0.5
+	patch -p0 geoalchemy/base.py < geoalchemy.pickle.patch
 
 repoze:
 	mkdir repoze
