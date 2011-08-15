@@ -38,6 +38,10 @@
 
 <%def name="content_main()">
     <div data-role="content">
+        <div class="content_title">
+            <h1>${self.title}</h1>
+        </div>
+        
         ##----Media----
         <div class="top_media media_list">
             <%
@@ -77,11 +81,12 @@
                 <ul data-role="listview" data-inset="true">
                     ${list_includes.parent_content(self.content)}
                 </ul>
-
+                
                 ## Content info
                 <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
                     <li><h3>Published:</h3> ${self.content['publish_date']}</li>
+                    <li><h3>Tags:</h3> ${", ".join(self.content['tags'])}</li>
                     <li><h3>Views:</h3> ${self.content['views']}</li>
                     <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
                 </ul>

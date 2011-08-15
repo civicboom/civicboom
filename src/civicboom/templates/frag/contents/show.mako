@@ -404,7 +404,7 @@
         % if content.get('tags'):
             <tr${' class=%s' % trclass if trclass else ''}>
                 <td>${_('Tags')}</td>
-                <td>${", ".join(content['tags'])}</td>
+                <td>${", ".join(content['tags'][:])}</td>
             </tr>
         % endif
       </table>

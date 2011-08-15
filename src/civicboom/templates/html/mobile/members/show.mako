@@ -108,17 +108,7 @@
             <p>Username: <b>${username}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
             
-            <div class="messages ui-grid-b" data-theme="b">
-                <div class="ui-block-a">
-                    <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages</a>
-                </div>
-                <div class="ui-block-b">
-                    <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
-                </div>
-                <div class="ui-block-c">
-                    <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications</a>
-                </div>
-            </div>
+            ${messages_bar()}
             
             <ul data-role="listview" data-inset="true">
                 ## User website
@@ -147,6 +137,37 @@
             ${member_list("following")}
             ${member_list("followers")}
             ${member_list("members")}
+        </div>
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Message and notification bar
+##-----------------------------------------------------------------------------
+<%def name="messages_bar()">
+    % if d.get('num_unread_messages'):
+        <%
+            unread_messages =       d['num_unread_messages']
+            unread_notifications =  d['num_unread_notifications']
+        %>
+        <div class="messages ui-grid-b" data-theme="b">
+            <div class="ui-block-a">
+                <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages
+                % if unread_messages:
+                    <br />(${unread_messages} new)
+                % endif
+                </a>
+            </div>
+            <div class="ui-block-b">
+                <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
+            </div>
+            <div class="ui-block-c">
+                <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications
+                % if unread_notifications:
+                    <br />(${unread_notifications} new)
+                % endif
+                </a>
+            </div>
         </div>
     % endif
 </%def>

@@ -1,4 +1,13 @@
 ##------------------------------------------------------------------------------
+## Member Link
+##------------------------------------------------------------------------------
+<%def name="member_link(member, )">
+    % if member and member.get('id'):
+        <a href="${h.url(controller='members', action='show', id=member['id'])}" rel="external">${member['name']}</a>
+    % endif
+</%def>
+
+##------------------------------------------------------------------------------
 ## Member Avatar - display a member as text/image + link to profile
 ##------------------------------------------------------------------------------
 <%def name="avatar(member, class_='', js_link_to_frag=True, new_window=False, img_class='', as_link=True, **kwargs)">
