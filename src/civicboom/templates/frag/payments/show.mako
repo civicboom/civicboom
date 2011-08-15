@@ -40,16 +40,15 @@
         <ul>
             % for service in d['services_full']:
                 <li>
-                    ${service['service']['title']} - ${format_price(service['price_taxed'])} per ${service['frequency']}
+                    ${service['service']['title']} - ${format_price(service['price_taxed'])}
                 </li>
             % endfor
         </ul>
         <h2>Total cost:</h2>
         <p>
-            % for freq, cost in d['cost_frequency'].items():
-            ${format_price(cost)} billed every ${freq}<br />
-            % endfor
+            ${format_price(d['cost_taxed'])} billed every ${d['frequency']}<br />
         </p>
+        <p>All prices shown are inclusive of taxes</p>
     </div>
     <div class="frag_whitewrap" style="float:right;width:42%; margin-left:0;">
         <h2>Payment Methods</h2>

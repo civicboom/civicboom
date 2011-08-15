@@ -143,7 +143,7 @@ class PaymentAccountService(Base):
     
     @property
     def price(self):
-        return self.service.get_price(self.payment_account.currency, self.payment_account.frequency)
+        return self.service.get_price(self.payment_account.currency, self.payment_account.frequency) * (1-self.discount)
     
     def price_taxed(self):
         return self.price * (1 + (tax_rates[self.payment_account.tax_rate_code] if self.payment_account.taxable else 0))

@@ -231,37 +231,18 @@ class TaskController(BaseController):
         days_invoice_in = 7
         seven_days = time_now + datetime.timedelta(days=days_invoice_in)
         
-        # Create sql where clauses for checking start dates (SQL used as date_part functions are indexed in postgres)
-        def filter_start_dates(query, table=''):
-            if table:
-                table += '.'
-            filter = ""
-            if frequency == "month":
-                # start day:
-                filter += "date_part('day', start_date) >= %(day_s)i " % {'day_s':time_now.day}
-                # and if end day in same month, else or:
-                filter += "and" if seven_days.day > time_now.day else "or"
-                # end day:
-                filter += " date_part('day', start_date) < %(day_e)i" % {'day_e':seven_days.day}
-            elif frequency == "year":
-                ## Month 1! & start day:
-                filter += "(date_part('month', start_date) = %(month_s)i and date_part('day', start_date) >= %(day_s)i) or " % {'month_s': time_now.month, 'day_s': time_now.day}
-                ## Month 2?:
-                filter += "(date_part('month', start_date) = %(month_e)i and " % {'month_e': seven_days.month if time_now.month < seven_days.month else time_now.month}
-                ##          & end day:
-                filter += "date_part('day', start_date) < %(day_e)i)" % {'day_e': seven_days.day}
-                
-            return query.filter("(%s)" % (filter))
-        
         def check_timestamp(timestamp, days):
-            return (timestamp - time_now).days >= days
+            if timestamp > time_now:
+                return False
+            return (time_now - timestamp).days-1 >= days
         
         # For each billing frequency get accounts likely to be due in the next x days
         for frequency in ["month", "year"]:
             # Get accounts due in the next x days and have paid services:
-            unbilled_accounts = filter_start_dates(
+            unbilled_accounts = payment.db_methods.filter_start_dates(
                     Session.query(PaymentAccount)\
-                    .filter(PaymentAccount.frequency == frequency)
+                    .filter(PaymentAccount.frequency == frequency),
+                    frequency, time_now, seven_days,
                 )\
                 .join((Service, Service.payment_account_type == PaymentAccount.type))\
                 .join((ServicePrice, ServicePrice.service_id == Service.id and ServicePrice.frequency == frequency))\
@@ -283,40 +264,10 @@ class TaskController(BaseController):
                 if check:
                     continue
                 
-                # Get the service object applicable for this account
-                service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
+                #Generate the invoice (note the invoice will be committed with status == 'unbilled'
+                invoice = payment.db_methods.generate_invoice(account, start_date)
                 
-                # Create a new Invoice object & set the due date to the service start date
-                invoice = Invoice(account)
-                invoice.due_date = start_date
-                Session.add(invoice)
-                Session.commit()
-                
-                # Check if there is a payment account service set-up for this account (allows discount, etc. to be applied)
-                payment_account_service = Session.query(PaymentAccountService).filter(PaymentAccountService.payment_account_id == account.id)\
-                    .filter(PaymentAccountService.service_id == service.id).first()
-                
-                # Create billing line for the account's main service type
-                line = InvoiceLine(
-                       invoice,
-                       payment_account_service  = payment_account_service,
-                       service                  = service,
-                       start_date               = start_date
-                   )
-                invoice.lines.append(line)
-                
-                # Loop through the rest of the services and create billing lines
-                # TODO: This needs to take into account service frequency / account frequency, etc.
-                for payment_account_service in account.services:
-                    if payment_account_service.service.payment_account_type != account.type:
-                        line = InvoiceLine(invoice, payment_account_service.service)
-                        invoice.lines.append(line)
-                        #lines.append(line)
-                
-                # Commit the invoice before changing status or the commit will fail db level security check!
-                Session.commit()
-                
-                # TODO: Any Invoice changes need to go here!
+                # Any Invoice changes need to go here!
                 
                 # Change invoice status to billed, no further changes can be made to invoice and related lines from now onwards!
                 invoice.status = "billed"
@@ -340,39 +291,44 @@ class TaskController(BaseController):
             # Check all billed invoices
             for invoice in account.invoices.filter(Invoice.status == "billed").all():
                 if invoice.paid_total >= invoice.total:
+                    print 'paid'
                     invoice.status = "paid"
                     Session.commit()
                 elif check_timestamp(invoice.timestamp, days_disable):
+                    print 'disable'
                     max_acct_status = max((max_acct_status, payment_account_status.index("failed" )))
-                elif check_timestamp(invoice.timestamp, days_remind):
-                    #nothing
-                    pass
                 else:
+                    if check_timestamp(invoice.timestamp, days_remind):
+                        print 'remind'
                     if invoice.due_date > time_now.date():
+                        print 'invoiced'
                         max_acct_status = max((max_acct_status, payment_account_status.index("invoiced" )))
                     else:
+                        print 'waiting'
                         max_acct_status = max((max_acct_status, payment_account_status.index("waiting" )))
             # Update account
-            new_status      = payment_account_status[max_acct_status]
-            new_status_n    = max_acct_status
-            old_status      = invoice.payment_account.billing_status
-            old_status_n    = payment_account_status.index(old_status)
-            
-            if new_status_n != old_status_n:
-                invoice.payment_account.billing_status = new_status
-                Session.commit()
-                if new_status == "failed":
-                    print "Send DISABLED"
-                    pass #Send account disabled email
-                elif new_status == "invoiced":
-                    print "Send INVOICED"
-                    pass #Send account invoiced email
-                elif new_status == "waiting":
-                    print "Send WAITING"
-                    pass #Send account due email
-                elif new_status == "ok":
-                    print "Send AOK TNX"
-                    pass #Send account all ok, thank you, email
+            print 'Account status:', max_acct_status
+            if max_acct_status > 0:
+                new_status      = payment_account_status[max_acct_status]
+                new_status_n    = max_acct_status
+                old_status      = invoice.payment_account.billing_status
+                old_status_n    = payment_account_status.index(old_status)
+                
+                if new_status_n != old_status_n:
+                    invoice.payment_account.billing_status = new_status
+                    Session.commit()
+                    if new_status == "failed":
+                        print "Send DISABLED"
+                        pass #Send account disabled email
+                    elif new_status == "invoiced":
+                        print "Send INVOICED"
+                        pass #Send account invoiced email
+                    elif new_status == "waiting":
+                        print "Send WAITING"
+                        pass #Send account due email
+                    elif new_status == "ok":
+                        print "Send ALL OK THANK YOU"
+                        pass #Send account all ok, thank you, email
 
         Session.commit()
         return response_completed_ok

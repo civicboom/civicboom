@@ -842,7 +842,7 @@ class PaymentAccount(Base):
             'billing_accounts' : lambda account: [billing.to_dict() for billing in account.billing_accounts],
             'services'         : lambda account: [service.to_dict() for service in account.services],
             'services_full'    : None ,
-            'cost_frequency'   : None ,
+            'cost_taxed'   : None ,
     })
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
@@ -854,17 +854,13 @@ class PaymentAccount(Base):
     _config = None
     
     @property
-    def cost_frequency(self):
-        freq_map = {}
-        for pac in self.services_full:
-            if freq_map.get(pac['frequency']) == None:
-                freq_map[pac['frequency']] = 0
-            freq_map[pac['frequency']] += pac['price_taxed']
-        return freq_map
+    def cost_taxed(self):
+        return sum([pac['price_taxed'] for pac in self.services_full])
+            
     
     @property
     def services_full(self):
-        from civicboom.lib.database.actions import payment_account_services_normalised
+        from civicboom.lib.payment.db_methods import payment_account_services_normalised
         return payment_account_services_normalised(self)
     
     @property

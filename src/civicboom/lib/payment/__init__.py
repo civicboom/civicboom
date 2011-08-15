@@ -1,8 +1,12 @@
 from civicboom.lib.payment.api_calls import *
+from civicboom.lib.payment.functions import *
+
+import db_methods as db_methods 
 
 __all__ = [
     'begins', 'cancels', 'returns', 'lookups', 'cancel_recurrings',
     'cbPaymentError', 'cbPaymentAPIError', 'cbPaymentArgumentError', 'cbPaymentTransactionError', 'cbPaymentRecurringTransactionError',
+    'db_methods', 
 ]
 
 begins              = {'paypal_express':    paypal_express_begin}

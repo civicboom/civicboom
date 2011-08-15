@@ -6,8 +6,10 @@ from civicboom.lib.base import *
 import civicboom.lib.helpers as h
 from sqlalchemy           import or_, and_, null
 #from civicboom.lib.payment.paypal import express_checkout_single_auth, express_checkout_get_details
-from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount, BillingTransaction
+from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount, BillingTransaction, Service
+from civicboom.model.member import account_types_level
 import civicboom.lib.payment as payment
+import datetime
 #from civicboom.controllers.groups import _get_group
 
 log      = logging.getLogger(__name__)
@@ -136,7 +138,7 @@ class PaymentActionsController(BaseController):
             raise action_error(_('Payment account does not exist'), code=404)
         if not c.logged_in_persona in account.members:
             raise action_error(_('You do not have permission to view this account'), code=404)
-        
+        # TODO: Finish me!
         
         return action_ok(code=200)
     
@@ -293,4 +295,64 @@ class PaymentActionsController(BaseController):
             Session.add(bacct)
         Session.commit()
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
+    
+    @web
+    @authorize
+    @role_required('admin')
+    def regrade(self, id, **kwargs):
+        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        if not account:
+            raise action_error(_('Payment account does not exist'), code=404)
+        if not c.logged_in_persona in account.members:
+            raise action_error(_('You do not have permission to view this account'), code=404)
+        new_account_type = kwargs.get('new_type')
+        if new_account_type not in account_types_level:
+            raise action_error(_('Invalid account type'), code=400)
+        
+        time_now = now()
+        
+        apply_payment = None
+        
+        if account.cost_taxed > 0:
+            # Do paid account stuff here!
+            current_service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
+            psd = payment.previous_start_date(account.start_date, account.frequency, time_now) # FIXME
+            nsd = payment.next_start_date(account.start_date, account.frequency, time_now)
+            days_this_period = (nsd - psd).days
+            
+            prev_invoice_line = Session.query(InvoiceLine)\
+                .join((Invoice, Invoice.id == InvoiceLine.invoice_id))\
+                .filter(Invoice.status == "paid")\
+                .filter(Invoice.payment_account_id == account.id)\
+                .filter(InvoiceLine.start_date == psd)\
+                .filter(InvoiceLine.service_id == current_service.id).first()
+            
+            if prev_invoice_line:
+                days_elapsed = (time_now.date() - psd).days
+                days_left = days_this_period - days_elapsed
+                apply_payment = BillingTransaction()
+                from decimal import Decimal
+                apply_payment.amount = (((prev_invoice_line.price_final * prev_invoice_line.invoice.tax_rate) / days_this_period) * days_left).quantize(Decimal('0.00'))
+                apply_payment.status = 'complete'
+                apply_payment.provider = 'refund_unused'
+                apply_payment.reference = prev_invoice_line.invoice_id
+                print '###', apply_payment.amount
+                pass
+        
+        account.start_date = datetime.date.today()
+        
+        account.type = new_account_type
+        
+        invoice = payment.db_methods.generate_invoice(account, account.start_date)
+        
+        invoice.status = 'billed'
+        
+        if apply_payment:
+            apply_payment.invoice = invoice
+        
+        Session.commit()
+        
+        print "RAR Invoice ID ", invoice.id
+        
+        return action_ok(code=200)
         
