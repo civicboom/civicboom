@@ -14,11 +14,11 @@ twitter:
 	rm -rf twitter-1.6.1.tar.gz twitter-1.6.1
 
 formalchemy:
-	wget http://formalchemy.googlecode.com/files/FormAlchemy-1.3.3.tar.gz
-	tar xzf FormAlchemy-1.3.3.tar.gz
-	mv FormAlchemy-1.3.3/formalchemy ./
+	wget https://github.com/FormAlchemy/formalchemy/tarball/1.4 -O FormAlchemy-1.4.tar.gz
+	tar xzf FormAlchemy-1.4.tar.gz
+	mv FormAlchemy-formalchemy-67f7f90/formalchemy ./
 	rm -rf formalchemy/tests
-	rm -rf FormAlchemy-1.3.3.tar.gz FormAlchemy-1.3.3
+	rm -rf FormAlchemy-1.4.tar.gz FormAlchemy-formalchemy-67f7f90
 
 geoalchemy:
 	wget http://pypi.python.org/packages/source/G/GeoAlchemy/GeoAlchemy-0.5.tar.gz

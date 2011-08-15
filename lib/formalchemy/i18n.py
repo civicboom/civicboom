@@ -9,6 +9,13 @@ from gettext import GNUTranslations
 i18n_path = os.path.join(os.path.dirname(__file__), 'i18n_resources')
 
 try:
+    from pyramid.i18n import get_localizer
+    from pyramid.i18n import TranslationStringFactory
+    HAS_PYRAMID = True
+except ImportError:
+    HAS_PYRAMID = False
+
+try:
     from pylons.i18n import get_lang
     HAS_PYLONS = True
 except:
@@ -21,19 +28,28 @@ class _Translator(object):
     """dummy translator"""
     def gettext(self, value):
         return value
+_translator = _Translator()
 
-def get_translator(lang=None):
+def get_translator(lang=None, request=None):
     """
     return a GNUTranslations instance for `lang`::
 
         >>> translator = get_translator('fr')
-        ... assert translator.gettext('Remove') == 'Supprimer'
-        ... assert translator.gettext('month_01') == 'Janvier'
+        ... assert translate('Remove') == 'Supprimer'
+        ... assert translate('month_01') == 'Janvier'
         >>> translator = get_translator('en')
-        ... assert translator.gettext('Remove') == 'Remove'
-        ... assert translator.gettext('month_01') == 'January'
+        ... assert translate('Remove') == 'Remove'
+        ... assert translate('month_01') == 'January'
 
     """
+    if request is not None and HAS_PYRAMID:
+        translate = request.environ.get('fa.translate')
+        if translate:
+            return translate
+        translate = get_localizer(request).translate
+        request.environ['fa.translate'] = translate
+        return translate
+
     # get possible fallback languages
     try:
         langs = get_lang() or []
@@ -53,14 +69,17 @@ def get_translator(lang=None):
         filename = os.path.join(i18n_path, lang, 'LC_MESSAGES','formalchemy.mo')
         if os.path.isfile(filename):
             translations_path = os.path.join(i18n_path, lang, 'LC_MESSAGES','formalchemy.mo')
-            return GNUTranslations(open(translations_path, 'rb'))
+            return GNUTranslations(open(translations_path, 'rb')).gettext
 
     # dummy translator
-    return _Translator()
+    return _translator.gettext
 
-def _(value):
-    """dummy 'translator' to mark translation strings in python code"""
-    return value
+if HAS_PYRAMID:
+    _ = TranslationStringFactory('formalchemy')
+else:
+    def _(value):
+        """dummy 'translator' to mark translation strings in python code"""
+        return value
 
 # month translation
 _('Year')
