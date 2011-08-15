@@ -37,18 +37,22 @@ if __name__ == "__main__":
 
     log.info("Connecting to cloudfiles")
     conn = cloudfiles.get_connection(
-        c.get("DEFAULT", "rack_username"),
-        c.get("DEFAULT", "rack_api_key"),
+        c.get("DEFAULT", "api_key.rs.username"),
+        c.get("DEFAULT", "api_key.rs.api_key"),
         authurl = 'https://lon.auth.api.rackspacecloud.com/v1.0'
     )
-    cont = conn.get_container('static')
+    cont = conn.get_container(c.get("DEFAULT", "cdn.rs.container"))
     if cont.is_public == False:
         cont.make_public()
+
+    obj = cont.create_object(options.version)
+    obj.content_type = "application/directory"
+    obj.write("")
 
     # walk through all dirs and all files in the specified folder
     log.info("Walking files in %s" % args[0])
     for root, dirnames, filenames in os.walk(args[0]):
-        for filename in filenames:
+        for filename in filenames + dirnames:
             fullpath = os.path.join(root, filename)
             relpath = fullpath[len(args[0]):]
             if relpath[0] == "/":
@@ -63,9 +67,14 @@ if __name__ == "__main__":
 
             # if the file is to be included, add it
             if included:
-                log.info("Adding %s" % relpath)
-
-                obj  = cont.create_object(os.path.join(options.version, relpath))
-                obj.load_from_filename(fullpath)
+                if filename in filenames:
+                    log.info("Adding file %s" % relpath)
+                    obj = cont.create_object(os.path.join(options.version, relpath))
+                    obj.load_from_filename(fullpath)
+                else:
+                    log.info("Adding directory %s" % relpath)
+                    obj = cont.create_object(os.path.join(options.version, relpath))
+                    obj.content_type = "application/directory"
+                    obj.write("")
 
 #    sys.exit(main(sys.argv))

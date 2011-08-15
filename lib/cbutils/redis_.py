@@ -19,6 +19,23 @@ except:
 log = logging.getLogger(__name__)
 
 
+def redis_from_url(url):
+    conn_params = {}
+    parts = url.split('?', 1)
+    url = parts[0]
+    if len(parts) > 1:
+        conn_params = dict(p.split('=', 1) for p in parts[1].split('&'))
+
+    if ":" in url:
+        host, port = url.split(':', 1)
+        port = int(port)
+    else:
+        host = url
+        port = 6379
+
+    return Redis(host, port, **conn_params)
+
+
 class RedisQueue(object):
     """An abstract FIFO queue"""
     def __init__(self, redis, queue_id=None):
@@ -53,9 +70,9 @@ class NoSqlManager(NamespaceManager):
             self.lock_dir = data_dir + "/container_tcd_lock"
         else:
             self.lock_dir = None
-            
+
         if self.lock_dir:
-            verify_directory(self.lock_dir)           
+            verify_directory(self.lock_dir)
 
         conn_params = {}
         parts = url.split('?', 1)
@@ -63,9 +80,14 @@ class NoSqlManager(NamespaceManager):
         if len(parts) > 1:
             conn_params = dict(p.split('=', 1) for p in parts[1].split('&'))
 
-        host, port = url.split(':', 1)
+        if ":" in url:
+            host, port = url.split(':', 1)
+            port = int(port)
+        else:
+            host = url
+            port = None
 
-        self.open_connection(host, int(port), **conn_params)
+        self.open_connection(host, port, **conn_params)
 
     def open_connection(self, host, port):
         self.db_conn = None
@@ -76,7 +98,7 @@ class NoSqlManager(NamespaceManager):
             lock_dir = self.lock_dir)
 
     def _format_key(self, key):
-        return self.namespace + '_' 
+        return self.namespace + '_'
 
     def __getitem__(self, key):
         return pickle.loads(self.db_conn.get(self._format_key(key)))
@@ -108,7 +130,9 @@ class RedisManager(NoSqlManager):
         NoSqlManager.__init__(self, namespace, url=url, data_dir=data_dir, lock_dir=lock_dir, **params)
 
     def open_connection(self, host, port, **params):
-        self.db_conn = Redis(host=host, port=int(port), db=1, **params)
+        if not port:
+            port = 6379
+        self.db_conn = Redis(host=host, port=port, db=1, **params)
 
     def __contains__(self, key):
         #log.debug('%s contained in redis cache (as %s) : %s'%(key, self._format_key(key), self.db_conn.exists(self._format_key(key))))

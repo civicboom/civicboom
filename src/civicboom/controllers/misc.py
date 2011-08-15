@@ -311,6 +311,11 @@ Disallow: /*.frag$
         m['new_members'] = member_search(sort='-join_date', type='user'                        , limit=3)['data']['list']
         m['new_groups' ] = member_search(sort='-join_date', default_content_visibility='public', limit=3)['data']['list']
         
+        # AllanC - HACK HACK!!!
+        # The count from the query using the default_content_visibility='public' is wrong .. the content is correct .. the count is broken
+        # Set the count FOR THIS LIST ONLY to match the items returned
+        m['new_groups' ]['count'] = len(m['new_groups' ]['items'])
+        
         return action_ok(
             data={
                 #'sponsored' : s,

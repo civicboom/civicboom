@@ -87,10 +87,14 @@ def send_notification(members, message): #members, rendered_message
                             }
                         )
                     else:
-                        l = TemplateLookup(directories=['.', 'civicboom/templates'])
+                        l = TemplateLookup(
+                            directories=['.', 'civicboom/templates'],
+                            input_encoding='utf-8',
+                            output_encoding='utf-8'
+                        )
                         f = os.path.join("civicboom/templates", notification_template(message.get('name')))
                         t = Template(filename=f, lookup=l)
-                        c = t.render(kwargs=message, h=helpers)
+                        c = t.render_unicode(kwargs=message, h=helpers)
                     send_email(
                         member,
                         subject      = message.get('subject'), #, _('_site_name notification')

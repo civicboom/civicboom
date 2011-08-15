@@ -208,7 +208,7 @@
             <div class="col_left">
             <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
             % if self.member.get('website'):
-                <p class="website"><a href="${self.member['website']}">${h.nicen_url(self.member['website'])}</a></p>
+                <p class="website"><a href="${self.member['website']}" target="_blank">${h.nicen_url(self.member['website'])}</a></p>
             % endif
             % if self.member.get('description'):
                 <p class="description">${self.member['description']}</p>

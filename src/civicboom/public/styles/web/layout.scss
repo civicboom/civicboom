@@ -52,6 +52,10 @@ HEADER {
 	border-bottom: 1px solid #ccc;
 }
 
+A {
+	color: $link-colour;
+}
+
 BODY>DIV#app {
 	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
 	z-index: 0;
@@ -60,25 +64,41 @@ BODY>DIV#app {
     
     .button {
         color: $button-txt;
+		text-decoration: none;
         
         &:hover {
             color: $button-txt;
+			text-decoration: none;
         }
     }
+
+	.frag_container {
+		.button {
+			color: $button-txt;
+			text-decoration: none;
+			
+			&:hover {
+				color: $button-txt;
+				text-decoration: none;
+			}
+		}
+	}
     
-    a {
-        color: $link-colour;
-        text-decoration: none;
-        
-        &:hover {
-            color: $link-hover-colour;
-            text-decoration: underline;
-            
-            p, span {
-                text-decoration: inherit;
-            }
-        }
-    }
+	.frag_container {
+		a {
+			color: $link-frag-colour;
+			text-decoration: none;
+			
+			&:hover {
+				color: $link-hover-colour;
+				text-decoration: underline;
+				
+				p, span {
+					text-decoration: inherit;
+				}
+			}
+		}
+	}
 }
 
 FOOTER {

@@ -283,4 +283,3 @@ class TestDeleteCascadesController(TestController):
         self.assertEqual(Session.query(Content         ).filter_by(  parent_id = self.content_id              ).count(), 0)
         self.assertEqual(Session.query(Tag             ).filter_by(       name = u'delete_cascade'            ).count(), 1) #Tag remains at the end, this could be tidyed witha  delete orphan cascade
         self.assertEqual(Session.query(MemberAssignment).filter_by( content_id = self.content_id              ).count(), 0)
-
