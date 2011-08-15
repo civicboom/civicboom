@@ -32,7 +32,7 @@ repoze:
 	wget https://raw.github.com/repoze/repoze.profile/master/repoze/profile/__init__.py -O repoze/__init__.py
 	wget https://raw.github.com/repoze/repoze.profile/master/repoze/profile/profiler.py -O repoze/profiler.py
 	wget https://raw.github.com/repoze/repoze.profile/master/repoze/profile/profiler.html -O repoze/profiler.html
-	patch -p0 repoze/profiler.py < profiler.fixtag.patch
+	patch -p0 repoze/profiler.py < repoze.fixtag.patch
 
 clean:
 	rm -rf twitter formalchemy geoalchemy repoze
