@@ -34,7 +34,9 @@ oauth_token_file: <oauth_token_filename>
 
 """
 
-BOT_VERSION = "TwitterBot 1.4 (http://mike.verdone.ca/twitter)"
+from __future__ import print_function
+
+BOT_VERSION = "TwitterBot 1.6.1 (http://mike.verdone.ca/twitter)"
 
 CONSUMER_KEY = "XryIxN3J2ACaJs50EizfLQ"
 CONSUMER_SECRET = "j7IuDCNjftVY8DBauRdqXs4jDl5Fgk1IJRag8iE"
@@ -48,16 +50,19 @@ import sys
 import time
 from datetime import datetime, timedelta
 from email.utils import parsedate
-from ConfigParser import SafeConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 from heapq import heappop, heappush
 import traceback
 import os
 import os.path
 
-from api import Twitter, TwitterError
-from oauth import OAuth, read_token_file
-from oauth_dance import oauth_dance
-from util import htmlentitydecode
+from .api import Twitter, TwitterError
+from .oauth import OAuth, read_token_file
+from .oauth_dance import oauth_dance
+from .util import htmlentitydecode
 
 PREFIXES = dict(
     cats=dict(
@@ -77,16 +82,16 @@ def get_prefix(prefix_typ=None):
 
 try:
     import irclib
-except:
+except ImportError:
     raise ImportError(
         "This module requires python irclib available from "
-        + "http://python-irclib.sourceforge.net/")
+        + "https://github.com/sixohsix/python-irclib/zipball/python-irclib3-0.4.8")
 
 OAUTH_FILE = os.environ.get('HOME', '') + os.sep + '.twitterbot_oauth'
 
 def debug(msg):
     # uncomment this for debug text stuff
-    # print >> sys.stderr, msg
+    # print(msg, file=sys.stdout)
     pass
 
 class SchedTask(object):
@@ -97,10 +102,10 @@ class SchedTask(object):
 
     def __repr__(self):
         return "<SchedTask %s next:%i delta:%i>" %(
-            self.task.__name__, self.next, self.delta)
+            self.task.__name__, self.__next__, self.delta)
 
-    def __cmp__(self, other):
-        return cmp(self.next, other.next)
+    def __lt__(self, other):
+        return self.next < other.next
 
     def __call__(self):
         return self.task()
@@ -160,33 +165,31 @@ class TwitterBot(object):
         debug("In check_statuses")
         try:
             updates = reversed(self.twitter.statuses.friends_timeline())
-        except Exception, e:
-            print >> sys.stderr, "Exception while querying twitter:"
+        except Exception as e:
+            print("Exception while querying twitter:", file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
             return
 
         nextLastUpdate = self.lastUpdate
-        debug("self.lastUpdate is %s" % self.lastUpdate)
         for update in updates:
             crt = parsedate(update['created_at'])
             if (crt > nextLastUpdate):
                 text = (htmlentitydecode(
                     update['text'].replace('\n', ' '))
-                    .encode('utf-8', 'replace'))
+                    .encode('utf8', 'replace'))
 
                 # Skip updates beginning with @
                 # TODO This would be better if we only ignored messages
                 #   to people who are not on our following list.
-                if not text.startswith("@"):
-                    self.privmsg_channels(
-                        u"%s %s%s%s %s" %(
-                            get_prefix(),
-                            IRC_BOLD, update['user']['screen_name'],
-                            IRC_BOLD, text.decode('utf-8')))
+                if not text.startswith(b"@"):
+                    msg = "%s %s%s%s %s" %(
+                        get_prefix(),
+                        IRC_BOLD, update['user']['screen_name'],
+                        IRC_BOLD, text.decode('utf8'))
+                    self.privmsg_channels(msg)
 
                 nextLastUpdate = crt
 
-        debug("setting self.lastUpdate to %s" % nextLastUpdate)
         self.lastUpdate = nextLastUpdate
 
     def process_events(self):
@@ -223,14 +226,10 @@ class TwitterBot(object):
             elif args[0] == 'CLIENTINFO':
                 conn.ctcp_reply(source, "CLIENTINFO PING VERSION CLIENTINFO")
 
-    def privmsg_channel(self, msg):
-        return self.ircServer.privmsg(
-            self.config.get('irc', 'channel'), msg.encode('utf-8'))
-
     def privmsg_channels(self, msg):
         return_response=True
         channels=self.config.get('irc','channel').split(',')
-        return self.ircServer.privmsg_many(channels, msg.encode('utf-8'))
+        return self.ircServer.privmsg_many(channels, msg.encode('utf8'))
 
     def follow(self, conn, evt, name):
         userNick = evt.source().split('!')[0]
@@ -297,7 +296,7 @@ class TwitterBot(object):
 def load_config(filename):
     # Note: Python ConfigParser module has the worst interface in the
     # world. Mega gross.
-    cp = SafeConfigParser()
+    cp = ConfigParser()
     cp.add_section('irc')
     cp.set('irc', 'port', '6667')
     cp.set('irc', 'nick', 'twitterbot')
@@ -335,11 +334,11 @@ def main():
         if not os.path.exists(configFilename):
             raise Exception()
         load_config(configFilename)
-    except Exception, e:
-        print >> sys.stderr, "Error while loading ini file %s" %(
-            configFilename)
-        print >> sys.stderr, e
-        print >> sys.stderr, __doc__
+    except Exception as e:
+        print("Error while loading ini file %s" %(
+            configFilename), file=sys.stderr)
+        print(e, file=sys.stderr)
+        print(__doc__, file=sys.stderr)
         sys.exit(1)
 
     bot = TwitterBot(configFilename)
