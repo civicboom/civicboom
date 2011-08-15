@@ -7,6 +7,7 @@ from sqlalchemy.ext.compiler import compiles
 from utils import from_wkt
 from functions import functions, _get_function, BaseFunction
 
+import pickle
 # Base classes for geoalchemy
 
 class SpatialElement(object):
@@ -87,6 +88,21 @@ class WKBSpatialElement(SpatialElement, expression.Function):
         self.geometry_type = geometry_type
         
         expression.Function.__init__(self, "")
+    
+    def  __getstate__(self):
+        return {
+            'desc'          : pickle.dumps(str(self.desc)),
+            'length'        : len(self.desc),
+            'srid'          : self.srid,
+            'geometry_type' : self.geometry_type,
+        }
+    
+    def __setstate__(self, old):
+        self.__init__(
+            buffer(pickle.loads(old['desc']),0,old['length']),
+            old['srid'],
+            old['geometry_type'],
+        )
 
 @compiles(WKBSpatialElement)
 def __compile_wkbspatialelement(element, compiler, **kw):
