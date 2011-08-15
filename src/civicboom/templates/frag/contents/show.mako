@@ -401,6 +401,12 @@
         % endif
         ${format_date_if(_('Event Date'), content.get('event_date'), False, 'bold')}
         ${format_date_if(_('Due By')    , content.get('due_date'), False, 'bold'  )}
+        % if content.get('tags'):
+            <tr${' class=%s' % trclass if trclass else ''}>
+                <td>${_('Tags')}</td>
+                <td>${", ".join(content['tags'])}</td>
+            </tr>
+        % endif
       </table>
     </div>
 </%def>

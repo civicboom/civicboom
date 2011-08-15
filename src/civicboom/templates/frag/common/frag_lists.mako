@@ -360,9 +360,9 @@
                     </p>
                 % elif content['type']=='article':
                     <p class="extra">
-                    ${_('Views')}:${content['views']}
+                    ${_('Views')}: ${content['views']}
                     % if content.get('tags'):
-                    , ${_('Tags')}:${content['tags'][:3]}
+                    , ${_('Tags')}: ${", ".join(content['tags'][:4])}
                     % endif
                     </p>
                 % elif content['type']=='assignment':

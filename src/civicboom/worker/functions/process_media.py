@@ -34,16 +34,16 @@ def _reformed(name, ext):
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     db_object = Session.query(Media).filter(Media.hash==file_hash).first()
 
-    import redis
-    m               = redis.Redis(config['service.redis.server'])
+    from cbutils.redis_ import redis_from_url
+    m               = redis_from_url(config['worker.queue.url'])
     status_key    = str("media_processing_"+file_hash)
     status_expire = int(config['media.processing.status_expire_time'])
     
     # temp hack while bulk importing
     from boto.s3.connection import S3Connection
     from boto.s3.key import Key
-    connection = S3Connection(config["aws_access_key"], config["aws_secret_key"])
-    bucket = connection.get_bucket(config["s3_bucket_name"])
+    connection = S3Connection(config["api_key.aws.access"], config["api_key.aws.secret"])
+    bucket = connection.get_bucket(config["warehouse.s3.bucket"])
     key = Key(bucket)
     key.key = "media-original/"+file_hash
     if key.exists():

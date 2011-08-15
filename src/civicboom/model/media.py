@@ -127,16 +127,16 @@ class Media(Base):
     @property
     def original_url(self):
         "The URL of the original as-uploaded file"
-        return "https://%s/media-original/%s"  % (config['warehouse_url'], self.hash) #/%s , self.name
+        return "https://%s/media-original/%s"  % (config['warehouse.url'], self.hash) #/%s , self.name
 
     @property
     def media_url(self):
         "The URL of the processed media, eg .flv file for video"
-        return "https://%s/media/%s"           % (config['warehouse_url'], self.hash) #/%s need to add filename to end for saving , self.name
+        return "https://%s/media/%s"           % (config['warehouse.url'], self.hash) #/%s need to add filename to end for saving , self.name
 
     @property
     def thumbnail_url(self):
         "The URL of a JPEG-format thumbnail of this media"
-        return "https://%s/media-thumbnail/%s" % (config['warehouse_url'], self.hash )
+        return "https://%s/media-thumbnail/%s" % (config['warehouse.url'], self.hash )
 
 GeometryDDL(Media.__table__)

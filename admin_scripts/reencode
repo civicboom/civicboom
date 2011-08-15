@@ -41,7 +41,7 @@ if __name__ == '__main__':
         if m.type == "audio":
             if not os.path.exists(m.hash):
                 log.info("Downloading %s" % m.hash)
-                u = urllib2.urlopen("http://"+pylons.config['warehouse_url']+"/media-original/"+m.hash).read()
+                u = urllib2.urlopen("http://"+pylons.config['warehouse.url']+"/media-original/"+m.hash).read()
                 file(m.hash, "w").write(u)
             log.info("Processing %s" % m.hash)
             process_media(m.hash, m.hash, m.type, m.name, False)

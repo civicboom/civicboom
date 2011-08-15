@@ -85,7 +85,7 @@ generators = [
     
     # Content Actions
     ["article_rated",                        "",   _("_article rated"),              _("%(your)s _article %(article)s was rated a %(rating)s")],
-    ["comment",                              "n",  _("comment made on _article"),    _("%(member)s commented on %(you)s _article %(article)s")],  #TODO Also passes comment.contents as a string and could be used here
+    ["comment",                              "n",  _("comment made on _article"),    _("%(member)s commented on %(you)s _article %(content)s")],  #TODO Also passes comment.contents as a string and could be used here
 
     # Content Responses
     # AllanC- we don't distingusih mobile responses anymore #["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(member)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],
