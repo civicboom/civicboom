@@ -21,11 +21,11 @@ formalchemy:
 	rm -rf FormAlchemy-1.3.3.tar.gz FormAlchemy-1.3.3
 
 geoalchemy:
-	wget http://pypi.python.org/packages/source/G/GeoAlchemy/GeoAlchemy-0.5.tar.gz
-	tar xzf GeoAlchemy-0.5.tar.gz
-	mv GeoAlchemy-0.5/geoalchemy ./
+	wget http://pypi.python.org/packages/source/G/GeoAlchemy/GeoAlchemy-0.6.tar.gz
+	tar xzf GeoAlchemy-0.6.tar.gz
+	mv GeoAlchemy-0.6/geoalchemy ./
 	rm -rf geoalchemy/tests
-	rm -rf GeoAlchemy-0.5.tar.gz GeoAlchemy-0.5
+	rm -rf GeoAlchemy-0.6.tar.gz GeoAlchemy-0.6
 
 repoze:
 	mkdir repoze

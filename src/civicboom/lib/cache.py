@@ -8,10 +8,10 @@ def init_cache(config):
     cache_manager = CacheManager(**parse_cache_config_options(config))
     
     if config['beaker.cache.enabled']:
-        for bucket in ['members', 'contents', 'contents_index', 'members_index', 'content_show', 'members_show']: #
+        for bucket in ['members', 'contents', 'contents_index', 'members_index', 'content_show', 'members_show']:
             _cache[bucket] = cache_manager.get_cache(bucket)
-            #if config['development_mode']:
-            _cache[bucket].clear()
+            if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
+                _cache[bucket].clear()
 
 
 cacheable_lists = {
