@@ -50,13 +50,9 @@
         <description>${content.get('content', content.get('content_short'))}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Content #${content['id']}</guid>
-        % if content.get('tags', None):
-        <category>
-            % for tag in content['tags']:
-            ${tag}, 
-            % endfor
-        </category>
-        % endif
+        % for tag in content.get('tags', []):
+        <category>${tag}</category>
+        % endfor
         <dc:creator>${content.get('creator',dict()).get('name')} (${content.get('creator',dict()).get('username')})</dc:creator>
         ## Comments - http://wellformedweb.org/news/wfw_namespace_elements/
         <wfw:commentRss>${h.url('content_action', action='comments', id=content['id'], format='rss', qualified=True)}</wfw:commentRss>
