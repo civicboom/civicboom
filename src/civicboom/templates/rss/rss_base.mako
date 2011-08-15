@@ -8,18 +8,19 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()"><?xml version="1.0" encoding="utf-8"?>
+## w3c rss validator recommends a different reference for CC
+##xmlns:creativeCommons="http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html"
+## Reference for geo/georss - http://www.georss.org/Main_Page
+## unused? w3c doesn't recognise it...
+##xmlns:woe    = "http://where.yahooapis.com/v1/schema.rng"
 <rss
 	version="2.0"
 	xmlns:media  = "http://search.yahoo.com/mrss/"
 	xmlns:dc     = "http://purl.org/dc/elements/1.1/"
-    ## w3c rss validator recommends the latter
-	##xmlns:creativeCommons="http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html"
 	xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
-	## Reference http://www.georss.org/Main_Page
 	xmlns:geo    = "http://www.w3.org/2003/01/geo/wgs84_pos#"
 	xmlns:georss = "http://www.georss.org/georss"
 	xmlns:gml    = "http://www.opengis.net/gml"
-	xmlns:woe    = "http://where.yahooapis.com/v1/schema.rng"
 	xmlns:wfw    = "http://wellformedweb.org/CommentAPI/"
 >
     <channel>
