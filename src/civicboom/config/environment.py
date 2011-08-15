@@ -125,7 +125,7 @@ def load_environment(global_conf, app_conf):
     elif pylons.config['worker.queue'] == "threads":  # pragma: no cover
         worker.start_worker()
     elif pylons.config['worker.queue'] == "redis":  # pragma: no cover
-        worker.init_queue(redis_.RedisQueue(Redis(config['service.redis.server']), platform.node()))
+        worker.init_queue(redis_.RedisQueue(redis_.redis_from_url(config['service.redis.server']), platform.node()))
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
 

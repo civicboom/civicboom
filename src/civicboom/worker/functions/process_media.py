@@ -34,8 +34,8 @@ def _reformed(name, ext):
 def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     db_object = Session.query(Media).filter(Media.hash==file_hash).first()
 
-    import redis
-    m               = redis.Redis(config['service.redis.server'])
+    from cbutils.redis_ import redis_from_url
+    m               = redis_from_url(config['service.redis.server'])
     status_key    = str("media_processing_"+file_hash)
     status_expire = int(config['media.processing.status_expire_time'])
     

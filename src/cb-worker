@@ -57,9 +57,8 @@ def main(argv):
         return 1
     elif w.config['worker.queue'] == "redis":
         import cbutils.redis_ as redis_
-        from redis import Redis
         import platform
-        w.init_queue(redis_.RedisQueue(Redis(w.config['service.redis.server']), platform.node()))
+        w.init_queue(redis_.RedisQueue(redis_.redis_from_url(w.config['service.redis.server']), platform.node()))
     else:
         log.error("Invalid worker type: %s" % w.config['worker.queue'])
 
