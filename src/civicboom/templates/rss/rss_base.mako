@@ -27,7 +27,11 @@
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
         <generator    >${h.url(controller='misc', action='titlepage', sub_domain='www', qualified=True)}</generator>
-        <image url="/images/rss_large.png" link="${h.url(controller='misc', action='titlepage', sub_domain='www', qualified=True)}" title="${_('_site_name')}" />
+        <image>
+            <url>${h.wh_url('public', 'images/rss_large.png')}</url>
+            <title>${_("_site_name")}</title>
+            <link>${h.url(controller='misc', action='titlepage', sub_domain='www', qualified=True)}</link>
+        </image>
         
         ${next.body()}
         
