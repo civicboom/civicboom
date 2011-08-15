@@ -22,6 +22,7 @@
 	xmlns:georss = "http://www.georss.org/georss"
 	xmlns:gml    = "http://www.opengis.net/gml"
 	xmlns:wfw    = "http://wellformedweb.org/CommentAPI/"
+	xmlns:atom   = "http://www.w3.org/2005/Atom"
 >
     <channel>
         <title        >${self.title()}</title>
@@ -30,6 +31,7 @@
         <pubDate      >${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</pubDate>
         <lastBuildDate>${datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>
         <generator    >${h.url(controller='misc', action='titlepage', sub_domain='www', qualified=True)}</generator>
+        <atom:link href="${h.url('current', qualified=True)}" rel="self" type="application/rss+xml" />
         <image>
             <url>${h.wh_url('public', 'images/rss_large.png')}</url>
             <title>${self.title()}</title>
