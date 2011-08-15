@@ -50,7 +50,7 @@
         <description>${content.get('content', content.get('content_short'))}</description> 
         <pubDate>${h.date_to_rss(content.get('update_date'))}</pubDate>
         <guid isPermaLink="false">Content #${content['id']}</guid>
-        % if 'tags' in content:
+        % if content.get('tags', None):
         <category>
             % for tag in content['tags']:
             ${tag}, 
