@@ -26,12 +26,14 @@ db_get cb-website-api/db_geo         && DB_GIS=$RET
 db_get cb-website-api/db_log         && DB_LOG=$RET
 db_get cb-website-api/mc_session     && MC_SESSION=$RET
 db_get cb-website-api/mc_cache       && MC_CACHE=$RET
+db_get cb-website-api/worker_queue   && WORKER_QUEUE=$RET
 
 sed -i "s#DEBCONF_DB_MAIN#$DB_MAIN#"       /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_DB_GIS#$DB_GIS#"         /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_DB_LOG#$DB_LOG#"         /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_SESSION#$MC_SESSION#" /opt/cb/share/website/production.ini
 sed -i "s#DEBCONF_MC_CACHE#$MC_CACHE#"     /opt/cb/share/website/production.ini
+sed -i "s#DEBCONF_WORKER_QUEUE#$WORKER_QUEUE#" /opt/cb/share/website/production.ini
 
 initctl stop cb-website || true
 initctl stop cb-worker  || true

@@ -110,7 +110,7 @@ def load_environment(global_conf, app_conf):
     email.configure(pylons.config)
 
     # set up worker processors
-    if pylons.config['worker.queue'] in ["inline", "threads"]:
+    if pylons.config['worker.queue.type'] in ["inline", "threads"]:
         worker.config = pylons.config
         from civicboom.worker.functions.send_notification import send_notification
         from civicboom.worker.functions.process_media     import process_media
@@ -120,14 +120,14 @@ def load_environment(global_conf, app_conf):
         worker.add_worker_function('profanity_check'   , profanity_check  )
 
     # set up worker queue
-    if pylons.config['worker.queue'] == "inline":
+    if pylons.config['worker.queue.type'] == "inline":
         worker.init_queue(None)
-    elif pylons.config['worker.queue'] == "threads":  # pragma: no cover
+    elif pylons.config['worker.queue.type'] == "threads":  # pragma: no cover
         worker.start_worker()
-    elif pylons.config['worker.queue'] == "redis":  # pragma: no cover
-        worker.init_queue(redis_.RedisQueue(redis_.redis_from_url(config['service.redis.server']), platform.node()))
+    elif pylons.config['worker.queue.type'] == "redis":  # pragma: no cover
+        worker.init_queue(redis_.RedisQueue(redis_.redis_from_url(config['worker.queue.url']), platform.node()))
     else:  # pragma: no cover
-        log.error("Invalid worker type: %s" % pylons.config['worker.queue'])
+        log.error("Invalid worker type: %s" % pylons.config['worker.queue.type'])
 
     init_model_extra() # This will trigger a set of additional initalizers
 

@@ -52,15 +52,15 @@ def main(argv):
         smtp.setLevel(logging.WARNING)
         logging.getLogger('').addHandler(smtp)
 
-    if w.config['worker.queue'] in ['inline', 'threads']:
+    if w.config['worker.queue.type'] in ['inline', 'threads']:
         log.error("Separate worker doesn't make sense for inline or threaded mode")
         return 1
-    elif w.config['worker.queue'] == "redis":
+    elif w.config['worker.queue.type'] == "redis":
         import cbutils.redis_ as redis_
         import platform
-        w.init_queue(redis_.RedisQueue(redis_.redis_from_url(w.config['service.redis.server']), platform.node()))
+        w.init_queue(redis_.RedisQueue(redis_.redis_from_url(w.config['worker.queue.url']), platform.node()))
     else:
-        log.error("Invalid worker type: %s" % w.config['worker.queue'])
+        log.error("Invalid worker type: %s" % w.config['worker.queue.type'])
 
     set_up_environment()
     if options.test:

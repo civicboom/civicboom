@@ -32,9 +32,15 @@ Description: Where is the session cache?
 
 Template: cb-website-api/mc_cache
 Type: string
-Default: 127.0.0.1:6379
+Default: 127.0.0.1
 Description: Where is the memcache server?
  This should be a space-separated list of host:port pairs for a
  set of memcache servers. For the cache to work efficiently, all
  the API nodes need to have exactly the same list (even the same
  order)
+
+Template: cb-website-api/worker_queue
+Type: string
+Default: 127.0.0.1
+Description: Where is the worker queue?
+ Currently a Redis server, though that may be different in future
