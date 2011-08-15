@@ -252,27 +252,18 @@ class ContentsController(BaseController):
                 kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
 
 
-        # Normalize kwargs -----------------------------------------------------
-        #  do not allow db objects to be used as params
+        # Create Cache key based on kwargs -------------------------------------
         
-        for key, value in kwargs.iteritems():
-            if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
-                #try   : value = value.__db_index__() # AllanC if it has an id use it. This should work for all db objects and not require the __db_index__ function
-                try   : value = value.id
-                except: pass
-                # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-                value = str(value).strip()
-            kwargs[key] = value
+        kwargs = normaize_kwargs_for_cache(kwargs) # This string's all args and gets id from any objects
         
         cache_key = ''
-        keys_sorted = [k for k in kwargs.keys()]
-        keys_sorted.sort()
-        for key in keys_sorted:
-            cache_key += str(kwargs[key]) + '|'
         if _filter:
-            cache_key += sql(_filter) # Create a string representation of the passed filters so that they form part of the cache key
+            pass # We cant cache anything with a filter provided because we cant invalidate it afterwards because we cant identify the source
+            #if _filter:
+            #    cache_key += sql(_filter) # Create a string representation of the passed filters so that they form part of the cache key
+        else:
+            cache_key = get_cache_key('contents_index', kwargs)
         
-
         # Construct Query with provided kwargs ---------------------------------
         # Everything past here can be cached based on the kwargs state
 
