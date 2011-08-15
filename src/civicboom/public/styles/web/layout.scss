@@ -64,32 +64,36 @@ BODY>DIV#app {
     
     .button {
         color: $button-txt;
+		text-decoration: none;
         
         &:hover {
             color: $button-txt;
+			text-decoration: none;
         }
     }
-  
-    .frag_container {
-        .button {
-            color: $button-txt;
-            
-            &:hover {
-                color: $button-txt;
-            }
-        }
+
+	.frag_container {
+    		.button {
+      			color: $button-txt;
+      			text-decoration: none;
+      			
+      			&:hover {
+        				color: $button-txt;
+        				text-decoration: none;
+      			}
+    		}
+  	}
     
-        a {
-            color: $link-frag-colour;
-            text-decoration: none;
-            		
-            &:hover {
-                color: $link-hover-colour;
-                text-decoration: underline;
-                			
-                p, span {
-                    text-decoration: inherit;
-                }
+    a {
+        color: $link-frag-colour;
+        text-decoration: none;
+        		
+        &:hover {
+            color: $link-hover-colour;
+            text-decoration: underline;
+            			
+            p, span {
+                text-decoration: inherit;
             }
         }
     }
