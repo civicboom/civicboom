@@ -12,7 +12,9 @@
 	version="2.0"
 	xmlns:media  = "http://search.yahoo.com/mrss/"
 	xmlns:dc     = "http://purl.org/dc/elements/1.1/"
-	xmlns:creativeCommons="http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html"
+    ## w3c rss validator recommends the latter
+	##xmlns:creativeCommons="http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html"
+	xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule"
 	## Reference http://www.georss.org/Main_Page
 	xmlns:geo    = "http://www.w3.org/2003/01/geo/wgs84_pos#"
 	xmlns:georss = "http://www.georss.org/georss"
