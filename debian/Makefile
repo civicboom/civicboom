@@ -26,11 +26,11 @@ cb-website-api.deb: Makefile $(shell find ../admin_scripts ../docs ../selenium .
 	$(call mdcp, api/*                    , fs-api/DEBIAN/                   )
 	$(call mdcp, api/cb-website.conf      , fs-api/etc/init/                 )
 	$(call mdcp, api/cb-worker.conf       , fs-api/etc/init/                 )
+	$(call mdcp, api/logrotate.conf       , fs-api/etc/logrotate.d/civicboom )
 	$(call mdcp, ../admin_scripts/cb-task , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../admin_scripts/nosete* , fs-api/opt/cb/bin/               )
 	$(call mdcp, ../docs/*                , fs-api/opt/cb/share/doc/website/ )
 	$(call mdcp, ../src/*                 , fs-api/opt/cb/share/website/     )
-	$(call mdcp, ../src/production.ini    , fs-api/opt/cb/share/website-api/ )
 	sed -i s/VERSION/${VERSION}/ fs-api/DEBIAN/control
 	echo ${VERSION} > fs-api/opt/cb/share/website/.version
 	fakeroot dpkg -b fs-api cb-website-api_${VERSION}_all.deb 

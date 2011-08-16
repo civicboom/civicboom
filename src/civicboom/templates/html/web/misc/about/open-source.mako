@@ -9,13 +9,39 @@ whenever we fix bugs or add features, the scripts and tools that we write intern
 <a href="https://github.com/civicboom">our github page</a>.
 
 <!--
-bugs reported in other people's trackers:
-http://code.google.com/p/page-speed/issues/detail?id=448 - png optimisation
-https://bitbucket.org/bbangert/beaker/issue/62/some-way-to-set-httponly-cookies
-https://bitbucket.org/bbangert/beaker/issue/63/secure-auto-cookie-setting
-http://www.sqlalchemy.org/trac/ticket/2079 - unicode col with non-unicode default
-http://trac.pythonpaste.org/pythonpaste/ticket/483 - urlparse.parse_qsl rather than cgi
-https://bugs.launchpad.net/ubuntu/+source/lazr.uri/+bug/725124 - lazr missing __init__.py
+sqlalchemy: unicode col with non-unicode default:
+  report: http://www.sqlalchemy.org/trac/ticket/2079
+  status: fixed upstream in 0.7(?) \o/
+
+google page speed tools: png optimisation:
+  report: http://code.google.com/p/page-speed/issues/detail?id=448
+  status: they ask for an example
+
+paste: urlparse.parse_qsl rather than cgi:
+  report: http://trac.pythonpaste.org/pythonpaste/ticket/483
+  status: ignored? /o\
+
+lazr: lazr missing __init__.py:
+  report: https://bugs.launchpad.net/ubuntu/+source/lazr.uri/+bug/725124
+  status: confirmed, no action yet
+
+beaker: some way to set httponly cookies
+  report: https://bitbucket.org/bbangert/beaker/issue/62
+  status: fixed upstream in 1.6 \o/
+
+beaker: secure=auto cookie setting:
+  report: https://bitbucket.org/bbangert/beaker/issue/63
+  status: ignored? /o\
+
+geoalchemy: picklable objects:
+  report:
+  patch : https://github.com/civicboom/geoalchemy/commit/9d35b3e668b4113f24459ab0f67067bb9d9a05e9
+  status:
+
+repoze.profile: filter results by filename:
+  report: https://github.com/repoze/repoze.profile/pull/1
+  patch : https://github.com/civicboom/repoze.profile/commit/f39189b198ab196c567a2ddafa4b97fd5b68ffa0
+  status: merged \o/
 -->
 <div>
 <b>Front End:</b>
@@ -82,7 +108,6 @@ mako              - MIT
 formalchemy       - MIT
 python-magic      - PSF
 GeoAlchemy        - MIT
-GeoFormAlchemy    - MIT
 twitter           - MIT
 pexif             - MIT
 

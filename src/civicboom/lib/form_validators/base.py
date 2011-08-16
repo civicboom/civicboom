@@ -15,7 +15,11 @@ from cbutils.text import clean_html_markup, strip_html_tags
 from dateutil.parser import parse as parse_date
 import re
 
-def x_(s): return s # see lib/base:x_
+
+def x_(s):
+    # see lib/base:x_
+    return s
+
 
 class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True

@@ -70,7 +70,7 @@ We can use the form::
     <div>
       <label class="field_req" for="Pet--birthdate">Birth date</label>
       <span id="Pet--birthdate"><select id="Pet--birthdate__month" name="Pet--birthdate__month">
-    <option value="MM">Month</option>
+    <option selected="selected" value="MM">Month</option>
     <option value="1">January</option>
     <option value="2">February</option>
     ...
@@ -102,9 +102,9 @@ Ok, let's assume that validation and syncing works:
     True
     >>> fs.sync()
     >>> fs.name.value
-    'minou'
+    u'minou'
     >>> p.name
-    'minou'
+    u'minou'
 
     >>> fs.configure(include=[fs.age])
     >>> fs.rebind(p, data={'Pet--age':'-1'})
@@ -124,9 +124,9 @@ Ok, let's assume that validation and syncing works:
     True
     >>> fs.sync()
     >>> fs.colour.value
-    'Brown'
+    u'Brown'
     >>> p.colour
-    'Brown'
+    u'Brown'
 
 
 Looks nice ! Let's use the grid:
@@ -160,7 +160,7 @@ Looks nice ! Let's use the grid:
         </td>
         <td>
           <span id="Pet--birthdate"><select id="Pet--birthdate__month" name="Pet--birthdate__month">
-    <option value="MM">Month</option>
+    <option selected="selected" value="MM">Month</option>
     <option value="1">January</option>
     <option value="2">February</option>
     <option value="3">March</option>
@@ -175,7 +175,7 @@ Looks nice ! Let's use the grid:
     <option value="12">December</option>
     </select>
     <select id="Pet--birthdate__day" name="Pet--birthdate__day">
-    <option value="DD">Day</option>
+    <option selected="selected" value="DD">Day</option>
     <option value="1">1</option>
     ...
     <option value="31">31</option>
@@ -202,8 +202,8 @@ Looks nice ! Let's use the grid:
 from formalchemy.forms import FieldSet as BaseFieldSet
 from formalchemy.tables import Grid as BaseGrid
 from formalchemy.fields import Field as BaseField
+from formalchemy.forms import SimpleMultiDict
 from formalchemy.fields import _stringify
-from formalchemy.base import SimpleMultiDict
 from formalchemy import fields
 from formalchemy import validators
 from formalchemy import fatypes
@@ -403,14 +403,15 @@ class Field(BaseField):
                 options = [(term.title, term.value) for term in sourcelist]
         return BaseField.set(self, options=options, **kwargs)
 
+    @property
     def value(self):
         if not self.is_readonly() and self.parent.data is not None:
             v = self._deserialize()
             if v is not None:
                 return v
         return getattr(self.model, self.name)
-    value = property(value)
 
+    @property
     def raw_value(self):
         try:
             return getattr(self.model, self.name)
@@ -419,7 +420,6 @@ class Field(BaseField):
         if callable(self._value):
             return self._value(self.model)
         return self._value
-    raw_value = property(raw_value)
 
     def _validate(self):
         if self.is_readonly():
@@ -454,6 +454,7 @@ class Field(BaseField):
 class FieldSet(BaseFieldSet):
     """FieldSet aware of zope schema. See :class:`formalchemy.forms.FieldSet` for full api."""
 
+    __sa__ = False
     _fields_mapping = {
         schema.TextLine: fatypes.Unicode,
         schema.Text: fatypes.Unicode,
@@ -467,19 +468,14 @@ class FieldSet(BaseFieldSet):
         schema.List: fatypes.List,
     }
 
-    def __init__(self, model, session=None, data=None, prefix=None):
+    def __init__(self, model, **kwargs):
+        BaseFieldSet.__init__(self, model, **kwargs)
+        self.iface = model
+        self.rebind(model)
         self._fields = OrderedDict()
         self._render_fields = OrderedDict()
-        self.model = self.session = None
-        self.prefix = prefix
-        self.model = model
-        self.readonly = False
-        self.focus = True
-        self._errors = []
-        self.validator = None
-        self.iface = model
-        focus = True
-        for name, field in schema.getFieldsInOrder(model):
+        self._bound_pk = None
+        for name, field in schema.getFieldsInOrder(self.iface):
             klass = field.__class__
             try:
                 t = self._fields_mapping[klass]
@@ -495,14 +491,14 @@ class FieldSet(BaseFieldSet):
                 if klass is schema.Text:
                     self._fields[name].set(renderer=fields.TextAreaFieldRenderer)
                 if klass is schema.List:
-                    value_type = self.model[name].value_type
+                    value_type = self.iface[name].value_type
                     if isinstance(value_type, schema.Choice):
                         self._fields[name].set(options=value_type, multiple=True)
                     else:
                         self._fields[name].set(multiple=True)
                 elif klass is schema.Choice:
                     self._fields[name].set(renderer=fields.SelectFieldRenderer,
-                                           options=self.model[name])
+                                           options=self.iface[name])
 
     def bind(self, model, session=None, data=None):
         if not (model is not None or session or data):
@@ -541,12 +537,13 @@ class FieldSet(BaseFieldSet):
             try:
                 self.data = SimpleMultiDict(data)
             except:
-                raise Exception('unsupported data object %s.  currently only dicts and Paste multidicts are supported' % self.data)
+                raise Exception('unsupported data object %s. currently only dicts and Paste multidicts are supported' % self.data)
 
 class Grid(BaseGrid, FieldSet):
     """Grid aware of zope schema. See :class:`formalchemy.tables.Grid` for full api."""
-    def __init__(self, cls, instances=[], session=None, data=None, prefix=None):
-        FieldSet.__init__(self, cls, session, data, prefix)
+    __sa__ = False
+    def __init__(self, cls, instances=[], **kwargs):
+        FieldSet.__init__(self, cls, **kwargs)
         self.rows = instances
         self.readonly = False
         self._errors = {}
