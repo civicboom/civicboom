@@ -96,12 +96,7 @@ def get_member(member, search_email=False, **kwargs):
                 get_member_querys.append( Session.query(User).filter_by(email=member) )
         
         for query in get_member_querys:
-            try                 :
-                r = query.one()
-                import pickle
-                print pickle.dumps(r)
-                return r
-                return query.one()
+            try                 : return query.one()
             except NoResultFound: pass
         
         return None

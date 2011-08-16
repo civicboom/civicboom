@@ -35,7 +35,9 @@ cacheable_lists = {
         'groups'    : {'groups_for' : None},
         'members_of': {'members_of' : None},
         'boomed'    : {'boomed'     : None},
-    }
+    },
+    'members' : {}, # Not used, just here as a reminder that these lists are tracked with version numbers
+    'contents': {},
 }
 
 def normalize_kwargs_for_cache(kwargs):
@@ -53,12 +55,17 @@ def normalize_kwargs_for_cache(kwargs):
     return kwargs
 
 
-def _gen_list_key(bucket, cacheable_list_name, cacheable_variables):
-    if isinstance(cacheable_variables, list):
-        cacheable_variables = ",".join(cacheable_variables)
-    if not isinstance(cacheable_variables, basestring):
-        cacheable_variables = str(cacheable_variables)
-    return cache_separator.join(['cache', bucket, cacheable_list_name, cacheable_variables])
+def _gen_list_key(*args):
+    """
+    bucket, cacheable_list_name, cacheable_variables
+    """
+    def string_arg(arg):
+        if isinstance(arg, list):
+            arg = ",".join(cacheable_variables)
+        if not isinstance(arg, basestring):
+            arg = str(cacheable_variables)
+        return arg
+    return cache_separator.join(['cache']+[string_arg(arg) for arg in args])
 
 def get_list_version(*args):
     key   = _gen_list_key(*args)
@@ -71,6 +78,12 @@ def invalidate_list_version(*args):
     value += 1
     app_globals.memcache.set(key, value)
     return value
+    
+def get_lists_versions(cacheable_identifyer_tuples):
+    list_versions = ['cache']
+    for bucket, cacheable_list_name, cacheable_variables in cacheable_list_name_variables_tuples:
+        list_version.append(get_list_version(bucket, cacheable_list_name, cacheable_variables))
+    return cache_separator.join([str(i) for i in list_versions])
     
 
 def get_cache_key(bucket, kwargs, normalize_kwargs=False):

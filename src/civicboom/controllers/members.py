@@ -281,6 +281,12 @@ class MembersController(BaseController):
         @example https://test.civicboom.com/members/1.json
         """
         
+        #cache_key = 'members_show:' + get_lists_versions(
+        #    ('members', id),
+        #    # but if the lists are 0 then they will never update ... oh ballz
+        #    # All dependecys must be cacheable otherwise this is futile
+        #)
+        
         member = get_member(id)
         
         if 'lists' in kwargs:
