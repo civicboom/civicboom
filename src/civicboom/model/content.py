@@ -210,7 +210,7 @@ class Content(Base):
         return h.hexdigest()
 
     def invalidate_cache(self):
-        from civicboom.lib.database.get_cached import invalidate_content
+        from civicboom.lib.cache import invalidate_content
         invalidate_content(self)
 
     def action_list_for(self, member, **kwargs):

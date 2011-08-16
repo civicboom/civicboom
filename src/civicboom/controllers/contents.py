@@ -3,7 +3,7 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
-from civicboom.lib.database.get_cached import invalidate_content, get_license, get_tag, get_assigned_to, get_content as _get_content
+from civicboom.lib.database.get_cached import get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
@@ -743,7 +743,7 @@ class ContentsController(BaseController):
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        invalidate_content(content)  # Invalidate any cache associated with this content
+        content.invalidate_cache()  # Invalidate any cache associated with this content
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
         # Profanity Check --------------------------------------------------

@@ -2,23 +2,9 @@ from pylons import app_globals
 
 from collections import OrderedDict
 
+# -- Constants -----------------------------------------------------------------
 
 cache_separator = ':'
-
-_cache = {} # Global dictionary that is imported by submodule, contins the cache buckets
-
-def init_cache(config):
-    from beaker.cache import CacheManager
-    from beaker.util import parse_cache_config_options
-    cache_manager = CacheManager(**parse_cache_config_options(config))
-    
-    if config['beaker.cache.enabled']:
-        for bucket in ['members', 'contents', 'contents_index', 'members_index', 'content_show', 'members_show']:
-            _cache[bucket] = cache_manager.get_cache(bucket)
-            # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
-            #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
-            #    _cache[bucket].clear()
-
 
 cacheable_lists = {
     'contents_index': {
@@ -42,15 +28,49 @@ cacheable_lists = {
         'members_of': {'members_of' : None},
         'boomed'    : {'boomed'     : None},
     },
+    'mesages_index': {
+        'all'         : {'list':'all'         },
+        'to'          : {'list':'to'          },
+        'sent'        : {'list':'sent'        },
+        'public'      : {'list':'public'      },
+        'notification': {'list':'notification'},
+    },
     'members_show' : {}, # Not used, just here as a reminder that these lists are tracked with version numbers
     'contents_show': {},
 }
 cacheable_lists['contents_index'] = OrderedDict(cacheable_lists['contents_index'])
 cacheable_lists['contents_index'].update({'content'     : {'creator': None}})
 
+# -- Variables -----------------------------------------------------------------
+
+_cache = {} # Global dictionary that is imported by submodule, contins the cache buckets
+
+
+# -- Init ----------------------------------------------------------------------
+
+def init_cache(config):
+    """
+    Called by enviroment.py after most of the Pylons setup is done.
+    """
+    from beaker.cache import CacheManager
+    from beaker.util import parse_cache_config_options
+    cache_manager = CacheManager(**parse_cache_config_options(config))
+    
+    if config['beaker.cache.enabled']:
+        for bucket in ['members', 'contents', 'contents_index', 'members_index', 'messages_index', 'content_show', 'members_show']:
+            _cache[bucket] = cache_manager.get_cache(bucket)
+            # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
+            #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
+            #    _cache[bucket].clear()
+
+
+# -- Utils ---------------------------------------------------------------------
+
 def normalize_kwargs_for_cache(kwargs):
     """
-    do not allow db objects to be used as params
+    Do not allow db objects to be used as params
+    Normalize everything down to strings
+    Skips kwargs beggining with '_'
     """
     for key, value in kwargs.iteritems():
         if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
@@ -62,6 +82,8 @@ def normalize_kwargs_for_cache(kwargs):
         kwargs[key] = value
     return kwargs
 
+
+# -- Core Version Number Management --------------------------------------------
 
 def _gen_list_key(*args):
     """
@@ -94,6 +116,8 @@ def get_lists_versions(cacheable_identifyer_tuples):
     return cache_separator.join([str(i) for i in list_versions])
     
 
+# -- Generate Cache Key (from index kwargs) with version number-----------------
+
 def get_cache_key(bucket, kwargs, normalize_kwargs=False):
     """
     Take args for an index action and return
@@ -107,6 +131,8 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
     it is assumed that kwargs have be pre-processed with 'normalize_kwargs_for_cache', a param is included to do this without the need to call the normalize function specifically
     
     will return and empty string if this item is not cacheable
+    
+    with version number of idetifyed list
     """
     
     cache_key = ''
@@ -155,3 +181,40 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
     
     #print "cache_key: %s" % cache_key
     return cache_key
+
+
+
+#-- Invalidate Objects ---------------------------------------------------------
+
+def _invalidate_obj_cache(bucket, obj, fields=['id']):
+    """
+    Some objects can be fetched useing a varity of keys
+    This is a pain in the ass as we have to invalidate multiple keys per object, because we dont know how it could be indexed
+    Invalidate them ALL!! .. ALL OF THEM!!! .. for this object passed
+    """
+    assert obj
+    cache = _cache.get(bucket)
+    if cache:
+        keys_to_invalidate = []
+        if isinstance(obj, basestring):
+            keys_to_invalidate.append(obj)
+        else:
+            for field in [field for field in fields if hasattr(obj, field)]:
+                keys_to_invalidate.append(str(getattr(obj, field)))
+        for key in keys_to_invalidate:
+            cache.remove_value(key=key)
+        
+
+def invalidate_member(member):
+    _invalidate_obj_cache('members', member, ['id','username', 'email'])
+    invalidate_list_version('members', member.id)
+
+
+def invalidate_content(content):
+    _invalidate_obj_cache('contents', content)
+    invalidate_list_version('contents', content.id)
+    
+    if content.parent:               # If content has parent
+        #invalidate_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
+        # dissasociate has code to separately update the parent, could thoese lines be ignored?
+        pass

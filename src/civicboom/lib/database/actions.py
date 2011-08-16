@@ -1,12 +1,13 @@
 from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
-from civicboom.model.meta import Session
+from civicboom.model.meta    import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
 from civicboom.model.member  import *
 
-from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content, invalidate_content, invalidate_accepted_assignment, invalidate_member
+from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content
+#from civicboom.lib.cache import  invalidate_content, invalidate_member
 
 from civicboom.lib.communication           import messages
 from civicboom.lib.communication.email_lib import send_email
@@ -189,8 +190,8 @@ def follow(follower, followed, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(follower)
-    invalidate_member(followed)
+    #invalidate_member(follower)
+    #invalidate_member(followed)
 
     followed.send_notification(messages.followed_by(member=follower, you=followed))
 
@@ -217,8 +218,8 @@ def unfollow(follower, followed, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(follower)
-    invalidate_member(followed)
+    #invalidate_member(follower)
+    #invalidate_member(followed)
 
     followed.send_notification(messages.follow_stop(member=follower, you=followed))
 
@@ -247,8 +248,8 @@ def follower_trust(followed, follower, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(follower)
-    invalidate_member(followed)
+    #invalidate_member(follower)
+    #invalidate_member(followed)
     
     follower.send_notification(messages.follower_trusted(member=followed, you=follower))
     
@@ -312,8 +313,8 @@ def follower_invite_trusted(followed, follower, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(follower)
-    invalidate_member(followed)
+    #invalidate_member(follower)
+    #invalidate_member(followed)
     
     follower.send_notification(messages.follow_invite_trusted(member=followed, you=follower))
     
@@ -371,8 +372,8 @@ def join_group(group, member, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(group)
-    invalidate_member(member)
+    #invalidate_member(group)
+    #invalidate_member(member)
     
     return return_value
     
@@ -412,8 +413,8 @@ def remove_member(group, member, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(group)
-    invalidate_member(member)
+    #invalidate_member(group)
+    #invalidate_member(member)
     
     return True
 
@@ -450,8 +451,8 @@ def invite(group, member, role, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(group)
-    invalidate_member(member)
+    #invalidate_member(group)
+    #invalidate_member(member)
     
     return True
     
@@ -489,8 +490,8 @@ def set_role(group, member, role, delay_commit=False):
     if not delay_commit:
         Session.commit()
     
-    invalidate_member(group)
-    invalidate_member(member)
+    #invalidate_member(group)
+    #invalidate_member(member)
     
     return True
 
@@ -502,14 +503,14 @@ def del_group(group):
         member.send_notification(messages.group_deleted(group=group, admin=c.logged_in_user)) # AllanC - We cant use the standard group.send_notification because the group wont exisit after this line!
     Session.delete(group)
     Session.commit()
-    invalidate_member(group)
+    #invalidate_member(group)
 
 
 def del_member(member):
     member = get_member(member)
     Session.delete(member)
     Session.commit()
-    invalidate_member(member)
+    #invalidate_member(member)
 
 
 #-------------------------------------------------------------------------------
@@ -554,7 +555,7 @@ def accept_assignment(assignment, member, status="accepted", delay_commit=False)
     
     if not delay_commit:
         Session.commit()
-    invalidate_accepted_assignment(member)
+    #invalidate_accepted_assignment(member)
     
     if status=="accepted":
         assignment.creator.send_notification(messages.assignment_accepted(member=member, assignment=assignment, you=assignment.creator))
@@ -578,7 +579,7 @@ def withdraw_assignemnt(assignment, member, delay_commit=False):
         assignment_accepted.status = "withdrawn"
         #Session.update(assignment_accepted)
         Session.commit()
-        invalidate_accepted_assignment(member)
+        #invalidate_accepted_assignment(member)
         
         assignment.creator.send_notification(messages.assignment_interest_withdrawn(member=member, assignment=assignment, you=assignment.creator))
         
@@ -619,7 +620,7 @@ def respond_assignment(parent_content, member, delay_commit=False):
     if not delay_commit:
         Session.commit()
         
-    invalidate_accepted_assignment(member)
+    #invalidate_accepted_assignment(member)
     return True
 
     
@@ -631,14 +632,14 @@ def respond_assignment(parent_content, member, delay_commit=False):
 def del_content(content):
     content = get_content(content)
     # TODO - AllanC - send notification to group members?
-    invalidate_content(content) #invalidate the cache
+    #invalidate_content(content) # invalidate the cache - AllanC unneeded the event triggers handle this
     Session.delete(content)
     Session.commit()
     
 
 def del_member(member):
     member = get_member(member)
-    invalidate_member(member) #invalidate the cache
+    #invalidate_member(member) #invalidate the cache - AllanC unneeded the event triggers handle this
     Session.delete(member)
     Session.commit()
 
@@ -752,7 +753,7 @@ def parent_seen(content, delay_commit=False):
     
     if not delay_commit:
         Session.commit()
-    invalidate_content(content)
+    #invalidate_content(content)
     return True
 
 
@@ -774,7 +775,7 @@ def parent_approve(content, delay_commit=False):
     if not delay_commit:
         Session.commit()
         
-    invalidate_content(content)
+    #invalidate_content(content)
     return True
     
     
@@ -783,8 +784,8 @@ def parent_disassociate(content, delay_commit=False):
         return False
     
     # Update has to be done before the commit in this case bcause the parent is needed
-    invalidate_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
-    invalidate_content(content)        # this currently has code to update parents reponses, is the line above needed?
+    #invalidate_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
+    #invalidate_content(content)        # this currently has code to update parents reponses, is the line above needed?
 
     content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent))
     

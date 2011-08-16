@@ -21,24 +21,11 @@ log = logging.getLogger(__name__)
 from civicboom.lib.cache import _cache
 
 
-#-------------------------------------------------------------------------------
-# Cashe Management - Part 1
-#-------------------------------------------------------------------------------
-# A collection of functions used to setup + assit with caching
-# Part 2 contains all the functions for invalidating the cache and must be defined after the cached functions
-
-from civicboom.lib.database.etag_manager import etag_key_incement, add_etag_dependency_key
-
-add_etag_dependency_key("content")
-add_etag_dependency_key("member")
-add_etag_dependency_key("member_content")
-add_etag_dependency_key("member_assignments_active")
 
 
 #-------------------------------------------------------------------------------
-# Database Object Gets - Cached - Get data from database that is cached
+# Database Object Gets
 #-------------------------------------------------------------------------------
-# Most methods will have a get_stuff and get_stuff_nocache. As the cache is a decorator we can bypass the cache by calling the _nocache variant
 
 def get_media(id=None, hash=None):
     if id:
@@ -114,7 +101,6 @@ def get_member(member, search_email=False, **kwargs):
         else:
             log.warn('Member object already in session, but how do we get a reference to the exisitng object in the session?')
             return Session[result]
-        
     return cache_func()
 
 
@@ -290,22 +276,40 @@ def get_message(message):
     return Session.query(Message).filter(Message.id==int(message)).options(joinedload('source')).options(joinedload('target')).first()
 
 
-def get_content_nocache(content_id):
-    #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
-    # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
-    try:
-        return Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
-    except: # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
-        return None
 
 
 def get_content(content):
     if not content:
         return None
-    #if content is Content object or a subclass: return content
-    if issubclass(content.__class__,Content):
+    if isinstance(content,Content):
         return content
-    return get_content_nocache(content)
+    
+    try:
+        content = int(content)
+    except:
+        return None
+    
+    def get_content_nocache(content_id):
+        #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
+        # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
+        try:
+            query = Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
+            result = query.one()
+            Session.expunge(result)
+            return result
+        except:
+            return None  # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
+
+    cache_func = lambda: get_content_nocache(content)
+    if _cache.get('contents'):
+        result = _cache.get('contents').get(key=str(content), createfunc=cache_func)
+        if result not in Session: # AllanC - Is this check needed? we always expunge from session before returning it .. so this should always work??
+            Session.add(result)
+            return result
+        else:
+            log.warn('Content object already in session, but how do we get a reference to the exisitng object in the session?')
+            return Session[result]
+    return cache_func()
 
 
 def find_content_root(content):
@@ -347,62 +351,3 @@ def get_tag(tag):
         Session.add(t)
         return t
 
-
-
-#-------------------------------------------------------------------------------
-# Database List Gets - Cached - Get data lists from database that is cached
-#-------------------------------------------------------------------------------
-
-
-#-------------------------------------------------------------------------------
-# Cache Management - Part 2 - Invalidating the Cache
-#-------------------------------------------------------------------------------
-
-def _invalidate_cache(region, obj, fields=['id']):
-    assert obj
-    cache = _cache.get(region)
-    if cache:
-        if isinstance(obj, basestring):
-            cache.remove_value(key=obj)
-        else:
-            for field in fields:
-                try   : cache.remove_value(key=str(getattr(obj, field)))
-                except: pass
-
-def invalidate_member(member):
-    _invalidate_cache('members', member, ['id','username', 'email'])
-    etag_key_incement("member",member.id)
-
-
-def invalidate_content(content):
-    if not issubclass(content.__class__, Content):
-        content = get_content_nocache(content)
-    
-    if not content:
-        # need to invalidate
-        return
-    
-    _invalidate_cache('contents', content)
-    
-    etag_key_incement("content",content.id)
-    #cache_test.invalidate(get_content, '', content.id)
-    
-    etag_key_incement("member_content",content.creator.id)
-    #cache_test.invalidate(get_content_from, '', article.member.id)
-    
-    if content.parent:               # If content has parent
-        #invalidate_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
-        # dissasociate has code to separately update the parent, could thoese lines be ignored?
-        pass
-
-
-def invalidate_member_messages(member):
-    pass
-
-
-def invalidate_accepted_assignment(member):
-    pass
-
-
-def invalidate_member_assignments_active(member):
-    pass
