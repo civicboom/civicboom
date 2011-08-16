@@ -96,14 +96,25 @@ def get_member(member, search_email=False, **kwargs):
                 get_member_querys.append( Session.query(User).filter_by(email=member) )
         
         for query in get_member_querys:
-            try                 : return query.one()
-            except NoResultFound: pass
+            try :
+                result = query.one()
+                Session.expunge(result)
+                return result
+            except NoResultFound:
+                pass
         
         return None
     
     cache_func = lambda: get_member_nocache(member)
     if _cache.get('members'):
-        return _cache.get('members').get(key=str(member), createfunc=cache_func)
+        result = _cache.get('members').get(key=str(member), createfunc=cache_func)
+        if result not in Session: # AllanC - Is this check needed? we always expunge from session before returning it .. so this should always work??
+            Session.add(result)
+            return result
+        else:
+            log.warn('Member object already in session, but how do we get a reference to the exisitng object in the session?')
+            return Session[result]
+        
     return cache_func()
 
 

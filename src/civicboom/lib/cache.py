@@ -1,3 +1,8 @@
+from pylons import app_globals
+
+from collections import OrderedDict
+
+
 cache_separator = ':'
 
 _cache = {} # Global dictionary that is imported by submodule, contins the cache buckets
@@ -10,13 +15,14 @@ def init_cache(config):
     if config['beaker.cache.enabled']:
         for bucket in ['members', 'contents', 'contents_index', 'members_index', 'content_show', 'members_show']:
             _cache[bucket] = cache_manager.get_cache(bucket)
-            if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
-                _cache[bucket].clear()
+            # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
+            #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
+            #    _cache[bucket].clear()
 
 
 cacheable_lists = {
     'contents_index': {
-        'content'     : {'creator': None},
+        #'content'     : {'creator': None}, # AllanC - Ballz, because dict key order is not reproducatble. A bug where some lists were being identifyed as 'content' because they were matching 'creator'. This dict is converted to an OrderedDict and the 'content' list added to the end
         'boomed_by'   : {'boomed_by': None},
         'drafts'      : {'list':'drafts'     , 'creator':None},
         'articles'    : {'list':'articles'   , 'creator':None},
@@ -36,9 +42,11 @@ cacheable_lists = {
         'members_of': {'members_of' : None},
         'boomed'    : {'boomed'     : None},
     },
-    'members' : {}, # Not used, just here as a reminder that these lists are tracked with version numbers
-    'contents': {},
+    'members_show' : {}, # Not used, just here as a reminder that these lists are tracked with version numbers
+    'contents_show': {},
 }
+cacheable_lists['contents_index'] = OrderedDict(cacheable_lists['contents_index'])
+cacheable_lists['contents_index'].update({'content'     : {'creator': None}})
 
 def normalize_kwargs_for_cache(kwargs):
     """
@@ -61,9 +69,9 @@ def _gen_list_key(*args):
     """
     def string_arg(arg):
         if isinstance(arg, list):
-            arg = ",".join(cacheable_variables)
+            arg = ",".join(arg)
         if not isinstance(arg, basestring):
-            arg = str(cacheable_variables)
+            arg = str(arg)
         return arg
     return cache_separator.join(['cache']+[string_arg(arg) for arg in args])
 
@@ -106,19 +114,21 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
     if normalize_kwargs:
         kwargs = normalize_kwargs_for_cache(kwargs)
     
+    #print "cache_input: %s" % kwargs
+    
     cacheable_kwargs_keys = [k for (k,v) in kwargs.iteritems() if not k.startswith('_')]  # Strip the keys starting with '_' as they are not needed. We need to preserve the kwargs for later as the _logged_in and _private are going to form part of the cache key
     cacheable_kwargs_keys.sort()
     
     # Iterate through all the 
     for cacheable_list_name, cache_args_dict in cacheable_lists[bucket].iteritems():
-        if len(cache_args_dict) != len(cacheable_kwargs_keys): # Optimisation - no point in deeply comparing a list of args that dont match
-            continue
+        #if len(cache_args_dict) != len(cacheable_kwargs_keys): # Optimisation - no point in deeply comparing a list of args that dont match
+        #    continue
         
         # Try to match the passed kwargs with the cacheable known lists
         #cacheable_list_name = cache_name
         cacheable_variables = []
-        for key in cacheable_kwargs_keys: # Iterate over kwargs keys to see if they match the cacheable list
-            key_match = key in cache_args_dict
+        for key in cache_args_dict: # Iterate over kwargs keys to see if they match the cacheable list
+            key_match = key in cacheable_kwargs_keys
             if   key_match and not cache_args_dict[key]: # if the value stored in the cache_args_dict is None then that key is a variable and can be added to the variable list
                 cacheable_variables.append(kwargs[key])
             elif key_match and     cache_args_dict[key] and cache_args_dict[key]==kwargs[key]: # If the key exisits in cachable_list and the key value is NOT null - then check the value of the keys match
@@ -129,6 +139,7 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
         
         # After the for look has run though all the keys, and has not aborted to the next item with continue - the kwargs match this cacheable_list
         if cacheable_list_name:
+            #print "cacheable_list_name: %s" % cacheable_list_name
             list_version = get_list_version(bucket, cacheable_list_name, cacheable_variables)
             
             # Sort keys to normaize the cache_key that is generated
@@ -136,10 +147,11 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [str(kwargs[key]) for key in keys_sorted]
-            cache_values += [str(list_version)]
+            cache_values  = [key+'='+str(kwargs[key]) for key in keys_sorted]
+            cache_values += ['ver=' +str(list_version)                      ]
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match
-        
+    
+    #print "cache_key: %s" % cache_key
     return cache_key

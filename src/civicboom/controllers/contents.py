@@ -12,7 +12,7 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
 
 # Cache
-from civicboom.lib.cache import _cache
+from civicboom.lib.cache import _cache, get_cache_key, normalize_kwargs_for_cache
 
 # Validation
 import formencode
@@ -239,8 +239,10 @@ class ContentsController(BaseController):
         #try:
         if kwargs.get('creator'):
             creator = get_member(kwargs['creator'])
-            if creator:
-                kwargs['creator'] = creator.username
+            # AllanC - why the **** was there here? ... by using creator.username it triggers WAY more calls to get_member in an attempt to get the member_id
+            #          I think it was here so that the kwargs returned in the list source had the username. The username is more meaningful than the member_id ... but the id is WAY more efficent
+            #if creator:
+            #    kwargs['creator'] = creator.id # Repace creator kwarg input with the normalised form
             #kwargs['creator'] = normalize_member(creator) # normalize creator param for search # AllanC - will be normalize with the other fields later
         #except Exception as e:
         #    user_log.exception("Error searching:")
@@ -254,8 +256,8 @@ class ContentsController(BaseController):
 
         # Create Cache key based on kwargs -------------------------------------
         
-        kwargs = normaize_kwargs_for_cache(kwargs) # This string's all args and gets id from any objects
-        
+        kwargs = normalize_kwargs_for_cache(kwargs) # This string's all args and gets id from any objects
+
         cache_key = ''
         if _filter:
             pass # We cant cache anything with a filter provided because we cant invalidate it afterwards because we cant identify the source
@@ -344,9 +346,10 @@ class ContentsController(BaseController):
     
             return results
         
+        cache      = _cache.get('contents_index')
         cache_func = lambda: contents_index(_filter, **kwargs)
-        if _cache.get('contents_index') and cache_key:
-            return _cache.get('contents_index').get(key=cache_key, createfunc=cache_func)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
         return cache_func()
 
 

@@ -436,6 +436,9 @@ class CreatorFilter(Filter):
 
     @staticmethod
     def from_string(s):
+        if s.isdigit():
+            return CreatorFilter(int(s)) # AllanC - short term optimisation to stop normalized string instances triggering a DB get for members every time
+            # WARNING! TODO!! Automated tests! This may fail for usernames that are entirely numerical ... testing needed!!
         if s == "me":
             m = c.logged_in_persona
         else:
@@ -462,6 +465,10 @@ class BoomedByFilter(Filter):
 
     @staticmethod
     def from_string(s):
+        if s.isdigit():
+            return BoomedByFilter(int(s))
+            # WARNING! TODO!! Automated tests! This may fail for usernames that are entirely numerical ... testing needed!!
+        
         m = get_member(s)
         if m:
             return BoomedByFilter(m.id)

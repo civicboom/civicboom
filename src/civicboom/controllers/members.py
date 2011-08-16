@@ -323,7 +323,7 @@ class MembersController(BaseController):
         
         # Content Lists
         for list in [list for list in lists if list in list_filters]:
-            data[list] = contents_controller.index(creator=member.username, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
+            data[list] = contents_controller.index(creator=member, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
             lists.remove(list) # AllanC - fix; don't allow the same lists to be got from both content and member controller
         
         # Member Lists
