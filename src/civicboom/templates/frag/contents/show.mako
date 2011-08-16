@@ -335,10 +335,6 @@
             <span class="${icon_classes}" title="${title}"><span>${title}</span></span>
           % endif
         </%def>
-        <style type="text/css">
-          table.content tr td { padding-right: 3px; }
-          table.content tr td.x { padding-left: 3px; }
-        </style>
         <table class="content">
           <tr>
             <td>${_("Booms")}</td>
@@ -389,10 +385,6 @@
           <span class="${icon_classes}"><span>${title}</span></span>
         % endif
       </%def>
-      <style type="text/css">
-        table.content tr td { padding-right: 3px; }
-        table.content tr td.x { padding-left: 3px; }
-      </style>
       <table class="content">
 ##        ${format_date_if('Created'  , content.get('creation_date'))}</p>
         ${format_date_if(_('Published'), content.get('publish_date' ))}</p>
