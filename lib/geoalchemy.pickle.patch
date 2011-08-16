@@ -1,0 +1,18 @@
+9a10
+> import pickle
+89a91,105
+>     
+>     def  __getstate__(self):
+>         return {
+>             'desc'          : pickle.dumps(str(self.desc)),
+>             'length'        : len(self.desc),
+>             'srid'          : self.srid,
+>             'geometry_type' : self.geometry_type,
+>         }
+>     
+>     def __setstate__(self, old):
+>         self.__init__(
+>             buffer(pickle.loads(old['desc']),0,old['length']),
+>             old['srid'],
+>             old['geometry_type'],
+>         )

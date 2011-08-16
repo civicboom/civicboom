@@ -60,7 +60,7 @@ Usage
 from formalchemy.forms import FieldSet as BaseFieldSet
 from formalchemy.tables import Grid as BaseGrid
 from formalchemy.fields import Field as BaseField
-from formalchemy.base import SimpleMultiDict
+from formalchemy.forms import SimpleMultiDict
 from formalchemy import fields
 from formalchemy import validators
 from formalchemy import fatypes
@@ -91,17 +91,17 @@ class Session(object):
 class Field(BaseField):
     """"""
 
+    @property
     def value(self):
         if not self.is_readonly() and self.parent.data is not None:
             v = self._deserialize()
             if v is not None:
                 return v
         return getattr(self.model, self.name)
-    value = property(value)
 
+    @property
     def model_value(self):
         return getattr(self.model, self.name)
-    model_value = property(model_value)
     raw_value = model_value
 
     def sync(self):
@@ -110,23 +110,16 @@ class Field(BaseField):
             setattr(self.model, self.name, self._deserialize())
 
 class FieldSet(BaseFieldSet):
+    __sa__ = False
     _mapping = {
             descriptors.rdfSingle: fatypes.String,
             descriptors.rdfMultiple: fatypes.List,
             descriptors.rdfList: fatypes.List,
         }
 
-    def __init__(self, model, session=None, data=None, prefix=None):
-        self._fields = OrderedDict()
-        self._render_fields = OrderedDict()
-        self.model = self.session = None
-        BaseFieldSet.rebind(self, model, data=data)
-        self.prefix = prefix
-        self.model = model
-        self.readonly = False
-        self.focus = True
-        self._errors = []
-        focus = True
+    def __init__(self, model, **kwargs):
+        BaseFieldSet.__init__(self, model, **kwargs)
+        BaseFieldSet.rebind(self, model, data=kwargs.get('data', None))
         for k, v in model.__dict__.iteritems():
             if not k.startswith('_'):
                 descriptor = type(v)
@@ -174,9 +167,9 @@ class FieldSet(BaseFieldSet):
                 raise Exception('unsupported data object %s.  currently only dicts and Paste multidicts are supported' % self.data)
 
 class Grid(BaseGrid, FieldSet):
-    def __init__(self, cls, instances=[], session=None, data=None, prefix=None):
-        FieldSet.__init__(self, cls, session, data, prefix)
-        self.rows = instances
+    def __init__(self, cls, instances=None, **kwargs):
+        FieldSet.__init__(self, cls, **kwargs)
+        self.rows = instances or []
         self.readonly = False
         self._errors = {}
 

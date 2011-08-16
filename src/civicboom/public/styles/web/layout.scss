@@ -64,11 +64,25 @@ BODY>DIV#app {
     
     .button {
         color: $button-txt;
+		text-decoration: none;
         
         &:hover {
             color: $button-txt;
+			text-decoration: none;
         }
     }
+
+	.frag_container {
+		.button {
+			color: $button-txt;
+			text-decoration: none;
+			
+			&:hover {
+				color: $button-txt;
+				text-decoration: none;
+			}
+		}
+	}
     
 	.frag_container {
 		a {

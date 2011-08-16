@@ -4,6 +4,8 @@
 import redis
 import os
 
+from cbutils.redis_ import redis_from_url
+
 
 class Globals(object):
     """
@@ -22,6 +24,6 @@ class Globals(object):
             self.version   = file(".version").read().strip()
         else:  # pragma: no cover - all released versions have a version
             self.version   = None
-        
-        
-        self.memcache      = redis.Redis(config['service.redis.server'])
+
+        self.memcache      = redis_from_url(config['worker.queue.url'])
+
