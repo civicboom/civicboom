@@ -42,6 +42,10 @@ repoze.profile: filter results by filename:
   report: https://github.com/repoze/repoze.profile/pull/1
   patch : https://github.com/civicboom/repoze.profile/commit/f39189b198ab196c567a2ddafa4b97fd5b68ffa0
   status: merged \o/
+
+puppet: constantly disabling and re-enabling services:
+  report: http://projects.puppetlabs.com/issues/7296
+  status:
 -->
 <div>
 <b>Front End:</b>
