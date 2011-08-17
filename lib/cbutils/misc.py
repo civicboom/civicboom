@@ -44,6 +44,7 @@ def timedelta_str(string_args):
         return datetime.timedelta(**dict([(kwarg.split('=')[0].strip(), int(kwarg.split('=')[1].strip())) for kwarg in string_args.split(',')]))
     return string_args
 
+
 def random_string(length=8):
     """
     Generate a random string of a-z A-Z 0-9
@@ -198,3 +199,7 @@ def make_username(title):
     'bob-s-cake-factory'
     """
     return re.sub("[^\w-]", "-", title.lower()).strip("-")
+
+
+def debug_type(var):
+    return "%s:%s" % (type(var), repr(var))

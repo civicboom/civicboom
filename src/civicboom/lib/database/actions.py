@@ -63,8 +63,8 @@ def upgrade_user_to_group(member_to_upgrade_to_group, new_admins_username, new_g
     
     # Create new admin user
     admin_user = User()
+    admin_user.id                = new_admins_username
     admin_user.name              = new_admins_username
-    admin_user.username          = new_admins_username
     admin_user.status            = 'active'
     admin_user.email             = to_group.email
     admin_user.email_unverifyed  = to_group.email_unverified

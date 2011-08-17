@@ -208,7 +208,7 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         
-        group_id = int(response_json['data']['id'])
+        group_id = response_json['data']['id']
         self.assertNotEqual(group_id, 0)
         
         response = self.app.get(url('group', id=username, format='json'))

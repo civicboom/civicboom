@@ -111,7 +111,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else None)
+        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else '') # hack; anons should never see drafts
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),
@@ -440,7 +440,7 @@ class ContentsController(BaseController):
         # GregM: Set private flag to user or hub setting (or public as default)
         #content.private = is_private
         
-        parent = _get_content(kwargs.get('parent_id'))
+        parent = _get_content(int(kwargs.get('parent_id', 0)))
         if parent:
             # If a license isn't explicitly set, use the parent's preference
             if not kwargs.get('license_id'):
@@ -455,10 +455,11 @@ class ContentsController(BaseController):
                 from civicboom.controllers.content_actions import ContentActionsController
                 content_accept = ContentActionsController().accept
                 try:
-                    content_accept(id=parent)
+                    content_accept(id=parent.id)
                 except action_error as ae:
                     if ae.original_dict.get('code') == 403:
                         raise ae
+                    log.exception("Strange error while accepting")
                 
 
         # comments are always owned by the writer; ignore settings

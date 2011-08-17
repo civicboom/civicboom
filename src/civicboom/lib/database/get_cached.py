@@ -11,7 +11,8 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqla_hierarchy import *
 
 
-from cbutils.misc import make_username
+from cbutils.misc import make_username, debug_type
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -29,10 +30,7 @@ from civicboom.lib.cache import _cache
 
 def get_media(id=None, hash=None):
     if id:
-        try:
-            return Session.query(Media).filter_by(id=id).one()
-        except NoResultFound:
-            return None
+        return Session.query(Media).get(id)
     if hash:
         try:
             return Session.query(Media).filter_by(hash=hash).first()
@@ -47,20 +45,10 @@ def get_licenses():
 
 
 # AllanC - primarly used in setup of test data, not normally used in main site operation
-def get_license(license):
-    license = license or u"Unspecified" # get_license(None) should return the default
-    assert type(license) == unicode
-
-    try:
-        return Session.query(License).filter_by(code=license).one()
-    except NoResultFound:
-        # Shish - as far as I can tell, we will never want to find by name; so
-        #         leave the unused code commented out until it is wanted
-        #try:
-        #    return Session.query(License).filter_by(name=unicode(license)).one()
-        #except NoResultFound:
-            pass
-    return None
+def get_license(code):
+    code = code or u"Unspecified" # get_license(None) should return the default
+    assert type(code) in [str, unicode], debug_type(code)
+    return Session.query(License).get(code)
 
 
 
@@ -71,16 +59,15 @@ def get_member(member, search_email=False, **kwargs):
     if isinstance(member, Member):
         return member
 
-    assert type(member) in [int, str, unicode]
+    assert type(member) in [str, unicode], debug_type(member)
 
     def get_member_nocache(member):
         get_member_querys = []
-        if type(member) == int or member.isdigit():
-            get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=int(member)) )
-        else:
-            get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)) )
-            if search_email:
-                get_member_querys.append( Session.query(User).filter_by(email=member) )
+        
+        #return Session.query(Member).with_polymorphic('*').get(make_username(member)) # AllanC - .get() returns object based on primary key - else None
+        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=make_username(member)) )
+        if search_email:
+            get_member_querys.append( Session.query(User).filter_by(email=member) )
         
         for query in get_member_querys:
             try :
@@ -188,9 +175,9 @@ def get_members(members, expand_group_members=True):
         return [members]
         
     # normalize member names
-    members = [member if not hasattr(member, 'username') else member.username for member in members]
+    members = [member if not hasattr(member, 'id') else member.id for member in members]
     
-    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.username.in_(members)).all()
+    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.id.in_(members)).all()
     
     if expand_group_members:
         group_members = []
@@ -272,8 +259,9 @@ def get_assigned_to(content, member):
         return None
 
 
-def get_message(message):
-    return Session.query(Message).filter(Message.id==int(message)).options(joinedload('source')).options(joinedload('target')).first()
+def get_message(message_id):
+    assert str(message_id).isdigit(), debug_type(message_id)
+    return Session.query(Message).options(joinedload('source')).options(joinedload('target')).get(int(message_id))
 
 
 
@@ -292,9 +280,10 @@ def get_content(content):
     def get_content_nocache(content_id):
         #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
         # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
+        assert str(content_id).isdigit(), debug_type(content_id)
+
         try:
-            query = Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
-            result = query.one()
+            result = Session.query(Content).with_polymorphic('*').get(int(content_id)) #Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
             Session.expunge(result)
             return result
         except:
