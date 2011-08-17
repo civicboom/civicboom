@@ -167,9 +167,9 @@ def get_members(members, expand_group_members=True):
         return [members]
         
     # normalize member names
-    members = [member if not hasattr(member, 'username') else member.username for member in members]
+    members = [member if not hasattr(member, 'id') else member.id for member in members]
     
-    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.username.in_(members)).all()
+    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.id.in_(members)).all()
     
     if expand_group_members:
         group_members = []
@@ -252,15 +252,15 @@ def get_assigned_to(content, member):
 
 
 def get_message(message_id):
-    assert type(message_id) in [int, long], debug_type(message_id)
-    return Session.query(Message).options(joinedload('source')).options(joinedload('target')).get(message_id)
+    assert str(message_id).isdigit(), debug_type(message_id)
+    return Session.query(Message).options(joinedload('source')).options(joinedload('target')).get(int(message_id))
 
 
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
     # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
-    assert type(content_id) in [int, long], debug_type(content_id)
-    return Session.query(Content).with_polymorphic('*').get(content_id)
+    assert str(content_id).isdigit(), debug_type(content_id)
+    return Session.query(Content).with_polymorphic('*').get(int(content_id))
 
 
 def get_content(content):

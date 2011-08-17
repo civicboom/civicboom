@@ -269,7 +269,7 @@ def get_lowest_role_for_user(user_list=None):
         user_list = session_get('logged_in_persona_path')
     
     if isinstance(user_list, basestring):
-        user_list = [int(i) for i in user_list.split(',')]
+        user_list = [make_username(i) for i in user_list.split(',')]
         
     if not isinstance(user_list, list):
         return None
