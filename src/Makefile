@@ -148,6 +148,8 @@ run-worker:
 # CDN
 
 cdnpush-ssh: js css
+	echo removing cache breaker from icons.css
+	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-ssh.py \
 		--ini production.ini \
 		--version ${GIT_TAG} \
@@ -155,6 +157,8 @@ cdnpush-ssh: js css
 		civicboom/public
 
 cdnpush-rs: js css
+	echo removing cache breaker from icons.css
+	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-rs.py \
 		--ini production.ini \
 		--version ${GIT_TAG} \
