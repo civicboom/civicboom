@@ -34,7 +34,7 @@
 		<script src="/javascript/OpenLayers.js"></script>
 		<script src="/javascript/minimap.js"></script>
 	% else:
-		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
+		<script async src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
 	% endif
 
 
@@ -63,7 +63,7 @@
 
 
 	## tinymce, should also be loaded on demand
-	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
+	<script async src="/javascript/tiny_mce/tiny_mce.js"></script>
 </%def>
 
 
