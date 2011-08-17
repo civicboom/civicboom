@@ -13,6 +13,7 @@
         self.member    = d['member']
         self.id        = self.member['username']
         self.name      = self.member.get('name')
+        self.actions   = d['actions']
     %>
     
     ## Main member detail page (username/description/etc)
@@ -44,7 +45,7 @@
 ## Signout nav bar link
 ##-----------------------------------------------------------------------------
 <%def name="signout_navbar()">
-    % if c.logged_in_user and c.logged_in_user.username == self.id:
+    % if "logout" in self.actions:
         <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
             <div data-role="navbar" class="ui-navbar">
                 <ul>
@@ -103,12 +104,15 @@
         %>
         <div class="member_details">
             ## Avatar/name
-            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
             <h3>${member['name']}</h3>
+            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
             <p>Username: <b>${username}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
             
+            <div class="separator" style="padding: 0.5em;"></div>
+            
             ${messages_bar()}
+            ${actions_buttons()}
             
             <ul data-role="listview" data-inset="true">
                 ## User website
@@ -136,8 +140,52 @@
                 
             ${member_list("following")}
             ${member_list("followers")}
+            ${member_list("groups")}
             ${member_list("members")}
         </div>
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Member action buttons (follow, etc)
+##-----------------------------------------------------------------------------
+<%def name="actions_buttons()">
+
+    % if c.logged_in_user and self.actions:
+            % if 'follow' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
+                    value           = _('Follow'),
+                    value_formatted = h.literal("<button>%s</button>") % _('Follow'),
+                    title           = _("Follow %s" % self.name) ,
+                )}
+            % endif
+            
+            % if 'unfollow' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
+                    value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
+                    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
+                )}
+            % endif
+            
+            % if 'join' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
+                    value           = _('Join _group') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
+                )}
+            % endif
+            
+            ## AllanC - same as above, could be neater but works
+            % if 'join_request' in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
+                    value           = _('Request to join _group') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
+                )}
+            % endif
     % endif
 </%def>
 
@@ -145,7 +193,7 @@
 ## Message and notification bar
 ##-----------------------------------------------------------------------------
 <%def name="messages_bar()">
-    % if d.get('num_unread_messages'):
+    % if c.logged_in_user.username == self.id:
         <%
             unread_messages =       d['num_unread_messages']
             unread_notifications =  d['num_unread_notifications']

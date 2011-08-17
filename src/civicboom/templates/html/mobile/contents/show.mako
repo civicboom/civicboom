@@ -46,18 +46,15 @@
         <div class="top_media media_list">
             <%
                 count = len(self.media)
-                thumb = None
-                if count:
-                    for item in self.media:
-                        if item['type'] in ["image", "video"]:
-                            thumb = item['thumbnail_url']
-                    if not thumb:
-                        thumb = "/images/misc/shareicons/audio_icon.png"
+                thumb = self.content['thumbnail_url'] if self.content.get('thumbnail_url') else None
             %>
             % if thumb and count > 1:
-                <a href="#content-media-${self.id}" alt="more"><img src="${thumb}" /></a>
+                <a href="#content-media-${self.id}" alt="Content thumbnail">
+                    <img src="${thumb}" />
+                    <p>See all ${count} media items</p>
+                </a>
             % elif thumb and count:
-                <a href="${self.media[0]['original_url']}"><img src="${thumb}" /></a>
+                <a href="${self.media[0]['original_url']}" alt="Content thumbnail"><img src="${thumb}"/></a>
             % endif
         </div>
         
@@ -86,9 +83,15 @@
                 <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
                     <li><h3>Published:</h3> ${self.content['publish_date']}</li>
-                    <li><h3>Tags:</h3> ${", ".join(self.content['tags'])}</li>
-                    <li><h3>Views:</h3> ${self.content['views']}</li>
-                    <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
+                    % if self.content.get('tags'):
+                        <li><h3>Tags:</h3> ${", ".join(self.content['tags'])}</li>
+                    % endif
+                    % if self.content.get('views'):
+                        <li><h3>Views:</h3> ${self.content['views']}</li>
+                    % endif
+                    % if self.content.get('boom_count'):
+                        <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
+                    % endif
                 </ul>
                 
                 ## Responses
