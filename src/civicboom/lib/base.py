@@ -213,7 +213,9 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
     """
     Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
     """
-    content = _get_content(id)
+    if not str(id).isdigit():
+        raise action_error(_("_content ID should be a number"), code=400)
+    content = _get_content(int(id))
     if not content:
         raise action_error(_("The _content you requested could not be found"), code=404)
     if content_type and content.__type__ != content_type:
