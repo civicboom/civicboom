@@ -34,9 +34,9 @@ def _init_search_filters():
         #except:
         
         if isinstance(member, basestring):
-            return query.filter(Member.username == member                  )
+            return query.filter(Member.id == member                  )
         else:
-            return query.filter(Member.id       == normalize_member(member))
+            return query.filter(Member.id == normalize_member(member))
 
     def append_search_name(query, text):
         if not text:  # o_O
@@ -51,7 +51,7 @@ def _init_search_filters():
         if parts:
             text = " | ".join(parts)
             return query.filter("""
-                to_tsvector('english', username || ' ' || name || ' ' || description) @@
+                to_tsvector('english', id || ' ' || name || ' ' || description) @@
                 to_tsquery(:text)
             """).params(text=text)
         else:
@@ -59,7 +59,7 @@ def _init_search_filters():
 
     def append_search_username(query, username_text):
         if username_text:
-            return query.filter(Member.username==username_text)
+            return query.filter(Member.id==username_text)
         return query
 
     def append_search_type(query, type_text):
@@ -76,7 +76,7 @@ def _init_search_filters():
             return query
         if isinstance(members, basestring):
             members = [member.strip() for member in members.split(',')]
-        return query.filter(not_(Member.username.in_(members)))
+        return query.filter(not_(Member.id.in_(members)))
 
     def append_search_group_join_mode(query, join_mode):
         return query.filter(Member.__type__=='group').filter(Group.join_mode==join_mode)
