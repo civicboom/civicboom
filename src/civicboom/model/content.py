@@ -40,7 +40,7 @@ class ContentTagMapping(Base):
 class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id') , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
     content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
@@ -52,7 +52,7 @@ class Boom(Base):
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id')              , nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False)
 
     __table_args__ = (
@@ -64,7 +64,7 @@ class Rating(Base):
 class Interest(Base):
     __tablename__ = "map_interest"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id')              , nullable=False, primary_key=True)
 
 
 class Content(Base):
@@ -95,7 +95,7 @@ class Content(Base):
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
-    creator_id      = Column(Integer(),        ForeignKey('member.id'),  nullable=False, index=True)
+    creator_id      = Column(String(32),       ForeignKey('member.id'),  nullable=False, index=True)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True,  index=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
@@ -638,7 +638,7 @@ class MemberAssignment(Base):
     __tablename__ = "member_assignment"
     _assignment_status = Enum("pending", "accepted", "withdrawn", "responded", name="assignment_status")
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
     member_viewed = Column(Boolean(),    nullable=False, default=False, doc="a flag to keep track to see if the member invited has actually viewed this page")
     #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
@@ -763,7 +763,7 @@ class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(Integer(),     ForeignKey('member.id'),  nullable=False, index=True)
+    member_id     = Column(String(32),    ForeignKey('member.id'),  nullable=False, index=True)
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
@@ -774,7 +774,7 @@ class FlaggedContent(Base):
     _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=True )
+    member_id     = Column(String(32),    ForeignKey('member.id') , nullable=True )
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=False, default="", doc="optional should the user want to add additional details")

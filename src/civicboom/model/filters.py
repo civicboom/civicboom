@@ -12,7 +12,7 @@ of themselves
 ...             LocationFilter(1, 51, 10),
 ...             TagFilter("Science & Nature")
 ...         ]),
-...         CreatorFilter(1)
+...         CreatorFilter("unittest")
 ...     ]),
 ...     NotFilter(OrFilter([
 ...         TextFilter("waffles"),
@@ -24,7 +24,7 @@ of themselves
 and_(or_(
     Content.content.matches('terrorists'),
     and_(Content.location.near((1.000000, 51.000000), 10.000000), Content.tags.contains('Science & Nature')),
-    Content.creator_id = 1
+    Content.creator_id = 'unittest'
 ), not_(or_(
     Content.content.matches('waffles'),
     Content.tags.contains('Business')
@@ -34,17 +34,17 @@ and_(or_(
 AndFilter([OrFilter([
     TextFilter('terrorists'),
     AndFilter([LocationFilter(1.000000, 51.000000, 10.000000), TagFilter('Science & Nature')]),
-    CreatorFilter(1)
+    CreatorFilter('unittest')
 ]), NotFilter(OrFilter([
     TextFilter('waffles'),
     TagFilter('Business')
 ]))])
 
 >>> print html(query)
-<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorFilter(1)</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
+<div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorFilter('unittest')</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
 
 >>> print sql(query)
-((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 1)) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 'unittest')) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
 
 
 LabelFilter is a thing to put text into the human-readable output while having
@@ -77,6 +77,7 @@ Filter()
 from civicboom.lib.database.get_cached import get_content, get_member
 from civicboom.model import Content
 from civicboom.model.meta import location_to_string
+from cbutils.misc import make_username, debug_type
 from pylons import tmpl_context as c
 import re
 from dateutil.parser import parse
@@ -316,7 +317,7 @@ class LocationFilter(Filter):
 
 class TypeFilter(Filter):
     def __init__(self, type):
-        assert type in ['article', 'assignment', 'draft']
+        assert type in ['article', 'assignment', 'draft'], debug_type(type)
         self.type = type
 
     @staticmethod
@@ -335,7 +336,7 @@ class TypeFilter(Filter):
 
 class DueDateFilter(Filter):
     def __init__(self, comparitor, date):
-        assert comparitor in ["<", ">", "IS"]
+        assert comparitor in ["<", ">", "IS"], debug_type(comparitor)
         # FIXME: validate date
         self.comparitor = comparitor
         self.date = date
@@ -369,7 +370,7 @@ class DueDateFilter(Filter):
 
 class UpdateDateFilter(Filter):
     def __init__(self, comparitor, date):
-        assert comparitor in ["<", ">", "IS"]
+        assert comparitor in ["<", ">", "IS"], debug_type(comparitor)
         # FIXME: validate date
         self.comparitor = comparitor
         self.date = date
@@ -402,7 +403,7 @@ class UpdateDateFilter(Filter):
 
 class ParentIDFilter(Filter):
     def __init__(self, parent_id):
-        assert type(parent_id) in [int, bool]
+        assert type(parent_id) in [int, bool], debug_type(parent_id)
         self.parent_id = parent_id
 
     @staticmethod
@@ -429,10 +430,8 @@ class ParentIDFilter(Filter):
 
 class CreatorFilter(Filter):
     def __init__(self, creator_id):
-        if not creator_id:
-            creator_id = 0 # AllanC - if no creator, set the id to 0. There is no user_id 0 .. so nothing with be returned
-        assert type(creator_id) == int
-        self.creator_id = creator_id
+        assert type(creator_id) in [str, unicode], debug_type(creator_id)
+        self.creator_id = make_username(creator_id)
 
     @staticmethod
     def from_string(s):
@@ -446,19 +445,19 @@ class CreatorFilter(Filter):
         raise FilterException("Member not found: %s" % s)
 
     def __unicode__(self):
-        return "Content.creator_id = %d" % self.creator_id
+        return "Content.creator_id = '%s'" % self.creator_id
 
     def __repr__(self):
-        return "CreatorFilter(%d)" % self.creator_id
+        return "CreatorFilter(%s)" % repr(self.creator_id)
 
     def __sql__(self):
-        return "content.creator_id = %d" % self.creator_id
+        return "content.creator_id = '%s'" % self.creator_id
 
 
 class BoomedByFilter(Filter):
     def __init__(self, boomer_id):
-        assert type(boomer_id) == int
-        self.boomer_id = boomer_id
+        assert type(boomer_id) in [str, unicode], debug_type(boomer_id)
+        self.boomer_id = make_username(boomer_id)
 
     @staticmethod
     def from_string(s):
@@ -472,10 +471,10 @@ class BoomedByFilter(Filter):
         return "FIXME" # Content.id in '%s'" % self.boomer_id
 
     def __repr__(self):
-        return "BoomedByFilter(%d)" % repr(self.boomer_id)
+        return "BoomedByFilter(%s)" % repr(self.boomer_id)
 
     def __sql__(self):
-        return "content.id IN (SELECT content_id FROM map_booms WHERE member_id=%d)" % self.boomer_id
+        return "content.id IN (SELECT content_id FROM map_booms WHERE member_id='%s')" % self.boomer_id
 
 
 class TagFilter(Filter):
