@@ -86,7 +86,7 @@ class FeedsController(BaseController):
         #    h.form(url('feed', id=ID),
         #           method='put')
         # url('feed', id=ID)
-        f = Session.query(Feed).filter(Feed.id==id).first()
+        f = Session.query(Feed).get(id)
         if not f:
             raise action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_persona:
@@ -107,7 +107,7 @@ class FeedsController(BaseController):
         #    h.form(url('feed', id=ID),
         #           method='delete')
         # url('feed', id=ID)
-        f = Session.query(Feed).filter(Feed.id==id).first()
+        f = Session.query(Feed).get(id)
         if not f:
             raise action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_persona:
@@ -122,7 +122,7 @@ class FeedsController(BaseController):
     def show(self, id, format='html'):
         """GET /feeds/id: Show a specific item"""
         # url('feed', id=ID)
-        f = Session.query(Feed).filter(Feed.id==id).first()
+        f = Session.query(Feed).get(id)
         if not f:
             raise action_error(_("No such feed"), code=404)
 
@@ -139,7 +139,7 @@ class FeedsController(BaseController):
     def edit(self, id, format='html'):
         """GET /feeds/id/edit: Form to edit an existing item"""
         # url('edit_feed', id=ID)
-        f = Session.query(Feed).filter(Feed.id==id).first()
+        f = Session.query(Feed).get(id)
         if not f:
             raise action_error(_("No such feed"), code=404)
         if f.member != c.logged_in_persona:

@@ -53,7 +53,7 @@ def get_user_and_check_password(username, password):
     """
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.username   == make_username(username))
+        q = q.filter(User.id         == make_username(username))
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
         q = q.filter(UserLogin.token == encode_plain_text_password(password))

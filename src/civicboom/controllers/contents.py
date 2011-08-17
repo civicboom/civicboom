@@ -106,7 +106,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else None)
+        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else '') # hack; anons should never see drafts
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),

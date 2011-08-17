@@ -12,7 +12,7 @@ from sqlalchemy import select
 
 from sqla_hierarchy import *
 
-from cbutils.misc import make_username
+from cbutils.misc import make_username, debug_type
 
 import logging
 log = logging.getLogger(__name__)
@@ -38,10 +38,7 @@ add_etag_dependency_key("member_assignments_active")
 
 def get_media(id=None, hash=None):
     if id:
-        try:
-            return Session.query(Media).filter_by(id=id).one()
-        except NoResultFound:
-            return None
+        return Session.query(Media).get(id)
     if hash:
         try:
             return Session.query(Media).filter_by(hash=hash).first()
@@ -56,39 +53,23 @@ def get_licenses():
 
 
 # AllanC - primarly used in setup of test data, not normally used in main site operation
-def get_license(license):
-    license = license or u"Unspecified" # get_license(None) should return the default
-    assert type(license) == unicode
-
-    try:
-        return Session.query(License).filter_by(code=license).one()
-    except NoResultFound:
-        # Shish - as far as I can tell, we will never want to find by name; so
-        #         leave the unused code commented out until it is wanted
-        #try:
-        #    return Session.query(License).filter_by(name=unicode(license)).one()
-        #except NoResultFound:
-            pass
-    return None
+def get_license(code):
+    code = code or u"Unspecified" # get_license(None) should return the default
+    assert type(code) in [str, unicode], debug_type(code)
+    return Session.query(License).get(code)
 
 
 def get_member_nocache(member, search_email=False):
-    assert type(member) in [int, str, unicode]
+    assert type(member) in [str, unicode], debug_type(member)
 
-    if type(member) == int or member.isdigit():
-        try:
-            return Session.query(Member).with_polymorphic('*').filter_by(id=int(member)).one()
-        except NoResultFound:
-            pass
-    else:
-        try:
-            return Session.query(Member).with_polymorphic('*').filter_by(username=make_username(member)).one()
-        except NoResultFound:
-            if search_email:
-                try:
-                    return Session.query(User).filter_by(email=member).one()
-                except NoResultFound:
-                    pass
+    try:
+        return Session.query(Member).with_polymorphic('*').get(make_username(member))
+    except NoResultFound:
+        if search_email:
+            try:
+                return Session.query(User).filter_by(email=member).one()
+            except NoResultFound:
+                pass
     return None
 
 
@@ -270,17 +251,16 @@ def get_assigned_to(content, member):
         return None
 
 
-def get_message(message):
-    return Session.query(Message).filter(Message.id==int(message)).options(joinedload('source')).options(joinedload('target')).first()
+def get_message(message_id):
+    assert type(message_id) in [int, long], debug_type(message_id)
+    return Session.query(Message).options(joinedload('source')).options(joinedload('target')).get(message_id)
 
 
 def get_content_nocache(content_id):
     #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
     # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
-    try:
-        return Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
-    except: # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
-        return None
+    assert type(content_id) in [int, long], debug_type(content_id)
+    return Session.query(Content).with_polymorphic('*').get(content_id)
 
 
 def get_content(content):
