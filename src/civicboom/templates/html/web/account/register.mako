@@ -20,8 +20,11 @@
 	
 	<div id="reg_form">
     <form action="" method="post">
+        ## AllanC - Addition to show invalid states without the need to pass through the JS hide if the registration form is invalid - bit messy but works
+        % if c.result['status']!='invalid' or (c.result['status']=='invalid' and c.result['data']['invalid'].get('help_type')):
         ${help_type()}
-        <table class="newform user hide_if_js">
+        % endif
+        <table class="newform user ${'hide_if_js' if c.result['status']!='invalid' else ''}">
             % if 'username' in c.required_fields:
               ${username()}
             % endif
