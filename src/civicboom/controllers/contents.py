@@ -428,10 +428,11 @@ class ContentsController(BaseController):
                 from civicboom.controllers.content_actions import ContentActionsController
                 content_accept = ContentActionsController().accept
                 try:
-                    content_accept(id=parent)
+                    content_accept(id=parent.id)
                 except action_error as ae:
                     if ae.original_dict.get('code') == 403:
                         raise ae
+                    log.exception("Strange error while accepting")
                 
 
         # comments are always owned by the writer; ignore settings
