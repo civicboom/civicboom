@@ -10,7 +10,7 @@
 
 <%def name="body()">
     <div data-role="page">
-        <div data-role="content" data-title="Sign in">
+        <div data-role="content">
 	       ${signin()}
 	   </div>
 	</div>
@@ -22,9 +22,13 @@
 	    <div data-role="fieldcontain">
 			<label for="username">${_("Username")}</label>
 			<input type="text" id="username" name="username" placeholder="e.g. dave43"/>
+	    </div>
+	    <div data-role="fieldcontain">
 			<label for="password">${_("Password")}</label>
 			<input type="password" id="password" name="password" />
-		    <input class="button" type="submit" name="submit" value="${_("Sign in")}"/>
-	    </div>
+		</div>
+        <div data-role="fieldcontain" data-theme="b">
+		    <input data-theme="b" class="button" type="submit" name="submit" value="${_("Sign in")}"/>
+		</div>
 	</form>
 </%def>

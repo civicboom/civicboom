@@ -35,7 +35,7 @@
 <%def name="page_title()">
     <%
         title = _('_site_name Mobile')
-        if next.page_title():
+        if hasattr(next, 'page_title'):
             title += " - "+next.page_title()
     %>
     <title>${_(title)}</title>

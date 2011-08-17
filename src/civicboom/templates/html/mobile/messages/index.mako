@@ -9,7 +9,6 @@
 ##-----------------------------------------------------------------------------
 <%namespace name="components"      file="/html/mobile/common/components.mako" />
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
-<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 
 <%def name="body()">
     <%
@@ -22,11 +21,11 @@
     %>
     
     ## Main member detail page (username/description/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="messages" class="messages">
+    <div data-role="page" data-theme="b" id="messages" class="messages">
         ${components.header()}
         
         <div data-role="content">
-            ${list_includes.list_messages(self.list, self.type)}
+            ${parent.list_messages(self.list, self.type)}
         </div>
         
         ${parent.pagination()}        
@@ -34,5 +33,5 @@
 </%def>
 
 <%def name="page_title()">
-    something
+    ${_("Messages")}
 </%def>

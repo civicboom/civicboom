@@ -15,7 +15,7 @@
         self.list = d['list']
     %>
 
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="explore_content" class="">
+    <div data-role="page" data-theme="b" id="explore_content" class="">
         ${components.header(title="Explore contents")}
         
         <div data-role="content">

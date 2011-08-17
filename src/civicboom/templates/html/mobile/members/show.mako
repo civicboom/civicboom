@@ -17,7 +17,7 @@
     %>
     
     ## Main member detail page (username/description/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
+    <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
@@ -28,7 +28,7 @@
     </div>
     
     ## Extra info (content/boomed/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
+    <div data-role="page" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">

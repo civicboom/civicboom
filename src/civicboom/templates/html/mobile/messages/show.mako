@@ -15,7 +15,7 @@
         self.source =   self.message['source']
         self.target =   self.message['target']
     %>
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="" class="">
+    <div data-role="page" data-theme="b" id="" class="">
         <div data-role="header">
             <h1>Message</h1>
         </div>

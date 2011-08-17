@@ -101,10 +101,10 @@
     >
         <a href="${url('message', id=item['id'])}" data-rel="dialog" data-transition="fade">
             <h3>${item['subject']}</h3>
-            <p>${item['content']}</p>
             % if item.get('source'):
                 <p><b>From ${item['source']['username']}</b></p>
             % endif
+            <p>${item['content']}</p>
             <p>${item['timestamp']}</p>
         </a>
         <%doc>

@@ -16,17 +16,17 @@
         self.responses = d['responses']
         self.actions   = d.get('actions', [])
     %>
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="content-main-${self.id}" class="content_page">
+    <div data-role="page" data-theme="b" id="content-main-${self.id}" class="content_page">
         ${components.header(next_link="#content-info-"+str(self.id))}
         ${content_main()}
     </div>
     
-    <div data-role="page" data-title="${page_title()} - info" data-theme="b" id="content-info-${self.id}" class="content_page">
+    <div data-role="page" data-theme="b" id="content-info-${self.id}" class="content_page">
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_info()}
     </div>
     
-    <div data-role="page" data-title="${page_title()} - media" data-theme="b" id="content-media-${self.id}" class="content_page">
+    <div data-role="page" data-theme="b" id="content-media-${self.id}" class="content_page">
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_media()}
     </div>
