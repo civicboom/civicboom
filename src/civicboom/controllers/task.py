@@ -253,7 +253,8 @@ class TaskController(BaseController):
                 currency = account.currency
                 
                 # Calculate the start date we are going to try and invoice for
-                start_date = next_start_date(account.start_date, frequency, time_now)
+                # If next start date is today we calculate for today!
+                start_date = payment.calculate_start_date(account.start_date, frequency, time_now)
                 
                 #Check for invoices with the start date already in the system (not disregarded though!)
                 check = account.invoices.filter(Invoice.status != "disregarded")\

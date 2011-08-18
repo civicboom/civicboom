@@ -80,13 +80,5 @@ class PaymentsController(BaseController):
         if not c.logged_in_persona in account.members:
             raise action_error(_('You do not have permission to view this account'), code=404)
         
-        data = {
-            'account_id':       account.id,
-            'account_type':     account.type,
-            'billing_status':   account.billing_status,
-            'members':          [member.to_dict() for member in account.members],
-            'invoices':         [invoice.to_dict() for invoice in account.invoices],
-            #'billing_accounts': [billing.to_dict() for billing in account.billing_accounts]
-            }
         data = account.to_dict('full')
         return action_ok(code=200, data=data)

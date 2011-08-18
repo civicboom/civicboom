@@ -66,6 +66,9 @@
             padding-right: 1em;
         }
     </style>
+    <div class="frag_whitewrap hide_if_print">
+        <a href="${h.url(controller='payments', id=d['payment_account_id'], action='show')}">&lt; Return to account overview</a>
+    </div>
     <div class="frag_whitewrap">
         <div class="invoice">
             <div class="header">
@@ -114,7 +117,7 @@
                     </div>
                     <div class="fr detail">
                         Amount due: ${format_price(d['total_due'])}<br />
-                        Due on receipt of invoice<br />
+                        Due by: ${h.api_datestr_to_datetime(d['due_date']).strftime('%a, %d %b %Y')}<br />
                         Currency:${format_currency(True)}<br />
                         Payment account #: ${d['payment_account']['id']}<br />
                         VAT #: N/A
@@ -189,21 +192,21 @@
         </div>
     </div>
     % if Decimal(d['total_due']) > 0 and not d['processing']:
-        <div class="frag_whitewrap">
+        <div class="frag_whitewrap hide_if_print">
             <h2>Payment Options</h2>
             <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left;padding-right:2em" />
             <div style="float:left;text-align:center;padding-right:2em">
+                Pay this invoice<br />
                 <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='payment_begin', service='paypal_express', invoice_id=d['id'])}">
                     <img src="https://www.paypalobjects.com/en_GB/i/btn/btn_paynowCC_LG.gif" alt="We accept PayPal" />
-                </a><br />
-                Pay this invoice
+                </a>
             </div>
         
             <div style="float:left;text-align:center">
+                Set up regular payments<br />
                 <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='payment_begin', service='paypal_express', invoice_id=d['id'], recurring=True)}">
                     <img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" alt="We accept PayPal" />
                 </a><br />
-                Set up a regular payment
             </div>
         
             <div style="clear:both"></div>

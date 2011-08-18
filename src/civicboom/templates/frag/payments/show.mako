@@ -76,7 +76,7 @@
             % for invoice in d['invoices']:
                 <li>
                     <a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}" onclick="cb_frag($(this), '${h.url('payment_action', format='frag', action='invoice', id=d['id'], invoice_id=invoice['id'])}'); return false;">
-                        ${invoice.get('id')} - ${invoice.get('timestamp')} - ${invoice.get('status')}
+                        ${invoice['id']} - ${h.api_datestr_to_datetime(invoice['timestamp']).strftime('%a, %d %b %Y')} - ${invoice['status']}
                     </a>
                 </li>
             % endfor
