@@ -8,6 +8,10 @@
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
+<%def name="page_title()">
+    ${_(d['member']['username'])}
+</%def>
+
 <%def name="body()">
     <%
         self.member    = d['member']
@@ -35,10 +39,6 @@
             ${member_content_list(d)}
         </div>
     </div>
-</%def>
-
-<%def name="page_title()">
-    ${_(self.name)}
 </%def>
 
 ##-----------------------------------------------------------------------------

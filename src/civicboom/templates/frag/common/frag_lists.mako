@@ -221,15 +221,19 @@
     <td style="padding-top: 3px;">
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
-    <td style="padding-left: 3px">
-        ## AllanC - short term botch to add follow option to member list
-        ${h.secure_link(
-            h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
-            value           = _('Follow') ,
-            value_formatted = h.literal("<span class='icon16 i_follow' style='float:right;'></span>%s") % '',#_('Follow'),
-            title           = _("Follow") + " " + (member['name'] or member['username']),
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
-        )}
+    <td style="padding-left: 3px">  
+        <% show_type = "[H]" if member.get('type') == "group" else "" %>
+        <span style='float:right;'>
+            ${show_type}
+            ## AllanC - short term botch to add follow option to member list
+            ${h.secure_link(
+                h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
+                value           = _('Follow') ,
+                value_formatted = h.literal("<span class='icon16 i_follow'></span>") % show_type, #_('Follow'),
+                title           = _("Follow") + " " + (member['name'] or member['username']),
+                json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
+            )}
+        </span>
         
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
         ${member.get('name')}

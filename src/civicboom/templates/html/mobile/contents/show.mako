@@ -5,6 +5,10 @@
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 
+<%def name="page_title()">
+    ${_(d['content']['title'])}
+</%def>
+
 ## page structure defs
 <%def name="body()">
     <%
@@ -30,10 +34,6 @@
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_media()}
     </div>
-</%def>
-
-<%def name="page_title()">
-    ${_(d['content']['title'])}
 </%def>
 
 <%def name="content_main()">

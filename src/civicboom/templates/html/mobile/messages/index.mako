@@ -10,6 +10,10 @@
 <%namespace name="components"      file="/html/mobile/common/components.mako" />
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 
+<%def name="page_title()">
+    ${_("Messages")}
+</%def>
+
 <%def name="body()">
     <%
         self.list =     d['list']
@@ -30,8 +34,4 @@
         
         ${parent.pagination()}        
     </div>
-</%def>
-
-<%def name="page_title()">
-    ${_("Messages")}
 </%def>

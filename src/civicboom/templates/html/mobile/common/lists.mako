@@ -1,7 +1,9 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 <%def name="page_title()">
-    ${next.page_title()}
+    % if hasattr(next, 'page_title'):
+        ${next.page_title()}
+    % endif
 </%def>
 
 <%def name="body()">

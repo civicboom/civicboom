@@ -5,6 +5,10 @@
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 
+<%def name="page_title()">
+    ${d['message']['subject']}    
+</%def>
+
 ## page structure defs
 <%def name="body()">
     <%
@@ -38,8 +42,4 @@
     % if self.source:
         <p>From: ${member_includes.member_link(self.source)}</p>
     % endif
-</%def>
-
-<%def name="page_title()">
-    
 </%def>

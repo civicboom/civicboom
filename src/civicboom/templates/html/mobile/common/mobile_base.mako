@@ -1,6 +1,6 @@
 <html>
     <head>
-        ${page_title()}
+        ${title()}
         <link rel="shortcut icon" href="/images/favicon.ico" />
         
         ## --- CSS imports ---
@@ -32,11 +32,11 @@
     </body>
 </html>
 
-<%def name="page_title()">
-    <%
-        title = _('_site_name Mobile')
-        if hasattr(next, 'page_title'):
-            title += " - "+next.page_title()
-    %>
-    <title>${_(title)}</title>
+<%def name="title()">
+    <title>
+        ${_('_site_name Mobile')}
+        % if hasattr(next, 'page_title'):
+        : ${next.page_title()}
+        % endif
+    </title>
 </%def>
