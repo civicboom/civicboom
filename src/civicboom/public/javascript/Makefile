@@ -3,7 +3,7 @@ HEAD=\
 	swfobject.js \
 	jquery-1.6.2.js \
 	prototypes.js \
-	misc.js\
+	misc.head.js \
 	url_encode.js \
 	cb_frag.js \
 	ajaxError.js \
@@ -28,6 +28,7 @@ FOOT=\
 	geo.js \
 	OpenLayers.js \
 	minimap.js \
+	misc.foot.js \
 
 
 all: _combined.head.js _combined.foot.js

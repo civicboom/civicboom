@@ -1,25 +1,5 @@
 // Misc Functions
 
-// Requires toggle_div.js functions
-// MARKED FOR DEPRICATION
-/*
-function setSingleCSSClass(element_to_style, class_to_set, parent_id) {
-    try {
-        // Find all occurances of this class
-        var elements = getElementByClass(class_to_set, parent_id);
-        for (var element in elements) {
-            // Remove the class
-            removeClass(elements[element], class_to_set);
-        }
-        // Add the class to the specifyed element
-        addClass(element_to_style, class_to_set);
-    }
-    catch(err) {
-        Y.log("setSingleCSS failed", "warn", "misc")
-    }
-}
-*/
-
 function flash_message(json_message) {
 	if (typeof(json_message) == "string") {json_message = {status:'ok', message:json_message};}
 	if (json_message && typeof(json_message.message)=='string' &&  json_message.message != "") {
