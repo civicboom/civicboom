@@ -28,6 +28,7 @@ FOOT=\
 	geo.js \
 	OpenLayers.js \
 	minimap.js \
+	rpx.js \
 	misc.foot.js \
 
 
@@ -70,3 +71,6 @@ OpenLayers.js:
 	mv openlayers/build/OpenLayers.js ./
 	patch OpenLayers.js OpenLayers.patch
 	rm -rf openlayers
+
+rpx.js:
+	wget https://s3.amazonaws.com/static.rpxnow.com/js/lib/rpx.js
