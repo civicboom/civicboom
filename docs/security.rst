@@ -16,8 +16,8 @@ Network
 
   - Most websites only encrypt the transfer of username & password,
     then send the data back and forth in the clear; this is like
-    having an armoured garage, then parking your convertible outside
-    with the top down and keys in the ignition.
+    having an armoured garage to get in and turn the car on, then
+	parking outside with the engine still running.
 
 Server Side
 ~~~~~~~~~~~
@@ -42,16 +42,14 @@ Back-End
 
 Backups
 ~~~~~~~
-- Off-site backups of the database are taken every 8 hours and archived
-- Media backups are taken care of by Amazon, not locally, as it is going to
-  end up being a ginormous amount of data. S3 is designed for 99.999999999%
-  durability by storing each file on multiple servers in multiple datacenters,
-  and versioning can be used to recover files after accidental deletion
+- Off-site backups are taken every 4 hours and archived
 
 
 Data locations
 ~~~~~~~~~~~~~~
-- Live web site & Media:
+- Live web site:
+  - Rackspace datacenter in London
+- Media:
   - Amazon's datacenter in Dublin
 - Backups:
   - Our office in Kent
@@ -77,7 +75,7 @@ Scaling
 ~~~~~~~
 - Pretty much every aspect of the site scales well (see network.svg)
 
-- The only bit that isn't trivial is the users + content database, as all the data
+- The only bit that isn't trivial is the users & content database, as all the data
   is inter-related, frequently updated, and needs to be kept in sync
   - the simplest way to deal with this is to avoid touching the database; simple
     reads should be cached inside pylons, or with memcache, or somesuch
