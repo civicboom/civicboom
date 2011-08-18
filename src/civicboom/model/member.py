@@ -838,7 +838,7 @@ class PaymentAccount(Base):
             'currency'         : None ,
             'frequency'        : None ,
             'members'          : lambda account: [member.to_dict() for member in account.members],
-            'invoices'         : lambda account: [invoice.to_dict() for invoice in account.invoices],
+            'invoices'         : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']),
             'billing_accounts' : lambda account: [billing.to_dict() for billing in account.billing_accounts],
             'services'         : lambda account: [service.to_dict() for service in account.services],
             'services_full'    : None ,
@@ -855,6 +855,7 @@ class PaymentAccount(Base):
     
     @property
     def cost_taxed(self):
+        print [pac['price_taxed'] for pac in self.services_full]
         return sum([pac['price_taxed'] for pac in self.services_full])
             
     
@@ -874,7 +875,8 @@ class PaymentAccount(Base):
     @property
     def next_start_date(self):
         from civicboom.lib.payment.functions import next_start_date
-        return next_start_date(self.start_date, self.frequency, datetime.datetime.now())
+        # Unsure if i need today if today is the next calculated start date :S
+        return next_start_date(self.start_date, self.frequency, now())
     
     @property
     def next_start_date_unbilled(self):
@@ -882,10 +884,6 @@ class PaymentAccount(Base):
         not_found = True
         while not_found:
             break
-    
-    @property
-    def total_value(self):
-        discount
     
     def member_add(self, member, **kwargs):
         from civicboom.lib.database.actions import payment_member_add

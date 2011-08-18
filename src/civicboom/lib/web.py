@@ -7,6 +7,9 @@ from cbutils.cbxml import dictToXMLString
 
 from civicboom.lib.widget import widget_defaults
 
+import wkhtmltox
+import tempfile
+        
 import os
 import time
 import simplejson as json
@@ -507,24 +510,47 @@ def setup_format_processors():
             
         #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
-        
+    
+    def format_print(result):
+        frag = render_template(result, 'frag')
+        return render_mako('pdf/wrapper.mako', extra_vars={"inner_html": frag})
+    
     def format_ical(result):
         abort(501)
         
     def format_pdf(result):
-        abort(501)
+        import subprocess
+        print_formatted = format_print(result)
+        
+        f = tempfile.NamedTemporaryFile(prefix='cbgenpdf', dir='/tmp/')
+        sp = subprocess.Popen(['wkhtmltopdf', '--encoding', 'utf8', '-q', '-', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        sp.stdin.write(print_formatted)
+        sp.stdin.close()
+        sp2 = subprocess.Popen('cat >/tmp/onetwo', shell=True, stdin=subprocess.PIPE)
+        sp2.stdin.write(print_formatted)
+        sp2.stdin.close()
+        while sp.poll():
+            pass
+        ret = sp.stdout.read()
+        
+        response.headers['Content-type'] = "application/pdf"
+        
+        return ret
+    
+    
 
-    return dict(
-        python   = lambda result:result,
-        json     = format_json,
-        xml      = format_xml,
-        rss      = format_rss,
-        html     = format_html,
-        frag     = format_frag,
-        redirect = format_redirect,
-        ical     = format_ical,
-        pdf      = format_pdf,
-    )
+    return {
+        'python'   : lambda result:result,
+        'json'     : format_json,
+        'xml'      : format_xml,
+        'rss'      : format_rss,
+        'html'     : format_html,
+        'frag'     : format_frag,
+        'redirect' : format_redirect,
+        'print'    : format_print,
+        'ical'     : format_ical,
+        'pdf'      : format_pdf,
+    }
 
 
 format_processors = setup_format_processors()

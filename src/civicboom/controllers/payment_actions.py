@@ -5,9 +5,9 @@ Group Actions
 from civicboom.lib.base import *
 import civicboom.lib.helpers as h
 from sqlalchemy           import or_, and_, null
-#from civicboom.lib.payment.paypal import express_checkout_single_auth, express_checkout_get_details
 from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount, BillingTransaction, Service
 from civicboom.model.member import account_types_level
+from decimal import Decimal
 import civicboom.lib.payment as payment
 import datetime
 #from civicboom.controllers.groups import _get_group
@@ -115,12 +115,9 @@ class PaymentActionsController(BaseController):
         if not billing_account or billing_account.status in ('error', 'deactivated'):
             raise action_error(_('This billing account does not exist'), code=404)
         
-        if billing_account.provider == 'paypal-recurring':
-            billing_account.provider = 'paypal_recurring'
         if billing_account.provider in payment.cancel_recurrings:
             try:
                 response = payment.cancel_recurrings[billing_account.provider](billing_account.reference)
-                #response = payment.cancel_recurrings['paypal_express'](billing_account.reference)
             except payment.cbPaymentError as e:
                 raise action_error(e.value, code=400)
         
@@ -264,7 +261,7 @@ class PaymentActionsController(BaseController):
                 'recurring' : txn.config['recurring'],
                 'next_date' : txn.invoice.payment_account.next_start_date,
                 'frequency' : txn.invoice.payment_account.frequency.capitalize(),
-                'amount'    : txn.invoice.payment_account.cost_frequency[txn.invoice.payment_account.frequency],
+                'amount'    : txn.invoice.payment_account.cost_taxed,
                 'currency'  : txn.invoice.payment_account.currency,
             })
         try:
@@ -308,51 +305,95 @@ class PaymentActionsController(BaseController):
         new_account_type = kwargs.get('new_type')
         if new_account_type not in account_types_level:
             raise action_error(_('Invalid account type'), code=400)
+        if new_account_type == account.type:
+            raise action_error(_('Cannot re-grade account to the same as it is now.'), code=400)
         
         time_now = now()
         
-        apply_payment = None
+        apply_payment = []
         
         if account.cost_taxed > 0:
             # Do paid account stuff here!
             current_service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
             psd = payment.previous_start_date(account.start_date, account.frequency, time_now) # FIXME
-            nsd = payment.next_start_date(account.start_date, account.frequency, time_now)
+            nsd = payment.calculate_start_date(account.start_date, account.frequency, time_now)
             days_this_period = (nsd - psd).days
             
-            prev_invoice_line = Session.query(InvoiceLine)\
-                .join((Invoice, Invoice.id == InvoiceLine.invoice_id))\
-                .filter(Invoice.status == "paid")\
-                .filter(Invoice.payment_account_id == account.id)\
-                .filter(InvoiceLine.start_date == psd)\
-                .filter(InvoiceLine.service_id == current_service.id).first()
+            def get_invoice_line(status, start_date):
+                return Session.query(InvoiceLine)\
+                    .join((Invoice, Invoice.id == InvoiceLine.invoice_id))\
+                    .filter(Invoice.status == status)\
+                    .filter(Invoice.payment_account_id == account.id)\
+                    .filter(InvoiceLine.start_date == start_date)\
+                    .filter(InvoiceLine.service_id == current_service.id).first()
             
+            # Check paid invoice line
+            prev_invoice_line = get_invoice_line("paid", psd)
             if prev_invoice_line:
-                days_elapsed = (time_now.date() - psd).days
-                days_left = days_this_period - days_elapsed
-                apply_payment = BillingTransaction()
-                from decimal import Decimal
-                apply_payment.amount = (((prev_invoice_line.price_final * prev_invoice_line.invoice.tax_rate) / days_this_period) * days_left).quantize(Decimal('0.00'))
-                apply_payment.status = 'complete'
-                apply_payment.provider = 'refund_unused'
-                apply_payment.reference = prev_invoice_line.invoice_id
-                print '###', apply_payment.amount
-                pass
+                if len(prev_invoice_line.invoice.lines) == 1:
+                    days_elapsed = (time_now.date() - psd).days
+                    days_left = days_this_period - days_elapsed
+                    apply_payment_prev = BillingTransaction()
+                    apply_payment_prev.amount = (((prev_invoice_line.price_final * prev_invoice_line.invoice.tax_rate) / days_this_period) * days_left).quantize(Decimal('0.00'))
+                    apply_payment_prev.status = 'complete'
+                    apply_payment_prev.provider = 'refund_unused'
+                    apply_payment_prev.reference = prev_invoice_line.invoice_id
+                    apply_payment.append(apply_payment_prev)
+                else:
+                    # also raise error to admins?
+                    raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
+                
+            # Check billed invoice line
+            prev_invoice_line = get_invoice_line("billed", psd) or []
+            prev_invoice_line.append(get_invoice_line("billed", nsd))
+            for line in prev_invoice_line:
+                if len(line.invoice.lines) == 1:
+                    line.invoice.status = "disregarded"
+                else:
+                    # also raise error to admins?
+                    raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
+                
+            prev_invoice_line = get_invoice_line("paid", nsd)
+            if prev_invoice_line:
+                if len(prev_invoice_line.invoice.lines) == 1:
+                    line.invoice.status = "disregarded"
+                    apply_payment_next = BillingTransaction()
+                    apply_payment_next.amount = prev_invoice_line.invoice.paid_total
+                    apply_payment_next.status = 'complete'
+                    apply_payment_next.provider = 'refund_unused'
+                    apply_payment_next.reference = prev_invoice_line.invoice_id
+                    apply_payment.append(apply_payment_next)
+                else:
+                    # also raise error to admins?
+                    raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
+        
+        for pas in account.services:
+            if pas.service.payment_account_type == account.type:
+                Session.delete(pas)
+                
+        active_billing_accounts = Session.query(BillingAccount).filter(BillingAccount.payment_account_id == account.id)\
+            .filter(BillingAccount.status == 'active').all()
+        
+        for billing_account in active_billing_accounts:
+            if billing_account.provider in payment.action_on_regrade:
+                try:
+                    response = payment.action_on_regrade[billing_account.provider](billing_account.reference)
+                except payment.cbPaymentError as e:
+                    raise action_error(e.value, code=400)
+                billing_account.status = response['status']
+            pass
         
         account.start_date = datetime.date.today()
-        
         account.type = new_account_type
-        
         invoice = payment.db_methods.generate_invoice(account, account.start_date)
-        
         invoice.status = 'billed'
-        
-        if apply_payment:
-            apply_payment.invoice = invoice
-        
+        for _payment in apply_payment:
+            _payment.invoice = invoice
         Session.commit()
         
-        print "RAR Invoice ID ", invoice.id
-        
-        return action_ok(code=200)
+        if invoice.total_due <= 0:
+            invoice.status = 'paid'
+            Session.commit()
+
+        return redirect(h.url(controller='payment_actions', id=id, action='invoice', invoice_id = invoice.id))
         

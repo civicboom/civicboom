@@ -144,9 +144,11 @@ class PaymentAccountService(Base):
     @property
     def price(self):
         return self.service.get_price(self.payment_account.currency, self.payment_account.frequency) * (1-self.discount)
-    
+    @property
     def price_taxed(self):
-        return self.price * (1 + (tax_rates[self.payment_account.tax_rate_code] if self.payment_account.taxable else 0))
+        print type(self.price)
+        print type(1 + (tax_rates[self.payment_account.tax_rate_code] if self.payment_account.taxable else 0))
+        return (self.price * Decimal((tax_rates[self.payment_account.tax_rate_code] + 1) if self.payment_account.taxable else 1).quantize(Decimal('0.00'))).quantize(Decimal('0.00'))
     
     def __init__(self, payment_account=None, service=None, note=None,quantity=None, discount=None ):
         if payment_account:
@@ -166,7 +168,7 @@ class Invoice(Base):
     __tablename__      = "payment_invoice"
     id                 = Column(Integer(),     primary_key=True)
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=False)
-    _invoice_status    = Enum("unbilled", "processing", "billed", "waiting_payment_processing", "disregarded", "paid", name="invoice_status")
+    _invoice_status    = Enum("unbilled", "processing", "billed", "disregarded", "waiting_payment_processing", "paid", name="invoice_status")
     status             = Column(_invoice_status, nullable=False, default="unbilled")
     timestamp          = Column(DateTime(),    nullable=False, default=func.now())
     due_date           = Column(Date(), nullable=False)

@@ -16,3 +16,4 @@ lookups             = {'paypal_express':    paypal_express_lookup}
 cancel_recurrings   = {'paypal_recurring':  paypal_recurring_cancel}
 check_transactions  = {'paypal_express':    paypal_express_check_transaction}
 check_recurrings    = {'paypal_recurring':  paypal_recurring_check}
+action_on_regrade   = {'paypal_recurring':  paypal_recurring_cancel}
