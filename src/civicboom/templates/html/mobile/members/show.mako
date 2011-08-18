@@ -8,15 +8,20 @@
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
+<%def name="page_title()">
+    ${_(d['member']['username'])}
+</%def>
+
 <%def name="body()">
     <%
         self.member    = d['member']
         self.id        = self.member['username']
         self.name      = self.member.get('name')
+        self.actions   = d['actions']
     %>
     
     ## Main member detail page (username/description/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
+    <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
@@ -27,7 +32,7 @@
     </div>
     
     ## Extra info (content/boomed/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
+    <div data-role="page" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
@@ -36,22 +41,19 @@
     </div>
 </%def>
 
-<%def name="page_title()">
-    ${_(self.name)}
-</%def>
-
 ##-----------------------------------------------------------------------------
 ## Signout nav bar link
 ##-----------------------------------------------------------------------------
 <%def name="signout_navbar()">
-    % if c.logged_in_user and c.logged_in_user.username == self.id:
+    % if "logout" in self.actions:
         <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
             <div data-role="navbar" class="ui-navbar">
                 <ul>
                     <li>
                         ${h.secure_link(
                             h.url(controller='account', action='signout'),
-                            _('Sign out')
+                            _('Sign out'),
+                            rel = "external"
                         )}
                     </li>
                 </ul>
@@ -103,22 +105,15 @@
         %>
         <div class="member_details">
             ## Avatar/name
-            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
             <h3>${member['name']}</h3>
+            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
             <p>Username: <b>${username}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
             
-            <div class="messages ui-grid-b" data-theme="b">
-                <div class="ui-block-a">
-                    <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages</a>
-                </div>
-                <div class="ui-block-b">
-                    <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
-                </div>
-                <div class="ui-block-c">
-                    <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications</a>
-                </div>
-            </div>
+            <div class="separator" style="padding: 0.5em;"></div>
+            
+            ${messages_bar()}
+            ${actions_buttons()}
             
             <ul data-role="listview" data-inset="true">
                 ## User website
@@ -146,7 +141,86 @@
                 
             ${member_list("following")}
             ${member_list("followers")}
+            ${member_list("groups")}
             ${member_list("members")}
+        </div>
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Member action buttons (follow, etc)
+##-----------------------------------------------------------------------------
+<%def name="actions_buttons()">
+
+    % if c.logged_in_user and self.actions:
+            % if 'follow' in self.actions:
+                ${h.secure_link(
+                    h.url('member_action', action='follow'    , id=self.id) ,
+                    value           = _('Follow'),
+                    value_formatted = h.literal("<button>%s</button>") % _('Follow'),
+                    title           = _("Follow %s" % self.name) ,
+                    rel             = "external",
+                )}
+            % endif
+            
+            % if 'unfollow' in self.actions:
+                ${h.secure_link(
+                    h.url('member_action', action='unfollow'  , id=self.id) ,
+                    value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
+                    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
+                    rel             = "external",
+                )}
+            % endif
+            
+            % if 'join' in self.actions:
+                ${h.secure_link(
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    value           = _('Join _group') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
+                    rel             = "external",
+                )}
+            % endif
+            
+            ## AllanC - same as above, could be neater but works
+            % if 'join_request' in self.actions:
+                ${h.secure_link(
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    value           = _('Request to join _group') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
+                    rel             = "external",
+                )}
+            % endif
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Message and notification bar
+##-----------------------------------------------------------------------------
+<%def name="messages_bar()">
+    % if c.logged_in_user.username == self.id:
+        <%
+            unread_messages =       d['num_unread_messages']
+            unread_notifications =  d['num_unread_notifications']
+        %>
+        <div class="messages ui-grid-b" data-theme="b">
+            <div class="ui-block-a">
+                <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages
+                % if unread_messages:
+                    <br />(${unread_messages} new)
+                % endif
+                </a>
+            </div>
+            <div class="ui-block-b">
+                <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
+            </div>
+            <div class="ui-block-c">
+                <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications
+                % if unread_notifications:
+                    <br />(${unread_notifications} new)
+                % endif
+                </a>
+            </div>
         </div>
     % endif
 </%def>

@@ -11,28 +11,27 @@
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 
 <%def name="page_title()">
-    ${_("Explore _users and _groups")}
+    ${_("Messages")}
 </%def>
 
 <%def name="body()">
     <%
-        self.list = d['list']
+        self.list =     d['list']
+        self.messages = self.list['items']
+        self.count =    self.list['count']
+        self.type =     self.list['type']
+        if self.list['kwargs'].get('list'):
+            self.list['kwargs']['list']
     %>
-
-    <div data-role="page" data-theme="b" id="explore_member" class="">
-        ${components.header(title="Explore _users and _groups")}
+    
+    ## Main member detail page (username/description/etc)
+    <div data-role="page" data-theme="b" id="messages" class="messages">
+        ${components.header()}
         
         <div data-role="content">
-            ${content_main(self.list)}
+            ${parent.list_messages(self.list, self.type)}
         </div>
         
-        <div data-role="footer" data-position="fixed" data-fullscreen="true">
-            ${parent.pagination()}
-        </div>
+        ${parent.pagination()}        
     </div>
-</%def>
-
-<%def name="content_main(list)">
-    ${components.search_form()}
-    ${parent.list_members(list)}
 </%def>
