@@ -1,16 +1,20 @@
-import urllib2
+try:
+    import urllib.request as urllib_request
+    import urllib.error as urllib_error
+except ImportError:
+    import urllib2 as urllib_request
+    import urllib2 as urllib_error
 
 from twitter.twitter_globals import POST_ACTIONS
 from twitter.auth import NoAuth
 
-def _py26OrGreater():
-    import sys
-    return sys.hexversion > 0x20600f0
-
-if _py26OrGreater():
+try:
     import json
-else:
+except ImportError:
     import simplejson as json
+
+class _DEFAULT(object):
+    pass
 
 class TwitterError(Exception):
     """
@@ -25,10 +29,10 @@ class TwitterHTTPError(TwitterError):
     HTTP error interacting with twitter.com.
     """
     def __init__(self, e, uri, format, uriparts):
-      self.e = e
-      self.uri = uri
-      self.format = format
-      self.uriparts = uriparts
+        self.e = e
+        self.uri = uri
+        self.format = format
+        self.uriparts = uriparts
 
     def __str__(self):
         return (
@@ -84,14 +88,15 @@ def wrap_response(response, headers):
 
 
 class TwitterCall(object):
+
     def __init__(
-        self, auth, format, domain, uri="", agent=None,
+        self, auth, format, domain, callable_cls, uri="",
         uriparts=None, secure=True):
         self.auth = auth
         self.format = format
         self.domain = domain
+        self.callable_cls = callable_cls
         self.uri = uri
-        self.agent = agent
         self.uriparts = uriparts
         self.secure = secure
 
@@ -99,9 +104,9 @@ class TwitterCall(object):
         try:
             return object.__getattr__(self, k)
         except AttributeError:
-            return TwitterCall(
+            return self.callable_cls(
                 auth=self.auth, format=self.format, domain=self.domain,
-                agent=self.agent, uriparts=self.uriparts + (k,),
+                callable_cls=self.callable_cls, uriparts=self.uriparts + (k,),
                 secure=self.secure)
 
     def __call__(self, **kwargs):
@@ -110,8 +115,8 @@ class TwitterCall(object):
         for uripart in self.uriparts:
             # If this part matches a keyword argument, use the
             # supplied value otherwise, just use the part.
-            uriparts.append(unicode(kwargs.pop(uripart, uripart)))
-        uri = u'/'.join(uriparts)
+            uriparts.append(str(kwargs.pop(uripart, uripart)))
+        uri = '/'.join(uriparts)
 
         method = "GET"
         for action in POST_ACTIONS:
@@ -142,19 +147,21 @@ class TwitterCall(object):
                 uriBase += '?' + arg_data
                 body = None
             else:
-                body = arg_data
+                body = arg_data.encode('utf8')
 
-        req = urllib2.Request(uriBase, body, headers)
+        req = urllib_request.Request(uriBase, body, headers)
+        return self._handle_response(req, uri, arg_data)
 
+    def _handle_response(self, req, uri, arg_data):
         try:
-            handle = urllib2.urlopen(req)
+            handle = urllib_request.urlopen(req)
             if "json" == self.format:
                 res = json.loads(handle.read().decode('utf8'))
                 return wrap_response(res, handle.headers)
             else:
                 return wrap_response(
                     handle.read().decode('utf8'), handle.headers)
-        except urllib2.HTTPError as e:
+        except urllib_error.HTTPError as e:
             if (e.code == 304):
                 return []
             else:
@@ -235,8 +242,8 @@ class Twitter(TwitterCall):
     """
     def __init__(
         self, format="json",
-        domain="twitter.com", secure=True, auth=None,
-        api_version=''):
+        domain="api.twitter.com", secure=True, auth=None,
+        api_version=_DEFAULT):
         """
         Create a new twitter API connector.
 
@@ -249,20 +256,14 @@ class Twitter(TwitterCall):
 
 
         `domain` lets you change the domain you are connecting. By
-        default it's twitter.com but `search.twitter.com` may be
+        default it's `api.twitter.com` but `search.twitter.com` may be
         useful too.
 
         If `secure` is False you will connect with HTTP instead of
         HTTPS.
 
-        The value of `agent` is sent in the `X-Twitter-Client`
-        header. This is deprecated. Instead Twitter determines the
-        application using the OAuth Client Key and Client Key Secret
-        parameters.
-
         `api_version` is used to set the base uri. By default it's
-        nothing, but if you set it to '1' your URI will start with
-        '1/'.
+        '1'. If you are using "search.twitter.com" set this to None.
         """
         if not auth:
             auth = NoAuth()
@@ -270,12 +271,19 @@ class Twitter(TwitterCall):
         if (format not in ("json", "xml", "")):
             raise ValueError("Unknown data format '%s'" %(format))
 
+        if api_version is _DEFAULT:
+            if domain == 'api.twitter.com':
+                api_version = '1'
+            else:
+                api_version = None
+
         uriparts = ()
         if api_version:
             uriparts += (str(api_version),)
 
         TwitterCall.__init__(
             self, auth=auth, format=format, domain=domain,
+            callable_cls=TwitterCall,
             secure=secure, uriparts=uriparts)
 
 
