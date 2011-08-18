@@ -10,7 +10,7 @@ clean:
 
 common/icons.scss: common/icons/*
 	iconmapper -q -c common/icons.scss -p icons.png -a icons.png?ut=${TIMESTAMP} common/icons/*
-	cp icons.png common/
+	pngcrush icons.png common/icons.png
 
 web.css:    common/*.scss  common/icons.scss  web/*.scss     Makefile
 	ls -1 common/*.scss web/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed web.css
