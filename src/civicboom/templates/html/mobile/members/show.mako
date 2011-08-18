@@ -52,7 +52,8 @@
                     <li>
                         ${h.secure_link(
                             h.url(controller='account', action='signout'),
-                            _('Sign out')
+                            _('Sign out'),
+                            rel = "external"
                         )}
                     </li>
                 </ul>
@@ -154,36 +155,40 @@
     % if c.logged_in_user and self.actions:
             % if 'follow' in self.actions:
                 ${h.secure_link(
-                    h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
+                    h.url('member_action', action='follow'    , id=self.id) ,
                     value           = _('Follow'),
                     value_formatted = h.literal("<button>%s</button>") % _('Follow'),
                     title           = _("Follow %s" % self.name) ,
+                    rel             = "external",
                 )}
             % endif
             
             % if 'unfollow' in self.actions:
                 ${h.secure_link(
-                    h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
+                    h.url('member_action', action='unfollow'  , id=self.id) ,
                     value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
                     title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
+                    rel             = "external",
                 )}
             % endif
             
             % if 'join' in self.actions:
                 ${h.secure_link(
-                    h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
                     value           = _('Join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
+                    rel             = "external",
                 )}
             % endif
             
             ## AllanC - same as above, could be neater but works
             % if 'join_request' in self.actions:
                 ${h.secure_link(
-                    h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
                     value           = _('Request to join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
+                    rel             = "external",
                 )}
             % endif
     % endif

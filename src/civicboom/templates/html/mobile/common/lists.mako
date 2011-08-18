@@ -82,9 +82,16 @@
 <%def name="member_li(item)">
     <li>
         <a href="${h.url('member', id=item['username'])}" title="${item['name']}" rel="external">
-            <h3>${item['name']}</h3>
-            <p>Username: <b>${item['username']}</b></p>
-            <p>Type: <b>${item['type'].capitalize()}</b></p>
+            <img src="${item['avatar_url']}" class="thumbnail" />
+            <h3>
+                ${item['name']}
+                % if item.get('type') == "group":
+                    <small><b> [${_("_Group")}]</b></small>
+                % endif
+            </h3>
+            % if item.get('num_followers'):
+                <p><b>${item['num_followers']}</b> followers</p>
+            % endif
         </a>
     </li>
 </%def>

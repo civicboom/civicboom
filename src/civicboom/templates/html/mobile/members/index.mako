@@ -11,7 +11,7 @@
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 
 <%def name="page_title()">
-    ${_("Explore _members")}
+    ${_("Explore _users and _groups")}
 </%def>
 
 <%def name="body()">
@@ -20,7 +20,7 @@
     %>
 
     <div data-role="page" data-theme="b" id="explore_member" class="">
-        ${components.header(title="Explore members")}
+        ${components.header(title="Explore _users and _groups")}
         
         <div data-role="content">
             ${content_main(self.list)}
