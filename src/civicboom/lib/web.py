@@ -7,9 +7,6 @@ from cbutils.cbxml import dictToXMLString
 
 from civicboom.lib.widget import widget_defaults
 
-import wkhtmltox
-import tempfile
-        
 import os
 import time
 import simplejson as json
@@ -512,8 +509,10 @@ def setup_format_processors():
         #return redirect("/")
     
     def format_print(result):
+        if result.get('status', 'ok') == 'error':
+            return render_template(result, 'html')
         frag = render_template(result, 'frag')
-        return render_mako('pdf/wrapper.mako', extra_vars={"inner_html": frag})
+        return render_mako('print/wrapper.mako', extra_vars={"inner_html": frag})
     
     def format_ical(result):
         abort(501)
@@ -522,20 +521,21 @@ def setup_format_processors():
         import subprocess
         print_formatted = format_print(result)
         
-        f = tempfile.NamedTemporaryFile(prefix='cbgenpdf', dir='/tmp/')
-        sp = subprocess.Popen(['wkhtmltopdf', '--encoding', 'utf8', '-q', '-', '-'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        sp.stdin.write(print_formatted)
-        sp.stdin.close()
-        sp2 = subprocess.Popen('cat >/tmp/onetwo', shell=True, stdin=subprocess.PIPE)
-        sp2.stdin.write(print_formatted)
-        sp2.stdin.close()
-        while sp.poll():
-            pass
-        ret = sp.stdout.read()
+        import ho.pisa as pisa
+        import cStringIO as StringIO
         
-        response.headers['Content-type'] = "application/pdf"
+        io = StringIO.StringIO()
         
-        return ret
+        def link_handler(uri, rel):
+            if uri[0:4] != 'http':
+                uri = 'https://localhost' + uri
+            return uri
+            
+        pdf = pisa.pisaDocument(StringIO.StringIO(print_formatted.encode("UTF-8")), io, link_callback = link_handler, encoding="UTF-8")# path, link_callback, debug, show_error_as_pdf, default_css, xhtml, encoding, xml_output, raise_exception, capacity)
+        if not pdf.err:
+            response.headers['Content-type'] = "application/pdf"
+            return io.getvalue()
+        return pdf.err
     
     
 
