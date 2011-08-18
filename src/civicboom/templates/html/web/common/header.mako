@@ -31,7 +31,7 @@
         <input type="submit" name="type" class="button b0" value="V">
         <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
         <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
-        <input type="submit" name="type" class="button b3" value="${_("_Members")}">
+        <input type="submit" name="type" class="button b3" value="${_("_Users / _Groups")}">
     </form>
 </div>
 
