@@ -34,6 +34,7 @@
         <h1>Manage your payment account</h1>
         <p>Payment account number: ${d['id']}</p>
         <p>Account type: ${_('_'+d['type']).capitalize()}</p>
+        <p>Account status: ${d['billing_status']}</p>
     </div>
     <div class="frag_whitewrap" style="float:left;width:42%; margin-right:0;">
         <h2>Services</h2>

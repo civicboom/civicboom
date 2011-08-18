@@ -828,6 +828,7 @@ class PaymentAccount(Base):
             'start_date'        : None ,
             'name'              : lambda account: account.config.get('company') or account.config.get('name'),
             'address'           : lambda account: [account.config[key] for key in account.config if key[:7] == 'address'],
+            'billing_status'    : None, 
         },
     })
     
