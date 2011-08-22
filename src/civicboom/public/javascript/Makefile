@@ -24,12 +24,12 @@ FOOT=\
 	jquery.jcarousel.min.js \
 	invite.js \
 	mobile.js \
+	rpx.js \
+	misc.foot.js \
 	gears_init.js \
 	geo.js \
 	OpenLayers.js \
 	minimap.js \
-	rpx.js \
-	misc.foot.js \
 
 
 all: _combined.head.js _combined.foot.js
@@ -72,5 +72,8 @@ OpenLayers.js:
 	patch OpenLayers.js OpenLayers.patch
 	rm -rf openlayers
 
+# the janrain API suggests we link to their servers, but their slow
+# servers are blocking our page rendering speed. Hacky solution:
+# bundle their JS within ours
 rpx.js:
 	wget https://s3.amazonaws.com/static.rpxnow.com/js/lib/rpx.js

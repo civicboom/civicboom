@@ -70,7 +70,7 @@ css_all.sort()
 	<script src="/javascript/jquery-1.6.2.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/prototypes.js"></script>
-	<script src="/javascript/misc.js"></script>
+	<script src="/javascript/misc.head.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
 	<script src="/javascript/ajaxError.js"></script>

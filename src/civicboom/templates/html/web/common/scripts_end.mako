@@ -28,6 +28,8 @@
 		<script src="/javascript/jquery.jcarousel.min.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
+		<script src="/javascript/rpx.js"></script>
+		<script src="/javascript/misc.foot.js"></script>
 		<!-- maps -->
 		<script src="/javascript/gears_init.js"></script>
 		<script src="/javascript/geo.js"></script>
