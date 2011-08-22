@@ -3,7 +3,7 @@ HEAD=\
 	swfobject.js \
 	jquery-1.6.2.js \
 	prototypes.js \
-	misc.js\
+	misc.head.js \
 	url_encode.js \
 	cb_frag.js \
 	ajaxError.js \
@@ -28,6 +28,8 @@ FOOT=\
 	geo.js \
 	OpenLayers.js \
 	minimap.js \
+	rpx.js \
+	misc.foot.js \
 
 
 all: _combined.head.js _combined.foot.js
@@ -69,3 +71,6 @@ OpenLayers.js:
 	mv openlayers/build/OpenLayers.js ./
 	patch OpenLayers.js OpenLayers.patch
 	rm -rf openlayers
+
+rpx.js:
+	wget https://s3.amazonaws.com/static.rpxnow.com/js/lib/rpx.js

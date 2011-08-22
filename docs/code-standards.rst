@@ -1,11 +1,6 @@
 Code Standards
 ==============
 
-Shish - it seems that we (Shish + AllanC) have our editors set up the same
-        way, so dodgy formatting behind the scenes won't be noticed -- but
-		as the team grows, more people with different settings will appear
-		so some consistency would be good.
-
 tl;dr
 ~~~~~
 
@@ -20,8 +15,6 @@ Shish - In particular, have "if" and the effect on separate lines,
         so the code coverage tool can tell them apart. Otherwise,
         the coverage tool will see "I hit the if statement (the
         variable was false)" and mark the whole line as "tested"
-Shish - I like to have two code windows side by side; 1366px / 2 =
-        ~115 characters per window
 
 in the src dir you can "make pep8" to have the code checked
 
@@ -32,7 +25,7 @@ the makefile has valid syntax it should be ok
 
 HTML, JScript, CSS (Everything else):
 -------------------------------------
-4 spaces for indentation
+Similar to python; 4 spaces for indentation
 
 
 code comment keywords

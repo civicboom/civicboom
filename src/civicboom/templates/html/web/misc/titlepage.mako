@@ -98,18 +98,18 @@
 
 <%def name="front_windows()">
 	<div class="windows">
-		${make_window("left", "/images/misc/titlepage/first_panel.png", "Request",
+		${make_window("left", "/images/misc/titlepage/first_panel", "Request",
 			content="Journalists, news organisations, media outlets and publishers: Need stories? Sign up and ask.")}
 		
 		<div class="window_wrapper">
 			<span class="symbol">+</span>
-			${make_window("center", "/images/misc/titlepage/middle_panel.png", "Respond",
+			${make_window("center", "/images/misc/titlepage/middle_panel", "Respond",
 				content="Got stories? Sign up and respond to requests for your stories - or send directly to journalists, news organisations, media outlets and publishers.")}
 		</div>
 		
 		<div class="window_wrapper">
 			<span class="symbol">=</span>
-			${make_window("right", "/images/misc/titlepage/last_panel.png", "Result",
+			${make_window("right", "/images/misc/titlepage/last_panel", "Result",
 				content="Publish and get published: Get news stories from source. Get closer to your audience. Work together.")}
 		</div>
 	
@@ -130,12 +130,13 @@
 	${popup.popup_static('', window_popup, 'title_window_'+id)}
 	<a href="#" class="title_link_${id}">
 		<div class="window" id="${id}">
-			<img src="${img}" alt="${alt}" />
+			<img src="${img}_s.png" alt="${alt}" />
 		</div>
 	</a>
 	<script>
 	    $(".title_link_${id}").click(function() {
     		$("#title_window_${id}").modal();
+            $("#title_img_${id}").attr("src", "${img}_l.png");
     		return false;
 	    });
 	</script>
@@ -143,7 +144,7 @@
 	<%def name="window_popup()">
 		<div style="text-align: center; font-size: 125%;">
 			<div class="image_wrapper">
-			    <img src="${img}" style="width: 600px; display: block; margin: auto;"/>
+			    <img id="title_img_${id}" src="${img}_s.png" style="width: 600px; display: block; margin: auto;"/>
 			    <div class="text_wrapper">${content}</div>
 			</div>
 			<div class="image_footer">Don't just read it. Feed it</div>

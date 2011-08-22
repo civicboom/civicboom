@@ -80,7 +80,8 @@ css_all.sort()
 
 <%namespace name="share" file="/frag/common/share.mako" />
 
-% if config['online']:
+## addthis isn't used by the title page, but it slows down our first impression D:
+% if config['online'] and not (c.controller=="misc" and c.action=="titlepage"):
 	${share.AddThisScript()}
 % endif
 
