@@ -471,6 +471,7 @@
         if not message['read']:
             read_status = 'unread'
 %>
+
 <li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
     <div style="float:right;">

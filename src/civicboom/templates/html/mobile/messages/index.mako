@@ -15,7 +15,7 @@
 </%def>
 
 <%def name="body()">
-    <%
+    <%   
         self.list =     d['list']
         self.messages = self.list['items']
         self.count =    self.list['count']

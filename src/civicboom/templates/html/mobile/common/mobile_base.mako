@@ -40,3 +40,12 @@
         % endif
     </title>
 </%def>
+
+<%def name="error_message()">
+    <h3 id="error_message" class="status_${c.result['status']}">${c.result['message']}</h3>
+    % if c.result['message'] != "":
+    <script type="text/javascript">
+        <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+    </script>
+    % endif
+</%def>

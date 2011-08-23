@@ -27,7 +27,9 @@
         <div data-role="content" data-theme="c">
             ${involved()}
             <h1>${self.subject}</h1>
-            <p>${self.content}</p>
+            <p>
+                ${h.literal(self.content)}
+            </p>
         </div>
     </div>
 </%def>

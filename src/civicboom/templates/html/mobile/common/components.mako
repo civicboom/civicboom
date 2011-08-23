@@ -1,4 +1,15 @@
 ##-----------------------------------------------------------------------------
+## Title logo image
+##-----------------------------------------------------------------------------
+<%def name="title_logo()">
+    <div class="title_logo">
+        <a href="${h.url(controller='misc', action='titlepage')}" rel='external'>
+            <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-684x150.png")}' alt='${_("_site_name")}' />
+        </a>
+    </div>
+</%def>
+
+##-----------------------------------------------------------------------------
 ## Creates the control bar/footer
 ##-----------------------------------------------------------------------------
 <%def name="control_bar()">
