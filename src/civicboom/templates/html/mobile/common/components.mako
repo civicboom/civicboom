@@ -13,18 +13,18 @@
 ## Creates the control bar/footer
 ##-----------------------------------------------------------------------------
 <%def name="control_bar()">
-    % if c.logged_in_user:
         <div data-role="navbar" class="ui-navbar">
             <ul>
+                % if c.logged_in_user:
                 <li>
                     <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
                 </li>
+                % endif
                 <li>
                     <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
                 </li>
             </ul>
         </div>
-    % endif
 </%def>
 
 ##-----------------------------------------------------------------------------
