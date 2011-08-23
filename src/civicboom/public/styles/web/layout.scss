@@ -57,8 +57,8 @@ A {
 }
 
 BODY>DIV#app {
-	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
-	z-index: 0;
+    position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
+    z-index: 0;
     top: $header_height + 5px;
     color: $text-colour;
     
@@ -73,32 +73,30 @@ BODY>DIV#app {
     }
 
 	.frag_container {
-		.button {
-			color: $button-txt;
-			text-decoration: none;
-			
-			&:hover {
-				color: $button-txt;
-				text-decoration: none;
-			}
-		}
-	}
+    		.button {
+      			color: $button-txt;
+      			text-decoration: none;
+      			
+      			&:hover {
+        				color: $button-txt;
+        				text-decoration: none;
+      			}
+    		}
+  	}
     
-	.frag_container {
-		a {
-			color: $link-frag-colour;
-			text-decoration: none;
-			
-			&:hover {
-				color: $link-hover-colour;
-				text-decoration: underline;
-				
-				p, span {
-					text-decoration: inherit;
-				}
-			}
-		}
-	}
+    a {
+        color: $link-frag-colour;
+        text-decoration: none;
+        		
+        &:hover {
+            color: $link-hover-colour;
+            text-decoration: underline;
+            			
+            p, span {
+                text-decoration: inherit;
+            }
+        }
+    }
 }
 
 FOOTER {
@@ -123,7 +121,7 @@ FOOTER {
 
 HEADER #logo {
 	.logo_img     {position: absolute; left:  12px; top:  6px; width: 128px;}
-	.beta_overlay {position: absolute; left: 113px; top: 30px; width:  24px;}
+	.beta_overlay {position: absolute; left: 116px; top: 28px; color: black; font-size: 11px;}
 	.logo_text    {display: none;}
 }
 

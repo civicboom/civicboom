@@ -39,7 +39,7 @@ server {
 	gzip_http_version 1.0;
 	gzip_proxied any;
 	gzip_disable "MSIE [1-6]\.(?!.*SV1)";
-	gzip_types text/plain text/css text/xml application/javascript application/x-javascript application/json application/rss+xml; # text/html is implied
+	gzip_types text/plain text/css text/xml application/javascript application/x-javascript application/json application/rss+xml image/svg+xml; # text/html is implied
 
 	# ssl
 	ssl_certificate      /opt/cb/etc/ssl/wild.civicboom.com.pem;
