@@ -187,7 +187,13 @@
                 % endif
             </${type_[0]}>
             % if href and show_heading and len(items) < count:
-            <a href="${href}" ${js_link_to_frag_list} class="link_more">${_("%d more") % (count-len(items))}</a>
+            <a href="${href}" ${js_link_to_frag_list} class="link_more">
+                % if show_count:
+                    ${_("%d more") % (count-len(items))}
+                % else:
+                    ${_("more")}
+                % endif
+            </a>
             % endif
             % if paginate:
                 ${pagination()}
