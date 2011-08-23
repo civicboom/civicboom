@@ -1,6 +1,6 @@
 <html>
     <head>
-        ${page_title()}
+        ${title()}
         <link rel="shortcut icon" href="/images/favicon.ico" />
         
         ## --- CSS imports ---
@@ -23,7 +23,7 @@
         <script type="text/javascript" src="/javascript/jquery-1.6.2.js"></script>
         <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
         <script type="text/javascript">
-            // $.mobile.page.prototype.options.addBackBtn = "true";
+            
         </script>
     </head>
   
@@ -32,11 +32,11 @@
     </body>
 </html>
 
-<%def name="page_title()">
-    <%
-        title = _('_site_name Mobile')
-        if next.page_title():
-            title += " - "+next.page_title()
-    %>
-    <title>${_(title)}</title>
+<%def name="title()">
+    <title>
+        ${_('_site_name Mobile')}
+        % if hasattr(next, 'page_title'):
+        : ${next.page_title()}
+        % endif
+    </title>
 </%def>

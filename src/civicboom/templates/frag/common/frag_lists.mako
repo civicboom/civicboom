@@ -221,15 +221,19 @@
     <td style="padding-top: 3px;">
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
-    <td style="padding-left: 3px">
-        ## AllanC - short term botch to add follow option to member list
-        ${h.secure_link(
-            h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
-            value           = _('Follow') ,
-            value_formatted = h.literal("<span class='icon16 i_follow' style='float:right;'></span>%s") % '',#_('Follow'),
-            title           = _("Follow") + " " + (member['name'] or member['username']),
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
-        )}
+    <td style="padding-left: 3px">  
+        <% show_type = "[H]" if member.get('type') == "group" else "" %>
+        <span style='float:right;'>
+            ${show_type}
+            ## AllanC - short term botch to add follow option to member list
+            ${h.secure_link(
+                h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
+                value           = _('Follow') ,
+                value_formatted = h.literal("<span class='icon16 i_follow'></span>") % show_type, #_('Follow'),
+                title           = _("Follow") + " " + (member['name'] or member['username']),
+                json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
+            )}
+        </span>
         
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
         ${member.get('name')}
@@ -343,27 +347,27 @@
             </a>
             <p class="timestamp">
                 ${timestamp(content)}
-            </p>
-            % if extra_info:
-                % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
+                % if content['type']=='article' and (content.get('parent_id') or content.get('parent')):
                     <%
                         (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
                     %>
-                    <p class="extra">${_('In response to:')}
-                        <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
-                            % if content.get('parent'):
+                    ${_('in response to')}
+                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                        % if content.get('parent'):
                             ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
-                            % else:
+                        % else:
                             content
-                            % endif
-                        </a>
-                    </p>
-                % elif content['type']=='article':
+                        % endif
+                    </a>
+                % endif
+            </p>
+            % if extra_info:
+                % if content['type']=='article':
                     <p class="extra">
-                    ${_('Views')}: ${content['views']}
-                    % if content.get('tags'):
-                    , ${_('Tags')}: ${", ".join(content['tags'][:4])}
-                    % endif
+                        % if content.get('tags'):
+                            ${_('Tags')}: ${", ".join(content['tags'][:4])}<br />
+                        % endif
+                        ${_('Views')}: ${content['views']}
                     </p>
                 % elif content['type']=='assignment':
                     <%

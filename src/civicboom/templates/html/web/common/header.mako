@@ -7,10 +7,10 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-128x28.png")}'              alt='${_("_site_name")}' />
-        <img  class='beta_overlay' src='${h.wh_url("public", "images/logo_beta_overlay.png")}' alt='${_("Beta")}'       />
+		<img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-128x28.png")}'    alt='${_("_site_name")}' width="128" height="28"/>
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
+    <span class='beta_overlay'>beta</span>
 </h1>
 
 ##------------------------------------------------------------------------------
@@ -31,7 +31,7 @@
         <input type="submit" name="type" class="button b0" value="V">
         <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
         <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
-        <input type="submit" name="type" class="button b3" value="${_("_Members")}">
+        <input type="submit" name="type" class="button b3" value="${_("_Users / _Groups")}">
     </form>
 </div>
 
