@@ -7,7 +7,7 @@
 ##------------------------------------------------------------------------------
 <h1 id="logo">
 	<a href='/'>
-		<img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-128x28.png")}'    alt='${_("_site_name")}' />
+		<img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-128x28.png")}'    alt='${_("_site_name")}' width="128" height="28"/>
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
     <span class='beta_overlay'>beta</span>

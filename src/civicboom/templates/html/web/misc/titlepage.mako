@@ -130,7 +130,7 @@
 	${popup.popup_static('', window_popup, 'title_window_'+id)}
 	<a href="#" class="title_link_${id}">
 		<div class="window" id="${id}">
-			<img src="${img}_s.png" alt="${alt}" />
+			<img src="${img}_s.png" alt="${alt}" width="300" height="200" />
 		</div>
 	</a>
 	<script>
@@ -144,7 +144,7 @@
 	<%def name="window_popup()">
 		<div style="text-align: center; font-size: 125%;">
 			<div class="image_wrapper">
-			    <img id="title_img_${id}" src="${img}_s.png" style="width: 600px; display: block; margin: auto;"/>
+			    <img id="title_img_${id}" src="${img}_s.png" width="600" height="400" style="display: block; margin: auto;"/>
 			    <div class="text_wrapper">${content}</div>
 			</div>
 			<div class="image_footer">Don't just read it. Feed it</div>
