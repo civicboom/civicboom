@@ -2,17 +2,14 @@ BODY.c-misc.a-titlepage {
     h1 {
         text-align: center;
     }
-
-    .title_logo {
-        text-align: center;
-    
-        img {
-            width: 100%;
-            max-width: 508px;
-        }
-    }
     
     .title_content {
+        text-align: center;
+    }
+}
+
+BODY.c-account.a-signin {
+    .signin_title {
         text-align: center;
     }
 }

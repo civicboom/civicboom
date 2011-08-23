@@ -1,11 +1,12 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
+## includes
+<%namespace name="components"      file="/html/mobile/common/components.mako" />
+
 <%def name="body()">
     <div data-role="page">        
         <div data-role="content">
-            <div class="title_logo">
-                <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-684x150.png")}' alt='${_("_site_name")}' />
-            </div>
+            ${components.title_logo()}
             <h1>The new way to source and share news!</h1>
             <div class="title_content">
     	        <a href="${h.url(controller='account', action='signin')}" rel="external"><button data-theme="b">Sign in!</button></a>

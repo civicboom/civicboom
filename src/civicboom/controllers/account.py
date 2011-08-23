@@ -77,7 +77,7 @@ class AccountController(BaseController):
                 #return render("/html/web/account/signin_frag.mako")
             
             #return render("/html/web/account/signin.mako")
-            return action_ok("direct to login")
+            return action_ok()
 
         # Without this line, a simple blank POST would see no janrain token,
         # and no username / password, so it would leave c.logged_in_user

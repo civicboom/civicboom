@@ -167,9 +167,16 @@
 			.unread      {background-color: #eee;}
 			.source      {float: left;}
 			.target      {float: left;}
-			.subject     {font-weight: bold; background-color: #ccc;}
 			.content a   {font-weight: bold;}
 			.icon_delete {float: right;}
+			
+			.message_subject {
+			   font-size: 110%;
+			}
+			
+			.message_content {
+			   word-break: break-word;
+			}
 		}
 	}
 	

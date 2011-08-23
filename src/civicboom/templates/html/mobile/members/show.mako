@@ -198,7 +198,7 @@
 ## Message and notification bar
 ##-----------------------------------------------------------------------------
 <%def name="messages_bar()">
-    % if c.logged_in_user.username == self.id:
+    % if c.logged_in_user and c.logged_in_user.username == self.id:
         <%
             unread_messages =       d['num_unread_messages']
             unread_notifications =  d['num_unread_notifications']
