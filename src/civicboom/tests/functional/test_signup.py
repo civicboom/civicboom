@@ -166,8 +166,8 @@ class TestSignup(TestController):
         response = self.app.post(
             link,
             params={
-                'password'        : u'password',
-                'password_confirm': u'password',
+                'password'        : u'passwordß', # AllanC - allow unicode passwords in signup
+                'password_confirm': u'passwordß',
                 'dob'             : u'1980-01-01',
                 'name'            : u'This is my full name',
                 'terms'           : u'checked',
@@ -178,10 +178,10 @@ class TestSignup(TestController):
         #email_response = getLastEmail()
         #self.assertIn('civicboom', email_response.content_text)
         
-        self.log_in_as('test_signup', 'password')
+        self.log_in_as('test_signup', 'passwordß')
         
         # Test lowercase normalisation
-        self.log_in_as('TeSt_SiGnUp', 'password')
+        self.log_in_as('TeSt_SiGnUp', 'passwordß')
 
     #---------------------------------------------------------------------------
     # Signup & autofollow user
