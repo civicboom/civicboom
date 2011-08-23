@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from civicboom.tests import *
 
 #from civicboom.lib.communication.email_log import getLastEmail, getNumEmails
@@ -95,8 +97,8 @@ class TestSignup(TestController):
         response = self.app.post(
             link,
             params={
-                'password'        : u'pppppppp',
-                'password_confirm': u'pppppppp', # Passwords should not contain entirely of a single repeated character
+                'password'        : u'ßßßßßßßß',
+                'password_confirm': u'ßßßßßßßß', # Passwords should not contain entirely of a single repeated character
                 'dob'             : u'01-01-1980',
                 'terms'           : u'checked',
                 'help_type'       : u'ind',
