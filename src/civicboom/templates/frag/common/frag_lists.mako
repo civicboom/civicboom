@@ -472,68 +472,6 @@
             read_status = 'unread'
 %>
 
-
-## NEW
-<li class="${read_status}">
-    ## Message type icon
-    <div style="float: left; padding-right: 3px;">
-      % if list=="to":
-      <a href    = "${url('message', id=message['id'])}"
-         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
-         class   = "icon16 i_message" title="Open / Reply"
-      >
-      </a>
-      % endif
-    </div>
-    
-    ## Message deletion action
-    <div style="float:right;">
-        % if list!='sent':
-            ${h.secure_link(
-                h.args_to_tuple('message', id=message['id'], format='redirect') ,
-                method="DELETE",
-                value="",
-                title=_("Delete"),
-                css_class="icon16 i_delete",
-                json_form_complete_actions = "cb_frag_reload(current_element);" ,
-            )}
-        % endif
-    </div>
-    
-    ## Message content including subject/content/details
-    <div class="message_content">
-      <a href    = "${url('message', id=message['id'])}"
-         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
-      >
-          <h2 class="message_subject">${message['subject']}</h2>
-      </a>
-    % if 'content' in message:
-          <p class="content">
-          % if list=='notification':
-              ## It is safe to use literal here as notifications only come from the system
-              ${h.literal(h.links_to_frag_links(message['content']))}
-          % else:
-              ${h.truncate(message['content'], length=100, indicator="...", whole_word="True")}
-          % endif
-          </p>
-      % endif
-        <p class="timestamp"><small>
-            % if message.get('source') and list!='sent':
-                ${member_includes.avatar(message['source'], class_="thumbnail_small source")}
-            % endif
-            % if message.get('source') and list!='sent':
-                From: ${message['source']['name']}
-            % endif
-            % if message.get('target') and list=='sent':
-                To: ${message['target']['name']}
-            % endif
-        </small></p>
-        <p class="timestamp"><small>${_('%s ago') % h.time_ago(message['timestamp'])}</small></p>
-    </div>
-</li>
-
-<%doc>
-## OLD
 <li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
     <div style="float:right;">
@@ -600,7 +538,6 @@
     </div>
     
 </li>
-</%doc>
 </%def>
 
 ##------------------------------------------------------------------------------
