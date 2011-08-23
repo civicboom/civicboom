@@ -27,24 +27,23 @@
 
 
 <%def name="show_message(message)">
-
-% if message.get('source'):
-    <div style="float:left;margin: 3px;">${member_includes.avatar(message['source'], class_="thumbnail source")}</div>
-% else:
-    <div class="icon32 i_notification" style="float: left; margin: 3px;"><span>Notification</span></div>
-% endif
-<div style="padding-left:50px;">
-	<div class="subject">${message["subject"]}</div>
-	<div class="content">${message["content"] | n}</div>
-</div>
-<p class="timestamp">${_('%s ago') % h.time_ago(message['timestamp'])}</p>
+    % if message.get('source'):
+        <div style="float:left;margin: 3px;">${member_includes.avatar(message['source'], class_="thumbnail source")}</div>
+    % else:
+        <div class="icon32 i_notification" style="float: left; margin: 3px;"><span>Notification</span></div>
+    % endif
+    <div style="padding-left:50px;">
+    	<div class="subject">${message["subject"]}</div>
+    	<div class="content">${message["content"] | n}</div>
+    </div>
+    <p class="timestamp">${_('%s ago') % h.time_ago(message['timestamp'])}</p>
 </%def>
 
 <%def name="reply_message(message)">
 	${h.form(h.args_to_tuple('messages', format='redirect'), json_form_complete_actions="cb_frag_remove(current_element);")}
 		<table class="message_composer" style="width:100%">
 	        
-	        <input type="hidden" name="target" value="${message['source'] if isinstance(message['source'],basestring) else message['source']['username']}"/>]
+	        <input type="hidden" name="target" value="${message['source'] if isinstance(message['source'],basestring) else message['source']['username']}"/>
             
 			<tr>
 				<td>${_("Subject")}&nbsp;</td>
