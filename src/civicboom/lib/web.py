@@ -676,13 +676,13 @@ def authenticate_form(_target, *args, **kwargs):
 
 def cacheable(time=60*60*24*365, anon_only=True):
     def _cacheable(func, *args, **kwargs):
-        if app_globals.cache_enabled:
-            from pylons import request, response
-            if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
-                response.headers["Cache-Control"] = "public,max-age=%d" % time
-                response.headers["Vary"] = "Cookie"
-                if "Pragma" in response.headers:
-                    del response.headers["Pragma"]
+        #if app_globals.cache_enabled: # AllanC - at the time of remming this production.ini had beaker.cache = False ... we want this cached for now. This should re-instated once the cache framework is finished
+        from pylons import request, response
+        if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
+            response.headers["Cache-Control"] = "public,max-age=%d" % time
+            response.headers["Vary"] = "Cookie"
+            if "Pragma" in response.headers:
+                del response.headers["Pragma"]
         return func(*args, **kwargs)
     return decorator(_cacheable)
 
