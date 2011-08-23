@@ -65,15 +65,15 @@
                     cb_list = d['featured'][title]
                     title   = list_names.get(title,title)
                 %>
-                ${frag_list.content_list(cb_list, title, creator=1)}
+                ${frag_list.content_list(cb_list, title, creator=True, show_count=False)}
             </%def>
             
             ${featured_list('recent'            )}
             
             
             <div style="clear:both; margin-top   : 1.4em;"></div>
-            <div style="float:left;  width:48%;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'))}</div>
-            <div style="float:right; width:48%;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ))}</div>
+            <div style="float:left;  width:48%;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'), show_count=False)}</div>
+            <div style="float:right; width:48%;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ), show_count=False)}</div>
             <div style="clear:both; margin-bottom: 0em;"></div>
             
             ${featured_list('recent_assignments')}
