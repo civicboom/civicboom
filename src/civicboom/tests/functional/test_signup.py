@@ -178,10 +178,10 @@ class TestSignup(TestController):
         #email_response = getLastEmail()
         #self.assertIn('civicboom', email_response.content_text)
         
-        self.log_in_as('test_signup', 'passwordß')
+        self.log_in_as('test_signup', u'passwordß')
         
         # Test lowercase normalisation
-        self.log_in_as('TeSt_SiGnUp', 'passwordß')
+        self.log_in_as('TeSt_SiGnUp', u'passwordß')
 
     #---------------------------------------------------------------------------
     # Signup & autofollow user
