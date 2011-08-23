@@ -97,8 +97,8 @@ class TestSignup(TestController):
         response = self.app.post(
             link,
             params={
-                'password'        : u'ßßßßßßßß',
-                'password_confirm': u'ßßßßßßßß', # Passwords should not contain entirely of a single repeated character
+                'password'        : 'ßßßßßßßß',
+                'password_confirm': 'ßßßßßßßß', # Passwords should not contain entirely of a single repeated character
                 'dob'             : u'01-01-1980',
                 'terms'           : u'checked',
                 'help_type'       : u'ind',
@@ -166,8 +166,8 @@ class TestSignup(TestController):
         response = self.app.post(
             link,
             params={
-                'password'        : u'passwordß', # AllanC - allow unicode passwords in signup
-                'password_confirm': u'passwordß',
+                'password'        : 'passwordß', # AllanC - allow unicode passwords in signup
+                'password_confirm': 'passwordß',
                 'dob'             : u'1980-01-01',
                 'name'            : u'This is my full name',
                 'terms'           : u'checked',
@@ -178,10 +178,10 @@ class TestSignup(TestController):
         #email_response = getLastEmail()
         #self.assertIn('civicboom', email_response.content_text)
         
-        self.log_in_as('test_signup', u'passwordß')
+        self.log_in_as('test_signup', 'passwordß')
         
         # Test lowercase normalisation
-        self.log_in_as('TeSt_SiGnUp', u'passwordß')
+        self.log_in_as('TeSt_SiGnUp', 'passwordß')
 
     #---------------------------------------------------------------------------
     # Signup & autofollow user
