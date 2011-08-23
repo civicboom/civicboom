@@ -435,17 +435,15 @@ class CreatorFilter(Filter):
 
     @staticmethod
     def from_string(s):
-        if s.isdigit():
-            return CreatorFilter(int(s)) # AllanC - short term optimisation to stop normalized string instances triggering a DB get for members every time
-            # WARNING! TODO!! Automated tests! This may fail for usernames that are entirely numerical ... testing needed!!
-        if s == "me":
-            m = c.logged_in_persona
-        else:
-            m = get_member(s)
-        if m:
-            return CreatorFilter(m.id)
+        try:
+            s = s.id
+        except:
+            pass
+        #if s == "me":
+        #    s = c.logged_in_persona.id # AllanC - this is dangerious for cache - should be normalized beforehand
+        return CreatorFilter(s)
 
-        raise FilterException("Member not found: %s" % s)
+        #raise FilterException("Member not found: %s" % s) # AllanC - unreachable, no call of get_member to be none
 
     def __unicode__(self):
         return "Content.creator_id = '%s'" % self.creator_id
@@ -464,15 +462,14 @@ class BoomedByFilter(Filter):
 
     @staticmethod
     def from_string(s):
-        if s.isdigit():
-            return BoomedByFilter(int(s))
-            # WARNING! TODO!! Automated tests! This may fail for usernames that are entirely numerical ... testing needed!!
-        
-        m = get_member(s)
-        if m:
-            return BoomedByFilter(m.id)
-
-        raise FilterException("Member not found: %s" % s)
+        try:
+            s = s.id
+        except:
+            pass
+        #if s == "me":
+        #    s = c.logged_in_persona.id # AllanC - this is dangerious for cache - should be normalized beforehand
+        return BoomedByFilter(s)
+        #raise FilterException("Member not found: %s" % s) # AllanC - we are not calling get_member, so get_member cant return none and this execption cannot be called
 
     def __unicode__(self):
         return "FIXME" # Content.id in '%s'" % self.boomer_id

@@ -222,6 +222,13 @@ class ContentsController(BaseController):
         if kwargs.get('list') == 'responses': # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
             kwargs['include_fields'] += ",parent"
 
+        # Replace instances of 'me' with current username
+        for key, value in kwargs.iteritems():
+            if value == 'me':
+                if c.logged_in_persona:
+                    kwargs[key] = c.logged_in_persona # Member object will get normalized down to str in normalize for cache later
+                else:
+                    raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
 
         creator = None
 
@@ -236,16 +243,8 @@ class ContentsController(BaseController):
         except Exception as e:
             user_log.exception("Error searching:")
 
-        #try:
         if kwargs.get('creator'):
             creator = get_member(kwargs['creator'])
-            # AllanC - why the **** was there here? ... by using creator.username it triggers WAY more calls to get_member in an attempt to get the member_id
-            #          I think it was here so that the kwargs returned in the list source had the username. The username is more meaningful than the member_id ... but the id is WAY more efficent
-            #if creator:
-            #    kwargs['creator'] = creator.id # Repace creator kwarg input with the normalised form
-            #kwargs['creator'] = normalize_member(creator) # normalize creator param for search # AllanC - will be normalize with the other fields later
-        #except Exception as e:
-        #    user_log.exception("Error searching:")
         
         if creator:
             if c.logged_in_persona == creator:
@@ -256,7 +255,7 @@ class ContentsController(BaseController):
 
         # Create Cache key based on kwargs -------------------------------------
         
-        kwargs = normalize_kwargs_for_cache(kwargs) # This string's all args and gets id from any objects
+        kwargs = normalize_kwargs_for_cache(kwargs) # This str()'s all kwargs and gets id from any objects
 
         cache_key = ''
         if _filter:

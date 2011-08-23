@@ -17,11 +17,8 @@ def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs=
     kwargs = {}
     for key, value in source_kwargs.iteritems():
         if not (key in kwargs_to_exclude_in_api_output or key.startswith('_')):
-            try:
-                #value = value.__db_index__()
-                value = value.id
-            except Exception as e:
-                pass
+            try   : value = value.id # AllanC - get id's of any object types
+            except: pass
             # AllanC - it may be wise here to look to all objects that are ok .. like int, float, date ... but raise warnings on actual objects that arrive at this point
             value = unicode(value)
             if value:
