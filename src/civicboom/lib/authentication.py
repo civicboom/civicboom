@@ -26,6 +26,7 @@ from cbutils.misc import make_username
 # Other imports
 from sqlalchemy import or_, and_
 from sqlalchemy.orm import join
+from sqlalchemy.orm.exc import NoResultFound
 
 # Pyhton package imports
 import hashlib
@@ -44,7 +45,7 @@ user_log = logging.getLogger("user")
 #-------------------------------------------------------------------------------
 
 def encode_plain_text_password(password):
-    return hashlib.sha1(password).hexdigest()
+    return hashlib.sha1(password.encode('utf-8')).hexdigest() # The encode utf-8 is needed because sha1 goes mad about non ascii characters
 
 
 def get_user_and_check_password(username, password):
@@ -57,9 +58,8 @@ def get_user_and_check_password(username, password):
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
         q = q.filter(UserLogin.token == encode_plain_text_password(password))
-        q = q.one()
-        return q
-    except:
+        return q.one()
+    except NoResultFound:
         # AllanC - Added fallback to search for email as some users get confised as to how to identify themselfs
         #          emails are not indexed? performance? using this should be safe as our username policy prohibits '@' and '.'
         try:
@@ -68,9 +68,8 @@ def get_user_and_check_password(username, password):
             q = q.filter(User.status     == 'active'  )
             q = q.filter(UserLogin.type  == 'password')
             q = q.filter(UserLogin.token == encode_plain_text_password(password))
-            q = q.one()
-            return q
-        except:
+            return q.one()
+        except NoResultFound:
             return None
 
 
@@ -85,7 +84,7 @@ def get_user_from_openid_identifyer(identifyer):
         q = q.filter(UserLogin.token == identifyer )
         q = q.one()
         return q
-    except:
+    except NoResultFound:
         return None
 
 
