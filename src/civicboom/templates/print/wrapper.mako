@@ -1,11 +1,11 @@
 <html>
     <head>
         <title></title>
-        <link rel="stylesheet" type="text/css" href="https://localhost/styles/common/yui-3.2.0-reset-fonts.css?ut=1310987217" />
-        <link rel="stylesheet" type="text/css" href="https://localhost/styles/common/layout2.css" />
-        <link rel="stylesheet" type="text/css" href="https://localhost/styles/web/frag_content2.css?ut=1312379801" />
-        <link rel="stylesheet" type="text/css" href="https://localhost/styles/web/frags2.css?ut=1312379801" />
-        <link rel="stylesheet" type="text/css" href="https://localhost/styles/web/frag_lists2.css?ut=1312379801" />
+        <link rel="stylesheet" type="text/css" href="http://localhost/styles/common/yui-3.2.0-reset-fonts.css?ut=1310987217" />
+        <link rel="stylesheet" type="text/css" href="http://localhost/styles/common/layout2.css" />
+        <link rel="stylesheet" type="text/css" href="http://localhost/styles/web/frag_content2.css?ut=1312379801" />
+        <link rel="stylesheet" type="text/css" href="http://localhost/styles/web/frags2.css?ut=1312379801" />
+        <link rel="stylesheet" type="text/css" href="http://localhost/styles/web/frag_lists2.css?ut=1312379801" />
         <style type="text/css">
             .frag_container {
                 width: auto !important;
