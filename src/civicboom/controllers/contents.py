@@ -284,7 +284,7 @@ class ContentsController(BaseController):
                 results = results.filter(Content.__type__!='draft') # Don't show drafts to anyone other than the creator
     
             # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
-            for col in ['creator', 'attachments', 'tags']:
+            for col in ['creator', 'attachments', 'tags', 'parent']:
                 if col in kwargs.get('include_fields', []):
                     results = results.options(joinedload(getattr(Content, col)))
     
