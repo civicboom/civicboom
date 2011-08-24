@@ -29,6 +29,7 @@
     <form action="${url(controller='misc', action='search_redirector')}">
         <input type="search" name="term" placeholder="${_("Find _assignments, _articles and _members")}" class="search_input">
         <input type="submit" name="type" class="button b0" value="V">
+## IMPORTANT!!! These need to match up with controllers/misc.py:search_redirector()
         <input type="submit" name="type" class="button b1" value="${_("_Assignments")}">
         <input type="submit" name="type" class="button b2" value="${_("_Articles")}">
         <input type="submit" name="type" class="button b3" value="${_("_Users / _Groups")}">
