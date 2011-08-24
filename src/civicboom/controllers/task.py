@@ -205,6 +205,10 @@ class TaskController(BaseController):
             timedelta = timedelta_str(timedelta)
             set_now(datetime.datetime.now() + timedelta)
         return response_completed_ok
+    
+    def print_account_admin_members(self):
+        from civicboom.model.member import PaymentAccount
+        print Session.query(PaymentAccount).filter(PaymentAccount.id==1).first().get_admins()
     #---------------------------------------------------------------------------
     # Run the below billing tasks (easier for overnight batches
     #---------------------------------------------------------------------------
@@ -320,13 +324,16 @@ class TaskController(BaseController):
                     Session.commit()
                     if new_status == "failed":
                         print "Send DISABLED"
+                        account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_disabled.mako', extra_vars={}))
                         pass #Send account disabled email
-                    elif new_status == "invoiced":
-                        print "Send INVOICED"
-                        pass #Send account invoiced email
                     elif new_status == "waiting":
                         print "Send WAITING"
+                        account.send_email_admins(subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
                         pass #Send account due email
+                    elif new_status == "invoiced":
+                        print "Send INVOICED"
+                        account.send_email_admins(subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
+                        pass #Send account invoiced email
                     elif new_status == "ok":
                         print "Send ALL OK THANK YOU"
                         pass #Send account all ok, thank you, email
@@ -380,10 +387,12 @@ class TaskController(BaseController):
         billing_accounts = Session.query(BillingAccount).filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active')).all()
         
         for billing_account in billing_accounts:
-            if billing_account.provider == 'paypal-recurring':
-                billing_account.provider = 'paypal_recurring'
             
-            if billing_account.provider == 'paypal_recurring' or billing_account.provider == 'paypal-recurring':
+            if billing_account.provider in payment.check_recurrings:
+                pass
+                # paypal_recurring_check CONFUSED, should be calling this here?
+            
+            if billing_account.provider == 'paypal_recurring':
                 try:
                     response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
                 except:
