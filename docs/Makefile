@@ -9,3 +9,6 @@ html/all.html: *.rst
 html/%.html: %.rst
 	mkdir -p html
 	rst2html $< $@
+
+clean:
+	rm -rf html

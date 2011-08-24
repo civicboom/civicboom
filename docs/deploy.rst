@@ -44,19 +44,12 @@ Get a list of servers
   - civicboom
   - hosting -> cloud servers -> server instances
 
-- OLD: for a realtime list, log into the ec2 control panel
-
-  - https://console.aws.amazon.com/ec2/home?region=eu-west-1
-  - civicboom@gmail.com
-  - instances -> select one -> instance actions -> connect
-
 
 upgrade the servers (web / api nodes)
 -------------------------------------
 
 - ssh into the server
 - ``cb-install``, then follow prompts to upgrade (or downgrade) the installed packages
-
 - check that the site is working by viewing that specific server (eg http://webapi2.civicboom.com/contents.json).
   Doing one at a time means that the load balancer always has at least one active server to point to
 
