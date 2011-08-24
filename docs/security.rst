@@ -1,5 +1,5 @@
-Server Security / Reliability Notes
-===================================
+Server Security Notes
+=====================
 
 Client Side
 ~~~~~~~~~~~
@@ -39,12 +39,6 @@ Back-End
   - There are logs of which administrators are logging in to which
     servers and what they're doing
 
-
-Backups
-~~~~~~~
-- Off-site backups are taken every 4 hours and archived
-
-
 Data locations
 ~~~~~~~~~~~~~~
 - Live web site:
@@ -55,39 +49,3 @@ Data locations
   - Our office in Kent
 - Extra bits:
   - Bytemark's datacenter in Manchester
-
-
-Reliability
-~~~~~~~~~~~
-- With multiple servers, they can be taken out of action one at a time, upgrades
-  done, and put back into service; that way, the service as a whole is always up
-  - Alterations to the database schema require all database servers to be updated
-    at once
-- With multiple servers, errors can be automatically detected and a crashed server
-  can be routed around
-
-- If a server is rebooted in a controlled way, uploads in progress can be allowed
-  to finish; if it crashes, they will need restarting
-  - Article text is saved as drafts, so a lost connection won't lose everything
-
-
-Scaling
-~~~~~~~
-- Pretty much every aspect of the site scales well (see network.svg)
-
-- The only bit that isn't trivial is the users & content database, as all the data
-  is inter-related, frequently updated, and needs to be kept in sync
-  - the simplest way to deal with this is to avoid touching the database; simple
-    reads should be cached inside pylons, or with memcache, or somesuch
-  - read-only slaves can handle the more complex queries, at the cost of a few ms
-    lag in updates
-  - non-urgent data writes (eg, page view counts) can be queued and written in
-    batches
-  - data writing speed can be scaled by using faster disks, RAID, SSDs, splitting
-    tables over multiple disks, etc; but each increase in speed is more expensive
-    than the last, and is ultimately limited to a single server
-    - Based on experience with other projects, I would estimate that a dedicated
-      database server with SSDs should handle 5000, maybe even 10,000 concurrent
-      users before we hit a wall with disk speed. It would be a pretty expensive
-      single server though, where everything else is clusters of cheap parts.
-
