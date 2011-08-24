@@ -32,16 +32,30 @@ code comment keywords
 ~~~~~~~~~~~~~~~~~~~~~
 Not set in stone, but consistency makes it easier to spot:
 
-  NOTE - an important bit of information that is key to this code but may not
-         be obvious just by looking at it. Assumptions should be noted (and /
-         or assert()'ed)
-  TODO - for when a developer knows what needs doing, but hasn't got around
-         to it yet
-  BUG  - for when a problem is known and reported and pinpointed, but can't
-         be solved immediately
-  ???? - for when the code works, but really needs rewriting
-  ???? - workarounds for bugs in external libraries, this code can be removed
-         once the library is updated, or we ship a custom fixed version
-  ???? - workarounds for bugs in IE, this code can be removed when IE is dead
-  name - a developer's login name followed by a dash indicates that they are
-         voicing an opinion.
+  NOTE
+    an important bit of information that is key to this code but may not
+    be obvious just by looking at it. Assumptions should be noted (and /
+    or assert()'ed)
+
+  TODO
+    for when a developer knows what needs doing, but hasn't got around
+    to it yet
+
+  BUG
+    for when a problem is known and reported and pinpointed, but can't
+    be solved immediately
+
+  undecided
+    for when the code works, but really needs rewriting
+
+  undecided
+    workarounds for bugs in external libraries, this code can be removed
+    once the library is updated, or we ship a custom fixed version
+
+  undecided
+    workarounds for bugs in IE, this code can be removed when IE is dead
+
+  name
+    a developer's login name followed by a dash indicates that they are
+    voicing an opinion.
+

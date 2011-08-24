@@ -362,7 +362,7 @@
                         % if content.get('parent'):
                             ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
                         % else:
-                            content
+                            ${_('a _assignment')}
                         % endif
                     </a>
                 % endif
