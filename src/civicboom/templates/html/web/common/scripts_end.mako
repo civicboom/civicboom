@@ -25,7 +25,7 @@
 		<script src="/javascript/jquery.limit-1.2.js"></script>
 		<script src="/javascript/jquery.getUrlParam.js"></script>
 		<script src="/javascript/jquery.cookie.js"></script>
-		<script src="/javascript/jquery.jcarousel.min.js"></script>
+		<script src="/javascript/jquery.jcarousel.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
 		<script src="/javascript/rpx.js"></script>

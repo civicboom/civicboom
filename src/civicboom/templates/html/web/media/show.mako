@@ -2,12 +2,6 @@
 
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 
-## Include caousel javascripts in header
-<%def name="scripts_head()">
-    <script type='text/javascript' src='/javascript/jquery-1.5.1.js'        ></script>
-    <script type='text/javascript' src='/javascript/jquery.jcarousel.min.js'></script>
-</%def>
-
 <%def name="title()">${_("Media Viewer")}</%def>
 
 <%def name="preview(media)">
@@ -88,6 +82,7 @@
 ## ---
 <%def name="media_carousel(contents, content_id)">
     % if len(contents):
+    
         <%
             uid = h.uniqueish_id(content_id)
         %>

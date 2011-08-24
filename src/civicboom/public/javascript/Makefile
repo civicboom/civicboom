@@ -21,7 +21,7 @@ FOOT=\
 	jquery.limit-1.2.js \
 	jquery.getUrlParam.js \
 	jquery.cookie.js \
-	jquery.jcarousel.min.js \
+	jquery.jcarousel.js \
 	invite.js \
 	mobile.js \
 	rpx.js \

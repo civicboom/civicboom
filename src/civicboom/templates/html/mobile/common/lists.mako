@@ -116,13 +116,14 @@
             <p>${item['content']}</p>
             <p>${item['timestamp']}</p>
         </a>
-        <%doc>
-        <a>
-        ${h.form(url('message', id=item['id'], format='redirect'), method="DELETE")}
-            <input type="submit" value="Delete">
-        ${h.end_form()}
-        </a>
-        </%doc>
+        
+        ${h.secure_link(
+            h.args_to_tuple('message', id=item['id'], format='redirect'),
+            method="DELETE",
+            title=_("Delete"),
+            rel="external",
+            value=h.literal("<a>smoosh</a>"),
+        )}
     </li>
 </%def>
 
