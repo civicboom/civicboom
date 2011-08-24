@@ -2,6 +2,7 @@ from civicboom import model
 from civicboom.lib.base import render
 from formalchemy import forms, templates, fields
 from civicboom.forms.renderers import *
+from civicboom.forms.renderers import CheckBoxSetRelationRenderer, RadioSetRelationRenderer
 
 
 class FieldSet(forms.FieldSet):
@@ -134,6 +135,7 @@ Member.configure(include=[
         Member.username,
         Member.name,
         Member.join_date,
+        Member.payment_account.with_renderer(RadioSetRelationRenderer),
         ])
 
 User = FieldSet(model.User)
@@ -145,6 +147,7 @@ User.configure(include=[
         User.email,
         User.email_unverified,
         User.status,
+        User.payment_account,
         ])
 
 Group = FieldSet(model.Group)
@@ -158,6 +161,7 @@ Group.configure(include=[
         Group.member_visibility,
         Group.default_content_visibility,
         Group.default_role,
+        Group.payment_account,
         ])
 
 Message = FieldSet(model.Message)
@@ -190,3 +194,32 @@ Media.configure(include=[
 
 License = FieldSet(model.License)
 License.engine = CustomTemplateEngine("license")
+
+
+
+PaymentAccount = FieldSet(model.PaymentAccount)
+PaymentAccount.engine = CustomTemplateEngine('payment_account')
+PaymentAccount.configure(include=[
+        PaymentAccount.type,
+        PaymentAccount.billing_status,
+        PaymentAccount.start_date,
+        PaymentAccount.currency,
+        PaymentAccount.frequency,
+        PaymentAccount.taxable,
+        PaymentAccount.tax_rate_code,
+        PaymentAccount.members.with_renderer(CheckBoxSetRelationRenderer),
+        PaymentAccount.billing_accounts.with_renderer(CheckBoxSetRelationRenderer),
+        ])
+
+Invoice = FieldSet(model.Invoice)
+Invoice.engine = CustomTemplateEngine('invoice')
+Invoice.configure(include=[
+        Invoice.id,
+        Invoice.payment_account,
+        Invoice.status,
+        Invoice.timestamp,
+        Invoice.currency,
+        Invoice.taxable,
+        Invoice.tax_rate_code,
+        Invoice.tax_rate,
+        ])

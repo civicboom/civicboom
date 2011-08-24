@@ -128,3 +128,16 @@ PaymentAccountGrid.configure(include=[
         PaymentAccountGrid.taxable,
         PaymentAccountGrid.tax_rate_code,
         ])
+
+InvoiceGrid = Grid(model.Invoice)
+InvoiceGrid.configure(include=[
+        InvoiceGrid.id,
+        InvoiceGrid.payment_account,
+        InvoiceGrid.status,
+        InvoiceGrid.timestamp,
+        InvoiceGrid.due_date,
+        InvoiceGrid.currency,
+        InvoiceGrid.taxable,
+        InvoiceGrid.tax_rate_code,
+        InvoiceGrid.tax_rate,
+        ])
