@@ -66,7 +66,7 @@ Same for grids::
     >>> # grid
     >>> grid = couchdb.Grid(Pet, [p, Pet()])
     >>> grid.configure(include=[grid.name, grid.type, grid.birthdate, grid.weight_in_pounds, grid.friends])
-    >>> print grid.render() # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+    >>> print grid.render() # doctest: +SKIP +ELLIPSIS +NORMALIZE_WHITESPACE
     <thead>
       <tr>
           <th>Name</th>
@@ -98,7 +98,7 @@ Same for grids::
 from formalchemy.forms import FieldSet as BaseFieldSet
 from formalchemy.tables import Grid as BaseGrid
 from formalchemy.fields import Field as BaseField
-from formalchemy.base import SimpleMultiDict
+from formalchemy.forms import SimpleMultiDict
 from formalchemy import fields
 from formalchemy import validators
 from formalchemy import fatypes
@@ -193,6 +193,7 @@ class Field(BaseField):
             kwargs['multiple'] = True
         BaseField.__init__(self, *args, **kwargs)
 
+    @property
     def value(self):
         if not self.is_readonly() and self.parent.data is not None:
             v = self._deserialize()
@@ -200,8 +201,8 @@ class Field(BaseField):
                 return v
         value = getattr(self.model, self.name)
         return _stringify(value)
-    value = property(value)
 
+    @property
     def raw_value(self):
         try:
             value = getattr(self.model, self.name)
@@ -211,7 +212,6 @@ class Field(BaseField):
         if callable(self._value):
             return self._value(self.model)
         return self._value
-    raw_value = property(raw_value)
 
     def sync(self):
         """Set the attribute's value in `model` to the value given in `data`"""
@@ -226,24 +226,16 @@ class Field(BaseField):
 
 class FieldSet(BaseFieldSet):
     """See :class:`~formalchemy.forms.FieldSet`"""
-    def __init__(self, model, session=None, data=None, prefix=None):
-        self._fields = OrderedDict()
-        self._render_fields = OrderedDict()
-        self.model = self.session = None
+    __sa__ = False
+    def __init__(self, model, **kwargs):
+        BaseFieldSet.__init__(self, model, **kwargs)
         if model is not None and isinstance(model, schema.Document):
-            BaseFieldSet.rebind(self, model.__class__, data=data)
+            BaseFieldSet.rebind(self, model.__class__, data=kwargs.get('data', None))
             self.doc = model.__class__
             self._bound_pk = fields._pk(model)
         else:
-            BaseFieldSet.rebind(self, model, data=data)
+            BaseFieldSet.rebind(self, model, data=kwargs.get('data', None))
             self.doc = model
-        self.model = model
-        self.prefix = prefix
-        self.validator = None
-        self.readonly = False
-        self.focus = True
-        self._errors = []
-        focus = True
         values = self.doc._properties.values()
         values.sort(lambda a, b: cmp(a.creation_counter, b.creation_counter))
         for v in values:
@@ -315,9 +307,9 @@ class FieldSet(BaseFieldSet):
 
 class Grid(BaseGrid, FieldSet):
     """See :class:`~formalchemy.tables.Grid`"""
-    def __init__(self, cls, instances=[], session=None, data=None, prefix=None):
-        FieldSet.__init__(self, cls, session, data, prefix)
-        self.rows = instances
+    def __init__(self, cls, instances=None, **kwargs):
+        FieldSet.__init__(self, cls, **kwargs)
+        self.rows = instances or []
         self.readonly = False
         self._errors = {}
 

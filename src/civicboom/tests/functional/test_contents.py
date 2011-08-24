@@ -8,6 +8,7 @@ import warnings
 class TestContentsController(TestController):
     
     def test_character_escaping(self):
+        # AllanC - We should be able to send actual unicode in content ... we should be able to send '€' ... this may need additional investigation
         before = u'&euro;<moose><p class="TEST">&</p>' # humm .. I wanted to put an actuall euro in ... humm ...  is this an error with the request generator not accepting unicode? or our site? €
         after  = u'&euro;<p>&amp;</p>' # &euro; should be preserved and <tag should be stripped> & should be escaped
         
@@ -16,6 +17,28 @@ class TestContentsController(TestController):
         response_json = json.loads(response.body)
         self.assertIn(after, response_json['data']['content']['content']) 
     
+    def test_index(self):
+        
+        # AllanC - More index tests needed!
+        
+        #-----
+        # Lists of drafts should not have other article types in them .. especially not for logged out users!!!
+        
+        self.log_in_as('unittest')
+        response = self.app.get(url('contents', creator='unittest', list="drafts", format='json'))
+        response_json = json.loads(response.body)
+        for draft in response_json['data']['list']['items']:
+            self.assertEqual(draft['type'],'draft')
+        
+        self.log_out()
+        response = self.app.get(url('contents', creator='unittest', list='drafts', format='json'))
+        response_json = json.loads(response.body)
+        for draft in response_json['data']['list']['items']:
+            self.assertEqual(draft['type'],'draft')
+        self.assertEquals(response_json['data']['list']['count'], 0) # Anon users can never see drafts (this could change in future with public drafts)
+        
+        
+        
     
     def test_all(self):
         self.part_setup()

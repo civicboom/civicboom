@@ -133,6 +133,9 @@ def update_dict(dict_a, dict_b):
 def obj_to_dict(obj, dict_fields):
     """
     Used to convert a python object to a python dict of strings, but only including requested fields
+    dict_fields is a dictionary of functions
+       if a key is set will a null function - it will check if it is a primitive type
+       if a key is set with a function      - that function is used to convert the object to a primitive type
     TODO: currenly does not follow lists or dict, just string dumps .. could be useful in future to recusivly call obj_to_dict
 
     >>> class a:

@@ -3,7 +3,7 @@ HEAD=\
 	swfobject.js \
 	jquery-1.6.2.js \
 	prototypes.js \
-	misc.js\
+	misc.head.js \
 	url_encode.js \
 	cb_frag.js \
 	ajaxError.js \
@@ -24,6 +24,8 @@ FOOT=\
 	jquery.jcarousel.min.js \
 	invite.js \
 	mobile.js \
+	rpx.js \
+	misc.foot.js \
 	gears_init.js \
 	geo.js \
 	OpenLayers.js \
@@ -69,3 +71,9 @@ OpenLayers.js:
 	mv openlayers/build/OpenLayers.js ./
 	patch OpenLayers.js OpenLayers.patch
 	rm -rf openlayers
+
+# the janrain API suggests we link to their servers, but their slow
+# servers are blocking our page rendering speed. Hacky solution:
+# bundle their JS within ours
+rpx.js:
+	wget https://s3.amazonaws.com/static.rpxnow.com/js/lib/rpx.js

@@ -73,7 +73,7 @@ class RegisterController(BaseController):
             c.logged_in_user    = c.new_user #fake logged in user for rendering template
             c.logged_in_persona = c.new_user
         else:
-            abort(403)
+            raise action_error(code=403, message="Unable to verify email hash - it may already have been validated?")
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','name','dob']
@@ -94,7 +94,7 @@ class RegisterController(BaseController):
         schema = build_schema(*c.required_fields)
         schema.fields['terms'] = validators.NotEmpty(messages={'missing': 'You must agree to the terms and conditions'}) # In addtion to required fields add the terms checkbox validator
         schema.fields['name']  = validators.NotEmpty(messages={'missing': 'Please give us your full name as you wish it to appear on your profile'})
-        schema.fields['help_type'] = formencode.validators.OneOf(['org','ind'], messages={'missing': 'Please select a user type'}) #, if_missing='ind'
+        schema.fields['help_type'] = formencode.validators.OneOf(['org','ind'], messages={'missing': 'Please select a help type'}) #, if_missing='ind'
         # schema.fields['help_type'] = validators.NotEmpty(messages={'missing': 'Please select a user type'})
         data = {'register':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='register', template_error='account/register')

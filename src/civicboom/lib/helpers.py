@@ -185,7 +185,10 @@ def wh_url(folder, filename):
     if folder == "public":
         if app_globals.version:
             # in production, serve from a domain without cookies, with package version as cache breaker
-            return proto+config['cdn_url']+"/"+app_globals.version+"/"+filename
+            cdn_url = config['cdn.url']
+            if proto == "https://": # rackspace CDN uses different hostnames for SSL and regular
+                cdn_url = re.sub("\.r\d\d\.", ".ssl.", cdn_url)
+            return proto+cdn_url+"/"+app_globals.version+"/"+filename
         else:  # pragma: no cover - only the production setup is tested
             # in development, serve locally, with update time as cache breaker
             path = os.path.join("civicboom", "public", filename)
@@ -194,7 +197,7 @@ def wh_url(folder, filename):
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:
-        return proto+config["warehouse_url"]+"/"+folder+"/"+filename
+        return proto+config["warehouse.url"]+"/"+folder+"/"+filename
 
 
 def uniqueish_id(*args):
@@ -404,7 +407,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None):
+def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, rel=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -460,6 +463,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         href    = href,
         class_  = css_class + ' secure_show', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
         title   = title,
+        rel     = rel, # Proto: Relational attribute for jquerymobile to disable ajax sumbission
         # AllanC - the beast onclick even below does the following:
         #   - put yes/no proceed message up if specifyed
         #   - check if link has NOT class='disabled'

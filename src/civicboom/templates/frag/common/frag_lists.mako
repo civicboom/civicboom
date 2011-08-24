@@ -117,18 +117,27 @@
         if not count:
             count = len(items)
         
-        # If HREF is a dict then generate two URL's from it
+        # If HREF is a tuple of *args **kwargs then generate two URL's from it
         #  1.) the original compatable call
         #  2.) a json formatted version for the AJAX call
         js_link_to_frag_list = ''
+        href_args   = []
+        href_kwargs = {}
         if isinstance(href, tuple):
             href_args   = href[0]
             href_kwargs = href[1]
+            
+        # If CB list is an API list, it could have kwargs as to how the list is generated, we can recreate the url automatically with these kwargs
+        if not href and isinstance(cb_list, dict) and cb_list.get('kwargs'):
+            href_args   = [cb_list.get('type')] # AllanC - hack - we know the list type 'content' or 'member' we need to put this string in an arg list but also the controllers are called 'contents' and 'members' .. the propper way would be to use the singular pluran data in the url_routing stuff, but this works for now. It may even be worth changing the name on the list from 'content' to 'contents' to match
+            href_kwargs = cb_list.get('kwargs')
+        
+        if href_args or href_kwargs:
             href_kwargs['private'] = True # AllanC - short term hack - infuture this will only be needed on private profile pages, it may help caching if it's not included every time, future investigation needed as private=true may disabled the public cache
             href      = h.url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'
             href_frag = h.url(*href_args, **href_kwargs)
-            js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_1'); return false;" """ % href_frag)
+            js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_2'); return false;" """ % href_frag)
     %>
     % if hide_if_empty and not count:
       % if empty_message:
@@ -178,7 +187,13 @@
                 % endif
             </${type_[0]}>
             % if href and show_heading and len(items) < count:
-            <a href="${href}" ${js_link_to_frag_list} class="link_more">${_("%d more") % (count-len(items))}</a>
+            <a href="${href}" ${js_link_to_frag_list} class="link_more">
+                % if show_count:
+                    ${_("%d more") % (count-len(items))}
+                % else:
+                    ${_("more")}
+                % endif
+            </a>
             % endif
             % if paginate:
                 ${pagination()}
@@ -212,15 +227,19 @@
     <td style="padding-top: 3px;">
         ${member_includes.avatar(member, class_="thumbnail_small")}
     </td>
-    <td style="padding-left: 3px">
-        ## AllanC - short term botch to add follow option to member list
-        ${h.secure_link(
-            h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
-            value           = _('Follow') ,
-            value_formatted = h.literal("<span class='icon16 i_follow' style='float:right;'></span>%s") % '',#_('Follow'),
-            title           = _("Follow") + " " + (member['name'] or member['username']),
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
-        )}
+    <td style="padding-left: 3px">  
+        <% show_type = "[H]" if member.get('type') == "group" else "" %>
+        <span style='float:right;'>
+            ${show_type}
+            ## AllanC - short term botch to add follow option to member list
+            ${h.secure_link(
+                h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
+                value           = _('Follow') ,
+                value_formatted = h.literal("<span class='icon16 i_follow'></span>") % show_type, #_('Follow'),
+                title           = _("Follow") + " " + (member['name'] or member['username']),
+                json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
+            )}
+        </span>
         
         <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
         ${member.get('name')}
@@ -334,27 +353,27 @@
             </a>
             <p class="timestamp">
                 ${timestamp(content)}
-            </p>
-            % if extra_info:
-                % if   content['type']=='article' and (content.get('parent_id') or content.get('parent')):
+                % if content['type']=='article' and (content.get('parent_id') or content.get('parent')):
                     <%
                         (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
                     %>
-                    <p class="extra">${_('In response to:')}
-                        <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
-                            % if content.get('parent'):
+                    ${_('in response to')}
+                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                        % if content.get('parent'):
                             ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
-                            % else:
-                            content
-                            % endif
-                        </a>
-                    </p>
-                % elif content['type']=='article':
+                        % else:
+                            ${_('a _assignment')}
+                        % endif
+                    </a>
+                % endif
+            </p>
+            % if extra_info:
+                % if content['type']=='article':
                     <p class="extra">
-                    ${_('Views')}:${content['views']}
-                    % if content.get('tags'):
-                    , ${_('Tags')}:${content['tags'][:3]}
-                    % endif
+                        % if content.get('tags'):
+                            ${_('Tags')}: ${", ".join(content['tags'][:4])}<br />
+                        % endif
+                        ${_('Views')}: ${content['views']}
                     </p>
                 % elif content['type']=='assignment':
                     <%
@@ -458,6 +477,7 @@
         if not message['read']:
             read_status = 'unread'
 %>
+
 <li class="${read_status}">
     ##<a href="${url('message', id=message['id'])}">
     <div style="float:right;">

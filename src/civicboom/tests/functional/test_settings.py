@@ -366,7 +366,7 @@ class TestSettingsController(TestController):
             params={
                 '_method': 'PUT',
                 '_authentication_token': self.auth_token,
-                'name'    : u'Testing User Testing User',
+                'name'    : u'Mr Unit Test',
             },
             status=200
         )

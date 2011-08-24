@@ -8,6 +8,8 @@ from paste.deploy.converters import asbool
 import redis
 import os
 
+from cbutils.redis_ import redis_from_url
+
 
 class Globals(object):
     """
@@ -30,4 +32,4 @@ class Globals(object):
         self.cache         = CacheManager(**parse_cache_config_options(config))
         self.cache_enabled = asbool(config['beaker.cache.enabled']) # Also used by lib.database
 
-        self.memcache      = redis.Redis(config['service.redis.server'])
+        self.memcache      = redis_from_url(config['worker.queue.url'])

@@ -208,10 +208,10 @@
             <div class="col_left">
             <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
             % if self.member.get('website'):
-                <p class="website"><a href="${self.member['website']}">${self.member['website']}</a></p>
+                <p class="website"><a href="${self.member['website']}" target="_blank">${h.nicen_url(self.member['website'])}</a></p>
             % endif
             % if self.member.get('description'):
-                <p class="description">${h.truncate(self.member['description'], length=500, whole_word=True, indicator='...')}</p>
+                <p class="description">${self.member['description']}</p>
             % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
                 <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
             % else:
@@ -232,7 +232,14 @@
                 )}
                 ##<div style="clear: both;"></div>
             % endif
-            <div class="mo-help">
+            </div>
+            
+            <div class="separator"></div>
+        </div>
+        % if self.attr.share_kwargs:
+            ${share.AddThisLine(**self.attr.share_kwargs)}
+        % endif
+            <span style="float: right; font-size: 1.25em; padding-right: 1.1em;" class="mo-help">
                 <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their content and respond to requests for stories")}</div>
                 <a href="#">
                 <p class="boombox_link">
@@ -243,16 +250,11 @@
                     )}
                 </p>
                 </a>
-            </div>
-            <a href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
-            </div>
-            
+            </span>
+
+            <a style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
+
             <div class="separator"></div>
-        </div>
-        % if self.attr.share_kwargs:
-            ${share.AddThisLine(**self.attr.share_kwargs)}
-        % endif
-        <div class="separator"></div>
         </div>    
         
         ## My requests
@@ -272,13 +274,22 @@
     ## Left col
     <div class="frag_left_col">
     <div class="frag_col">
+        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ## this class attributes in this section are rather important; rather
+        ## than being used for CSS, they are part of the hCard standard, they
+        ## need to stay the same in order for search engines to recognise the
+        ## current page as being a person or organisation's profile
+        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         <div class="frag_col hideable vcard">
         <div class="user-details">
             
-            <span class="name" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
+            <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
             <span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
             % if self.member.get('website'):
-                <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${self.member['website']}</a><br />
+                <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
+            % endif
+            % if self.member.get('google_profile'):
+                <span class="detail-title">${_('Google Profile')}:</span> <a href="${self.member['google_profile']}" rel="me" target="_blank">${self.member['name']}</a><br />
             % endif
             <span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
             % if self.current_user:
@@ -344,8 +355,8 @@
     ${frag_list.member_list_thumbnails(
         d['following'],
         _('Following'),
-        #h.args_to_tuple('member_action', id=self.id, action='following'),
-        h.args_to_tuple('members', followed_by=self.id),
+        ##h.args_to_tuple('member_action', id=self.id, action='following'),
+        #h.args_to_tuple('members', followed_by=self.id), # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
         icon =  'follow'
     )}
     
@@ -357,12 +368,12 @@
            help_classes='mo-help-r mo-help-b'
         )}
     </%def>
-    
+
     ${frag_list.member_list_thumbnails(
         d['followers'] ,
         _('Followers') ,
-        #h.args_to_tuple('member_action', id=self.id, action='followers') ,
-        h.args_to_tuple('members', follower_of=self.id),
+        ##h.args_to_tuple('member_action', id=self.id, action='followers') ,
+        #h.args_to_tuple('members', follower_of=self.id), # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
         icon    = 'follow',
         actions = invite_members_trusted if 'invite_trusted_followers' in self.actions else None ,
     )}
@@ -437,7 +448,7 @@
         ${frag_list.content_list(
             d[list] ,
             description ,
-            h.args_to_tuple('contents', creator=self.id, list=list),
+            #h.args_to_tuple('contents', creator=self.id, list=list), # AllanC - this is no longer needed as the kwargs are provided in the api_list output
             icon = icon ,
             extra_info = True ,
         )}
@@ -449,8 +460,8 @@
         ${frag_list.content_list(
             d['boomed'],
             _('Boomed _content'),
-            #h.args_to_tuple('member_action', id=self.id, action='boomed') ,
-            h.args_to_tuple('contents', boomed_by=self.id) ,
+            #h.args_to_tuple('member_action', id=self.id, action='boomed') , 
+            #h.args_to_tuple('contents', boomed_by=self.id) , # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
             creator = True ,
             icon = 'boom' ,
             extra_info = True ,

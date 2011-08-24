@@ -76,7 +76,11 @@
 
 		@include border_radius($frag-radius);
 
-		td, li, ul {
+    td {
+        padding-bottom: 0.5em;
+    }
+
+		li, ul {
 			padding-bottom: 1em;
 		}
 
@@ -163,21 +167,29 @@
 			.unread      {background-color: #eee;}
 			.source      {float: left;}
 			.target      {float: left;}
-			.subject     {font-weight: bold; background-color: #ccc;}
 			.content a   {font-weight: bold;}
 			.icon_delete {float: right;}
+			
+			.message_subject {
+			   font-size: 110%;
+			}
+			
+			.message_content {
+			   word-break: break-word;
+			}
 		}
 	}
 	
 	/*------------------------------ Members -------------------------------------*/
 	.member {
 		padding-bottom: 0;
+		width: 100%;
 		
 		li {
 			display: inline;
 			
 			.thumbnail {
-				// margin-bottom: 0.2em;
+				margin-bottom: 0.2em;
 			}
 		}
 	}

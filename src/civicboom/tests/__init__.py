@@ -12,8 +12,6 @@ from unittest import TestCase
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
 from pylons import url
-#from pylons import url as url_pylons
-#from civicboom.lib.web import url
 from routes.util import URLGenerator
 
 from civicboom.model      import Message
@@ -24,6 +22,8 @@ from sqlalchemy           import or_, and_, not_, null
 #from webtest import TestApp
 from paste.fixture import TestApp
 import cbutils.worker as worker
+
+from civicboom.lib.database.query_helpers import to_apilist
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
 import re
@@ -189,6 +189,37 @@ class TestController(TestCase):
         )
         #self.assertIn('request', response) # successful "join request" in response
 
+    def create_group(self, username, name=None, description='', join_mode='invite_and_request', default_role='editor', member_visibility='public', default_content_visibility='public'):
+        if not name:
+            name = username
+        response = self.app.post(
+            url('groups', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+                'username'     : username,
+                'name'         : name ,
+                'description'  : description ,
+                'default_role' : default_role ,
+                'join_mode'    : join_mode ,
+                'member_visibility'         : member_visibility , 
+                'default_content_visibility': default_content_visibility ,
+            },
+            status=201
+        )
+        response_json = json.loads(response.body)
+        
+        group_id = int(response_json['data']['id'])
+        self.assertNotEqual(group_id, 0)
+        
+        response = self.app.get(url('group', id=username, format='json'))
+        response_json = json.loads(response.body)
+        self.assertEqual(response_json['data']['member']['username']                  , username                   )
+        self.assertEqual(response_json['data']['member']['join_mode']                 , join_mode                  )
+        self.assertEqual(response_json['data']['member']['default_role']              , default_role               )
+        self.assertEqual(response_json['data']['member']['member_visibility']         , member_visibility          )
+        self.assertEqual(response_json['data']['member']['default_content_visibility'], default_content_visibility )
+        return group_id
+
 
     def sign_up_as(self, username, password=u'password', dob=u'1/1/1980'):
         """
@@ -249,7 +280,13 @@ class TestController(TestCase):
             response_json = json.loads(response.body)
             return response_json['data']
         return response
-
+    
+    def get_comments(self, content_id, format='json'):
+        response      = self.app.get(url('content_action', action='comments', id=content_id, format=format), status=200)
+        if format=='json':
+            response_json = json.loads(response.body)
+            return response_json['data']
+        return response
     
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
@@ -269,6 +306,25 @@ class TestController(TestCase):
         response_json = json.loads(response.body)
         content_id = int(response_json['data']['id'])
         self.assertGreater(content_id, 0)
+        
+        # Check public notifications are generated (for public content)
+        if False: #not kwargs.get('private'): # AllanC - The notification tests are remmed out for now ... multiple tests fail for odd reasons, this needs looking at when we have more time
+            try:
+                follower_id = json.loads(self.app.get(url('member_action', action='followers', id=self.logged_in_as, limit=1, format='json'), status=200).body)['data']['list']['items'][0]['id'] #   get a follower of the creator of this item of content
+                notification = self.getLastNotification(user_id=follower_id) # Get the followers most recent notification
+            except:
+                pass
+            if notification:
+                if type=='article' and kwargs.get('parent_id'):
+                    self.assertIn('response'         , notification['subject'])
+                    self.assertIn('response'         , notification['content'])
+                elif type=='article' or type=='assignment':
+                    self.assertIn('new'              , notification['subject']) # Check the text expected in the notification
+                    self.assertIn('new'              , notification['content'])
+                if kwargs.get('parent_id'):
+                    self.assertIn('/'+kwargs.get('parent_id'), notification['content']) # Check there is a reference to the parent content id
+                self.assertIn('/'+str(content_id), notification['content']) # Check there is a reference to this content id
+        
         return content_id
 
     def update_content(self, id, **kwargs):
@@ -281,6 +337,7 @@ class TestController(TestCase):
             params = params ,
             status = 200    ,
         )
+        # Todo - check notifications
 
     def delete_content(self, id):
         response = self.app.delete(
@@ -315,6 +372,7 @@ class TestController(TestCase):
             self.log_in_as(username)
             self.follower_trust(original_username)
             self.log_in_as(original_username)
+        # Todo - check notifications
             
     
     def unfollow(self, username):
@@ -383,6 +441,7 @@ class TestController(TestCase):
         if len(message_id_list)==1:
             return message_id_list[0]
         return message_id_list
+        # Todo - check email with message content sent?
 
     def get_messages(self, username=None):
         if not username:
@@ -415,7 +474,20 @@ class TestController(TestCase):
             },
             status=201
         )
-        return json.loads(response.body)["data"]["id"]
+        comment_id = json.loads(response.body)["data"]["id"]
+        
+        # Check comment is listed in parent as the latest comment
+        parent_content = self.get_content(content_id)
+        self.assertEqual(parent_content['comments']['items'][-1]['id'], comment_id)
+        
+        # Check the comment notification was generated for the creator of the content being commented on
+        #self.assertEqual(self.get_comments(content_id)['list']['items'][-1]['id'], comment_id) # AllanC - no need to re-get just the comments, we got the whole content object above
+        last_parent_creator_notification = self.getLastNotification(user_id=parent_content['content']['creator']['id'])
+        self.assertIn('comment'          , last_parent_creator_notification['subject'])
+        self.assertIn('commented'        , last_parent_creator_notification['content'])
+        self.assertIn('/'+str(comment_id), last_parent_creator_notification['content'])
+        
+        return comment_id
 
     def accept_assignment(self, id):
         response = self.app.post( # Accept assignment
@@ -464,24 +536,26 @@ class TestController(TestCase):
                 self.log_in_as(old_user, old_password)
         return int(response_json['data']['list']['count'])
     
-    def getLastNotification(self, username=None, password=None):
-        if username:
-            if self.logged_in_as != username:
-                old_user = self.logged_in_as
-                old_password = self.logged_in_password
-                self.log_in_as(username, password)
-        response = self.app.get(
-            url('messages', format='json'),
-            params={
-                'list': 'notification',
-            },
-            status=200
-        )
-        response_json = json.loads(response.body)
-        if username:
-            if self.logged_in_as != old_user:
-                self.log_in_as(old_user, old_password)
-        return response_json['data']['list']['items'][0]
+    def getLastNotification(self, user_id=None):
+        # If user ID given - Get notifications directly from db for that user - we do this because if the user is persona we cant just log in and out to get there notifications
+        if user_id:
+            notification_list = to_apilist(
+                Session.query(Message).filter(and_(Message.source_id==null(), Message.target_id==user_id)).order_by(Message.timestamp.desc()) ,
+                obj_type = 'messages' ,
+                limit    = 3 ,
+            )
+        # Else - get notifications using API for currently logged in user
+        else:
+            response = self.app.get(
+                url('messages', format='json'),
+                params={
+                    'list' : 'notification',
+                    'limit': 3 ,
+                },
+                status=200
+            )
+            notification_list = json.loads(response.body)
+        return notification_list['data']['list']['items'][0]
     
     def invite_user_to(self, type, id, user):
         # Test that we can access the invite page

@@ -1,6 +1,37 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 BODY.c-contents.a-show {
 
     .top_media {
         text-align: center;
+    }
+    
+    .media_list {
+        .media_item {
+            text-align: center;
+            padding-bottom: 1.5em;
+        
+            p.media_item_data {
+                margin: 0;
+            }
+            
+            img {
+                background-color: #eee;
+                border: 10px solid #ccc;
+                @include border_radius(3px);
+
+                margin-bottom: 5px;
+                min-width: 64px;
+                max-width: 128px;
+                min-height: 64px;
+                max-height: 128px;
+            }
+        }
+    }
+    
+    .content_text {
+        margin: auto;
+        word-break: break-word;
     }
 }

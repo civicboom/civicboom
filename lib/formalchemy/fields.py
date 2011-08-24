@@ -12,10 +12,13 @@ from copy import copy, deepcopy
 import datetime
 import warnings
 
+from sqlalchemy.orm.interfaces import MANYTOMANY
+from sqlalchemy.orm.interfaces import ONETOMANY
+from sqlalchemy.orm.interfaces import MANYTOONE
 from sqlalchemy.orm import class_mapper, Query
 from sqlalchemy.orm.attributes import ScalarAttributeImpl, ScalarObjectAttributeImpl, CollectionAttributeImpl, InstrumentedAttribute
 from sqlalchemy.orm.properties import CompositeProperty, ColumnProperty
-from sqlalchemy.exceptions import InvalidRequestError # 0.4 support
+from sqlalchemy import exceptions as sqlalchemy_exceptions
 from formalchemy import helpers as h
 from formalchemy import fatypes, validators
 from formalchemy import config
@@ -36,26 +39,34 @@ __all__ = ['Field', 'FieldRenderer',
 
 
 
-def iterable(item):
-    try:
-        iter(item)
-    except:
-        return False
-    return True
-
 def _stringify(k, null_value=u''):
     if k is None:
         return null_value
-    if isinstance(k, datetime.timedelta):
-        return '%s.%s' % (k.days, k.seconds)
-    elif isinstance(k, str):
+    if isinstance(k, str):
         return unicode(k, config.encoding)
     elif isinstance(k, unicode):
         return k
     elif hasattr(k, '__unicode__'):
         return unicode(k)
+    elif isinstance(k, datetime.timedelta):
+        return '%s.%s' % (k.days, k.seconds)
     else:
         return unicode(str(k), config.encoding)
+
+def _htmlify(k, null_value=u''):
+    if hasattr(k, '__html__'):
+        try:
+            return h.literal(k.__html__())
+        except TypeError:
+            # not callable. skipping
+            pass
+    return _stringify(k, null_value)
+
+class _NoDefault(object):
+    def __repr__(self):
+        return '<NoDefault>'
+NoDefault = _NoDefault()
+del _NoDefault
 
 def deserialize_once(func):
     """Simple deserialization caching decorator.
@@ -67,7 +78,7 @@ def deserialize_once(func):
     def cache(self, *args, **kwargs):
         if hasattr(self, '_deserialization_result'):
             return self._deserialization_result
-               
+
         self._deserialization_result = func(self, *args, **kwargs)
 
         return self._deserialization_result
@@ -88,12 +99,13 @@ class FieldRenderer(object):
         self.field = field
         assert isinstance(self.field, AbstractField)
 
+    @property
     def name(self):
         """Name of rendered input element.
 
         The `name` of a field will always look like:
           [fieldset_prefix-]ModelName-[pk]-fieldname
-        
+
         The fieldset_prefix is defined when instantiating the
         `FieldSet` object, by passing the `prefix=` keyword argument.
 
@@ -112,7 +124,7 @@ class FieldRenderer(object):
          same page. You can however, create more than one object
          of a certain class, provided that you create multiple FieldSet
          instances and pass the `prefix=` keyword argument.
-         
+
          Otherwise, FormAlchemy deals very well with editing multiple
          existing objects of same/different types on the same page,
          without any name clash. Just be careful with multiple object
@@ -125,7 +137,7 @@ class FieldRenderer(object):
         clsname = self.field.model.__class__.__name__
         pk = self.field.parent._bound_pk
         assert pk != ''
-        if isinstance(pk, basestring) or not iterable(pk):
+        if isinstance(pk, basestring) or not hasattr(pk, '__iter__'):
             pk_string = _stringify(pk)
         else:
             # remember to use a delimiter that can be used in the DOM (specifically, no commas).
@@ -134,33 +146,53 @@ class FieldRenderer(object):
             # names for a given model's domain.
             pk_string = u'_'.join([_stringify(k) for k in pk])
 
-        components = [clsname, pk_string, self.field.name]
-        if self.field.parent.prefix:
-            components.insert(0, self.field.parent.prefix)
-        return u"-".join(components)
-    name = property(name)
+        components = dict(model=clsname, pk=pk_string, name=self.field.name)
+        name = self.field.parent._format % components
+        if self.field.parent._prefix is not None:
+            return u'%s-%s' % (self.field.parent._prefix, name)
+        return name
 
-    def _value(self):
+    @property
+    def value(self):
         """
         Submitted value, or field value converted to string.
         Return value is always either None or a string.
         """
         if not self.field.is_readonly() and self.params is not None:
             # submitted value.  do not deserialize here since that requires valid data, which we might not have
-            v = self._serialized_value() 
+            v = self._serialized_value()
         else:
             v = None
         # empty field will be '' -- use default value there, too
-        return v or self._model_value_as_string()
-    _value = property(_value)
+        if v:
+            return v
 
-    def _model_value_as_string(self):
-        if self.field.model_value is None:
+        value = self.field.model_value
+        if value is None:
             return None
         if self.field.is_collection:
-            return [self.stringify_value(v) for v in self.field.model_value]
+            return [self.stringify_value(v) for v in value]
         else:
-            return self.stringify_value(self.field.model_value)
+            return self.stringify_value(value)
+
+    @property
+    def _value(self):
+        warnings.warn('FieldRenderer._value is deprecated. Use '\
+                          'FieldRenderer.value instead')
+        return self.value
+
+    @property
+    def raw_value(self):
+        """return fields field.raw_value (mean real objects, not ForeignKeys)
+        """
+        return self.field.raw_value
+
+    @property
+    def request(self):
+        """return the ``request`` bound to the
+        :class:`~formalchemy.forms.FieldSet`` during
+        :func:`~formalchemy.forms.FieldSet.bind`"""
+        return self.field.parent._request
 
     def get_translator(self, **kwargs):
         """return a GNUTranslations object in the most convenient way
@@ -171,19 +203,12 @@ class FieldRenderer(object):
             lang = kwargs.pop('lang')
         else:
             lang = 'en'
-        return get_translator(lang=lang).gettext
-
-    def errors(self):
-        """Return the errors on the FieldSet if any. Useful to know
-        if you're redisplaying a form, or showing up a fresh one.
-        """
-        return self.field.parent.errors
-    errors = property(errors)
+        return get_translator(lang=lang, request=self.request)
 
     def render(self, **kwargs):
         """
         Render the field.  Use `self.name` to get a unique name for the
-        input element and id.  `self._value` may also be useful if
+        input element and id.  `self.value` may also be useful if
         you are not rendering multiple input elements.
 
         When rendering, you can verify `self.errors` to know
@@ -195,22 +220,19 @@ class FieldRenderer(object):
 
     def render_readonly(self, **kwargs):
         """render a string representation of the field value"""
-        value = self.field.raw_value
+        value = self.raw_value
         if value is None:
             return ''
-        if self.field.is_scalar_relation:
-            q = self.field.query(self.field.relation_type())
-            v = q.get(value)
-            return _stringify(v)
         if isinstance(value, list):
-            return u', '.join([_stringify(item) for item in value])
+            return h.literal(', ').join([self.stringify_value(item, as_html=True) for item in value])
         if isinstance(value, unicode):
             return value
-        return _stringify(value)
+        return self.stringify_value(value, as_html=True)
 
+    @property
     def params(self):
         """This gives access to the POSTed data, as received from
-        the web user. You should call `.getone`, or `.getall` to 
+        the web user. You should call `.getone`, or `.getall` to
         retrieve a single value or multiple values for a given
         key.
 
@@ -223,16 +245,12 @@ class FieldRenderer(object):
         to catch all the values for the renderer's form entry.
         """
         return self.field.parent.data
-    params = property(params)
 
-    # DEPRECATED, for backwards compatibility
+    @property
     def _params(self):
-        """DEPRECATED: for backwards compatibility only."""
-        import warnings
         warnings.warn('FieldRenderer._params is deprecated. Use '\
                           'FieldRenderer.params instead')
         return self.params
-    _params = property(_params)
 
     def _serialized_value(self):
         """
@@ -253,20 +271,12 @@ class FieldRenderer(object):
         The default _serialized_value returns the submitted value(s)
         in the input element corresponding to self.name.
         """
-        if self.field.is_collection:
-            return self.params.getall(self.name)
-        return self.params.getone(self.name)
-
-    def value_objects(self):
-        """Same as `value`, except returns a list of objects instead of 
-        primary keys, when working with ForeignKeys.
-
-        Use this when your `deserialize` or `render` functions manipulates
-        ForeignKey objects; adding, removing or changing display according
-        to their contents.
-        """
-        return self.field.value_objects
-    value_objects = property(value_objects)
+        try:
+            if self.field.is_collection:
+                return self.params.getall(self.name)
+            return self.params.getone(self.name)
+        except KeyError:
+            raise KeyError('%s not found in %r' % (self.name, self.params))
 
     def deserialize(self):
         """Turns the user-submitted data into a Python value.
@@ -307,7 +317,7 @@ class FieldRenderer(object):
         decorator, provided using:
 
         .. sourcecode:: py
-       
+
           from formalchemy.fields import deserialize_once
 
           @deserialize_once
@@ -370,7 +380,10 @@ class FieldRenderer(object):
             return datetime.datetime(dt.year, dt.month, dt.day, tm.hour, tm.minute, tm.second)
 
         return data
-    def stringify_value(self, v):
+
+    def stringify_value(self, v, as_html=False):
+        if as_html:
+            return _htmlify(v, null_value=self.field._null_option[1])
         return _stringify(v, null_value=self.field._null_option[1])
 
     def __repr__(self):
@@ -397,24 +410,24 @@ class EscapingReadonlyRenderer(FieldRenderer):
 
 class TextFieldRenderer(FieldRenderer):
     """render a field as a text field"""
+    @property
     def length(self):
         return self.field.type.length
-    length = property(length)
 
     def render(self, **kwargs):
-        return h.text_field(self.name, value=self._value, maxlength=self.length, **kwargs)
+        return h.text_field(self.name, value=self.value, maxlength=self.length, **kwargs)
 
 
 class IntegerFieldRenderer(FieldRenderer):
     """render an integer as a text field"""
     def render(self, **kwargs):
-        return h.text_field(self.name, value=self._value, **kwargs)
+        return h.text_field(self.name, value=self.value, **kwargs)
 
 
 class FloatFieldRenderer(FieldRenderer):
     """render a float as a text field"""
     def render(self, **kwargs):
-        return h.text_field(self.name, value=self._value, **kwargs)
+        return h.text_field(self.name, value=self.value, **kwargs)
 
 class IntervalFieldRenderer(FloatFieldRenderer):
     """render an interval as a text field"""
@@ -428,7 +441,7 @@ class IntervalFieldRenderer(FloatFieldRenderer):
 class PasswordFieldRenderer(TextFieldRenderer):
     """Render a password field"""
     def render(self, **kwargs):
-        return h.password_field(self.name, value=self._value, maxlength=self.length, **kwargs)
+        return h.password_field(self.name, value=self.value, maxlength=self.length, **kwargs)
     def render_readonly(self):
         return '*'*6
 
@@ -437,21 +450,16 @@ class TextAreaFieldRenderer(FieldRenderer):
     def render(self, **kwargs):
         if isinstance(kwargs.get('size'), tuple):
             kwargs['size'] = 'x'.join([str(i) for i in kwargs['size']])
-        return h.text_area(self.name, content=self._value, **kwargs)
-
-
-class HiddenFieldRenderer(FieldRenderer):
-    """render a field as an hidden field"""
-    def render(self, **kwargs):
-        return h.hidden_field(self.name, value=self._value, **kwargs)
-    def render_readonly(self):
-        return ''
+        return h.text_area(self.name, content=self.value, **kwargs)
 
 
 class CheckBoxFieldRenderer(FieldRenderer):
     """render a boolean value as checkbox field"""
     def render(self, **kwargs):
-        return h.check_box(self.name, True, checked=_simple_eval(self._value or ''), **kwargs)
+        value = self.value or ''
+        return h.check_box(self.name, True,
+                           checked=_simple_eval(value.capitalize()),
+                           **kwargs)
     def _serialized_value(self):
         if self.name not in self.params:
             return None
@@ -480,7 +488,7 @@ class FileFieldRenderer(FieldRenderer):
             return h.file_field(self.name, **kwargs)
 
     def get_size(self):
-        value = self.field.raw_value
+        value = self.raw_value
         if value is None:
             return 0
         return len(value)
@@ -520,33 +528,39 @@ class FileFieldRenderer(FieldRenderer):
             data = getattr(self.field.model, self.field.name)
         return data is not None and data or ''
 
-# for when and/or is not safe b/c first might eval to false
-def _ternary(condition, first, second):
-    if condition:
-        return first()
-    return second()
-
 class DateFieldRenderer(FieldRenderer):
     """Render a date field"""
+    @property
     def format(self):
         return config.date_format
-    format = property(format)
+    @property
     def edit_format(self):
         return config.date_edit_format
-    edit_format = property(edit_format)
     def render_readonly(self, **kwargs):
-        value = self.field.raw_value
+        value = self.raw_value
         return value and value.strftime(self.format) or ''
     def _render(self, **kwargs):
         data = self.params
+        value = self.field.model_value
         F_ = self.get_translator(**kwargs)
         month_options = [(F_('Month'), 'MM')] + [(unicode(F_('month_%02i' % i), 'utf-8'), str(i)) for i in xrange(1, 13)]
         day_options = [(F_('Day'), 'DD')] + [(i, str(i)) for i in xrange(1, 32)]
         mm_name = self.name + '__month'
         dd_name = self.name + '__day'
         yyyy_name = self.name + '__year'
-        mm = _ternary((data is not None and mm_name in data), lambda: data[mm_name],  lambda: str(self.field.model_value and self.field.model_value.month))
-        dd = _ternary((data is not None and dd_name in data), lambda: data[dd_name], lambda: str(self.field.model_value and self.field.model_value.day))
+        is_date_type = isinstance(value, (datetime.datetime, datetime.date, datetime.time))
+        values = []
+        for key, default in (('month', 'MM'), ('day', 'DD')):
+            name = self.name+'__'+key
+            v = default
+            if data is not None and name in data:
+                v = data[name]
+            if v.isdigit():
+                pass
+            elif is_date_type:
+                v = getattr(value, key)
+            values.append(v)
+        mm, dd = values
         # could be blank so don't use and/or construct
         if data is not None and yyyy_name in data:
             yyyy = data[yyyy_name]
@@ -564,24 +578,36 @@ class DateFieldRenderer(FieldRenderer):
     def _serialized_value(self):
         return '-'.join([self.params.getone(self.name + '__' + subfield) for subfield in ['year', 'month', 'day']])
 
-
 class TimeFieldRenderer(FieldRenderer):
     """Render a time field"""
     format = '%H:%M:%S'
+    def is_time_type(self):
+        return isinstance(self.field.model_value, (datetime.datetime, datetime.date, datetime.time))
     def render_readonly(self, **kwargs):
-        value = self.field.raw_value
-        return value and value.strftime(self.format) or ''
+        value = self.raw_value
+        return isinstance(value, datetime.time) and value.strftime(self.format) or ''
     def _render(self, **kwargs):
         data = self.params
-        hour_options = ['HH'] + [(i, str(i)) for i in xrange(24)]
-        minute_options = ['MM' ] + [(i, str(i)) for i in xrange(60)]
-        second_options = ['SS'] + [(i, str(i)) for i in xrange(60)]
+        value = self.field.model_value
+        hour_options = ['HH'] + [str(i) for i in xrange(24)]
+        minute_options = ['MM' ] + [str(i) for i in xrange(60)]
+        second_options = ['SS'] + [str(i) for i in xrange(60)]
         hh_name = self.name + '__hour'
         mm_name = self.name + '__minute'
         ss_name = self.name + '__second'
-        hh = _ternary((data is not None and hh_name in data), lambda: data[hh_name], lambda: str(self.field.model_value and self.field.model_value.hour))
-        mm = _ternary((data is not None and mm_name in data), lambda: data[mm_name], lambda: str(self.field.model_value and self.field.model_value.minute))
-        ss = _ternary((data is not None and ss_name in data), lambda: data[ss_name], lambda: str(self.field.model_value and self.field.model_value.second))
+        is_time_type = isinstance(value, (datetime.datetime, datetime.date, datetime.time))
+        values = []
+        for key, default in (('hour', 'HH'), ('minute', 'MM'), ('second', 'SS')):
+            name = self.name+'__'+key
+            v = default
+            if data is not None and name in data:
+                v = data[name]
+            if v.isdigit():
+                pass
+            elif is_time_type:
+                v = getattr(value, key)
+            values.append(v)
+        hh, mm, ss = values
         return h.literal(':').join([
                     h.select(hh_name, [hh], hour_options, **kwargs),
                     h.select(mm_name, [mm], minute_options, **kwargs),
@@ -623,23 +649,27 @@ class RadioSet(FieldRenderer):
     """render a field as radio"""
     widget = staticmethod(h.radio_button)
     format = '%(field)s%(label)s'
-    
+
     def _serialized_value(self):
         if self.name not in self.params:
             return None
         return FieldRenderer._serialized_value(self)
 
-    def _is_checked(self, choice_value):
-        return self._value == _stringify(choice_value)
+    def _is_checked(self, choice_value, value=NoDefault):
+        if value is NoDefault:
+            value = self.value
+        return value == _stringify(choice_value)
 
     def render(self, options, **kwargs):
+        value = self.value
         self.radios = []
         if callable(options):
             options = options(self.field.parent)
         for i, (choice_name, choice_value) in enumerate(_extract_options(options)):
             choice_id = '%s_%i' % (self.name, i)
             radio = self.widget(self.name, choice_value, id=choice_id,
-                                checked=self._is_checked(choice_value), **kwargs)
+                                checked=self._is_checked(choice_value, value),
+                                **kwargs)
             label = h.label(choice_name, for_=choice_id)
             self.radios.append(h.literal(self.format % dict(field=radio,
                                                             label=label)))
@@ -654,8 +684,12 @@ class CheckBoxSet(RadioSet):
             return []
         return FieldRenderer._serialized_value(self)
 
-    def _is_checked(self, choice_value):
-        return _stringify(choice_value) in self._value
+    def _is_checked(self, choice_value, value=NoDefault):
+        if value is NoDefault:
+            value = self.value
+        if value is None:
+            value = []
+        return _stringify(choice_value) in value
 
 
 class SelectFieldRenderer(FieldRenderer):
@@ -679,7 +713,7 @@ class SelectFieldRenderer(FieldRenderer):
                 L = [(k, self.stringify_value(v)) for k, v in L]
             else:
                 L = [_stringify(k) for k in L]
-        return h.select(self.name, self._value, L, **kwargs)
+        return h.select(self.name, self.value, L, **kwargs)
 
     def render_readonly(self, options=None, **kwargs):
         """render a string representation of the field value.
@@ -688,7 +722,7 @@ class SelectFieldRenderer(FieldRenderer):
         if not options or self.field.is_scalar_relation:
             return FieldRenderer.render_readonly(self)
 
-        value = self.field.raw_value
+        value = self.raw_value
         if value is None:
             return ''
 
@@ -707,6 +741,30 @@ class SelectFieldRenderer(FieldRenderer):
             return u', '.join([_stringify(D.get(item, item)) for item in value])
         return _stringify(D.get(value, value))
 
+
+class HiddenFieldRenderer(FieldRenderer):
+    """render a field as an hidden field"""
+    def render(self, **kwargs):
+        return h.hidden_field(self.name, value=self.value, **kwargs)
+    def render_readonly(self):
+        return ''
+
+def HiddenFieldRendererFactory(cls):
+    """A factory to generate a new class to hide an existing renderer"""
+    class Renderer(cls, HiddenFieldRenderer):
+        def render(self, **kwargs):
+            html = super(Renderer, self).render(**kwargs)
+            return h.content_tag('div', html, style="display:none;")
+        def render_readonly(self):
+            return ''
+    attrs = dict(__doc__="""Hidden %s renderer""" % cls.__name__)
+    renderer = type('Hidden%s' % cls.__name__, (Renderer,), attrs)
+    return renderer
+
+
+HiddenDateFieldRenderer = HiddenFieldRendererFactory(DateFieldRenderer)
+HiddenTimeFieldRenderer = HiddenFieldRendererFactory(TimeFieldRenderer)
+HiddenDateTimeFieldRenderer = HiddenFieldRendererFactory(DateTimeFieldRenderer)
 
 
 
@@ -734,11 +792,11 @@ def _pk_one_column(instance, column):
     return attr
 
 def _pk(instance):
-    # Return the value of this instance's primary key, suitable for passing to Query.get().  
+    # Return the value of this instance's primary key, suitable for passing to Query.get().
     # Will be a tuple if PK is multicolumn.
     try:
         columns = class_mapper(type(instance)).primary_key
-    except InvalidRequestError:
+    except sqlalchemy_exceptions.InvalidRequestError:
         # try to get pk from model attribute
         if hasattr(instance, '_pk'):
             return getattr(instance, '_pk', None) or None
@@ -756,13 +814,13 @@ class _SafeEval(object):
         cls = node.__class__
         meth = getattr(self,'visit'+cls.__name__,self.default)
         return meth(node, **kw)
-            
+
     def default(self, node, **kw):
         for child in node.getChildNodes():
             return self.visit(child, **kw)
-            
+
     visitExpression = default
-    
+
     def visitName(self, node, **kw):
         if node.name in ['True', 'False', 'None']:
             return eval(node.name)
@@ -772,7 +830,7 @@ class _SafeEval(object):
 
     def visitTuple(self,node, **kw):
         return tuple(self.visit(i) for i in node.nodes)
-        
+
     def visitList(self,node, **kw):
         return [self.visit(i) for i in node.nodes]
 
@@ -858,13 +916,14 @@ class AbstractField(object):
 
     """
     _null_option = (u'None', u'')
+    _valide_options = [
+            'validate', 'renderer', 'hidden', 'required', 'readonly',
+            'nul_as', 'label', 'multiple', 'options',
+            'size', 'instructions', 'metadata']
 
-    def __init__(self, parent):
+    def __init__(self, parent, name=None, type=fatypes.String, **kwattrs):
         # the FieldSet (or any ModelRenderer) owning this instance
         self.parent = parent
-        if 0:
-            import forms
-            isinstance(self.parent, forms.FieldSet)
         # Renderer for this Field.  this will
         # be autoguessed, unless the user forces it with .dropdown,
         # .checkbox, etc.
@@ -887,7 +946,8 @@ class AbstractField(object):
         self.is_raw_foreign_key = False
         # Field metadata, for customization
         self.metadata = {}
-        return False
+        self.name = name
+        self.type = type
 
     def __deepcopy__(self, memo):
         wrapper = copy(self)
@@ -903,9 +963,9 @@ class AbstractField(object):
             wrapper._renderer.field = wrapper
         return wrapper
 
+    @property
     def requires_label(self):
         return not isinstance(self.renderer, HiddenFieldRenderer)
-    requires_label = property(requires_label)
 
     def query(self, *args, **kwargs):
         """Perform a query in the parent's session"""
@@ -924,7 +984,7 @@ class AbstractField(object):
             # also raise a ValidationError
             value = self._deserialize()
         except validators.ValidationError, e:
-            self.errors.append(e)
+            self.errors.append(e.message)
             return False
 
         L = list(self.validators)
@@ -953,9 +1013,9 @@ class AbstractField(object):
         """True iff this Field is in readonly mode"""
         return self._readonly
 
+    @property
     def model(self):
         return self.parent.model
-    model = property(model)
 
     def _modified(self, **kwattrs):
         # return a copy of self, with the given attributes modified
@@ -967,8 +1027,8 @@ class AbstractField(object):
     def set(self, **kwattrs):
         """
         Update field attributes in place. Allowed attributes are: validate,
-        renderer, required, readonly, nul_as, label, multiple, options, size,
-        instructions, metadata::
+        renderer, hidden, required, readonly, nul_as, label, multiple, options,
+        size, instructions, metadata::
 
             >>> field = Field('myfield')
             >>> field.set(label='My field', renderer=SelectFieldRenderer,
@@ -1000,6 +1060,16 @@ class AbstractField(object):
                 else:
                     if validators.required in self.validators:
                         self.validators.remove(validators.required)
+            elif attr == 'hidden':
+                if isinstance(self.type, fatypes.Date):
+                    renderer = HiddenDateFieldRenderer
+                elif isinstance(self.type, fatypes.Time):
+                    renderer = HiddenTimeFieldRenderer
+                elif isinstance(self.type, fatypes.DateTime):
+                    renderer = HiddenDateTimeFieldRenderer
+                else:
+                    renderer = HiddenFieldRenderer
+                self._renderer = renderer
             elif attr in mapping:
                 attr = mapping.get(attr)
                 setattr(self, attr, value)
@@ -1084,18 +1154,44 @@ class AbstractField(object):
         for k, v in html_options.iteritems():
             new_opts[k.rstrip('_')] = v
         return self._modified(html_options=new_opts)
-    def label(self, text):
+    def label(self, text=NoDefault):
+        """Get or set the label for the field. If a value is provided then change
+        the label associated with this field.  By default, the field name is
+        used, modified for readability (e.g., 'user_name' -> 'User name').
         """
-        Change the label associated with this field.  By default, the field name
-        is used, modified for readability (e.g., 'user_name' -> 'User name').
-        """
+        if text is NoDefault:
+            if self.label_text is not None:
+                text = self.label_text
+            else:
+                text = self.parent.prettify(self.key)
+            if text:
+                F_ = get_translator(request=self.parent._request)
+                return h.escape_once(F_(text))
+            else:
+                return ''
         return self._modified(label_text=text)
+    def label_tag(self, **html_options):
+        """return the <label /> tag for the field."""
+        html_options.update(for_=self.renderer.name)
+        if 'class_' in html_options:
+            html_options['class_'] += self.is_required() and ' field_req' or ' field_opt'
+        else:
+            html_options['class_'] = self.is_required() and 'field_req' or 'field_opt'
+        return h.content_tag('label', self.label(), **html_options)
     def readonly(self, value=True):
         """Render the field readonly."""
         return self._modified(_readonly=True)
     def hidden(self):
         """Render the field hidden.  (Value only, no label.)"""
-        return self._modified(_renderer=HiddenFieldRenderer, render_opts={})
+        if isinstance(self.type, fatypes.Date):
+            renderer = HiddenDateFieldRenderer
+        elif isinstance(self.type, fatypes.Time):
+            renderer = HiddenTimeFieldRenderer
+        elif isinstance(self.type, fatypes.DateTime):
+            renderer = HiddenDateTimeFieldRenderer
+        else:
+            renderer = HiddenFieldRenderer
+        return self._modified(_renderer=renderer, render_opts={})
     def password(self):
         """Render the field as a password input, hiding its value."""
         field = deepcopy(self)
@@ -1164,6 +1260,7 @@ class AbstractField(object):
                 'No renderer found for field %s. '
                 'Type %s as no default renderer' % (self.name, self.type))
 
+    @property
     def renderer(self):
         if self._renderer is None:
             self._renderer = self._get_renderer()
@@ -1175,7 +1272,6 @@ class AbstractField(object):
             # must be a Renderer class.  instantiate.
             self._renderer = self._renderer(self)
         return self._renderer
-    renderer = property(renderer)
 
     def _get_render_opts(self):
         """
@@ -1212,6 +1308,7 @@ class AbstractField(object):
         """return the PK for value, if applicable"""
         return value
 
+    @property
     def value(self):
         """
         The value of this Field: use the corresponding value in the bound `data`,
@@ -1222,7 +1319,7 @@ class AbstractField(object):
         a list of the primary key values of the items in the collection is returned.
 
         Invalid form data will cause an error to be raised.  Controllers should thus validate first.
-        Renderers should thus never access .value; use .model_value instead.  
+        Renderers should thus never access .value; use .model_value instead.
         """
         # TODO add ._validated flag to save users from themselves?
         if not self.is_readonly() and self.parent.data is not None:
@@ -1230,29 +1327,19 @@ class AbstractField(object):
             if v is not None:
                 return self._pkify(v)
         return self.model_value
-    value = property(value)
 
-    def value_objects(self):
-        """This is the same as `value`, except that when used with ForeignKeys,
-        instead of returning a list of primary keys, it will return a list of
-        objects.
-        """
-        if not self.is_readonly() and self.parent.data is not None:
-            return self._deserialize()
-        return self.model_value
-    value_objects = property(value_objects)
-
+    @property
     def model_value(self):
         """
         raw value from model, transformed if necessary for use as a form input value.
         """
         raise NotImplementedError()
-    model_value = property(model_value)
-        
+
+    @property
     def raw_value(self):
         """
         raw value from model.  different from `.model_value` in SQLAlchemy fields, because for reference types,
-        `.model_value` will return the foreign key ID.  This will return the actual object 
+        `.model_value` will return the foreign key ID.  This will return the actual object
         referenced instead.
         """
         raise NotImplementedError()
@@ -1268,14 +1355,14 @@ class Field(AbstractField):
         """
         Create a new Field object.
 
-        - `name`: 
+        - `name`:
               field name
 
-        - `type=types.String`: 
-              data type, from formalchemy.types (Integer, Float, String, Binary,
-              Boolean, Date, DateTime, Time) or a custom type
+        - `type=types.String`:
+              data type, from formalchemy.types (Integer, Float, String,
+              LargeBinary, Boolean, Date, DateTime, Time) or a custom type
 
-        - `value=None`: 
+        - `value=None`:
               default value.  If value is a callable, it will be passed the current
               bound model instance when the value is read.  This allows creating a
               Field whose value depends on the model once, then binding different
@@ -1302,16 +1389,17 @@ class Field(AbstractField):
             self._value = kwattrs.pop('value')
         return AbstractField.set(self, **kwattrs)
 
+    @property
     def model_value(self):
         return self.raw_value
-    model_value = property(model_value)
 
+    @property
     def is_collection(self):
         if isinstance(self.type, (fatypes.List, fatypes.Set)):
             return True
         return self.render_opts.get('multiple', False) or isinstance(self.renderer, self.parent.default_renderers['checkbox'])
-    is_collection = property(is_collection)
 
+    @property
     def raw_value(self):
         try:
             # this is NOT the same as getattr -- getattr will return the class's
@@ -1323,7 +1411,6 @@ class Field(AbstractField):
         if callable(self._value):
             return self._value(self.model)
         return self._value
-    raw_value = property(raw_value)
 
     def sync(self):
         """Set the attribute's value in `model` to the value given in `data`"""
@@ -1332,6 +1419,9 @@ class Field(AbstractField):
 
     def __repr__(self):
         return 'AttributeField(%s)' % self.name
+
+    def __unicode__(self):
+        return self.render_readonly()
 
     def __eq__(self, other):
         # we override eq so that when we configure with options=[...], we can match the renders in options
@@ -1413,10 +1503,53 @@ class AttributeField(AbstractField):
         if not self.is_collection and not self.is_readonly() and [c for c in _columns if not c.nullable]:
             self.validators.append(validators.required)
 
+        info = dict([(str(k), v) for k, v in self.info.items() if k in self._valide_options])
+        if self.is_relation and 'label' not in info:
+            m = self._property.mapper.class_
+            label = getattr(m, '__label__', None)
+            if self._property.direction in (MANYTOMANY, ONETOMANY):
+                label = getattr(m, '__plural__', label)
+            if label:
+                info['label'] = label
+        self.set(**info)
+
+    @property
+    def info(self):
+        """return the best information from SA's Column.info"""
+        info = None
+
+        if self.is_relation:
+            pairs = self._property.local_remote_pairs
+            if len(pairs):
+                for pair in reversed(pairs):
+                    for col in pair:
+                        if col.table in self._property.parent.tables and not col.primary_key:
+                            return getattr(col, 'info', None)
+                        elif col.table in self._property.mapper.tables:
+                            if col.primary_key:
+                                if self._property.direction == MANYTOMANY:
+                                    return getattr(col, 'info', None)
+                            else:
+                                parent_info = getattr(col, 'info', {})
+                                info = {}
+                                for k, v in parent_info.items():
+                                    if k.startswith('backref_'):
+                                        info[k[8:]] = v
+                                return info
+        else:
+            try:
+                col = getattr(self.model.__table__.c, self.key)
+            except AttributeError:
+                return {}
+            else:
+                return getattr(col, 'info', None)
+        return {}
+
     def is_readonly(self):
         from sqlalchemy.sql.expression import _Label
         return AbstractField.is_readonly(self) or isinstance(self._columns[0], _Label)
 
+    @property
     def _columns(self):
         if self.is_scalar_relation:
             # If the attribute is a foreign key, return the Column that this
@@ -1429,7 +1562,6 @@ class AttributeField(AbstractField):
             # collection -- use the mapped class's PK
             assert self.is_collection, self._impl.__class__
             return self._property.mapper.primary_key
-    _columns = property(_columns)
 
     def relation_type(self):
         """
@@ -1444,17 +1576,23 @@ class AttributeField(AbstractField):
             return None
         if self.is_collection:
             return [_pk(item) for item in value]
+        if self.is_relation:
+            return _pk(value)
         return value
 
+    @property
     def model_value(self):
         return self._pkify(self.raw_value)
-    model_value = property(model_value)
 
+    @property
     def raw_value(self):
-        try:
-            v = getattr(self.model, self.name)
-        except AttributeError:
+        if self.is_scalar_relation:
             v = getattr(self.model, self.key)
+        else:
+            try:
+                v = getattr(self.model, self.name)
+            except AttributeError:
+                v = getattr(self.model, self.key)
         if v is not None:
             return v
 
@@ -1473,7 +1611,6 @@ class AttributeField(AbstractField):
             else:
                 return arg
         return None
-    raw_value = property(raw_value)
 
     def sync(self):
         """Set the attribute's value in `model` to the value given in `data`"""

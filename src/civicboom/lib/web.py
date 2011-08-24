@@ -1,4 +1,4 @@
-from pylons import url as url_pylons, session, request, response, config, tmpl_context as c
+from pylons import url as url_pylons, session, request, response, config, tmpl_context as c, app_globals
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, secure_form
@@ -386,11 +386,11 @@ def _find_template(result, type):
     if 'data' in result and 'list' in result['data'] and 'type' in result['data']['list']:
         list_type = result['data']['list']['type']
         list_part = None
-        if   list_type == 'content':
+        if   list_type == 'contents':
             list_part = 'contents/index'
-        elif list_type == 'member':
+        elif list_type == 'members':
             list_part = 'members/index'
-        elif list_type == 'message':
+        elif list_type == 'messages':
             list_part = 'messages/index'
         if list_part:
             paths = paths + [
@@ -702,10 +702,11 @@ def authenticate_form(_target, *args, **kwargs):
 
 def cacheable(time=60*60*24*365, anon_only=True):
     def _cacheable(func, *args, **kwargs):
+        #if app_globals.cache_enabled: # AllanC - at the time of remming this production.ini had beaker.cache = False ... we want this cached for now. This should re-instated once the cache framework is finished
         from pylons import request, response
         if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
             response.headers["Cache-Control"] = "public,max-age=%d" % time
-            response.headers["Vary"] = "cookie"
+            response.headers["Vary"] = "Cookie"
             if "Pragma" in response.headers:
                 del response.headers["Pragma"]
         return func(*args, **kwargs)
@@ -790,3 +791,26 @@ def web_params_to_kwargs(_target, *args, **kwargs):
 
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function
+
+
+
+@decorator
+def normalize_kwargs(_target, *args, **kwargs):
+    """
+    Controller action can be called with a varity of kwargs
+    often these kwargs can be a combination of primitive types and objects
+    For caching and simplification of both calling and the body of these methods the kwargs can be normalize to primitive types
+    
+    Performance TODO investigation:
+    This could create serious ineffiencys by converting from objects to strings and then re-getting the objects again in the methods
+    We need to check if SQLAlchemy is smart enough to realise it already has the object in memory and does not need to perform a GET again from the DB
+    """
+    for key, value in kwargs.iteritems():
+        if not key.startswith('_'):
+            try   : value = value.__db_index__()
+            except: pass
+            # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
+            value = str(value).strip()
+        kwargs[key] = value
+    
+    return _target(*args, **kwargs)

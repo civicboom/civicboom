@@ -15,7 +15,11 @@ from cbutils.text import clean_html_markup, strip_html_tags
 from dateutil.parser import parse as parse_date
 import re
 
-def x_(s): return s # see lib/base:x_
+
+def x_(s):
+    # see lib/base:x_
+    return s
+
 
 class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
@@ -187,9 +191,10 @@ class PasswordValidator(validators.FancyValidator):
     letter_regex = re.compile(r'[a-zA-Z]')
     not_empty    = True
     messages = {
-        'empty'     : x_('You must enter a password'),
-        'too_few'   : x_('Your password must be longer than %(min)i characters'),
-        'non_letter': x_('You must include at least %(non_letter)i non-letter in your password'),
+        'empty'        : x_('You must enter a password'),
+        'too_few'      : x_('Your password must be longer than %(min)i characters'),
+        'non_letter'   : x_('You must include at least %(non_letter)i non-letter in your password'),
+        'repeated_char': x_('Your password consits of a single character repeated. You may have copy and pasted your password'),
     }
 
     def _to_python(self, value, state):
@@ -200,6 +205,8 @@ class PasswordValidator(validators.FancyValidator):
         non_letters = self.letter_regex.sub('', value)
         if len(non_letters) < self.non_letter:
             raise formencode.Invalid(self.message("non_letter", state, non_letter=self.non_letter), value, state)
+        if re.search('^%s+$' % value[0], value):
+            raise formencode.Invalid(self.message("repeated_char", state), value, state)
         return encode_plain_text_password(value)
 
 

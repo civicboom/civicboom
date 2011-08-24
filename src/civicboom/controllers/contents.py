@@ -106,7 +106,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.id)
+        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else None)
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),
@@ -163,6 +163,7 @@ class ContentsController(BaseController):
 
     
     @web
+    @normalize_kwargs
     def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
@@ -213,8 +214,8 @@ class ContentsController(BaseController):
         logged_in_creator = False
         creator = None
 
-        if kwargs.get('list') == "drafts" and not c.logged_in_persona:
-            kwargs['list'] = 'all'
+        #if kwargs.get('list') == "drafts" and not c.logged_in_persona:
+        #    kwargs['list'] = 'all'
 
         try:
             # Try to get the creator of the whole parent chain or creator of self
@@ -258,7 +259,7 @@ class ContentsController(BaseController):
             results = results.filter(Content.__type__!='draft')
 
         # TODO: how does this affect performance?
-        for col in ['creator', 'attachments', 'tags']:
+        for col in ['creator', 'attachments', 'tags', 'parent']:
             if col in kwargs.get('include_fields', []):
                 results = results.options(joinedload(getattr(Content, col)))
         ###############################
@@ -292,8 +293,10 @@ class ContentsController(BaseController):
                 parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
 
             for filter_name in filter_map:
-                if kwargs.get(filter_name):
-                    f = filter_map[filter_name].from_string(str(kwargs[filter_name]))
+                val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired
+                #val = str(kwargs.get(filter_name, '')).strip()
+                if val:
+                    f = filter_map[filter_name].from_string(val)
                     if hasattr(f, 'mangle'):
                         results = f.mangle(results)
                     parts.append(f)
@@ -315,7 +318,7 @@ class ContentsController(BaseController):
         results = results.filter("("+sql(feed)+")")
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
 
-        l = to_apilist(results, obj_type='content', **kwargs)
+        l = to_apilist(results, obj_type='contents', **kwargs)
 
         # hacky benchmarking just to get some basic idea of how each feed performs
         time_end = time()
@@ -700,8 +703,15 @@ class ContentsController(BaseController):
                 # going straight to publish, content may not have an ID as it's
                 # not been added and committed yet (this happens below)
                 #user_log.info("updated published Content #%d" % (content.id, ))
+                
             if message_to_all_creator_followers:
                 content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
+        
+        # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
+        if content.__type__ == "comment":
+            content.parent.creator.send_notification(
+                messages.comment(member=content.creator, content=content, you=content.parent.creator)
+            )
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)

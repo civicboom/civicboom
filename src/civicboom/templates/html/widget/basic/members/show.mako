@@ -5,7 +5,7 @@
 <%
     contents = []
     for list in d.values():
-        if isinstance(list, dict) and 'type' in list and list['type'] == 'content':
+        if isinstance(list, dict) and 'type' in list and list['type'] == 'contents':
             contents = contents + list['items']
             
     # TODO

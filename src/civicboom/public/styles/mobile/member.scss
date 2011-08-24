@@ -1,8 +1,15 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
 BODY.c-members.a-show, BODY.c-profile {
 
     .avatar {
         width: 100px;
         float: left;
         margin-right: 15px;
+    }
+    
+    .messages {
+        text-align: center;
     }
 }

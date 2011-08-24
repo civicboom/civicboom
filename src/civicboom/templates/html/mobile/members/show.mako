@@ -1,38 +1,39 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
+##-----------------------------------------------------------------------------
 ## includes
+##-----------------------------------------------------------------------------
+<%namespace name="components"      file="/html/mobile/common/components.mako" />
 <%namespace name="member_includes" file="/html/mobile/common/member.mako" />
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
-## page structure defs
+<%def name="page_title()">
+    ${_(d['member']['username'])}
+</%def>
+
 <%def name="body()">
     <%
         self.member    = d['member']
         self.id        = self.member['username']
         self.name      = self.member.get('name')
+        self.actions   = d['actions']
     %>
     
     ## Main member detail page (username/description/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-details-${self.id}" class="member_details_page">
-        <div data-role="header" data-position="inline">
-            <h1>${self.name}</h1>
-            <a href="#member-extra-${self.id}" alt="more" class="ui-btn-right" data-role="button" data-icon="arrow-r" data-iconpos="right">More</a>
-        </div>
+    <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
+        ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
             ${member_details_full(self.member)}
         </div>
         
-        ${control_bar()}
+        ${signout_navbar()}
     </div>
     
     ## Extra info (content/boomed/etc)
-    <div data-role="page" data-title="${page_title()}" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
-        <div data-role="header" data-position="inline">
-            <a href="#member-details-${self.id}" data-role="button" data-icon="arrow-l" data-direction="reverse">Back</a>
-            <h1>${self.name} - extra</h1>
-        </div>
+    <div data-role="page" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
+        ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
             ${member_content_list(d)}
@@ -40,18 +41,19 @@
     </div>
 </%def>
 
-<%def name="control_bar()">
-    % if c.logged_in_user:
-        <div data-role="footer" data-position="fixed">
+##-----------------------------------------------------------------------------
+## Signout nav bar link
+##-----------------------------------------------------------------------------
+<%def name="signout_navbar()">
+    % if "logout" in self.actions:
+        <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
             <div data-role="navbar" class="ui-navbar">
                 <ul>
                     <li>
-                        <a href="${h.url(controller='profile', action='index')}" rel="external">My profile</a>
-                    </li>
-                    <li>
                         ${h.secure_link(
                             h.url(controller='account', action='signout'),
-                            _('Sign out')
+                            _('Sign out'),
+                            rel = "external"
                         )}
                     </li>
                 </ul>
@@ -60,11 +62,9 @@
     % endif
 </%def>
 
-<%def name="page_title()">
-    ${_("_site_name Mobile - " + self.name)}
-</%def>
-
+##-----------------------------------------------------------------------------
 ## Short member details - Username, real name and user type + avatar
+##-----------------------------------------------------------------------------
 <%def name="member_details_short(member, as_link=True)">
     % if member:
         <%
@@ -90,26 +90,34 @@
     % endif
 </%def>
 
+##-----------------------------------------------------------------------------
 ## Full user details for member/profile pages
 ## Includes username/etc, description, followers/etc
+##-----------------------------------------------------------------------------
 <%def name="member_details_full(member)">
     % if member:
         <%
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
             username = member['username']
+            description = member['description']
             website = member['website']
         %>
         <div class="member_details">
             ## Avatar/name
-            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
             <h3>${member['name']}</h3>
+            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
             <p>Username: <b>${username}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
-                
+            
+            <div class="separator" style="padding: 0.5em;"></div>
+            
+            ${messages_bar()}
+            ${actions_buttons()}
+            
             <ul data-role="listview" data-inset="true">
                 ## User website
-                % if member['website']:
+                % if website:
                     <li data-role="list-divider" role="heading">
                         ${username}'s website
                     </li>
@@ -121,22 +129,105 @@
                 % endif
                 
                 ## User description
-                <li data-role="list-divider" role="heading">
-                    ${username}'s description
-                </li>
-                <li>
-                    ${member['description']}
-                </li>
+                % if description:
+                    <li data-role="list-divider" role="heading">
+                        ${username}'s description
+                    </li>
+                    <li>
+                        ${description}
+                    </li>
+                % endif
             </ul>
                 
-                ${member_list("following")}
-                ${member_list("followers")}
-                ${member_list("members")}
-            </ul>
+            ${member_list("following")}
+            ${member_list("followers")}
+            ${member_list("groups")}
+            ${member_list("members")}
         </div>
     % endif
 </%def>
 
+##-----------------------------------------------------------------------------
+## Member action buttons (follow, etc)
+##-----------------------------------------------------------------------------
+<%def name="actions_buttons()">
+
+    % if c.logged_in_user and self.actions:
+            % if 'follow' in self.actions:
+                ${h.secure_link(
+                    h.url('member_action', action='follow'    , id=self.id) ,
+                    value           = _('Follow'),
+                    value_formatted = h.literal("<button>%s</button>") % _('Follow'),
+                    title           = _("Follow %s" % self.name) ,
+                    rel             = "external",
+                )}
+            % endif
+            
+            % if 'unfollow' in self.actions:
+                ${h.secure_link(
+                    h.url('member_action', action='unfollow'  , id=self.id) ,
+                    value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
+                    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
+                    rel             = "external",
+                )}
+            % endif
+            
+            % if 'join' in self.actions:
+                ${h.secure_link(
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    value           = _('Join _group') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
+                    rel             = "external",
+                )}
+            % endif
+            
+            ## AllanC - same as above, could be neater but works
+            % if 'join_request' in self.actions:
+                ${h.secure_link(
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    value           = _('Request to join _group') ,
+                    value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
+                    rel             = "external",
+                )}
+            % endif
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Message and notification bar
+##-----------------------------------------------------------------------------
+<%def name="messages_bar()">
+    % if c.logged_in_user and c.logged_in_user.username == self.id and d.get('num_unread_messages'):
+        <%
+            unread_messages =       d['num_unread_messages']
+            unread_notifications =  d['num_unread_notifications']
+        %>
+        <div class="messages ui-grid-b" data-theme="b">
+            <div class="ui-block-a">
+                <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages
+                % if unread_messages:
+                    <br />(${unread_messages} new)
+                % endif
+                </a>
+            </div>
+            <div class="ui-block-b">
+                <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
+            </div>
+            <div class="ui-block-c">
+                <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications
+                % if unread_notifications:
+                    <br />(${unread_notifications} new)
+                % endif
+                </a>
+            </div>
+        </div>
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## 
+##-----------------------------------------------------------------------------
 <%def name="member_list(list_title)">
     <% count = d[list_title]['count'] %>
     % if count:
@@ -152,8 +243,10 @@
     % endif
 </%def>
 
+##-----------------------------------------------------------------------------
 ## List the content relating to this user
 ## Includes assignments, articles, responses, etc
+##-----------------------------------------------------------------------------
 <%def name="member_content_list(data)">
     % if data:
         <%
@@ -168,6 +261,30 @@
             ${list_includes.list_contents(requests, "Active requests")}
             ${list_includes.list_contents(responses, "Responses")}
             ${list_includes.list_contents(articles, "Stories")}
+        </div>
+    % endif
+</%def>
+
+##-----------------------------------------------------------------------------
+## Creates the control bar/footer
+##-----------------------------------------------------------------------------
+<%def name="control_bar()">
+    % if c.logged_in_user:
+        <div data-role="navbar" class="ui-navbar">
+            <ul>
+                <li>
+                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
+                </li>
+                <li>
+                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
+                </li>
+                <li>
+                    ${h.secure_link(
+                        h.url(controller='account', action='signout'),
+                        _('Sign out')
+                    )}
+                </li>
+            </ul>
         </div>
     % endif
 </%def>

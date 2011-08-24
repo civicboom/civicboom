@@ -32,8 +32,8 @@ def profanity_check(content_id, url_base):
         content.flag(comment=u"automatic profanity check failed, please manually inspect", url_base=url_base, moderator_address=config['email.moderator'])
     elif profanity_response['FoundProfanity']:
         log.debug("Profanity found")
-        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, delay_commit=True, moderator_address=config['email.moderator'])
         content.content = profanity_response['CleanText']
+        content.flag(comment=u"found %s profanities" % profanity_response['ProfanityCount'], url_base=url_base, moderator_address=config['email.moderator']) # delay_commit=True, # this flag cmd should commit the Session
     else:
         log.debug("No profanity found")
         if content.__type__ != 'comment' and content.__type__ != 'draft':
@@ -41,7 +41,8 @@ def profanity_check(content_id, url_base):
             # AllanC - really didnt want this crashing the live server, so wrapped it all in a try except
             try:
                 from civicboom.lib.aggregation import twitter_global
-                twitter_global(content)
+                live = config['online'] and config['feature.aggregate.twitter_global']
+                twitter_global(content, live)
             except Exception as e:
                 log.exception('Global twitter failed')
     

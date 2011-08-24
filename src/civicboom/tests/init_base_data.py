@@ -71,7 +71,8 @@ def init_base_data():
 
         g1 = Group()
         g1.username = "unitgroup"
-        g1.name = "Test User Group"
+        g1.name     = "Test User Group"
+        g1.status   = "active"
         g1.join(u1)
         g1.join(u2)
 
@@ -161,7 +162,8 @@ def init_base_data():
 
         g2 = Group()
         g2.username = "cuteness"
-        g2.name = "Cute Users United"
+        g2.name     = "Cute Users United"
+        g2.status   = "active"
         g2.join(u3)
         g2.join(u4)
         g2.join(u5)

@@ -114,9 +114,6 @@ class TestDeleteCascadesController(TestController):
         response_json = json.loads(response.body)
         self.media_id = response_json['data']['content']['attachments'][0]['id']
         self.assertNotEqual(self.media_id  , 0)
-
-
-
         
         # record current number of
         response      = self.app.get(url('member', id='unittest', format='json'), status=200)
@@ -151,23 +148,15 @@ class TestDeleteCascadesController(TestController):
         
         
         # Create group - and therefor become a member
-        response = self.app.post(
-            url('groups', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'username'     : 'delete_cascade_group',
-                'name'         : 'Test group for delete_cascade' ,
-                'description'  : 'This group should not be visible once the tests have completed because it will be removed' ,
-                'default_role'              : 'admin'  ,
-                'join_mode'                 : 'public' ,
-                'member_visibility'         : 'public' ,
-                'default_content_visibility': 'public' ,
-            },
-            status=201
+        self.group_id = self.create_group(
+            username     = 'delete_cascade_group',
+            name         = 'Test group for delete_cascade' ,
+            description  = 'This group should not be visible once the tests have completed because it will be removed',
+            default_role               = 'contributor',
+            join_mode                  = 'public' ,
+            member_visibility          = 'public' ,
+            default_content_visibility = 'public' ,
         )
-        response_json = json.loads(response.body)
-        self.group_id = int(response_json['data']['id'])
-        self.assertNotEqual(self.group_id, 0)
         
         self.set_account_type('plus') # Create an account record associated with this user
         self.delete_cascade_payment_account_id = Session.query(Member).filter_by(id = self.delete_cascade_member_id).one().payment_account_id # Get payment account id
@@ -255,7 +244,8 @@ class TestDeleteCascadesController(TestController):
         unittest_assignment = get_content(unittest_assingment_id)
         unittest_assignment.delete()
         
-        
+
+
     #---------------------------------------------------------------------------
     # Delete Content
     #---------------------------------------------------------------------------

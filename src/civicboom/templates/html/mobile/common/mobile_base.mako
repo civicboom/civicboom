@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>${next.page_title()}</title>
+        ${title()}
         <link rel="shortcut icon" href="/images/favicon.ico" />
         
         ## --- CSS imports ---
@@ -21,9 +21,9 @@
         ## ------
         
         <script type="text/javascript" src="/javascript/jquery-1.6.2.js"></script>
-        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b1.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
         <script type="text/javascript">
-            // $.mobile.page.prototype.options.addBackBtn = "true";
+            
         </script>
     </head>
   
@@ -31,3 +31,21 @@
         ${next.body()}
     </body>
 </html>
+
+<%def name="title()">
+    <title>
+        ${_('_site_name Mobile')}
+        % if hasattr(next, 'page_title'):
+        : ${next.page_title()}
+        % endif
+    </title>
+</%def>
+
+<%def name="error_message()">
+    <h3 id="error_message" class="status_${c.result['status']}">${c.result['message']}</h3>
+    % if c.result['message'] != "":
+    <script type="text/javascript">
+        <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+    </script>
+    % endif
+</%def>

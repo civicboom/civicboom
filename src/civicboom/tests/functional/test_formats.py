@@ -13,7 +13,7 @@ class TestFormats(TestController):
             for format in ['json', 'xml', 'frag', 'html', 'rss']:
                 response = self.app.get(url('content', id=1, format=format), status=200)
                 self.assertIn('API Documentation', response)
-                response = self.app.get(url('member' , id=1, format=format), status=200)
+                response = self.app.get(url('member' , id='unittest', format=format), status=200)
                 self.assertIn('unittest'         , response)
         
         test_all_formats() # Logged in user

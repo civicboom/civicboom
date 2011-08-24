@@ -1,0 +1,71 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+#error_message, .status_error {
+    color: red;
+}
+
+.title_logo {
+    text-align: center;
+
+    img {
+        width: 100%;
+        max-width: 508px;
+    }
+}
+
+.header {
+    .logo_img {
+        margin: 0.5em;
+        float: left;
+    }
+    
+    .header_title {
+        font-size: 130%;
+        margin: 0.5em;
+        float: right;
+    }
+    
+    .back_link {
+        float: left;
+        border-right: 1px solid white;
+    }
+    
+    .next_link {
+        float: right;
+        border-left: 1px solid white;
+    }
+    
+    .back_link, .next_link {
+        font-size: 130%;
+        padding: 0.5em 0.75em 0.5em 0.75em;
+        color: white;
+        text-decoration: none;
+        
+        span {
+            padding: 0;
+            margin: 0;
+        }
+    }
+}
+
+.separator {
+    clear: both;
+}
+
+.thumbnail {
+    $size: 80px;
+    min-width: $size;
+    min-height: $size;
+    max-width: $size;
+    max-height: $size;
+    @include border_radius(4px);
+}
+
+.thumbnail_small {
+    $size: 40px;
+    min-width: $size;
+    min-height: $size;
+    max-width: $size;
+    max-height: $size;
+}

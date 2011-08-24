@@ -5,10 +5,6 @@ Global status update for Civicboom - (this is a piss poor solution, but it works
 Uses - Python Twitter Tools - http://mike.verdone.ca/twitter/
 """
 
-from pylons import config
-
-#import twitter
-
 from twitter.api import Twitter, TwitterError
 from twitter.oauth import OAuth
 
@@ -16,25 +12,23 @@ import logging
 log = logging.getLogger(__name__)
 
 
-"""
-t = Twitter(
-    auth=OAuth(
-        config['api_key.twitter.oauth_token'],
-        config['api_key.twitter.oauth_token_secret'],
-        config['api_key.twitter.consumer_key'],
-        config['api_key.twitter.consumer_secret']
-    ),
-    secure=True, #options['secure']
-    api_version='1',
-    domain='api.twitter.com'
-)
-"""
-
-
 def status(**kargs):
+    from cbutils.worker import config as w_config
+    from pylons import config as p_config
+    t = Twitter(
+        auth=OAuth(
+            w_config['api_key.twitter.oauth_token'],
+            w_config['api_key.twitter.oauth_token_secret'],
+            w_config['api_key.twitter.consumer_key'],
+            w_config['api_key.twitter.consumer_secret']
+        ),
+        secure=True, #options['secure']
+        api_version='1',
+        domain='api.twitter.com'
+    )
     kargs['status'] = kargs['status'].encode('utf8', 'replace')
-    log.warn('global twitter disabled')
-    ##t.statuses.update(**kargs)
+    #log.warn('global twitter disabled')
+    t.statuses.update(**kargs)
 
 # Old custom ideas
 """

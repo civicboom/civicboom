@@ -293,18 +293,21 @@ types that it is useful to know about.
     "message": null,
     "data"   : {
         "list": {
-        "items": [
-            {...},
-            {...},
-            {...}
-        ],
-        "type"  : "content" / "member" / "message",
-        "offset":  0,
-        "limit" : 20,
-        "count" :  3
+            "items": [
+                {...},
+                {...},
+                {...}
+            ],
+            "type"  : "contents" / "members" / "messages",
+            "kwargs": {...},
+            "offset":  0,
+            "limit" : 20,
+            "count" :  3,
         }
     }
 }</pre>
+    <p>Using the 'type' and 'kwarg' fields, it is possible to determine the source url of this list.
+    <p>WIP Note: In some list cases the kwargs provided WILL NOT reproduce the list accurately. Until the API is formalised this behaviour may not be reliable in all cases.
     
     <h4>XML</h4>
     <p>The same as JSON, just in XML.</p>

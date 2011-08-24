@@ -52,28 +52,46 @@ HEADER {
 	border-bottom: 1px solid #ccc;
 }
 
+A {
+	color: $link-colour;
+}
+
 BODY>DIV#app {
-	position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
-	z-index: 0;
+    position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
+    z-index: 0;
     top: $header_height + 5px;
     color: $text-colour;
     
     .button {
         color: $button-txt;
+		text-decoration: none;
         
         &:hover {
             color: $button-txt;
+			text-decoration: none;
         }
     }
+
+	.frag_container {
+    		.button {
+      			color: $button-txt;
+      			text-decoration: none;
+      			
+      			&:hover {
+        				color: $button-txt;
+        				text-decoration: none;
+      			}
+    		}
+  	}
     
     a {
-        color: $link-colour;
+        color: $link-frag-colour;
         text-decoration: none;
-        
+        		
         &:hover {
             color: $link-hover-colour;
             text-decoration: underline;
-            
+            			
             p, span {
                 text-decoration: inherit;
             }
@@ -103,7 +121,7 @@ FOOTER {
 
 HEADER #logo {
 	.logo_img     {position: absolute; left:  12px; top:  6px; width: 128px;}
-	.beta_overlay {position: absolute; left: 113px; top: 30px; width:  24px;}
+	.beta_overlay {position: absolute; left: 116px; top: 28px; color: black; font-size: 11px;}
 	.logo_text    {display: none;}
 }
 
@@ -222,36 +240,35 @@ HEADER #persona_select {
 	}
 
 	#persona_holder {
-	  vertical-align: center;
-	  padding-left: 6px;
-	  padding-top: 6px;
-	}
+		vertical-align: center;
+		padding-left: 6px;
+		padding-top: 6px;
+		height: 32px;
+		cursor: pointer;
 
-	#persona_holder #message_holder {
-	  position: relative;
-	  top: -4px;
-	  vertical-align: center;
-	  //height: 32px;
-	  display: inline-block;
-	}
-	
-  #persona_holder #persona_details {
-    vertical-align: middle;
-    position: relative;
-    top: -3px;
-    vertical-align: middle;
-    height: 32px;
-    display: inline-block;
-    width: 15.5em;
-    overflow: hidden;
-    white-space: nowrap;
-    #settings {
-      font-size: 88%;
-    }
-  }
+		#persona_avatar {
+			vertical-align: middle;
+			display: inline-block;
+		}
 
-	#persona_holder #message_holder .icon_overlay_red {
-	  font-size: 88%;
+		#message_holder {
+			vertical-align: middle;
+			display: inline-block;
+			.icon_overlay_red {
+				font-size: 88%;
+			}
+		}
+
+		#persona_details {
+			vertical-align: middle;
+			display: inline-block;
+			width: 14.5em;
+			overflow: hidden;
+			white-space: nowrap;
+			#settings {
+				font-size: 88%;
+			}
+		}
 	}
 }
 
@@ -344,12 +361,25 @@ HEADER #search {
 		top: 20px;
 		width: $search_width/$search_buttons;
 
-		&.b0 {display: none;}
+		&.b0 {
+			top: 0px;
+			right: 0px;
+			width: 20px;
+			height: 20px;
+			padding-top: 1px;
+			box-shadow: none;
+			background: lighten($cb-lightblue, 30%);
+
+			-webkit-transition: background 0.15s ease-in;
+			-moz-transition: background 0.15s ease-in;
+			-o-transition: background 0.15s ease-in;
+			transition: background 0.15s ease-in;
+		}
 		&.b1 {left: $search_width/$search_buttons*0;}
 		&.b2 {left: $search_width/$search_buttons*1;}
 		&.b3 {left: $search_width/$search_buttons*2;}
 
-		&.b0, &.b1, &.b2, &.b3 {
+		&.b1, &.b2, &.b3 {
 			-webkit-transition: opacity 0.15s ease-in;
 			-moz-transition: opacity 0.15s ease-in;
 			-o-transition: opacity 0.15s ease-in;
@@ -409,6 +439,9 @@ HEADER #search {
 		}
 
 		.button {
+			&.b0 {
+				background: $button-top;
+			}
 			&.b1, &.b2, &.b3 {
 				opacity: 1.0;
 				filter: alpha(opacity=100);

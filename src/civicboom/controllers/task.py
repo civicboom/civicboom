@@ -442,7 +442,7 @@ class TaskController(BaseController):
     # Publish Sceduled Assignments
     #---------------------------------------------------------------------------
     @web_params_to_kwargs
-    def publish_sceduled_content(self, frequency_of_timed_task="hours=1"):
+    def publish_scheduled_content(self, frequency_of_timed_task="hours=1"):
         """
         query for all users in last <timedelta> and email 
         """

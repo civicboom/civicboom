@@ -1,7 +1,5 @@
 #!/bin/sh
 
-. /usr/share/debconf/confmodule
-
 if [ ! -d /tmp/cb-website-temp ] ; then
 	mkdir /tmp/cb-website-temp
 	chown www-data:www-data /tmp/cb-website-temp
@@ -12,27 +10,6 @@ if [ ! -d /var/log/civicboom ] ; then
 	chown www-data:www-data /var/log/civicboom
 fi
 
-if [ -f /var/log/civicboom-pylons.log ] ; then
-	mv /var/log/civicboom-pylons.log /var/log/civicboom/website.log
-fi
-
-if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
-	# reset to initial state before configuring
-	cp /opt/cb/share/website-api/production.ini /opt/cb/share/website/production.ini
-fi
-
-db_get cb-website-api/db_main        && DB_MAIN=$RET
-db_get cb-website-api/db_geo         && DB_GIS=$RET
-db_get cb-website-api/db_log         && DB_LOG=$RET
-db_get cb-website-api/mc_session     && MC_SESSION=$RET
-db_get cb-website-api/mc_cache       && MC_CACHE=$RET
-
-sed -i "s#DEBCONF_DB_MAIN#$DB_MAIN#"       /opt/cb/share/website/production.ini
-sed -i "s#DEBCONF_DB_GIS#$DB_GIS#"         /opt/cb/share/website/production.ini
-sed -i "s#DEBCONF_DB_LOG#$DB_LOG#"         /opt/cb/share/website/production.ini
-sed -i "s#DEBCONF_MC_SESSION#$MC_SESSION#" /opt/cb/share/website/production.ini
-sed -i "s#DEBCONF_MC_CACHE#$MC_CACHE#"     /opt/cb/share/website/production.ini
-
 initctl stop cb-website || true
 initctl stop cb-worker  || true
 
@@ -41,5 +18,3 @@ initctl start cb-worker  || true
 
 cd /opt/cb/share/website
 find -name "*.pyc" | xargs rm -f
-
-db_stop

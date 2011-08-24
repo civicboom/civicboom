@@ -1,17 +1,19 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-<%def name="page_title()">
-	${_("_site_name Mobile")}
-</%def>
-
-<%def name="header()">
-	<h1>${_("_site_name - Mobile Edition")}</h1>
-</%def>
+## includes
+<%namespace name="components"      file="/html/mobile/common/components.mako" />
 
 <%def name="body()">
-    <div data-role="page">
+    <div data-role="page">        
         <div data-role="content">
-	        <a href="${url(controller='account', action='signin')}" rel="external">sign in</a>
+            ${components.title_logo()}
+            <h1>The new way to source and share news!</h1>
+            <div class="title_content">
+    	        <a href="${h.url(controller='account', action='signin')}" rel="external"><button data-theme="b">Sign in!</button></a>
+    	        <p>
+    	           <a href="${h.url(controller="contents", action="index")}">${_("or start exploring _site_name!")}</a>
+                </p>
+            </div>
 	    </div>
 	</div>
 </%def>
