@@ -90,11 +90,11 @@ class MiscController(BaseController):
         return action_ok(data=data)
 
     def search_redirector(self):
-        if request.GET.get("type") == "Members": # these need to match the submit buttons
+        if request.GET.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
             return redirect(url(controller="members", action="index", term=request.GET.get("term")))
-        elif request.GET.get("type") == "Requests":
+        elif request.GET.get("type") == _("_Assignments"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
-        elif request.GET.get("type") == "Stories":
+        elif request.GET.get("type") == _("_Articles"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
         else:
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
