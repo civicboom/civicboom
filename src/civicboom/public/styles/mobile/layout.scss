@@ -1,6 +1,19 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+#error_message, .status_error {
+    color: red;
+}
+
+.title_logo {
+    text-align: center;
+
+    img {
+        width: 100%;
+        max-width: 508px;
+    }
+}
+
 .header {
     .logo_img {
         margin: 0.5em;
@@ -34,10 +47,10 @@
             margin: 0;
         }
     }
-    
-    .separator {
-        clear: both;
-    }
+}
+
+.separator {
+    clear: both;
 }
 
 .thumbnail {

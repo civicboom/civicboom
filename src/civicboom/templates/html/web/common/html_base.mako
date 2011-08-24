@@ -70,7 +70,7 @@ css_all.sort()
 	<script src="/javascript/jquery-1.6.2.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/prototypes.js"></script>
-	<script src="/javascript/misc.js"></script>
+	<script src="/javascript/misc.head.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
 	<script src="/javascript/ajaxError.js"></script>
@@ -80,7 +80,8 @@ css_all.sort()
 
 <%namespace name="share" file="/frag/common/share.mako" />
 
-% if config['online']:
+## addthis isn't used by the title page, but it slows down our first impression D:
+% if config['online'] and not (c.controller=="misc" and c.action=="titlepage"):
 	${share.AddThisScript()}
 % endif
 

@@ -1,19 +1,30 @@
 ##-----------------------------------------------------------------------------
+## Title logo image
+##-----------------------------------------------------------------------------
+<%def name="title_logo()">
+    <div class="title_logo">
+        <a href="${h.url(controller='misc', action='titlepage')}" rel='external'>
+            <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-684x150.png")}' alt='${_("_site_name")}' />
+        </a>
+    </div>
+</%def>
+
+##-----------------------------------------------------------------------------
 ## Creates the control bar/footer
 ##-----------------------------------------------------------------------------
 <%def name="control_bar()">
-    % if c.logged_in_user:
         <div data-role="navbar" class="ui-navbar">
             <ul>
+                % if c.logged_in_user:
                 <li>
                     <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
                 </li>
+                % endif
                 <li>
                     <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
                 </li>
             </ul>
         </div>
-    % endif
 </%def>
 
 ##-----------------------------------------------------------------------------
@@ -29,7 +40,7 @@
                     <option value="All">All content</option>
                     <option value="${_("_Assignments")}">${_("_Assignments")}</option>
                     <option value="${_("_Articles")}">${_("_Articles")}</option>
-                    <option value="${_("_Members")}">${_("_Members")}</option>
+                    <option value="${_("_Members")}">${_("_Users / _Groups")}</option>
                 </select>
                 <input type="submit" value="${_("Search")}">
             </form>
