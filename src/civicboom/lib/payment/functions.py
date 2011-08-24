@@ -72,4 +72,27 @@ def previous_start_date(start_date, frequency, time_now):
     if _start_date == time_now.date():
         _start_date = calculate_start_date(start_date, frequency, time_now, -2)
     return _start_date
+
+def get_admin_members(payment_account):
+    user_list = []
+    seen = []
+    def get_group_admins(group):
+        seen.append(group.id)
+        for member in group.members:
+            if member.id not in seen and group.is_admin(member):
+                seen.append(member.id)
+                if member.__type__ == 'user':
+                    user_list.append(member)
+                    continue
+                if member.id not in seen:
+                    get_group_admins(member)
+        pass
     
+    for member in payment_account.members:
+        if member.__type__ == 'user':
+            if member.id not in seen:
+                user_list.append(member)
+                seen.append(member.id)
+            continue
+        get_group_admins(member)
+    return user_list
