@@ -9,13 +9,16 @@ from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, DateTime, Date, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, synonym
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.schema import DDL, CheckConstraint
 
 import urllib, datetime
 import hashlib
 import copy
+import webhelpers.constants
 
+country_codes = dict(webhelpers.constants.country_codes())
 
 # many-to-many mappings need to be at the top, so that other classes can
 # say "I am joined to other table X using mapping Y as defined above"
@@ -333,7 +336,9 @@ class Member(Base):
     
 
     _config = None
-
+        
+#    extra_fields_raw = synonym('extra_fields', descriptor=property(_get_extra_fields_raw, _set_extra_fields_raw))
+    
     @property
     def config(self):
         if not self.extra_fields:
@@ -819,6 +824,9 @@ class PaymentAccount(Base):
     taxable          = Column(Boolean(), nullable=False, default=True)
     _tax_rate_code   = Enum("GB", "EU", "US", name="tax_rate_code")
     tax_rate_code    = Column(_tax_rate_code, nullable=True, default="GB")
+    _address_config_order = ['address_1', 'address_2', 'address_town', 'address_county', 'address_postal', 'address_country']
+    _address_required= ('address_1', 'address_town', 'address_country', 'address_postal')
+    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name'))
     
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
@@ -826,8 +834,8 @@ class PaymentAccount(Base):
             'id'                : None ,
             'type'              : None ,
             'start_date'        : None ,
-            'name'              : lambda account: account.config.get('company') or account.config.get('name'),
-            'address'           : lambda account: [account.config[key] for key in account.config if key[:7] == 'address'],
+            'name'              : lambda account: account.config.get('org_name') or account.config.get('ind_name'),
+            'address'           : lambda account: dict([(key, account.config[key] if key != 'address_country' else country_codes[account.config[key]]) for key in account._address_config_order if key[:7] == 'address' and key in account.config]),
             'billing_status'    : None, 
         },
     })
@@ -840,6 +848,7 @@ class PaymentAccount(Base):
             'frequency'        : None ,
             'members'          : lambda account: [member.to_dict() for member in account.members],
             'invoices'         : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']),
+            'invoices_outstanding' : None ,
             'billing_accounts' : lambda account: [billing.to_dict() for billing in account.billing_accounts],
             'services'         : lambda account: [service.to_dict() for service in account.services],
             'services_full'    : None ,
@@ -853,6 +862,25 @@ class PaymentAccount(Base):
     #services            = relationship("Service"          , primaryjoin="PaymentAccount.id==PaymentAccountService.payment_account_id"  , secondaryjoin="Service.id==PaymentAccountService.service_id", secondary='payment_account_service')
     
     _config = None
+    
+    def __unicode__(self):
+        return "%i - %s - %s" % (self.id, self.type, self.config.get('org_name') or self.config.get('ind_name'))
+
+    def __str__(self):
+        return unicode(self).encode('ascii', 'replace')
+    
+    def get_admins(self):
+        from civicboom.lib.payment.functions import get_admin_members
+        return get_admin_members(self)
+    
+    def send_email_admins(subject, content_html, extra_vars):
+        for user in self.get_admins():
+            user.send_email(subject, content_html, extra_vars)
+    
+    @property
+    def invoices_outstanding(self):
+        from civicboom.model.payment import Invoice
+        return sum([invoice.total_due for invoice in self.invoices.filter(Invoice.status=='billed').all()])
     
     @property
     def cost_taxed(self):

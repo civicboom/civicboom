@@ -1,4 +1,3 @@
-
 from civicboom.model.meta import Base, location_to_string, JSONType, Session
 from civicboom.model.member import account_types as _payment_account_types
 
@@ -11,10 +10,12 @@ from sqlalchemy.schema import DDL, CheckConstraint
 
 import UserDict
 import copy
+import webhelpers.constants
 from ConfigParser import SafeConfigParser, NoOptionError
 
 from decimal import *
 
+country_codes = dict(webhelpers.constants.country_codes())
 
 currency_symbols = {
     'GBP':  u"&pound;",
@@ -60,6 +61,9 @@ class ServicePrice(Base):
     frequency          = Column(_frequency,    nullable=False, default="month" , primary_key=True)
     currency           = Column(Unicode(),     nullable=False, primary_key=True)
     amount             = Column(Numeric(precision=10, scale=2),     nullable=False)
+    
+    def __str__(self):
+        return "%s %n %s" % (self.currency, self.amount, self.frequency)
     
     def __init__(self, service=None, frequency=None, currency=None, amount=None):
         if service:
