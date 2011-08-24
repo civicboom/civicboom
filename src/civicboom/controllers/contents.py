@@ -259,7 +259,7 @@ class ContentsController(BaseController):
             results = results.filter(Content.__type__!='draft')
 
         # TODO: how does this affect performance?
-        for col in ['creator', 'attachments', 'tags']:
+        for col in ['creator', 'attachments', 'tags', 'parent']:
             if col in kwargs.get('include_fields', []):
                 results = results.options(joinedload(getattr(Content, col)))
         ###############################
