@@ -1,4 +1,5 @@
 from pylons import app_globals
+from pylons.controllers.util import etag_cache
 
 from collections import OrderedDict
 
@@ -190,8 +191,14 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match
-    
+
     #print "cache_key: %s" % cache_key
+
+    if cache_key:
+        pass
+        # We need to know if this has been activated via a master controller call or a sub controller call .. an eTag can only be set once
+        #etag_cache(cache_key) # Set eTag in response header - if etag matchs the eTag in the original request header then abort execution and return the correct HTTP code for "use client etag cached ver"
+    
     return cache_key
 
 
@@ -226,15 +233,18 @@ def invalidate_content(content):
     _invalidate_obj_cache('contents', content)
     invalidate_list_version('contents', content.id)
     
-    if content.parent:               # If content has parent
-        #invalidate_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
-        # dissasociate has code to separately update the parent, could thoese lines be ignored?
-        pass
+    if content.parent:
+        if content.__type__ == 'comment':
+            # invalidate comments list ... humm ..
+            pass
+        else:
+            invalidate_list_version('contents_index', 'responses_to', content.parent.id )
+            # we dont need to invalidate the whole parent object - just the responses list
     
-    if content.__type__ == 'article' and content.parent == None:
-        invalidate_list_version('contents_index', 'articles'   , content.creator.id)
+    if content.__type__ == 'article' and not content.parent:
+        invalidate_list_version('contents_index', 'articles'    , content.creator.id)
+    if content.__type__ == 'article' and content.parent:
+        invalidate_list_version('contents_index', 'responses'   , content.creator.id)
     if content.__type__ == 'assignment':
-        invalidate_list_version('contents_index', 'assignments', content.creator.id)
-    
-    #'responses'   : {'list':'responses'  , 'creator':None},
-    #'responses_to': {'response_to': None},
+        invalidate_list_version('contents_index', 'assignments' , content.creator.id)
+

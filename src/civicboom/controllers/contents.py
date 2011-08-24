@@ -241,7 +241,7 @@ class ContentsController(BaseController):
             # If displaying responses - Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 'show' private content API call
             if kwargs.get('response_to'):
-                parent_root = get_content(kwargs['response_to']) # get_content will fail if current user does not have permission to view it
+                parent_root = get_content(kwargs['response_to'], is_viewable=True) # get_content will fail if current user does not have permission to view it
                 parent_root = parent_root.root_parent or parent_root
                 creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
