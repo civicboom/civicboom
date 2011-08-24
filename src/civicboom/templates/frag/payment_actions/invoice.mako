@@ -3,6 +3,8 @@
 <%!
     from decimal import Decimal
     from civicboom.model.payment import currency_symbols
+    from civicboom.model.member import PaymentAccount
+    _address_config_order = PaymentAccount._address_config_order
 %>
 
 ##------------------------------------------------------------------------------
@@ -66,9 +68,6 @@
             padding-right: 1em;
         }
     </style>
-    <div class="frag_whitewrap hide_if_print">
-        <a href="${h.url(controller='payments', id=d['payment_account_id'], action='show')}">&lt; Return to account overview</a>
-    </div>
     <div class="frag_whitewrap">
         <div class="invoice">
             <div class="header">
@@ -105,8 +104,8 @@
                     </div>
                     <div class="fr detail">
                         <b>${d['payment_account']['name']}</b><br />
-                        % for line in d['payment_account']['address']:
-                            ${line}<br />
+                        % for key in _address_config_order:
+                            ${d['payment_account']['address'].get(key,'')}<br />
                         % endfor
                     </div>
                     <div class="cb"></div>
@@ -154,8 +153,8 @@
                             </td>
                             <td>
                                 ${line.get('quantity')}
-                                % if int(line.get('discount',0)) > 0:
-                                    (${_('with %d%% discount') % (line.get('discount')*100)})
+                                % if line.get('discount',0) > 0:
+                                    (${_('with %d%% discount') % (Decimal(line.get('discount'))*100)})
                                 % endif
                             </td>
                             <td>
