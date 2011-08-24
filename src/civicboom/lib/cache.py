@@ -92,6 +92,9 @@ def normalize_kwargs_for_cache(kwargs):
 def _gen_list_key(*args):
     """
     bucket, cacheable_list_name, cacheable_variables
+    
+    typically called with args to identify the current key e.g.
+      'contents_index', 'articles', 'unittest'
     """
     def string_arg(arg):
         if isinstance(arg, list):
@@ -227,3 +230,11 @@ def invalidate_content(content):
         #invalidate_content(content.parent) # Refreshes parent, this is potentialy overkill for just updateing a reposnse tilte, responses will happen so in-frequently that this isnt a problem for now
         # dissasociate has code to separately update the parent, could thoese lines be ignored?
         pass
+    
+    if content.__type__ == 'article' and content.parent == None:
+        invalidate_list_version('contents_index', 'articles'   , content.creator.id)
+    if content.__type__ == 'assignment':
+        invalidate_list_version('contents_index', 'assignments', content.creator.id)
+    
+    #'responses'   : {'list':'responses'  , 'creator':None},
+    #'responses_to': {'response_to': None},
