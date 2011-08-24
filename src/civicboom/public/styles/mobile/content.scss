@@ -31,7 +31,7 @@ BODY.c-contents.a-show {
     }
     
     .content_text {
-        max-width: 508px;
         margin: auto;
+        word-break: break-word;
     }
 }

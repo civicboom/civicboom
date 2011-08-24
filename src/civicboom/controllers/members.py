@@ -288,6 +288,9 @@ class MembersController(BaseController):
         #)
         
         member = get_member(id)
+
+        if member and id.isdigit() and int(member.id) == int(id):
+            return redirect(url('member', id=member.username))
         
         if 'lists' in kwargs:
             lists = [list.strip() for list in kwargs['lists'].split(',')]

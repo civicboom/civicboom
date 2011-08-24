@@ -265,6 +265,7 @@ class ContentsController(BaseController):
         else:
             cache_key = get_cache_key('contents_index', kwargs)
         
+        
         # Construct Query with provided kwargs ---------------------------------
         # Everything past here can be cached based on the kwargs state
 

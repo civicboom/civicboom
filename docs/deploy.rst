@@ -1,27 +1,6 @@
 Deployment process
 ==================
 
-SSH Config for easy access to hosts
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- vim ~/.ssh/config and add the following:
-
-host webapi1
-	User ubuntu
-	HostName webapi1.civicboom.com
-	IdentityFile ~/.ec2/civicboom-key.pem
-
-host webapi2
-	User ubuntu
-    HostName webapi2.civicboom.com
-    IdentityFile ~/.ec2/civicboom-key.pem
-
-host db1
-	User ubuntu
-    HostName db1.civicboom.com
-    IdentityFile ~/.ec2/civicboom-key.pem
-
-- This means you will be able to ssh webapi1 or ssh webapi2 etc.
-
 Push to master to build packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 - for pushing all of develop
@@ -46,11 +25,15 @@ Push to master to build packages
 Install the packages
 ~~~~~~~~~~~~~~~~~~~~
 - get a list of servers
-  - as of this writing we have webapi1, webapi2, db1.civicboom.com
-  - for a realtime list, log into the ec2 control panel
+  - as of this writing we have webapi1, webapi2, db1, db2.civicboom.com
+  - for a realtime list, log into the rackspace control panel
+    - https://lon.manage.rackspacecloud.com/pages/Login.jsp
+	- civicboom
+	- hosting -> cloud servers -> server instances
+  - OLD: for a realtime list, log into the ec2 control panel
     - https://console.aws.amazon.com/ec2/home?region=eu-west-1
     - civicboom@gmail.com
-    - instances -> select one -> instance actions -> connect (note: user "ubuntu" rather than "root")
+    - instances -> select one -> instance actions -> connect
 
 - upgrade the servers (web / api nodes)
   - ssh into the server
@@ -58,7 +41,6 @@ Install the packages
     - follow prompts to upgrade (or downgrade) the installed packages
   - check that the site is working by viewing that specific server (eg http://webapi2.civicboom.com/contents.json)
     - (Doing one at a time means that the load balancer always has at least one active server to point to)
-	- sometimes nginx needs a second kick - /etc/init.d/nginx restart
 
 - upgrade the servers (database nodes)
   - note that the database rarely needs updating, and doing it is a pain, so

@@ -20,8 +20,17 @@
 	
 	<div id="reg_form">
     <form action="" method="post">
-        ${help_type()}
-        <table class="newform user hide_if_js">
+        ## AllanC - Addition to show invalid states without the need to pass through the JS hide if the registration form is invalid - bit messy but works
+        <% help_type_invalid = c.result['status']=='invalid' and c.result['data']['invalid'].get('help_type') %>
+        % if c.result['status']!='invalid' or help_type_invalid:
+            ${help_type()}
+        % endif
+        ## AllanC - if we are not displaying the help selection - we still need to include the original selsection if it was valid
+        % if c.result['status']=='invalid' and not help_type_invalid:
+            <input type='hidden' name='help_type' value='${h.get_data_value('help_type','register')}'>
+        % endif
+        
+        <table class="newform user ${'hide_if_js' if c.result['status']!='invalid' else ''}">
             % if 'username' in c.required_fields:
               ${username()}
             % endif
@@ -208,13 +217,13 @@
             </div>
             
             <div class="hide_if_js">
-<%
-    radio_choices = {
-        'ind':[_('Individual')  , False],
-        'org':[_('Organisation'), False],
-        'ind':[_('Just browsing'), False],
-    }
-%>
+                <%
+                    radio_choices = {
+                        'ind':[_('Individual'   ), False],
+                        'org':[_('Organisation' ), False],
+                        'ind':[_('Just browsing'), False],
+                    }
+                %>
                 % for radio_key, (display_text, checked) in radio_choices.iteritems():
                     <%
                         if checked:

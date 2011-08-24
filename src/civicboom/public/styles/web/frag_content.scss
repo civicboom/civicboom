@@ -1,6 +1,9 @@
 #frag_containers {
 	.frag_container {
 	
+	   table.content tr td { padding-right: 3px; }
+     table.content tr td.x { padding-left: 3px; }
+	
 	   .ui-button {
 	       margin-right: 1em;
 	   }
