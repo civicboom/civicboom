@@ -129,7 +129,7 @@ test-db: skel-db
 
 live-db: skel-db
 	mkdir -p data
-	ssh db1.civicboom.com /opt/cb/bin/dump_db > data/live-data.pgdump
+	ssh db1.civicboom.com sudo -u postgres pg_dump civicboom > data/live-data.pgdump
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
 
