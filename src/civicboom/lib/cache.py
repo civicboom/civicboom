@@ -15,7 +15,7 @@ cacheable_lists = {
         'assignments' : {'list':'assignments', 'creator':None},
         'responses'   : {'list':'responses'  , 'creator':None},
         'responses_to': {'response_to': None},
-        #'comments' : {} # AllanC - todo - comments should come from index?
+        #'comments' : {} # AllanC - todo - comments could come from index?
         #'assignments_accepted': {'accepted_by': None},
         #'assignments_invited' : {'accepted_by': None},
         #'assignments_active'   # AllanC - humm .. these are date realted? .. how can these be cached? are they cacheable?
@@ -40,6 +40,8 @@ cacheable_lists = {
 }
 cacheable_lists['contents_index'] = OrderedDict(cacheable_lists['contents_index'])
 cacheable_lists['contents_index'].update({'content'     : {'creator': None}})
+
+uncacheable_kwargs = ['include_content', 'exclude_content', 'include_member', 'exclude_member']
 
 # -- Variables -----------------------------------------------------------------
 
@@ -69,17 +71,19 @@ def init_cache(config):
 def normalize_kwargs_for_cache(kwargs):
     """
     Do not allow db objects to be used as params
-    Normalize everything down to strings
+    Normalize everything down to strings or sorted lists of strings
     Skips kwargs beggining with '_'
     """
     for key, value in kwargs.iteritems():
         if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
-            #try   : value = value.__db_index__() # AllanC if it has an id use it. This should work for all db objects and not require the __db_index__ function
-            try   : value = value.id
-            except: pass
-            # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-            value = str(value).strip()
-        kwargs[key] = value
+            if isinstance(value, list):
+                kwargs[key].sort()
+            else:
+                try   : value = value.id
+                except: pass
+                # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
+                value = str(value).strip()
+                kwargs[key] = value
     return kwargs
 
 
@@ -136,6 +140,9 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
     """
     
     cache_key = ''
+
+    if set(kwargs.keys()) & set(uncacheable_kwargs): # If kwargs contains any of the uncacheable keys - then abort caching
+        return cache_key
     
     if normalize_kwargs:
         kwargs = normalize_kwargs_for_cache(kwargs)
@@ -144,6 +151,8 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
     
     cacheable_kwargs_keys = [k for (k,v) in kwargs.iteritems() if not k.startswith('_')]  # Strip the keys starting with '_' as they are not needed. We need to preserve the kwargs for later as the _logged_in and _private are going to form part of the cache key
     cacheable_kwargs_keys.sort()
+    
+
     
     # Iterate through all the 
     for cacheable_list_name, cache_args_dict in cacheable_lists[bucket].iteritems():

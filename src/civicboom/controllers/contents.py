@@ -207,6 +207,7 @@ class ContentsController(BaseController):
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
+        @comment AllanC if list='responses' - ",parent" is appended automatically to 'include_fields'
         """
 
         # Pre-process kwargs ---------------------------------------------------
@@ -222,6 +223,10 @@ class ContentsController(BaseController):
         if kwargs.get('list') == 'responses': # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
             kwargs['include_fields'] += ",parent"
 
+        # Split comma separted fields into lists
+        for field in [field for field in ['sort', 'include_fields', 'exclude_fields'] if isinstance(kwargs.get(field),basestring)]:
+            kwargs[field] = kwargs[field].split(",") # these will be sorted in normalization
+
         # Replace instances of 'me' with current username
         for key, value in kwargs.iteritems():
             if value == 'me':
@@ -236,12 +241,15 @@ class ContentsController(BaseController):
             # If displaying responses - Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 'show' private content API call
             if kwargs.get('response_to'):
-                parent_root = get_content(kwargs['response_to'])
+                parent_root = get_content(kwargs['response_to']) # get_content will fail if current user does not have permission to view it
                 parent_root = parent_root.root_parent or parent_root
                 creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
+                # AllanC - Could this be a security hole?
+                #          we are faking the creator to be the root parent - does this mean we could use this to our advantage to list private content?
+                #          This needs another developer to advise and check
         except Exception as e:
-            user_log.exception("Error searching:")
+            user_log.exception("Error searching:") # AllanC - um? why is this in a genertic exception catch? if get_content fails then we want that exception to propergate
 
         if kwargs.get('creator'):
             creator = get_member(kwargs['creator'])
@@ -255,7 +263,7 @@ class ContentsController(BaseController):
 
         # Create Cache key based on kwargs -------------------------------------
         
-        kwargs = normalize_kwargs_for_cache(kwargs) # This str()'s all kwargs and gets id from any objects
+        kwargs = normalize_kwargs_for_cache(kwargs) # This str()'s all kwargs and gets id from any objects - and sorts any lists
 
         cache_key = ''
         if _filter:
@@ -324,10 +332,10 @@ class ContentsController(BaseController):
                         parts.append(f)
     
                 if 'include_content' in kwargs and kwargs['include_content']:
-                    parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
+                    parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(',')]))
     
                 if 'exclude_content' in kwargs and kwargs['exclude_content']:
-                    parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
+                    parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(',')])))
             except FilterException as fe:
                 raise action_error(code=400, message=str(fe))
     
@@ -336,7 +344,7 @@ class ContentsController(BaseController):
             # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
             # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
             results = results.filter("("+sql(feed)+")")
-            results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
+            results = sort_results(results, kwargs.get('sort', '-update_date'))
             
             results = to_apilist(results, obj_type='contents', **kwargs)
             
