@@ -26,7 +26,7 @@
 </%def>
 
 
-<%def name="upgrade_details()">
+<%def name="upgrade_details(style=None)">
     <%
         plans = ['free', 'plus', 'corp']
         hilight_plan = 'plus'
@@ -119,16 +119,34 @@
                     </td>
                 % endfor
             </tr>
-            <tr class="upgrade">
-                <td></td>
-                % if len(plans)-2 > 0:
-                    % for x in range(len(plans)-2):
-                        <td></td>
+            % if style == 'create_account':
+                <tr class="upgrade">
+                    <td></td>
+                    % for plan in plans:
+                        <td>
+                            % if plan in ('plus','corp'):
+                                <input type="submit" name="plan_${plan}" value="Create" />
+                            % endif
+                        </td>
                     % endfor
-                % endif
-                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">${_("Upgrade Now")}</a></td>
-                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">${_("Learn More")}</a></td>
-            </tr>
+                    % if len(plans)-2 > 0:
+                        % for x in range(len(plans)-2):
+                            <td></td>
+                        % endfor
+                    % endif
+                </tr>
+            % else:
+                <tr class="upgrade">
+                    <td></td>
+                    % if len(plans)-2 > 0:
+                        % for x in range(len(plans)-2):
+                            <td></td>
+                        % endfor
+                    % endif
+                    <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">${_("Upgrade Now")}</a></td>
+                    <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">${_("Learn More")}</a></td>
+                </tr>
+            % endif
         </tfoot>
     </table>
     

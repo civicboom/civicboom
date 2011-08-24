@@ -3,6 +3,8 @@
 <%!
     from decimal import Decimal
     from civicboom.model.payment import currency_symbols
+    from civicboom.model.member import PaymentAccount
+    _address_config_order = PaymentAccount._address_config_order
 %>
 
 ##------------------------------------------------------------------------------
@@ -32,9 +34,22 @@
 <%def name="body()">
     <div class="frag_whitewrap">
         <h1>Manage your payment account</h1>
-        <p>Payment account number: ${d['id']}</p>
-        <p>Account type: ${_('_'+d['type']).capitalize()}</p>
-        <p>Account status: ${d['billing_status']}</p>
+        <div class="fl">
+            <p>Payment account number: ${d['id']}</p>
+            <p>Account type: ${_('_'+d['type']).capitalize()}</p>
+            <p>Account status: ${d['billing_status']}</p>
+        </div>
+        <div class="fr" style="width: 50%;">
+            <p><h3>Name:</h3>${d['name']}</p>
+            <p>
+                <h3>Address:</h3>
+                % for key in _address_config_order:
+                    ${d['address'].get(key,'')}<br />
+                % endfor
+            </p>
+            <p><a href="${h.url('edit_payment', id=d['id'])}">Edit account information</a></p>
+        </div>
+        <div class="cb"></div>
     </div>
     <div class="frag_whitewrap" style="float:left;width:42%; margin-right:0;">
         <h2>Services</h2>
