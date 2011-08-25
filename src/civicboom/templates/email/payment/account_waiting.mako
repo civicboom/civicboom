@@ -1,4 +1,4 @@
-<%inherit file="./base_email.mako"/>
+<%inherit file="../base_email.mako"/>
 
 <%def name="body()">
 
