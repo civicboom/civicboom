@@ -209,9 +209,9 @@ class Content(Base):
             h.update(str(getattr(self, field)))
         return h.hexdigest()
 
-    def invalidate_cache(self):
+    def invalidate_cache(self, remove=False):
         from civicboom.lib.cache import invalidate_content
-        invalidate_content(self)
+        invalidate_content(self, remove=remove)
 
     def action_list_for(self, member, **kwargs):
         action_list = []

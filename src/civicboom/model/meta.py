@@ -92,7 +92,7 @@ class CacheChangeListener(MapperExtension):
         instance.invalidate_cache()
         #print "instance %s after_update" % instance
     def before_delete(self, mapper, connection, instance):
-        instance.invalidate_cache()
+        instance.invalidate_cache(remove=True)
         #print "instance %s before_delete" % instance
 
 

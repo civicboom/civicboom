@@ -192,6 +192,7 @@ class ContentsController(BaseController):
         @param due_date     find the due date of an assignment, eg "due_date=<2000/11/01" for old assignments, "due_date=>now" for open ones
         @param update_date  search by most recent update date, eg "update_date=<2000/11/01" for old articles
         @param response_to  content_id of parent
+        @param comments_to  content_id of parent
         @param boomed_by    username or user_id of booming user
         @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
@@ -226,6 +227,7 @@ class ContentsController(BaseController):
         # Split comma separted fields into lists
         for field in [field for field in ['sort', 'include_fields', 'exclude_fields'] if isinstance(kwargs.get(field),basestring)]:
             kwargs[field] = kwargs[field].split(",") # these will be sorted in normalization
+        # AllanC - this messed up passing kwargs in the list obejcts because they were in the format ['content','thing'] rather than content,thing
 
         # Replace instances of 'me' with current username
         for key, value in kwargs.iteritems():
@@ -245,9 +247,7 @@ class ContentsController(BaseController):
                 parent_root = parent_root.root_parent or parent_root
                 creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
-                # AllanC - Could this be a security hole?
-                #          we are faking the creator to be the root parent - does this mean we could use this to our advantage to list private content?
-                #          This needs another developer to advise and check
+                # AllanC note - 'creator' is compared against c.logged_in_persona later
         except Exception as e:
             user_log.exception("Error searching:") # AllanC - um? why is this in a genertic exception catch? if get_content fails then we want that exception to propergate
 
@@ -282,7 +282,11 @@ class ContentsController(BaseController):
             time_start = time()
             
             results = Session.query(Content).with_polymorphic('*') # TODO: list
-            results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
+            results = results.filter(Content.visible==True)
+            if kwargs.get('comments_to'):
+                results = results.filter(Content.__type__=='comment')
+            else:
+                results = results.filter(Content.__type__!='comment')
     
             if kwargs['_is_logged_in_as_creator']:
                 pass # allow private content
@@ -308,6 +312,7 @@ class ContentsController(BaseController):
                     'update_date': UpdateDateFilter,
                     'type'       : TypeFilter      ,
                     'response_to': ParentIDFilter  ,
+                    'comments_to': ParentIDFilter  ,
                     'boomed_by'  : BoomedByFilter  ,
                     'term'       : TextFilter      ,
                     'location'   : LocationFilter  ,
@@ -835,7 +840,7 @@ class ContentsController(BaseController):
         @type object
         @api contents 1.0 (WIP)
         
-        @param * (see common list return controls)
+        @param lists A comma separated list of lists to return with this call. Default 'comments, responses, contributors, actions, accepted_status'
         
         @return 200      page ok
                 content  content object

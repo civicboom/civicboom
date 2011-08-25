@@ -7,6 +7,7 @@ from civicboom.model.meta    import Session
 from sqlalchemy         import and_,  select
 from sqlalchemy.orm     import joinedload
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc     import InvalidRequestError
 
 from sqla_hierarchy import *
 
@@ -72,7 +73,7 @@ def get_member(member, search_email=False, **kwargs):
         for query in get_member_querys:
             try :
                 result = query.one()
-                Session.expunge(result)
+                #Session.expunge(result)
                 return result
             except NoResultFound:
                 pass
@@ -82,12 +83,11 @@ def get_member(member, search_email=False, **kwargs):
     cache_func = lambda: get_member_nocache(member)
     if _cache.get('members'):
         result = _cache.get('members').get(key=str(member), createfunc=cache_func)
-        if result not in Session: # AllanC - Is this check needed? we always expunge from session before returning it .. so this should always work??
-            Session.add(result)
-            return result
-        else:
-            log.warn('Member object already in session, but how do we get a reference to the exisitng object in the session?')
-            return Session[result]
+        #try:
+            #Session.add(result)
+            #return result
+        #except InvalidRequestError:
+        return Session.merge(result, load=False)
     return cache_func()
 
 
@@ -284,7 +284,7 @@ def get_content(content):
 
         try:
             result = Session.query(Content).with_polymorphic('*').get(int(content_id)) #Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
-            Session.expunge(result)
+            #Session.expunge(result)
             return result
         except:
             return None  # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
@@ -292,12 +292,13 @@ def get_content(content):
     cache_func = lambda: get_content_nocache(content)
     if _cache.get('contents'):
         result = _cache.get('contents').get(key=str(content), createfunc=cache_func)
-        if result not in Session: # AllanC - Is this check needed? we always expunge from session before returning it .. so this should always work??
-            Session.add(result)
-            return result
-        else:
-            log.warn('Content object already in session, but how do we get a reference to the exisitng object in the session?')
-            return Session[result]
+        #try:
+            #Session.add(result)
+            #return result
+        #except InvalidRequestError:
+            #log.warn('Content object already in session, but how do we get a reference to the exisitng object in the session?')
+        return Session.merge(result, load=False)
+
     return cache_func()
 
 

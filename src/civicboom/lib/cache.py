@@ -15,19 +15,20 @@ cacheable_lists = {
         'articles'    : {'list':'articles'   , 'creator':None},
         'assignments' : {'list':'assignments', 'creator':None},
         'responses'   : {'list':'responses'  , 'creator':None},
-        'responses_to': {'response_to': None},
-        #'comments' : {} # AllanC - todo - comments could come from index?
+        
+        'response_to' : {'response_to': None},
+        'comments_to' : {'comments_to': None},
         #'assignments_accepted': {'accepted_by': None},
         #'assignments_invited' : {'accepted_by': None},
         #'assignments_active'   # AllanC - humm .. these are date realted? .. how can these be cached? are they cacheable?
         #'assignments_previous'
     },
     'members_index': {
-        'followers' : {'follower_of': None},
-        'following' : {'followed_by': None},
-        'groups'    : {'groups_for' : None},
-        'members_of': {'members_of' : None},
-        'boomed'    : {'boomed'     : None},
+        'followers'   : {'follower_of': None},
+        'following'   : {'followed_by': None},
+        'groups'      : {'groups_for' : None},
+        'members_of'  : {'members_of' : None},
+        'boomed'      : {'boomed'     : None},
     },
     'mesages_index': {
         'all'         : {'list':'all'         },
@@ -64,7 +65,7 @@ def init_cache(config):
             _cache[bucket] = cache_manager.get_cache(bucket)
             # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
             #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
-            #    _cache[bucket].clear()
+            _cache[bucket].clear()
 
 
 # -- Utils ---------------------------------------------------------------------
@@ -107,14 +108,21 @@ def _gen_list_key(*args):
 
 def get_list_version(*args):
     key   = _gen_list_key(*args)
-    value = app_globals.memcache.get(key) or 0
+    value = 0
+    try:
+        value = app_globals.memcache.get(key)
+    except:
+        pass
     return value
 
 def invalidate_list_version(*args):
     key    = _gen_list_key(*args)
-    value  = app_globals.memcache.get(key) or 0
-    value += 1
-    app_globals.memcache.set(key, value)
+    value  = 0
+    try:
+        value = app_globals.memcache.get(key) + 1
+        app_globals.memcache.set(key, value)
+    except:
+        pass
     return value
     
 def get_lists_versions(cacheable_identifyer_tuples):
@@ -191,9 +199,9 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match
-
+    
     #print "cache_key: %s" % cache_key
-
+    
     if cache_key:
         pass
         # We need to know if this has been activated via a master controller call or a sub controller call .. an eTag can only be set once
@@ -224,21 +232,33 @@ def _invalidate_obj_cache(bucket, obj, fields=['id']):
             cache.remove_value(key=key)
         
 
-def invalidate_member(member):
-    _invalidate_obj_cache('members', member, ['id','username', 'email'])
+def invalidate_member(member, remove=False):
+    _invalidate_obj_cache('members', member, ['id','email'])
     invalidate_list_version('members', member.id)
 
+    # If removing the member entirely - invalidate all sub lists
+    if remove:
+        for list in ['drafts', 'articles', 'assignments', 'responses', 'boomed_by']:
+            invalidate_list_version('contents_index', list, member.id)
+        # TODO
+        # member index lists
+        # messages index lists
 
-def invalidate_content(content):
+
+def invalidate_content(content, remove=False):
+    """
+    Invalidate:
+      1.) The get_content(?) db object cache
+      2.) Any lists associated with this content or content.parent
+    """
     _invalidate_obj_cache('contents', content)
     invalidate_list_version('contents', content.id)
     
     if content.parent:
         if content.__type__ == 'comment':
-            # invalidate comments list ... humm ..
-            pass
+            invalidate_list_version('contents_index', 'comments_to', content.parent.id)
         else:
-            invalidate_list_version('contents_index', 'responses_to', content.parent.id )
+            invalidate_list_version('contents_index', 'response_to', content.parent.id)
             # we dont need to invalidate the whole parent object - just the responses list
     
     if content.__type__ == 'article' and not content.parent:
@@ -248,3 +268,10 @@ def invalidate_content(content):
     if content.__type__ == 'assignment':
         invalidate_list_version('contents_index', 'assignments' , content.creator.id)
 
+    # If removing the content item entirely - invalidate all sub lists
+    if remove:
+        for list in ['comments_to', 'response_to']:
+            invalidate_list_version('contents_index', list, content.id)
+        # TODO
+        # accepted lists
+        # member index lists

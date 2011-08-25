@@ -8,7 +8,7 @@ import logging
 log  = logging.getLogger(__name__)
 
 valid_obj_types = ['contents', 'members', 'messages']
-kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format','exclude_content','exclude_members']
+kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format','exclude_content','exclude_members','lists']
 
 
 def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):
@@ -19,6 +19,8 @@ def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs=
         if not (key in kwargs_to_exclude_in_api_output or key.startswith('_')):
             try   : value = value.id # AllanC - get id's of any object types
             except: pass
+            if isinstance(value, list):
+                value = ','.join(value)
             # AllanC - it may be wise here to look to all objects that are ok .. like int, float, date ... but raise warnings on actual objects that arrive at this point
             value = unicode(value)
             if value:
