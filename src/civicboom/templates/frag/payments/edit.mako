@@ -14,17 +14,19 @@
         self.id = self.account.get('id')
     %>
     <div class="frag_whitewrap">
-        ${h.form('/payments/1')}
-        ${h.form(h.args_to_tuple('payment', id=self.id, format="redirect"),
-            method       = 'PUT',
-        )}
+        ${h.form(h.url('payment', id=self.id, format='redirect'), method='PUT')}
         <h1>Just a few details before we can upgrade your account</h1>
         <p>
             Who is this payment account for?
         </p>
+        <%def name="selectopt(value, current)">
+            % if value==selected:
+                selected="selected"
+            % endif
+        </%def>
         <select name="name_type" id="name_type">
-            <option value="org">The company / org you work for</option>
-            <option value="ind">You personally, separate from any company</option>
+            <option ${selectopt(org, self.account.get('name_type'))} value="org">The company / org you work for</option>
+            <option ${selectopt(org, self.account.get('name_type'))} value="ind">You personally, separate from any company</option>
         </select>
         <br />
         <p class="org">
