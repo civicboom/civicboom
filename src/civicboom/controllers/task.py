@@ -323,8 +323,8 @@ class TaskController(BaseController):
                     invoice.payment_account.billing_status = new_status
                     Session.commit()
                     if new_status == "failed":
-                        print "Send DISABLED"
-                        account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_disabled.mako', extra_vars={}))
+                        print "Send FAILED"
+                        account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
                         pass #Send account disabled email
                     elif new_status == "waiting":
                         print "Send WAITING"
