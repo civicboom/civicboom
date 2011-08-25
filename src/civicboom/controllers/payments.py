@@ -131,9 +131,12 @@ class PaymentsController(BaseController):
             org_name        = formencode.validators.UnicodeString(),
             ind_name        = formencode.validators.UnicodeString(),
         )
+        print '###', kwargs.get('name_type')
         if kwargs.get('name_type') == 'org':
+            print 'org'
             schema.fields['org_name']  = formencode.validators.UnicodeString(not_empty=True)
         else:
+            print 'ind'
             schema.fields['ind_name']  = formencode.validators.UnicodeString(not_empty=True)
             
         for address_field in address_fields:
@@ -161,8 +164,10 @@ class PaymentsController(BaseController):
         Session.commit()
         
         # url('payment', id=ID)
+        if c.format == 'redirect':
+            redirect(url('payment', id=account.id))
         
-        return redirect(url('payment', id=account.id))
+        return action_ok()
     
     @web
     @auth
