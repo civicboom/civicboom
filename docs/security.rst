@@ -25,7 +25,7 @@ Server Side
 - Content in our database is marked as public or private, private
   content only shows up to the creator and people the creator has
   allowed
-- Media (videos, photos, etc) is stored in Amazon S3; files are
+- Media (videos, photos, etc) are stored in Amazon S3; files are
   associated with a 256-bit key which you can only know if you
   access to the file
 - There is an event log / audit trail which shows who has edited what
@@ -48,6 +48,6 @@ Data locations
 - Media:
   Amazon's datacenter in Dublin
 - Backups:
-  Our office in Kent
+  Our office in Kent (See the disaster recovery docs for more details)
 - Extra bits:
   Bytemark's datacenter in Manchester
