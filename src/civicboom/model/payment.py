@@ -222,6 +222,7 @@ class Invoice(Base):
             self.tax_rate_code = payment_account.tax_rate_code
             if payment_account.taxable:
                 self.tax_rate = tax_rates.get(self.tax_rate_code)
+            self.config.update({'payment_account_config': payment_account.to_dict('invoice')})
     
     _config = None
 
