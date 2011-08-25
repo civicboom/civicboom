@@ -827,7 +827,7 @@ class PaymentAccount(Base):
     tax_rate_code    = Column(_tax_rate_code, nullable=True, default="GB")
     _address_config_order = ['address_1', 'address_2', 'address_town', 'address_county', 'address_postal', 'address_country']
     _address_required= ('address_1', 'address_town', 'address_country', 'address_postal')
-    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name'))
+    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type'))
     
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
@@ -839,6 +839,16 @@ class PaymentAccount(Base):
             'address'           : lambda account: dict([(key, account.config[key] if key != 'address_country' else country_codes[account.config[key]]) for key in account._address_config_order if key[:7] == 'address' and key in account.config]),
             'billing_status'    : None, 
         },
+    })
+    
+    __to_dict__.update({
+        'invoice': copy.deepcopy(__to_dict__['default'])
+    })
+    __to_dict__['invoice'].update({
+            'currency'         : None ,
+            'frequency'        : None ,
+            'taxable'          : lambda account: [member.to_dict() for member in account.members],
+            'tax_rate_code'    : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']),
     })
     
     __to_dict__.update({
@@ -876,7 +886,7 @@ class PaymentAccount(Base):
     
     def send_email_admins(subject, content_html, extra_vars):
         for user in self.get_admins():
-            user.send_email(subject, content_html, extra_vars)
+            user.send_email(subject=subject, content_html=content_html, extra_vars=extra_vars)
     
     @property
     def invoices_outstanding(self):
