@@ -26,6 +26,8 @@ Base = declarative_base()
 from sqlalchemy import PickleType, UnicodeText
 import json
 
+from civicboom.lib.telemetry import log as t_log
+
 
 class JSONType(PickleType):
     """
@@ -49,6 +51,7 @@ def location_to_string(location):
     return None
 
 
+@t_log("to_dict")
 def to_dict(self, list_type='default', include_fields=None, **kwargs):
     """
     describe

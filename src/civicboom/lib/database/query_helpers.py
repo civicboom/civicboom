@@ -72,7 +72,7 @@ def __list_to_dict(results, list_to_dict_transform=None, **kwargs):
     except:
         return results
 
-@t_log("converting to api list")
+@t_log("to_apilist")
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     """
     """
