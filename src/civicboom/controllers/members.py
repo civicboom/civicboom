@@ -308,35 +308,37 @@ class MembersController(BaseController):
             ]
         lists.sort() # Order needs to be standardised to generate a normalized cache key
         
-        #cache_key = gen_key_for_lists(['member']+lists, normalize_member(id)) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        cache_key = gen_key_for_lists(['member']+lists, normalize_member(id)) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
         
-        member = get_member(id)
+        def members_show(id, **kwargs):
         
-        data = {'member': member.to_dict(list_type='full', **kwargs)}
+            member = get_member(id)
+            
+            data = {'member': member.to_dict(list_type='full', **kwargs)}
+            
+            # Imports
+            # AllanC - cannot be imported at begining of module because of mutual coupling error
+            from civicboom.controllers.contents       import ContentsController, list_filters
+            from civicboom.controllers.member_actions import MemberActionsController
+            contents_controller       = ContentsController()
+            member_actions_controller = MemberActionsController()
+            
+            # Content Lists
+            for list in [list for list in lists if list in list_filters]:
+                data[list] = contents_controller.index(creator=member, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
+                lists.remove(list) # AllanC - fix; don't allow the same lists to be got from both content and member controller
+            
+            # Member Lists
+            for list in [list for list in lists if hasattr(member_actions_controller, list)]:
+                limit = None
+                if list in ['boomed', 'assignments_accepted']: # AllanC - we dont want to limit member lists, but we do want to limit content lists to 3
+                    limit = config['search.default.limit.sub_list']
+                data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
+            
+            return action_ok(data=data)
         
-        # Imports
-        # AllanC - cannot be imported at begining of module because of mutual coupling error
-        from civicboom.controllers.contents       import ContentsController, list_filters
-        from civicboom.controllers.member_actions import MemberActionsController
-        contents_controller       = ContentsController()
-        member_actions_controller = MemberActionsController()
-        
-        # Content Lists
-        for list in [list for list in lists if list in list_filters]:
-            data[list] = contents_controller.index(creator=member, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
-            lists.remove(list) # AllanC - fix; don't allow the same lists to be got from both content and member controller
-        
-        # Member Lists
-        for list in [list for list in lists if hasattr(member_actions_controller, list)]:
-            limit = None
-            if list in ['boomed', 'assignments_accepted']: # AllanC - we dont want to limit member lists, but we do want to limit content lists to 3
-                limit = config['search.default.limit.sub_list']
-            data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
-        
-        result = action_ok(data=data)
-        
-        # Retreaval of cache to go here.
-        # PLACEHOLDER
-        #  use cache_key generated above
-        
-        return result
+        cache_func = lambda: members_show(id, **kwargs)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
+        return cache_func()
+

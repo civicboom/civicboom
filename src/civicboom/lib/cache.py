@@ -8,7 +8,7 @@ Concepts
     list version represents the version number of the underlying list source
 
   A page can have a cache_key associated with it e.g.
-    'contents_index:list=articles:creator=unittest:_logged_in_creator=True:limit=3:1798'
+    'contents_index:site_version:list=articles:creator=unittest:_logged_in_creator=True:limit=3:1798'
   This uniquely identifys the returned data and is used as the redis cache_key and etag cache_key
   
   The final number in the example ':1798' is the version number of the list
@@ -28,6 +28,10 @@ Concepts
     Server lists are aquired from the server cache with this cache_key - else the server cache is populated with the calculated result
     Old cache_key versions wait to expire and are managed by redis - it would be impossible to invalidate every permuncation of kwargs to view a base list
 
+  The site version number is appended to cache_keys because:
+    new versions may have differnt returns
+    there may be multiple API servers with different versions actives, we do not want the cache to interfear with each other
+  It is not nessiary to invalidate the list version numbers between versions as regardless of site version they represent the state of the list and not the final return data
 """
 
 from pylons import app_globals, tmpl_context as c, config
@@ -109,7 +113,8 @@ def init_cache(config):
         #    #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
         #    _cache[bucket].clear()
         _cache = cache_manager.get_cache(bucket)
-        _cache.clear()
+        if config['development_mode']:
+            _cache.clear()
         
 
 
@@ -192,6 +197,7 @@ def get_lists_versions(lists, list_variables):
     return zip(lists, list_versions)
 
 def gen_key_for_lists(lists, list_variables):
+    return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
     cache_key = cache_separator.join([list_name+'='+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
     etag_cache(cache_key) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
     return cache_key
@@ -273,7 +279,7 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [bucket]
+            cache_values  = [bucket, app_globals.version]
             cache_values += [key+'='+str(kwargs[key]) for key in keys_sorted]
             cache_values += ['ver=' +str(list_version)]
             cache_key = cache_separator.join(cache_values)

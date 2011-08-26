@@ -795,6 +795,23 @@ class ContentsController(BaseController):
         
         return action_ok(_("_content has been saved"))
 
+    @web
+    @authorize
+    @role_required('contributor')
+    def edit(self, id, **kwargs):
+        """
+        GET /contents/{id}/edit: Form to edit an existing item
+        """
+        # url('edit_content', id=ID)
+        
+        content = get_content(id, is_editable=True)
+        
+        return action_ok(
+            data={
+                'content': content.to_dict(list_type='full'),
+                'actions': content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
+            }
+        ) # Automatically finds edit template
 
     @web
     @auth
@@ -864,9 +881,11 @@ class ContentsController(BaseController):
                 'accepted_status',
             ]
         
-        #cache_key = gen_key_for_lists(['content']+lists, id) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        cache_key = gen_key_for_lists(['content']+lists, id) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
         # AllanC - the eTag here is not a security problem before .viewable_by because we are not transmitting any data, just an identifyer key
         # However viewers of an item of content will see the version numbers of the lists and know when something has changed - is this an issue? - we really want the call to terminate before any DB access is done if the eTag matchs
+        
+        # -- humm, --------
         
         content = get_content(id) #, is_viewable=True) # This is done manually below we needed some special handling for comments
         
@@ -878,24 +897,28 @@ class ContentsController(BaseController):
         
         if not content.viewable_by(c.logged_in_persona):
             raise errors.error_view_permission()
+
         
-        data = {'content':content.to_dict(list_type='full', **kwargs)}
+        # Cache function return
+        def contents_show(content, **kwargs):
+            
+            data = {'content':content.to_dict(list_type='full', **kwargs)}
+            
+            # AllanC - cant be imported at top of file because that creates a coupling issue
+            from civicboom.controllers.content_actions import ContentActionsController
+            content_actions_controller = ContentActionsController()
+            
+            for list in [list.strip() for list in kwargs['lists']]:
+                if hasattr(content_actions_controller, list):
+                    data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
+            
+            return action_ok(data=data)
         
-        # AllanC - cant be imported at top of file because that creates a coupling issue
-        from civicboom.controllers.content_actions import ContentActionsController
-        content_actions_controller = ContentActionsController()
         
-        for list in [list.strip() for list in kwargs['lists']]:
-            if hasattr(content_actions_controller, list):
-                data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
-        
-        result = action_ok(data=data)
-        
-        # Retreaval of cache to go here.
-        # PLACEHOLDER
-        #  use cache_key generated above
+        # -- These increments and state changes are invisible to the user the call is for .. it may be worth adding these as 'differed processs' to optimise the return time
         
         # Increase content view count
+        # AllanC - we should move this to redis with a clever timeout or something
         if hasattr(content,'views'):
             content_view_key = 'content_%s' % content.id
             if not session_get(content_view_key):
@@ -904,7 +927,7 @@ class ContentsController(BaseController):
                 Session.commit()
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
-                #invalidate_content(content)
+                # This needs to be considered
         
         # Corporate plus customers want to be able to see what members have looked at an assignment
         if content.__type__=='assignment' and content.closed==True:
@@ -916,23 +939,9 @@ class ContentsController(BaseController):
                 Session.commit()
             return True
         
-        return result
+        # Cache return
+        cache_func = lambda: contents_show(content, **kwargs)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
+        return cache_func()
 
-
-    @web
-    @authorize
-    @role_required('contributor')
-    def edit(self, id, **kwargs):
-        """
-        GET /contents/{id}/edit: Form to edit an existing item
-        """
-        # url('edit_content', id=ID)
-        
-        content = get_content(id, is_editable=True)
-        
-        return action_ok(
-            data={
-                'content': content.to_dict(list_type='full'),
-                'actions': content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
-            }
-        ) # Automatically finds edit template
