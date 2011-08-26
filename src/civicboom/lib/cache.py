@@ -1,7 +1,42 @@
-from pylons import app_globals
-from pylons.controllers.util import etag_cache
+"""
+Cache Framework
+
+Concepts
+
+  It is important to understand the difference between a cache_key and a 'list version key'.
+    cache_key represents a unique cached return
+    list version represents the version number of the underlying list source
+
+  A page can have a cache_key associated with it e.g.
+    'contents_index:list=articles:creator=unittest:_logged_in_creator=True:limit=3:1798'
+  This uniquely identifys the returned data and is used as the redis cache_key and etag cache_key
+  
+  The final number in the example ':1798' is the version number of the list
+  Regardless of some of the kwarg params the list is BASED ON 'the list of artilces for unittest'
+  The list key is
+    'cache_ver:contents_index:articles:unittest'
+  the value of this key is 1798
+  
+  When a new article is created by unittest (or any other action that could invalidate the list of articles), this version number is incremented
+  
+  Description of cache flow:
+    Calls that rely on multiple lists - or - Call that is a master call:
+      Fetch the version numbers all lists the current call is dependent on - concatinating them together to make an eTag key
+      if the client eTag matchs then execition can be aborted and no server cache or DB access is needed
+      The client eTag is set to minimise repeated calls (this is particulally important for the optimisation of repeated API calls)
+    A cahce_key is generated for each list call and a version number for the base list appended to the cache key
+    Server lists are aquired from the server cache with this cache_key - else the server cache is populated with the calculated result
+    Old cache_key versions wait to expire and are managed by redis - it would be impossible to invalidate every permuncation of kwargs to view a base list
+
+"""
+
+from pylons import app_globals, tmpl_context as c, config
+from pylons.controllers.util import etag_cache as pylons_etag_cache
 
 from collections import OrderedDict
+
+import logging
+log = logging.getLogger(__name__)
 
 # -- Constants -----------------------------------------------------------------
 
@@ -43,11 +78,17 @@ cacheable_lists = {
 cacheable_lists['contents_index'] = OrderedDict(cacheable_lists['contents_index'])
 cacheable_lists['contents_index'].update({'content'     : {'creator': None}})
 
+# Generate a reverse lookup to find the bucket for a list
+cacheable_lists_key_lookup = {}
+for key, list_dict in cacheable_lists.iteritems():
+    for list_name in list_dict.keys():
+        cacheable_lists_key_lookup.update({list_name:key})
+
 uncacheable_kwargs = ['include_content', 'exclude_content', 'include_member', 'exclude_member']
 
 # -- Variables -----------------------------------------------------------------
 
-_cache = {} # Global dictionary that is imported by submodule, contins the cache buckets
+_cache = None # Global dictionary that is imported by submodule, contins the cache buckets
 
 
 # -- Init ----------------------------------------------------------------------
@@ -61,11 +102,15 @@ def init_cache(config):
     cache_manager = CacheManager(**parse_cache_config_options(config))
     
     if config['beaker.cache.enabled']:
-        for bucket in ['members', 'contents', 'contents_index', 'members_index', 'messages_index', 'content_show', 'members_show']:
-            _cache[bucket] = cache_manager.get_cache(bucket)
-            # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
-            #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
-            _cache[bucket].clear()
+        # AllanC - no point in having buckets, these can be represented by a single cache and managed by redis
+        #for bucket in ['members', 'contents', 'contents_index', 'members_index', 'messages_index', 'content_show', 'members_show']:
+        #    _cache[bucket] = cache_manager.get_cache(bucket)
+        #    # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
+        #    #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
+        #    _cache[bucket].clear()
+        _cache = cache_manager.get_cache(bucket)
+        _cache.clear()
+        
 
 
 # -- Utils ---------------------------------------------------------------------
@@ -104,15 +149,15 @@ def _gen_list_key(*args):
         if not isinstance(arg, basestring):
             arg = str(arg)
         return arg
-    return cache_separator.join(['cache']+[string_arg(arg) for arg in args])
+    return cache_separator.join(['cache_ver']+[string_arg(arg) for arg in args])
 
 def get_list_version(*args):
     key   = _gen_list_key(*args)
     value = 0
     try:
         value = app_globals.memcache.get(key)
-    except:
-        pass
+    except TypeError: 
+        pass # if no app_globals regstered for this thread then ignore
     return value
 
 def invalidate_list_version(*args):
@@ -121,16 +166,50 @@ def invalidate_list_version(*args):
     try:
         value = app_globals.memcache.get(key) + 1
         app_globals.memcache.set(key, value)
-    except:
-        pass
+    except TypeError:
+        pass # if no app_globals regstered for this thread then ignore
     return value
     
-def get_lists_versions(cacheable_identifyer_tuples):
-    list_versions = ['cache']
-    for bucket, cacheable_list_name, cacheable_variables in cacheable_list_name_variables_tuples:
-        list_version.append(get_list_version(bucket, cacheable_list_name, cacheable_variables))
-    return cache_separator.join([str(i) for i in list_versions])
+def get_lists_versions(lists, list_variables):
+    """
+    lists is a string list of list names
+    for each list name - get the cache version number
+    return a list of tuples ('list_name',version)
+    typically the variables identifying the list will be the same - e.g. in members_show every list refers to
     
+    This is not perfect because there could be names in the contens_index and member_index that are the same .. this will cause problems
+    """
+    list_versions = []
+    for list_name in lists:
+        bucket = cacheable_lists_key_lookup.get(list_name)
+        if bucket:
+            list_versions.append(get_list_version(bucket, list_name, list_variables))
+        else:
+            list_versions.append(get_list_version(        list_name, list_variables))
+    #for bucket, cacheable_list_name, cacheable_variables in cacheable_list_name_variables_tuples:
+    #    list_versions.append(get_list_version(bucket, cacheable_list_name, cacheable_variables))
+    #return cache_separator.join([str(i) for i in list_versions])
+    return zip(lists, list_versions)
+
+def gen_key_for_lists(lists, list_variables):
+    cache_key = cache_separator.join([list_name+'='+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
+    etag_cache(cache_key) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
+    return cache_key
+    
+
+# -- set eTag cache key --------------------------------------------------------
+
+def etag_cache(cache_key):
+    """
+    Set the eTag header
+    (this could be moved out to the controller actions, but it seems nice to do all the cache work in one place rather than having each controller set it separately)
+    We need to know if this has been activated via a master controller call or a sub controller call .. an eTag can only be set once
+    """
+    if cache_key and c.master_controller_call and config['cache.etags.enabled']:
+        log.debug("HTTP eTag being set")
+        pylons_etag_cache(cache_key) # Set eTag in response header - if etag matchs the eTag in the original request header then abort execution and return the correct HTTP code for "use client etag cached ver"
+        log.debug("HTTP eTag does not match client key; continueing ...")
+
 
 # -- Generate Cache Key (from index kwargs) with version number-----------------
 
@@ -194,18 +273,16 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [key+'='+str(kwargs[key]) for key in keys_sorted]
-            cache_values += ['ver=' +str(list_version)                      ]
+            cache_values  = [bucket]
+            cache_values += [key+'='+str(kwargs[key]) for key in keys_sorted]
+            cache_values += ['ver=' +str(list_version)]
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match
     
-    #print "cache_key: %s" % cache_key
+    log.debug("cache_key: %s" % cache_key)
     
-    if cache_key:
-        pass
-        # We need to know if this has been activated via a master controller call or a sub controller call .. an eTag can only be set once
-        #etag_cache(cache_key) # Set eTag in response header - if etag matchs the eTag in the original request header then abort execution and return the correct HTTP code for "use client etag cached ver"
+    etag_cache(cache_key)
     
     return cache_key
 
@@ -220,7 +297,8 @@ def _invalidate_obj_cache(bucket, obj, fields=['id']):
     Invalidate them ALL!! .. ALL OF THEM!!! .. for this object passed
     """
     assert obj
-    cache = _cache.get(bucket)
+    #cache = _cache.get(bucket)
+    cache = _cache
     if cache:
         keys_to_invalidate = []
         if isinstance(obj, basestring):
@@ -233,8 +311,8 @@ def _invalidate_obj_cache(bucket, obj, fields=['id']):
         
 
 def invalidate_member(member, remove=False):
-    _invalidate_obj_cache('members', member, ['id','email'])
-    invalidate_list_version('members', member.id)
+    _invalidate_obj_cache('member', member, ['id','email'])
+    invalidate_list_version('member', member.id)
 
     # If removing the member entirely - invalidate all sub lists
     if remove:
@@ -251,8 +329,8 @@ def invalidate_content(content, remove=False):
       1.) The get_content(?) db object cache
       2.) Any lists associated with this content or content.parent
     """
-    _invalidate_obj_cache('contents', content)
-    invalidate_list_version('contents', content.id)
+    _invalidate_obj_cache('content', content)
+    invalidate_list_version('content', content.id)
     
     if content.parent:
         if content.__type__ == 'comment':

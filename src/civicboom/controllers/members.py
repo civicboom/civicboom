@@ -5,7 +5,10 @@ from civicboom.lib.base import *
 from cbutils.misc import update_dict
 import re
 
+from civicboom.lib.cache import _cache as cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
+
 # AllanC - for members autocomplete index
+# AllanC - are these needed anymore?
 from civicboom.model      import Member, Follow, GroupMembership, Group
 from sqlalchemy           import or_, and_, null, not_
 from sqlalchemy.orm       import join, joinedload, defer
@@ -278,20 +281,8 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         
-        @example https://test.civicboom.com/members/1.json
+        @example https://test.civicboom.com/members/unittest.json
         """
-        
-        #cache_key = 'members_show:' + get_lists_versions(
-        #    ('members', id),
-        #    # but if the lists are 0 then they will never update ... oh ballz
-        #    # All dependecys must be cacheable otherwise this is futile
-        #)
-        
-        member = get_member(id)
-
-        # AllanC - unneeded as id is now username
-        #if member and id.isdigit() and int(member.id) == int(id):
-        #    return redirect(url('member', id=member.username))
         
         if 'lists' in kwargs:
             lists = [list.strip() for list in kwargs['lists'].split(',')]
@@ -315,6 +306,11 @@ class MembersController(BaseController):
                 'actions',
                 'boomed' ,              # AllanC - see limit imposed below
             ]
+        lists.sort() # Order needs to be standardised to generate a normalized cache key
+        
+        #cache_key = gen_key_for_lists(['member']+lists, normalize_member(id)) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        
+        member = get_member(id)
         
         data = {'member': member.to_dict(list_type='full', **kwargs)}
         
@@ -337,4 +333,10 @@ class MembersController(BaseController):
                 limit = config['search.default.limit.sub_list']
             data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
         
-        return action_ok(data=data)
+        result = action_ok(data=data)
+        
+        # Retreaval of cache to go here.
+        # PLACEHOLDER
+        #  use cache_key generated above
+        
+        return result

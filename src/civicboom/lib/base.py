@@ -22,9 +22,9 @@ from civicboom.lib.database.get_cached import get_member as _get_member, get_gro
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
-from civicboom.lib.accounts import deny_pending_user
+from civicboom.lib.accounts            import deny_pending_user
+from civicboom.lib.widget              import widget_defaults, setup_widget_env
 
-from civicboom.lib.widget import widget_defaults, setup_widget_env
 
 from cbutils.misc import now
 import cbutils.worker as worker
@@ -243,26 +243,10 @@ def normalize_member(member):
     """
     Will return integer member_id or raise action_error
     """
-    if isinstance(member, int):
-        return member
-    return get_member(member).id
-    
-    #elif isinstance(member, basestring) and member.lower()=='me':
-    #    if c.logged_in_persona:
-    #        return c.logged_in_persona.id
-    #    else:
-    #        raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
-    #else:
-    #    try:
-    #        member = int(member)
-    #    except:
-    #        if always_return_id:
-    #            member = _get_member(member)
-    #            if member:
-    #                member = member.id
-    #if not member:
-    #    raise action_error(_(""), code=404)
-    #return member
+    try   : member = member.id
+    except: pass
+    assert isinstance(member, basestring)
+    return member
 
 
 #-------------------------------------------------------------------------------
@@ -270,12 +254,17 @@ def normalize_member(member):
 #-------------------------------------------------------------------------------
 class BaseController(WSGIController):
     
+    def __after__(self):
+        c.master_controller_call = True # Sub calls can be made multiple times within a master call. We want c.master_call call to be accurate inbetween calls to multiple controller actions
+    
     def __before__(self):
+        c.master_controller_call = True # Used as an indication to tell if this is the master call or an internal call within a master call - initalize it's state (otherwise c complains about undefined stuff)
         
         # If this is a multiple call to base then abort
         # Result is always set, so if it is not set then we know this is first call
         # This is needed because methods like member_actions.py:groups calls members.py:index. This would trigger 2 calls to base
         if hasattr(c, 'result'):
+            c.master_controller_call = False
             return
         
         # AllanC - useful for debug

@@ -81,6 +81,8 @@ def load_environment(global_conf, app_conf):
                         'demo_mode',
                         'profile',
                         'beaker.cache.enabled',
+                        'cache.etags.enabled',
+                        'cache.static_decorators.enabled',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config.get(varname))

@@ -12,7 +12,7 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
 
 # Cache
-from civicboom.lib.cache import _cache, get_cache_key, normalize_kwargs_for_cache
+from civicboom.lib.cache import _cache as cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
 
 # Validation
 import formencode
@@ -283,6 +283,7 @@ class ContentsController(BaseController):
             
             results = Session.query(Content).with_polymorphic('*') # TODO: list
             results = results.filter(Content.visible==True)
+            # AllanC - not to sure about this comments addition. It would be nice to have it built with the filters? could this be moved down? thoughts?
             if kwargs.get('comments_to'):
                 results = results.filter(Content.__type__=='comment')
             else:
@@ -359,7 +360,7 @@ class ContentsController(BaseController):
     
             return results
         
-        cache      = _cache.get('contents_index')
+        #cache      = _cache.get('contents_index')
         cache_func = lambda: contents_index(_filter, **kwargs)
         if cache and cache_key:
             return cache.get(key=cache_key, createfunc=cache_func)
@@ -851,7 +852,22 @@ class ContentsController(BaseController):
         @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
-       
+        
+        if 'lists' in kwargs:
+            lists = [list.strip() for list in kwargs['lists'].split(',')]
+        else:
+            kwargs['lists'] = [
+                'comments',
+                'responses',
+                'contributors',
+                'actions',
+                'accepted_status',
+            ]
+        
+        #cache_key = gen_key_for_lists(['content']+lists, id) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        # AllanC - the eTag here is not a security problem before .viewable_by because we are not transmitting any data, just an identifyer key
+        # However viewers of an item of content will see the version numbers of the lists and know when something has changed - is this an issue? - we really want the call to terminate before any DB access is done if the eTag matchs
+        
         content = get_content(id) #, is_viewable=True) # This is done manually below we needed some special handling for comments
         
         if content.__type__ == 'comment':
@@ -863,18 +879,21 @@ class ContentsController(BaseController):
         if not content.viewable_by(c.logged_in_persona):
             raise errors.error_view_permission()
         
-        if 'lists' not in kwargs:
-            kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
-        
         data = {'content':content.to_dict(list_type='full', **kwargs)}
         
         # AllanC - cant be imported at top of file because that creates a coupling issue
         from civicboom.controllers.content_actions import ContentActionsController
         content_actions_controller = ContentActionsController()
         
-        for list in [list.strip() for list in kwargs['lists'].split(',')]:
+        for list in [list.strip() for list in kwargs['lists']]:
             if hasattr(content_actions_controller, list):
                 data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
+        
+        result = action_ok(data=data)
+        
+        # Retreaval of cache to go here.
+        # PLACEHOLDER
+        #  use cache_key generated above
         
         # Increase content view count
         if hasattr(content,'views'):
@@ -897,7 +916,7 @@ class ContentsController(BaseController):
                 Session.commit()
             return True
         
-        return action_ok(data=data)
+        return result
 
 
     @web
