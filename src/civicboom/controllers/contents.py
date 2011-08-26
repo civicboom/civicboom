@@ -164,6 +164,7 @@ class ContentsController(BaseController):
     
     @web
     @normalize_kwargs
+    @t_log(lambda f,a,k: "content search: "+str(k))
     def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
@@ -204,6 +205,7 @@ class ContentsController(BaseController):
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
         """
+        t_log_start("generating query")
         results = Session.query(Content).with_polymorphic('*') # TODO: list
         results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
 
@@ -317,6 +319,7 @@ class ContentsController(BaseController):
         # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
         results = results.filter("("+sql(feed)+")")
         results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
+        t_log_end("generating query")
 
         l = to_apilist(results, obj_type='contents', **kwargs)
 
