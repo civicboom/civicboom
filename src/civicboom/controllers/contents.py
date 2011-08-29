@@ -12,7 +12,7 @@ from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
 
 # Cache
-from civicboom.lib.cache import _cache as cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
+from civicboom.lib.cache import _cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
 
 # Validation
 import formencode
@@ -360,7 +360,7 @@ class ContentsController(BaseController):
     
             return results
         
-        #cache      = _cache.get('contents_index')
+        cache      = _cache.get('contents_index')
         cache_func = lambda: contents_index(_filter, **kwargs)
         if cache and cache_key:
             return cache.get(key=cache_key, createfunc=cache_func)
@@ -870,9 +870,9 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         
-        if 'lists' in kwargs:
-            lists = [list.strip() for list in kwargs['lists'].split(',')]
-        else:
+        if isinstance(kwargs.get('lists'), basestring):
+            kwargs['lists'] = [list.strip() for list in kwargs['lists'].split(',')]
+        if not isinstance(kwargs.get('lists'), type([])): # have to use type([]) because list is used below and python trys to pre-empt variable use
             kwargs['lists'] = [
                 'comments',
                 'responses',
@@ -880,8 +880,9 @@ class ContentsController(BaseController):
                 'actions',
                 'accepted_status',
             ]
+        kwargs['lists'].sort()
         
-        cache_key = gen_key_for_lists(['content']+lists, id) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        cache_key = gen_key_for_lists(['content']+kwargs['lists'], id, is_etag_master=True) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
         # AllanC - the eTag here is not a security problem before .viewable_by because we are not transmitting any data, just an identifyer key
         # However viewers of an item of content will see the version numbers of the lists and know when something has changed - is this an issue? - we really want the call to terminate before any DB access is done if the eTag matchs
         
@@ -901,14 +902,14 @@ class ContentsController(BaseController):
         
         # Cache function return
         def contents_show(content, **kwargs):
-            
+            lists = kwargs.pop('lists')
             data = {'content':content.to_dict(list_type='full', **kwargs)}
             
             # AllanC - cant be imported at top of file because that creates a coupling issue
             from civicboom.controllers.content_actions import ContentActionsController
             content_actions_controller = ContentActionsController()
             
-            for list in [list.strip() for list in kwargs['lists']]:
+            for list in [list.strip() for list in lists]:
                 if hasattr(content_actions_controller, list):
                     data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
             
@@ -940,6 +941,7 @@ class ContentsController(BaseController):
             return True
         
         # Cache return
+        cache      = _cache.get('contents_show')
         cache_func = lambda: contents_show(content, **kwargs)
         if cache and cache_key:
             return cache.get(key=cache_key, createfunc=cache_func)

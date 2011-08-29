@@ -768,4 +768,3 @@ def web_params_to_kwargs(_target, *args, **kwargs):
 
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function
-    

@@ -92,7 +92,7 @@ uncacheable_kwargs = ['include_content', 'exclude_content', 'include_member', 'e
 
 # -- Variables -----------------------------------------------------------------
 
-_cache = None # Global dictionary that is imported by submodule, contins the cache buckets
+_cache = {} # Global dictionary that is imported by submodule, contins the cache buckets
 
 
 # -- Init ----------------------------------------------------------------------
@@ -101,20 +101,23 @@ def init_cache(config):
     """
     Called by enviroment.py after most of the Pylons setup is done.
     """
-    from beaker.cache import CacheManager
-    from beaker.util import parse_cache_config_options
-    cache_manager = CacheManager(**parse_cache_config_options(config))
     
     if config['beaker.cache.enabled']:
+        from beaker.cache import CacheManager
+        from beaker.util import parse_cache_config_options
+        cache_manager = CacheManager(**parse_cache_config_options(config))
+        
         # AllanC - no point in having buckets, these can be represented by a single cache and managed by redis
-        #for bucket in ['members', 'contents', 'contents_index', 'members_index', 'messages_index', 'content_show', 'members_show']:
-        #    _cache[bucket] = cache_manager.get_cache(bucket)
-        #    # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
-        #    #if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
-        #    _cache[bucket].clear()
-        _cache = cache_manager.get_cache(bucket)
-        if config['development_mode']:
-            _cache.clear()
+        #          but without putting them in a dict they cant be imported .. the dict serves as a reference to the conructed objects
+        for bucket in ['members', 'contents', 'contents_index', 'members_index', 'messages_index', 'content_show', 'members_show']:
+            _cache[bucket] = cache_manager.get_cache(bucket)
+            # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
+            if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
+                _cache[bucket].clear()
+        
+        #_cache = cache_manager.get_cache('civicboom')
+        #if config['development_mode']:
+        #    _cache['civicboom'].clear()
         
 
 
@@ -196,25 +199,29 @@ def get_lists_versions(lists, list_variables):
     #return cache_separator.join([str(i) for i in list_versions])
     return zip(lists, list_versions)
 
-def gen_key_for_lists(lists, list_variables):
-    return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
+def gen_key_for_lists(lists, list_variables, **kwargs):
+    #return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
     cache_key = cache_separator.join([list_name+'='+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
-    etag_cache(cache_key) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
+    etag_cache(cache_key, **kwargs) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
     return cache_key
     
 
 # -- set eTag cache key --------------------------------------------------------
 
-def etag_cache(cache_key):
+def etag_cache(cache_key, is_etag_master=False):
     """
     Set the eTag header
     (this could be moved out to the controller actions, but it seems nice to do all the cache work in one place rather than having each controller set it separately)
     We need to know if this has been activated via a master controller call or a sub controller call .. an eTag can only be set once
+    
+    is_etag_master is designed a flag to indicate that after this eTag is created - no more etags are to be set
     """
-    if cache_key and c.master_controller_call and config['cache.etags.enabled']:
-        log.debug("HTTP eTag being set")
+    if cache_key and not c.etag_master_generated and config['cache.etags.enabled']:
+        log.debug("HTTP eTag being set %s" % cache_key)
         pylons_etag_cache(cache_key) # Set eTag in response header - if etag matchs the eTag in the original request header then abort execution and return the correct HTTP code for "use client etag cached ver"
         log.debug("HTTP eTag does not match client key; continueing ...")
+    if is_etag_master:
+        c.etag_master_generated = True
 
 
 # -- Generate Cache Key (from index kwargs) with version number-----------------
@@ -279,14 +286,14 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [bucket, app_globals.version]
+            cache_values  = [bucket, app_globals.version or 'dev']
             cache_values += [key+'='+str(kwargs[key]) for key in keys_sorted]
-            cache_values += ['ver=' +str(list_version)]
+            cache_values += ['list_ver=' +str(list_version)]
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match
     
-    log.debug("cache_key: %s" % cache_key)
+    #log.debug("cache_key: %s" % cache_key)
     
     etag_cache(cache_key)
     

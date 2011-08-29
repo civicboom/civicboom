@@ -254,17 +254,12 @@ def normalize_member(member):
 #-------------------------------------------------------------------------------
 class BaseController(WSGIController):
     
-    def __after__(self):
-        c.master_controller_call = True # Sub calls can be made multiple times within a master call. We want c.master_call call to be accurate inbetween calls to multiple controller actions
-    
     def __before__(self):
-        c.master_controller_call = True # Used as an indication to tell if this is the master call or an internal call within a master call - initalize it's state (otherwise c complains about undefined stuff)
         
         # If this is a multiple call to base then abort
         # Result is always set, so if it is not set then we know this is first call
         # This is needed because methods like member_actions.py:groups calls members.py:index. This would trigger 2 calls to base
         if hasattr(c, 'result'):
-            c.master_controller_call = False
             return
         
         # AllanC - useful for debug
@@ -297,6 +292,7 @@ class BaseController(WSGIController):
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
         c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+        c.etag_master_generated    = False
 
         request.environ['app_version'] = app_globals.version
         request.environ['node_name']   = platform.node()

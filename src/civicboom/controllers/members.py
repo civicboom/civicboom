@@ -284,10 +284,10 @@ class MembersController(BaseController):
         @example https://test.civicboom.com/members/unittest.json
         """
         
-        if 'lists' in kwargs:
-            lists = [list.strip() for list in kwargs['lists'].split(',')]
-        else:
-            lists = [
+        if isinstance(kwargs.get('lists'), basestring):
+            kwargs['lists'] = [list.strip() for list in kwargs['lists'].split(',')]
+        if not isinstance(kwargs.get('lists'), type([])): # have to use type([]) because list is used below and python trys to pre-empt variable use
+            kwargs['lists'] = [
                 # Comunity
                 'followers',
                 'following',
@@ -306,12 +306,12 @@ class MembersController(BaseController):
                 'actions',
                 'boomed' ,              # AllanC - see limit imposed below
             ]
-        lists.sort() # Order needs to be standardised to generate a normalized cache key
+        kwargs['lists'].sort() # Order needs to be standardised to generate a normalized cache key
         
-        cache_key = gen_key_for_lists(['member']+lists, normalize_member(id)) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        cache_key = gen_key_for_lists(['member']+kwargs['lists'], normalize_member(id), is_etag_master=True) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
         
         def members_show(id, **kwargs):
-        
+            lists  = kwargs.pop('lists')
             member = get_member(id)
             
             data = {'member': member.to_dict(list_type='full', **kwargs)}
@@ -337,6 +337,7 @@ class MembersController(BaseController):
             
             return action_ok(data=data)
         
+        cache      = _cache.get('members_show')
         cache_func = lambda: members_show(id, **kwargs)
         if cache and cache_key:
             return cache.get(key=cache_key, createfunc=cache_func)

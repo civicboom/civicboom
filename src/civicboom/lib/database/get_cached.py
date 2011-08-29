@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 # This global variable is set by parent calling modles. If this is set, the module will use the cache
 #  cache regions instances are added to the cache dictonary
-from civicboom.lib.cache import _cache as cache
+from civicboom.lib.cache import _cache
 
 
 
@@ -80,8 +80,8 @@ def get_member(member, search_email=False, **kwargs):
         
         return None
     
+    cache      = _cache.get('member')
     cache_func = lambda: get_member_nocache(member)
-    #if _cache.get('members'):
     if cache:
         result = cache.get(key='member:'+str(member), createfunc=cache_func)
         #try:
@@ -290,8 +290,8 @@ def get_content(content):
         except:
             return None  # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
 
+    cache      = _cache.get('content')
     cache_func = lambda: get_content_nocache(content)
-    #if _cache.get('contents'):
     if cache:
         result = cache.get(key='content:'+str(content), createfunc=cache_func)
         #try:
