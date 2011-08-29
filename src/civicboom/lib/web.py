@@ -735,6 +735,7 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     ->>> print test(1)
     -1 4
     """
+    
     if c.web_params_to_kwargs:
         return _target(*args, **kwargs) # If already processed, pass through
     
@@ -751,7 +752,7 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     if "kwargs" in _target.func_code.co_varnames:
         new_kwargs.update(params)
 
-    exclude_fields = ['pylons', 'environ', 'start_response']
+    exclude_fields = ['pylons', 'environ', 'start_response', 'controller', 'action', 'format', 'sub_domain'] # AllanC - it appears that routes variables are automatically forwarded as kwargs, they are to be removed, we dont want unneeded kwargs for caching. Could these not be set in the first place?
     for exclude_field in exclude_fields:
         if exclude_field in new_kwargs:
             del new_kwargs[exclude_field]
