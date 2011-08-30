@@ -23,6 +23,8 @@ import civicboom.lib.payment as payment
 
 log = logging.getLogger(__name__)
 
+from civicboom.lib.communication.email_lib import send_email as send_email
+
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
 
@@ -284,6 +286,10 @@ class TaskController(BaseController):
             "waiting",
             "failed",
         ]
+            
+        def send_email_admins(account, **kwargs):
+            for user in account.get_admins():
+                send_email(user, **kwargs)
         
         ## Process 2 new: Check all payment accounts with outstanding invoices
         billed_accounts = Session.query(PaymentAccount)\
@@ -298,7 +304,6 @@ class TaskController(BaseController):
                 if invoice.paid_total >= invoice.total:
                     print 'paid'
                     invoice.status = "paid"
-                    Session.commit()
                 elif check_timestamp(invoice.timestamp, days_disable):
                     print 'disable'
                     max_acct_status = max((max_acct_status, payment_account_status.index("failed" )))
@@ -324,15 +329,18 @@ class TaskController(BaseController):
                     Session.commit()
                     if new_status == "failed":
                         print "Send FAILED"
-                        account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
+                        send_email_admins(account, subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
+                        #account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
                         pass #Send account disabled email
                     elif new_status == "waiting":
                         print "Send WAITING"
-                        account.send_email_admins(subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
+                        send_email_admins(account, subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
+                        #account.send_email_admins(subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
                         pass #Send account due email
                     elif new_status == "invoiced":
                         print "Send INVOICED"
-                        account.send_email_admins(subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
+                        send_email_admins(account, subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
+                        #account.send_email_admins(subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
                         pass #Send account invoiced email
                     elif new_status == "ok":
                         print "Send ALL OK THANK YOU"
