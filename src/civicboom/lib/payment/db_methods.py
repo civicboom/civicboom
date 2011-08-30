@@ -1,6 +1,8 @@
 from civicboom.lib.base import *
 from civicboom.model.payment import *
 
+import copy
+
 #-------------------------------------------------------------------------------
 # Payment actions
 #-------------------------------------------------------------------------------
@@ -71,7 +73,6 @@ def generate_invoice(account, start_date):
     invoice.lines.append(line)
     
     # Loop through the rest of the services and create billing lines
-    # TODO: This needs to take into account service frequency / account frequency, etc.
     for payment_account_service in account.services:
         if payment_account_service.service.payment_account_type != account.type:
             line = InvoiceLine(invoice, payment_account_service.service)
@@ -81,3 +82,21 @@ def generate_invoice(account, start_date):
     # Commit the invoice before changing status or the commit will fail db level security check!
     Session.commit()
     return invoice
+
+def get_payment_options(account, check_key):
+    from ..payment import options
+    new_providers = {}
+    current_billing_providers = [ba.provider for ba in account.billing_accounts]
+    providers = copy.deepcopy(options['providers'])
+    for key in providers.keys():
+        provider = providers[key]
+        if provider.get('exclusive_to') and len(set(provider['exclusive_to']).intersection(set(current_billing_providers))) > 0:
+            provider['hidden'] = 'exclusive'
+        if check_key and not provider.get(check_key):
+            continue
+#            provider['hidden'] = 'check_key'
+        new_providers[key] = provider
+    return {'providers': new_providers, 'groups': options['groups'], }
+
+def get_payment_providers(account):
+    pass

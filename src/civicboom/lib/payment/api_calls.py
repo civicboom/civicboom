@@ -10,6 +10,8 @@ from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount
 from civicboom.lib.payment.paypal import *
 #from civicboom.controllers.groups import _get_group
 
+import copy
+
 log      = logging.getLogger(__name__)
 
 paypal_config = PayPalConfig(
@@ -184,18 +186,29 @@ def paypal_express_return(**kwargs):
         else:
             print '###', recurring_response
             if 'Success' in recurring_response.ACK:
+                config_update = {
+                    'paypal_return' : recurring_response.raw,
+                    'amount'        : kwargs['amount'],
+                    'frequency'     : kwargs['frequency'],
+                    'currency'      : kwargs['currency'],
+                }
+#                config_update = copy.copy(recurring_response.raw)
+#                config_update.update({
+#                    'amount'    : kwargs['amount'],
+#                    'frequency' : kwargs['frequency'],
+#                    'currency'  : kwargs['currency'],
+#                })
                 result.update({
                     'billing_account_create': {
                         'status'        : 'active' if recurring_response.PROFILESTATUS == 'ActiveProfile' else 'pending',
                         'title'         : 'PayPal Subscription **%s' % recurring_response.PROFILEID[-4:],
                         'provider'      : 'paypal_recurring',
                         'reference'     : recurring_response.PROFILEID,
-                        'config_update' : recurring_response.raw,
+                        'config_update' : config_update,
                     }
                 })
             else:
                 raise cbPaymentRecurringTransactionError('There was an error communicating with PayPal, please try again later', result)
-    Session.commit()
     return result
 
 def paypal_recurring_cancel(reference):

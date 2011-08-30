@@ -394,6 +394,5 @@ class PaymentActionsController(BaseController):
         if invoice.total_due <= 0:
             invoice.status = 'paid'
             Session.commit()
-
+            
         return redirect(h.url(controller='payment_actions', id=id, action='invoice', invoice_id = invoice.id))
-        

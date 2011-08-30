@@ -190,25 +190,42 @@
             </div>
         </div>
     </div>
-    % if Decimal(d['total_due']) > 0 and not d['processing']:
+    % if d.get('payment_options',{}).get('providers'):
+        <%
+            options = d['payment_options']
+            providers = options.get('providers', {})
+            print providers
+            grouped_providers = {}
+            for key in providers:
+                provider = providers[key]
+                group = provider['group']
+                if not grouped_providers.get(group):
+                    grouped_providers[group] = {}
+                grouped_providers[group][key] = provider
+            print grouped_providers
+        %>
         <div class="frag_whitewrap hide_if_print">
             <h2>Payment Options</h2>
-            <img src="https://www.paypalobjects.com/en_GB/i/logo/PayPal_mark_60x38.gif" alt="We accept PayPal" style="float:left;padding-right:2em" />
-            <div style="float:left;text-align:center;padding-right:2em">
-                Pay this invoice<br />
-                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='payment_begin', service='paypal_express', invoice_id=d['id'])}">
-                    <img src="https://www.paypalobjects.com/en_GB/i/btn/btn_paynowCC_LG.gif" alt="We accept PayPal" />
-                </a>
-            </div>
-        
-            <div style="float:left;text-align:center">
-                Set up regular payments<br />
-                <a href="${h.url(controller='payment_actions', id=d['payment_account_id'], action='payment_begin', service='paypal_express', invoice_id=d['id'], recurring=True)}">
-                    <img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_subscribeCC_LG.gif" alt="We accept PayPal" />
-                </a><br />
-            </div>
-        
-            <div style="clear:both"></div>
+            
+            % for group_key in grouped_providers.keys():
+                <% group = grouped_providers[group_key] %>
+                <div>
+                    <div style="float:left;display:inline-block;width: 6em;">
+                        <%include file="/frag/payments/plugin/group_${group_key}.mako" />
+                    </div>
+                    % for provider_key in group.keys():
+                        <% provider = group[provider_key] %>
+                        <div style="float:left;text-align:center;display:inline-block;width:13em;">
+                            % if provider.get('hidden'):
+                                <%include file="/frag/payments/plugin/invoice_${provider_key}_hidden.mako" />
+                            % else:
+                                <%include file="/frag/payments/plugin/invoice_${provider_key}.mako" />
+                            % endif
+                        </div>
+                    % endfor
+                    <div class="cb"></div>
+                </div>
+            % endfor
         </div>
     % endif
     <div class="frag_whitewrap">

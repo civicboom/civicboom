@@ -39,9 +39,12 @@ class PaymentsController(BaseController):
         """
         # url('payments')
         
-        raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
+        
         
         if not c.logged_in_persona.payment_account:
+            if c.format == 'html':
+                
+                return redirect(url('new_payment'))
             raise action_error(_('There is no payment account associated with this user, please create a new payment account'), code=404)
         
         account = c.logged_in_persona.payment_account
@@ -68,15 +71,15 @@ class PaymentsController(BaseController):
         """
         
         payment_account = PaymentAccount()
-        
-        self.update(payment_account, **kwargs)
-        
         payment_account.members.append(c.logged_in_persona)
+        
+        c.template_error = "payments/new"
+        self.update(payment_account, **kwargs)
         
         payment_account.frequency = 'month'
         
         Session.commit()
-        
+        plans = ['free', 'plus', 'corp']
         plan = [key[5:] for key in kwargs.keys() if key[0:5] == 'plan_' and key[5:] in plans]
         if plan:
             plan = plan[0]
@@ -123,7 +126,6 @@ class PaymentsController(BaseController):
         if c.logged_in_persona not in account.members:
             raise action_error(_('You do not have permission to view this account'), code=404)
         
-        plans = ['free', 'plus', 'corp']
         address_fields = PaymentAccount._address_config_order
         # Build validation schema
         schema = build_schema(
@@ -131,7 +133,6 @@ class PaymentsController(BaseController):
             org_name        = formencode.validators.UnicodeString(),
             ind_name        = formencode.validators.UnicodeString(),
         )
-        print '###', kwargs.get('name_type')
         if kwargs.get('name_type') == 'org':
             print 'org'
             schema.fields['org_name']  = formencode.validators.UnicodeString(not_empty=True)
@@ -145,7 +146,7 @@ class PaymentsController(BaseController):
         schema.fields['address_country'] = formencode.validators.OneOf(country_codes.keys(), messages={'missing': 'Please select a country'})
         kwargs['id'] = account.id
         data = {'payment':kwargs}
-        data = validate_dict(data, schema, dict_to_validate_key='payment', template_error='payments/edit')
+        data = validate_dict(data, schema, dict_to_validate_key='payment', template_error=c.template_error if c.template_error else 'payments/edit')
         form = data['payment']
         
         if form.get('ind_name'):
