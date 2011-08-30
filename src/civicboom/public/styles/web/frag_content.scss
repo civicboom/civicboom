@@ -26,6 +26,10 @@
 			.frag_top_row {
 				margin-bottom: 0;
 				
+				.hidden {
+            display: none;
+			  }
+				
 				.frag_col {
 					margin-bottom: 0;
 				}

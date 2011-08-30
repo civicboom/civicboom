@@ -4,7 +4,7 @@ Automated Test Framework
 tl;dr: How to write a test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 - Standard pylons test framework is used
-- run "make test-db" from the $REPO/src/ folder to run manually
+- run ``make test-db`` from the ``$REPO/src/`` folder to run manually
 
 
 Behind the scenes, how it is automated
@@ -18,8 +18,7 @@ Buildbot will automatically build / install / test for every git push, making us
 - test-client (dead, work is in progress for a selenium grid)
   - runs browser-based tests against the server
 
-details
+Details
 ~~~~~~~
-- master installed on dev:/home/buildmaster
-- config file is ~/cb-master/master.cfg
-- after updating the config, "buildbot reconfig ~/cb-master"
+- master installed on ``dev:/home/buildmaster``
+- config file is managed by Puppet

@@ -25,7 +25,7 @@
 		<script src="/javascript/jquery.limit-1.2.js"></script>
 		<script src="/javascript/jquery.getUrlParam.js"></script>
 		<script src="/javascript/jquery.cookie.js"></script>
-		<script src="/javascript/jquery.jcarousel.min.js"></script>
+		<script src="/javascript/jquery.jcarousel.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
 		<script src="/javascript/rpx.js"></script>
@@ -36,11 +36,11 @@
 		<script src="/javascript/OpenLayers.js"></script>
 		<script src="/javascript/minimap.js"></script>
 	% else:
-		<script async src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
+		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
 	% endif
 
 	## tinymce, should also be loaded on demand
-	<script async src="/javascript/tiny_mce/tiny_mce.js"></script>
+	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
 </%def>
 
 
