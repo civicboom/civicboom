@@ -34,6 +34,7 @@ help2:
 	# test-coverage -- run all nosetests and produce coverage html docs
 	# test-profile  -- run the test suite with profiling enabled (slow)
 	# run-worker    -- run a local worker
+	# run-demo      -- run in standalone demo mode - no internet needed
 	# stopsys       -- stop the system cb-website and cb-worker
 
 
@@ -142,6 +143,9 @@ live-db: data
 
 run:
 	paster serve --reload development.ini
+
+run-demo:
+	paster serve --reload demo.ini
 
 run-worker:
 	./cb-worker
