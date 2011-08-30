@@ -103,6 +103,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     % if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
+    <script src="javascript/jquery.jcarousel.js"></script>
     <script>
         ${share.janrain_social_call_content(self.content, 'new', self.content['type'] if not self.content['parent'] else 'response') | n }
     </script>
@@ -574,58 +575,17 @@
 <%def name="content_media()">
     <%
         content = self.content
-    %>
-    <%
+        
         # AllanC - now done by media/show.mako
         #media_width  = config['media.display.video.width' ]
         #media_height = config['media.display.video.height']
     %>
     <div class="media_container">
-    
-    ## % if config['development_mode']:
-    ## Load the content carousel to display previews of all content media
-    <span class="carousel">${media_includes.media_carousel(content['attachments'], content['id'])}</span>
-    <%doc>
-    % else:
-    <ul id="media_carousel_content_${content['id']}" class="media_carousel">
-    % for media in content['attachments']:
-        <li>
-        ${media_includes.preview(media)}
-        <p>
-        % if media.get('caption'):
-            <span class="caption">${media['caption']}</span>
-        % endif
-        % if media.get('credit'):
-            <span class="credit">(${_('Credit to')}: ${media['credit']})</span>
-        % endif
-        </p>
-        </li>
-    % endfor
-    </ul>
-    % endif
-    </%doc>
-    
+        ## Load the content carousel to display previews of all content media
+        <span class="carousel">
+            ${media_includes.media_carousel(content['attachments'], content['id'])}
+        </span>    
     </div>
-    
-    <%doc>
-    <script type="text/javascript">
-        ## http://sorgalla.com/projects/jcarousel/
-        
-        function media_carousel_content_${content['id']}_initCallback(carousel) {
-            // future control options go here
-        };
-        
-        jQuery(document).ready(function() {
-            jQuery('#media_carousel_content_${content['id']}').jcarousel({
-                wrap   : 'last' ,
-                scroll : 1 ,
-                visible: 1 ,
-                initCallback: media_carousel_content_${content['id']}_initCallback,
-            });
-        });
-    </script>
-    </%doc>
-    
 </%def>
 
 ##------------------------------------------------------------------------------

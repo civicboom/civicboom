@@ -116,13 +116,6 @@
             <p>${item['content']}</p>
             <p>${item['timestamp']}</p>
         </a>
-        <%doc>
-        <a>
-        ${h.form(url('message', id=item['id'], format='redirect'), method="DELETE")}
-            <input type="submit" value="Delete">
-        ${h.end_form()}
-        </a>
-        </%doc>
     </li>
 </%def>
 
