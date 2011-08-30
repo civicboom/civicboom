@@ -200,7 +200,7 @@ def get_lists_versions(lists, list_variables):
     return zip(lists, list_versions)
 
 def gen_key_for_lists(lists, list_variables, **kwargs):
-    #return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
+    return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
     cache_key = cache_separator.join([list_name+'='+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
     etag_cache(cache_key, **kwargs) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
     return cache_key
@@ -310,8 +310,7 @@ def _invalidate_obj_cache(bucket, obj, fields=['id']):
     Invalidate them ALL!! .. ALL OF THEM!!! .. for this object passed
     """
     assert obj
-    #cache = _cache.get(bucket)
-    cache = _cache
+    cache = _cache.get(bucket)
     if cache:
         keys_to_invalidate = []
         if isinstance(obj, basestring):

@@ -876,8 +876,8 @@ class ContentsController(BaseController):
             kwargs['lists'] = [
                 'comments',
                 'responses',
-                'contributors',
-                'actions',
+                #'contributors',
+                'actions', # AllanC - humm .. how can we cache this?
                 'accepted_status',
             ]
         kwargs['lists'].sort()
