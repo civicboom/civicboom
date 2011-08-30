@@ -590,6 +590,8 @@ def auto_format_output(target, *args, **kwargs):
                     set_flash_message(result) # Set flash message
                     return redirect(c.html_action_fallback_url)
             
+            #raise ae # AllanC - unsure if this is needed? surely if there has been an exception and it has not been delt with then we need to propergate it up?
+            
     
     # After
     # Is result a dict with data?
