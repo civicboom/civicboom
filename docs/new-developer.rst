@@ -1,5 +1,5 @@
-Setting up a developer laptop / desktop / a new server
-======================================================
+Setting up a developer PC
+=========================
 
 First
 ~~~~~
