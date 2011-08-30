@@ -1,6 +1,8 @@
 from civicboom.model.meta import Base, location_to_string, JSONType, Session
 from civicboom.model.member import account_types as _payment_account_types
 
+from cbutils.misc import now
+
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText
 from sqlalchemy import Enum, Integer, Numeric, DateTime, Date, Boolean
@@ -122,7 +124,7 @@ class PaymentAccountService(Base):
     id                 = Column(Integer(), primary_key=True)
     payment_account_id = Column(Integer(), ForeignKey('payment_account.id')      , nullable=False)
     service_id         = Column(Integer(), ForeignKey('payment_service.id')      , nullable=False)
-    start_date         = Column(DateTime(), nullable=False, default=func.now())
+    start_date         = Column(DateTime(), nullable=False, default=now)
     quantity           = Column(Integer(), nullable=False, default=1)
     discount           = Column(Numeric(precision=10, scale=2),     nullable=False, default=0)
     note               = Column(Unicode(),     nullable=True)
@@ -174,7 +176,7 @@ class Invoice(Base):
     payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=False)
     _invoice_status    = Enum("unbilled", "processing", "billed", "disregarded", "waiting_payment_processing", "paid", name="invoice_status")
     status             = Column(_invoice_status, nullable=False, default="unbilled")
-    timestamp          = Column(DateTime(),    nullable=False, default=func.now())
+    timestamp          = Column(DateTime(),    nullable=False, default=now)
     due_date           = Column(Date(), nullable=False)
     copied_from_id     = Column(Integer(),   ForeignKey('payment_invoice.id'), nullable=True)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
@@ -208,10 +210,12 @@ class Invoice(Base):
         'full': copy.deepcopy(__to_dict__['default'])
     })
     __to_dict__['full'].update({
-            'payment_account'     : lambda invoice: invoice.payment_account.to_dict(),
-            'lines'               : lambda invoice: [line.to_dict() for line in invoice.lines],
-            'transactions'        : lambda invoice: [trans.to_dict() for trans in invoice.transactions],
-            'processing'          : None, 
+            'payment_account'   : lambda invoice: invoice.payment_account.to_dict() ,
+            'lines'             : lambda invoice: [line.to_dict() for line in invoice.lines] ,
+            'transactions'      : lambda invoice: [trans.to_dict() for trans in invoice.transactions] ,
+            'processing'        : None ,
+            'config'            : None ,
+            'payment_options'   : None,
     })
     
     def __init__(self, payment_account=None):
@@ -257,6 +261,13 @@ class Invoice(Base):
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
+    
+    @property
+    def payment_options(self):
+        if self.status != 'billed' or self.total_due == 0:
+            return {}
+        from civicboom.lib.payment import get_payment_options
+        return get_payment_options(self.payment_account, check_key="invoice_button")
     
     
 # Allow inserts, allow delete when status != unbilled
@@ -429,10 +440,10 @@ class BillingAccount(Base):
     __tablename__      = "payment_billing_account"
     id                 = Column(Integer(),     primary_key=True)
     _billing_status    = Enum("active", "pending", "deactivated", "error", "flagged", name="billing_account_status")
-    timestamp          = Column(DateTime(),    nullable=False, default=func.now())
+    timestamp          = Column(DateTime(),    nullable=False, default=now)
     title              = Column(Unicode(),     nullable=False)
     status             = Column(_billing_status, nullable=False, default="active")
-    status_updated     = Column(DateTime(),    nullable=False, default=func.now())
+    status_updated     = Column(DateTime(),    nullable=False, default=now)
     provider           = Column(Unicode(),     nullable=False)
     reference          = Column(Unicode(),     nullable=False)
     extra_fields       = Column(JSONType(mutable=True), nullable=False, default={})
@@ -463,10 +474,10 @@ class BillingTransaction(Base):
     __tablename__ = "payment_billing_transaction"
     id                 = Column(Integer(),     primary_key=True)
     invoice_id         = Column(Integer(),     ForeignKey('payment_invoice.id'), nullable=True)
-    timestamp          = Column(DateTime(),    nullable=False, default=func.now())
+    timestamp          = Column(DateTime(),    nullable=False, default=now)
     _transaction_status= Enum("created", "pending", "complete", "failed", "cancelled", "error", "refunded", name="billing_transaction_status")
     status             = Column(_transaction_status, nullable=False, default="created")
-    status_updated     = Column(DateTime(),    nullable=False, default=func.now())
+    status_updated     = Column(DateTime(),    nullable=False, default=now)
     amount             = Column(Numeric(precision=10, scale=2),     nullable=False)
     billing_account_id = Column(Integer(),     ForeignKey('payment_billing_account.id'), nullable=True)
     provider           = Column(Unicode(),     nullable=True)

@@ -3,6 +3,8 @@ from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
+from cbutils.misc import now
+
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
 from sqlalchemy import Enum, Integer, DateTime, Boolean, Float
@@ -41,7 +43,7 @@ class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
     member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
-    timestamp     = Column(DateTime(),   nullable=False, default=func.now())
+    timestamp     = Column(DateTime(),   nullable=False, default=now)
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
     content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
     # AllanC - could we enforce that content is user visible at the DB level here?
@@ -98,8 +100,8 @@ class Content(Base):
     creator_id      = Column(Integer(),        ForeignKey('member.id'),  nullable=False, index=True)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True,  index=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
-    creation_date   = Column(DateTime(),       nullable=False, default=func.now())
-    update_date     = Column(DateTime(),       nullable=False, default=func.now(), doc="Controlled by postgres trigger")
+    creation_date   = Column(DateTime(),       nullable=False, default=now)
+    update_date     = Column(DateTime(),       nullable=False, default=now, doc="Controlled by postgres trigger")
     private         = Column(Boolean(),        nullable=False, default=False, doc="see class doc")
     license_id      = Column(Unicode(32),      ForeignKey('license.id'), nullable=False, default=u"CC-BY")
     visible         = Column(Boolean(),        nullable=False, default=True)
@@ -433,7 +435,7 @@ class UserVisibleContent(Content):
     __tablename__ = "content_user_visible"
     id            = Column(Integer() , ForeignKey('content.id'), primary_key=True)
     views         = Column(Integer() , nullable=False, default=0)
-    publish_date  = Column(DateTime(), nullable=False, default=func.now())
+    publish_date  = Column(DateTime(), nullable=False, default=now)
     boom_count    = Column(Integer() , nullable=False, default=0, doc="Controlled by postgres trigger")
 
     # Setup __to_dict__fields
@@ -764,7 +766,7 @@ class ContentEditHistory(Base):
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
     member_id     = Column(Integer(),     ForeignKey('member.id'),  nullable=False, index=True)
-    timestamp     = Column(DateTime(),    nullable=False, default=func.now())
+    timestamp     = Column(DateTime(),    nullable=False, default=now)
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
 
@@ -775,7 +777,7 @@ class FlaggedContent(Base):
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
     member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=True )
-    timestamp     = Column(DateTime(),    nullable=False, default=func.now())
+    timestamp     = Column(DateTime(),    nullable=False, default=now)
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=False, default="", doc="optional should the user want to add additional details")
 

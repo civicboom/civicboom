@@ -1,8 +1,9 @@
 
 from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.message import Message
-from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
+
+from cbutils.misc import now
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
@@ -240,7 +241,7 @@ class Member(Base):
     id              = Column(Integer(),      primary_key=True)
     username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
     name            = Column(Unicode(250),   nullable=False)
-    join_date       = Column(DateTime(),     nullable=False, default=func.now())
+    join_date       = Column(DateTime(),     nullable=False, default=now)
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Interval(),     nullable=False, default="0 hours")
@@ -599,10 +600,10 @@ class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
     id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
-    last_check       = Column(DateTime(), nullable=False,   default=func.now(), doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
+    last_check       = Column(DateTime(), nullable=False,   default=now, doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location_current = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
-    location_updated = Column(DateTime(), nullable=False,   default=func.now())
+    location_updated = Column(DateTime(), nullable=False,   default=now)
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
     email_unverified = Column(Unicode(250), nullable=True)
@@ -818,7 +819,7 @@ class PaymentAccount(Base):
     _billing_status  = Enum("ok", "invoiced","waiting", "failed", name="billing_status")
     billing_status   = Column(_billing_status, nullable=False, default="ok")
     extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
-    start_date       = Column(Date(),     nullable=False, default=func.now())
+    start_date       = Column(Date(),     nullable=False, default=now)
     currency         = Column(Unicode(), default="GBP", nullable=False)
     _frequency       = Enum("month", "year", name="billing_period")
     frequency        = Column(_frequency,     nullable=False, default="month")
@@ -832,12 +833,12 @@ class PaymentAccount(Base):
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
         'default': {
-            'id'                : None ,
-            'type'              : None ,
-            'start_date'        : None ,
-            'name'              : lambda account: account.config.get('org_name') or account.config.get('ind_name'),
-            'address'           : lambda account: dict([(key, account.config[key] if key != 'address_country' else country_codes[account.config[key]]) for key in account._address_config_order if key[:7] == 'address' and key in account.config]),
-            'billing_status'    : None, 
+            'id'                    : None ,
+            'type'                  : None ,
+            'start_date'            : None ,
+            'name'                  : None ,
+            'address'               : lambda account: dict([(key, account.config[key] if key != 'address_country' else country_codes[account.config[key]]) for key in account._address_config_order if key[:7] == 'address' and key in account.config]) ,
+            'billing_status'        : None , 
         },
     })
     
@@ -845,25 +846,26 @@ class PaymentAccount(Base):
         'invoice': copy.deepcopy(__to_dict__['default'])
     })
     __to_dict__['invoice'].update({
-            'currency'         : None ,
-            'frequency'        : None ,
-            'taxable'          : lambda account: [member.to_dict() for member in account.members],
-            'tax_rate_code'    : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']),
+            'currency'              : None ,
+            'frequency'             : None ,
+            'taxable'               : None ,
+            'tax_rate_code'         : None ,
+            '_address_config_order' : None ,
     })
     
     __to_dict__.update({
         'full': copy.deepcopy(__to_dict__['default'])
     })
     __to_dict__['full'].update({
-            'currency'         : None ,
-            'frequency'        : None ,
-            'members'          : lambda account: [member.to_dict() for member in account.members],
-            'invoices'         : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']),
-            'invoices_outstanding' : None ,
-            'billing_accounts' : lambda account: [billing.to_dict() for billing in account.billing_accounts],
-            'services'         : lambda account: [service.to_dict() for service in account.services],
-            'services_full'    : None ,
-            'cost_taxed'   : None ,
+            'currency'              : None ,
+            'frequency'             : None ,
+            'members'               : lambda account: [member.to_dict() for member in account.members] ,
+            'invoices'              : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']) ,
+            'invoices_outstanding'  : None ,
+            'billing_accounts'      : lambda account: [billing.to_dict() for billing in account.billing_accounts] ,
+            'services'              : lambda account: [service.to_dict() for service in account.services] ,
+            'services_full'         : None ,
+            'cost_taxed'            : None ,
     })
     
     members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
@@ -884,9 +886,21 @@ class PaymentAccount(Base):
         from civicboom.lib.payment.functions import get_admin_members
         return get_admin_members(self)
     
-    def send_email_admins(subject, content_html, extra_vars):
-        for user in self.get_admins():
-            user.send_email(subject=subject, content_html=content_html, extra_vars=extra_vars)
+#===========================================================================
+# Tried this, failed miserably (duplicate kwarg error :S)
+#===========================================================================
+#    def send_email_admins(subject, content_html, extra_vars):
+#        from civicboom.lib.communication.email_lib import send_email
+#        for user in self.get_admins():
+#            send_email(user, subject=subject, content_html=content_html, extra_vars=extra_vars)
+    
+    @property
+    def name(self):
+        org_name = self.config.get('org_name','')
+        ind_name = self.config.get('ind_name','')
+        if ind_name and org_name:
+            ind_name = '(%s)' % ind_name
+        return '%s%s' % (org_name, ind_name)
     
     @property
     def invoices_outstanding(self):
