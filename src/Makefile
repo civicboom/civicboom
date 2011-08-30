@@ -123,19 +123,18 @@ test-profile:
 data:
 	mkdir -p data
 
-data/skel-data.pgdump: civicboom/model/*.py data
+data/data-skel.pgdump: civicboom/model/*.py
 	../admin_scripts/init_cbdb
 	nosetests
-	sudo -u postgres pg_dump -Fc civicboom > data/skel-data.pgdump
+	sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump
 
-test-db: data/skel-data.pgdump
-	sudo -u postgres pg_restore --clean -d civicboom < data/skel-data.pgdump
+test-db: data/data-skel.pgdump
+	sudo -u postgres pg_restore --clean -d civicboom < data/data-skel.pgdump
 
-live-db: data/skel-data.pgdump
-	mkdir -p data
-	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/live-data.pgdump
+live-db: data
+	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
-	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
+	sudo -u postgres pg_restore -d civicboom data/data-live.pgdump
 
 
 ##############################################################################
