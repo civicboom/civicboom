@@ -150,7 +150,9 @@ class RedisManager(NoSqlManager):
         return 'beaker:%s:%s' % (self.namespace, key.replace(' ', '\302\267'))
 
     def do_remove(self):
-        self.db_conn.flush()
+        for key in self.db_conn.keys('beaker:%s:*' % self.namespace):
+            self.db_conn.delete(key)
+        #self.db_conn.flush()
 
     def keys(self):
         raise self.db_conn.keys('beaker:%s:*' % self.namespace)
