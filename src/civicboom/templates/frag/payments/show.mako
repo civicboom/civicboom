@@ -44,7 +44,9 @@
             <p>
                 <h3>Address:</h3>
                 % for key in _address_config_order:
-                    ${d['address'].get(key,'')}<br />
+                    % if d['address'].get(key):
+                        ${d['address'].get(key,'')}<br />
+                    % endif
                 % endfor
             </p>
             <p><a href="${h.url('edit_payment', id=d['id'])}">Edit account information</a></p>
