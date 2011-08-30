@@ -120,14 +120,18 @@ test-coverage:
 test-profile:
 	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests --verbose
 
-skel-db:
+data:
+	mkdir -p data
+
+data/skel-data.pgdump: civicboom/model/*.py data
 	../admin_scripts/init_cbdb
-
-test-db: skel-db
-	paster setup-app development.ini
 	nosetests
+	sudo -u postgres pg_dump -Fc civicboom > data/skel-data.pgdump
 
-live-db: skel-db
+test-db: data/skel-data.pgdump
+	sudo -u postgres pg_restore --clean -d civicboom < data/skel-data.pgdump
+
+live-db: data/skel-data.pgdump
 	mkdir -p data
 	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/live-data.pgdump
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
