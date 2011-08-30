@@ -116,14 +116,6 @@
             <p>${item['content']}</p>
             <p>${item['timestamp']}</p>
         </a>
-        
-        ${h.secure_link(
-            h.args_to_tuple('message', id=item['id'], format='redirect'),
-            method="DELETE",
-            title=_("Delete"),
-            rel="external",
-            value=h.literal("<a>smoosh</a>"),
-        )}
     </li>
 </%def>
 

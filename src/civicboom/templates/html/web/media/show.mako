@@ -94,23 +94,29 @@
         
         <script type="text/javascript">
             jQuery(document).ready(function() {
-                jQuery('#media_carousel-${uid}').jcarousel({
-                    animation   :   'slow',
-                    scroll  :   1,
-                    visible :   1,
-                    auto    :   3,
-                    wrap    :   'both',
-                    initCallback    :   media_carousel_initCallback,
-                    buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
-                    buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
-                    itemVisibleInCallback   :   {
-                        onAfterAnimation    :   show_preview_details_itemVisibleInCallback
-                    },
-                    itemVisibleOutCallback  :   {
-                        onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
-                    },
-                    itemFallbackDimension	:	349,
-                });
+                try {
+                    jQuery('#media_carousel-${uid}').jcarousel({
+                        animation   :   'slow',
+                        scroll  :   1,
+                        visible :   1,
+                        auto    :   3,
+                        wrap    :   'both',
+                        initCallback    :   media_carousel_initCallback,
+                        buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
+                        buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
+                        itemVisibleInCallback   :   {
+                            onAfterAnimation    :   show_preview_details_itemVisibleInCallback
+                        },
+                        itemVisibleOutCallback  :   {
+                            onBeforeAnimation   :   hide_preview_details_itemVisibleInCallback
+                        },
+                        itemFallbackDimension	:	349,
+                    });
+                } catch (err) {
+                    $('#media_carousel-${uid}').removeClass("jcarousel-skin-content-media");
+                    $('.play_icon').toggleClass('hidden');
+                    console.log(err);
+                }
             });
             
             function media_carousel_initCallback(carousel) {
