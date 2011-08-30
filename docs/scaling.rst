@@ -3,7 +3,11 @@ Server Scaling Notes
 
 Web Services
 ~~~~~~~~~~~~
-Pretty much every aspect of the site scales well (see network.svg)
+Pretty much every aspect of the site scales well (see network.svg) - for web
+and API servers, the amount of traffic we can handle is approximately
+proportional to the number of servers we have running (which is itself
+proportional to hosting costs). For short term traffic spikes, most load
+problems can be lifted by running extra servers until the spike is over.
 
 Database
 ~~~~~~~~

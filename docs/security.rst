@@ -26,8 +26,10 @@ Server Side
   content only shows up to the creator and people the creator has
   allowed
 - Media (videos, photos, etc) are stored in Amazon S3; files are
-  associated with a 256-bit key which you can only know if you
-  access to the file
+  associated with a pseudo-random 32 character key which you can
+  only know if you access to the file (this essentially functions
+  as a form of password; more advanced security could be put in
+  place, but it would require a lot of developer time)
 - There is an event log / audit trail which shows who has edited what
   content, so if a user's account is broken into (eg they were using a
   weak password which got guessed) we can see what the attacker has done
@@ -37,7 +39,9 @@ Back-End
 ~~~~~~~~
 At the system level, standard server security practices are used
 
-- Web server, database, and other parts of the system are kept separate
+- Web server, database, and other parts of the system are run on separate
+  servers so that bugs or human errors in one area won't compromise the
+  whole system
 - There are logs of which administrators are logging in to which
   servers and what they're doing
 
