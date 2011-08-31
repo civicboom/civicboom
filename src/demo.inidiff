@@ -1,11 +1,12 @@
 [app:main]
-cache_dir = /tmp/cb-website-test-data
 demo_mode = true
 online = false
+test_mode = true
+
+cache_dir = /tmp/cb-website-test-data
 path.temp = /tmp/cb-website-test-temp
 setting.username_to_auto_follow_on_signup = unittest, unitfriend
-test_mode = true
-use = config:development.ini
+
 warehouse.type = local
 warehouse.url = /warehouse
 
