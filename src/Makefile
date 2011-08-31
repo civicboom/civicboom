@@ -12,6 +12,7 @@ help:
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
 	#   css         -- compress folders of css into single files
+	#   ini         -- generate production / demo / test.ini files
 	# sass          -- run a daemon to turn scss into css
 	# test          -- run all nosetests
 	# test-db       -- create a blank database and fill it with test data
@@ -108,6 +109,12 @@ sass:
 	cd civicboom/public/styles
 	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
+production.ini: development.ini production.inidiff
+
+%.ini: %.inidiff development.ini
+	inipatch development.ini $< > $@
+
+ini: production.ini demo.ini test.ini
 
 ##############################################################################
 # testing
