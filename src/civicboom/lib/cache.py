@@ -44,7 +44,9 @@ log = logging.getLogger(__name__)
 
 # -- Constants -----------------------------------------------------------------
 
-cache_separator = ':'
+cache_separator     = ':'
+key_var_separator   = '='
+list_item_separator = ','
 
 cacheable_lists = {
     'contents_index': {
@@ -153,7 +155,7 @@ def _gen_list_key(*args):
     """
     def string_arg(arg):
         if isinstance(arg, list):
-            arg = ",".join(arg)
+            arg = list_item_separator.join(arg)
         if not isinstance(arg, basestring):
             arg = str(arg)
         return arg
@@ -201,7 +203,7 @@ def get_lists_versions(lists, list_variables):
 
 def gen_key_for_lists(lists, list_variables, **kwargs):
     return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
-    cache_key = cache_separator.join([list_name+'='+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
+    cache_key = cache_separator.join([list_name+key_var_separator+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
     etag_cache(cache_key, **kwargs) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
     return cache_key
     
@@ -287,8 +289,8 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
             cache_values  = [bucket, app_globals.version or 'dev']
-            cache_values += [key+'='+str(kwargs[key]) for key in keys_sorted]
-            cache_values += ['list_ver=' +str(list_version)]
+            cache_values += [key+key_var_separator+str(kwargs[key]) for key in keys_sorted]
+            cache_values += ['list_ver'+key_var_separator+str(list_version)]
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match
