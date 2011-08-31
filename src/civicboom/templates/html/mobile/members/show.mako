@@ -51,7 +51,7 @@
                 <ul>
                     <li>
                         ${h.secure_link(
-                            h.url(controller='account', action='signout'),
+                            h.url(controller='account', action='signout', format='redirect'),
                             _('Sign out'),
                             rel = "external"
                         )}

@@ -23,9 +23,12 @@
         <script type="text/javascript" src="/javascript/jquery-1.6.2.js"></script>
         <script type="text/javascript">
             $(document).bind("mobileinit", function(){
+                $.mobile.page.prototype.options.degradeInputs.date = 'text';
             });
         </script>
         <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
+        <script src="/javascript/jquery.ui.datepicker.js"></script>
+        <script src="/javascript/jquery.ui.datepicker.mobile.js"></script>
     </head>
   
     <body class="c-${c.controller} a-${c.action}">

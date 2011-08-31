@@ -45,21 +45,21 @@
 ##------------------------------------------------------------------------------
 ## Generate li elements for a list of contents
 ##------------------------------------------------------------------------------
-<%def name="list_contents(list, title=None)">
+<%def name="list_contents(list, title='Content')">
     ${generate_list(list, content_li, title)}
 </%def>
 
 ##------------------------------------------------------------------------------
 ## Generate li elements for a list of members
 ##------------------------------------------------------------------------------
-<%def name="list_members(list, title=None)">
+<%def name="list_members(list, title='Members')">
     ${generate_list(list, member_li, title)}
 </%def>
 
 ##------------------------------------------------------------------------------
 ## Generate li elements for a list of messages
 ##------------------------------------------------------------------------------
-<%def name="list_messages(list, title=None)">
+<%def name="list_messages(list, title='Message')">
     ${generate_list(list, message_li, title)}
 </%def>
 
@@ -89,7 +89,10 @@
                     <small><b> [${_("_Group")}]</b></small>
                 % endif
             </h3>
-            % if item.get('num_followers'):
+            % if item.get('username'):
+                <p>${item['username']}</p>
+            % endif
+            % if item.get('num_followers') != None:
                 <p><b>${item['num_followers']}</b> followers</p>
             % endif
         </a>
