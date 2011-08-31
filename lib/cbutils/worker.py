@@ -72,18 +72,20 @@ def flush():
     """
     Adds locally queued jobs to the central job list
     """
-    global _local_queue
-    for job in _local_queue:
-        if _worker_queue:
-            log.info('Adding job to worker queue: %s' % job["task"])
-            _worker_queue.put(job)
-        else:
-            log.info('Running job in foreground: %s' % job["task"])
-            # in production, jobs are encoded for the queue; in testing, we want
-            # un-encodable jobs to fail
-            import json; json.dumps(job)
-            run_one_job(job)
-    _local_queue = []
+    while _local_queue:
+        try:
+            job = _local_queue.pop()
+            if _worker_queue:
+                log.info('Adding job to worker queue: %s' % job["task"])
+                _worker_queue.put(job)
+            else:
+                log.info('Running job in foreground: %s' % job["task"])
+                # in production, jobs are encoded for the queue; in testing, we want
+                # un-encodable jobs to fail
+                import json; json.dumps(job)
+                run_one_job(job)
+        except Exception as e:
+            log.exception("Exception processing job:")
 
 
 ##############################################################################
