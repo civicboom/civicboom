@@ -185,7 +185,7 @@ cdnpush: cdnpush-rs
 ##############################################################################
 # other
 
-site: i18n js css api-doc
+site: i18n js css api-doc ini
 
 clean:
 	git clean -d -f -x
