@@ -4,6 +4,12 @@ port = 5080
 [app:main]
 debug = false
 
+smtp_server      = smtp.googlemail.com
+smtp_port        = 587
+smtp_username    = noreply@civicboom.com
+smtp_password    = zahz6Wer
+smtp_use_tls     = True
+
 beaker.session.secret = 5b41b460c6fe35fdd332d3f71aec729b
 
 cache_dir = /tmp/cb-website-data
