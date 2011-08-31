@@ -78,6 +78,7 @@ def load_environment(global_conf, app_conf):
                         'test_mode',
                         'demo_mode',
                         'profile',
+                        'telemetry',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config.get(varname))
@@ -128,6 +129,11 @@ def load_environment(global_conf, app_conf):
         worker.init_queue(redis_.RedisQueue(redis_.redis_from_url(config['worker.queue.url']), platform.node()))
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue.type'])
+
+    # set up telemetry
+    import cbutils.telemetry as t
+    if config['telemetry']:
+        t.set_log("telemetry.log")
 
     init_model_extra() # This will trigger a set of additional initalizers
 

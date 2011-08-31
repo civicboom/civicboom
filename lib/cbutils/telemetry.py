@@ -17,15 +17,9 @@ BLOCK_HEIGHT=14
 
 _output = None
 
-
-if __name__ != "__main__":
-    if _output == None:
-        _output = open("telemetry.log", "a", 1)
-
-
-def set_log(fp):
+def set_log(fn):
     global _output
-    _output = fp
+    _output = open(fn, "a", 1)
 
 
 def log_msg(text, io):
