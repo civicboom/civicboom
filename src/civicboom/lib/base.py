@@ -32,7 +32,7 @@ import cbutils.worker as worker
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
-from civicboom.lib.telemetry import log as t_log, log_start as t_log_start, log_end as t_log_end
+from cbutils.telemetry import log as t_log, log_start as t_log_start, log_end as t_log_end
 
 import json
 import platform

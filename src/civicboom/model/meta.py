@@ -26,7 +26,7 @@ Base = declarative_base()
 from sqlalchemy import PickleType, UnicodeText
 import json
 
-from civicboom.lib.telemetry import log as t_log
+from cbutils.telemetry import log as t_log
 
 
 class JSONType(PickleType):

@@ -3,7 +3,7 @@ from sqlalchemy.util import NamedTuple
 
 from cbutils.misc import str_to_int
 from civicboom.lib.web import action_ok
-from civicboom.lib.telemetry import log as t_log
+from cbutils.telemetry import log as t_log
 
 import logging
 log  = logging.getLogger(__name__)

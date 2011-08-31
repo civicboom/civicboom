@@ -65,7 +65,7 @@ def get_subdomain_format(environ=None):
 # URL Generation
 #-------------------------------------------------------------------------------
 
-from civicboom.lib.telemetry import log as t_log
+from cbutils.telemetry import log as t_log
 
 @t_log("generating url")
 def url(*args, **kwargs):
