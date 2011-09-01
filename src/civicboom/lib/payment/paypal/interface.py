@@ -97,9 +97,93 @@ class PayPalInterface(object):
             logger.debug('PayPal NVP Query Key/Vals:\n%s' % pformat(url_values))
 
         url = self._encode_utf8(**url_values)
-        data = urllib.urlencode(url)
-        req = urllib2.Request(self.config.API_ENDPOINT, data)
-        response = PayPalResponse(urllib2.urlopen(req).read(), self.config)
+        
+        response = ''
+        if not self.config.CB_TEST_DATA:
+            data = urllib.urlencode(url)
+            req = urllib2.Request(self.config.API_ENDPOINT, data)
+            response = urllib2.urlopen(req).read()
+        ###### Civicboom Unit Test Responses
+        else:
+            if not hasattr(self.config, 'test_counter'):
+                setattr(self.config, 'test_counter', 0)
+                setattr(self.config, 'test_data'   , {})
+            count = self.config.test_counter
+            
+            if url_values['METHOD'] == 'SetExpressCheckout':
+                self.config.test_counter += 1
+                token = 'TESTTOKEN-%s' % count
+                self.config.test_data[token] = url
+                response = {
+                    'ACK'               : 'Success',
+                    'TOKEN'             : token,
+                    'TIMESTAMP'         : '',                                             # FIXME: Insert timestamp for now() in paypal format!
+                    'CORRELATIONID'     : 'TESTCORID-%s' % token,
+                    'VERSION'           : url['VERSION'],
+                    'BUILD'             :'CB_TEST'
+                }
+            elif url_values['METHOD'] == 'GetExpressCheckoutDetails':
+                token = url['TOKEN']
+                test_data = self.config.test_data[token]
+                response = {
+                    'ACK'                                       : 'Success',
+                    'TOKEN'                                     : token,
+                    'TIMESTAMP'                                 : '',       # FIXME: Insert timestamp for now() in paypal format!
+                    'CORRELATIONID'                             : 'TESTCORID-%s' % token,
+                    'VERSION'                                   : url['VERSION'],
+                    'BUILD'                                     : 'CB_TEST',
+                    'CHECKOUTSTATUS'                            : 'PaymentActionNotInitiated',
+                    'EMAIL'                                     : 'test+paypal_account@civicboom.com',
+                    'PAYERID'                                   : '023456',
+                    'PAYERSTATUS'                               : 'VERIFIED',
+                    'FIRSTNAME'                                 : 'Unit',
+                    'LASTNAME'                                  : 'Test',
+                    'COUNTRYCODE'                               : 'GB',
+                    'CURRENCYCODE'                              : test_data['PAYMENTREQUEST_0_CURRENCYCODE'],
+                    'AMT'                                       : test_data['PAYMENTREQUEST_0_AMT'],
+                    'PAYMENTREQUEST_0_CURRENCYCODE'             : test_data['PAYMENTREQUEST_0_CURRENCYCODE'],
+                    'PAYMENTREQUEST_0_AMT'                      : test_data['PAYMENTREQUEST_0_AMT'],
+                    'PAYMENTREQUEST_0_SHIPPINGAMT'              : '0.00',
+                    'PAYMENTREQUEST_0_HANDLINGAMT'              : '0.00',
+                    'PAYMENTREQUEST_0_TAXAMT'                   : '0.00',
+                    'PAYMENTREQUEST_0_INVNUM'                   : test_data['PAYMENTREQUEST_0_INVNUM'],
+                    'PAYMENTREQUEST_0_INSURANCEAMT'             : '0.00',
+                    'PAYMENTREQUEST_0_SHIPDISCAMT'              : '0.00',
+                    'PAYMENTREQUEST_0_INSURANCEOPTIONOFFERED'   : 'false',
+                    'PAYMENTREQUESTINFO_0_ERRORCODE'            : '0',
+                }
+            elif url_values['METHOD'] == 'DoExpressCheckoutPayment':
+                token = url['TOKEN']
+                test_data = self.config.test_data[token]
+                response = {
+                    'ACK'                                       : 'Success',
+                    'TOKEN'                                     : token,
+                    'TIMESTAMP'                                 : '',       # FIXME: Insert timestamp for now() in paypal format!
+                    'CORRELATIONID'                             : 'TESTCORID-%s' % token,
+                    'VERSION'                                   : url['VERSION'],
+                    'BUILD'                                     : 'CB_TEST',
+                    'SUCCESSPAGEREDIRECTREQUESTED'              : 'false',
+                    'SHIPPINGOPTIONISDEFAULT'                   : 'false',
+                    'PAYMENTINFO_0_TRANSACTIONID'               : 'TEST_TRANSACTION_ID',
+                    'PAYMENTINFO_0_TRANSACTIONTYPE'             : 'expresscheckout',
+                    'PAYMENTINFO_0_PAYMENTTYPE'                 : 'instant',
+                    'PAYMENTINFO_0_ORDERTIME'                   : '', # FIXME: Insert timestamp for now() in paypal format!
+                    'PAYMENTINFO_0_CURRENCYCODE'                : test_data['PAYMENTREQUEST_0_CURRENCYCODE'],
+                    'PAYMENTINFO_0_AMT'                         : test_data['PAYMENTREQUEST_0_AMT'],
+                    'PAYMENTINFO_0_FEEAMT'                      : '0.50',
+                    'PAYMENTINFO_0_TAXAMT'                      : '0.00',
+                    'PAYMENTINFO_0_PAYMENTSTATUS'               :'Completed',
+                    'PAYMENTINFO_0_PENDINGREASON'               : 'None',
+                    'PAYMENTINFO_0_REASONCODE'                  : 'None',
+                    'PAYMENTINFO_0_PROTECTIONELIGIBILITY'       : 'Ineligible',
+                    'PAYMENTINFO_0_PROTECTIONELIGIBILITYTYPE'   : 'None',
+                    'PAYMENTINFO_0_SECUREMERCHANTACCOUNTID'     : 'MASH_KEYS_238974321',
+                    'PAYMENTINFO_0_ERRORCODE'                   : '0',
+                    'PAYMENTINFO_0_ACK'                         : 'Success'
+                }
+            response = urllib.urlencode(response)
+            ###### Civicboom Unit Test Responses
+        response = PayPalResponse(response, self.config)
 
         logger.debug('PayPal NVP API Endpoint: %s'% self.config.API_ENDPOINT)
     

@@ -18,6 +18,7 @@ paypal_config = PayPalConfig(
     API_USERNAME  = config['api_key.paypal.username'],
     API_PASSWORD  = config['api_key.paypal.password'],
     API_SIGNATURE = config['api_key.paypal.signature'],
+    CB_TEST_DATA  = True if config['test_mode'] else False,
     DEBUG_LEVEL   = 0)
 
 paypal_interface = PayPalInterface(config=paypal_config)
@@ -68,7 +69,7 @@ def paypal_express_begin(payment_account_id, amount, currency, invoice_id=None, 
         })
     try:
         response = paypal_interface.set_express_checkout(**params)
-    except:
+    except Exception as e:
         raise cbPaymentAPIError(_('There was an error starting your payment with PayPal, please try again later'))
     
     if 'Success' not in response.ack:
@@ -119,7 +120,6 @@ def paypal_express_return(**kwargs):
         return {
             'status' : 'error'
         }
-    print '###', details_response
     # Check action was successful!
     if 'Success' not in details_response.ack:
         return action_error(_('There was an error starting your payment with PayPal'))
@@ -133,7 +133,7 @@ def paypal_express_return(**kwargs):
             PAYMENTREQUEST_0_AMT            = details_response.PAYMENTREQUEST_0_AMT,
             PAYMENTREQUEST_0_CURRENCYCODE   = details_response.PAYMENTREQUEST_0_CURRENCYCODE,
             )
-    except:
+    except Exception as e:
         raise cbPaymentAPIError('There was an error communicating with PayPal.')
         # Return error
         return {
@@ -179,12 +179,10 @@ def paypal_express_return(**kwargs):
                 'amt'               : kwargs['amount'],
                 'currencyCode'      : kwargs['currency'],
                 }
-            print '###rp###', recurring_params
             recurring_response = paypal_interface.create_recurring_payments_profile(**recurring_params)
         except Exception as error:
             raise cbPaymentRecurringTransactionError(_('There was an error creating your recurring billing, please try again later'), result)
         else:
-            print '###', recurring_response
             if 'Success' in recurring_response.ACK:
                 config_update = {
                     'paypal_return' : recurring_response.raw,
@@ -262,7 +260,7 @@ def paypal_recurring_check(reference):
         result['status'] = 'error'
     if 'LASTPAYMENTDATE' in response.raw:
         last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
-        result['create_transaction'] = {
+        result['create_transaction_if'] = {
             'timestamp' : last_date,
             'status'    : 'complete',
             'amount'    : response.LASTPAYMENTAMT,

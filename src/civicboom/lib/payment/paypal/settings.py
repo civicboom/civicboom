@@ -63,6 +63,9 @@ class PayPalConfig(object):
 
     # In seconds. Depending on your setup, this may need to be higher.
     HTTP_TIMEOUT = 15
+    
+    # Do not inject test data by default
+    CB_TEST_DATA = False
 
     def __init__(self, **kwargs):
         """
@@ -99,7 +102,7 @@ class PayPalConfig(object):
                     raise PayPalConfigError('Missing in PayPalConfig: %s ' % arg)
                 setattr(self, arg, kwargs[arg])
                 
-        for arg in ['HTTP_TIMEOUT']:
+        for arg in ['HTTP_TIMEOUT', 'CB_TEST_DATA']:
             if arg in kwargs:
                 setattr(self, arg, kwargs[arg])
 
