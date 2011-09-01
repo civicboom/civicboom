@@ -129,7 +129,7 @@ class TestPaymentController(TestController):
         invoice = self.part_get_invoice('test_payment_pp_cancel')
         print invoice, invoice.status, invoice.transactions[0].status, invoice.paid_total, invoice.total, invoice.total_due
         assert invoice.status == 'billed'
-        assert invoice.payments[0].status == 'cancelled'
+        assert invoice.transactions[0].status == 'cancelled'
         self.part_check_member_status('test_payment_pp_cancel', 'waiting')
         
     def part_get_invoice(self, username, offset=0):
