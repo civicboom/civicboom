@@ -69,11 +69,21 @@ def compile_log(log_file, database_file):
             text text not null
         )
     """)
-    for line in open("telemetry.log"):
+    for line in open(log_file):
         c.execute("INSERT INTO telemetry VALUES(?, ?, ?, ?)", line.strip().split(" ", 3))
     c.close()
     db.commit()
 
+def get_start(cursor, start_hint=1):
+    return list(cursor.execute("SELECT min(timestamp) FROM telemetry WHERE timestamp > ?", [start_hint]))[0][0]
+
+def get_end(cursor, end_hint=0):
+    return list(cursor.execute("SELECT max(timestamp) FROM telemetry WHERE timestamp < ?", [end_hint]))[0][0]
+
+
+#######################################################################
+# HTML Out
+#######################################################################
 
 def render(database_file, html_file):
     db = sqlite3.connect(database_file)
@@ -81,15 +91,12 @@ def render(database_file, html_file):
 
     fp = open(html_file, "w")
 
-    render_start = 0
-    render_len = 5000
+    render_start = get_start(c, 0)
+    render_len = get_end(c, 9999999999) - render_start
     resolution = 1000
 
     threads = []
     thread_level_starts = []
-    # if we don't have a defined start and end, guess them
-    if render_start == 0:
-        render_start = float(open("telemetry.log").readline().strip().split(" ")[0])
 
     print_header(fp)
     for row in c.execute("SELECT * FROM telemetry WHERE timestamp BETWEEN ? AND ?", (render_start, render_start+render_len)):
@@ -121,23 +128,6 @@ def render(database_file, html_file):
                     stack_len = len(thread_level_starts[thread_idx])
                     show(int(start_px), int(length_px), thread_idx, stack_len, _text, fp)
     print_footer(fp)
-
-
-def main(argv):
-    parser = OptionParser()
-    parser.add_option("-c", "--compile", dest="log_file", default="telemetry.log",
-            help="compile log file to database", metavar="FILE")
-    parser.add_option("-d", "--database", dest="database", default="telemetry.db",
-            help="database file to use", metavar="DIR")
-    parser.add_option("-r", "--render", dest="output_file", default="telemetry.html",
-            help="extract files")
-    (options, args) = parser.parse_args(argv)
-
-    if options.log_file and options.database:
-        compile_log(options.log_file, options.database)
-
-    if options.database and options.output_file:
-        render(options.database, options.output_file)
 
 
 def print_header(fp):
@@ -209,6 +199,220 @@ def show(start, length, thread, level, text, fp):
 
 def print_footer(fp):
     print("""    </body>\n</html>""", file=fp)
+
+
+#######################################################################
+# GUI Out
+#######################################################################
+
+from Tkinter import *
+from ttk import *
+
+class App:
+    def __control_box(self, master):
+        f = Frame(master)
+
+        Label(f, text="Start").pack(side="left")
+        Spinbox(f, from_=0, to=int(time()), increment=0.1, textvariable=self.render_start).pack(side="left")
+        Label(f, text="  Length").pack(side="left")
+        Spinbox(f, from_=0, to=60*1000,     increment=1,   textvariable=self.render_len).pack(side="left")
+        Label(f, text="  Zoom").pack(side="left")
+        Spinbox(f, from_=100, to=5000,      increment=100, textvariable=self.scale).pack(side="left")
+        #Button(f, text="Render", command=self.render).pack(side="right")
+
+        f.pack()
+        return f
+
+    def __init__(self, master, database_file):
+        db = sqlite3.connect(database_file)
+        self.c = db.cursor()
+
+        self.threads = sorted(n[0] for n in self.c.execute("SELECT DISTINCT thread FROM telemetry"))
+        self.render_start = DoubleVar(master, get_start(self.c, 0))
+        self.render_len = IntVar(master, 5)
+        self.scale = IntVar(master, 1000)
+
+        self.render_start.trace_variable("w", self.update)
+        self.render_len.trace_variable("w", self.update)
+        self.scale.trace_variable("w", self.render)
+
+        self.h = Scrollbar(master, orient=HORIZONTAL)
+        self.v = Scrollbar(master, orient=VERTICAL)
+        self.canvas = Canvas(
+            master,
+            width=800, height=600,
+            background="white",
+            xscrollcommand=self.h.set,
+            yscrollcommand=self.v.set,
+        )
+        self.h['command'] = self.canvas.xview
+        self.v['command'] = self.canvas.yview
+
+        self.controls = self.__control_box(master)
+        self.grip = Sizegrip(master)
+        self.details = Label(master, text="Hover over an item to see the full name")
+
+        master.grid_columnconfigure(0, weight=1)
+        master.grid_rowconfigure(2, weight=1)
+        self.controls.grid(column=0, row=0, sticky=(W,E))
+        self.details.grid( column=0, row=1, sticky=(W,E))
+        self.canvas.grid(  column=0, row=2, sticky=(N, W, E, S))
+        self.v.grid(       column=1, row=2, sticky=(N,S))
+        self.h.grid(       column=0, row=3, sticky=(W,E))
+        self.grip.grid(    column=1, row=3, sticky=(S,E))
+
+        def _ss(n):
+            old = self.scale.get()
+            new = max(old + n, 100)
+            if old != new:
+                self.scale.set(new)
+                self.render()
+        self.canvas.bind("<4>", lambda e: _ss(100))
+        self.canvas.bind("<5>", lambda e: _ss(-100))
+
+        #def _sm(e):
+        #    self.st = self.render_start.get()
+        #    self.sx = e.x
+        #    self.sy = e.y
+        #def _cm(e):
+        #    self.render_start.set(self.st + float(self.sx - e.x)/self.scale.get())
+        #    self.render()
+        #self.canvas.bind("<1>", _sm)
+        #self.canvas.bind("<B1-Motion>", _cm)
+
+        self.update()
+
+    def update(self, event=None, x=None, y=None, z=None):
+        """
+        Data settings changed, get new data and re-render
+        """
+        s = self.render_start.get()-1
+        e = self.render_start.get()+self.render_len.get()+1
+        self.data = list(self.c.execute("SELECT * FROM telemetry WHERE timestamp BETWEEN ? AND ?", (s, e)))
+        self.render()
+
+    def render(self, event=None, x=None, y=None, z=None):
+        """
+        Render settings changed, re-render with existing data
+        """
+        self.render_clear()
+        self.render_base()
+        self.render_data()
+
+    def render_clear(self):
+        self.canvas.delete(ALL)
+        self.canvas.configure(scrollregion=(
+            0, 0,
+            self.render_len.get()*self.scale.get(),
+            len(self.threads)*100+20
+        ))
+
+    def render_base(self):
+        _rs = self.render_start.get()
+        _rl = self.render_len.get()
+        _sc = self.scale.get()
+
+        rs_px = int(_rl * _sc)
+        rl_px = int(_rl * _sc)
+
+        for n in range(rs_px, rs_px+rl_px, 100):
+            label = "+%.3f" % (float(n)/_sc-_rl)
+            self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*100)
+            self.canvas.create_text(n-rs_px+5, 5, text=label, anchor="nw")
+
+        for n in range(0, len(self.threads)):
+            self.canvas.create_line(0, 20+100*n, rl_px, 20+100*n)
+            self.canvas.create_text(5, 20+100*n+5, text=self.threads[n], anchor="nw")
+
+    def render_data(self):
+        _rs = self.render_start.get()
+        _rl = self.render_len.get()
+        _sc = self.scale.get()
+
+        threads = self.threads
+        thread_level_starts = [[], ] * len(self.threads)
+
+        for row in self.data:
+            (_time, _thread, _io, _text) = row
+            _time = float(_time)
+            thread_idx = threads.index(_thread)
+
+            # when an event starts, take note of the start time
+            if _io == "+":
+                thread_level_starts[thread_idx].append(_time)
+
+            # when the event ends, render it
+            else:
+                # if we start rendering mid-file, we may see the ends of events that haven't started yet
+                if len(thread_level_starts[thread_idx]):
+                    event_start = thread_level_starts[thread_idx].pop()
+                    event_end = _time
+                    #print("offset:%f start:%f end:%f" % (self.render_start, event_start-self.render_start, event_end-self.render_start))
+                    if event_start < _rs + _rl:
+                        start_px  = (event_start-_rs) * _sc
+                        end_px    = (event_end-_rs) * _sc
+                        length_px = end_px - start_px
+                        stack_len = len(thread_level_starts[thread_idx])
+                        self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
+
+    def update_tip(self, text):
+        self.details.configure(text=text)
+
+    def show(self, start, length, thread, level, text):
+        r = self.canvas.create_rectangle(
+            start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
+            start+length, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT,
+            fill="green")
+        t = self.canvas.create_text(
+            start+(length/2), 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+(BLOCK_HEIGHT/2),
+            text=text[:length/10], width=length
+        )
+
+        tip = "%dms @%dms: %s" % (float(length)/self.scale.get()*1000, float(start)/self.scale.get()*1000, text)
+        self.canvas.tag_bind(t, "<Enter>", lambda e: self.update_tip(tip))
+        self.canvas.tag_bind(r, "<Enter>", lambda e: self.update_tip(tip))
+
+
+def _center(root):
+    w=800
+    h=600
+    ws = root.winfo_screenwidth()
+    hs = root.winfo_screenheight()
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+    root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+
+def display(database_file):
+    root = Tk()
+    root.title("Civicboom Telemetry Viewer")
+    #_center(root)
+    App(root, database_file)
+    root.mainloop()
+    return 0
+
+
+def main(argv):
+    parser = OptionParser()
+    parser.add_option("-c", "--compile", dest="log_file", default="telemetry.log",
+            help="compile log file to database", metavar="FILE")
+    parser.add_option("-d", "--database", dest="database", default="telemetry.db",
+            help="database file to use", metavar="DB")
+    parser.add_option("-r", "--render", dest="output_file", default="telemetry.html",
+            help="render the database contents to a web page")
+    parser.add_option("-g", "--gui", action="store_true", default=False,
+            help="display a GUI")
+    (options, args) = parser.parse_args(argv)
+
+    if options.gui and options.database:
+        display(options.database)
+        return 0
+
+    if options.log_file and options.database:
+        compile_log(options.log_file, options.database)
+
+    if options.database and options.output_file:
+        render(options.database, options.output_file)
 
 
 if __name__ == "__main__":
