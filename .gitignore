@@ -11,6 +11,11 @@ src/civicboom/public/warehouse
 src/civicboom/public/doc
 src/.sass-cache
 
+# ini files are stored as diffs from development.ini
+src/production.ini
+src/demo.ini
+src/test.ini
+
 # Auto generated documents
 docs/*.json
 docs/milestone.html

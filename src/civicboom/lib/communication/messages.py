@@ -105,8 +105,8 @@ generators = [
 
     # Response Actions
     # NOTE: Don't set these to default email because these action create emails themselfs - AllanC
-    ["article_disassociated_from_assignment","ne",  _("_article disassociated from _assignment"), _("%(member)s disassociated %(your)s _article %(article)s from the _assignment %(assignment)s")],
-    ["article_approved",                     "ne",  _("_article approved by organisation"), _("%(member)s has approved %(your)s _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
+    ["article_disassociated_from_assignment","n",  _("_article disassociated from _assignment"), _("%(member)s disassociated %(your)s _article %(article)s from the _assignment %(assignment)s")],
+    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved %(your)s _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
       # TODO: response seen
 
     # Groups to group

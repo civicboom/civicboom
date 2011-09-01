@@ -20,7 +20,6 @@ Content have their author listed
  - ``Written by <a rel="author" href="/members/bob">Bob</a>``
 
 
-
 Practical Results
 ~~~~~~~~~~~~~~~~~
 Member:hCard = user's avatar and membership details show in search results
@@ -28,3 +27,10 @@ for the member
 
 Content -> Author -> Google Profile chain = user's avatar shows up on google
 search results for the content
+
+
+Links
+~~~~~
+- http://www.google.com/webmasters/tools/richsnippets
+- http://microformats.org/wiki/hcard
+- http://www.google.com/support/webmasters/bin/answer.py?answer=1229920&hl=en

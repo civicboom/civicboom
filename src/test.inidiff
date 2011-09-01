@@ -1,0 +1,6 @@
+[app:main]
+online = false
+test_mode = true
+
+cache_dir = /tmp/cb-website-test-data
+path.temp = /tmp/cb-website-test-temp

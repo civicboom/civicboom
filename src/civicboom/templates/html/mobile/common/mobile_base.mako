@@ -21,10 +21,11 @@
         ## ------
         
         <script type="text/javascript" src="/javascript/jquery-1.6.2.js"></script>
-        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
         <script type="text/javascript">
-            
+            $(document).bind("mobileinit", function(){
+            });
         </script>
+        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
     </head>
   
     <body class="c-${c.controller} a-${c.action}">
