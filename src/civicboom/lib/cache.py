@@ -56,7 +56,7 @@ cacheable_lists = {
         #'assignments' : {'list':'assignments', 'creator':None},
         #'responses'   : {'list':'responses'  , 'creator':None},
 
-        'boomed_by'   : {'boomed_by': None},        
+        'boomed_by'   : {'boomed_by'  : None},
         'response_to' : {'response_to': None},
         'comments_to' : {'comments_to': None},
         #'assignments_accepted': {'accepted_by': None},
@@ -315,7 +315,7 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [bucket, app_globals.version or 'dev', "%s%s%s" % (cacheable_list_name, key_var_separator, list_version)]
+            cache_values  = [app_globals.version or 'dev', bucket, "%s%s%s" % (cacheable_list_name, key_var_separator, list_version)]
             cache_values += ["%s%s%s" % (key, key_var_separator, kwargs[key]) for key in keys_sorted]
             cache_key = cache_separator.join(cache_values)
             
@@ -371,21 +371,25 @@ def invalidate_content(content, remove=False):
     """
     _invalidate_obj_cache('content', content)
     
-    invalidate_list_version('contents_index','content', content.creator.id)
-    
-    if content.parent:
-        if content.__type__ == 'comment':
-            invalidate_list_version('contents_index', 'comments_to', content.parent.id)
-        else:
-            invalidate_list_version('contents_index', 'response_to', content.parent.id)
+    if content.__type__ == 'comment':
+        print content
+        print content.parent
+        invalidate_list_version('contents_index', 'comments_to', content.parent.id) # Comments always have a parent id
+        
+    else:
+        
+        invalidate_list_version('contents_index','content', content.creator.id)
+        
+        if content.parent:
+            invalidate_list_version('contents_index', 'response_to', content.parent.id ) # Invalidate responses to the parent content
+            invalidate_list_version('contents_index', 'responses'  , content.creator.id) # Invalidate responses this creator has written
             # we dont need to invalidate the whole parent object - just the responses list
-    
-    if content.__type__ == 'article' and not content.parent:
-        invalidate_list_version('contents_index', 'articles'    , content.creator.id)
-    if content.__type__ == 'article' and content.parent:
-        invalidate_list_version('contents_index', 'responses'   , content.creator.id)
-    if content.__type__ == 'assignment':
-        invalidate_list_version('contents_index', 'assignments' , content.creator.id)
+        
+        if content.__type__ == 'article' and not content.parent:
+            invalidate_list_version('contents_index', 'articles'    , content.creator.id)
+            
+        if content.__type__ == 'assignment':
+            invalidate_list_version('contents_index', 'assignments' , content.creator.id)
 
     # If removing the content item entirely - invalidate all sub lists
     if remove:
