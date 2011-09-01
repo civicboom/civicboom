@@ -85,10 +85,13 @@ class PaymentsController(BaseController):
             plan = plan[0]
         else:
             plan = 'free'
-        
-        payment_actions_controller.regrade(id=payment_account.id, new_type=plan)
-        
-        return redirect(url('payment', action='show', id=payment_account.id))
+        # Only regrade if plan != free (regrade errors on same plan)
+        if plan != 'free':
+            payment_actions_controller.regrade(id=payment_account.id, new_type=plan)
+            
+        if c.format in ('html', 'redirect'):
+            return redirect(url('payment', action='show', id=payment_account.id))
+        return action_ok('Account created')
 
     @web
     @authorize
@@ -134,10 +137,8 @@ class PaymentsController(BaseController):
             ind_name        = formencode.validators.UnicodeString(),
         )
         if kwargs.get('name_type') == 'org':
-            print 'org'
             schema.fields['org_name']  = formencode.validators.UnicodeString(not_empty=True)
         else:
-            print 'ind'
             schema.fields['ind_name']  = formencode.validators.UnicodeString(not_empty=True)
             
         for address_field in address_fields:
@@ -146,7 +147,7 @@ class PaymentsController(BaseController):
         schema.fields['address_country'] = formencode.validators.OneOf(country_codes.keys(), messages={'missing': 'Please select a country'})
         kwargs['id'] = account.id
         data = {'payment':kwargs}
-        data = validate_dict(data, schema, dict_to_validate_key='payment', template_error=c.template_error if c.template_error else 'payments/edit')
+        data = validate_dict(data, schema, dict_to_validate_key='payment', template_error=c.template_error if hasattr(c, 'template_error') else 'payments/edit')
         form = data['payment']
         
         if form.get('ind_name'):
