@@ -110,8 +110,6 @@ class PaymentActionsController(BaseController):
         
         billing_account = Session.query(BillingAccount).filter(and_(BillingAccount.id==billing_account_id, BillingAccount.payment_account_id==account.id)).first()
         
-        print billing_account
-        
         if not billing_account or billing_account.status in ('error', 'deactivated'):
             raise action_error(_('This billing account does not exist'), code=404)
         
@@ -219,6 +217,9 @@ class PaymentActionsController(BaseController):
         if not txn:
             return action_error(_('Payment transaction not found'), 404)
         
+        if kwargs.get('invoice_id'):
+            del kwargs['invoice_id']
+        
         try:
             response = payment.cancels[service](
                 payment_account_id  = id,
@@ -272,7 +273,6 @@ class PaymentActionsController(BaseController):
             response = e.dict
             #response_message = e.value
         except payment.cbPaymentError as e:
-            print args
             txn.status = 'error'
             Session.commit()
             raise action_error(e.value, code=400)
@@ -309,16 +309,17 @@ class PaymentActionsController(BaseController):
             raise action_error(_('Cannot re-grade account to the same as it is now.'), code=400)
         
         time_now = now()
-        
+        # Set up array of refund payments
         apply_payment = []
-        
+        # Only need to check previous / next invoices if account costs money... otherwise no refunds
         if account.cost_taxed > 0:
-            # Do paid account stuff here!
+            # Get current service, prev/next start date & days between them
             current_service = Session.query(Service).filter(Service.payment_account_type == account.type).one()
             psd = payment.previous_start_date(account.start_date, account.frequency, time_now) # FIXME
             nsd = payment.calculate_start_date(account.start_date, account.frequency, time_now)
             days_this_period = (nsd - psd).days
             
+            # Function to query invoice lines based on current service, invoice status and start date
             def get_invoice_line(status, start_date):
                 return Session.query(InvoiceLine)\
                     .join((Invoice, Invoice.id == InvoiceLine.invoice_id))\
@@ -326,37 +327,61 @@ class PaymentActionsController(BaseController):
                     .filter(Invoice.payment_account_id == account.id)\
                     .filter(InvoiceLine.start_date == start_date)\
                     .filter(InvoiceLine.service_id == current_service.id).first()
+                    
+            def send_admin_email(extra_error):
+                send_email(
+                    subject=_('Welcome to _site_name'),
+                    content_html=render('/email/payment/admin/regrade_failed.mako',
+                        extra_vars={
+                            'persona':c.logged_in_persona,
+                            'new_account_type': new_account_type,
+                            'extra_error': extra_error,
+                        })
+                )
+                pass
             
             # Check paid invoice line
             prev_invoice_line = get_invoice_line("paid", psd)
             if prev_invoice_line:
+                # If there is more than 1 service kick back to manual for now!
                 if len(prev_invoice_line.invoice.lines) == 1:
+                    # Get days into billed service
                     days_elapsed = (time_now.date() - psd).days
+                    # Get days to refund from billed service
                     days_left = days_this_period - days_elapsed
+                    # Create a billing transaction for refund:
                     apply_payment_prev = BillingTransaction()
                     apply_payment_prev.amount = (((prev_invoice_line.price_final * prev_invoice_line.invoice.tax_rate) / days_this_period) * days_left).quantize(Decimal('0.00'))
                     apply_payment_prev.status = 'complete'
                     apply_payment_prev.provider = 'refund_unused'
                     apply_payment_prev.reference = prev_invoice_line.invoice_id
+                    # Append billing transaction to array
                     apply_payment.append(apply_payment_prev)
                 else:
+                    # Kick back to manual refund.
+                    #send_admin_email('More than one service needing refund on previous paid invoice!')
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
             # Check billed invoice line
             prev_invoice_line = get_invoice_line("billed", psd) or []
-            prev_invoice_line.append(get_invoice_line("billed", nsd))
+            giv = get_invoice_line("billed", nsd)
+            if giv:
+                prev_invoice_line.append(giv)
             for line in prev_invoice_line:
+                # If there is more than 1 service kick back to manual for now!
                 if len(line.invoice.lines) == 1:
                     line.invoice.status = "disregarded"
                 else:
+                    # Kick back to manual refund.
+                    #send_admin_email('More than one service needing refund on %s billed invoice!' % line.invoice.timestamp)
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
             prev_invoice_line = get_invoice_line("paid", nsd)
             if prev_invoice_line:
                 if len(prev_invoice_line.invoice.lines) == 1:
-                    line.invoice.status = "disregarded"
+                    prev_invoice_line.invoice.status = "disregarded"
                     apply_payment_next = BillingTransaction()
                     apply_payment_next.amount = prev_invoice_line.invoice.paid_total
                     apply_payment_next.status = 'complete'
@@ -364,16 +389,20 @@ class PaymentActionsController(BaseController):
                     apply_payment_next.reference = prev_invoice_line.invoice_id
                     apply_payment.append(apply_payment_next)
                 else:
+                    #send_admin_email('More than one service needing refund on next paid invoice!')
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
         
+        # Currently defaults to removing all Payment Account Services, this may not be wanted in the future!
         for pas in account.services:
             if pas.service.payment_account_type == account.type:
                 Session.delete(pas)
-                
+        
+        # Get all current billing accounts
         active_billing_accounts = Session.query(BillingAccount).filter(BillingAccount.payment_account_id == account.id)\
             .filter(BillingAccount.status == 'active').all()
         
+        # If the account providers have regrade actions, run these (for now only paypal recurring, cancels recurring payments)
         for billing_account in active_billing_accounts:
             if billing_account.provider in payment.action_on_regrade:
                 try:
@@ -383,6 +412,7 @@ class PaymentActionsController(BaseController):
                 billing_account.status = response['status']
             pass
         
+        # Reset start date, account type, generates new invoice, sets to billed, applys any refund payments, Commits
         account.start_date = datetime.date.today()
         account.type = new_account_type
         invoice = payment.db_methods.generate_invoice(account, account.start_date)
@@ -391,8 +421,13 @@ class PaymentActionsController(BaseController):
             _payment.invoice = invoice
         Session.commit()
         
+        # If bill paid status -> paid
         if invoice.total_due <= 0:
             invoice.status = 'paid'
-            Session.commit()
+        else:
+            account.billing_status = 'waiting'
+        Session.commit()
             
-        return redirect(h.url(controller='payment_actions', id=id, action='invoice', invoice_id = invoice.id))
+        if c.format in ('html', 'redirect'):
+            return redirect(h.url(controller='payment_actions', id=id, action='invoice', invoice_id = invoice.id))
+        return action_ok('Account upgraded and invoiced')
