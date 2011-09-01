@@ -32,19 +32,19 @@
             </p>
             
             % if config['development_mode']:
-            % if self.message.get('source_id') and not (self.message['source_id']==c.logged_in_persona.id or self.message['source_id']==c.logged_in_persona.username):
-                <hr>
-                <h3>Reply</h3>
-                ${h.form(h.url(controller='messages', action='create'))}
-                    <div data-role="fieldcontain">
-                        <input type="hidden" name="target" value="${self.message['source'] if isinstance(self.message['source'],basestring) else self.message['source']['username']}"/>
-                        <label for="subject">${_("Subject")}</label>
-                        <input type="text" name="subject" value="Re: ${self.message['subject']}">
-                        <textarea name="content"></textarea>
-                        <input type="submit" value="${_("Send")}">
-                    </div>
-                ${h.end_form()}
-            % endif
+                % if self.message.get('source_id') and not (self.message['source_id']==c.logged_in_persona.id or self.message['source_id']==c.logged_in_persona.username):
+                    <hr>
+                    <h3>Reply</h3>
+                    ${h.form(h.args_to_tuple('messages', format='redirect'), json_form_complete_actions="$('.ui-dialog').dialog('close');)")}
+                        <div data-role="fieldcontain">
+                            <input type="hidden" name="target" value="${self.message['source'] if isinstance(self.message['source'],basestring) else self.message['source']['username']}"/>
+                            <label for="subject">${_("Subject")}</label>
+                            <input type="text" name="subject" value="Re: ${self.message['subject']}">
+                            <textarea name="content"></textarea>
+                            <input type="submit" value="${_("Send")}">
+                        </div>
+                    ${h.end_form()}
+                % endif
             % endif
         </div>
     </div>

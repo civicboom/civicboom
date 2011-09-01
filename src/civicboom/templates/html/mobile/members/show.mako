@@ -36,6 +36,7 @@
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
+            <h2 style="text-align: center;">${self.id}'s ${_('_content')}</h2>
             ${member_content_list(d)}
         </div>
     </div>
@@ -51,9 +52,9 @@
                 <ul>
                     <li>
                         ${h.secure_link(
-                            h.url(controller='account', action='signout', format='redirect'),
+                            h.url(controller='account', action='signout'),
                             _('Sign out'),
-                            rel = "external"
+                            css_class="button",
                         )}
                     </li>
                 </ul>
@@ -153,6 +154,10 @@
 <%def name="actions_buttons()">
 
     % if c.logged_in_user and self.actions:
+            % if 'message' in self.actions:
+                <a href="${h.url(controller='messages', action='new', target=self.id)}" data-rel="dialog"><button>Message</button></a>
+            % endif
+
             % if 'follow' in self.actions:
                 ${h.secure_link(
                     h.url('member_action', action='follow'    , id=self.id) ,
@@ -258,9 +263,9 @@
             articles = data['articles']
         %>
         <div class="member_content">
-            ${list_includes.list_contents(requests, "Active requests")}
-            ${list_includes.list_contents(responses, "Responses")}
-            ${list_includes.list_contents(articles, "Stories")}
+            ${list_includes.list_contents(requests, "Active requests", more=1)}
+            ${list_includes.list_contents(responses, "Responses", more=1)}
+            ${list_includes.list_contents(articles, "Stories", more=1)}
         </div>
     % endif
 </%def>

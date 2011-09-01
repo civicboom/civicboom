@@ -11,7 +11,7 @@
     <div data-role="page">
         <div data-role="content">
             ${components.title_logo()}
-    	    ${parent.error_message()}
+    	    ${parent.flash_message()}
         	<div class="signin_title">
         	   <h1>${_("Sign in to _site_name!")}</h1>
         	</div>
@@ -21,6 +21,8 @@
                    <h1>${_("Don't have an account? Sign up to _site_name now!")}</h1>
                 </div>
                 ${signup()}
+                <hr />
+                ${janrain()}
            % endif
 	   </div>
 	</div>
@@ -52,4 +54,19 @@
             <input class="button" type="submit" name="submit" value="${_("Sign up")}"/>
         </div>
     </form>
+</%def>
+
+## ----------------------------------------------------------------------------
+## Janrain testing
+## ----------------------------------------------------------------------------
+<%def name="janrain()">
+    % if 'api_key.janrain' in config:
+        <section>
+            % if config['online']:
+                ${h.get_janrain(lang=c.lang)}
+            % else:
+                <img src="/images/test/janrain.png">
+            % endif
+        </section>
+    % endif
 </%def>
