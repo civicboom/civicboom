@@ -58,7 +58,6 @@ def calculate_start_date(start_date, frequency, time_now, offset=0):
             p_year += offset
         elif frequency == 'month':
             p_mon += offset
-            print 'p_mon', p_mon
     return normalize_date(p_year, p_mon, p_day)
 
 def next_start_date(start_date, frequency, time_now):
