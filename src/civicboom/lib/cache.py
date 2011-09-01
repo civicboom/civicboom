@@ -122,6 +122,13 @@ def init_cache(config):
         #    _cache['civicboom'].clear()
         
 
+# -- Exceptions ----------------------------------------------------------------
+
+class ListVersionException(Exception):
+    def __init__(self, value):
+        self.parameter = value
+    def __str__(self):
+        return repr(self.parameter)
 
 # -- Utils ---------------------------------------------------------------------
 
@@ -162,23 +169,29 @@ def _gen_list_key(*args):
     return cache_separator.join(['cache_ver']+[string_arg(arg) for arg in args])
 
 def get_list_version(*args):
+    if not _cache: return
     key   = _gen_list_key(*args)
-    value = 0
     try:
         value = app_globals.memcache.get(key)
-    except TypeError: 
-        pass # if no app_globals regstered for this thread then ignore
+    except TypeError:
+        e = 'unable to aquire list verison for %s' % key
+        log.warn(e)
+        raise ListVersionException(e)
+    #if value == None:
+    #    return invalidate_list_version()
     return value
 
 def invalidate_list_version(*args):
+    if not _cache: return
     key    = _gen_list_key(*args)
-    value  = 0
     try:
-        value = app_globals.memcache.get(key) + 1
-        app_globals.memcache.set(key, value)
+        value = app_globals.memcache.incr(key)
+        log.debug('got list ver %s:%s' % (key,value))
+        return value
     except TypeError:
-        pass # if no app_globals regstered for this thread then ignore
-    return value
+        #raise ListVersionException('unable to invalidate list verison for %s' % key)
+        pass # We dont want to DIE on invalidating, because invalidate is run on every object update regardless of if cache is enabled - but thats why we put the if not _cache above?
+    return
     
 def get_lists_versions(lists, list_variables):
     """
@@ -203,7 +216,10 @@ def get_lists_versions(lists, list_variables):
 
 def gen_key_for_lists(lists, list_variables, **kwargs):
     return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
-    cache_key = cache_separator.join([list_name+key_var_separator+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
+    try:
+        cache_key = cache_separator.join([list_name+key_var_separator+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
+    except ListVersionException:
+        return ''
     etag_cache(cache_key, **kwargs) # AllanC - it is not sendible at this point to eTag member_show and contents_show as every list does not have a version number .. can we actually ever to this at all with assignments_active and actions?
     return cache_key
     
@@ -281,16 +297,19 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
         # After the for look has run though all the keys, and has not aborted to the next item with continue - the kwargs match this cacheable_list
         if cacheable_list_name:
             #print "cacheable_list_name: %s" % cacheable_list_name
-            list_version = get_list_version(bucket, cacheable_list_name, cacheable_variables)
+            try:
+                list_version = get_list_version(bucket, cacheable_list_name, cacheable_variables)
+            except ListVersionException:
+                return '' # We cannot allow etags if no list version is present
+                #config['cache.etags.enabled'] = False # If we cant get to memcache DONT use etags, lists will never refresh
             
             # Sort keys to normaize the cache_key that is generated
             keys_sorted = [k for k in kwargs.keys()]
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [bucket, app_globals.version or 'dev']
-            cache_values += [key+key_var_separator+str(kwargs[key]) for key in keys_sorted]
-            cache_values += ['list_ver'+key_var_separator+str(list_version)]
+            cache_values  = [bucket, app_globals.version or 'dev', "%s%s%s" % (cacheable_list_name, key_var_separator, list_version)]
+            cache_values += ["%s%s%s" % (key, key_var_separator, kwargs[key]) for key in keys_sorted]
             cache_key = cache_separator.join(cache_values)
             
             break # There is no need to check any more lists - as we have matched a chacheable item and no other will match

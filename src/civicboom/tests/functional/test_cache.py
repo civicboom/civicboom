@@ -23,8 +23,26 @@ class TestCache(TestController):
                     etag_dict[etag_key_value] = ''
             return etag_dict
         
-        response       = self.app.get(url('member_action', id='unittest', action='content', format='json'))
-        response_json  = json.loads(response.body)
-        response_etags = get_etag_dict(response)
+        # -- Content List ------------------------------------------------------
         
+        # Get content list
+        response         = self.app.get(url('member_action', id='unittest', action='content', format='json'))
+        response_json    = json.loads(response.body)
         
+        # Record list vars
+        list_content_ver = get_etag_dict(response)['content']
+        list_count       = response_json['data']['list']['count']
+        
+        # Create content
+        content_id = self.create_content(title='cache test')
+        
+        # Get new list
+        response         = self.app.get(url('member_action', id='unittest', action='content', format='json'))
+        response_json    = json.loads(response.body)
+        
+        # Check Assertions
+        self.assertNotEqual(get_etag_dict(response)['content']     , list_content_ver) # Check list version has changed
+        self.assertEqual   ( response_json['data']['list']['count'], list_count + 1  ) # Check list count has incremented by 1
+        
+        # Cleanup
+        self.delete_content(content_id)
