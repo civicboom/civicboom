@@ -909,7 +909,6 @@ class PaymentAccount(Base):
     
     @property
     def cost_taxed(self):
-        print [pac['price_taxed'] for pac in self.services_full]
         return sum([pac['price_taxed'] for pac in self.services_full])
             
     

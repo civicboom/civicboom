@@ -152,8 +152,6 @@ class PaymentAccountService(Base):
         return self.service.get_price(self.payment_account.currency, self.payment_account.frequency) * (1-self.discount)
     @property
     def price_taxed(self):
-        print type(self.price)
-        print type(1 + (tax_rates[self.payment_account.tax_rate_code] if self.payment_account.taxable else 0))
         return (self.price * Decimal((tax_rates[self.payment_account.tax_rate_code] + 1) if self.payment_account.taxable else 1).quantize(Decimal('0.00'))).quantize(Decimal('0.00'))
     
     def __init__(self, payment_account=None, service=None, note=None,quantity=None, discount=None ):
@@ -214,7 +212,7 @@ class Invoice(Base):
             'lines'             : lambda invoice: [line.to_dict() for line in invoice.lines] ,
             'transactions'      : lambda invoice: [trans.to_dict() for trans in invoice.transactions] ,
             'processing'        : None ,
-            'config'            : None ,
+            #'config'            : None ,
             'payment_options'   : None,
     })
     
@@ -321,7 +319,7 @@ CREATE OR REPLACE FUNCTION update_create_payment_invoice() RETURNS TRIGGER AS $$
                 ELSIF (OLD.status = 'disregarded') THEN
                     RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
                     
-                ELSIF (OLD.status = 'paid') THEN
+                ELSIF (OLD.status = 'paid' AND NEW.status != 'disregarded') THEN
                     RAISE EXCEPTION 'Cant move from %%%% to %%%%', OLD.status, NEW.status;
                     
                 ELSIF (OLD.status = 'waiting_payment_processing' AND (NEW.status NOT IN ('disregarded','paid','billed'))) THEN
