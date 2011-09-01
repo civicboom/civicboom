@@ -50,13 +50,13 @@ list_item_separator = ','
 
 cacheable_lists = {
     'contents_index': {
-        #'content'     : {'creator': None}, # AllanC - Ballz, because dict key order is not reproducatble. A bug where some lists were being identifyed as 'content' because they were matching 'creator'. This dict is converted to an OrderedDict and the 'content' list added to the end
-        'boomed_by'   : {'boomed_by': None},
-        'drafts'      : {'list':'drafts'     , 'creator':None},
-        'articles'    : {'list':'articles'   , 'creator':None},
-        'assignments' : {'list':'assignments', 'creator':None},
-        'responses'   : {'list':'responses'  , 'creator':None},
-        
+        #'content'     : {                      'creator':None}, # AllanC - Ballz, because dict key order is not reproducatble. A bug where some lists were being identifyed as 'content' because they were matching 'creator'. This dict is converted to an OrderedDict and the 'content' list added to the end
+        #'drafts'      : {'list':'drafts'     , 'creator':None},
+        #'articles'    : {'list':'articles'   , 'creator':None},
+        #'assignments' : {'list':'assignments', 'creator':None},
+        #'responses'   : {'list':'responses'  , 'creator':None},
+
+        'boomed_by'   : {'boomed_by': None},        
         'response_to' : {'response_to': None},
         'comments_to' : {'comments_to': None},
         #'assignments_accepted': {'accepted_by': None},
@@ -82,7 +82,12 @@ cacheable_lists = {
     'contents_show': {},
 }
 cacheable_lists['contents_index'] = OrderedDict(cacheable_lists['contents_index'])
-cacheable_lists['contents_index'].update({'content'     : {'creator': None}})
+cacheable_lists['contents_index'].update({'content'     : {                     'creator': None}})
+cacheable_lists['contents_index'].update({'drafts'      : {'list':'drafts'     ,'creator': None}})
+cacheable_lists['contents_index'].update({'articles'    : {'list':'articles'   ,'creator': None}})
+cacheable_lists['contents_index'].update({'assignments' : {'list':'assignments','creator': None}})
+cacheable_lists['contents_index'].update({'responses'   : {'list':'responses'  ,'creator': None}})
+
 
 # Generate a reverse lookup to find the bucket for a list
 cacheable_lists_key_lookup = {}
@@ -173,20 +178,22 @@ def get_list_version(*args):
     key   = _gen_list_key(*args)
     try:
         value = app_globals.memcache.get(key)
+        #print('got list %s as %s' % (key,value))
+        return value
     except TypeError:
         e = 'unable to aquire list verison for %s' % key
         log.warn(e)
         raise ListVersionException(e)
     #if value == None:
     #    return invalidate_list_version()
-    return value
 
 def invalidate_list_version(*args):
     if not _cache: return
     key    = _gen_list_key(*args)
+
     try:
         value = app_globals.memcache.incr(key)
-        log.debug('got list ver %s:%s' % (key,value))
+        #log.error('inc list %s to %s' % (key,value))
         return value
     except TypeError:
         #raise ListVersionException('unable to invalidate list verison for %s' % key)
@@ -349,7 +356,7 @@ def invalidate_member(member, remove=False):
 
     # If removing the member entirely - invalidate all sub lists
     if remove:
-        for list in ['drafts', 'articles', 'assignments', 'responses', 'boomed_by']:
+        for list in ['content','drafts', 'articles', 'assignments', 'responses', 'boomed_by']:
             invalidate_list_version('contents_index', list, member.id)
         # TODO
         # member index lists
@@ -363,7 +370,8 @@ def invalidate_content(content, remove=False):
       2.) Any lists associated with this content or content.parent
     """
     _invalidate_obj_cache('content', content)
-    invalidate_list_version('content', content.id)
+    
+    invalidate_list_version('contents_index','content', content.creator.id)
     
     if content.parent:
         if content.__type__ == 'comment':
