@@ -63,7 +63,7 @@ def compile_log(log_file, database_file):
     c = db.cursor()
     c.execute("""
         CREATE TABLE IF NOT EXISTS telemetry(
-            timestamp int not null,
+            timestamp float not null,
             thread varchar(32) not null,
             io char(1) not null,
             text text not null
