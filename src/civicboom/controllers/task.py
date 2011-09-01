@@ -198,21 +198,9 @@ class TaskController(BaseController):
         )
         
         return response_completed_ok
-
-    @web_params_to_kwargs
-    def run_set_date(self, timedelta="days=28"):
-        if timedelta == "now":
-            set_now('now')
-        else:
-            timedelta = timedelta_str(timedelta)
-            set_now(datetime.datetime.now() + timedelta)
-        return response_completed_ok
     
-    def print_account_admin_members(self):
-        from civicboom.model.member import PaymentAccount
-        print Session.query(PaymentAccount).filter(PaymentAccount.id==1).first().get_admins()
     #---------------------------------------------------------------------------
-    # Run the below billing tasks (easier for overnight batches
+    # Run the below billing tasks (easier for overnight batches)
     #---------------------------------------------------------------------------
     def run_billing_tasks(self):
         self.run_invoice_tasks()
@@ -232,15 +220,17 @@ class TaskController(BaseController):
         
         # Set variables
         time_now = now()
-        days_disable = 6
+        days_disable = 2
         days_remind = 3
         days_invoice_in = 7
         seven_days = time_now + datetime.timedelta(days=days_invoice_in)
         
         def check_timestamp(timestamp, days):
+            if isinstance(timestamp, datetime.date):
+                timestamp = datetime.datetime.combine(timestamp, datetime.time(0))
             if timestamp > time_now:
                 return False
-            return (time_now - timestamp).days-1 >= days
+            return (time_now - timestamp).days >= days
         
         # For each billing frequency get accounts likely to be due in the next x days
         for frequency in ["month", "year"]:
@@ -296,29 +286,24 @@ class TaskController(BaseController):
             .join((Invoice, Invoice.payment_account_id == PaymentAccount.id))\
             .filter(Invoice.status == "billed").all()
         for account in billed_accounts:
-            print 'Checking outstanding account %d' % account.id
-            max_acct_status = 0
+            max_acct_status = -1
             count_unpaid = 0
             # Check all billed invoices
             for invoice in account.invoices.filter(Invoice.status == "billed").all():
                 if invoice.paid_total >= invoice.total:
-                    print 'paid'
                     invoice.status = "paid"
-                elif check_timestamp(invoice.timestamp, days_disable):
-                    print 'disable'
+                    max_acct_status = max((max_acct_status, payment_account_status.index("ok" )))
+                elif check_timestamp(invoice.due_date, days_disable):
                     max_acct_status = max((max_acct_status, payment_account_status.index("failed" )))
                 else:
                     if check_timestamp(invoice.timestamp, days_remind):
-                        print 'remind'
+                        pass
                     if invoice.due_date > time_now.date():
-                        print 'invoiced'
                         max_acct_status = max((max_acct_status, payment_account_status.index("invoiced" )))
                     else:
-                        print 'waiting'
                         max_acct_status = max((max_acct_status, payment_account_status.index("waiting" )))
             # Update account
-            print 'Account status:', max_acct_status
-            if max_acct_status > 0:
+            if max_acct_status > -1:
                 new_status      = payment_account_status[max_acct_status]
                 new_status_n    = max_acct_status
                 old_status      = invoice.payment_account.billing_status
@@ -328,22 +313,18 @@ class TaskController(BaseController):
                     invoice.payment_account.billing_status = new_status
                     Session.commit()
                     if new_status == "failed":
-                        print "Send FAILED"
                         send_email_admins(account, subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
                         #account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
                         pass #Send account disabled email
                     elif new_status == "waiting":
-                        print "Send WAITING"
                         send_email_admins(account, subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
                         #account.send_email_admins(subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
                         pass #Send account due email
                     elif new_status == "invoiced":
-                        print "Send INVOICED"
                         send_email_admins(account, subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
                         #account.send_email_admins(subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
                         pass #Send account invoiced email
                     elif new_status == "ok":
-                        print "Send ALL OK THANK YOU"
                         pass #Send account all ok, thank you, email
 
         Session.commit()
@@ -358,20 +339,20 @@ class TaskController(BaseController):
         transactions = Session.query(BillingTransaction).filter(BillingTransaction.status=='pending').all()
         
         for txn in transactions:
-            if txn.provider in payment.check_transactions:
-                try:
-                    response = payment.check_transactions[txn.provider](
-                        reference = txn.config['transaction_id']
-                    )
-                except:
-                    pass
-                else:
-                    txn.status = response['status']
-                    if txn.status == 'complete':
-                        if txn.invoice.total_paid >= txn.invoice.total:
-                            txn.invoice.status = 'paid'
-                    pass
-            pass
+            if txn.status_updated < (now() - datetime.timedelta(hours=3)):
+                if txn.provider in payment.check_transactions:
+                    try:
+                        response = payment.check_transactions[txn.provider](
+                            reference = txn.config['transaction_id']
+                        )
+                    except:
+                        pass
+                    else:
+                        txn.status = response['status']
+                        if txn.status == 'complete':
+                            if txn.invoice.total_paid >= txn.invoice.total:
+                                txn.invoice.status = 'paid'
+                        txn.status_updated = now()
         
         Session.commit()
         return response_completed_ok
@@ -395,30 +376,42 @@ class TaskController(BaseController):
         billing_accounts = Session.query(BillingAccount).filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active')).all()
         
         for billing_account in billing_accounts:
+            if billing_account.status_updated < (now() - datetime.timedelta(hours=3)):
+                if billing_account.provider in payment.check_recurrings:
+                    response = payment.check_recurrings[billing_account.provider](billing_account.reference)
+                    if response.status != 'error':
+                        billing_account.status = paypal_to_civicboom_status[response['status']]
+                        if 'create_transaction_if' in response:
+                            cti = response['create_transaction_if']
+                            if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
+                                txn = BillingTransaction()
+                                txn.timestamp       = cti['timestamp']
+                                txn.status          = cti['status']
+                                txn.amount          = cti['amount']
+                                txn.billing_account = billing_account
+                                txn.provider        = cti['provider']
+                                txn.reference       = cti['reference']
+                billing_account.status_updated = now()
             
-            if billing_account.provider in payment.check_recurrings:
-                pass
-                # paypal_recurring_check CONFUSED, should be calling this here?
-            
-            if billing_account.provider == 'paypal_recurring':
-                try:
-                    response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
-                except:
-                    pass
-                else:
-                    if response.STATUS in paypal_to_civicboom_status.keys():
-                        billing_account.status = paypal_to_civicboom_status[response.STATUS]
-                    if 'LASTPAYMENTDATE' in response.raw:
-                        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
-                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider=='paypal_recurring', BillingTransaction.timestamp==last_date)).first():
-                            txn = BillingTransaction()
-                            txn.timestamp = last_date
-                            txn.status = 'complete'
-                            txn.amount = response.LASTPAYMENTAMT
-                            txn.billing_account = billing_account
-                            txn.provider = 'paypal_recurring'
-                            txn.reference = response.PROFILEID
-                            Session.add(txn)
+#            if billing_account.provider == 'paypal_recurring':
+#                try:
+#                    response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
+#                except:
+#                    pass
+#                else:
+#                    if response.STATUS in paypal_to_civicboom_status.keys():
+#                        billing_account.status = paypal_to_civicboom_status[response.STATUS]
+#                    if 'LASTPAYMENTDATE' in response.raw:
+#                        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
+#                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider=='paypal_recurring', BillingTransaction.timestamp==last_date)).first():
+#                            txn = BillingTransaction()
+#                            txn.timestamp = last_date
+#                            txn.status = 'complete'
+#                            txn.amount = response.LASTPAYMENTAMT
+#                            txn.billing_account = billing_account
+#                            txn.provider = 'paypal_recurring'
+#                            txn.reference = response.PROFILEID
+#                            Session.add(txn)
         Session.commit()
         return response_completed_ok
     #---------------------------------------------------------------------------
@@ -442,7 +435,6 @@ class TaskController(BaseController):
                 Invoice.total_due > 0
             ).all()
             if pending_invoices:
-                print 'found'
                 txn.invoice = pending_invoices[0]
         Session.commit()
         return response_completed_ok
