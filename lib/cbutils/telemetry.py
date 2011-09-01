@@ -9,8 +9,8 @@ import sqlite3
 import sys
 
 
-ROW_HEIGHT=100
-BLOCK_HEIGHT=14
+ROW_HEIGHT=140
+BLOCK_HEIGHT=20
 
 
 #######################################################################
@@ -212,11 +212,11 @@ class App:
     def __control_box(self, master):
         f = Frame(master)
 
-        Label(f, text="Start").pack(side="left")
+        Label(f, text="  Start ").pack(side="left")
         Spinbox(f, from_=0, to=int(time()), increment=0.1, textvariable=self.render_start).pack(side="left")
-        Label(f, text="  Length").pack(side="left")
+        Label(f, text="  Length ").pack(side="left")
         Spinbox(f, from_=0, to=60*1000,     increment=1,   textvariable=self.render_len).pack(side="left")
-        Label(f, text="  Zoom").pack(side="left")
+        Label(f, text="  Zoom ").pack(side="left")
         Spinbox(f, from_=100, to=5000,      increment=100, textvariable=self.scale).pack(side="left")
         #Button(f, text="Render", command=self.render).pack(side="right")
 
@@ -250,39 +250,72 @@ class App:
 
         self.controls = self.__control_box(master)
         self.grip = Sizegrip(master)
-        self.details = Label(master, text="Hover over an item to see the full name")
 
         master.grid_columnconfigure(0, weight=1)
-        master.grid_rowconfigure(2, weight=1)
+        master.grid_rowconfigure(1, weight=1)
         self.controls.grid(column=0, row=0, sticky=(W,E))
-        self.details.grid( column=0, row=1, sticky=(W,E))
-        self.canvas.grid(  column=0, row=2, sticky=(N, W, E, S))
-        self.v.grid(       column=1, row=2, sticky=(N,S))
-        self.h.grid(       column=0, row=3, sticky=(W,E))
-        self.grip.grid(    column=1, row=3, sticky=(S,E))
+        self.canvas.grid(  column=0, row=1, sticky=(N, W, E, S))
+        self.v.grid(       column=1, row=1, sticky=(N,S))
+        self.h.grid(       column=0, row=2, sticky=(W,E))
+        self.grip.grid(    column=1, row=2, sticky=(S,E))
 
-        def _ss(n):
+        hard_scale = """
+        def _modify_scale(e, n):
             old = self.scale.get()
             new = max(old + n, 100)
             if old != new:
+                # figure out where the mouse was pointing (in terms of scrollbar position)
+                # eg the middle of the screen will be pointing to "the beginning of the scrollbar block plus half the width of the block"
+                _xv = self.canvas.xview()
+                left_edge = _xv[0]
+                width = (_xv[1]-_xv[0])
+                width_fraction = float(e.x)/self.canvas.winfo_width()
+                x_pos = left_edge + width * width_fraction
+                # scale the display
                 self.scale.set(new)
                 self.render()
-        self.canvas.bind("<4>", lambda e: _ss(100))
-        self.canvas.bind("<5>", lambda e: _ss(-100))
+                # scroll the canvas so that the mouse still points to the same place
+                _xv = self.canvas.xview()
+                new_width = (_xv[1]-_xv[0])
+                self.canvas.xview_moveto(x_pos - new_width*width_fraction)
 
-        #def _sm(e):
-        #    self.st = self.render_start.get()
-        #    self.sx = e.x
-        #    self.sy = e.y
-        #def _cm(e):
-        #    self.render_start.set(self.st + float(self.sx - e.x)/self.scale.get())
-        #    self.render()
-        #self.canvas.bind("<1>", _sm)
-        #self.canvas.bind("<B1-Motion>", _cm)
+        self.canvas.bind("<4>", lambda e: _modify_scale(e, +100))
+        self.canvas.bind("<5>", lambda e: _modify_scale(e, -100))
+        """
+
+        def _scale(e, n):
+            # get the old pos
+            _xv = self.canvas.xview()
+            left_edge = _xv[0]
+            width = (_xv[1]-_xv[0])
+            width_fraction = float(e.x)/self.canvas.winfo_width()
+            x_pos = left_edge + width * width_fraction
+            # scale
+            self.canvas.scale(ALL, 0, 0, n, 1)
+            self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
+            # scroll the canvas so that the mouse still points to the same place
+            _xv = self.canvas.xview()
+            new_width = (_xv[1]-_xv[0])
+            self.canvas.xview_moveto(x_pos - new_width*width_fraction)
+
+        self.canvas.bind("<4>", lambda e: _scale(e, 1.0*1.1))
+        self.canvas.bind("<5>", lambda e: _scale(e, 1.0/1.1))
+
+        drag_move = """
+        def _sm(e):
+            self.st = self.render_start.get()
+            self.sx = e.x
+            self.sy = e.y
+        def _cm(e):
+            self.render_start.set(self.st + float(self.sx - e.x)/self.scale.get())
+            self.render()
+        self.canvas.bind("<1>", _sm)
+        self.canvas.bind("<B1-Motion>", _cm)
+        """
 
         self.update()
 
-    def update(self, event=None, x=None, y=None, z=None):
+    def update(self, *args):
         """
         Data settings changed, get new data and re-render
         """
@@ -291,7 +324,7 @@ class App:
         self.data = list(self.c.execute("SELECT * FROM telemetry WHERE timestamp BETWEEN ? AND ?", (s, e)))
         self.render()
 
-    def render(self, event=None, x=None, y=None, z=None):
+    def render(self, *args):
         """
         Render settings changed, re-render with existing data
         """
@@ -304,10 +337,13 @@ class App:
         self.canvas.configure(scrollregion=(
             0, 0,
             self.render_len.get()*self.scale.get(),
-            len(self.threads)*100+20
+            len(self.threads)*ROW_HEIGHT+20
         ))
 
     def render_base(self):
+        """
+        Render grid lines and markers
+        """
         _rs = self.render_start.get()
         _rl = self.render_len.get()
         _sc = self.scale.get()
@@ -317,12 +353,12 @@ class App:
 
         for n in range(rs_px, rs_px+rl_px, 100):
             label = "+%.3f" % (float(n)/_sc-_rl)
-            self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*100)
+            self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*ROW_HEIGHT, fill="#CCC")
             self.canvas.create_text(n-rs_px+5, 5, text=label, anchor="nw")
 
         for n in range(0, len(self.threads)):
-            self.canvas.create_line(0, 20+100*n, rl_px, 20+100*n)
-            self.canvas.create_text(5, 20+100*n+5, text=self.threads[n], anchor="nw")
+            self.canvas.create_line(0, 20+ROW_HEIGHT*n, rl_px, 20+ROW_HEIGHT*n)
+            self.canvas.create_text(5, 20+ROW_HEIGHT*n+5, text=self.threads[n], anchor="nw")
 
     def render_data(self):
         _rs = self.render_start.get()
@@ -355,22 +391,48 @@ class App:
                         stack_len = len(thread_level_starts[thread_idx])
                         self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
 
-    def update_tip(self, text):
-        self.details.configure(text=text)
-
     def show(self, start, length, thread, level, text):
+        tip = "%dms @%dms:\n%s" % (float(length)/self.scale.get()*1000, float(start)/self.scale.get()*1000, text)
+
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
             start+length, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT,
-            fill="green")
+            fill="#CFC", outline="#484",
+        )
         t = self.canvas.create_text(
-            start+(length/2), 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+(BLOCK_HEIGHT/2),
-            text=text[:length/10], width=length
+            start+3, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
+            text=text, tags="event_label", anchor="nw",
+            state="disabled",
+        )
+        self.canvas.tag_raise(r)
+        self.canvas.tag_raise(t)
+
+        r2 = self.canvas.create_rectangle(
+            start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
+            start+max(length, 200), 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT*6+2,
+            state="hidden",
+            fill="white")
+        t2 = self.canvas.create_text(
+            start+2, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
+            text=tip, width=max(length, 200), tags="event_label", anchor="nw", justify="left",
+            state="hidden"
         )
 
-        tip = "%dms @%dms: %s" % (float(length)/self.scale.get()*1000, float(start)/self.scale.get()*1000, text)
-        self.canvas.tag_bind(t, "<Enter>", lambda e: self.update_tip(tip))
-        self.canvas.tag_bind(r, "<Enter>", lambda e: self.update_tip(tip))
+        def ttip_show():
+            self.canvas.itemconfigure(r2, state="disabled")
+            self.canvas.itemconfigure(t2, state="disabled")
+            self.canvas.tag_raise(r2)
+            self.canvas.tag_raise(t2)
+        def ttip_hide():
+            self.canvas.itemconfigure(r2, state="hidden")
+            self.canvas.itemconfigure(t2, state="hidden")
+
+        #self.canvas.tag_bind(t, "<Enter>", lambda e: ttip_show())
+        self.canvas.tag_bind(r, "<Enter>", lambda e: ttip_show())
+        #self.canvas.tag_bind(t, "<Leave>", lambda e: ttip_hide())
+        self.canvas.tag_bind(r, "<Leave>", lambda e: ttip_hide())
+        #self.canvas.tag_bind(t, "<Enter>", lambda e: self.update_tip(tip))
+        #self.canvas.tag_bind(r, "<Leave>", lambda e: self.update_tip("Hover over an item to see the full name"))
 
 
 def _center(root):
@@ -386,6 +448,7 @@ def _center(root):
 def display(database_file):
     root = Tk()
     root.title("Civicboom Telemetry Viewer")
+    #root.state("zoomed")
     #_center(root)
     App(root, database_file)
     root.mainloop()
