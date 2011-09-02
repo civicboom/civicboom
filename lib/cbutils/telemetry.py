@@ -306,7 +306,7 @@ class App:
             for t in self.canvas.find_withtag("event_label"):
                 self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n) # this seems slow? sure something similar was faster...
                 w = int(self.canvas.itemcget(t, 'width'))
-                tx = self.trunctate_text(self.original_texts[t], w)
+                tx = self.truncate_text(self.original_texts[t], w)
                 self.canvas.itemconfigure(t, text=tx) # this seems slow? sure something similar was faster...
             self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
         # scroll the canvas so that the mouse still points to the same place
@@ -316,7 +316,7 @@ class App:
             self.canvas.xview_moveto(x_pos - new_width*width_fraction)
 
     def truncate_text(self, text, w):
-        return text[:w/6]
+        return text[:w/7]
 
     def update(self, *args):
         """
@@ -402,7 +402,10 @@ class App:
                         self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
 
     def show(self, start, length, thread, level, text):
-        tip = "%dms @%dms:\n%s" % (float(length)/self.scale.get()*1000, float(start)/self.scale.get()*1000, text)
+        text = " "+text
+        _time_mult = float(self.scale.get())/1000.0
+        print(_time_mult, length)
+        tip = "%dms @%dms:\n%s" % (float(length)/_time_mult, float(start)/_time_mult, text)
 
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
@@ -410,8 +413,9 @@ class App:
             fill="#CFC", outline="#484",
         )
         t = self.canvas.create_text(
-            start+3, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
-            text=self.trunctate_text(text, length), tags="event_label", anchor="nw", width=length,
+            start, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
+            text=self.truncate_text(text, length), tags="event_label", anchor="nw", width=length,
+            font="TkFixedFont",
             state="disabled",
         )
         self.canvas.tag_raise(r)
