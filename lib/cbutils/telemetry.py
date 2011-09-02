@@ -273,47 +273,8 @@ class App:
         self.h.grid(       column=0, row=2, sticky=(W,E))
         self.grip.grid(    column=1, row=2, sticky=(S,E))
 
-        hard_scale = """
-        def _modify_scale(e, n):
-            old = self.scale.get()
-            new = max(old + n, 100)
-            if old != new:
-                # figure out where the mouse was pointing (in terms of scrollbar position)
-                # eg the middle of the screen will be pointing to "the beginning of the scrollbar block plus half the width of the block"
-                _xv = self.canvas.xview()
-                left_edge = _xv[0]
-                width = (_xv[1]-_xv[0])
-                width_fraction = float(e.x)/self.canvas.winfo_width()
-                x_pos = left_edge + width * width_fraction
-                # scale the display
-                self.scale.set(new)
-                self.render()
-                # scroll the canvas so that the mouse still points to the same place
-                _xv = self.canvas.xview()
-                new_width = (_xv[1]-_xv[0])
-                self.canvas.xview_moveto(x_pos - new_width*width_fraction)
-
-        self.canvas.bind("<4>", lambda e: _modify_scale(e, +100))
-        self.canvas.bind("<5>", lambda e: _modify_scale(e, -100))
-        """
-
-        def _scale(e, n):
-            # get the old pos
-            _xv = self.canvas.xview()
-            left_edge = _xv[0]
-            width = (_xv[1]-_xv[0])
-            width_fraction = float(e.x)/self.canvas.winfo_width()
-            x_pos = left_edge + width * width_fraction
-            # scale
-            self.canvas.scale(ALL, 0, 0, n, 1)
-            self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
-            # scroll the canvas so that the mouse still points to the same place
-            _xv = self.canvas.xview()
-            new_width = (_xv[1]-_xv[0])
-            self.canvas.xview_moveto(x_pos - new_width*width_fraction)
-
-        self.canvas.bind("<4>", lambda e: _scale(e, 1.0*1.1))
-        self.canvas.bind("<5>", lambda e: _scale(e, 1.0/1.1))
+        self.canvas.bind("<4>", lambda e: self.scale_view(e, 1.0*1.1))
+        self.canvas.bind("<5>", lambda e: self.scale_view(e, 1.0/1.1))
 
         drag_move = """
         def _sm(e):
@@ -328,6 +289,50 @@ class App:
         """
 
         self.update()
+
+
+    def old_scale_view(self, e, n):
+        old = self.scale.get()
+        new = max(old + n, 100)
+        if old != new:
+            # figure out where the mouse was pointing (in terms of scrollbar position)
+            # eg the middle of the screen will be pointing to "the beginning of the scrollbar block plus half the width of the block"
+            _xv = self.canvas.xview()
+            left_edge = _xv[0]
+            width = (_xv[1]-_xv[0])
+            width_fraction = float(e.x)/self.canvas.winfo_width()
+            x_pos = left_edge + width * width_fraction
+            # scale the display
+            self.scale.set(new)
+            self.render()
+            # scroll the canvas so that the mouse still points to the same place
+            _xv = self.canvas.xview()
+            new_width = (_xv[1]-_xv[0])
+            self.canvas.xview_moveto(x_pos - new_width*width_fraction)
+
+    def scale_view(self, e=None, n=1):
+        # get the old pos
+        if e:
+            _xv = self.canvas.xview()
+            left_edge = _xv[0]
+            width = (_xv[1]-_xv[0])
+            width_fraction = float(e.x)/self.canvas.winfo_width()
+            x_pos = left_edge + width * width_fraction
+        # scale
+        if n != 1:
+            self.canvas.scale(ALL, 0, 0, n, 1)
+            for t in self.canvas.find_withtag("event_tip"):
+                self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n) # this seems slow? sure something similar was faster...
+            for t in self.canvas.find_withtag("event_label"):
+                self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n) # this seems slow? sure something similar was faster...
+                w = int(self.canvas.itemcget(t, 'width'))
+                self.canvas.itemconfigure(t, text=self.original_texts[t][:w/10]) # this seems slow? sure something similar was faster...
+            self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
+        # scroll the canvas so that the mouse still points to the same place
+        if e:
+            _xv = self.canvas.xview()
+            new_width = (_xv[1]-_xv[0])
+            self.canvas.xview_moveto(x_pos - new_width*width_fraction)
 
     def update(self, *args):
         """
@@ -348,6 +353,7 @@ class App:
 
     def render_clear(self):
         self.canvas.delete(ALL)
+        self.original_texts = {}
         self.canvas.configure(scrollregion=(
             0, 0,
             self.render_len.get()*self.scale.get(),
@@ -415,11 +421,13 @@ class App:
         )
         t = self.canvas.create_text(
             start+3, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
-            text=text, tags="event_label", anchor="nw",
+            text=text[:length/10], tags="event_label", anchor="nw", width=length,
             state="disabled",
         )
         self.canvas.tag_raise(r)
         self.canvas.tag_raise(t)
+
+        self.original_texts[t] = text
 
         r2 = self.canvas.create_rectangle(
             start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
@@ -428,7 +436,7 @@ class App:
             fill="white")
         t2 = self.canvas.create_text(
             start+2, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
-            text=tip, width=max(length, 200), tags="event_label", anchor="nw", justify="left",
+            text=tip, width=max(length, 200), tags="event_tip", anchor="nw", justify="left",
             state="hidden"
         )
 
@@ -440,10 +448,22 @@ class App:
         def ttip_hide():
             self.canvas.itemconfigure(r2, state="hidden")
             self.canvas.itemconfigure(t2, state="hidden")
+        def focus():
+            # scale the canvas so that the (selected item width + padding == screen width)
+            canvas_w = self.canvas.bbox(ALL)[2]
+            view_w = self.canvas.winfo_width()
+            rect_x = self.canvas.bbox(r)[0]
+            rect_w = self.canvas.bbox(r)[2] - self.canvas.bbox(r)[0] + 20
+            self.scale_view(n=float(view_w)/rect_w)
+
+            # move the view so that the selected (item x1 = left edge of screen + padding)
+            canvas_w = self.canvas.bbox(ALL)[2]
+            rect_x = self.canvas.bbox(r)[0] - 5
+            self.canvas.xview_moveto(float(rect_x)/canvas_w)
 
         self.canvas.tag_bind(r, "<Enter>", lambda e: ttip_show())
         self.canvas.tag_bind(r, "<Leave>", lambda e: ttip_hide())
-        self.canvas.tag_bind(r, "<1>",     lambda e: print('focusing'))
+        self.canvas.tag_bind(r, "<1>",     lambda e: focus())
 
 
 def _center(root):
