@@ -1,5 +1,17 @@
 #!/usr/bin/python
 
+# todo:
+# click on an item to zoom to it
+# - have it centered on screen
+# - zoom in, but have a max zoom (having a 0ms event filling the screen would be silly)
+# full-file navigation
+# - telemetry logs can last for hours, but only a minute at a time is sensibly viewable
+# close log after appending?
+# - holding it open blocks other threads?
+# - but it is opened at the start and should never be closed...
+# label as image?
+# - hopefully images are cropped on bbox change, not scaled?
+
 from __future__ import print_function
 from decorator import decorator
 import threading
