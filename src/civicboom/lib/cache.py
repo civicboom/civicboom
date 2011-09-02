@@ -357,7 +357,7 @@ def _invalidate_obj_cache(bucket, obj, fields=['id']):
         
 
 def invalidate_member(member, remove=False):
-    _invalidate_obj_cache('member', member, ['id','email'])
+    _invalidate_obj_cache('member', member) #, ['id','email']
     invalidate_list_version('member', member.id)
 
     # If removing the member entirely - invalidate all sub lists

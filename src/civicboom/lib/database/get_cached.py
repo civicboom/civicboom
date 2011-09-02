@@ -54,7 +54,7 @@ def get_license(code):
 
 
 # TODO: it might be nice to specify eager load fields here, so getting the logged in user eagerloads group_roles and groups to be show in the title bar with only one query
-def get_member(member, search_email=False, **kwargs):
+def get_member(member):
     if not member:
         return None
     if isinstance(member, Member):
@@ -63,26 +63,12 @@ def get_member(member, search_email=False, **kwargs):
     assert type(member) in [str, unicode], debug_type(member)
 
     member = make_username(member)
-
-    # AllanC - TODO!! URGENT!! What happens to search_email in tests!!!? Lets have a separte call get_member_email or this is going to get nasty to cache
-
+    
     def get_member_nocache(member_id):
-        get_member_querys = []
-        
-        #return Session.query(Member).with_polymorphic('*').get(make_username(member)) # AllanC - .get() returns object based on primary key - else None
-        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=member_id) )
-        if search_email:
-            get_member_querys.append( Session.query(User).filter_by(email=member_id) )
-        
-        for query in get_member_querys:
-            try :
-                result = query.one()
-                #Session.expunge(result)
-                return result
-            except NoResultFound:
-                pass
-        
-        return None
+        try:
+            return Session.query(Member).with_polymorphic('*').get(member_id)
+        except NoResultFound:
+            return None
     
     cache      = _cache.get('member')
     cache_func = lambda: get_member_nocache(member)
@@ -95,6 +81,13 @@ def get_member(member, search_email=False, **kwargs):
         return Session.merge(result, load=False)
     return cache_func()
 
+def get_member_email(member_email):
+    assert type(member_email) in [str, unicode], debug_type(member_email)
+    try:
+        return Session.query(User).filter_by(email=member_email)
+    except NoResultFound:
+        return None
+    
 
 def get_group(group):
     if isinstance(group, Group):
