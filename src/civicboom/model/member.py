@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType
+from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener
 from civicboom.model.message import Message
 from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -9,7 +9,7 @@ from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, DateTime, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, column_property
 from sqlalchemy.schema import DDL, CheckConstraint
 
 import urllib
@@ -252,7 +252,7 @@ class Member(Base):
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     # AllanC - TODO - derived field trigger needed
-    #account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by postgres trigger")
+    account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by Python MapperExtension event on PaymentAccount")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
@@ -529,12 +529,13 @@ class Member(Base):
         from civicboom.lib.database.actions import set_payment_account
         return set_payment_account(self, value, delay_commit)
         
-    @property
+#    @property
     # AllanC - TODO this needs to be a derrived field
-    def account_type(self):
-        if self.payment_account and self.payment_account.type:
-            return self.payment_account.type
-        return 'free'
+    # GregM  - Done, MapperExtension on PaymentAccount updates this field!
+#    def account_type(self):
+#        if self.payment_account and self.payment_account.type:
+#            return self.payment_account.type
+#        return 'free'
 
     def delete(self):
         """
@@ -791,9 +792,9 @@ class UserLogin(Base):
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id          = Column(Integer(), primary_key=True)
-    type        = Column(account_types, nullable=False, default="free")
+    type        = column_property(Column(account_types, nullable=False, default="free"), extension=PaymentAccountTypeChangeListener())
     
-    members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    members = relationship("Member", backref=backref('payment_account'), extension=PaymentAccountMembersChangeListener() ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
     
     def member_add(self, member, **kwargs):
         from civicboom.lib.database.actions import payment_member_add

@@ -1,6 +1,7 @@
 """SQLAlchemy Metadata and Session object"""
 from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.interfaces import AttributeExtension
 import copy
 
 __all__ = ['Session', 'engine', 'metadata', 'Base']
@@ -19,7 +20,31 @@ metadata = MetaData()
 # Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
-
+            
+#===============================================================================
+# Events for:
+#    PaymentAccount.type change -> update PaymentAccount.members.account_type
+#    PaymentAccount.members change -> update PaymentAccount.members/memb_appended/memb_removed
+#    Member.payment_account change -> update Memb.account_type
+#===============================================================================
+class PaymentAccountTypeChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        for member in state.obj().members:
+            member.account_type = value
+        return value
+class PaymentAccountMembersChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        for member in state.obj().members:
+            member.account_type = value
+        return value
+    def append(self, state, value, initiator):
+        value.account_type = state.obj().type
+        return value
+    def remove(self, state, value, initiator):
+        value.account_type = 'free'
+#class MemberPaymentAccountChangeListener(AttributeExtension):
+#    def set(self, state, value, oldvalue, initiator):
+#        state.obj().account_type = value.account_type
 
 # types
 
