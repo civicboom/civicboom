@@ -3,6 +3,8 @@ Cache Framework
 
 Concepts
 
+  There are 3 types of cache methods
+
   It is important to understand the difference between a cache_key and a 'list version key'.
     cache_key represents a unique cached return
     list version represents the version number of the underlying list source
@@ -32,6 +34,13 @@ Concepts
     new versions may have differnt returns
     there may be multiple API servers with different versions actives, we do not want the cache to interfear with each other
   It is not nessiary to invalidate the list version numbers between versions as regardless of site version they represent the state of the list and not the final return data
+  
+  
+  The final type of cache is the pickeling of SQLAlchemy objects:
+    On a call to get_member or get_content the return type is a SQLAlchmemy object
+    This object is pickeled and stored in the member or content bucket
+    On a change to a member or content object the cached pickedled blob key is completly removed from the cache
+    As the key it not present, it is refetched and placed in the cache next get
 """
 
 from pylons import app_globals, tmpl_context as c, config
@@ -51,10 +60,10 @@ list_item_separator = ','
 cacheable_lists = {
     'contents_index': {
         #'content'     : {                      'creator':None}, # AllanC - Ballz, because dict key order is not reproducatble. A bug where some lists were being identifyed as 'content' because they were matching 'creator'. This dict is converted to an OrderedDict and the 'content' list added to the end
-        #'drafts'      : {'list':'drafts'     , 'creator':None},
-        #'articles'    : {'list':'articles'   , 'creator':None},
-        #'assignments' : {'list':'assignments', 'creator':None},
-        #'responses'   : {'list':'responses'  , 'creator':None},
+        'drafts'      : {'list':'drafts'     , 'creator':None},
+        'articles'    : {'list':'articles'   , 'creator':None},
+        'assignments' : {'list':'assignments', 'creator':None},
+        'responses'   : {'list':'responses'  , 'creator':None},
 
         'boomed_by'   : {'boomed_by'  : None},
         'response_to' : {'response_to': None},
@@ -83,10 +92,10 @@ cacheable_lists = {
 }
 cacheable_lists['contents_index'] = OrderedDict(cacheable_lists['contents_index'])
 cacheable_lists['contents_index'].update({'content'     : {                     'creator': None}})
-cacheable_lists['contents_index'].update({'drafts'      : {'list':'drafts'     ,'creator': None}})
-cacheable_lists['contents_index'].update({'articles'    : {'list':'articles'   ,'creator': None}})
-cacheable_lists['contents_index'].update({'assignments' : {'list':'assignments','creator': None}})
-cacheable_lists['contents_index'].update({'responses'   : {'list':'responses'  ,'creator': None}})
+#cacheable_lists['contents_index'].update({'drafts'      : {'list':'drafts'     ,'creator': None}})
+#cacheable_lists['contents_index'].update({'articles'    : {'list':'articles'   ,'creator': None}})
+#cacheable_lists['contents_index'].update({'assignments' : {'list':'assignments','creator': None}})
+#cacheable_lists['contents_index'].update({'responses'   : {'list':'responses'  ,'creator': None}})
 
 
 # Generate a reverse lookup to find the bucket for a list
@@ -118,13 +127,8 @@ def init_cache(config):
         #          but without putting them in a dict they cant be imported .. the dict serves as a reference to the conructed objects
         for bucket in ['members', 'contents', 'contents_index', 'members_index', 'messages_index', 'content_show', 'members_show']:
             _cache[bucket] = cache_manager.get_cache(bucket)
-            # AllanC - WTF!! .. this does not clear the individual bucket!! .. it clears ALL of redis! including the sessions .. WTF! ... can I not just clear my bucket?!
             if config['development_mode']: # We don't want to clear the cache on every server update. This could lead to the server undergoing heavy load as ALL the cache is rebuilt. This could be removed if it causes a problem
                 _cache[bucket].clear()
-        
-        #_cache = cache_manager.get_cache('civicboom')
-        #if config['development_mode']:
-        #    _cache['civicboom'].clear()
         
 
 # -- Exceptions ----------------------------------------------------------------
@@ -179,7 +183,7 @@ def get_list_version(*args):
     try:
         value = app_globals.memcache.get(key)
         #print('got list %s as %s' % (key,value))
-        return value
+        return value or 0
     except TypeError:
         e = 'unable to aquire list verison for %s' % key
         log.warn(e)
@@ -193,7 +197,9 @@ def invalidate_list_version(*args):
 
     try:
         value = app_globals.memcache.incr(key)
-        #log.error('inc list %s to %s' % (key,value))
+        #print('inc list %s to %s' % (key,value))
+        #import traceback
+        #traceback.print_stack()
         return value
     except TypeError:
         #raise ListVersionException('unable to invalidate list verison for %s' % key)
@@ -371,25 +377,37 @@ def invalidate_content(content, remove=False):
     """
     _invalidate_obj_cache('content', content)
     
+    #print "invalidate content: %s %s" %(content.id, content.title)
+    
+    try   : parent_id = content.parent_id or content.parent.id
+    except: parent_id = None
+    
+    try   : creator_id = content.creator_id or content.creator.id
+    except: creator_id = None
+    
     if content.__type__ == 'comment':
-        print content
-        print content.parent
-        invalidate_list_version('contents_index', 'comments_to', content.parent.id) # Comments always have a parent id
+        #import traceback
+        #traceback.print_stack()
+        assert parent_id
+        invalidate_list_version('contents_index', 'comments_to', parent_id) # Comments always have a parent id
         
     else:
         
-        invalidate_list_version('contents_index','content', content.creator.id)
+        invalidate_list_version('contents_index','content', creator_id)
         
-        if content.parent:
-            invalidate_list_version('contents_index', 'response_to', content.parent.id ) # Invalidate responses to the parent content
-            invalidate_list_version('contents_index', 'responses'  , content.creator.id) # Invalidate responses this creator has written
+        if parent_id:
+            invalidate_list_version('contents_index', 'response_to', parent_id ) # Invalidate responses to the parent content
+            invalidate_list_version('contents_index', 'responses'  , creator_id) # Invalidate responses this creator has written
             # we dont need to invalidate the whole parent object - just the responses list
         
-        if content.__type__ == 'article' and not content.parent:
-            invalidate_list_version('contents_index', 'articles'    , content.creator.id)
+        if content.__type__ == 'draft':
+            invalidate_list_version('contents_index', 'drafts'      , creator_id)
+        
+        if content.__type__ == 'article' and not parent_id:
+            invalidate_list_version('contents_index', 'articles'    , creator_id)
             
         if content.__type__ == 'assignment':
-            invalidate_list_version('contents_index', 'assignments' , content.creator.id)
+            invalidate_list_version('contents_index', 'assignments' , creator_id)
 
     # If removing the content item entirely - invalidate all sub lists
     if remove:

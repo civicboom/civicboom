@@ -123,7 +123,7 @@ def morph_content_to(content, after_type):
         Session.execute(sql_cmd)
     Session.commit()
     
-    content.invalidate_cache() # Invalidate cache for this content and update etag
+    #content.invalidate_cache() # Invalidate cache for this content and update etag - AllanC unneeded as this is done automatically with SQLa events
     content = get_content(id)
     assert content.__type__ == after_type # If this is not true then something has gone very wrong!
     return content

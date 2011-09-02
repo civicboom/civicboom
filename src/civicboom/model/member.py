@@ -269,7 +269,7 @@ class Member(Base):
     assigments           = relationship("MemberAssignment", backref=backref("member"), cascade="all,delete-orphan")
 
     # Content relation shortcuts
-    #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
+    content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
     
     #content_assignments = relationship("AssignmentContent")
     #content_articles    = relationship(   "ArticleContent")

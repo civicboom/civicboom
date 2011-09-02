@@ -87,10 +87,15 @@ Base = declarative_base(cls=Base)
 # This is subject to change in sqlalchemy 0.7
 # Reference - http://www.sqlalchemy.org/docs/06/orm/interfaces.html#mapper-events
 from sqlalchemy.orm.interfaces import MapperExtension
+from sqlalchemy.orm.session import object_session
+#from sqlalchemy.orm.util import has_identity
 class CacheChangeListener(MapperExtension):
+    def after_insert(self, mapper, connection, instance):
+        self.after_update(mapper, connection, instance)
     def after_update(self, mapper, connection, instance):
-        instance.invalidate_cache()
-        #print "instance %s after_update" % instance
+        if object_session(instance).is_modified(instance, include_collections=False): # and has_identity(instance)
+            instance.invalidate_cache()
+            #print "instance %s after_update" % instance
     def before_delete(self, mapper, connection, instance):
         instance.invalidate_cache(remove=True)
         #print "instance %s before_delete" % instance

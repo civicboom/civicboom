@@ -297,7 +297,7 @@ class ContentsController(BaseController):
                 results = results.filter(Content.__type__!='draft') # Don't show drafts to anyone other than the creator
     
             # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
-            for col in ['creator', 'attachments', 'tags', 'parent']:
+            for col in ['creator', 'attachments', 'tags', 'parent', 'license']:
                 if col in kwargs.get('include_fields', []):
                     results = results.options(joinedload(getattr(Content, col)))
     
@@ -437,7 +437,8 @@ class ContentsController(BaseController):
             raise_if_current_role_insufficent('observer') # Check role, in adition the content:update method checks for view permission of parent
             content = CommentContent()
             kwargs['private'] = False                          # Comments are always public
-            content.creator = c.logged_in_user          # Comments are always made by logged in user
+            content.creator_id = c.logged_in_user.id          # Comments are always made by logged in user
+            #content.creator = c.logged_in_user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
@@ -448,8 +449,9 @@ class ContentsController(BaseController):
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
-        if not content.creator:
-            content.creator = c.logged_in_persona
+        if not content.creator_id:
+            content.creator_id = c.logged_in_persona.id
+            #content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
         #content.private = is_private
@@ -476,9 +478,9 @@ class ContentsController(BaseController):
                     log.exception("Strange error while accepting")
                 
 
-        # comments are always owned by the writer; ignore settings
-        # and parent preferences
-        if type == 'comment':
+        # comments are always owned by the writer; ignore settings and parent preferences
+        if kwargs['type'] == 'comment':
+            content.parent_id = parent.id # The validators take care of enforcing the permissions for response - the parent_id is set inadvance here because cache invalidation needs a parent_id and the flush below triggers this preparation, we cant determin if flushing or commitiing
             content.license = get_license(None)
 
         # Flush to database to get ID field
@@ -596,7 +598,7 @@ class ContentsController(BaseController):
             error                      = errors.error_role()
         
         # If 'assignment' and creator has permissions to publish - it has to be 'creator' rather than c.logged_in_persona because this might be auto publishing and the user may not be logged in
-        if kwargs.get('type') == 'assignment' and not content.creator.can_publish_assignment():
+        if kwargs.get('type') == 'assignment' and not (content.creator if content.creator else get_member(content.creator_id)).can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
             #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
@@ -632,7 +634,7 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
-                extra_fields = dict(content.extra_fields)
+                extra_fields = dict(content.extra_fields) if content.extra_fields else {}
                 content = morph_content_to(content, kwargs['type'])
                 # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
                 #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator
@@ -705,61 +707,65 @@ class ContentsController(BaseController):
             #         This is NOT acceptable for ints, floats, longs, or None
             #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
-        # -- Publishing --------------------------------------------------------
-        if  submit_type=='publish'     and \
-            permissions['can_publish'] and \
-            content.__type__ in publishable_types:
-            
-            # GregM: Content can now stay private after publishing :)
-            #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
-            
-            # Notifications ----------------------------------------------------
-            # AllanC - as notifications not need commit anymore this can be done after?
-            message_to_all_creator_followers = None
-            if starting_content_type != content.__type__ or called_from_create_method:
-                # Send notifications about NEW published content
-                if   content.__type__ == "article"   :
-                    message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
-                elif content.__type__ == "assignment":
-                    message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
+        def send_notifications():
+            # -- Publishing --------------------------------------------------------
+            if  submit_type=='publish'     and \
+                permissions['can_publish'] and \
+                content.__type__ in publishable_types:
                 
-                # if this is a response - notify parent content creator
-                if content.parent:
-                    content.parent.creator.send_notification(
-                        messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
-                    )
+                # GregM: Content can now stay private after publishing :)
+                #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+                
+                # Notifications ----------------------------------------------------
+                # AllanC - as notifications not need commit anymore this can be done after?
+                message_to_all_creator_followers = None
+                if starting_content_type != content.__type__ or called_from_create_method:
+                    # Send notifications about NEW published content
+                    if   content.__type__ == "article"   :
+                        message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
+                    elif content.__type__ == "assignment":
+                        message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
                     
-                    # if it is a response, mark the accepted status as 'responded'
-                    respond_assignment(content.parent, content.creator, delay_commit=True)
-                
-                content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
-                
-                user_log.info("published new Content #%d" % (content.id, ))
-                # Aggregate new content
-                content.aggregate_via_creator() # Agrigate content over creators known providers
-            else:
-                # Send notifications about previously published content has been UPDATED
-                if   content.__type__ == "assignment":
-                    if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
-                        message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
-                # going straight to publish, content may not have an ID as it's
-                # not been added and committed yet (this happens below)
-                #user_log.info("updated published Content #%d" % (content.id, ))
-                
-            if message_to_all_creator_followers:
-                content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
-        
-        # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
-        if content.__type__ == "comment":
-            content.parent.creator.send_notification(
-                messages.comment(member=content.creator, content=content, you=content.parent.creator)
-            )
+                    # if this is a response - notify parent content creator
+                    if content.parent:
+                        content.parent.creator.send_notification(
+                            messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
+                        )
+                        
+                        # if it is a response, mark the accepted status as 'responded'
+                        respond_assignment(content.parent, content.creator, delay_commit=True)
+                    
+                    content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
+                    
+                    user_log.info("published new Content #%d" % (content.id, ))
+                    # Aggregate new content
+                    content.aggregate_via_creator() # Agrigate content over creators known providers
+                else:
+                    # Send notifications about previously published content has been UPDATED
+                    if   content.__type__ == "assignment":
+                        if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
+                            message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
+                    # going straight to publish, content may not have an ID as it's
+                    # not been added and committed yet (this happens below)
+                    #user_log.info("updated published Content #%d" % (content.id, ))
+                    
+                if message_to_all_creator_followers:
+                    content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
+            
+            # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
+            if content.__type__ == "comment":
+                content.parent.creator.send_notification(
+                    messages.comment(member=content.creator, content=content, you=content.parent.creator)
+                )
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        content.invalidate_cache()  # Invalidate any cache associated with this content
+        #content.invalidate_cache()  # Invalidate any cache associated with this content - AllanC unneeded as this triggers automatically on change and commit
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
+        
+        send_notifications()
+        Session.commit()
         
         # Profanity Check --------------------------------------------------
         if config['feature.profanity_filter']:
