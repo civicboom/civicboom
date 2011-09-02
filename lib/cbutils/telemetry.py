@@ -441,12 +441,9 @@ class App:
             self.canvas.itemconfigure(r2, state="hidden")
             self.canvas.itemconfigure(t2, state="hidden")
 
-        #self.canvas.tag_bind(t, "<Enter>", lambda e: ttip_show())
         self.canvas.tag_bind(r, "<Enter>", lambda e: ttip_show())
-        #self.canvas.tag_bind(t, "<Leave>", lambda e: ttip_hide())
         self.canvas.tag_bind(r, "<Leave>", lambda e: ttip_hide())
-        #self.canvas.tag_bind(t, "<Enter>", lambda e: self.update_tip(tip))
-        #self.canvas.tag_bind(r, "<Leave>", lambda e: self.update_tip("Hover over an item to see the full name"))
+        self.canvas.tag_bind(r, "<1>",     lambda e: print('focusing'))
 
 
 def _center(root):
