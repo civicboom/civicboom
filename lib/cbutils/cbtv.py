@@ -21,9 +21,9 @@ import sqlite3
 import sys
 
 
-NAME="Civicboom TV"
-ROW_HEIGHT=140
-BLOCK_HEIGHT=20
+NAME = "Civicboom TV"
+ROW_HEIGHT = 140
+BLOCK_HEIGHT = 20
 
 
 #######################################################################
@@ -31,6 +31,7 @@ BLOCK_HEIGHT=20
 #######################################################################
 
 _output = None
+
 
 def set_log(fn):
     global _output
@@ -83,15 +84,26 @@ def compile_log(log_file, database_file):
         )
     """)
     for line in open(log_file):
-        c.execute("INSERT INTO cbtv VALUES(?, ?, ?, ?)", line.strip().split(" ", 3))
+        c.execute(
+            "INSERT INTO cbtv VALUES(?, ?, ?, ?)",
+            line.strip().split(" ", 3)
+        )
     c.close()
     db.commit()
 
+
 def get_start(cursor, start_hint=1):
-    return list(cursor.execute("SELECT min(timestamp) FROM cbtv WHERE timestamp > ?", [start_hint]))[0][0]
+    return list(cursor.execute(
+        "SELECT min(timestamp) FROM cbtv WHERE timestamp > ?",
+        [start_hint]
+    ))[0][0]
+
 
 def get_end(cursor, end_hint=0):
-    return list(cursor.execute("SELECT max(timestamp) FROM cbtv WHERE timestamp < ?", [end_hint]))[0][0]
+    return list(cursor.execute(
+        "SELECT max(timestamp) FROM cbtv WHERE timestamp < ?",
+        [end_hint]
+    ))[0][0]
 
 
 #######################################################################
@@ -221,6 +233,7 @@ def print_footer(fp):
 from Tkinter import *
 from ttk import *
 
+
 class App:
     def __control_box(self, master):
         f = Frame(master)
@@ -268,14 +281,14 @@ class App:
 
         master.grid_columnconfigure(0, weight=1)
         master.grid_rowconfigure(1, weight=1)
-        self.controls.grid(column=0, row=0, sticky=(W,E))
+        self.controls.grid(column=0, row=0, sticky=(W, E))
         self.canvas.grid(  column=0, row=1, sticky=(N, W, E, S))
-        self.v.grid(       column=1, row=1, sticky=(N,S))
-        self.h.grid(       column=0, row=2, sticky=(W,E))
-        self.grip.grid(    column=1, row=2, sticky=(S,E))
+        self.v.grid(       column=1, row=1, sticky=(N, S))
+        self.h.grid(       column=0, row=2, sticky=(W, E))
+        self.grip.grid(    column=1, row=2, sticky=(S, E))
 
-        self.canvas.bind("<4>", lambda e: self.scale_view(e, 1.0*1.1))
-        self.canvas.bind("<5>", lambda e: self.scale_view(e, 1.0/1.1))
+        self.canvas.bind("<4>", lambda e: self.scale_view(e, 1.0 * 1.1))
+        self.canvas.bind("<5>", lambda e: self.scale_view(e, 1.0 / 1.1))
 
         drag_move = """
         def _sm(e):
@@ -296,25 +309,25 @@ class App:
         if e:
             _xv = self.canvas.xview()
             left_edge = _xv[0]
-            width = (_xv[1]-_xv[0])
-            width_fraction = float(e.x)/self.canvas.winfo_width()
+            width = _xv[1] - _xv[0]
+            width_fraction = float(e.x) / self.canvas.winfo_width()
             x_pos = left_edge + width * width_fraction
         # scale
         if n != 1:
             self.canvas.scale(ALL, 0, 0, n, 1)
             for t in self.canvas.find_withtag("event_tip"):
-                self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n) # this seems slow? sure something similar was faster...
+                self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n)  # this seems slow? sure something similar was faster...
             for t in self.canvas.find_withtag("event_label"):
-                self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n) # this seems slow? sure something similar was faster...
+                self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n)  # this seems slow? sure something similar was faster...
                 w = int(self.canvas.itemcget(t, 'width'))
                 tx = self.truncate_text(self.original_texts[t], w)
-                self.canvas.itemconfigure(t, text=tx) # this seems slow? sure something similar was faster...
+                self.canvas.itemconfigure(t, text=tx)  # this seems slow? sure something similar was faster...
             self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
         # scroll the canvas so that the mouse still points to the same place
         if e:
             _xv = self.canvas.xview()
-            new_width = (_xv[1]-_xv[0])
-            self.canvas.xview_moveto(x_pos - new_width*width_fraction)
+            new_width = _xv[1] - _xv[0]
+            self.canvas.xview_moveto(x_pos - new_width * width_fraction)
 
     def truncate_text(self, text, w):
         return text[:w/7]
@@ -323,8 +336,8 @@ class App:
         """
         Data settings changed, get new data and re-render
         """
-        s = self.render_start.get()-1
-        e = self.render_start.get()+self.render_len.get()+1
+        s = self.render_start.get() - 1
+        e = self.render_start.get() + self.render_len.get() + 1
         self.data = list(self.c.execute("SELECT * FROM cbtv WHERE timestamp BETWEEN ? AND ?", (s, e)))
         self.render()
 
@@ -390,11 +403,11 @@ class App:
 
             # when the event ends, render it
             else:
-                # if we start rendering mid-file, we may see the ends of events that haven't started yet
+                # if we start rendering mid-file, we may see the ends
+                # of events that haven't started yet
                 if len(thread_level_starts[thread_idx]):
                     event_start = thread_level_starts[thread_idx].pop()
                     event_end = _time
-                    #print("offset:%f start:%f end:%f" % (self.render_start, event_start-self.render_start, event_end-self.render_start))
                     if event_start < _rs + _rl:
                         start_px  = (event_start-_rs) * _sc
                         end_px    = (event_end-_rs) * _sc
@@ -403,9 +416,9 @@ class App:
                         self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
 
     def show(self, start, length, thread, level, text):
-        text = " "+text
-        _time_mult = float(self.scale.get())/1000.0
-        tip = "%dms @%dms:\n%s" % (float(length)/_time_mult, float(start)/_time_mult, text)
+        text = " " + text
+        _time_mult = float(self.scale.get()) / 1000.0
+        tip = "%dms @%dms:\n%s" % (float(length) / _time_mult, float(start) / _time_mult, text)
 
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
@@ -426,12 +439,12 @@ class App:
         r2 = self.canvas.create_rectangle(
             start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
             start+max(length, 200), 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT*6+2,
-            state="hidden",
-            fill="white")
+            state="hidden", fill="white"
+        )
         t2 = self.canvas.create_text(
             start+2, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
-            text=tip, width=max(length, 200), tags="event_tip", anchor="nw", justify="left",
-            state="hidden"
+            text=tip, width=max(length, 200), tags="event_tip", anchor="nw",
+            justify="left", state="hidden",
         )
 
         def ttip_show():
@@ -461,8 +474,8 @@ class App:
 
 
 def _center(root):
-    w=800
-    h=600
+    w = 800
+    h = 600
     ws = root.winfo_screenwidth()
     hs = root.winfo_screenheight()
     x = (ws/2) - (w/2)
@@ -482,25 +495,24 @@ def display(database_file):
 
 def main(argv):
     parser = OptionParser()
-    parser.add_option("-c", "--compile", dest="log_file", default="cbtv.log",
+    parser.add_option("-c", "--compile", dest="log_file", #default="cbtv.log",
             help="compile log file to database", metavar="FILE")
-    parser.add_option("-d", "--database", dest="database", default="cbtv.db",
+    parser.add_option("-d", "--database", dest="database", #default="cbtv.db",
             help="database file to use", metavar="DB")
-    parser.add_option("-r", "--render", dest="output_file", default="cbtv.html",
+    parser.add_option("-r", "--render", dest="output_file", #default="cbtv.html",
             help="render the database contents to a web page")
     parser.add_option("-g", "--gui", action="store_true", default=False,
             help="display a GUI")
     (options, args) = parser.parse_args(argv)
-
-    if options.gui and options.database:
-        display(options.database)
-        return 0
 
     if options.log_file and options.database:
         compile_log(options.log_file, options.database)
 
     if options.database and options.output_file:
         render(options.database, options.output_file)
+
+    if options.database and options.gui:
+        display(options.database)
 
 
 if __name__ == "__main__":
