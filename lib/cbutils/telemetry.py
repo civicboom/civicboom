@@ -404,7 +404,6 @@ class App:
     def show(self, start, length, thread, level, text):
         text = " "+text
         _time_mult = float(self.scale.get())/1000.0
-        print(_time_mult, length)
         tip = "%dms @%dms:\n%s" % (float(length)/_time_mult, float(start)/_time_mult, text)
 
         r = self.canvas.create_rectangle(
