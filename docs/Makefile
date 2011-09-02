@@ -6,8 +6,10 @@ html/all.html: *.rst
 	    for n in *.rst ; do cat $$n && echo && echo ; done \
 	) | rst2html > html/all.html
 
-html/%.html: %.rst
+html:
 	mkdir -p html
+
+html/%.html: %.rst html
 	rst2html $< $@
 
 clean:

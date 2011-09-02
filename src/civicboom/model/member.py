@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType
+from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener
 from civicboom.model.message import Message
 from civicboom.lib.helpers import wh_url
 
@@ -10,7 +10,7 @@ from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
 from sqlalchemy import Enum, Integer, DateTime, Date, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship, backref, synonym
+from sqlalchemy.orm import relationship, backref, column_property
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.schema import DDL, CheckConstraint
 
@@ -246,7 +246,8 @@ class Member(Base):
     avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Interval(),     nullable=False, default="0 hours")
     location_home   = Golumn(Point(2),       nullable=True)
-    payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+    payment_account_id = column_property(Column(Integer(),   ForeignKey('payment_account.id'), nullable=True), extension=MemberPaymentAccountIdChangeListener())
+    #payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
     description     = Column(UnicodeText(),  nullable=False, default=u"")
     extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
@@ -256,7 +257,7 @@ class Member(Base):
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     # AllanC - TODO - derived field trigger needed
-    #account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by postgres trigger")
+    account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by Python MapperExtension event on PaymentAccount")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
@@ -535,12 +536,13 @@ class Member(Base):
         from civicboom.lib.database.actions import set_payment_account
         return set_payment_account(self, value, delay_commit)
         
-    @property
+#    @property
     # AllanC - TODO this needs to be a derrived field
-    def account_type(self):
-        if self.payment_account and self.payment_account.type:
-            return self.payment_account.type
-        return 'free'
+    # GregM  - Done, MapperExtension on PaymentAccount updates this field!
+#    def account_type(self):
+#        if self.payment_account and self.payment_account.type:
+#            return self.payment_account.type
+#        return 'free'
 
     def delete(self):
         """
@@ -815,7 +817,7 @@ class _PaymentConfigManager(UserDict.DictMixin):
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id               = Column(Integer(), primary_key=True)
-    type             = Column(account_types, nullable=False, default="free")
+    type             = column_property(Column(account_types, nullable=False, default="free"), extension=PaymentAccountTypeChangeListener())
     _billing_status  = Enum("ok", "invoiced","waiting", "failed", name="billing_status")
     billing_status   = Column(_billing_status, nullable=False, default="ok")
     extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
@@ -868,7 +870,7 @@ class PaymentAccount(Base):
             'cost_taxed'            : None ,
     })
     
-    members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    members = relationship("Member", backref=backref('payment_account'), extension=PaymentAccountMembersChangeListener() ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
     invoices = relationship("Invoice", backref=backref('payment_account'), lazy='dynamic' )
     billing_accounts = relationship("BillingAccount", backref=backref('payment_account') )
     services = relationship("PaymentAccountService", backref=backref('payment_account') )

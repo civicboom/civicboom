@@ -19,17 +19,33 @@
         self.source =   self.message['source']
         self.target =   self.message['target']
     %>
-    <div data-role="page" data-theme="b" id="" class="">
+    <div data-role="page" data-theme="b" id="message_dialog" class="">
         <div data-role="header">
             <h1>Message</h1>
         </div>
         
         <div data-role="content" data-theme="c">
-            ${involved()}
             <h1>${self.subject}</h1>
+            ${involved()}
             <p>
                 ${h.literal(self.content)}
             </p>
+            
+            % if config['development_mode']:
+            % if self.message.get('source_id') and not (self.message['source_id']==c.logged_in_persona.id or self.message['source_id']==c.logged_in_persona.username):
+                <hr>
+                <h3>Reply</h3>
+                ${h.form(h.url(controller='messages', action='create'))}
+                    <div data-role="fieldcontain">
+                        <input type="hidden" name="target" value="${self.message['source'] if isinstance(self.message['source'],basestring) else self.message['source']['username']}"/>
+                        <label for="subject">${_("Subject")}</label>
+                        <input type="text" name="subject" value="Re: ${self.message['subject']}">
+                        <textarea name="content"></textarea>
+                        <input type="submit" value="${_("Send")}">
+                    </div>
+                ${h.end_form()}
+            % endif
+            % endif
         </div>
     </div>
 </%def>

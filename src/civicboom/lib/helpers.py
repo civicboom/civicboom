@@ -474,7 +474,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick
+        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick if not rel else None
     )
     # $('#form_%(hhash)s').onsubmit();
     
