@@ -403,7 +403,6 @@ class App:
 
     def show(self, start, length, thread, level, text):
         tip = "%dms @%dms:\n%s" % (float(length)/self.scale.get()*1000, float(start)/self.scale.get()*1000, text)
-        self.original_texts[t] = text
 
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
@@ -417,6 +416,8 @@ class App:
         )
         self.canvas.tag_raise(r)
         self.canvas.tag_raise(t)
+
+        self.original_texts[t] = text
 
         r2 = self.canvas.create_rectangle(
             start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
