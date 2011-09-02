@@ -480,13 +480,13 @@ class ContentsController(BaseController):
 
         # comments are always owned by the writer; ignore settings and parent preferences
         if kwargs['type'] == 'comment':
-            content.parent_id = parent.id # The validators take care of enforcing the permissions for response - the parent_id is set inadvance here because cache invalidation needs a parent_id and the flush below triggers this preparation, we cant determin if flushing or commitiing
+            content.parent_id = parent.id if parent else None # The validators take care of enforcing the permissions for response - the parent_id is set inadvance here because cache invalidation needs a parent_id and the flush below triggers this preparation, we cant determin if flushing or commitiing
             content.license = get_license(None)
 
         # Flush to database to get ID field
         # AllanC - if the update fails on validation we do not want a ghost record commited
         # Shish - the "no id" error is back, adding a flush seems to fix it, and doesn't commit
-        Session.flush()
+        #Session.flush()
         
         # Use update behaviour to save and commit object
         update_response = self.update(id=content, **kwargs)

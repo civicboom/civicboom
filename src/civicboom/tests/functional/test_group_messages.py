@@ -1,7 +1,7 @@
 from civicboom.tests import *
 
 
-class TestGroupsController(TestController):
+class TestGroupsMessages(TestController):
 
     def create_group(self, group_name):
         response = self.app.post(

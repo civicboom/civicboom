@@ -180,7 +180,8 @@ class Content(Base):
     del __to_dict__['full']['license_id']
     del __to_dict__['full']['content_short']
     
-    
+    def __init__(self):
+        self.extra_fields = {} # AllanC - for some holy reason even though the default is setup in the field list above, if the object isnt added to the session this dict is None - force an epty dict - extending class's must ensure that they call Content.__init__() in there own init methods
     
     def __unicode__(self):
         return self.title # + u" (" + self.__type__ + u")"
@@ -400,6 +401,7 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
+        Content.__init__(self)
         self.private  = True # AllanC? hu? - GregM: Removed set to user/hub default in contents controller
         self.__type__ = 'draft'
 
@@ -430,6 +432,7 @@ class CommentContent(Content):
     __to_dict__['full']         = copy.deepcopy(__to_dict__['default'])
 
     def __init__(self):
+        Content.__init__(self)
         self.__type__ = 'comment'
 
 
@@ -510,6 +513,7 @@ class ArticleContent(UserVisibleContent):
     __to_dict__['full'        ].update(_extra_article_fields)
 
     def __init__(self):
+        Content.__init__(self)
         self.__type__ = 'article'
 
     def rate(self, member, rating):
@@ -577,6 +581,7 @@ class AssignmentContent(UserVisibleContent):
     #__to_dict__['full+actions'].update(__to_dict__['full'])
 
     def __init__(self):
+        Content.__init__(self)
         self.__type__ = 'assignment'
 
     def action_list_for(self, member, **kwargs):
