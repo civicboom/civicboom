@@ -306,13 +306,17 @@ class App:
             for t in self.canvas.find_withtag("event_label"):
                 self.canvas.itemconfigure(t, width=float(self.canvas.itemcget(t, 'width'))*n) # this seems slow? sure something similar was faster...
                 w = int(self.canvas.itemcget(t, 'width'))
-                self.canvas.itemconfigure(t, text=self.original_texts[t][:w/10]) # this seems slow? sure something similar was faster...
+                tx = self.trunctate_text(self.original_texts[t], w)
+                self.canvas.itemconfigure(t, text=tx) # this seems slow? sure something similar was faster...
             self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
         # scroll the canvas so that the mouse still points to the same place
         if e:
             _xv = self.canvas.xview()
             new_width = (_xv[1]-_xv[0])
             self.canvas.xview_moveto(x_pos - new_width*width_fraction)
+
+    def truncate_text(self, text, w):
+        return text[:w/6]
 
     def update(self, *args):
         """
@@ -408,7 +412,7 @@ class App:
         )
         t = self.canvas.create_text(
             start+3, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
-            text=text[:length/10], tags="event_label", anchor="nw", width=length,
+            text=self.trunctate_text(text, length), tags="event_label", anchor="nw", width=length,
             state="disabled",
         )
         self.canvas.tag_raise(r)
