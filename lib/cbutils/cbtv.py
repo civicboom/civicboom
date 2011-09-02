@@ -5,7 +5,7 @@
 # - have it centered on screen
 # - zoom in, but have a max zoom (having a 0ms event filling the screen would be silly)
 # full-file navigation
-# - cbtv logs can last for hours, but only a minute at a time is sensibly viewable
+# - cbtv_events logs can last for hours, but only a minute at a time is sensibly viewable
 # close log after appending?
 # - holding it open blocks other threads?
 # - but it is opened at the start and should never be closed...
@@ -44,6 +44,10 @@ def log_msg(text, io):
         print("%f %s %s %s" % (time(), tn, io, text), file=_output)
 
 
+def log_bookmark(text):
+    log_msg(text, "!")
+
+
 def log_start(text):
     log_msg(text, "+")
 
@@ -52,7 +56,7 @@ def log_end(text):
     log_msg(text, "-")
 
 
-def log(text):
+def log(text, bookmark=False):
     @decorator
     def _log(function, *args, **kwargs):
         if callable(text):
@@ -61,6 +65,8 @@ def log(text):
             _text = text
         # _text = function.func_name+":"+_text
         try:
+            if bookmark:
+                log_bookmark(_text)
             log_start(_text)
             return function(*args, **kwargs)
         finally:
@@ -76,33 +82,33 @@ def compile_log(log_file, database_file):
     db = sqlite3.connect(database_file)
     c = db.cursor()
     c.execute("""
-        CREATE TABLE IF NOT EXISTS cbtv(
+        CREATE TABLE IF NOT EXISTS cbtv_events(
             timestamp float not null,
             thread varchar(32) not null,
-            io char(1) not null,
+            type char(1) not null,
             text text not null
         )
     """)
     for line in open(log_file):
         c.execute(
-            "INSERT INTO cbtv VALUES(?, ?, ?, ?)",
+            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?)",
             line.strip().split(" ", 3)
         )
     c.close()
     db.commit()
 
 
-def get_start(cursor, start_hint=1):
+def get_start(cursor, start_hint=1, io="+"):
     return list(cursor.execute(
-        "SELECT min(timestamp) FROM cbtv WHERE timestamp > ?",
-        [start_hint]
+        "SELECT min(timestamp) FROM cbtv_events WHERE timestamp > ? AND type = ?",
+        [start_hint, io]
     ))[0][0]
 
 
-def get_end(cursor, end_hint=0):
+def get_end(cursor, end_hint=0, io="-"):
     return list(cursor.execute(
-        "SELECT max(timestamp) FROM cbtv WHERE timestamp < ?",
-        [end_hint]
+        "SELECT max(timestamp) FROM cbtv_events WHERE timestamp < ? AND type = ?",
+        [end_hint, io]
     ))[0][0]
 
 
@@ -119,12 +125,16 @@ class App:
         f = Frame(master)
 
         Label(f, text="  Start ").pack(side="left")
-        Spinbox(f, from_=0, to=int(time()), increment=0.1, textvariable=self.render_start).pack(side="left")
+        Spinbox(f, from_=0, to=int(time()), increment=10,  textvariable=self.render_start).pack(side="left")
         Label(f, text="  Length ").pack(side="left")
-        Spinbox(f, from_=0, to=60*1000,     increment=1,   textvariable=self.render_len).pack(side="left")
+        Spinbox(f, from_=1, to=60,          increment=1,   textvariable=self.render_len).pack(side="left")
         Label(f, text="  Zoom ").pack(side="left")
         Spinbox(f, from_=100, to=5000,      increment=100, textvariable=self.scale).pack(side="left")
         #Button(f, text="Render", command=self.render).pack(side="right")
+        Button(f, text="End",           command=self.end_event).pack(side="right")
+        Button(f, text="Next Bookmark", command=self.next_event).pack(side="right")
+        Button(f, text="Prev Bookmark", command=self.prev_event).pack(side="right")
+        Button(f, text="Start",         command=self.start_event).pack(side="right")
 
         f.pack()
         return f
@@ -135,9 +145,9 @@ class App:
         db = sqlite3.connect(database_file)
         self.c = db.cursor()
 
-        self.threads = sorted(n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv"))
+        self.threads = sorted(n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv_events"))
         self.render_start = DoubleVar(master, get_start(self.c, 0))
-        self.render_len = IntVar(master, 5)
+        self.render_len = IntVar(master, 30)
         self.scale = IntVar(master, 1000)
 
         self.render_start.trace_variable("w", self.update)
@@ -184,6 +194,30 @@ class App:
 
         self.update()
 
+    def end_event(self):
+        next_ts = get_end(self.c, sys.maxint, "!")
+        if next_ts:
+            self.render_start.set(next_ts)
+        self.canvas.xview_moveto(0)
+
+    def next_event(self):
+        next_ts = get_start(self.c, self.render_start.get(), "!")
+        if next_ts:
+            self.render_start.set(next_ts)
+        self.canvas.xview_moveto(0)
+
+    def prev_event(self):
+        prev_ts = get_end(self.c, self.render_start.get(), "!")
+        if prev_ts:
+            self.render_start.set(prev_ts)
+        self.canvas.xview_moveto(0)
+
+    def start_event(self):
+        next_ts = get_start(self.c, 0, "!")
+        if next_ts:
+            self.render_start.set(next_ts)
+        self.canvas.xview_moveto(0)
+
     def scale_view(self, e=None, n=1):
         # get the old pos
         if e:
@@ -218,7 +252,7 @@ class App:
         """
         s = self.render_start.get() - 1
         e = self.render_start.get() + self.render_len.get() + 1
-        self.data = list(self.c.execute("SELECT * FROM cbtv WHERE timestamp BETWEEN ? AND ?", (s, e)))
+        self.data = list(self.c.execute("SELECT * FROM cbtv_events WHERE timestamp BETWEEN ? AND ?", (s, e)))
         self.render()
 
     def render(self, *args):
@@ -253,13 +287,13 @@ class App:
         rl_px = int(_rl * _sc)
 
         for n in range(rs_px, rs_px+rl_px, 100):
-            label = "+%.3f" % (float(n)/_sc-_rl)
+            label = " +%.3f" % (float(n)/_sc-_rl)
             self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*ROW_HEIGHT, fill="#CCC")
-            self.canvas.create_text(n-rs_px+5, 5, text=label, anchor="nw")
+            self.canvas.create_text(n-rs_px, 5, text=label, anchor="nw")
 
         for n in range(0, len(self.threads)):
             self.canvas.create_line(0, 20+ROW_HEIGHT*n, rl_px, 20+ROW_HEIGHT*n)
-            self.canvas.create_text(5, 20+ROW_HEIGHT*n+5, text=self.threads[n], anchor="nw")
+            self.canvas.create_text(0, 20+ROW_HEIGHT*n+5, text=" "+self.threads[n], anchor="nw")
 
     def render_data(self):
         """
@@ -282,7 +316,7 @@ class App:
                 thread_level_starts[thread_idx].append(_time)
 
             # when the event ends, render it
-            else:
+            elif _io == "-":
                 # if we start rendering mid-file, we may see the ends
                 # of events that haven't started yet
                 if len(thread_level_starts[thread_idx]):
@@ -294,6 +328,9 @@ class App:
                         length_px = end_px - start_px
                         stack_len = len(thread_level_starts[thread_idx])
                         self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
+
+            elif _io == "!":
+                pass  # render bookmark
 
     def show(self, start, length, thread, level, text):
         text = " " + text
