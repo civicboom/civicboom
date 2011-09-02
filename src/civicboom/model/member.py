@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener
+from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener
 from civicboom.model.message import Message
 from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -242,7 +242,8 @@ class Member(Base):
     avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Interval(),     nullable=False, default="0 hours")
     location_home   = Golumn(Point(2),       nullable=True)
-    payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+    payment_account_id = column_property(Column(Integer(),   ForeignKey('payment_account.id'), nullable=True), extension=MemberPaymentAccountIdChangeListener())
+    #payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
     description     = Column(UnicodeText(),  nullable=False, default=u"")
     extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})

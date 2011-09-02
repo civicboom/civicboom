@@ -25,7 +25,7 @@ Base = declarative_base()
 # Events for:
 #    PaymentAccount.type change -> update PaymentAccount.members.account_type
 #    PaymentAccount.members change -> update PaymentAccount.members/memb_appended/memb_removed
-#    Member.payment_account change -> update Memb.account_type
+#    Member.payment_account_id set None -> update Memb.account_type to 'free'
 #===============================================================================
 class PaymentAccountTypeChangeListener(AttributeExtension):
     def set(self, state, value, oldvalue, initiator):
@@ -42,9 +42,11 @@ class PaymentAccountMembersChangeListener(AttributeExtension):
         return value
     def remove(self, state, value, initiator):
         value.account_type = 'free'
-#class MemberPaymentAccountChangeListener(AttributeExtension):
-#    def set(self, state, value, oldvalue, initiator):
-#        state.obj().account_type = value.account_type
+class MemberPaymentAccountIdChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        if value == None:
+            state.obj().account_type = 'free'
+        return value
 
 # types
 
