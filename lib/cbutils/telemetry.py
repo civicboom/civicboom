@@ -21,6 +21,7 @@ import sqlite3
 import sys
 
 
+NAME="Civicboom Telemetry Viewer"
 ROW_HEIGHT=140
 BLOCK_HEIGHT=20
 
@@ -145,7 +146,7 @@ def render(database_file, html_file):
 def print_header(fp):
     print("""<html>
     <head>
-        <title>Civicboom Telemetry Viewer</title>
+        <title>"""+NAME+"""</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <style>
 .marker {
@@ -471,7 +472,7 @@ def _center(root):
 
 def display(database_file):
     root = Tk()
-    root.title("Civicboom Telemetry Viewer")
+    root.title(NAME)
     #root.state("zoomed")
     #_center(root)
     App(root, database_file)
