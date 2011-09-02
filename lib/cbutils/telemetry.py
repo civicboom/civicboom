@@ -236,6 +236,8 @@ class App:
         return f
 
     def __init__(self, master, database_file):
+        self.master = master
+
         db = sqlite3.connect(database_file)
         self.c = db.cursor()
 
