@@ -290,26 +290,6 @@ class App:
 
         self.update()
 
-
-    def old_scale_view(self, e, n):
-        old = self.scale.get()
-        new = max(old + n, 100)
-        if old != new:
-            # figure out where the mouse was pointing (in terms of scrollbar position)
-            # eg the middle of the screen will be pointing to "the beginning of the scrollbar block plus half the width of the block"
-            _xv = self.canvas.xview()
-            left_edge = _xv[0]
-            width = (_xv[1]-_xv[0])
-            width_fraction = float(e.x)/self.canvas.winfo_width()
-            x_pos = left_edge + width * width_fraction
-            # scale the display
-            self.scale.set(new)
-            self.render()
-            # scroll the canvas so that the mouse still points to the same place
-            _xv = self.canvas.xview()
-            new_width = (_xv[1]-_xv[0])
-            self.canvas.xview_moveto(x_pos - new_width*width_fraction)
-
     def scale_view(self, e=None, n=1):
         # get the old pos
         if e:
@@ -352,6 +332,9 @@ class App:
         self.render_data()
 
     def render_clear(self):
+        """
+        clear the canvas and any cached variables
+        """
         self.canvas.delete(ALL)
         self.original_texts = {}
         self.canvas.configure(scrollregion=(
@@ -381,6 +364,9 @@ class App:
             self.canvas.create_text(5, 20+ROW_HEIGHT*n+5, text=self.threads[n], anchor="nw")
 
     def render_data(self):
+        """
+        add the event rectangles
+        """
         _rs = self.render_start.get()
         _rl = self.render_len.get()
         _sc = self.scale.get()
@@ -413,6 +399,7 @@ class App:
 
     def show(self, start, length, thread, level, text):
         tip = "%dms @%dms:\n%s" % (float(length)/self.scale.get()*1000, float(start)/self.scale.get()*1000, text)
+        self.original_texts[t] = text
 
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
@@ -426,8 +413,6 @@ class App:
         )
         self.canvas.tag_raise(r)
         self.canvas.tag_raise(t)
-
-        self.original_texts[t] = text
 
         r2 = self.canvas.create_rectangle(
             start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
