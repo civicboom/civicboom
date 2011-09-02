@@ -107,126 +107,6 @@ def get_end(cursor, end_hint=0):
 
 
 #######################################################################
-# HTML Out
-#######################################################################
-
-def render(database_file, html_file):
-    db = sqlite3.connect(database_file)
-    c = db.cursor()
-
-    fp = open(html_file, "w")
-
-    render_start = get_start(c, 0)
-    render_len = get_end(c, 9999999999) - render_start
-    resolution = 1000
-
-    threads = []
-    thread_level_starts = []
-
-    print_header(fp)
-    for row in c.execute("SELECT * FROM cbtv WHERE timestamp BETWEEN ? AND ?", (render_start, render_start+render_len)):
-        (_time, _thread, _io, _text) = row
-        _time = float(_time)
-
-        # allocate a position to any new threads
-        if _thread not in threads:
-            threads.append(_thread)
-            thread_level_starts.append([])
-            print("<div class='thread' style='top: %dpx'></div>" % (20+(len(threads)-1)*ROW_HEIGHT, ), file=fp)
-        thread_idx = threads.index(_thread)
-
-        # when an event starts, take note of the start time
-        if _io == "+":
-            thread_level_starts[thread_idx].append(_time)
-
-        # when the event ends, render it
-        else:
-            # if we start rendering mid-file, we may see the ends of events that haven't started yet
-            if len(thread_level_starts[thread_idx]):
-                event_start = thread_level_starts[thread_idx].pop()
-                event_end = _time
-                #print("offset:%f start:%f end:%f" % (render_start, event_start-render_start, event_end-render_start))
-                if event_start < render_start + render_len:
-                    start_px  = (event_start-render_start) * resolution
-                    end_px    = (event_end-render_start) * resolution
-                    length_px = end_px - start_px
-                    stack_len = len(thread_level_starts[thread_idx])
-                    show(int(start_px), int(length_px), thread_idx, stack_len, _text, fp)
-    print_footer(fp)
-
-
-def print_header(fp):
-    print("""<html>
-    <head>
-        <title>"""+NAME+"""</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <style>
-.marker {
-    position: absolute;
-    border-left: 1px solid #CCC;
-    height: 1000px;
-    top: 0px;
-    padding: 5px;
-    font-size: 0.75em;
-    z-index: -1;
-}
-
-.thread {
-    position: absolute;
-    left: 0px;
-    width: 100%;
-    height: """+str(ROW_HEIGHT-1)+"""px;
-    background: #EFE;
-    border-top: 1px solid black;
-    border-bottom: 1px solid black;
-    z-index: -2;
-}
-/*
-.thread:nth-child(odd) {
-    background: #DFD;
-}
-*/
-
-.event {
-    position: absolute;
-    overflow: hidden;
-    background: #CFC;
-    border: 1px solid #484;
-    height: """+str(BLOCK_HEIGHT-1)+"""px; /* other box model would be handy... */
-    font-size: 0.65em;
-    text-align: center;
-}
-        </style>
-    </head>
-    <body>
-    """, file=fp)
-    for n in range(0, 2000, 100):
-        print(
-            "<div class='marker' style='left: %dpx'>%dms</div>" % (n, n),
-            file=fp
-        )
-
-
-def show(start, length, thread, level, text, fp):
-    print(
-        ("<div class='event' "+
-        "style='top: %(level)d; left: %(time)d; width: %(length)d;' "+
-        "title='%(length)sms @%(time)sms -- %(text)s'>%(text)s</div>") %
-        {
-            "level": 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
-            "time": start,
-            "length": length,
-            "text": text.replace("'", '"')
-        },
-        file=fp
-    )
-
-
-def print_footer(fp):
-    print("""    </body>\n</html>""", file=fp)
-
-
-#######################################################################
 # GUI Out
 #######################################################################
 
@@ -495,23 +375,16 @@ def display(database_file):
 
 def main(argv):
     parser = OptionParser()
-    parser.add_option("-c", "--compile", dest="log_file", #default="cbtv.log",
-            help="compile log file to database", metavar="FILE")
-    parser.add_option("-d", "--database", dest="database", #default="cbtv.db",
+    parser.add_option("-i", "--import", dest="log_file", #default="cbtv.log",
+            help="import log file to database", metavar="FILE")
+    parser.add_option("-d", "--database", dest="database", default="cbtv.db",
             help="database file to use", metavar="DB")
-    parser.add_option("-r", "--render", dest="output_file", #default="cbtv.html",
-            help="render the database contents to a web page")
-    parser.add_option("-g", "--gui", action="store_true", default=False,
-            help="display a GUI")
     (options, args) = parser.parse_args(argv)
 
     if options.log_file and options.database:
         compile_log(options.log_file, options.database)
 
-    if options.database and options.output_file:
-        render(options.database, options.output_file)
-
-    if options.database and options.gui:
+    elif options.database:
         display(options.database)
 
 
