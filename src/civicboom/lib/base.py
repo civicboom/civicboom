@@ -397,7 +397,7 @@ class BaseController(WSGIController):
                 overlay_status_message(c.result,            flash_message_session )
             
 
-    @t_log(lambda f,a,k: request.environ["pylons.routes_dict"]["controller"]+":"+request.environ["pylons.routes_dict"]["action"])
+    @t_log(lambda f,a,k: request.environ["pylons.routes_dict"]["controller"]+":"+request.environ["pylons.routes_dict"]["action"], bookmark=True)
     def __call__(self, environ, start_response):
         """Invoke the Controller"""
         # WSGIController.__call__ dispatches to the Controller method

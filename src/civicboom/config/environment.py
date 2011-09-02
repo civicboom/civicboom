@@ -78,7 +78,7 @@ def load_environment(global_conf, app_conf):
                         'test_mode',
                         'demo_mode',
                         'profile',
-                        'cbtv',
+                        'telemetry',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config.get(varname))
@@ -132,7 +132,7 @@ def load_environment(global_conf, app_conf):
 
     # set up cbtv
     import cbutils.cbtv as t
-    if config['cbtv']:
+    if config['telemetry']:
         t.set_log("cbtv.log")
 
     init_model_extra() # This will trigger a set of additional initalizers
