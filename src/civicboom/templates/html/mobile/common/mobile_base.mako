@@ -26,6 +26,7 @@
                 // Sets defaults for jquery mobile
                 $.mobile.page.prototype.options.degradeInputs.date = 'text';
                 $.mobile.defaultDialogTransition    = 'fade';
+                // $.mobile.ajaxEnabled = false;
             });
         </script>
         <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>

@@ -135,7 +135,7 @@
         data-theme="b"
     % endif    
     >
-        <a href="${url('message', id=item['id'])}" data-rel="dialog" data-transition="fade">
+        <a href="${url('message', id=item['id'])}" data-ajax="true" data-rel="dialog" data-transition="fade">
             <h3>${item['subject']}</h3>
             % if item.get('source'):
                 <p><b>From ${item['source']['username']}</b></p>

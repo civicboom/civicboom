@@ -40,14 +40,14 @@
             <h1>Delete posting?</h1>
         </div>
         <div data-role="content">
-            ${parent.error_message()}
+            ${parent.flash_message()}
             <h3>${_("Are you sure you want to delete")} "${self.title}"${_("? The posting will be permanently deleted from _site_name.")}</h3>
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect'),
                 method = "DELETE",
                 value           = _("Delete"),
                 value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
-                json_form_complete_actions = "console.log('poop'); $.mobile.changePage('%s');" % h.url(controller='misc', action='titlepage'),
+                json_form_complete_actions = "console.log('redirect to %s');" % h.url(controller='profile', action='index'),
             )}
             <a href="#" data-rel="back" data-direction="reverse"><button>No, take me back!</button></a>
         </div>

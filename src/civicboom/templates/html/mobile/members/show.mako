@@ -25,6 +25,7 @@
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
+            ${parent.flash_message()}
             ${member_details_full(self.member)}
         </div>
         
@@ -155,45 +156,40 @@
 
     % if c.logged_in_user and self.actions:
             % if 'message' in self.actions:
-                <a href="${h.url(controller='messages', action='new', target=self.id)}" data-rel="dialog"><button>Message</button></a>
+                <a href="${h.url(controller='messages', action='new', target=self.id)}" data-rel="dialog" data-transition="fade"><button>Send message</button></a>
             % endif
 
             % if 'follow' in self.actions:
                 ${h.secure_link(
-                    h.url('member_action', action='follow'    , id=self.id) ,
+                    h.url('member_action', action='follow', id=self.id, format='redirect') ,
                     value           = _('Follow'),
                     value_formatted = h.literal("<button>%s</button>") % _('Follow'),
                     title           = _("Follow %s" % self.name) ,
-                    rel             = "external",
                 )}
             % endif
             
             % if 'unfollow' in self.actions:
                 ${h.secure_link(
-                    h.url('member_action', action='unfollow'  , id=self.id) ,
+                    h.url('member_action', action='unfollow', id=self.id, format='redirect') ,
                     value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
                     title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-                    rel             = "external",
                 )}
             % endif
             
             % if 'join' in self.actions:
                 ${h.secure_link(
-                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
                     value           = _('Join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
-                    rel             = "external",
                 )}
             % endif
             
-            ## AllanC - same as above, could be neater but works
             % if 'join_request' in self.actions:
                 ${h.secure_link(
-                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
                     value           = _('Request to join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
-                    rel             = "external",
                 )}
             % endif
     % endif

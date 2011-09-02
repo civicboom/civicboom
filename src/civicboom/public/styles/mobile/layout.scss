@@ -2,8 +2,8 @@
 @import "../common/_mixin.scss";
 
 #flash_message.status_ok      { color: $cb-lightblue; }
-#flash_message.status_error   { color: #FAA; }
-#flash_message.status_invalid { color: #FAA; }
+#flash_message.status_error   { color: red; }
+#flash_message.status_invalid { color: red; }
 
 .title_logo {
     text-align: center;
