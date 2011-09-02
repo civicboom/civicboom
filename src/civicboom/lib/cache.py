@@ -386,10 +386,11 @@ def invalidate_content(content, remove=False):
     except: creator_id = None
     
     if content.__type__ == 'comment':
-        #import traceback
-        #traceback.print_stack()
-        assert parent_id
-        invalidate_list_version('contents_index', 'comments_to', parent_id) # Comments always have a parent id
+        #assert parent_id
+        if parent_id:
+            invalidate_list_version('contents_index', 'comments_to', parent_id) # Comments always have a parent id
+        else:
+            log.error('no parent_id on comment!!!!, the lists will not be invalidated')
         
     else:
         

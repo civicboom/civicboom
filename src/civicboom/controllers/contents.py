@@ -437,8 +437,8 @@ class ContentsController(BaseController):
             raise_if_current_role_insufficent('observer') # Check role, in adition the content:update method checks for view permission of parent
             content = CommentContent()
             kwargs['private'] = False                          # Comments are always public
-            content.creator_id = c.logged_in_user.id          # Comments are always made by logged in user
-            #content.creator = c.logged_in_user
+            #content.creator_id = c.logged_in_user.id          # Comments are always made by logged in user
+            content.creator = c.logged_in_user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
@@ -449,9 +449,9 @@ class ContentsController(BaseController):
             kwargs['submit_publish'] = True             # Ensure call to 'update' publish's content
         
         # Set create to currently logged in user
-        if not content.creator_id:
-            content.creator_id = c.logged_in_persona.id
-            #content.creator = c.logged_in_persona
+        if not content.creator:
+            #content.creator_id = c.logged_in_persona.id
+            content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
         #content.private = is_private
@@ -479,14 +479,15 @@ class ContentsController(BaseController):
                 
 
         # comments are always owned by the writer; ignore settings and parent preferences
-        if kwargs['type'] == 'comment':
+        if type == 'comment': #kwargs['type']
             content.parent_id = parent.id if parent else None # The validators take care of enforcing the permissions for response - the parent_id is set inadvance here because cache invalidation needs a parent_id and the flush below triggers this preparation, we cant determin if flushing or commitiing
             content.license = get_license(None)
+            
 
         # Flush to database to get ID field
         # AllanC - if the update fails on validation we do not want a ghost record commited
         # Shish - the "no id" error is back, adding a flush seems to fix it, and doesn't commit
-        #Session.flush()
+        Session.flush()
         
         # Use update behaviour to save and commit object
         update_response = self.update(id=content, **kwargs)
@@ -634,7 +635,7 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
-                extra_fields = dict(content.extra_fields) if content.extra_fields else {}
+                extra_fields = dict(content.extra_fields) #if content.extra_fields else {}
                 content = morph_content_to(content, kwargs['type'])
                 # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
                 #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator

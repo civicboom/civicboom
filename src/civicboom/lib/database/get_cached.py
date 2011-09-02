@@ -62,13 +62,17 @@ def get_member(member, search_email=False, **kwargs):
 
     assert type(member) in [str, unicode], debug_type(member)
 
-    def get_member_nocache(member):
+    member = make_username(member)
+
+    # AllanC - TODO!! URGENT!! What happens to search_email in tests!!!? Lets have a separte call get_member_email or this is going to get nasty to cache
+
+    def get_member_nocache(member_id):
         get_member_querys = []
         
         #return Session.query(Member).with_polymorphic('*').get(make_username(member)) # AllanC - .get() returns object based on primary key - else None
-        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=make_username(member)) )
+        get_member_querys.append( Session.query(Member).with_polymorphic('*').filter_by(id=member_id) )
         if search_email:
-            get_member_querys.append( Session.query(User).filter_by(email=member) )
+            get_member_querys.append( Session.query(User).filter_by(email=member_id) )
         
         for query in get_member_querys:
             try :
@@ -83,7 +87,7 @@ def get_member(member, search_email=False, **kwargs):
     cache      = _cache.get('member')
     cache_func = lambda: get_member_nocache(member)
     if cache:
-        result = cache.get(key='member:'+str(member), createfunc=cache_func)
+        result = cache.get(key='member:%s' % member, createfunc=cache_func)
         #try:
             #Session.add(result)
             #return result
@@ -281,19 +285,20 @@ def get_content(content):
     def get_content_nocache(content_id):
         #http://www.sqlalchemy.org/docs/mappers.html#controlling-which-tables-are-queried
         # could use .with_polymorphic([DraftContent, ArticleContent, AssignmentContent]), will see if this is needed
-        assert str(content_id).isdigit(), debug_type(content_id)
+        
+        #assert str(content_id).isdigit(), debug_type(content_id)
 
         try:
-            result = Session.query(Content).with_polymorphic('*').get(int(content_id)) #Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
+            result = Session.query(Content).with_polymorphic('*').get(content_id) #Session.query(Content).with_polymorphic('*').filter_by(id=int(content_id)).one()
             #Session.expunge(result)
             return result
-        except:
+        except NoResultFound:
             return None  # used to have NoResultFound but didnt want a 500 error raised, the caller code can detect NONE and just say "not found" neatly
 
     cache      = _cache.get('content')
     cache_func = lambda: get_content_nocache(content)
     if cache:
-        result = cache.get(key='content:'+str(content), createfunc=cache_func)
+        result = cache.get(key='content:%s' % content, createfunc=cache_func)
         #try:
             #Session.add(result)
             #return result
