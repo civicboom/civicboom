@@ -376,7 +376,7 @@ def display(database_file):
 def main(argv):
     parser = OptionParser()
     parser.add_option("-i", "--import", dest="log_file", #default="cbtv.log",
-            help="import log file to database", metavar="FILE")
+            help="import log file to database", metavar="LOG")
     parser.add_option("-d", "--database", dest="database", default="cbtv.db",
             help="database file to use", metavar="DB")
     (options, args) = parser.parse_args(argv)
