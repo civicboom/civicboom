@@ -5,7 +5,7 @@
 # - have it centered on screen
 # - zoom in, but have a max zoom (having a 0ms event filling the screen would be silly)
 # full-file navigation
-# - telemetry logs can last for hours, but only a minute at a time is sensibly viewable
+# - cbtv logs can last for hours, but only a minute at a time is sensibly viewable
 # close log after appending?
 # - holding it open blocks other threads?
 # - but it is opened at the start and should never be closed...
@@ -21,7 +21,7 @@ import sqlite3
 import sys
 
 
-NAME="Civicboom Telemetry Viewer"
+NAME="Civicboom TV"
 ROW_HEIGHT=140
 BLOCK_HEIGHT=20
 
@@ -75,7 +75,7 @@ def compile_log(log_file, database_file):
     db = sqlite3.connect(database_file)
     c = db.cursor()
     c.execute("""
-        CREATE TABLE IF NOT EXISTS telemetry(
+        CREATE TABLE IF NOT EXISTS cbtv(
             timestamp float not null,
             thread varchar(32) not null,
             io char(1) not null,
@@ -83,15 +83,15 @@ def compile_log(log_file, database_file):
         )
     """)
     for line in open(log_file):
-        c.execute("INSERT INTO telemetry VALUES(?, ?, ?, ?)", line.strip().split(" ", 3))
+        c.execute("INSERT INTO cbtv VALUES(?, ?, ?, ?)", line.strip().split(" ", 3))
     c.close()
     db.commit()
 
 def get_start(cursor, start_hint=1):
-    return list(cursor.execute("SELECT min(timestamp) FROM telemetry WHERE timestamp > ?", [start_hint]))[0][0]
+    return list(cursor.execute("SELECT min(timestamp) FROM cbtv WHERE timestamp > ?", [start_hint]))[0][0]
 
 def get_end(cursor, end_hint=0):
-    return list(cursor.execute("SELECT max(timestamp) FROM telemetry WHERE timestamp < ?", [end_hint]))[0][0]
+    return list(cursor.execute("SELECT max(timestamp) FROM cbtv WHERE timestamp < ?", [end_hint]))[0][0]
 
 
 #######################################################################
@@ -112,7 +112,7 @@ def render(database_file, html_file):
     thread_level_starts = []
 
     print_header(fp)
-    for row in c.execute("SELECT * FROM telemetry WHERE timestamp BETWEEN ? AND ?", (render_start, render_start+render_len)):
+    for row in c.execute("SELECT * FROM cbtv WHERE timestamp BETWEEN ? AND ?", (render_start, render_start+render_len)):
         (_time, _thread, _io, _text) = row
         _time = float(_time)
 
@@ -242,7 +242,7 @@ class App:
         db = sqlite3.connect(database_file)
         self.c = db.cursor()
 
-        self.threads = sorted(n[0] for n in self.c.execute("SELECT DISTINCT thread FROM telemetry"))
+        self.threads = sorted(n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv"))
         self.render_start = DoubleVar(master, get_start(self.c, 0))
         self.render_len = IntVar(master, 5)
         self.scale = IntVar(master, 1000)
@@ -325,7 +325,7 @@ class App:
         """
         s = self.render_start.get()-1
         e = self.render_start.get()+self.render_len.get()+1
-        self.data = list(self.c.execute("SELECT * FROM telemetry WHERE timestamp BETWEEN ? AND ?", (s, e)))
+        self.data = list(self.c.execute("SELECT * FROM cbtv WHERE timestamp BETWEEN ? AND ?", (s, e)))
         self.render()
 
     def render(self, *args):
@@ -482,11 +482,11 @@ def display(database_file):
 
 def main(argv):
     parser = OptionParser()
-    parser.add_option("-c", "--compile", dest="log_file", default="telemetry.log",
+    parser.add_option("-c", "--compile", dest="log_file", default="cbtv.log",
             help="compile log file to database", metavar="FILE")
-    parser.add_option("-d", "--database", dest="database", default="telemetry.db",
+    parser.add_option("-d", "--database", dest="database", default="cbtv.db",
             help="database file to use", metavar="DB")
-    parser.add_option("-r", "--render", dest="output_file", default="telemetry.html",
+    parser.add_option("-r", "--render", dest="output_file", default="cbtv.html",
             help="render the database contents to a web page")
     parser.add_option("-g", "--gui", action="store_true", default=False,
             help="display a GUI")
