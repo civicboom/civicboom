@@ -41,7 +41,7 @@ def set_log(fn):
 def log_msg(text, io):
     tn = threading.current_thread().name.replace(" ", "-")
     if _output:
-        print("%f %s %s %s %s" % (time(), platform.node(), tn, io, text), file=_output)
+        print("%f %s %s %s %s\n" % (time(), platform.node(), tn, io, text), file=_output, end='')
 
 
 def log_bookmark(text):
