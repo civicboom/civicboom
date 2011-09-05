@@ -37,11 +37,11 @@ if __name__ == "__main__":
 
     log.info("Connecting to cloudfiles")
     conn = cloudfiles.get_connection(
-        c.get("DEFAULT", "api_key.rs.username"),
-        c.get("DEFAULT", "api_key.rs.api_key"),
+        c.get("app:main", "api_key.rs.username"),
+        c.get("app:main", "api_key.rs.api_key"),
         authurl = 'https://lon.auth.api.rackspacecloud.com/v1.0'
     )
-    cont = conn.get_container(c.get("DEFAULT", "cdn.rs.container"))
+    cont = conn.get_container(c.get("app:main", "cdn.rs.container"))
     if cont.is_public == False:
         cont.make_public()
 
