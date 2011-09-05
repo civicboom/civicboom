@@ -58,7 +58,7 @@ class TestAdminController(TestController):
         # ("Media",   # these are blank
         ("Member",          1),
         ("User",            1),
-        ("Group",           3),
+        ("Group",           2),
         ("Content",         1),
         ("ArticleContent",  3),
     ]
