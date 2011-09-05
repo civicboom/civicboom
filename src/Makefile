@@ -154,7 +154,7 @@ run-worker:
 ##############################################################################
 # CDN
 
-cdnpush-ssh: js css
+cdnpush-ssh: js css ini
 	echo removing cache breaker from icons.css
 	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-ssh.py \
@@ -163,7 +163,7 @@ cdnpush-ssh: js css
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
 
-cdnpush-rs: js css
+cdnpush-rs: js css ini
 	echo removing cache breaker from icons.css
 	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-rs.py \
