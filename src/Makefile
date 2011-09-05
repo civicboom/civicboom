@@ -109,8 +109,7 @@ sass:
 # redirecting stdout means that the file is created even if the process fails.
 # the mv on the second line only happens if it succeeds
 %.ini: %.inidiff development.ini
-	inipatch development.ini $< > $@.tmp
-	mv $@.tmp $@
+	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
 
 
 ##############################################################################
