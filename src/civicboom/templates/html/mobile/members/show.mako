@@ -46,10 +46,12 @@
         </div>
     </div>
     
-    ## Persona switching
-    <div data-role="page" id="member_persona-${self.id}" class="member_persona">
-        ${persona()}
-    </div>
+    % if config['development_mode']:
+        ## Persona switching
+        <div data-role="page" id="member_persona-${self.id}" class="member_persona">
+            ${persona()}
+        </div>
+    % endif
     
 </%def>
 
