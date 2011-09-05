@@ -186,7 +186,7 @@ def paypal_express_return(**kwargs):
             if 'Success' in recurring_response.ACK:
                 config_update = {
                     'paypal_return' : recurring_response.raw,
-                    'amount'        : kwargs['amount'],
+                    'amount'        : str(kwargs['amount']), # Have to stringify here as jsonpickletype does not handle decimals.
                     'frequency'     : kwargs['frequency'],
                     'currency'      : kwargs['currency'],
                 }

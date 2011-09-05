@@ -51,7 +51,7 @@ class MemberPaymentAccountIdChangeListener(AttributeExtension):
 # types
 
 from sqlalchemy import PickleType, UnicodeText
-import json
+import simplejson as json
 
 
 class JSONType(PickleType):

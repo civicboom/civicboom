@@ -31,7 +31,7 @@ from sqlalchemy.orm.exc import NoResultFound
 # Pyhton package imports
 import hashlib
 from decorator import decorator
-import json
+import simplejson as json
 from urllib import quote_plus, unquote_plus
 
 # Logging

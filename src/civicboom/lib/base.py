@@ -33,7 +33,7 @@ import cbutils.worker as worker
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
 
-import json
+import simplejson as json
 import platform
 import formencode
 

@@ -26,7 +26,7 @@ import os
 import re
 import urllib
 import hashlib
-import json
+import simplejson as json
 import copy
 import time
 import datetime
