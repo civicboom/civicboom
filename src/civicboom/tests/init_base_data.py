@@ -48,9 +48,9 @@ def init_base_data():
         assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
         assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
         
-        u1_service = Session.query(Service).filter(Service.payment_account_type==u1.payment_account.type).one()
+        #u1_service = Session.query(Service).filter(Service.payment_account_type==u1.payment_account.type).one()
         
-        u1.payment_account.services.append(PaymentAccountService(u1.payment_account, u1_service, discount=1.00))
+        u1.payment_account.do_not_bill = True
 
         u2 = User()
         u2.username      = u"unitfriend"
@@ -68,6 +68,8 @@ def init_base_data():
         u2_account.start_date = datetime.datetime.now() - datetime.timedelta(days=27)
 
         u2.set_payment_account(u2_account, delay_commit=True)
+        
+        u2.payment_account.do_not_bill = True
 
         g1 = Group()
         g1.username = "unitgroup"

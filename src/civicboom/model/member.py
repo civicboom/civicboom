@@ -828,6 +828,7 @@ class PaymentAccount(Base):
     taxable          = Column(Boolean(), nullable=False, default=True)
     _tax_rate_code   = Enum("GB", "EU", "US", name="tax_rate_code")
     tax_rate_code    = Column(_tax_rate_code, nullable=True, default="GB")
+    do_not_bill      = Column(Boolean(), nullable=False, default=False)
     _address_config_order = ['address_1', 'address_2', 'address_town', 'address_county', 'address_postal', 'address_country']
     _address_required= ('address_1', 'address_town', 'address_country', 'address_postal')
     _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type'))

@@ -237,6 +237,7 @@ class TaskController(BaseController):
             # Get accounts due in the next x days and have paid services:
             unbilled_accounts = payment.db_methods.filter_start_dates(
                     Session.query(PaymentAccount)\
+                    .filter(PaymentAccount.do_not_bill==False)\
                     .filter(PaymentAccount.frequency == frequency),
                     frequency, time_now, seven_days,
                 )\
