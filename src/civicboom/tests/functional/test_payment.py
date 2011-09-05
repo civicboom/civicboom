@@ -129,9 +129,10 @@ class TestPaymentController(TestController):
             status=302
         )
         
+        # Check recurring billing account has been created
         bacct = self.part_get_billing_account('test_payment_paypal_rec')
-        
         self.assertNotEqual(bacct, None)
+        self.assertIn('paypal_recurring', bacct.provider)
         
         self.run_task('run_invoice_tasks')
         invoice = self.part_get_invoice('test_payment_paypal_rec')
@@ -139,6 +140,8 @@ class TestPaymentController(TestController):
         assert invoice.status == 'paid'
         self.part_check_member_status('test_payment_paypal_rec', 'ok')
         self.server_datetime('now')
+        
+        # Cancel billing account
         
     def test_payment_cancel_paypal(self):
         self.server_datetime('now')
