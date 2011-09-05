@@ -95,7 +95,7 @@
             <img src="${item['thumbnail_url']}" class="thumbnail" />
             <h3>${item['title']}</h3>
             <p>${item['content_short']}</p>
-            <p>${timestamp(item)} by ${item.get('creator').get('username')}</p>
+            <p>${timestamp(item)} by ${item.get('creator_id')}</p>
         </a>
     </li>
 </%def>

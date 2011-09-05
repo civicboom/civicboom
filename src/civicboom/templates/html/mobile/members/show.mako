@@ -8,18 +8,21 @@
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
-<%def name="page_title()">
-    ${_(d['member']['username'])}
-</%def>
-
-<%def name="body()">
+<%def name="init_vars()">
     <%
         self.member    = d['member']
-        self.id        = self.member['username']
+        self.id        = self.member.get('id')
         self.name      = self.member.get('name')
         self.actions   = d['actions']
     %>
-    
+</%def>
+
+<%def name="page_title()">
+    ${self.id}
+</%def>
+
+<%def name="body()">
+
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
@@ -27,6 +30,7 @@
         <div data-role="content">
             ${parent.flash_message()}
             ${member_details_full(self.member)}
+            <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
         </div>
         
         ${signout_navbar()}
@@ -41,6 +45,72 @@
             ${member_content_list(d)}
         </div>
     </div>
+    
+    ## Persona switching
+    <div data-role="page" id="member_persona-${self.id}" class="member_persona">
+        ${persona()}
+    </div>
+    
+</%def>
+
+## Persona switch
+<%def name="persona()">
+    <table>
+        <%def name="persona_select(member, **kwargs)">
+            <%
+                current_persona = member==c.logged_in_persona
+            %>
+            <tr
+                % if current_persona:
+                    class   = "current_persona selectable"
+                    onclick = "window.location = '/profile';"
+                % else:
+                    class   = "selectable"
+                    onclick = "$(this).find('form').submit();"
+                % endif
+            >
+                <td>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
+                </td>
+                <td>
+                    <p class="name">${member.name or member.username}</p>
+                    % for k,v in kwargs.iteritems():
+                        % if v:
+                            <p class="info">${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
+                        % endif
+                    % endfor
+                </td>
+                <td class="hide_if_js">
+                    % if not current_persona:
+                    ${h.secure_link(
+                        h.url(controller='account', action='set_persona', id=member.username, format='html') ,
+                        'switch user',
+                        css_class="persona_link",
+                    )}
+                    % endif
+                </td>
+            </tr>
+        </%def>
+        
+        <%
+            num_members = None
+            if hasattr(c.logged_in_persona, 'num_members'):
+                num_members = c.logged_in_persona.num_members
+        %>
+        
+        ## Show default persona (the user logged in)
+        ${persona_select(c.logged_in_user)}
+        
+        ## Show current persona (current group persona if applicable)
+        % if c.logged_in_persona != c.logged_in_user:
+            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+        % endif
+        
+        ## Show currently logged in persona's groups:
+        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
+            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+        % endfor
+    </table>
 </%def>
 
 ##-----------------------------------------------------------------------------
@@ -124,7 +194,7 @@
                         ${username}'s website
                     </li>
                     <li>
-                        <a href="${website}" alt="${member['id']}'s website">
+                        <a href="${website}">
                             ${website}
                         </a>
                     </li>

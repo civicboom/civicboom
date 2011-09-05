@@ -1,3 +1,7 @@
+% if hasattr(next, 'init_vars'):
+    ${next.init_vars()}
+% endif
+
 <html>
     <head>
         ${title()}
@@ -28,11 +32,17 @@
                 $.mobile.defaultDialogTransition    = 'fade';
                 // $.mobile.ajaxEnabled = false;
             });
+            
+            $(document).bind("pagecreate", function() {
+                // Little hacky, tell any forms created not to ajax submit
+                $('form').attr('data-ajax', 'false');
+            });
         </script>
         <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
         <script src="/javascript/jquery.ui.datepicker.js"></script>
         <script src="/javascript/jquery.ui.datepicker.mobile.js"></script>
     </head>
+    
   
     <body class="c-${c.controller} a-${c.action}">
         ${next.body()}

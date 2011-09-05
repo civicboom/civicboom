@@ -85,14 +85,13 @@
         % if config['development_mode']:
             % if "respond" in self.actions:
                 ${h.secure_link(
-                    h.args_to_tuple('new_content', parent_id=self.id) ,
+                    h.args_to_tuple('new_content', parent_id=self.id),
                     value     = h.literal("<button>respond</button>"),
-                    rel       = "external", 
+                    rel = "external"
                 )}
             % endif
             
             % if "edit" in self.actions:
-                <button>edit (NOT YET!)</button>
             % endif
             
             % if "delete" in self.actions:
