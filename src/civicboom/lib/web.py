@@ -249,14 +249,14 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, duration=3600*24*365, secure=None):
+def cookie_set(key, value, max_age=3600*24*365, secure=None):
     """
     duration in seconds
     """
     #print "COOKIE setting %s:%s" %(key, value)
     if secure == None:
         secure = (current_protocol() == "https")
-    response.set_cookie(key, value, max_age=duration, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
+    response.set_cookie(key, value, max_age=max_age, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
 
 
 def cookie_get(key):
