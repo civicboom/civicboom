@@ -24,7 +24,6 @@ help:
 
 help2:
 	# cdnpush       -- push static files to CDN
-	# libs          -- fetch external libraries
 	# gource        -- generate a video of developer activity
 	# stats         -- run the interactive profile examiner
 	# pep8          -- strict syntax checking
@@ -109,8 +108,6 @@ css:
 sass:
 	cd civicboom/public/styles
 	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
-
-production.ini: development.ini production.inidiff
 
 %.ini: %.inidiff development.ini
 	inipatch development.ini $< > $@
@@ -217,11 +214,6 @@ api-doc: civicboom/public/doc/index.html
 
 milestone-doc:
 	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
-
-py-libs:
-	$(MAKE) -C ../lib
-
-libs: py-libs
 
 shell:
 	paster shell
