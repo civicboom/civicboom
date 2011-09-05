@@ -9,10 +9,6 @@ ${common.errors(fieldset)}
 	<tr><th colspan="2">${_("Information")}</th></tr>
 	${common.render_short_field(fieldset.username)|n}
 </table>
-<table>
-    <tr><th colspan="2">${_("User Config")}</th></tr>
-    ${common.render_short_field(fieldset.extra_fields_raw)|n}
-</table>
 		</td>
 		<td>
 <table>
