@@ -92,9 +92,6 @@ i18n-zh: civicboom/i18n/zh/LC_MESSAGES/civicboom.po
 i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAGES/civicboom.po civicboom/i18n/zh/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
-# shortcuts
-i18n: i18n-en
-
 
 ##############################################################################
 # static files
@@ -109,10 +106,12 @@ sass:
 	cd civicboom/public/styles
 	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
+# redirecting stdout means that the file is created even if the process fails.
+# the mv on the second line only happens if it succeeds
 %.ini: %.inidiff development.ini
-	inipatch development.ini $< > $@
+	inipatch development.ini $< > $@.tmp
+	mv $@.tmp $@
 
-ini: production.ini demo.ini test.ini
 
 ##############################################################################
 # testing
@@ -126,9 +125,6 @@ test-coverage:
 test-profile:
 	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests --verbose
 
-data:
-	mkdir -p data
-
 data/data-skel.pgdump: civicboom/model/*.py
 	../admin_scripts/init_cbdb
 	nosetests
@@ -137,7 +133,7 @@ data/data-skel.pgdump: civicboom/model/*.py
 test-db: data/data-skel.pgdump
 	sudo -u postgres pg_restore --clean -d civicboom < data/data-skel.pgdump
 
-live-db: data
+live-db:
 	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/data-live.pgdump
@@ -177,13 +173,9 @@ cdnpush-rs: js css
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
 
-cdnpush: cdnpush-rs
-
 
 ##############################################################################
 # other
-
-site: i18n js css api-doc ini
 
 clean:
 	git clean -d -f -x
@@ -210,15 +202,13 @@ civicboom/public/doc/index.html: ../docs/api.*.html civicboom/controllers/*.py
 	mkdir -p civicboom/public/doc/
 	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
 
-api-doc: civicboom/public/doc/index.html
-
 milestone-doc:
 	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
 
 shell:
 	paster shell
 
-schemadiff: data civicboom/model/*.py
+update.sql: civicboom/model/*.py
 	pg_dump -U civicboom -h localhost -s civicboom > data/schema-dev.sql
 	ssh db1.civicboom.com sudo -u postgres pg_dump -s civicboom > data/schema-live.sql
 	java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction data/schema-live.sql data/schema-dev.sql > update.sql
@@ -232,3 +222,19 @@ cbtv.db: cbtv.log
 
 tv: cbtv.db
 	../lib/cbutils/cbtv.py -d cbtv.db
+
+
+##############################################################################
+# human readable aliases
+
+api-doc: civicboom/public/doc/index.html
+
+schemadiff: update.sql
+
+cdnpush: cdnpush-rs
+
+ini: production.ini demo.ini test.ini
+
+i18n: i18n-en
+
+site: i18n js css api-doc ini
