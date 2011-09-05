@@ -18,6 +18,7 @@ from time import time
 from optparse import OptionParser
 import sqlite3
 import sys
+import platform
 
 
 NAME = "Civicboom TV"
@@ -40,7 +41,7 @@ def set_log(fn):
 def log_msg(text, io):
     tn = threading.current_thread().name.replace(" ", "-")
     if _output:
-        print("%f %s %s %s" % (time(), tn, io, text), file=_output)
+        print("%f %s %s %s %s" % (time(), platform.node(), tn, io, text), file=_output)
 
 
 def log_bookmark(text):
@@ -83,6 +84,7 @@ def compile_log(log_file, database_file):
     c.execute("""
         CREATE TABLE IF NOT EXISTS cbtv_events(
             timestamp float not null,
+            node varchar(32) not null,
             thread varchar(32) not null,
             type char(1) not null,
             text text not null
@@ -90,8 +92,8 @@ def compile_log(log_file, database_file):
     """)
     for line in open(log_file):
         c.execute(
-            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?)",
-            line.strip().split(" ", 3)
+            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?, ?)",
+            line.strip().split(" ", 4)
         )
     c.close()
     db.commit()
@@ -336,7 +338,7 @@ class App:
         thread_level_starts = [[], ] * len(self.threads)
 
         for row in self.data:
-            (_time, _thread, _io, _text) = row
+            (_time, _node, _thread, _io, _text) = row
             _time = float(_time)
             thread_idx = threads.index(_thread)
 
