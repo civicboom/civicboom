@@ -62,7 +62,7 @@ class RegisterController(BaseController):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
         """
-        registration_template = "/html/web/account/register.mako"
+        registration_template = "/html/mobile/account/register.mako"
         
         c.new_user = _get_member(id)
         

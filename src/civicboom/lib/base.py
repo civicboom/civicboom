@@ -267,18 +267,18 @@ class BaseController(WSGIController):
             return
         
         # AllanC - useful for debug
-        #from pylons import session
-        #print ""
-        #print "CALL"
-        #print request.environ.get("pylons.routes_dict")
-        #print "GET"
-        #print request.GET
-        #print "POST"
-        #print request.POST
-        #print "SESSION"
-        #print session
-        #print "COOKIES"
-        #print request.cookies
+        # from pylons import session
+        # print ""
+        # print "CALL"
+        # print request.environ.get("pylons.routes_dict")
+        # print "GET"
+        # print request.GET
+        # print "POST"
+        # print request.POST
+        # print "SESSION"
+        # print session
+        # print "COOKIES"
+        # print request.cookies
         
         # Setup globals c ------------------------------------------------------
         c.result = action_ok()  # Default return object
@@ -292,6 +292,7 @@ class BaseController(WSGIController):
         #print "controller=%s action=%s id=%s" % (c.controller, c.action, c.id)
         
         c.format                   = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
+        c.subformat                = None
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback

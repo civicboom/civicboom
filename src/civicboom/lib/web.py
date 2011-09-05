@@ -367,7 +367,8 @@ def _find_template(result, type):
 
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
-    subformat = get_subdomain_format()
+    #subformat = get_subdomain_format() # Proto: Set once in auto formatter with c.format to avoid unecessary repeated calls
+    subformat = c.subformat  
     if type == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -424,7 +425,8 @@ def _find_template_basic(controller=None, action=None, format=None):
     action = action or c.action
     format = format or c.format or "html"
     template_part = '%s/%s' % (controller, action)
-    subformat = get_subdomain_format()
+    #subformat = get_subdomain_format() # Proto: Set once in auto formatter with c.format to avoid unecessary repeated calls
+    subformat = c.subformat
     if format == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -475,6 +477,9 @@ def setup_format_processors():
         return render_template(result, 'frag')
         
     def format_html(result):
+        #print result
+        #import traceback
+        #traceback.print_stack()
         # AllanC - if we perform an HTML action but have not come from our site and used format='redirect' then we want the redirect to the html object that the action has been performed on rather than displaying an error
         if c.html_action_fallback_url: #and c.format == 'html'
             set_flash_message(result)
@@ -562,18 +567,18 @@ format_processors = setup_format_processors()
 @decorator
 def auto_format_output(target, *args, **kwargs):
     """
-    Once a controler aciton has finished processing it will return a python dict
+    Once a controller aciton has finished processing it will return a python dict
     This decorator inspects the python dict and converts the dict into one of the following:
         - JSON
         - XML
         - RSS
-        - HTML (with htmlfill overlay if nessisary) [auto selecting mobile template if needed]
+        - HTML (with htmlfill overlay if necessary) [auto selecting mobile template if needed]
             + Web
             + Mobile
         - HTML_FRAGMENT
             Used to generate fragments of pages for use with AJAX calls or as a component of a static page
         - PYTHON (just the plain python dict for internal calls)
-        - REDIRECT (compatable old borswer action to have session message set and redirected to referer)
+        - REDIRECT (compatable old broswer action to have session message set and redirected to referer)
         - ICAL (calender support)
         - PDF (generate PDF for printing/archiving)
             
@@ -590,11 +595,12 @@ def auto_format_output(target, *args, **kwargs):
 
     # If no format has been set, then this is the first time this decorator has been called
     # We only format the output on the 'first master call' through this decorator
-    # This allows us to freely call controler actions internally without haveing to worry about specifying a format because they will always return python dictionarys
+    # This allows us to freely call controler actions internally without having to worry about specifying a format because they will always return python dictionarys
     auto_format_output_flag = False
     if not c.format:
         current_request = request.environ.get("pylons.routes_dict")
         c.format        = current_request.get("format") or "html"
+        c.subformat     = get_subdomain_format()
         auto_format_output_flag = True
 
     try:
@@ -619,7 +625,6 @@ def auto_format_output(target, *args, **kwargs):
                     set_flash_message(result) # Set flash message
                     return redirect(c.html_action_fallback_url)
             
-            #raise ae # AllanC - unsure if this is needed? surely if there has been an exception and it has not been delt with then we need to propergate it up?
             
     
     # After
