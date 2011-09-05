@@ -37,6 +37,7 @@ help2:
 	# run-worker    -- run a local worker
 	# run-demo      -- run in standalone demo mode - no internet needed
 	# stopsys       -- stop the system cb-website and cb-worker
+	# tv            -- compile telemetry DB
 
 
 ##############################################################################
@@ -233,3 +234,9 @@ schemadiff: data civicboom/model/*.py
 stopsys:
 	sudo initctl stop cb-website
 	sudo initctl stop cb-worker
+
+cbtv.db: cbtv.log
+	../lib/cbutils/cbtv.py -i cbtv.log -d cbtv.db
+
+tv: cbtv.db
+	../lib/cbutils/cbtv.py -d cbtv.db

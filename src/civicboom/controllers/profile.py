@@ -38,6 +38,9 @@ class ProfileController(BaseController):
         """
         # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
         
+        if c.format == "html":
+            return action_ok() # html format is just "include /profile.frag"
+
         member_return = members_controller.show(id=c.logged_in_persona.username, private=True)
         member_return['data'].update(
             self.messages()['data']
