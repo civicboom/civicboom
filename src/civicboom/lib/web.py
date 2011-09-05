@@ -596,11 +596,9 @@ def auto_format_output(target, *args, **kwargs):
     # If no format has been set, then this is the first time this decorator has been called
     # We only format the output on the 'first master call' through this decorator
     # This allows us to freely call controler actions internally without having to worry about specifying a format because they will always return python dictionarys
-    auto_format_output_flag = False
-    if not c.format:
-        current_request = request.environ.get("pylons.routes_dict")
-        c.format        = current_request.get("format") or "html"
-        c.subformat     = get_subdomain_format()
+    auto_format_output_flag = False # Each call to auto_format must have it's own local copy of auto_format_output_flag and not rely on the global c.
+    if not c.auto_format_top_call:
+        c.auto_format_top_call  = True # This prevent any subsiquent calls formatting therir output
         auto_format_output_flag = True
 
     try:

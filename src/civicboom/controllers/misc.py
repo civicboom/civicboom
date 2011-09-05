@@ -18,6 +18,7 @@ content_search = ContentsController().index
 from civicboom.controllers.members import MembersController
 member_search = MembersController().index
 
+from civicboom.lib.web import cookie_set
 
 import datetime
 import random
@@ -323,3 +324,10 @@ Disallow: /*.frag$
                 'members'   : m,
             }
         )
+
+    #---------------------------------------------------------------------------
+    # Set not mobile cookie
+    #---------------------------------------------------------------------------
+    def not_mobile(self):
+        cookie_set('not_mobile', 'True')
+        return action_ok()
