@@ -124,6 +124,7 @@ class MembersController(BaseController):
 
 
     @web
+    @t_log(lambda f,a,k: "member search: "+str(k))
     def index(self, **kwargs):
         """
         GET /members: Show a list of members
@@ -147,6 +148,7 @@ class MembersController(BaseController):
         @example https://test.civicboom.com/members.json?name=unit
         @example https://test.civicboom.com/members.json?follower_of=1&limit=5
         """
+        t_log_start("generating query")
         # Autocomplete uses term not name - for ease of migration term is copyed to name if name not present
         if 'term' in kwargs and 'name' not in kwargs:
             kwargs['name'] = kwargs['term']
@@ -257,6 +259,7 @@ class MembersController(BaseController):
         # Could be a much better way of doing the above
         # http://lowmanio.co.uk/blog/entries/postgresql-full-text-search-and-sqlalchemy/
         # The link has some tips as how to use add_colums - it is very lightly documented in SQLA docs        
+        t_log_end("generating query")
         
         
         return to_apilist(results, obj_type='members', list_to_dict_transform=list_to_dict_transform, **kwargs)

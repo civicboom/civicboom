@@ -16,7 +16,7 @@
 </%def>
 
 <%def name="profile()">
-	<%include file="/frag/members/show.mako"/>
+    <!--#include file="/profile.frag"-->
 </%def>
 
 <%def name="help()">

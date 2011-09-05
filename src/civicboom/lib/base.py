@@ -32,6 +32,7 @@ import cbutils.worker as worker
 
 #from civicboom.model.member            import account_types
 import civicboom.lib.errors as errors
+from cbutils.cbtv import log as t_log, log_start as t_log_start, log_end as t_log_end
 
 import json
 import platform
@@ -89,6 +90,7 @@ __all__ = [
     
     #log
     "user_log",
+    "t_log", "t_log_start", "t_log_end",
     
     # misc
     "BaseController",
@@ -395,6 +397,7 @@ class BaseController(WSGIController):
                 overlay_status_message(c.result,            flash_message_session )
             
 
+    @t_log(lambda f,a,k: request.environ["pylons.routes_dict"]["controller"]+":"+request.environ["pylons.routes_dict"]["action"], bookmark=True)
     def __call__(self, environ, start_response):
         """Invoke the Controller"""
         # WSGIController.__call__ dispatches to the Controller method

@@ -129,6 +129,11 @@ def load_environment(global_conf, app_conf):
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue.type'])
 
+    # set up cbtv
+    import cbutils.cbtv as t
+    if config['telemetry']:
+        t.set_log(config['telemetry'])
+
     init_model_extra() # This will trigger a set of additional initalizers
 
     return config
