@@ -39,7 +39,6 @@
             });
         </script>
         <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
-        <script src="/javascript/jquery.ui.datepicker.js"></script>
         <script src="/javascript/jquery.ui.datepicker.mobile.js"></script>
     </head>
     

@@ -2,6 +2,10 @@ import os
 import json
 
 from civicboom.lib.services.janrain import janrain
+import psycopg2
+
+conn = psycopg2.connect("host=dbw.civicboom.com dbname=civicboom user=civicboom pass=Eev3fair")
+cur = conn.cursor()
 
 # -- Variables --
 
@@ -16,7 +20,7 @@ def get_username_from_id(id):
     """
     Placeholder for code to looking username from id
     """
-    return ''
+    return cur.execute("SELECT id FROM member WHERE id_num=%s;", (int(id), )).fetchone()[0]
 
 
 # -- Main --
