@@ -5,7 +5,10 @@ from civicboom.lib.base import *
 from cbutils.misc import update_dict
 import re
 
+from civicboom.lib.cache import _cache as cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
+
 # AllanC - for members autocomplete index
+# AllanC - are these needed anymore?
 from civicboom.model      import Member, Follow, GroupMembership, Group
 from sqlalchemy           import or_, and_, null, not_
 from sqlalchemy.orm       import join, joinedload, defer
@@ -13,6 +16,8 @@ from sqlalchemy.orm       import join, joinedload, defer
 
 log      = logging.getLogger(__name__)
 
+# Cache
+from civicboom.lib.cache import _cache
 
 #-------------------------------------------------------------------------------
 # Global Functions
@@ -34,9 +39,9 @@ def _init_search_filters():
         #except:
         
         if isinstance(member, basestring):
-            return query.filter(Member.username == member                  )
+            return query.filter(Member.id == member                  )
         else:
-            return query.filter(Member.id       == normalize_member(member))
+            return query.filter(Member.id == normalize_member(member))
 
     def append_search_name(query, text):
         if not text:  # o_O
@@ -51,7 +56,7 @@ def _init_search_filters():
         if parts:
             text = " | ".join(parts)
             return query.filter("""
-                to_tsvector('english', username || ' ' || name || ' ' || description) @@
+                to_tsvector('english', id || ' ' || name || ' ' || description) @@
                 to_tsquery(:text)
             """).params(text=text)
         else:
@@ -59,7 +64,7 @@ def _init_search_filters():
 
     def append_search_username(query, username_text):
         if username_text:
-            return query.filter(Member.username==username_text)
+            return query.filter(Member.id==username_text)
         return query
 
     def append_search_type(query, type_text):
@@ -76,7 +81,7 @@ def _init_search_filters():
             return query
         if isinstance(members, basestring):
             members = [member.strip() for member in members.split(',')]
-        return query.filter(not_(Member.username.in_(members)))
+        return query.filter(not_(Member.id.in_(members)))
 
     def append_search_group_join_mode(query, join_mode):
         return query.filter(Member.__type__=='group').filter(Group.join_mode==join_mode)
@@ -279,18 +284,13 @@ class MembersController(BaseController):
                 member   member object
         @return 404      member not found
         
-        @example https://test.civicboom.com/members/1.json
+        @example https://test.civicboom.com/members/unittest.json
         """
         
-        member = get_member(id)
-
-        if member and id.isdigit() and int(member.id) == int(id):
-            return redirect(url('member', id=member.username))
-        
-        if 'lists' in kwargs:
-            lists = [list.strip() for list in kwargs['lists'].split(',')]
-        else:
-            lists = [
+        if isinstance(kwargs.get('lists'), basestring):
+            kwargs['lists'] = [list.strip() for list in kwargs['lists'].split(',')]
+        if not isinstance(kwargs.get('lists'), type([])): # have to use type([]) because list is used below and python trys to pre-empt variable use
+            kwargs['lists'] = [
                 # Comunity
                 'followers',
                 'following',
@@ -309,26 +309,40 @@ class MembersController(BaseController):
                 'actions',
                 'boomed' ,              # AllanC - see limit imposed below
             ]
+        kwargs['lists'].sort() # Order needs to be standardised to generate a normalized cache key
         
-        data = {'member': member.to_dict(list_type='full', **kwargs)}
+        cache_key = gen_key_for_lists(['member']+kwargs['lists'], normalize_member(id), is_etag_master=True) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
         
-        # Imports
-        # AllanC - cannot be imported at begining of module because of mutual coupling error
-        from civicboom.controllers.contents       import ContentsController, list_filters
-        from civicboom.controllers.member_actions import MemberActionsController
-        contents_controller       = ContentsController()
-        member_actions_controller = MemberActionsController()
+        def members_show(id, **kwargs):
+            lists  = kwargs.pop('lists')
+            member = get_member(id)
+            
+            data = {'member': member.to_dict(list_type='full', **kwargs)}
+            
+            # Imports
+            # AllanC - cannot be imported at begining of module because of mutual coupling error
+            from civicboom.controllers.contents       import ContentsController, list_filters
+            from civicboom.controllers.member_actions import MemberActionsController
+            contents_controller       = ContentsController()
+            member_actions_controller = MemberActionsController()
+            
+            # Content Lists
+            for list in [list for list in lists if list in list_filters]:
+                data[list] = contents_controller.index(creator=member, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
+                lists.remove(list) # AllanC - fix; don't allow the same lists to be got from both content and member controller
+            
+            # Member Lists
+            for list in [list for list in lists if hasattr(member_actions_controller, list)]:
+                limit = None
+                if list in ['boomed', 'assignments_accepted']: # AllanC - we dont want to limit member lists, but we do want to limit content lists to 3
+                    limit = config['search.default.limit.sub_list']
+                data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
+            
+            return action_ok(data=data)
         
-        # Content Lists
-        for list in [list for list in lists if list in list_filters]:
-            data[list] = contents_controller.index(creator=member.username, list=list, limit=config['search.default.limit.sub_list'], **kwargs)['data']['list']
-            lists.remove(list) # AllanC - fix; don't allow the same lists to be got from both content and member controller
-        
-        # Member Lists
-        for list in [list for list in lists if hasattr(member_actions_controller, list)]:
-            limit = None
-            if list in ['boomed', 'assignments_accepted']: # AllanC - we dont want to limit member lists, but we do want to limit content lists to 3
-                limit = config['search.default.limit.sub_list']
-            data[list] = getattr(member_actions_controller, list)(member, limit=limit, **kwargs)['data']['list']
-        
-        return action_ok(data=data)
+        cache      = _cache.get('members_show')
+        cache_func = lambda: members_show(id, **kwargs)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
+        return cache_func()
+

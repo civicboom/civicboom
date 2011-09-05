@@ -5,7 +5,7 @@ Beacause there is no standard way to change object types,
 we need to do some raw SQL processing to change the database level data and then re-query the object form the database
 """
 
-from civicboom.lib.database.get_cached import get_content, update_content
+from civicboom.lib.database.get_cached import get_content
 from civicboom.model.content import Content, DraftContent, ArticleContent, AssignmentContent, UserVisibleContent, CommentContent
 
 from civicboom.model.meta import Session
@@ -123,7 +123,7 @@ def morph_content_to(content, after_type):
         Session.execute(sql_cmd)
     Session.commit()
     
-    update_content(id) # Invalidate cache for this content and update etag
+    #content.invalidate_cache() # Invalidate cache for this content and update etag - AllanC unneeded as this is done automatically with SQLa events
     content = get_content(id)
     assert content.__type__ == after_type # If this is not true then something has gone very wrong!
     return content

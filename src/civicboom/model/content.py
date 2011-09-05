@@ -1,5 +1,5 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType
+from civicboom.model.meta import Base, location_to_string, JSONType, CacheChangeListener
 from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
@@ -40,7 +40,7 @@ class ContentTagMapping(Base):
 class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id') , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id') , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=func.now())
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
     content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
@@ -52,7 +52,7 @@ class Boom(Base):
 class Rating(Base):
     __tablename__ = "map_ratings"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id')              , nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False)
 
     __table_args__ = (
@@ -64,7 +64,7 @@ class Rating(Base):
 class Interest(Base):
     __tablename__ = "map_interest"
     content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')              , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id')              , nullable=False, primary_key=True)
 
 
 class Content(Base):
@@ -89,13 +89,13 @@ class Content(Base):
     """
     __tablename__   = "content"
     __type__        = Column(_content_type, nullable=False, index=True)
-    __mapper_args__ = {'polymorphic_on': __type__}
+    __mapper_args__ = {'polymorphic_on': __type__ , 'extension': CacheChangeListener()}
     #_visiability = Enum("pending", "show", name="content_")
     _edit_lock   = Enum("parent_owner", "group", "system", name="edit_lock_level")
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
-    creator_id      = Column(Integer(),        ForeignKey('member.id'),  nullable=False, index=True)
+    creator_id      = Column(String(32),       ForeignKey('member.id'),  nullable=False, index=True)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True,  index=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default=func.now())
@@ -116,6 +116,7 @@ class Content(Base):
     # AllanC - we want to cascade deleting of comments, but not full responses. Does the 'comments' cascade below over this?
     responses       = relationship("Content",  primaryjoin=id==parent_id, backref=backref('parent', remote_side=id, order_by=creation_date))
     #parent          = relationship("Content", primaryjoin=parent_id==id, remote_side=id)
+    
     creator         = relationship("Member" , primaryjoin="Content.creator_id==Member.id", backref=backref('content', cascade="all,delete-orphan"))
     
     attachments     = relationship("Media",              backref=backref('attached_to')         , cascade="all,delete-orphan")
@@ -179,7 +180,8 @@ class Content(Base):
     del __to_dict__['full']['license_id']
     del __to_dict__['full']['content_short']
     
-    
+    def __init__(self):
+        self.extra_fields = {} # AllanC - for some holy reason even though the default is setup in the field list above, if the object isnt added to the session this dict is None - force an epty dict - extending class's must ensure that they call Content.__init__() in there own init methods
     
     def __unicode__(self):
         return self.title # + u" (" + self.__type__ + u")"
@@ -188,8 +190,8 @@ class Content(Base):
         from civicboom.lib.web import url
         return url('content', id=self.id, sub_domain='www', qualified=True)
 
-    def __db_index__(self):
-        return self.id
+    #def __db_index__(self):
+    #    return self.id
 
     def clone(self, content):
         if content and content.id:
@@ -208,6 +210,10 @@ class Content(Base):
         for field in ("id", "title", "content", "creator", "parent", "update_date", "status", "private", "license", "attachments"): # AllanC: unfinished field list? include relations?
             h.update(str(getattr(self, field)))
         return h.hexdigest()
+
+    def invalidate_cache(self, remove=False):
+        from civicboom.lib.cache import invalidate_content
+        invalidate_content(self, remove=remove)
 
     def action_list_for(self, member, **kwargs):
         action_list = []
@@ -395,6 +401,7 @@ class DraftContent(Content):
     __to_dict__['full'        ].update(_extra_draft_fields)
 
     def __init__(self):
+        Content.__init__(self)
         self.private  = True # AllanC? hu? - GregM: Removed set to user/hub default in contents controller
         self.__type__ = 'draft'
 
@@ -425,6 +432,7 @@ class CommentContent(Content):
     __to_dict__['full']         = copy.deepcopy(__to_dict__['default'])
 
     def __init__(self):
+        Content.__init__(self)
         self.__type__ = 'comment'
 
 
@@ -505,6 +513,7 @@ class ArticleContent(UserVisibleContent):
     __to_dict__['full'        ].update(_extra_article_fields)
 
     def __init__(self):
+        Content.__init__(self)
         self.__type__ = 'article'
 
     def rate(self, member, rating):
@@ -572,6 +581,7 @@ class AssignmentContent(UserVisibleContent):
     #__to_dict__['full+actions'].update(__to_dict__['full'])
 
     def __init__(self):
+        Content.__init__(self)
         self.__type__ = 'assignment'
 
     def action_list_for(self, member, **kwargs):
@@ -638,7 +648,7 @@ class MemberAssignment(Base):
     __tablename__ = "member_assignment"
     _assignment_status = Enum("pending", "accepted", "withdrawn", "responded", name="assignment_status")
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
-    member_id     = Column(Integer(),    ForeignKey('member.id')            , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id')            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
     member_viewed = Column(Boolean(),    nullable=False, default=False, doc="a flag to keep track to see if the member invited has actually viewed this page")
     #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
@@ -763,7 +773,7 @@ class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(Integer(),     ForeignKey('member.id'),  nullable=False, index=True)
+    member_id     = Column(String(32),    ForeignKey('member.id'),  nullable=False, index=True)
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
@@ -774,7 +784,7 @@ class FlaggedContent(Base):
     _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(Integer(),     ForeignKey('member.id') , nullable=True )
+    member_id     = Column(String(32),    ForeignKey('member.id') , nullable=True )
     timestamp     = Column(DateTime(),    nullable=False, default=func.now())
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=False, default="", doc="optional should the user want to add additional details")

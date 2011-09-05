@@ -208,7 +208,7 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         
-        group_id = int(response_json['data']['id'])
+        group_id = response_json['data']['id']
         self.assertNotEqual(group_id, 0)
         
         response = self.app.get(url('group', id=username, format='json'))
@@ -478,7 +478,7 @@ class TestController(TestCase):
         
         # Check comment is listed in parent as the latest comment
         parent_content = self.get_content(content_id)
-        self.assertEqual(parent_content['comments']['items'][-1]['id'], comment_id)
+        self.assertEqual(parent_content['comments']['items'][0]['id'], comment_id)
         
         # Check the comment notification was generated for the creator of the content being commented on
         #self.assertEqual(self.get_comments(content_id)['list']['items'][-1]['id'], comment_id) # AllanC - no need to re-get just the comments, we got the whole content object above
