@@ -179,8 +179,22 @@ class PayPalInterface(object):
                     'PAYMENTINFO_0_PROTECTIONELIGIBILITYTYPE'   : 'None',
                     'PAYMENTINFO_0_SECUREMERCHANTACCOUNTID'     : 'MASH_KEYS_238974321',
                     'PAYMENTINFO_0_ERRORCODE'                   : '0',
-                    'PAYMENTINFO_0_ACK'                         : 'Success'
+                    'PAYMENTINFO_0_ACK'                         : 'Success',
                 }
+            elif url_values['METHOD'] == 'CreateRecurringPaymentsProfile':
+                token = url['TOKEN']
+                test_data = self.config.test_data[token]
+                response = {
+                    'ACK'                                       : 'Success',
+                    'TOKEN'                                     : token,
+                    'TIMESTAMP'                                 : '',
+                    'CORRELATIONID'                             : 'TESTCORID-%s' % token,
+                    'VERSION'                                   : url['VERSION'],
+                    'BUILD'                                     : 'CB_TEST',
+                    'PROFILESTATUS'                             : 'ActiveProfile',
+                    'PROFILEID'                                 : 'RECURRING-TEST',
+                }
+                pass
             response = urllib.urlencode(response)
             ###### Civicboom Unit Test Responses
         response = PayPalResponse(response, self.config)

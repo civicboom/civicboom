@@ -15,6 +15,7 @@ class TestPaymentController(TestController):
     payment_account_numbers = {}
     
     def test_payment_all_ok(self):
+        self.server_datetime('now')
         # Run invoice tasks to get any stray emails out of the way
         self.run_task('run_invoice_tasks')
         # Setup payment account numbers dict
@@ -64,6 +65,7 @@ class TestPaymentController(TestController):
         self.server_datetime('now')
         
     def test_payment_ok_paypal(self):
+        self.server_datetime('now')
         self.run_task('run_invoice_tasks')
         self.part_sign_up('test_payment_paypal', 'org')
         self.run_task('run_invoice_tasks')
@@ -96,8 +98,50 @@ class TestPaymentController(TestController):
         print invoice, invoice.status, invoice.transactions[0].status, invoice.paid_total, invoice.total, invoice.total_due
         assert invoice.status == 'paid'
         self.part_check_member_status('test_payment_paypal', 'ok')
+        self.server_datetime('now')
+        
+    def test_payment_ok_paypal_recurring(self):
+        self.server_datetime('now')
+        self.run_task('run_invoice_tasks')
+        self.part_sign_up('test_payment_paypal_rec', 'org')
+        self.run_task('run_invoice_tasks')
+        self.part_check_member_status('test_payment_paypal_rec', 'waiting')
+        outstanding = self.part_get_invoice('test_payment_paypal_rec').total_due
+        
+        # Get the invoice and call payment_begin for paypal
+        invoice = self.part_get_invoice('test_payment_paypal_rec')
+        response = self.app.get(
+            url(controller='payment_actions', id=invoice.payment_account.id, action='payment_begin', invoice_id=invoice.id, service="paypal_express", recurring="True"),
+            status=302
+        )
+        # Check correct response
+        assert 'sandbox.paypal.com' in response
+        # Grab 302'd url and token query parameter
+        redirect_location = response.response.headers['location']
+        redirect_token = urlparse.parse_qs(urlparse.urlparse(redirect_location).query)['token'][0]
+        # Check we got a "TESTTOKEN" back (actual token would be "TESTTOKEN-0" for e.g.)
+        assert 'TESTTOKEN' in redirect_token
+        
+        # Get the invoice and call payment_return for paypal
+        invoice = self.part_get_invoice('test_payment_paypal_rec')
+        response = self.app.get(
+            url(controller='payment_actions', id=invoice.payment_account.id, action='payment_return', invoice_id=invoice.id, service="paypal_express", token=redirect_token, PayerID='rar'),
+            status=302
+        )
+        
+        bacct = self.part_get_billing_account('test_payment_paypal_rec')
+        
+        self.assertNotEqual(bacct, None)
+        
+        self.run_task('run_invoice_tasks')
+        invoice = self.part_get_invoice('test_payment_paypal_rec')
+        print invoice, invoice.status, invoice.transactions[0].status, invoice.paid_total, invoice.total, invoice.total_due
+        assert invoice.status == 'paid'
+        self.part_check_member_status('test_payment_paypal_rec', 'ok')
+        self.server_datetime('now')
         
     def test_payment_cancel_paypal(self):
+        self.server_datetime('now')
         self.run_task('run_invoice_tasks')
         self.part_sign_up('test_payment_pp_cancel', 'org')
         self.run_task('run_invoice_tasks')
@@ -131,11 +175,22 @@ class TestPaymentController(TestController):
         assert invoice.status == 'billed'
         assert invoice.transactions[0].status == 'cancelled'
         self.part_check_member_status('test_payment_pp_cancel', 'waiting')
+        self.server_datetime('now')
         
+        
+    #===========================================================================
+    # Subroutines used for the tests above
+    #===========================================================================
     def part_get_invoice(self, username, offset=0):
+        """
+        Get the invoice at offset for username
+        """
         return get_member(username).payment_account.invoices[offset]
         
     def part_pay_invoice_manual(self, invoice, amount=None):
+        """
+        Create a manual transaction against invoice
+        """
         txn = BillingTransaction()
         txn.invoice = invoice
         txn.status = 'complete'
@@ -146,13 +201,25 @@ class TestPaymentController(TestController):
         pass
     
     def part_check_member_status(self, username, status):
-        assert get_member(username).payment_account.billing_status == status
+        """
+        Check member status against status parameter
+        """
+        self.assertEqual(get_member(username).payment_account.billing_status, status)
         
     def part_sign_up(self, username, name_type="ind", type="plus"):
+        """
+        Sign up to the site, create payment account (testing each required field), check account is waiting)
+        """
         self.sign_up_as(username)
         # New member should have no payment account
         member = get_member(username)
         assert member.payment_account == None
+        
+        # Check redirect from index when no payment account
+        response = self.app.get(
+            '/payments',
+            status=302
+        )
         
         params = {
             '_authentication_token': self.auth_token,
@@ -194,6 +261,13 @@ class TestPaymentController(TestController):
             status=200
         )
         assert (("%s's Individual Name" % username) if name_type == 'ind' else ("%s's Organisation Name" % username)) in response
+        
+        # Check edit page
+        response = self.app.get(
+            url('edit_payment', id=self.payment_account_numbers[username]),
+            status=200
+        )
+        
         # Change a field
         params['_authentication_token'] = self.auth_token
         params['address_postal']        = 'PO5_7AL_TESTING'
@@ -273,6 +347,9 @@ class TestPaymentController(TestController):
         assert len(get_member(username).payment_account.members) == members_len
         
     def part_regrade(self, username, type="free"):
+        """
+        Regrade account to type (default free)
+        """
         response = self.app.post(
             url(controller='payment_actions', action='regrade', id=self.payment_account_numbers[username], format="json"),
             params=dict(
@@ -281,5 +358,11 @@ class TestPaymentController(TestController):
             status=200)
         
         assert get_member(username).payment_account.type == type
+    
+    def part_get_billing_account(self, username):
+        """
+        Get the user's first billing account
+        """
+        return get_member(username).payment_account.billing_accounts[0]
         
         
