@@ -131,7 +131,7 @@ def load_environment(global_conf, app_conf):
 
     # set up cbtv
     import cbutils.cbtv as t
-    if config['telemetry']:
+    if config.get('telemetry'):
         t.set_log(config['telemetry'])
 
     init_model_extra() # This will trigger a set of additional initalizers
