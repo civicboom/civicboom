@@ -117,9 +117,12 @@ def get_end(cursor, end_hint=0, io="-"):
 # GUI Out
 #######################################################################
 
-from Tkinter import *
-from ttk import *
-
+try:
+    from Tkinter import *
+    from ttk import *
+    have_tk = True
+except ImportError:
+    have_tk = False
 
 class App:
     def __control_box(self, master):
@@ -456,7 +459,7 @@ def main(argv):
     if options.log_file and options.database:
         compile_log(options.log_file, options.database)
 
-    elif options.database:
+    elif options.database and have_tk:
         display(options.database)
 
 
