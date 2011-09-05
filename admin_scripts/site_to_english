@@ -59,9 +59,9 @@ def trans(text, locations):
         ("user",       "user"),
         ("group",      "Hub"),
 
-        ("free",       "basic"),
-        ("plus",       "premium"),
-        ("corporate",  "corporate"),
+        ("free",       "free"),
+        ("plus",       "pro lite"),
+        ("corporate",  "pro premium"),
 
         ("widget",  "Boombox"),
     ]

@@ -1,0 +1,1 @@
+<%include file="/frag/payments/show.mako"/>

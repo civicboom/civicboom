@@ -58,7 +58,7 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     # The Pylons WSGI app
     app = PylonsApp(config=config)
 
-    if config['profile']:
+    if config['profile']:  # pragma: no cover - nightly profiles do the full stack
         from repoze.profiler import AccumulatingProfileMiddleware
         app = AccumulatingProfileMiddleware(
             app,

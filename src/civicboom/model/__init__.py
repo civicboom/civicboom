@@ -11,10 +11,12 @@ from civicboom.model.member  import Member, User, UserLogin, Group, GroupMembers
 from civicboom.model.message import Message
 from civicboom.model.media   import Media
 from civicboom.model.feed    import Feed
+from civicboom.model.payment import Service, PaymentAccountService, Invoice, InvoiceLine, BillingAccount, BillingTransaction
 
 from cbutils.misc import now
 from sqlalchemy     import and_
 from sqlalchemy.orm import mapper, dynamic_loader, relationship, backref
+from sqlalchemy.schema import DDL   
 import datetime
 
 
@@ -84,3 +86,37 @@ def init_model_extra():
         foreign_keys  = [Boom.member_id, Boom.content_id],
         #cascade="all,delete-orphan",
     )
+    
+#    now_functions = """
+#CREATE OR REPLACE FUNCTION now() RETURNS timestamptz AS $$
+#BEGIN
+#    IF EXISTS (SELECT relname FROM pg_class WHERE relname = '_now_temp') THEN
+#        RETURN (SELECT t FROM _now_temp LIMIT 1);
+#    ELSE
+#        RETURN NOW();
+#    END IF;
+#END;
+#$$ LANGUAGE plpgsql;
+#
+#
+#CREATE OR REPLACE FUNCTION set_now(timestamptz) RETURNS boolean AS $$
+#BEGIN
+#    IF EXISTS (SELECT relname FROM pg_class WHERE relname = '_now_temp') THEN
+#        UPDATE _now_temp SET t = $1; 
+#    ELSE
+#        CREATE TABLE _now_temp (t timestamptz);
+#        INSERT INTO _now_temp (t) VALUES ($1);
+#    END IF;
+#    RETURN TRUE;
+#END;
+#$$ LANGUAGE plpgsql;
+#
+#CREATE OR REPLACE FUNCTION unset_now() RETURNS boolean AS $$
+#BEGIN
+#    DROP TABLE IF EXISTS _now_temp;
+#    RETURN TRUE;
+#END;
+#$$ LANGUAGE plpgsql;
+#"""
+#    
+#    meta.Session.execute(now_functions)

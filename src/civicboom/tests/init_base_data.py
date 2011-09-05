@@ -25,7 +25,7 @@ def init_base_data():
         log.debug("Users")
 
         u1 = User()
-        u1.username      = u"unittest"
+        u1.id            = u"unittest"
         u1.name          = u"Mr U. Test"
         u1.join_date     = datetime.datetime.now()
         u1.status        = "active"
@@ -41,9 +41,19 @@ def init_base_data():
 
         u1.set_payment_account('plus', delay_commit=True)
 
+        Session.add_all([u1, u1_login])
+        Session.commit()
+        #assert u1.id == 1
+        assert u1.login_details[0].type == "password"
+        assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
+        assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
+        
+        #u1_service = Session.query(Service).filter(Service.payment_account_type==u1.payment_account.type).one()
+        
+        u1.payment_account.do_not_bill = True
 
         u2 = User()
-        u2.username      = u"unitfriend"
+        u2.id            = u"unitfriend"
         u2.name          = u"Mr U's Friend"
         u2.status        = "active"
         u2.email         = u"test+unitfriend@civicboom.com"
@@ -53,10 +63,16 @@ def init_base_data():
         u2_login.type   = "password"
         u2_login.token  = hashlib.sha1("password").hexdigest()
 
-        u2.set_payment_account('plus', delay_commit=True)
+        u2_account         = PaymentAccount()
+        u2_account.type    = 'plus'
+        u2_account.start_date = datetime.datetime.now() - datetime.timedelta(days=27)
+
+        u2.set_payment_account(u2_account, delay_commit=True)
+        
+        u2.payment_account.do_not_bill = True
 
         g1 = Group()
-        g1.username = "unitgroup"
+        g1.id       = "unitgroup"
         g1.name     = "Test User Group"
         g1.status   = "active"
         g1.join(u1)
@@ -68,22 +84,17 @@ def init_base_data():
         u1.follow(u2)
         u2.follow(u1)
 
-        assert u1.id == 1
         assert u1.login_details[0].type == "password"
         assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
         assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
 
-        assert u2.id == 2
-
-        assert g1.id == 3
-
-
         u3 = User()
-        u3.username      = u"kitten"
+        u3.id            = u"kitten"
         u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"test+kitten@civicboom.com"
         u3.avatar        = u"f86c68ccab304eb232102ac27ba5da061559fde5"
+        u3.set_payment_account('free', delay_commit=True)
 
         u3_login = UserLogin()
         u3_login.user   = u3
@@ -91,21 +102,21 @@ def init_base_data():
         u3_login.token  = hashlib.sha1("password").hexdigest()
 
         u4 = User()
-        u4.username      = u"puppy"
+        u4.id            = u"puppy"
         u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"test+puppy@civicboom.com"
         u4.avatar        = u"64387ac53e446d1c93d11eec777cc7fbf4413f63"
 
         u5 = User()
-        u5.username      = u"bunny"
+        u5.id            = u"bunny"
         u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
         u5.avatar        = u"2ca1c359d090e6a9a68dac6b3cc7a14d195ef4d8"
 
         g2 = Group()
-        g2.username = "cuteness"
+        g2.id       = "cuteness"
         g2.name     = "Cute Users United"
         g2.status   = "active"
         g2.join(u3)
@@ -155,5 +166,4 @@ def init_base_data():
             for member in member_config:
                 member.config[member_config_var] = 'init'
 
-        assert list(Session.query(User).filter(User.id==0)) == []
-        assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
+        assert list(Session.query(User).filter(User.id=="MrNotExists")) == []

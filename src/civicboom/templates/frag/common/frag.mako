@@ -114,7 +114,7 @@
         ${popup.popup_frag(_('What next ...'), self.attr.popup_url)}
     % endif
     
-    <div class="frag_bars">
+    <div class="frag_bars hide_if_print">
         <div class="title_bar">
             <div class="common_actions">
                 ## AJAX Fragment refresh (not visible to user)

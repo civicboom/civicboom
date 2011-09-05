@@ -67,15 +67,13 @@ FlaggedContentGrid.configure(include=[
 
 MemberGrid = Grid(model.Member)
 MemberGrid.configure(include=[
-        #MemberGrid.id.readonly(),
-        MemberGrid.username,
+        MemberGrid.id,
         MemberGrid.name,
         ])
 
 UserGrid = Grid(model.User)
 UserGrid.configure(include=[
-        #UserGrid.id.readonly(),
-        UserGrid.username,
+        UserGrid.id,
         UserGrid.name,
         UserGrid.email,
         UserGrid.join_date.readonly(),
@@ -84,7 +82,7 @@ UserGrid.configure(include=[
 
 GroupGrid = Grid(model.Group)
 GroupGrid.configure(include=[
-        GroupGrid.username,
+        GroupGrid.id,
         GroupGrid.name,
         GroupGrid.join_date.readonly(),
         GroupGrid.num_members,
@@ -116,4 +114,28 @@ MediaGrid.configure(include=[
         MediaGrid.name,
         MediaGrid.type,
         MediaGrid.attached_to,
+        ])
+
+PaymentAccountGrid = Grid(model.PaymentAccount)
+PaymentAccountGrid.configure(include=[
+        PaymentAccountGrid.type,
+        PaymentAccountGrid.billing_status,
+        PaymentAccountGrid.start_date,
+        PaymentAccountGrid.currency,
+        PaymentAccountGrid.frequency,
+        PaymentAccountGrid.taxable,
+        PaymentAccountGrid.tax_rate_code,
+        ])
+
+InvoiceGrid = Grid(model.Invoice)
+InvoiceGrid.configure(include=[
+        InvoiceGrid.id,
+        InvoiceGrid.payment_account,
+        InvoiceGrid.status,
+        InvoiceGrid.timestamp,
+        InvoiceGrid.due_date,
+        InvoiceGrid.currency,
+        InvoiceGrid.taxable,
+        InvoiceGrid.tax_rate_code,
+        InvoiceGrid.tax_rate,
         ])

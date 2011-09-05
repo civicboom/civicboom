@@ -3,12 +3,13 @@ from sqlalchemy.util import NamedTuple
 
 from cbutils.misc import str_to_int
 from civicboom.lib.web import action_ok
+from cbutils.cbtv import log as t_log
 
 import logging
 log  = logging.getLogger(__name__)
 
 valid_obj_types = ['contents', 'members', 'messages']
-kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format','exclude_content','exclude_members']
+kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','exclude_content','exclude_members','lists'] # AllanC - these are no longer needed as they are stripped in web_parms to kwargs - 'controller','sub_domain','action','format'
 
 
 def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):
@@ -16,11 +17,11 @@ def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs=
         assert obj_type in valid_obj_types
     kwargs = {}
     for key, value in source_kwargs.iteritems():
-        if key not in kwargs_to_exclude_in_api_output:
-            try:
-                value = value.__db_index__()
-            except Exception as e:
-                pass
+        if not (key in kwargs_to_exclude_in_api_output or key.startswith('_')):
+            try   : value = value.id # AllanC - get id's of any object types
+            except: pass
+            if isinstance(value, list):
+                value = ','.join(value)
             # AllanC - it may be wise here to look to all objects that are ok .. like int, float, date ... but raise warnings on actual objects that arrive at this point
             value = unicode(value)
             if value:
@@ -71,7 +72,7 @@ def __list_to_dict(results, list_to_dict_transform=None, **kwargs):
     except:
         return results
 
-
+@t_log("to_apilist")
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     """
     """

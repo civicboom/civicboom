@@ -3,13 +3,16 @@ from civicboom.lib.base import *
 
 # Datamodel and database session imports
 from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
-from civicboom.lib.database.get_cached import update_content, get_license, get_tag, get_assigned_to, get_content as _get_content
+from civicboom.lib.database.get_cached import get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
 from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
 from civicboom.lib.database.actions             import respond_assignment
+
+# Cache
+from civicboom.lib.cache import _cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
 
 # Validation
 import formencode
@@ -34,6 +37,8 @@ from time import time
 
 # Logging setup
 log      = logging.getLogger(__name__)
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -106,7 +111,7 @@ list_filters = {
     ]),
     'drafts'              : lambda: AndFilter([
         TypeFilter('draft'),
-        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else None)
+        CreatorFilter(c.logged_in_persona.id if c.logged_in_persona else '') # hack; anons should never see drafts
     ]),
     'articles'            : lambda: AndFilter([
         TypeFilter('article'),
@@ -163,7 +168,7 @@ class ContentsController(BaseController):
 
     
     @web
-    @normalize_kwargs
+    @t_log(lambda f,a,k: "content search: "+str(k))
     def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
@@ -188,6 +193,7 @@ class ContentsController(BaseController):
         @param due_date     find the due date of an assignment, eg "due_date=<2000/11/01" for old assignments, "due_date=>now" for open ones
         @param update_date  search by most recent update date, eg "update_date=<2000/11/01" for old articles
         @param response_to  content_id of parent
+        @param comments_to  content_id of parent
         @param boomed_by    username or user_id of booming user
         @param exclude_content a list of comma separated content id's to exclude from the content returned
         @param private      if set and creator==logged_in_persona both public and private content will be returned
@@ -203,128 +209,167 @@ class ContentsController(BaseController):
         
         @comment AllanC use 'include_fields=attachments' for media
         @comment AllanC if 'creator' not in params or exclude list then it is added by default to include_fields:
+        @comment AllanC if list='responses' - ",parent" is appended automatically to 'include_fields'
         """
-        results = Session.query(Content).with_polymorphic('*') # TODO: list
-        results = results.filter(Content.__type__!='comment').filter(Content.visible==True)
 
-        ###############################
-        # BEGIN COPY & PASTE OLD BITS #
-        ###############################
-        trusted_follower  = False
-        logged_in_creator = False
+        # Pre-process kwargs ---------------------------------------------------
+        #
+        # This must be done before caching - we assertain if private content can be shown to this user
+
+        kwargs['_is_logged_in_as_creator'] = False # Setup placeholder kwargs for permissions options - this must be done because a cheeky user might try and pass them
+        kwargs['_is_trusted_follower'    ] = False
+
+        # Setup default search criteria
+        if 'include_fields' not in kwargs:
+            kwargs['include_fields'] = ""
+            if 'creator' not in kwargs:
+                kwargs['include_fields'] = "creator"
+        if kwargs.get('list') == 'responses': # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
+            kwargs['include_fields'] += ",parent"
+        if 'sort' not in kwargs:
+            kwargs['sort'] = '-update_date'
+
+        # Split comma separted fields into lists
+        for field in [field for field in ['include_fields', 'exclude_fields'] if isinstance(kwargs.get(field),basestring)]: #'sort' cannot be a list at this point because the list will be sorted by normalize_kwargs and the order of sort is important
+            kwargs[field] = [i.strip() for i in kwargs[field].split(",")] # these will be sorted in normalization
+
+        # Replace instances of 'me' with current username
+        for key, value in kwargs.iteritems():
+            if value == 'me':
+                if c.logged_in_persona:
+                    kwargs[key] = c.logged_in_persona # Member object will get normalized down to str in normalize for cache later
+                else:
+                    raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
+
         creator = None
 
-        #if kwargs.get('list') == "drafts" and not c.logged_in_persona:
-        #    kwargs['list'] = 'all'
-
         try:
-            # Try to get the creator of the whole parent chain or creator of self
-            # This models the same permission view enforcement as the 
+            # If displaying responses - Try to get the creator of the whole parent chain or creator of self
+            # This models the same permission view enforcement as the 'show' private content API call
             if kwargs.get('response_to'):
-                parent_root = get_content(kwargs['response_to'])
+                parent_root = get_content(kwargs['response_to'], is_viewable=True) # get_content will fail if current user does not have permission to view it
                 parent_root = parent_root.root_parent or parent_root
-                creator = parent_root.creator
+                creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
+                # AllanC note - 'creator' is compared against c.logged_in_persona later
         except Exception as e:
-            user_log.exception("Error searching:")
+            user_log.exception("Error searching:") # AllanC - um? why is this in a genertic exception catch? if get_content fails then we want that exception to propergate
 
-        try:
-            if kwargs.get('creator'):
-                creator = get_member(kwargs['creator'])
-                kwargs['creator'] = normalize_member(creator) # normalize creator param for search
-        except Exception as e:
-            user_log.exception("Error searching:")
+        if kwargs.get('creator'):
+            creator = get_member(kwargs['creator'])
         
         if creator:
-            #if c.logged_in_persona and kwargs['creator'] == c.logged_in_persona.id:
             if c.logged_in_persona == creator:
-                logged_in_creator = True
+                kwargs['_is_logged_in_as_creator'] = True
             else:
-                trusted_follower = creator.is_follower_trusted(c.logged_in_persona)
+                kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
 
-        # Setup search criteria
-        if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = "creator"
 
-        # Defaults
-        # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
-        if kwargs.get('list') == 'responses':
-            kwargs['include_fields'] += ",parent"
+        # Create Cache key based on kwargs -------------------------------------
+        
+        kwargs = normalize_kwargs_for_cache(kwargs) # This str()'s all kwargs and gets id from any objects - and sorts any lists
 
-        if logged_in_creator:
-            pass # allow private content
+        cache_key = ''
+        if _filter:
+            pass # We cant cache anything with a filter provided because we cant invalidate it afterwards because we cant identify the source
+            #if _filter:
+            #    cache_key += sql(_filter) # Create a string representation of the passed filters so that they form part of the cache key
         else:
-            if not trusted_follower:
-                results = results.filter(Content.private==False) # public content only
-            results = results.filter(Content.__type__!='draft')
+            cache_key = get_cache_key('contents_index', kwargs)
+        
+        
+        # Construct Query with provided kwargs ---------------------------------
+        # Everything past here can be cached based on the kwargs state
 
-        # TODO: how does this affect performance?
-        for col in ['creator', 'attachments', 'tags', 'parent']:
-            if col in kwargs.get('include_fields', []):
-                results = results.options(joinedload(getattr(Content, col)))
-        ###############################
-        #  END COPY & PASTE OLD BITS  #
-        ###############################
+        def contents_index(_filter=None, **kwargs):
 
-        parts = []
+            time_start = time()
+            
+            results = Session.query(Content).with_polymorphic('*') # TODO: list
+            results = results.filter(Content.visible==True)
+            # AllanC - not to sure about this comments addition. It would be nice to have it built with the filters? could this be moved down? thoughts?
+            if kwargs.get('comments_to'):
+                results = results.filter(Content.__type__=='comment')
+            else:
+                results = results.filter(Content.__type__!='comment')
+    
+            if kwargs['_is_logged_in_as_creator']:
+                pass # allow private content
+            else:
+                if not kwargs['_is_trusted_follower']:
+                    results = results.filter(Content.private==False) # public content only
+                results = results.filter(Content.__type__!='draft') # Don't show drafts to anyone other than the creator
+    
+            # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
+            for col in ['creator', 'attachments', 'tags', 'parent', 'license']:
+                if col in kwargs.get('include_fields', []):
+                    results = results.options(joinedload(getattr(Content, col)))
+    
+            parts = []
+    
+            try:
+                if _filter:
+                    parts.append(_filter)
+    
+                filter_map = {
+                    'creator'    : CreatorFilter   ,
+                    'due_date'   : DueDateFilter   ,
+                    'update_date': UpdateDateFilter,
+                    'type'       : TypeFilter      ,
+                    'response_to': ParentIDFilter  ,
+                    'comments_to': ParentIDFilter  ,
+                    'boomed_by'  : BoomedByFilter  ,
+                    'term'       : TextFilter      ,
+                    'location'   : LocationFilter  ,
+                }
+    
+                if 'list' in kwargs:
+                    if kwargs['list'] in list_filters:
+                        parts.append(list_filters[kwargs['list']]())
+                    else:
+                        raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+    
+                if 'feed' in kwargs and kwargs['feed']:
+                    parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
+    
+                for filter_name in filter_map:
+                    val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired - this strips and strings the input arguments
+                    #val = str(kwargs.get(filter_name, '')).strip()
+                    if val:
+                        f = filter_map[filter_name].from_string(val)
+                        if hasattr(f, 'mangle'):
+                            results = f.mangle(results)
+                        parts.append(f)
+    
+                if 'include_content' in kwargs and kwargs['include_content']:
+                    parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(',')]))
+    
+                if 'exclude_content' in kwargs and kwargs['exclude_content']:
+                    parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(',')])))
+            except FilterException as fe:
+                raise action_error(code=400, message=str(fe))
+    
+            feed = AndFilter(parts)
+    
+            # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
+            # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
+            results = results.filter("("+sql(feed)+")")
+            results = sort_results(results, kwargs.get('sort').split(","))
+            
+            results = to_apilist(results, obj_type='contents', **kwargs)
+            
+            # hacky benchmarking just to get some basic idea of how each feed performs
+            time_end = time()
+            log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
+    
+            return results
+        
+        cache      = _cache.get('contents_index')
+        cache_func = lambda: contents_index(_filter, **kwargs)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
+        return cache_func()
 
-        try:
-            if _filter:
-                parts.append(_filter)
-
-            filter_map = {
-                'creator': CreatorFilter,
-                'due_date': DueDateFilter,
-                'update_date': UpdateDateFilter,
-                'type': TypeFilter,
-                'response_to': ParentIDFilter,
-                'boomed_by': BoomedByFilter,
-                'term': TextFilter,
-                'location': LocationFilter,
-            }
-
-            if 'list' in kwargs:
-                if kwargs['list'] in list_filters:
-                    parts.append(list_filters[kwargs['list']]())
-                else:
-                    raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-
-            if 'feed' in kwargs and kwargs['feed']:
-                parts.append(Session.query(Feed).get(int(kwargs['feed'])).query)
-
-            for filter_name in filter_map:
-                val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired
-                #val = str(kwargs.get(filter_name, '')).strip()
-                if val:
-                    f = filter_map[filter_name].from_string(val)
-                    if hasattr(f, 'mangle'):
-                        results = f.mangle(results)
-                    parts.append(f)
-
-            if 'include_content' in kwargs and kwargs['include_content']:
-                parts.append(IDFilter([int(i) for i in kwargs['include_content'].split(",")]))
-
-            if 'exclude_content' in kwargs and kwargs['exclude_content']:
-                parts.append(NotFilter(IDFilter([int(i) for i in kwargs['exclude_content'].split(",")])))
-        except FilterException as fe:
-            raise action_error(code=400, message=str(fe))
-
-        feed = AndFilter(parts)
-
-        time_start = time()
-
-        # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
-        # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
-        results = results.filter("("+sql(feed)+")")
-        results = sort_results(results, kwargs.get('sort', '-update_date').split(','))
-
-        l = to_apilist(results, obj_type='contents', **kwargs)
-
-        # hacky benchmarking just to get some basic idea of how each feed performs
-        time_end = time()
-        log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
-
-        return l
 
 
     @web
@@ -396,7 +441,8 @@ class ContentsController(BaseController):
             raise_if_current_role_insufficent('observer') # Check role, in adition the content:update method checks for view permission of parent
             content = CommentContent()
             kwargs['private'] = False                          # Comments are always public
-            content.creator = c.logged_in_user          # Comments are always made by logged in user
+            #content.creator_id = c.logged_in_user.id          # Comments are always made by logged in user
+            content.creator = c.logged_in_user
         elif kwargs['type'] == 'article':
             raise_if_current_role_insufficent('editor') # Check permissions
             content = ArticleContent()                  # Create base content
@@ -408,12 +454,13 @@ class ContentsController(BaseController):
         
         # Set create to currently logged in user
         if not content.creator:
+            #content.creator_id = c.logged_in_persona.id
             content.creator = c.logged_in_persona
         
         # GregM: Set private flag to user or hub setting (or public as default)
         #content.private = is_private
         
-        parent = _get_content(kwargs.get('parent_id'))
+        parent = _get_content(int(kwargs.get('parent_id', 0)))
         if parent:
             # If a license isn't explicitly set, use the parent's preference
             if not kwargs.get('license_id'):
@@ -428,16 +475,18 @@ class ContentsController(BaseController):
                 from civicboom.controllers.content_actions import ContentActionsController
                 content_accept = ContentActionsController().accept
                 try:
-                    content_accept(id=parent)
+                    content_accept(id=parent.id)
                 except action_error as ae:
                     if ae.original_dict.get('code') == 403:
                         raise ae
+                    log.exception("Strange error while accepting")
                 
 
-        # comments are always owned by the writer; ignore settings
-        # and parent preferences
-        if type == 'comment':
+        # comments are always owned by the writer; ignore settings and parent preferences
+        if type == 'comment': #kwargs['type']
+            content.parent_id = parent.id if parent else None # The validators take care of enforcing the permissions for response - the parent_id is set inadvance here because cache invalidation needs a parent_id and the flush below triggers this preparation, we cant determin if flushing or commitiing
             content.license = get_license(None)
+            
 
         # Flush to database to get ID field
         # AllanC - if the update fails on validation we do not want a ghost record commited
@@ -554,7 +603,7 @@ class ContentsController(BaseController):
             error                      = errors.error_role()
         
         # If 'assignment' and creator has permissions to publish - it has to be 'creator' rather than c.logged_in_persona because this might be auto publishing and the user may not be logged in
-        if kwargs.get('type') == 'assignment' and not content.creator.can_publish_assignment():
+        if kwargs.get('type') == 'assignment' and not (content.creator if content.creator else get_member(content.creator_id)).can_publish_assignment():
             permissions['can_publish'] = False
             error                      = errors.error_account_level()
             #user_log.info('insufficent prvilages to - publish assignment %d' % content.id) # AllanC - unneeded as we log all errors in @auto_format_output now
@@ -590,7 +639,7 @@ class ContentsController(BaseController):
         if 'type' in kwargs:
             if kwargs.get('type') not in publishable_types or \
                kwargs.get('type')     in publishable_types and permissions['can_publish']:
-                extra_fields = dict(content.extra_fields)
+                extra_fields = dict(content.extra_fields) #if content.extra_fields else {}
                 content = morph_content_to(content, kwargs['type'])
                 # AllanC - when upgrading content from draft to published content there may be stored extra_fields that need transfering to actual fields. e.g due_date etc
                 #          the cool thing is that the extra_fields submitted to the drafts have already been through the validator
@@ -663,61 +712,65 @@ class ContentsController(BaseController):
             #         This is NOT acceptable for ints, floats, longs, or None
             #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
-        # -- Publishing --------------------------------------------------------
-        if  submit_type=='publish'     and \
-            permissions['can_publish'] and \
-            content.__type__ in publishable_types:
-            
-            # GregM: Content can now stay private after publishing :)
-            #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
-            
-            # Notifications ----------------------------------------------------
-            # AllanC - as notifications not need commit anymore this can be done after?
-            message_to_all_creator_followers = None
-            if starting_content_type != content.__type__ or called_from_create_method:
-                # Send notifications about NEW published content
-                if   content.__type__ == "article"   :
-                    message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
-                elif content.__type__ == "assignment":
-                    message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
+        def send_notifications():
+            # -- Publishing --------------------------------------------------------
+            if  submit_type=='publish'     and \
+                permissions['can_publish'] and \
+                content.__type__ in publishable_types:
                 
-                # if this is a response - notify parent content creator
-                if content.parent:
-                    content.parent.creator.send_notification(
-                        messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
-                    )
+                # GregM: Content can now stay private after publishing :)
+                #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
+                
+                # Notifications ----------------------------------------------------
+                # AllanC - as notifications not need commit anymore this can be done after?
+                message_to_all_creator_followers = None
+                if starting_content_type != content.__type__ or called_from_create_method:
+                    # Send notifications about NEW published content
+                    if   content.__type__ == "article"   :
+                        message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
+                    elif content.__type__ == "assignment":
+                        message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
                     
-                    # if it is a response, mark the accepted status as 'responded'
-                    respond_assignment(content.parent, content.creator, delay_commit=True)
-                
-                content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
-                
-                user_log.info("published new Content #%d" % (content.id, ))
-                # Aggregate new content
-                content.aggregate_via_creator() # Agrigate content over creators known providers
-            else:
-                # Send notifications about previously published content has been UPDATED
-                if   content.__type__ == "assignment":
-                    if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
-                        message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
-                # going straight to publish, content may not have an ID as it's
-                # not been added and committed yet (this happens below)
-                #user_log.info("updated published Content #%d" % (content.id, ))
-                
-            if message_to_all_creator_followers:
-                content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
-        
-        # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
-        if content.__type__ == "comment":
-            content.parent.creator.send_notification(
-                messages.comment(member=content.creator, content=content, you=content.parent.creator)
-            )
+                    # if this is a response - notify parent content creator
+                    if content.parent:
+                        content.parent.creator.send_notification(
+                            messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
+                        )
+                        
+                        # if it is a response, mark the accepted status as 'responded'
+                        respond_assignment(content.parent, content.creator, delay_commit=True)
+                    
+                    content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
+                    
+                    user_log.info("published new Content #%d" % (content.id, ))
+                    # Aggregate new content
+                    content.aggregate_via_creator() # Agrigate content over creators known providers
+                else:
+                    # Send notifications about previously published content has been UPDATED
+                    if   content.__type__ == "assignment":
+                        if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
+                            message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
+                    # going straight to publish, content may not have an ID as it's
+                    # not been added and committed yet (this happens below)
+                    #user_log.info("updated published Content #%d" % (content.id, ))
+                    
+                if message_to_all_creator_followers:
+                    content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
+            
+            # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
+            if content.__type__ == "comment":
+                content.parent.creator.send_notification(
+                    messages.comment(member=content.creator, content=content, you=content.parent.creator)
+                )
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        update_content(content)  # Invalidate any cache associated with this content
+        #content.invalidate_cache()  # Invalidate any cache associated with this content - AllanC unneeded as this triggers automatically on change and commit
         user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
+        
+        send_notifications()
+        Session.commit()
         
         # Profanity Check --------------------------------------------------
         if config['feature.profanity_filter']:
@@ -753,6 +806,23 @@ class ContentsController(BaseController):
         
         return action_ok(_("_content has been saved"))
 
+    @web
+    @authorize
+    @role_required('contributor')
+    def edit(self, id, **kwargs):
+        """
+        GET /contents/{id}/edit: Form to edit an existing item
+        """
+        # url('edit_content', id=ID)
+        
+        content = get_content(id, is_editable=True)
+        
+        return action_ok(
+            data={
+                'content': content.to_dict(list_type='full'),
+                'actions': content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
+            }
+        ) # Automatically finds edit template
 
     @web
     @auth
@@ -799,7 +869,7 @@ class ContentsController(BaseController):
         @type object
         @api contents 1.0 (WIP)
         
-        @param * (see common list return controls)
+        @param lists A comma separated list of lists to return with this call. Default 'comments, responses, contributors, actions, accepted_status'
         
         @return 200      page ok
                 content  content object
@@ -810,7 +880,25 @@ class ContentsController(BaseController):
         @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
-       
+        
+        if isinstance(kwargs.get('lists'), basestring):
+            kwargs['lists'] = [list.strip() for list in kwargs['lists'].split(',')]
+        if not isinstance(kwargs.get('lists'), type([])): # have to use type([]) because list is used below and python trys to pre-empt variable use
+            kwargs['lists'] = [
+                'comments',
+                'responses',
+                #'contributors',
+                'actions', # AllanC - humm .. how can we cache this?
+                'accepted_status',
+            ]
+        kwargs['lists'].sort()
+        
+        cache_key = gen_key_for_lists(['content']+kwargs['lists'], id, is_etag_master=True) # Get version numbers of all lists involved with this object and generate an eTag key - execution may abort here if the client eTag matches the one that this call generates
+        # AllanC - the eTag here is not a security problem before .viewable_by because we are not transmitting any data, just an identifyer key
+        # However viewers of an item of content will see the version numbers of the lists and know when something has changed - is this an issue? - we really want the call to terminate before any DB access is done if the eTag matchs
+        
+        # -- humm, --------
+        
         content = get_content(id) #, is_viewable=True) # This is done manually below we needed some special handling for comments
         
         if content.__type__ == 'comment':
@@ -821,21 +909,28 @@ class ContentsController(BaseController):
         
         if not content.viewable_by(c.logged_in_persona):
             raise errors.error_view_permission()
+
         
-        if 'lists' not in kwargs:
-            kwargs['lists'] = 'comments, responses, contributors, actions, accepted_status'
+        # Cache function return
+        def contents_show(content, **kwargs):
+            lists = kwargs.pop('lists')
+            data = {'content':content.to_dict(list_type='full', **kwargs)}
+            
+            # AllanC - cant be imported at top of file because that creates a coupling issue
+            from civicboom.controllers.content_actions import ContentActionsController
+            content_actions_controller = ContentActionsController()
+            
+            for list in [list.strip() for list in lists]:
+                if hasattr(content_actions_controller, list):
+                    data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
+            
+            return action_ok(data=data)
         
-        data = {'content':content.to_dict(list_type='full', **kwargs)}
         
-        # AllanC - cant be imported at top of file because that creates a coupling issue
-        from civicboom.controllers.content_actions import ContentActionsController
-        content_actions_controller = ContentActionsController()
-        
-        for list in [list.strip() for list in kwargs['lists'].split(',')]:
-            if hasattr(content_actions_controller, list):
-                data[list] = getattr(content_actions_controller, list)(content.id, **kwargs)['data']['list']
+        # -- These increments and state changes are invisible to the user the call is for .. it may be worth adding these as 'differed processs' to optimise the return time
         
         # Increase content view count
+        # AllanC - we should move this to redis with a clever timeout or something
         if hasattr(content,'views'):
             content_view_key = 'content_%s' % content.id
             if not session_get(content_view_key):
@@ -844,7 +939,7 @@ class ContentsController(BaseController):
                 Session.commit()
                 # AllanC - invalidating the content on EVERY view does not make scence
                 #        - a cron should invalidate this OR the templates should expire after X time
-                #update_content(content)
+                # This needs to be considered
         
         # Corporate plus customers want to be able to see what members have looked at an assignment
         if content.__type__=='assignment' and content.closed==True:
@@ -856,23 +951,10 @@ class ContentsController(BaseController):
                 Session.commit()
             return True
         
-        return action_ok(data=data)
+        # Cache return
+        cache      = _cache.get('contents_show')
+        cache_func = lambda: contents_show(content, **kwargs)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
+        return cache_func()
 
-
-    @web
-    @authorize
-    @role_required('contributor')
-    def edit(self, id, **kwargs):
-        """
-        GET /contents/{id}/edit: Form to edit an existing item
-        """
-        # url('edit_content', id=ID)
-        
-        content = get_content(id, is_editable=True)
-        
-        return action_ok(
-            data={
-                'content': content.to_dict(list_type='full'),
-                'actions': content.action_list_for(c.logged_in_persona, role=c.logged_in_persona_role),
-            }
-        ) # Automatically finds edit template

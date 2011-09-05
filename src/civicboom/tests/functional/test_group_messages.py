@@ -1,7 +1,7 @@
 from civicboom.tests import *
 
 
-class TestGroupsController(TestController):
+class TestGroupsMessages(TestController):
 
     def create_group(self, group_name):
         response = self.app.post(
@@ -19,7 +19,7 @@ class TestGroupsController(TestController):
             status=201
         )
         response_json = json.loads(response.body)
-        group_id = int(response_json['data']['id'])
+        group_id = response_json['data']['id']
         self.assertNotEqual(group_id, 0)
     
     def delete_group(self, group_name):
