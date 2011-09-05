@@ -47,7 +47,7 @@ class TestAdminController(TestController):
 
     def test_admin_search(self):
         # tests strings
-        response = self.get_https("/admin/User/models?User--username=jammy")
+        response = self.get_https("/admin/User/models?User--id=jammy")
         # tests ints
         response = self.get_https("/admin/Group/models?Group--num_members=1")
 
@@ -56,9 +56,9 @@ class TestAdminController(TestController):
         ("License",   "CC-BY"),
         # ("Tag",
         # ("Media",   # these are blank
-        ("Member",          1),
-        ("User",            1),
-        ("Group",           3),
+        ("Member",          'unittest'),
+        ("User",            'unitfriend'),
+        ("Group",           'cuteness'),
         ("Content",         1),
         ("ArticleContent",  3),
     ]

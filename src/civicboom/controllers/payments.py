@@ -72,7 +72,7 @@ class PaymentsController(BaseController):
         """
         raise_if_current_role_insufficent('admin', group=c.logged_in_persona)
         
-        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        account = Session.query(PaymentAccount).get(id)
         
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)

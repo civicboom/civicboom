@@ -37,7 +37,34 @@ class TestContentsController(TestController):
             self.assertEqual(draft['type'],'draft')
         self.assertEquals(response_json['data']['list']['count'], 0) # Anon users can never see drafts (this could change in future with public drafts)
         
+    def test_index_order(self):
+        contents = []
+        for i in range(3):
+            contents.append(self.create_content())
         
+        # Change the order of the content to check the index action is sorting by default correctly
+        from civicboom.model.meta import Session
+        from civicboom.model      import Content
+        import datetime
+        content_2 = Session.query(Content).get(contents[2])
+        content_2.update_date = content_2.update_date - datetime.timedelta(weeks=10)
+        content_0 = Session.query(Content).get(contents[0])
+        content_0.update_date = content_0.update_date + datetime.timedelta(weeks=10)
+        Session.commit()
+        
+        # Check order
+        # There could be other items of content in the list. We want to check for the order of our contents 0,1,2 to be in the order 0 (Newest) then 1 (Now) then 2 (Oldest)
+        response      = self.app.get(url('contents', creator='unittest', limit='100', format='json'))
+        response_json = json.loads(response.body)
+        
+        next_index = 0
+        for content_id in [content_item['id'] for content_item in response_json['data']['list']['items']]:
+            if content_id == contents[next_index]:
+                next_index += 1
+        self.assertEquals(next_index, len(contents)) # It found the id's in the oder of contents
+        
+        for content_id in contents:
+            self.delete_content(content_id)
         
     
     def test_all(self):

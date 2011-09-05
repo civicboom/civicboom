@@ -7,7 +7,7 @@ ${common.errors(fieldset)}
 		<td>
 <table>
 	<tr><th colspan="2">${_("Information")}</th></tr>
-	${common.render_short_field(fieldset.username)|n}
+	${common.render_short_field(fieldset.id)|n}
 	${common.render_short_field(fieldset.email)|n}
 	${common.render_short_field(fieldset.email_unverified)|n}
 	${common.render_short_field(fieldset.status.dropdown(options=["pending", "active", "removed"]))|n}

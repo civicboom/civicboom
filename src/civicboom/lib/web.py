@@ -593,6 +593,8 @@ def auto_format_output(target, *args, **kwargs):
                     set_flash_message(result) # Set flash message
                     return redirect(c.html_action_fallback_url)
             
+            #raise ae # AllanC - unsure if this is needed? surely if there has been an exception and it has not been delt with then we need to propergate it up?
+            
     
     # After
     # Is result a dict with data?
@@ -678,14 +680,17 @@ def authenticate_form(_target, *args, **kwargs):
 
 
 def cacheable(time=60*60*24*365, anon_only=True):
+    """
+    A static decorator to inform nginx to cache the returned content
+    """
     def _cacheable(func, *args, **kwargs):
-        #if app_globals.cache_enabled: # AllanC - at the time of remming this production.ini had beaker.cache = False ... we want this cached for now. This should re-instated once the cache framework is finished
-        from pylons import request, response
-        if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
-            response.headers["Cache-Control"] = "public,max-age=%d" % time
-            response.headers["Vary"] = "Cookie"
-            if "Pragma" in response.headers:
-                del response.headers["Pragma"]
+        if config['cache.static_decorators.enabled']:
+            from pylons import request, response
+            if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
+                response.headers["Cache-Control"] = "public,max-age=%d" % time
+                response.headers["Vary"] = "Cookie"
+                if "Pragma" in response.headers:
+                    del response.headers["Pragma"]
         return func(*args, **kwargs)
     return decorator(_cacheable)
 
@@ -735,6 +740,7 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     ->>> print test(1)
     -1 4
     """
+    
     if c.web_params_to_kwargs:
         return _target(*args, **kwargs) # If already processed, pass through
     
@@ -751,7 +757,7 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     if "kwargs" in _target.func_code.co_varnames:
         new_kwargs.update(params)
 
-    exclude_fields = ['pylons', 'environ', 'start_response']
+    exclude_fields = ['pylons', 'environ', 'start_response', 'controller', 'action', 'format', 'sub_domain'] # AllanC - it appears that routes variables are automatically forwarded as kwargs, they are to be removed, we dont want unneeded kwargs for caching. Could these not be set in the first place?
     for exclude_field in exclude_fields:
         if exclude_field in new_kwargs:
             del new_kwargs[exclude_field]
@@ -768,26 +774,3 @@ def web_params_to_kwargs(_target, *args, **kwargs):
 
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function
-
-
-
-@decorator
-def normalize_kwargs(_target, *args, **kwargs):
-    """
-    Controller action can be called with a varity of kwargs
-    often these kwargs can be a combination of primitive types and objects
-    For caching and simplification of both calling and the body of these methods the kwargs can be normalize to primitive types
-    
-    Performance TODO investigation:
-    This could create serious ineffiencys by converting from objects to strings and then re-getting the objects again in the methods
-    We need to check if SQLAlchemy is smart enough to realise it already has the object in memory and does not need to perform a GET again from the DB
-    """
-    for key, value in kwargs.iteritems():
-        if not key.startswith('_'):
-            try   : value = value.__db_index__()
-            except: pass
-            # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-            value = str(value).strip()
-        kwargs[key] = value
-    
-    return _target(*args, **kwargs)
