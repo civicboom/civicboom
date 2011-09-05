@@ -2,15 +2,12 @@
 
 # todo:
 # click on an item to zoom to it
-# - have it centered on screen
 # - zoom in, but have a max zoom (having a 0ms event filling the screen would be silly)
 # full-file navigation
 # - cbtv_events logs can last for hours, but only a minute at a time is sensibly viewable
 # close log after appending?
 # - holding it open blocks other threads?
 # - but it is opened at the start and should never be closed...
-# label as image?
-# - hopefully images are cropped on bbox change, not scaled?
 
 from __future__ import print_function
 from decorator import decorator
@@ -141,6 +138,7 @@ class App:
 
     def __init__(self, master, database_file):
         self.master = master
+        self.char_w = -1
 
         db = sqlite3.connect(database_file)
         self.c = db.cursor()
@@ -179,6 +177,11 @@ class App:
 
         self.canvas.bind("<4>", lambda e: self.scale_view(e, 1.0 * 1.1))
         self.canvas.bind("<5>", lambda e: self.scale_view(e, 1.0 / 1.1))
+
+        # in windows, mouse wheel events always go to the root window o_O
+        self.master.bind("<MouseWheel>", lambda e: self.scale_view(e,
+            ((1.0*1.1) if e.delta < 0 else (1.0/1.1))
+        ))
 
         drag_move = """
         def _sm(e):
@@ -244,7 +247,7 @@ class App:
             self.canvas.xview_moveto(x_pos - new_width * width_fraction)
 
     def truncate_text(self, text, w):
-        return text[:w/7]
+        return text[:w/self.char_w]
 
     def update(self, *args):
         """
@@ -274,6 +277,14 @@ class App:
             self.render_len.get()*self.scale.get(),
             len(self.threads)*ROW_HEIGHT+20
         ))
+        if self.char_w == -1:
+            t = self.canvas.create_text(0, 0, font="TkFixedFont", text="_", anchor=NW)
+            bb = self.canvas.bbox(t)
+            # [2]-[0]=10, but trying by hand, 8px looks better on win7
+            # 7px looks right on linux, not sure what [2]-[0] is there,
+            # hopefully 9px, so "-2" always helps?
+            self.char_w = bb[2] - bb[0] - 2
+            self.canvas.delete(t)
 
     def render_base(self):
         """
