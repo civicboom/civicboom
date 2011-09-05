@@ -4,8 +4,10 @@ import json
 from civicboom.lib.services.janrain import janrain
 import psycopg2
 
-conn = psycopg2.connect("host=dbw.civicboom.com dbname=civicboom user=civicboom pass=Eev3fair")
+conn = psycopg2.connect("host=dbw.civicboom.com dbname=civicboom user=civicboom password=Eev3fair")
 cur = conn.cursor()
+
+#print cur.execute("SELECT 'hello'").fetchone()[0]
 
 # -- Variables --
 
@@ -20,7 +22,12 @@ def get_username_from_id(id):
     """
     Placeholder for code to looking username from id
     """
-    return cur.execute("SELECT id FROM member WHERE id_num=%s;", (int(id), )).fetchone()[0]
+    cur.execute("SELECT id FROM member WHERE id_num=%s;", (int(id), ))
+    n = cur.fetchone()
+    if n:
+        return n[0]
+    else:
+        print "No user for ID: %s" % id
 
 
 # -- Main --
@@ -36,8 +43,9 @@ else:
 # Remap old primary key 'id' to new primary key 'username'
 for id, identifiers in mappings.iteritems():
     username = get_username_from_id(id)
-    print "remaping %s to %s" % (id, username)
-    for identifier in identifiers:
-        #janrain('map',  identifier=identifier, primaryKey=username, apiKey=apiKey) # By default will overwrite existing identifiers so we dont need to explicity call unmap
-        pass
+    if username:
+        print "remaping %s to %s" % (id, username)
+        for identifier in identifiers:
+            janrain('map',  identifier=identifier, primaryKey=username, apiKey=apiKey) # By default will overwrite existing identifiers so we dont need to explicity call unmap
+            pass
 
