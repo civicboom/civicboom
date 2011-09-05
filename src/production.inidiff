@@ -1,0 +1,34 @@
+[server:main]
+port = 5080
+
+[app:main]
+debug = false
+telemetry =
+
+smtp_server      = smtp.googlemail.com
+smtp_port        = 587
+smtp_username    = noreply@civicboom.com
+smtp_password    = zahz6Wer
+smtp_use_tls     = True
+
+beaker.session.secret = 5b41b460c6fe35fdd332d3f71aec729b
+
+cache_dir = /tmp/cb-website-data
+
+feature.aggregate.email = True
+feature.aggregate.twitter_global = True
+
+media.display.video.height = 450
+media.display.video.width = 600
+media.media.height = 360
+media.media.width = 480
+
+path.temp = /tmp/cb-website-temp
+
+setting.admin_users = subtle,calaldees,gothack,hodgson1,shish,prototo
+setting.username_to_auto_follow_on_signup = civicboom
+
+warehouse.s3.bucket = civicboom-static
+warehouse.url = civicboom-static.s3.amazonaws.com
+
+worker.queue.type = redis

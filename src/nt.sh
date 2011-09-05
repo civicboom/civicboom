@@ -1,5 +1,9 @@
 #!/bin/bash
+
+cd `dirname $0`
+
 export PYTHONPATH=../lib
+
 if [ x$1 = x ]
 then
   nosetests

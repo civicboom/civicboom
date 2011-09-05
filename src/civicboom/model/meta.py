@@ -1,6 +1,7 @@
 """SQLAlchemy Metadata and Session object"""
 from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.interfaces import AttributeExtension
 import copy
 
 __all__ = ['Session', 'engine', 'metadata', 'Base']
@@ -19,12 +20,40 @@ metadata = MetaData()
 # Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
-
+            
+#===============================================================================
+# Events for:
+#    PaymentAccount.type change -> update PaymentAccount.members.account_type
+#    PaymentAccount.members change -> update PaymentAccount.members/memb_appended/memb_removed
+#    Member.payment_account_id set None -> update Memb.account_type to 'free'
+#===============================================================================
+class PaymentAccountTypeChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        for member in state.obj().members:
+            member.account_type = value
+        return value
+class PaymentAccountMembersChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        for member in state.obj().members:
+            member.account_type = value
+        return value
+    def append(self, state, value, initiator):
+        value.account_type = state.obj().type
+        return value
+    def remove(self, state, value, initiator):
+        value.account_type = 'free'
+class MemberPaymentAccountIdChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        if value == None:
+            state.obj().account_type = 'free'
+        return value
 
 # types
 
 from sqlalchemy import PickleType, UnicodeText
 import json
+
+from cbutils.cbtv import log as t_log
 
 
 class JSONType(PickleType):
@@ -49,6 +78,7 @@ def location_to_string(location):
     return None
 
 
+@t_log("to_dict")
 def to_dict(self, list_type='default', include_fields=None, **kwargs):
     """
     describe
