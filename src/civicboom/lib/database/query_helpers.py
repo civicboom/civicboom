@@ -8,7 +8,7 @@ import logging
 log  = logging.getLogger(__name__)
 
 valid_obj_types = ['contents', 'members', 'messages']
-kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','controller','sub_domain','action','format','exclude_content','exclude_members','lists']
+kwargs_to_exclude_in_api_output = ['limit','offset','obj_type','exclude_content','exclude_members','lists'] # AllanC - these are no longer needed as they are stripped in web_parms to kwargs - 'controller','sub_domain','action','format'
 
 
 def __apilist(results, count=0, limit=0, offset=0, obj_type=None, source_kwargs={}):

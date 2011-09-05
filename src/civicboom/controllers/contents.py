@@ -220,14 +220,17 @@ class ContentsController(BaseController):
 
         # Setup default search criteria
         if 'include_fields' not in kwargs:
-            kwargs['include_fields'] = "creator"
+            kwargs['include_fields'] = ""
+            if 'creator' not in kwargs:
+                kwargs['include_fields'] = "creator"
         if kwargs.get('list') == 'responses': # HACK - AllanC - mini hack, this makes the API behaviour slightly unclear, but solves a short term problem with creating response lists - it is common with responses that you have infomation about the parent
             kwargs['include_fields'] += ",parent"
+        if 'sort' not in kwargs:
+            kwargs['sort'] = '-update_date'
 
         # Split comma separted fields into lists
-        for field in [field for field in ['sort', 'include_fields', 'exclude_fields'] if isinstance(kwargs.get(field),basestring)]:
-            kwargs[field] = kwargs[field].split(",") # these will be sorted in normalization
-        # AllanC - this messed up passing kwargs in the list obejcts because they were in the format ['content','thing'] rather than content,thing
+        for field in [field for field in ['include_fields', 'exclude_fields'] if isinstance(kwargs.get(field),basestring)]: #'sort' cannot be a list at this point because the list will be sorted by normalize_kwargs and the order of sort is important
+            kwargs[field] = [i.strip() for i in kwargs[field].split(",")] # these will be sorted in normalization
 
         # Replace instances of 'me' with current username
         for key, value in kwargs.iteritems():
@@ -350,7 +353,7 @@ class ContentsController(BaseController):
             # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
             # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
             results = results.filter("("+sql(feed)+")")
-            results = sort_results(results, kwargs.get('sort', '-update_date'))
+            results = sort_results(results, kwargs.get('sort').split(","))
             
             results = to_apilist(results, obj_type='contents', **kwargs)
             
