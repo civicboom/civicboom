@@ -84,8 +84,6 @@
 ## Optional Required component defs
 ##------------------------------------------------------------------------------
 
-
-
 <%def name="invalid(field_name)">
     % if 'invalid' in c.result['data'] and field_name in c.result['data']['invalid']:
     <p class="error">${c.result['data']['invalid'][field_name]}</p>
