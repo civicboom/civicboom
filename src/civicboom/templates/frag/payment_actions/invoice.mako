@@ -194,7 +194,6 @@
         <%
             options = d['payment_options']
             providers = options.get('providers', {})
-            print providers
             grouped_providers = {}
             for key in providers:
                 provider = providers[key]
@@ -202,7 +201,6 @@
                 if not grouped_providers.get(group):
                     grouped_providers[group] = {}
                 grouped_providers[group][key] = provider
-            print grouped_providers
         %>
         <div class="frag_whitewrap hide_if_print">
             <h2>Payment Options</h2>
