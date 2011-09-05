@@ -25,7 +25,7 @@ def init_base_data():
         log.debug("Users")
 
         u1 = User()
-        u1.username      = u"unittest"
+        u1.id            = u"unittest"
         u1.name          = u"Mr U. Test"
         u1.join_date     = datetime.datetime.now()
         u1.status        = "active"
@@ -53,7 +53,7 @@ def init_base_data():
         u1.payment_account.do_not_bill = True
 
         u2 = User()
-        u2.username      = u"unitfriend"
+        u2.id            = u"unitfriend"
         u2.name          = u"Mr U's Friend"
         u2.status        = "active"
         u2.email         = u"test+unitfriend@civicboom.com"
@@ -72,7 +72,7 @@ def init_base_data():
         u2.payment_account.do_not_bill = True
 
         g1 = Group()
-        g1.username = "unitgroup"
+        g1.id       = "unitgroup"
         g1.name     = "Test User Group"
         g1.status   = "active"
         g1.join(u1)
@@ -84,59 +84,12 @@ def init_base_data():
         u1.follow(u2)
         u2.follow(u1)
 
-        assert u1.id == 1
         assert u1.login_details[0].type == "password"
         assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
         assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
 
-        assert u2.id == 3
-
-        assert g1.id == 2
-
-        
-        u2_service = Session.query(Service).filter(Service.payment_account_type==u2_account.type).one()
-        
-        u2_billing = BillingAccount()
-        u2_billing.provider = "manual"
-        u2_billing.reference= "Card payment 45647874445678745"
-        u2_billing.title    = "Manual VISA **8745"
-        u2_billing.payment_account = u2.payment_account
-        
-        Session.commit()
-        
-        u2_invoice1 = Invoice(u2_account)
-        u2_invoice1.due_date = u2_account.start_date
-        u2_invoice1.timestamp = u2_account.start_date + datetime.timedelta(minutes=1)
-        
-        Session.add(u2_invoice1)
-        Session.commit()
-        
-        u2_invoice1line = InvoiceLine(
-                u2_invoice1,
-                service                  = u2_service,
-                start_date               = u2_account.start_date
-            )
-        
-        
-        Session.add_all([u2_invoice1line])
-        
-        Session.commit()
-        u2_invoice1.status = "billed"
-        Session.commit()
-        
-        u2_trans = BillingTransaction()
-        u2_trans.amount =u2_invoice1.total
-        u2_trans.billing_account = u2_billing
-        u2_trans.invoice = u2_invoice1
-        u2_trans.status = "complete"
-        
-        Session.add(u2_trans)
-        u2_invoice1.status = "paid"
-        Session.commit()
-        
-
         u3 = User()
-        u3.username      = u"kitten"
+        u3.id            = u"kitten"
         u3.name          = u"Amy M. Kitten"
         u3.status        = "active"
         u3.email         = u"test+kitten@civicboom.com"
@@ -149,21 +102,21 @@ def init_base_data():
         u3_login.token  = hashlib.sha1("password").hexdigest()
 
         u4 = User()
-        u4.username      = u"puppy"
+        u4.id            = u"puppy"
         u4.name          = u"Jamie L. Puppy"
         u4.status        = "active"
         u4.email         = u"test+puppy@civicboom.com"
         u4.avatar        = u"64387ac53e446d1c93d11eec777cc7fbf4413f63"
 
         u5 = User()
-        u5.username      = u"bunny"
+        u5.id            = u"bunny"
         u5.name          = u"David O. Bunny"
         u5.status        = "active"
         u5.email         = u""
         u5.avatar        = u"2ca1c359d090e6a9a68dac6b3cc7a14d195ef4d8"
 
         g2 = Group()
-        g2.username = "cuteness"
+        g2.id       = "cuteness"
         g2.name     = "Cute Users United"
         g2.status   = "active"
         g2.join(u3)
@@ -213,5 +166,4 @@ def init_base_data():
             for member in member_config:
                 member.config[member_config_var] = 'init'
 
-        assert list(Session.query(User).filter(User.id==0)) == []
-        assert list(Session.query(User).filter(User.username=="MrNotExists")) == []
+        assert list(Session.query(User).filter(User.id=="MrNotExists")) == []

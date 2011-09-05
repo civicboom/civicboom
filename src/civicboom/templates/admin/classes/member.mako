@@ -7,7 +7,7 @@ ${common.errors(fieldset)}
 		<td>
 <table>
 	<tr><th colspan="2">${_("Information")}</th></tr>
-	${common.render_short_field(fieldset.username)|n}
+	${common.render_short_field(fieldset.id)|n}
 </table>
 		</td>
 		<td>

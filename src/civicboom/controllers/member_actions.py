@@ -178,8 +178,6 @@ class MemberActionsController(BaseController):
                 list  the list
         @return 404   not found
         """
-        #member = _get_member(id)
-        #return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.followers]})
         return member_search(follower_of=id, **kwargs)
 
 
@@ -202,8 +200,6 @@ class MemberActionsController(BaseController):
                 list  the list
         @return 404   not found
         """
-        #member = _get_member(id)
-        #return action_ok(data={"list": [f.to_dict(**kwargs) for f in member.following]})
         return member_search(followed_by=id, **kwargs)
 
 
@@ -225,8 +221,6 @@ class MemberActionsController(BaseController):
         @return 200    list generated ok
                 list   array of content objects
         """
-        #q = CreatorFilter.from_string(id)
-        #return content_search(_filter=q, **kwargs)
         return content_search(creator=id, **kwargs)
 
 
@@ -247,8 +241,6 @@ class MemberActionsController(BaseController):
                 list   array of content objects
         @return 404   member not found
         """
-        #q = BoomedByFilter.from_string(id)
-        #return content_search(_filter=q, **kwargs)
         return content_search(boomed_by=id, **kwargs)
 
 

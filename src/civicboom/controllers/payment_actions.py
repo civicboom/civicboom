@@ -30,7 +30,7 @@ class PaymentActionsController(BaseController):
         """
         # url('payment', id=ID)
         
-        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        account = Session.query(PaymentAccount).get(id)
         
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)
@@ -61,7 +61,7 @@ class PaymentActionsController(BaseController):
         """
         # url('payment', id=ID)
         
-        account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
+        account = Session.query(PaymentAccount).get(id)
         
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)

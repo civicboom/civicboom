@@ -309,6 +309,11 @@ $(function() {
 #""" % vars
 
 
+class NoneRenderer(FieldRenderer):
+    def render(self):
+        return "[none]"
+
+
 from formalchemy.forms import FieldSet
 from geoalchemy import geometry
 import sqlalchemy
@@ -318,3 +323,4 @@ FieldSet.default_renderers[sqlalchemy.UnicodeText] = TextAreaFieldRenderer
 FieldSet.default_renderers[sqlalchemy.DateTime] = DatePickerFieldRenderer
 FieldSet.default_renderers[sqlalchemy.Enum] = EnumFieldRenderer
 #FieldSet.default_renderers[JSONType] = JSONTypeRenderer
+FieldSet.default_renderers[type(None)] = NoneRenderer

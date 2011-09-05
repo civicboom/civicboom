@@ -1,5 +1,5 @@
 from civicboom.lib.base import url, _, config
-from civicboom.lib.database.get_cached import get_member
+from civicboom.lib.database.get_cached import get_member, get_member_email
 from civicboom.lib.communication.email_lib import send_email
 from civicboom.lib.services.janrain import janrain
 from civicboom.model import UserLogin
@@ -133,7 +133,7 @@ def set_password(user, new_token, delay_commit=False):
 
 
 def has_account_without_password(user):
-    user = get_member(user, search_email=True)
+    user = get_member(user) or get_member_email(user)
     password_login = None
     if user:
         try:

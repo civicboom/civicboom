@@ -6,7 +6,7 @@ from civicboom.lib.database.get_cached import get_member, get_members
 
 from civicboom.model.meta              import Session
 from civicboom.model.message           import Message
-from civicboom.lib.database.get_cached import update_member_messages
+from civicboom.lib.cache               import invalidate_list_version
 from civicboom.lib.communication.email_lib import send_email
 import civicboom.lib.helpers as helpers
 
@@ -110,7 +110,7 @@ def send_notification(members, message): #members, rendered_message
                 m.target  = member
                 Session.add(m)
                 #member.messages_to.append(m)
-                update_member_messages(member)
+                #invalidate_list_version('mesages_index', 'notification', m.target.id) # AllanC - we can replace this invalidation with a sqlalchemy list watching trigger maybe?
             
             # ------------------------------------------------------------------
         
@@ -121,113 +121,3 @@ def send_notification(members, message): #members, rendered_message
     return True
 
 
-
-#-------------------------------------------------------------------------------
-
-    #print members
-    #print kwargs['rendered_message']['n']['subject']
-    
-    #rendered_message['n']['subject'] = str(member)+': '+rendered_message['n']['subject']
-    #rendered_message['n']['content'] = str(member)+': '+rendered_message['n']['content']
-
-
-    # Pre render all known output message types
-    # They cant be rendered in the thread because they don't have access to pylons features like template rendering, url() and c
-    #rendered_message = {}
-    # Each dict entry may contain another dict datastructure for that message type
-    #for message_format, message_format_processor in message_format_processors.iteritems():
-    #    rendered_message[message_format] = message_format_processor(message)
-
-
-def setup_message_format_processors():
-    """
-    Each processor should return a string representaion of the message
-    """
-    
-    def format_email(message_dict):
-        pass
-    
-    def format_notification(message_dict):
-        return dict(
-            subject = message_dict.get('subject') ,
-            content = message_dict.get('content') ,
-        )
-    
-    def format_comufy(message_dict):
-        return
-
-    return dict(
-        e = format_email ,
-        n = format_notification ,
-        #c = format_comufy ,
-    )
-
-message_format_processors = setup_message_format_processors()
-
-
-#-------------------------------------------------------------------------------
-
-
-def temp():
-
-    """
-    Takes - either
-        a comma separated list of members as string
-            (WARNING if this strings contains group names the notification wont propergate to all members,
-            if passing a string list it is assumed that all group links have been followed)
-        a list of member objets (this can contains groups and will call this method recursivly)
-        a single member - if group get all sub members
-        
-    message can be a MessageData object or a dict with name, default_route, subject and content
-
-    """
-    
-    single_member = None
-    
-    
-    
-    # If 'members' is not a list it is either a sting username or a member object
-    #  deal with a single member
-    #  if a group, get list of all submembers
-    if not isinstance(members, list):
-        # get member object
-        member = _get_member(members)
-        single_member = member
-        if not member:
-            log.error('unable to find member (%s) to send a message to' % 'TODO')
-            return
-    
-        # Save the notification for this member
-        #  - although the message will be threaded to agregate, we need to save the notification for the actual destination user (without the appended str bits)
-        #  - see 'if user' below for remove notification from thred aggregation for single member
-        m = Message()
-        m.subject = message.get('subject')
-        m.content = message.get('content')
-        m.target  = member
-        Session.add(m)
-        update_member_messages(member)
-        
-        # AllanC - bit of a botch here. if a notificaiton is sent to a group and needs to be propergated to members, we nee to record who the message was origninally too.
-        message['subject'] = str(member)+': '+message.get('subject')
-        message['content'] = str(member)+': '+message.get('content')
-        
-        # Pre generate list of members 'too'
-        members = []
-        if member.__type__ == 'user':
-            members.append(member)
-        elif member.__type__ == 'group':
-            members = member.all_sub_members()
-    
-    # If there are any groups in the list of members too, then send to all submembers recursivly
-    # As the message dict subject and contnet gets appended too for each group
-    for group in [m for m in members if hasattr(m, 'all_sub_members')]:
-        send_notification(group, message, delay_commit=True)
-        members.remove(group) # no need to have group in this send list any longer as all members have been notifyed by the call above
-        
-
-    #
-
-    
-    # Because we saved the actual notification above, if we have a single user we don't need to save the notification in the worker thread
-    if single_member and single_member.__type__ == 'user':
-        del rendered_message['n']

@@ -35,7 +35,7 @@ class TestInviteController(TestController):
             status=201
         )
         response_json = json.loads(response.body)
-        self.group_id = int(response_json['data']['id'])
+        self.group_id = response_json['data']['id']
         
         self.log_in_as("invite_test_user")
         

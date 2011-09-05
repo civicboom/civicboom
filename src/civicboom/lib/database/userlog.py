@@ -25,9 +25,9 @@ class UserLogHandler(logging.Handler):
         username = "None"
         persona = "None"
         if hasattr(c, "logged_in_user") and c.logged_in_user:
-            username = c.logged_in_user.username
+            username = c.logged_in_user.id
         if hasattr(c, "logged_in_persona") and c.logged_in_persona:
-            persona = c.logged_in_persona.username
+            persona = c.logged_in_persona.id
         url      = request.url
         addr     = request.environ["REMOTE_ADDR"]
         priority = record.levelno

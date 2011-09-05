@@ -2,7 +2,7 @@
 from civicboom.model.meta import Base
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy import Unicode, UnicodeText
+from sqlalchemy import String, Unicode, UnicodeText
 from sqlalchemy import Integer, DateTime, Boolean
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
@@ -14,8 +14,8 @@ import copy
 class Message(Base):
     __tablename__ = "message"
     id          = Column(Integer(),     primary_key=True)
-    source_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True)
-    target_id   = Column(Integer(),     ForeignKey('member.id'), nullable=True, index=True)
+    source_id   = Column(String(32),    ForeignKey('member.id'), nullable=True)
+    target_id   = Column(String(32),    ForeignKey('member.id'), nullable=True, index=True)
     timestamp   = Column(DateTime(),    nullable=False, default=now)
     subject     = Column(Unicode(),     nullable=False)
     content     = Column(UnicodeText(), nullable=False)
@@ -63,7 +63,7 @@ DDL('DROP TRIGGER IF EXISTS update_num_unread ON message').execute_at('before-dr
 DDL("""
 CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
     DECLARE
-        tmp_target_id integer;
+        tmp_target_id text;
     BEGIN
         -- UPDATE changing the target ID should never happen
         tmp_target_id := CASE WHEN TG_OP='DELETE' THEN OLD.target_id ELSE NEW.target_id END;

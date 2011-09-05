@@ -132,7 +132,7 @@ FlaggedContent.configure(include=[
 Member = FieldSet(model.Member)
 Member.engine = CustomTemplateEngine("member")
 Member.configure(include=[
-        Member.username,
+        Member.id,
         Member.name,
         Member.join_date,
         Member.payment_account.with_renderer(RadioSetRelationRenderer),
@@ -141,7 +141,7 @@ Member.configure(include=[
 User = FieldSet(model.User)
 User.engine = CustomTemplateEngine("user")
 User.configure(include=[
-        User.username,
+        User.id,
         User.name,
         User.join_date,
         User.email,
@@ -153,7 +153,7 @@ User.configure(include=[
 Group = FieldSet(model.Group)
 Group.engine = CustomTemplateEngine("group")
 Group.configure(include=[
-        Group.username,
+        Group.id,
         Group.name,
         Group.join_date,
         Group.status,

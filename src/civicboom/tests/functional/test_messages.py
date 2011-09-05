@@ -42,17 +42,17 @@ class TestMessagesController(TestController):
     def part_setup(self):
         # notifications can't be created manually
         n1 = Message()
-        n1.target = Session.query(Member).filter(Member.username=="unittest").first()
+        n1.target = Session.query(Member).get("unittest")
         n1.subject = u"Notification! A test"
         n1.content = u"A test is happening now :O"
 
         n2 = Message()
-        n2.target = Session.query(Member).filter(Member.username=="unitfriend").first()
+        n2.target = Session.query(Member).get("unitfriend")
         n2.subject = u"Another notification! A test"
         n2.content = u"A test part 2 is happening now :O"
 
         n3 = Message()
-        n3.target = Session.query(Member).filter(Member.username=="unittest").first()
+        n3.target = Session.query(Member).get("unittest")
         n3.subject = u"deleteme"
         n3.content = u"This is a notification to test deletion with"
 
