@@ -1,20 +1,26 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType
+from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener, CacheChangeListener
+
 from civicboom.model.message import Message
-from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
+
+from cbutils.misc import now
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
-from sqlalchemy import Enum, Integer, DateTime, Boolean, Interval
+from sqlalchemy import Enum, Integer, DateTime, Date, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, column_property
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.schema import DDL, CheckConstraint
 
-import urllib
+import urllib, datetime
 import hashlib
 import copy
+import webhelpers.constants
+
+country_codes = dict(webhelpers.constants.country_codes())
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -107,8 +113,8 @@ def has_account_required(required, current):
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
-    group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
-    member_id     = Column(Integer(), ForeignKey('member.id')      , primary_key=True)
+    group_id      = Column(String(32), ForeignKey('member_group.id'), primary_key=True)
+    member_id     = Column(String(32), ForeignKey('member.id')      , primary_key=True)
     role          = Column(group_member_roles , nullable=False, default="contributor")
     status        = Column(group_member_status, nullable=False, default="active")
 
@@ -116,7 +122,7 @@ DDL('DROP TRIGGER IF EXISTS update_group_size ON map_user_to_group').execute_at(
 DDL("""
 CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
     DECLARE
-        tmp_group_id integer;
+        tmp_group_id text;
     BEGIN
         IF (TG_OP = 'INSERT') THEN
             tmp_group_id := NEW.group_id;
@@ -146,8 +152,8 @@ CREATE TRIGGER update_group_size
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
-    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
-    follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    member_id     = Column(String(32),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    follower_id   = Column(String(32),    ForeignKey('member.id'), nullable=False, primary_key=True)
     type          = Column(follow_type                          , nullable=False, default="normal")
     
     member   = relationship("Member", primaryjoin="Member.id==Follow.member_id"  )
@@ -157,8 +163,8 @@ DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').ex
 DDL("""
 CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
     DECLARE
-        tmp_member_id integer;
-        tmp_follower_id integer;
+        tmp_member_id text;
+        tmp_follower_id text;
     BEGIN
         IF (TG_OP = 'INSERT') THEN
             tmp_member_id   := NEW.member_id;
@@ -232,17 +238,17 @@ class Member(Base):
     "Abstract class"
     __tablename__   = "member"
     __type__        = Column(member_type)
-    __mapper_args__ = {'polymorphic_on': __type__}
+    __mapper_args__ = {'polymorphic_on': __type__, 'extension': CacheChangeListener()}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
-    id              = Column(Integer(),      primary_key=True)
-    username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
+    id              = Column(String(32),     primary_key=True)
     name            = Column(Unicode(250),   nullable=False)
-    join_date       = Column(DateTime(),     nullable=False, default=func.now())
+    join_date       = Column(DateTime(),     nullable=False, default=now)
     status          = Column(_member_status, nullable=False, default="pending")
     avatar          = Column(String(40),     nullable=True)
     utc_offset      = Column(Interval(),     nullable=False, default="0 hours")
     location_home   = Golumn(Point(2),       nullable=True)
-    payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
+    payment_account_id = column_property(Column(Integer(),   ForeignKey('payment_account.id'), nullable=True), extension=MemberPaymentAccountIdChangeListener())
+    #payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
     description     = Column(UnicodeText(),  nullable=False, default=u"")
     extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
@@ -252,7 +258,7 @@ class Member(Base):
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     # AllanC - TODO - derived field trigger needed
-    #account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by postgres trigger")
+    account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by Python MapperExtension event on PaymentAccount")
 
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
@@ -270,6 +276,7 @@ class Member(Base):
 
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
+    #, cascade="all,delete-orphan"
     
     #content_assignments = relationship("AssignmentContent")
     #content_articles    = relationship(   "ArticleContent")
@@ -290,7 +297,7 @@ class Member(Base):
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
     __table_args__ = (
-        CheckConstraint("username ~* '^[a-z0-9_-]{4,}$'"),
+        CheckConstraint("id ~* '^[a-z0-9_-]{4,}$'"),
         CheckConstraint("length(name) > 0"),
         CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
         {}
@@ -300,7 +307,7 @@ class Member(Base):
     __to_dict__.update({
         'default': {
             'id'                : None ,
-            'name'              : lambda member: member.name if member.name else member.username , # Normalize the member name and return username if name not present
+            'name'              : lambda member: member.name if member.name else member.id , # Normalize the member name and return username if name not present
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
@@ -332,35 +339,43 @@ class Member(Base):
             #'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
     })
     
+    @property
+    def username(self):
+        import warnings
+        warnings.warn("Member.username used", DeprecationWarning)
+        return self.id
 
     _config = None
-
+        
+#    extra_fields_raw = synonym('extra_fields', descriptor=property(_get_extra_fields_raw, _set_extra_fields_raw))
+    
     @property
     def config(self):
-        if not self.extra_fields:
+        if self.extra_fields == None:
             self.extra_fields = {}
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.name or self.id
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
     
     def __link__(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, sub_domain='www', qualified=True)
-
-    def __db_index__(self):
-        return self.username
+        return url('member', id=self.id, sub_domain='www', qualified=True)
 
     def hash(self):
         h = hashlib.md5()
-        for field in ("id", "username", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
+        for field in ("id", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
             h.update(str(getattr(self, field)))
         return h.hexdigest()
+
+    def invalidate_cache(self, remove=False):
+        from civicboom.lib.cache import invalidate_member
+        invalidate_member(self, remove=remove)
 
     def action_list_for(self, member, **kwargs):
         action_list = []
@@ -464,7 +479,7 @@ class Member(Base):
     @property
     def url(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, qualified=True)
+        return url('member', id=self.id, qualified=True)
 
     @property
     def avatar_url(self, size=80):
@@ -529,12 +544,13 @@ class Member(Base):
         from civicboom.lib.database.actions import set_payment_account
         return set_payment_account(self, value, delay_commit)
         
-    @property
+#    @property
     # AllanC - TODO this needs to be a derrived field
-    def account_type(self):
-        if self.payment_account and self.payment_account.type:
-            return self.payment_account.type
-        return 'free'
+    # GregM  - Done, MapperExtension on PaymentAccount updates this field!
+#    def account_type(self):
+#        if self.payment_account and self.payment_account.type:
+#            return self.payment_account.type
+#        return 'free'
 
     def delete(self):
         """
@@ -587,17 +603,17 @@ class Member(Base):
 
 GeometryDDL(Member.__table__)
 
-DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
+DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', id || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
 
 
 class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
-    id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
-    last_check       = Column(DateTime(), nullable=False,   default=func.now(), doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
+    id               = Column(String(32),  ForeignKey('member.id'), primary_key=True)
+    last_check       = Column(DateTime(), nullable=False,   default=now, doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location_current = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
-    location_updated = Column(DateTime(), nullable=False,   default=func.now())
+    location_updated = Column(DateTime(), nullable=False,   default=now)
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
     email_unverified = Column(Unicode(250), nullable=True)
@@ -613,7 +629,7 @@ class User(Member):
     __to_dict__['full'        ].update(_extra_user_fields)
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.name or self.id
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
@@ -649,7 +665,7 @@ CREATE TRIGGER update_location_time
 class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
-    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)
+    id                         = Column(String(32), ForeignKey('member.id'), primary_key=True)
     join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
     member_visibility          = Column(group_member_visibility , nullable=False, default="public")
     default_content_visibility = Column(group_content_visibility, nullable=False, default="public")
@@ -662,7 +678,7 @@ class Group(Member):
     
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.name or self.id
 
     @property
     def num_admins(self):
@@ -781,19 +797,157 @@ class Group(Member):
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
-    member_id   = Column(Integer(),    ForeignKey('member.id'), index=True)
+    member_id   = Column(String(32),   ForeignKey('member.id'), index=True)
     # FIXME: need full list; facebook, google, yahoo?
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
     token       = Column(String(250),  nullable=False)
 
+class _PaymentConfigManager(UserDict.DictMixin):
+    def __init__(self, base):
+        self.base = base
+
+    def __getitem__(self, name):
+        if name in self.base:
+            return self.base[name]
+        raise KeyError(name)
+
+    def __setitem__(self, name, value):
+        self.base[name] = value
+
+    def __delitem__(self, name):
+        if name in self.base:
+            del self.base[name]
+
+    def keys(self):
+        return self.base.keys()
 
 class PaymentAccount(Base):
     __tablename__    = "payment_account"
-    id          = Column(Integer(), primary_key=True)
-    type        = Column(account_types, nullable=False, default="free")
+    id               = Column(Integer(), primary_key=True)
+    type             = column_property(Column(account_types, nullable=False, default="free"), extension=PaymentAccountTypeChangeListener())
+    _billing_status  = Enum("ok", "invoiced","waiting", "failed", name="billing_status")
+    billing_status   = Column(_billing_status, nullable=False, default="ok")
+    extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
+    start_date       = Column(Date(),     nullable=False, default=now)
+    currency         = Column(Unicode(), default="GBP", nullable=False)
+    _frequency       = Enum("month", "year", name="billing_period")
+    frequency        = Column(_frequency,     nullable=False, default="month")
+    taxable          = Column(Boolean(), nullable=False, default=True)
+    _tax_rate_code   = Enum("GB", "EU", "US", name="tax_rate_code")
+    tax_rate_code    = Column(_tax_rate_code, nullable=True, default="GB")
+    do_not_bill      = Column(Boolean(), nullable=False, default=False)
+    _address_config_order = ['address_1', 'address_2', 'address_town', 'address_county', 'address_postal', 'address_country']
+    _address_required= ('address_1', 'address_town', 'address_country', 'address_postal')
+    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type'))
     
-    members = relationship("Member", backref=backref('payment_account') ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    __to_dict__ = copy.deepcopy(Base.__to_dict__)
+    __to_dict__.update({
+        'default': {
+            'id'                    : None ,
+            'type'                  : None ,
+            'start_date'            : None ,
+            'name'                  : None ,
+            'address'               : lambda account: dict([(key, account.config[key] if key != 'address_country' else country_codes[account.config[key]]) for key in account._address_config_order if key[:7] == 'address' and key in account.config]) ,
+            'billing_status'        : None , 
+        },
+    })
+    
+    __to_dict__.update({
+        'invoice': copy.deepcopy(__to_dict__['default'])
+    })
+    __to_dict__['invoice'].update({
+            'currency'              : None ,
+            'frequency'             : None ,
+            'taxable'               : None ,
+            'tax_rate_code'         : None ,
+            '_address_config_order' : None ,
+    })
+    
+    __to_dict__.update({
+        'full': copy.deepcopy(__to_dict__['default'])
+    })
+    __to_dict__['full'].update({
+            'currency'              : None ,
+            'frequency'             : None ,
+            'members'               : lambda account: [member.to_dict() for member in account.members] ,
+            'invoices'              : lambda account: sorted([invoice.to_dict() for invoice in account.invoices], key=lambda invoice: invoice['id']) ,
+            'invoices_outstanding'  : None ,
+            'billing_accounts'      : lambda account: [billing.to_dict() for billing in account.billing_accounts] ,
+            'services'              : lambda account: [service.to_dict() for service in account.services] ,
+            'services_full'         : None ,
+            'cost_taxed'            : None ,
+    })
+    
+    members = relationship("Member", backref=backref('payment_account'), extension=PaymentAccountMembersChangeListener() ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
+    invoices = relationship("Invoice", backref=backref('payment_account'), lazy='dynamic' )
+    billing_accounts = relationship("BillingAccount", backref=backref('payment_account') )
+    services = relationship("PaymentAccountService", backref=backref('payment_account') )
+    #services            = relationship("Service"          , primaryjoin="PaymentAccount.id==PaymentAccountService.payment_account_id"  , secondaryjoin="Service.id==PaymentAccountService.service_id", secondary='payment_account_service')
+    
+    _config = None
+    
+    def __unicode__(self):
+        return "%i - %s - %s" % (self.id, self.type, self.config.get('org_name') or self.config.get('ind_name'))
+
+    def __str__(self):
+        return unicode(self).encode('ascii', 'replace')
+    
+    def get_admins(self):
+        from civicboom.lib.payment.functions import get_admin_members
+        return get_admin_members(self)
+    
+#===========================================================================
+# Tried this, failed miserably (duplicate kwarg error :S)
+#===========================================================================
+#    def send_email_admins(subject, content_html, extra_vars):
+#        from civicboom.lib.communication.email_lib import send_email
+#        for user in self.get_admins():
+#            send_email(user, subject=subject, content_html=content_html, extra_vars=extra_vars)
+    
+    @property
+    def name(self):
+        org_name = self.config.get('org_name','')
+        ind_name = self.config.get('ind_name','')
+        if ind_name and org_name:
+            ind_name = '(%s)' % ind_name
+        return '%s%s' % (org_name, ind_name)
+    
+    @property
+    def invoices_outstanding(self):
+        from civicboom.model.payment import Invoice
+        return sum([invoice.total_due for invoice in self.invoices.filter(Invoice.status=='billed').all()])
+    
+    @property
+    def cost_taxed(self):
+        return sum([pac['price_taxed'] for pac in self.services_full])
+            
+    
+    @property
+    def services_full(self):
+        from civicboom.lib.payment.db_methods import payment_account_services_normalised
+        return payment_account_services_normalised(self)
+    
+    @property
+    def config(self):
+        if not self.extra_fields:
+            self.extra_fields = {}
+        if not self._config:
+            self._config = _PaymentConfigManager(self.extra_fields)
+        return self._config
+    
+    @property
+    def next_start_date(self):
+        from civicboom.lib.payment.functions import next_start_date
+        # Unsure if i need today if today is the next calculated start date :S
+        return next_start_date(self.start_date, self.frequency, now())
+    
+    @property
+    def next_start_date_unbilled(self):
+        from civicboom.lib.payment.functions import next_start_date
+        not_found = True
+        while not_found:
+            break
     
     def member_add(self, member, **kwargs):
         from civicboom.lib.database.actions import payment_member_add
@@ -803,6 +957,9 @@ class PaymentAccount(Base):
         from civicboom.lib.database.actions import payment_member_remove
         return payment_member_remove(self, member)
         
+DDL("CREATE INDEX payment_account_start_year_idx  ON payment_account USING btree(extract(year  from start_date));").execute_at('after-create', PaymentAccount.__table__)
+DDL("CREATE INDEX payment_account_start_month_idx ON payment_account USING btree(extract(month from start_date));").execute_at('after-create', PaymentAccount.__table__)
+DDL("CREATE INDEX payment_account_start_day_idx   ON payment_account USING btree(extract(day   from start_date));").execute_at('after-create', PaymentAccount.__table__)
     #cascade="all,delete-orphan"
     
     

@@ -29,9 +29,10 @@
         ${components.header()}
         
         <div data-role="content">
+            ${parent.flash_message()}
             ${parent.list_messages(self.list, self.type)}
         </div>
         
-        ${parent.pagination()}        
+        ${parent.pagination()}
     </div>
 </%def>

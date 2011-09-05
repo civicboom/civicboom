@@ -1,0 +1,13 @@
+[app:main]
+demo_mode = true
+online = false
+test_mode = true
+telemetry =
+
+cache_dir = /tmp/cb-website-test-data
+path.temp = /tmp/cb-website-test-temp
+setting.username_to_auto_follow_on_signup = unittest, unitfriend
+
+warehouse.type = local
+warehouse.url = /warehouse
+

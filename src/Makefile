@@ -12,6 +12,7 @@ help:
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
 	#   css         -- compress folders of css into single files
+	#   ini         -- generate production / demo / test.ini files
 	# sass          -- run a daemon to turn scss into css
 	# test          -- run all nosetests
 	# test-db       -- create a blank database and fill it with test data
@@ -23,7 +24,6 @@ help:
 
 help2:
 	# cdnpush       -- push static files to CDN
-	# libs          -- fetch external libraries
 	# gource        -- generate a video of developer activity
 	# stats         -- run the interactive profile examiner
 	# pep8          -- strict syntax checking
@@ -34,7 +34,9 @@ help2:
 	# test-coverage -- run all nosetests and produce coverage html docs
 	# test-profile  -- run the test suite with profiling enabled (slow)
 	# run-worker    -- run a local worker
+	# run-demo      -- run in standalone demo mode - no internet needed
 	# stopsys       -- stop the system cb-website and cb-worker
+	# tv            -- compile telemetry DB
 
 
 ##############################################################################
@@ -90,9 +92,6 @@ i18n-zh: civicboom/i18n/zh/LC_MESSAGES/civicboom.po
 i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAGES/civicboom.po civicboom/i18n/zh/LC_MESSAGES/civicboom.po
 	python setup.py compile_catalog
 
-# shortcuts
-i18n: i18n-en
-
 
 ##############################################################################
 # static files
@@ -107,6 +106,11 @@ sass:
 	cd civicboom/public/styles
 	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
+# redirecting stdout means that the file is created even if the process fails.
+# the mv on the second line only happens if it succeeds
+%.ini: %.inidiff development.ini
+	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
+
 
 ##############################################################################
 # testing
@@ -120,18 +124,18 @@ test-coverage:
 test-profile:
 	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests --verbose
 
-skel-db:
+data/data-skel.pgdump: civicboom/model/*.py
 	../admin_scripts/init_cbdb
-
-test-db: skel-db
-	paster setup-app development.ini
 	nosetests
+	sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump
 
-live-db: skel-db
-	mkdir -p data
-	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/live-data.pgdump
+test-db: data/data-skel.pgdump
+	sudo -u postgres pg_restore --clean -d civicboom < data/data-skel.pgdump
+
+live-db:
+	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
 	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
-	sudo -u postgres pg_restore -d civicboom data/live-data.pgdump
+	sudo -u postgres pg_restore -d civicboom data/data-live.pgdump
 
 
 ##############################################################################
@@ -139,6 +143,9 @@ live-db: skel-db
 
 run:
 	paster serve --reload development.ini
+
+run-demo:
+	paster serve --reload demo.ini
 
 run-worker:
 	./cb-worker
@@ -165,13 +172,9 @@ cdnpush-rs: js css
 		--exclude-file civicboom/public/cdn-exclude.txt \
 		civicboom/public
 
-cdnpush: cdnpush-rs
-
 
 ##############################################################################
 # other
-
-site: i18n js css api-doc
 
 clean:
 	git clean -d -f -x
@@ -198,24 +201,39 @@ civicboom/public/doc/index.html: ../docs/api.*.html civicboom/controllers/*.py
 	mkdir -p civicboom/public/doc/
 	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
 
-api-doc: civicboom/public/doc/index.html
-
 milestone-doc:
 	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
-
-py-libs:
-	$(MAKE) -C ../lib
-
-libs: py-libs
 
 shell:
 	paster shell
 
-schemadiff:
-	pg_dump -U civicboom -h localhost -s civicboom > civicboom_dev.sql
-	ssh db1.civicboom.com sudo -u postgres pg_dump -s civicboom > civicboom_live.sql
-	java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction civicboom_live.sql civicboom_dev.sql > update.sql
+update.sql: civicboom/model/*.py
+	pg_dump -U civicboom -h localhost -s civicboom > data/schema-dev.sql
+	ssh db1.civicboom.com sudo -u postgres pg_dump -s civicboom > data/schema-live.sql
+	java -jar ~/apgdiff-2.3/apgdiff-2.3.jar --add-transaction data/schema-live.sql data/schema-dev.sql > update.sql
 
 stopsys:
 	sudo initctl stop cb-website
 	sudo initctl stop cb-worker
+
+cbtv.db: cbtv.log
+	../lib/cbutils/cbtv.py -i cbtv.log -d cbtv.db
+
+tv: cbtv.db
+	../lib/cbutils/cbtv.py -d cbtv.db
+
+
+##############################################################################
+# human readable aliases
+
+api-doc: civicboom/public/doc/index.html
+
+schemadiff: update.sql
+
+cdnpush: cdnpush-rs
+
+ini: production.ini demo.ini test.ini
+
+i18n: i18n-en
+
+site: i18n js css api-doc ini

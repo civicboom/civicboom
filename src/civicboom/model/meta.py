@@ -1,7 +1,10 @@
 """SQLAlchemy Metadata and Session object"""
 from sqlalchemy import MetaData
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm.interfaces import AttributeExtension
 import copy
+
+
 
 __all__ = ['Session', 'engine', 'metadata', 'Base']
 
@@ -19,12 +22,119 @@ metadata = MetaData()
 # Allan - dont think it is needed in this project? - http://www.sqlalchemy.org/docs/reference/ext/declarative.html#accessing-the-metadata
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
+            
+#===============================================================================
+# Events for:
+#    PaymentAccount.type change -> update PaymentAccount.members.account_type
+#    PaymentAccount.members change -> update PaymentAccount.members/memb_appended/memb_removed
+#    Member.payment_account_id set None -> update Memb.account_type to 'free'
+#===============================================================================
+class PaymentAccountTypeChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        for member in state.obj().members:
+            member.account_type = value
+        return value
+class PaymentAccountMembersChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        for member in state.obj().members:
+            member.account_type = value
+        return value
+    def append(self, state, value, initiator):
+        value.account_type = state.obj().type
+        return value
+    def remove(self, state, value, initiator):
+        value.account_type = 'free'
+class MemberPaymentAccountIdChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        if value == None:
+            state.obj().account_type = 'free'
+        return value
+
+
+# AllanC - Testing various SQLAlchemy Events
+#          I left it hear because it's a useful tool, getting alerts to every field change
+
+#from civicboom.lib.cache import cache_manager, caching_query
+#Session = scoped_session(sessionmaker(  query_cls=caching_query.query_callable(cache_manager) )) # Cache addition
+"""
+# Cache Additions
+#   We need to be able to recive notifications on any data object changes so that we can invalidate the cache
+#   Add receive_change_event to base
+#
+# Reference:
+#  - http://www.sqlalchemy.org/trac/browser/examples/custom_attributes/listen_for_events.py?rev=7667%3A6bf675d91a56
+
+from sqlalchemy.orm.interfaces import AttributeExtension,InstrumentationManager
+
+class InstallListeners(InstrumentationManager):
+    def post_configure_attribute(self, class_, key, inst):
+        # Add an event listener to an InstrumentedAttribute.
+        inst.impl.extensions.insert(0, AttributeListener(key))
+        
+class AttributeListener(AttributeExtension):
+    # Generic event listener.  
+    # Propigates attribute change events to a "receive_change_event()" method on the target instance.
+    
+    def __init__(self, key):
+        self.key = key
+    
+    def append(self, state, value, initiator):
+        self._report(state, value, None, "appended")
+        return value
+
+    def remove(self, state, value, initiator):
+        self._report(state, value, None, "removed")
+
+    def set(self, state, value, oldvalue, initiator):
+        self._report(state, value, oldvalue, "set")
+        return value
+    
+    def _report(self, state, value, oldvalue, verb):
+        state.obj().receive_change_event(verb, self.key, value, oldvalue)
+
+
+class Base(object):
+    __sa_instrumentation_manager__ = InstallListeners
+    
+    def receive_change_event(self, verb, key, value, oldvalue):
+        try:
+            s = "Value '%s' %s on attribute '%s', " % (value, verb, key)
+            if oldvalue:
+                s += "which replaced the value '%s', " % oldvalue
+            s += "on object %s" % self
+            print s
+        except:
+            pass
+        
+Base = declarative_base(cls=Base)
+"""
+
+
+# Listener for Member object events - this triggers invalidate cache
+# This is subject to change in sqlalchemy 0.7
+# Reference - http://www.sqlalchemy.org/docs/06/orm/interfaces.html#mapper-events
+from sqlalchemy.orm.interfaces import MapperExtension
+from sqlalchemy.orm.session import object_session
+#from sqlalchemy.orm.util import has_identity
+class CacheChangeListener(MapperExtension):
+    def after_insert(self, mapper, connection, instance):
+        self.after_update(mapper, connection, instance)
+    def after_update(self, mapper, connection, instance):
+        if object_session(instance).is_modified(instance, include_collections=False): # and has_identity(instance)
+            instance.invalidate_cache()
+            #print "instance %s after_update" % instance
+    def before_delete(self, mapper, connection, instance):
+        instance.invalidate_cache(remove=True)
+        #print "instance %s before_delete" % instance
+
 
 
 # types
 
 from sqlalchemy import PickleType, UnicodeText
-import json
+import simplejson as json
+
+from cbutils.cbtv import log as t_log
 
 
 class JSONType(PickleType):
@@ -49,6 +159,7 @@ def location_to_string(location):
     return None
 
 
+@t_log("to_dict")
 def to_dict(self, list_type='default', include_fields=None, **kwargs):
     """
     describe

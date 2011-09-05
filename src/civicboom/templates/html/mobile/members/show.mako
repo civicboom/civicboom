@@ -8,24 +8,29 @@
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
-<%def name="page_title()">
-    ${_(d['member']['username'])}
-</%def>
-
-<%def name="body()">
+<%def name="init_vars()">
     <%
         self.member    = d['member']
-        self.id        = self.member['username']
+        self.id        = self.member.get('id')
         self.name      = self.member.get('name')
         self.actions   = d['actions']
     %>
-    
+</%def>
+
+<%def name="page_title()">
+    ${self.id}
+</%def>
+
+<%def name="body()">
+
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
+            ${parent.flash_message()}
             ${member_details_full(self.member)}
+            <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
         </div>
         
         ${signout_navbar()}
@@ -36,9 +41,78 @@
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
+            <h2 style="text-align: center;">${self.id}'s ${_('_content')}</h2>
             ${member_content_list(d)}
         </div>
     </div>
+    
+    % if config['development_mode']:
+        ## Persona switching
+        <div data-role="page" id="member_persona-${self.id}" class="member_persona">
+            ${persona()}
+        </div>
+    % endif
+    
+</%def>
+
+## Persona switch
+<%def name="persona()">
+    <table>
+        <%def name="persona_select(member, **kwargs)">
+            <%
+                current_persona = member==c.logged_in_persona
+            %>
+            <tr
+                % if current_persona:
+                    class   = "current_persona selectable"
+                    onclick = "window.location = '/profile';"
+                % else:
+                    class   = "selectable"
+                    onclick = "$(this).find('form').submit();"
+                % endif
+            >
+                <td>
+                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
+                </td>
+                <td>
+                    <p class="name">${member.name or member.username}</p>
+                    % for k,v in kwargs.iteritems():
+                        % if v:
+                            <p class="info">${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
+                        % endif
+                    % endfor
+                </td>
+                <td class="hide_if_js">
+                    % if not current_persona:
+                    ${h.secure_link(
+                        h.url(controller='account', action='set_persona', id=member.username, format='html') ,
+                        'switch user',
+                        css_class="persona_link",
+                    )}
+                    % endif
+                </td>
+            </tr>
+        </%def>
+        
+        <%
+            num_members = None
+            if hasattr(c.logged_in_persona, 'num_members'):
+                num_members = c.logged_in_persona.num_members
+        %>
+        
+        ## Show default persona (the user logged in)
+        ${persona_select(c.logged_in_user)}
+        
+        ## Show current persona (current group persona if applicable)
+        % if c.logged_in_persona != c.logged_in_user:
+            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+        % endif
+        
+        ## Show currently logged in persona's groups:
+        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
+            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+        % endfor
+    </table>
 </%def>
 
 ##-----------------------------------------------------------------------------
@@ -53,7 +127,7 @@
                         ${h.secure_link(
                             h.url(controller='account', action='signout'),
                             _('Sign out'),
-                            rel = "external"
+                            css_class="button",
                         )}
                     </li>
                 </ul>
@@ -122,7 +196,7 @@
                         ${username}'s website
                     </li>
                     <li>
-                        <a href="${website}" alt="${member['id']}'s website">
+                        <a href="${website}">
                             ${website}
                         </a>
                     </li>
@@ -153,42 +227,41 @@
 <%def name="actions_buttons()">
 
     % if c.logged_in_user and self.actions:
+            % if 'message' in self.actions:
+                <a href="${h.url(controller='messages', action='new', target=self.id)}" data-rel="dialog" data-transition="fade"><button>Send message</button></a>
+            % endif
+
             % if 'follow' in self.actions:
                 ${h.secure_link(
-                    h.url('member_action', action='follow'    , id=self.id) ,
+                    h.url('member_action', action='follow', id=self.id, format='redirect') ,
                     value           = _('Follow'),
                     value_formatted = h.literal("<button>%s</button>") % _('Follow'),
                     title           = _("Follow %s" % self.name) ,
-                    rel             = "external",
                 )}
             % endif
             
             % if 'unfollow' in self.actions:
                 ${h.secure_link(
-                    h.url('member_action', action='unfollow'  , id=self.id) ,
+                    h.url('member_action', action='unfollow', id=self.id, format='redirect') ,
                     value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
                     title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-                    rel             = "external",
                 )}
             % endif
             
             % if 'join' in self.actions:
                 ${h.secure_link(
-                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
                     value           = _('Join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
-                    rel             = "external",
                 )}
             % endif
             
-            ## AllanC - same as above, could be neater but works
             % if 'join_request' in self.actions:
                 ${h.secure_link(
-                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
                     value           = _('Request to join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
-                    rel             = "external",
                 )}
             % endif
     % endif
@@ -258,9 +331,9 @@
             articles = data['articles']
         %>
         <div class="member_content">
-            ${list_includes.list_contents(requests, "Active requests")}
-            ${list_includes.list_contents(responses, "Responses")}
-            ${list_includes.list_contents(articles, "Stories")}
+            ${list_includes.list_contents(requests, "Active requests", more=1)}
+            ${list_includes.list_contents(responses, "Responses", more=1)}
+            ${list_includes.list_contents(articles, "Stories", more=1)}
         </div>
     % endif
 </%def>

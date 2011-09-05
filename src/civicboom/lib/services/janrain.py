@@ -1,5 +1,5 @@
 """
-Janrain Engage - http://www.janrain.com/products/engage
+Janrain Engage - http://documentation.janrain.com/
 Python wrapper for Janrain API calls
 """
 

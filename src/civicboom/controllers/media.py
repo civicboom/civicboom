@@ -61,7 +61,7 @@ class MediaController(BaseController):
         """DELETE /media/id: Delete an existing item"""
         m = None
         try:
-            m = Session.query(Media).filter(Media.id==id).first()
+            m = Session.query(Media).get(id)
         except:
             pass
         if not m:

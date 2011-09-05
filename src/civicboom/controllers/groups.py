@@ -228,8 +228,8 @@ class GroupsController(BaseController):
         
         # Create and set group admin here!
         group              = Group()
+        group.id           = group_dict['username']
         group.name         = group_dict['name']
-        group.username     = group_dict['username']
         group.status       = 'active'
         group_admin        = GroupMembership()
         group_admin.member = c.logged_in_persona
@@ -280,7 +280,7 @@ class GroupsController(BaseController):
         c.logged_in_persona = logged_in_persona
         c.logged_in_persona_role = logged_in_persona_role
         
-        user_log.info("Created Group #%d (%s)" % (group.id, group.username))
+        user_log.info("Created Group #%s (%s)" % (group.id, group.name))
         
         # AllanC - Temp email alert for new group
         send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
@@ -379,7 +379,7 @@ class GroupsController(BaseController):
         @return 200 group deleted successfully
         """
         group = get_group(id, is_current_persona_admin=True)
-        user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
+        user_log.info("Deleted Group #%s (%s)" % (group.id, group.name))
         group.delete()
         c.html_action_fallback_url = url('/')
         set_persona(c.logged_in_user)

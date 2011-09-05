@@ -76,7 +76,9 @@ class AdminControllerBase(BaseController):
             col_name = name[name.find("--")+2:]
             value = request.GET[name]
             if re.match("^[a-zA-Z0-9_]+$", col_name) and re.match("^[a-zA-Z0-9_]+$", value):
-                if re.match("^[0-9]+$", value):
+                if name == "User--id":  # FIXME: haaaaaaaaaack. id alone is ambiguous
+                    q = q.filter("member.id = '%s'" % (str(value), ))
+                elif re.match("^[0-9]+$", value):
                     q = q.filter("%s = %s" % (col_name, str(value)))
                 elif col_name == "status":
                     q = q.filter("%s = '%s'" % (col_name, value))

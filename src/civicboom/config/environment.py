@@ -25,11 +25,13 @@ from redis import Redis
 import cbutils.worker as worker
 
 
+
 def load_environment(global_conf, app_conf):
     """
     Configure the Pylons environment via the ``pylons.config``
     object
     """
+    
     config = PylonsConfig()
 
     beaker.cache.clsmap['ext:redis'] = redis_.RedisManager
@@ -47,7 +49,7 @@ def load_environment(global_conf, app_conf):
     config['routes.map']         = make_map(config)
     config['pylons.app_globals'] = app_globals.Globals(config)
 
-    pylons.cache._push_object(config['pylons.app_globals'].cache)
+    #pylons.cache._push_object(config['pylons.app_globals'].cache)
 
     config['pylons.h'] = civicboom.lib.helpers
 
@@ -78,6 +80,9 @@ def load_environment(global_conf, app_conf):
                         'test_mode',
                         'demo_mode',
                         'profile',
+                        'beaker.cache.enabled',
+                        'cache.etags.enabled',
+                        'cache.static_decorators.enabled',
                         ]
     for varname in boolean_varnames:
         config[varname] = asbool(config.get(varname))
@@ -128,6 +133,15 @@ def load_environment(global_conf, app_conf):
         worker.init_queue(redis_.RedisQueue(redis_.redis_from_url(config['worker.queue.url']), platform.node()))
     else:  # pragma: no cover
         log.error("Invalid worker type: %s" % pylons.config['worker.queue.type'])
+
+    # set up cache
+    from civicboom.lib.cache import init_cache
+    init_cache(config)
+
+    # set up cbtv
+    import cbutils.cbtv as t
+    if config.get('telemetry'):
+        t.set_log(config['telemetry'])
 
     init_model_extra() # This will trigger a set of additional initalizers
 
