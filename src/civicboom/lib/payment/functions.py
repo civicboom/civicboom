@@ -77,7 +77,8 @@ def get_admin_members(payment_account):
     seen = []
     def get_group_admins(group):
         seen.append(group.id)
-        for member in group.members:
+        for member_role in group.members_roles:
+            member = member_role.member
             if member.id not in seen and group.is_admin(member):
                 seen.append(member.id)
                 if member.__type__ == 'user':
