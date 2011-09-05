@@ -33,7 +33,7 @@ import cbutils.worker as worker
 import civicboom.lib.errors as errors
 from cbutils.cbtv import log as t_log, log_start as t_log_start, log_end as t_log_end
 
-import json
+import simplejson as json
 import platform
 import formencode
 

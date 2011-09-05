@@ -5,6 +5,8 @@ from sqlalchemy import func
 from sqlalchemy.schema import CheckConstraint
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
 
+from cbutils.misc import now
+
 from civicboom.model.meta import Base
 import cbutils.warehouse as wh
 import cbutils.worker as worker
@@ -33,7 +35,7 @@ class Media(Base):
     credit        = Column(UnicodeText(),    nullable=False)
     filesize      = Column(Integer(),        nullable=True, doc="the length of the processed media file in bytes")
     location      = Golumn(Point(2),         nullable=True)
-    timestamp     = Column(DateTime(),       nullable=False, default=func.now())
+    timestamp     = Column(DateTime(),       nullable=False, default=now)
 
     __table_args__ = (
         CheckConstraint("length(subtype) > 0"),

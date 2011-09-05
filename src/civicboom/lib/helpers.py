@@ -26,7 +26,7 @@ import os
 import re
 import urllib
 import hashlib
-import json
+import simplejson as json
 import copy
 import time
 import datetime
@@ -276,7 +276,10 @@ def icon(icon_type, description=None, class_=''):
 def api_datestr_to_datetime(date_str):
     if not date_str:
         return None
-    return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
+    try:
+        return datetime.datetime.strptime(date_str[0:19], "%Y-%m-%d %H:%M:%S")
+    except:
+        return datetime.datetime.strptime(date_str[0:10], "%Y-%m-%d")
 
 
 def date_to_rss(date):
@@ -289,7 +292,6 @@ def date_to_rss(date):
     if isinstance(date, basestring):
         date = api_datestr_to_datetime(date)
     return date.strftime("%a, %d %b %Y %H:%M:%S +0000")
-
 
 def time_ago(from_time):
     if not from_time:
