@@ -130,9 +130,9 @@ class App:
                 text=t
             ).pack(side="left")
 
-        def _sp(f, t, i, v):
+        def _sp(fr, t, i, v):
             Spinbox(f,
-                from_=f, to=t, increment=i,
+                from_=fr, to=t, increment=i,
                 textvariable=v
             ).pack(side="left")
 
@@ -141,12 +141,12 @@ class App:
                 text=t, command=c
             ).pack(side="right")
 
-        _la(f, "  Start ")
-        _sp(f, 0, int(time()), 10, self.render_start)
-        _la(f, "  Length ")
-        _sp(f, 1, 60, 1, self.render_len)
-        _la(f, "  Zoom ")
-        _sp(f, 100, 5000, 100, self.scale)
+        _la("  Start ")
+        _sp(0, int(time()), 10, self.render_start)
+        _la("  Length ")
+        _sp(1, 60, 1, self.render_len)
+        _la("  Zoom ")
+        _sp(100, 5000, 100, self.scale)
 
         _bu("End", self.end_event)
         _bu("Next Bookmark", self.next_event)
