@@ -335,25 +335,26 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     def run_transaction_tasks(self):
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
-        from civicboom.lib.payment.api_calls import paypal_interface
         from civicboom.model.member import PaymentAccount
-        transactions = Session.query(BillingTransaction).filter(BillingTransaction.status=='pending').all()
+        transactions = Session.query(BillingTransaction)\
+            .filter(BillingTransaction.status=='pending')\
+            .filter(BillingTransaction.status_updated < (now() - datetime.timedelta(hours=3)))\
+            .all()
         
         for txn in transactions:
-            if txn.status_updated < (now() - datetime.timedelta(hours=3)):
-                if txn.provider in payment.check_transactions:
-                    try:
-                        response = payment.check_transactions[txn.provider](
-                            reference = txn.config['transaction_id']
-                        )
-                    except:
-                        pass
-                    else:
-                        txn.status = response['status']
-                        if txn.status == 'complete':
-                            if txn.invoice.total_paid >= txn.invoice.total:
-                                txn.invoice.status = 'paid'
-                        txn.status_updated = now()
+            if txn.provider in payment.check_transactions:
+                try:
+                    response = payment.check_transactions[txn.provider](
+                        reference = txn.config['transaction_id']
+                    )
+                except:
+                    pass
+                else:
+                    txn.status = response['status']
+                    if txn.status == 'complete':
+                        if txn.invoice.total_paid >= txn.invoice.total:
+                            txn.invoice.status = 'paid'
+                    txn.status_updated = now()
         
         Session.commit()
         return response_completed_ok
@@ -363,7 +364,6 @@ class TaskController(BaseController):
     #---------------------------------------------------------------------------
     def run_billing_account_tasks(self):
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
-        from civicboom.lib.payment.api_calls import paypal_interface
         from civicboom.model.member import PaymentAccount
         
         paypal_to_civicboom_status = {
@@ -374,25 +374,27 @@ class TaskController(BaseController):
             'Expired'    :'deactivated',
         }
         
-        billing_accounts = Session.query(BillingAccount).filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active')).all()
+        billing_accounts = Session.query(BillingAccount)\
+            .filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active'))\
+            .filter(BillingAccount.status_updated < (now() - datetime.timedelta(hours=3)))\
+            .all()
         
         for billing_account in billing_accounts:
-            if billing_account.status_updated < (now() - datetime.timedelta(hours=3)):
-                if billing_account.provider in payment.check_recurrings:
-                    response = payment.check_recurrings[billing_account.provider](billing_account.reference)
-                    if response.status != 'error':
-                        billing_account.status = paypal_to_civicboom_status[response['status']]
-                        if 'create_transaction_if' in response:
-                            cti = response['create_transaction_if']
-                            if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
-                                txn = BillingTransaction()
-                                txn.timestamp       = cti['timestamp']
-                                txn.status          = cti['status']
-                                txn.amount          = cti['amount']
-                                txn.billing_account = billing_account
-                                txn.provider        = cti['provider']
-                                txn.reference       = cti['reference']
-                billing_account.status_updated = now()
+            if billing_account.provider in payment.check_recurrings:
+                response = payment.check_recurrings[billing_account.provider](billing_account.reference)
+                if response.status != 'error':
+                    billing_account.status = paypal_to_civicboom_status[response['status']]
+                    if 'create_transaction_if' in response:
+                        cti = response['create_transaction_if']
+                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
+                            txn = BillingTransaction()
+                            txn.timestamp       = cti['timestamp']
+                            txn.status          = cti['status']
+                            txn.amount          = cti['amount']
+                            txn.billing_account = billing_account
+                            txn.provider        = cti['provider']
+                            txn.reference       = cti['reference']
+            billing_account.status_updated = now()
             
 #            if billing_account.provider == 'paypal_recurring':
 #                try:

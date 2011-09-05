@@ -194,7 +194,16 @@ class PayPalInterface(object):
                     'PROFILESTATUS'                             : 'ActiveProfile',
                     'PROFILEID'                                 : 'RECURRING-TEST',
                 }
-                pass
+            elif url_values['METHOD'] == 'ManageRecurringPaymentsProfileStatus':
+                #token = url['TOKEN']
+                #test_data = self.config.test_data[token]
+                response = {
+                    'ACK'                                       : 'Success',
+                    'TIMESTAMP'                                 : '',
+                    'CORRELATIONID'                             : 'TESTCORID-cancel',
+                    'VERSION'                                   : url['VERSION'],
+                    'BUILD'                                     : 'CB_TEST',
+                }
             response = urllib.urlencode(response)
             ###### Civicboom Unit Test Responses
         response = PayPalResponse(response, self.config)
