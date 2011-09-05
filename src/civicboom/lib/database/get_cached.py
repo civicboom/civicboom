@@ -84,7 +84,7 @@ def get_member(member):
 def get_member_email(member_email):
     assert type(member_email) in [str, unicode], debug_type(member_email)
     try:
-        return Session.query(User).filter_by(email=member_email)
+        return Session.query(User).filter_by(email=member_email).one()
     except NoResultFound:
         return None
     
