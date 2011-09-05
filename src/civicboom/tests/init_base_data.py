@@ -41,6 +41,16 @@ def init_base_data():
 
         u1.set_payment_account('plus', delay_commit=True)
 
+        Session.add_all([u1, u1_login])
+        Session.commit()
+        #assert u1.id == 1
+        assert u1.login_details[0].type == "password"
+        assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
+        assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
+        
+        #u1_service = Session.query(Service).filter(Service.payment_account_type==u1.payment_account.type).one()
+        
+        u1.payment_account.do_not_bill = True
 
         u2 = User()
         u2.id            = u"unitfriend"
@@ -53,7 +63,13 @@ def init_base_data():
         u2_login.type   = "password"
         u2_login.token  = hashlib.sha1("password").hexdigest()
 
-        u2.set_payment_account('plus', delay_commit=True)
+        u2_account         = PaymentAccount()
+        u2_account.type    = 'plus'
+        u2_account.start_date = datetime.datetime.now() - datetime.timedelta(days=27)
+
+        u2.set_payment_account(u2_account, delay_commit=True)
+        
+        u2.payment_account.do_not_bill = True
 
         g1 = Group()
         g1.id       = "unitgroup"
@@ -78,6 +94,7 @@ def init_base_data():
         u3.status        = "active"
         u3.email         = u"test+kitten@civicboom.com"
         u3.avatar        = u"f86c68ccab304eb232102ac27ba5da061559fde5"
+        u3.set_payment_account('free', delay_commit=True)
 
         u3_login = UserLogin()
         u3_login.user   = u3

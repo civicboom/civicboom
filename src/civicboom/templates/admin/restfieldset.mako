@@ -61,6 +61,21 @@ from pylons import url
 			<p><a class="ui-state-default ui-corner-all" href="${models['Media']}">Media</a></p>
 		</td>
 	</tr>
+	<tr>
+	    <th colspan="1">${_("Payment")}</th>
+	    <td></td>
+        <td></td>
+	</tr>
+	<tr>
+	    <td>
+	        <p><a class="ui-state-default ui-corner-all" href="${models['PaymentAccount']}">Payment Accounts</a></p>
+	        <p><a class="ui-state-default ui-corner-all" href="${models['Invoice']}">Invoices</a></p>
+	        <p><a class="ui-state-default ui-corner-all" href="${models['BillingAccount']}">Billing Accounts</a></p>
+	        <p><a class="ui-state-default ui-corner-all" href="${models['BillingTransaction']}">Billing Transactions</a></p>
+	    </td>
+	    <td></td>
+	    <td></td>
+	</tr>
 </table>
 		</td><td>
 <table>

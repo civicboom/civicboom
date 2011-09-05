@@ -13,8 +13,9 @@ class TestCrawlSite(TestController):
     # /members/civicboom as this does not exist unless we are looking at the live site!
     # None for blank hrefs (we use href='' quite a bit?!)
     # 'False' for invalid href (Why does this happen in /help/article, WTF?!)
-    crawled = ['/members/civicboom', None, 'False']
+    crawled = ['/members/civicboom', '/doc/', None, 'False']
     count = 0
+    error_count = 0
     
     def setUp(self):
         pass
@@ -30,10 +31,10 @@ class TestCrawlSite(TestController):
         print url, 'from', prev_url
         response = self.app.get(url, status='*')
         if response.status not in [200, 301, 302]:
-            print 'Got response', response.status
-            print response.body
-            print 'When calling', url, 'referred to by', prev_url
-            assert False
+            print '\tGot response', response.status
+            print '\tWhen calling', url, 'referred to by', prev_url
+            self.error_count += 1
+            return
         self.count += 1
         soup = BeautifulSoup(response.body)
         hrefs = [ link.get('href') for link in soup.findAll('a') if not re.match(not_civicboom, link.get('href', ''))]
@@ -43,3 +44,5 @@ class TestCrawlSite(TestController):
                 self.crawl(href, url)
         if not prev_url:
             print 'Crawled', self.count
+            if error_count:
+                assert False

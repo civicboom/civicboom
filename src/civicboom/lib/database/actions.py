@@ -5,6 +5,7 @@ from civicboom.model.meta    import Session
 from civicboom.model         import Rating
 from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
 from civicboom.model.member  import *
+from civicboom.model.payment import *
 
 from civicboom.lib.database.get_cached import get_member, get_group, get_membership, get_content
 #from civicboom.lib.cache import  invalidate_content, invalidate_member

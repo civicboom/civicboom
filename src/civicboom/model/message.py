@@ -7,7 +7,7 @@ from sqlalchemy import Integer, DateTime, Boolean
 from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.schema import DDL
-
+from cbutils.misc import now
 import copy
 
 
@@ -16,7 +16,7 @@ class Message(Base):
     id          = Column(Integer(),     primary_key=True)
     source_id   = Column(String(32),    ForeignKey('member.id'), nullable=True)
     target_id   = Column(String(32),    ForeignKey('member.id'), nullable=True, index=True)
-    timestamp   = Column(DateTime(),    nullable=False, default=func.now())
+    timestamp   = Column(DateTime(),    nullable=False, default=now)
     subject     = Column(Unicode(),     nullable=False)
     content     = Column(UnicodeText(), nullable=False)
     read        = Column(Boolean(),     nullable=False, default=False)

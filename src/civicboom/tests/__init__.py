@@ -648,3 +648,12 @@ class TestController(TestCase):
                 fount = True
                 return True
         raise AssertionError('%s not found in subelements of %s' % (substring, string_list))
+    
+    def run_task(self, task, **kwargs):
+        response = self.app.get(
+            url(controller='task', action=task, **kwargs),
+            status=200
+        )
+        assert "task:ok" in response
+        
+        

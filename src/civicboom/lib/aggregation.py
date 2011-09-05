@@ -7,7 +7,7 @@ from civicboom.model.meta import Session
 from cbutils.tiny_url import tiny_url
 from cbutils.text     import strip_html_tags, safe_python_strings
 
-import json
+import simplejson as json
 
 import logging
 log      = logging.getLogger(__name__)

@@ -9,7 +9,7 @@ from civicboom.lib.widget import widget_defaults
 
 import os
 import time
-import json
+import simplejson as json
 import re
 from decorator import decorator
 import logging
@@ -455,7 +455,7 @@ def setup_format_processors():
             if n not in ['status', 'message', 'data']:
                 del result[n]
         cb = request.GET.get("callback")
-        json_data = json.dumps(result)
+        json_data = json.dumps(result, use_decimal=True)
         if cb and re.match("^[a-zA-Z][a-zA-Z0-9_]*$", cb):
             json_data = u"%s(%s)" % (cb, json_data)
         return json_data
@@ -510,24 +510,50 @@ def setup_format_processors():
             
         #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
-        
+    
+    def format_print(result):
+        if result.get('status', 'ok') == 'error':
+            return render_template(result, 'html')
+        frag = render_template(result, 'frag')
+        return render_mako('print/wrapper.mako', extra_vars={"inner_html": frag})
+    
     def format_ical(result):
         abort(501)
         
     def format_pdf(result):
-        abort(501)
+        import subprocess
+        print_formatted = format_print(result)
+        
+        import ho.pisa as pisa
+        import cStringIO as StringIO
+        
+        io = StringIO.StringIO()
+        
+        def link_handler(uri, rel):
+            if uri[0:4] != 'http':
+                uri = 'https://localhost' + uri
+            return uri
+            
+        pdf = pisa.pisaDocument(StringIO.StringIO(print_formatted.encode("UTF-8")), io, link_callback = link_handler, encoding="UTF-8")# path, link_callback, debug, show_error_as_pdf, default_css, xhtml, encoding, xml_output, raise_exception, capacity)
+        if not pdf.err:
+            response.headers['Content-type'] = "application/pdf"
+            return io.getvalue()
+        return pdf.err
+    
+    
 
-    return dict(
-        python   = lambda result:result,
-        json     = format_json,
-        xml      = format_xml,
-        rss      = format_rss,
-        html     = format_html,
-        frag     = format_frag,
-        redirect = format_redirect,
-        ical     = format_ical,
-        pdf      = format_pdf,
-    )
+    return {
+        'python'   : lambda result:result,
+        'json'     : format_json,
+        'xml'      : format_xml,
+        'rss'      : format_rss,
+        'html'     : format_html,
+        'frag'     : format_frag,
+        'redirect' : format_redirect,
+        'print'    : format_print,
+        'ical'     : format_ical,
+        'pdf'      : format_pdf,
+    }
 
 
 format_processors = setup_format_processors()

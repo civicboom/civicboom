@@ -132,7 +132,7 @@ class CacheChangeListener(MapperExtension):
 # types
 
 from sqlalchemy import PickleType, UnicodeText
-import json
+import simplejson as json
 
 from cbutils.cbtv import log as t_log
 
