@@ -12,14 +12,14 @@ class TestPaymentController(TestController):
     Tests for Payment Controller
     """
     
-    payment_account_numbers = {}
+    payment_account_ids = {}
     
     def test_payment_all_ok(self):
         self.server_datetime('now')
         # Run invoice tasks to get any stray emails out of the way
         self.run_task('run_invoice_tasks')
         # Setup payment account numbers dict
-        self.payment_account_numbers = {}
+        self.payment_account_ids = {}
         # Setup two accounts, ind and org & test invalid form entries for both!
         self.part_sign_up('test_payment_ind', 'ind')
         self.log_out()
@@ -62,6 +62,27 @@ class TestPaymentController(TestController):
         # Check invoice marked as paid & account is returned to "ok"
         assert self.part_get_invoice('test_payment_ind').status == 'paid'
         self.part_check_member_status('test_payment_ind', 'ok')
+        
+        # Move to next month & check invoice created email
+        emails = getNumEmails()
+        invoices = len(get_member('test_payment_ind').payment_account.invoices.all())
+        self.server_datetime(datetime.datetime.now() + datetime.timedelta(days=27))
+        self.run_task('run_invoice_tasks')
+        self.assertEqual(getNumEmails(), emails + 1)
+        self.assertEqual(len(get_member('test_payment_ind').payment_account.invoices.all()), invoices + 1)
+        self.assertIn('invoiced', getLastEmail().content_text)
+        # Move to invoice due date and test for invoice due email
+        emails = getNumEmails()
+        due_date = get_member('test_payment_ind').payment_account.invoices.filter(Invoice.status=='billed').one().due_date
+        self.server_datetime(datetime.datetime.combine(due_date, datetime.time(0,0,0)))
+        self.run_task('run_invoice_tasks')
+        self.assertEqual(getNumEmails(), emails + 1)
+        self.assertIn('overdue', getLastEmail().content_text)
+        
+        
+        
+        # Check another invoice has been generated
+        
         self.server_datetime('now')
         
     def test_payment_ok_paypal(self):
@@ -131,6 +152,7 @@ class TestPaymentController(TestController):
         
         # Check recurring billing account has been created
         bacct = self.part_get_billing_account('test_payment_paypal_rec')
+        bacct_id = bacct.id
         self.assertNotEqual(bacct, None)
         self.assertIn('paypal_recurring', bacct.provider)
         
@@ -142,6 +164,15 @@ class TestPaymentController(TestController):
         self.server_datetime('now')
         
         # Cancel billing account
+        response = self.app.post(
+            url(controller='payment_actions', id=self.payment_account_ids['test_payment_paypal_rec'], action='billing_account_deactivate', format='json'),
+            params={
+            '_authentication_token': self.auth_token,
+            'billing_account_id'          : bacct_id,
+            },
+            status=200
+        )
+        
         
     def test_payment_cancel_paypal(self):
         self.server_datetime('now')
@@ -179,6 +210,9 @@ class TestPaymentController(TestController):
         assert invoice.transactions[0].status == 'cancelled'
         self.part_check_member_status('test_payment_pp_cancel', 'waiting')
         self.server_datetime('now')
+        
+    def test_all_billing_tasks(self):
+        self.run_task('run_billing_tasks')
         
         
     #===========================================================================
@@ -255,7 +289,7 @@ class TestPaymentController(TestController):
         # Get member from DB
         member = get_member(username)
         # Set payment account number
-        self.payment_account_numbers[username] = member.payment_account.id
+        self.payment_account_ids[username] = member.payment_account.id
         # Check upgraded to plus account
         assert member.payment_account.type == type
         # Check name set on account, also tests index
@@ -267,7 +301,7 @@ class TestPaymentController(TestController):
         
         # Check edit page
         response = self.app.get(
-            url('edit_payment', id=self.payment_account_numbers[username]),
+            url('edit_payment', id=self.payment_account_ids[username]),
             status=200
         )
         
@@ -275,13 +309,13 @@ class TestPaymentController(TestController):
         params['_authentication_token'] = self.auth_token
         params['address_postal']        = 'PO5_7AL_TESTING'
         response = self.app.put(
-            url(controller='payments', id=self.payment_account_numbers[username], action="update", format='json'),
+            url(controller='payments', id=self.payment_account_ids[username], action="update", format='json'),
             params=params,
             status=200
         )
         # Check field changed, also tests show!
         response = self.app.get(
-            url('payments', id=self.payment_account_numbers[username], format='json'),
+            url('payments', id=self.payment_account_ids[username], format='json'),
             status=200
         )
         assert 'PO5_7AL_TESTING' in response
@@ -297,7 +331,7 @@ class TestPaymentController(TestController):
         
         # Check invoice show
         response = self.app.get(
-            url(controller='payment_actions', id=self.payment_account_numbers[username], action='invoice', invoice_id=invoices[0].id),
+            url(controller='payment_actions', id=self.payment_account_ids[username], action='invoice', invoice_id=invoices[0].id),
             status=200
         )
         assert 'Invoice' in response
@@ -317,7 +351,7 @@ class TestPaymentController(TestController):
         self.log_in_as(username)
         
         response = self.app.post(
-            url(controller='payment_actions', id=self.payment_account_numbers[username], action='member_remove', format='json'),
+            url(controller='payment_actions', id=self.payment_account_ids[username], action='member_remove', format='json'),
             params={
             '_authentication_token': self.auth_token,
             'username'          : username,
@@ -328,7 +362,7 @@ class TestPaymentController(TestController):
         members_len = len(get_member(username).payment_account.members)
         
         response = self.app.post(
-            url(controller='payment_actions', id=self.payment_account_numbers[username], action='member_add', format='json'),
+            url(controller='payment_actions', id=self.payment_account_ids[username], action='member_add', format='json'),
             params={
             '_authentication_token': self.auth_token,
             'username'          : '%s_add_me'%username,
@@ -339,7 +373,7 @@ class TestPaymentController(TestController):
         assert len(get_member(username).payment_account.members) == members_len + 1
         
         response = self.app.post(
-            url(controller='payment_actions', id=self.payment_account_numbers[username], action='member_remove', format='json'),
+            url(controller='payment_actions', id=self.payment_account_ids[username], action='member_remove', format='json'),
             params={
             '_authentication_token': self.auth_token,
             'username'          : '%s_add_me'%username,
@@ -354,7 +388,7 @@ class TestPaymentController(TestController):
         Regrade account to type (default free)
         """
         response = self.app.post(
-            url(controller='payment_actions', action='regrade', id=self.payment_account_numbers[username], format="json"),
+            url(controller='payment_actions', action='regrade', id=self.payment_account_ids[username], format="json"),
             params=dict(
                 new_type=type
             ),

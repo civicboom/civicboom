@@ -5,7 +5,7 @@
 *.bz2
 
 # the website creates these when it runs
-src/data
+src/data/*
 src/.coverage
 src/civicboom/public/warehouse
 src/civicboom/public/doc
