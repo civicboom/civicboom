@@ -771,6 +771,7 @@ def parent_approve(content, delay_commit=False):
     # Email content creator
     content.creator.send_email(subject=_('content approved'), content_html=render('/email/corporate/lock_article_to_member.mako'))
     #content.creator.send_notification(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
+    # AllanC - TODO - need to generate notification
 
     if not delay_commit:
         Session.commit()

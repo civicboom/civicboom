@@ -90,15 +90,6 @@ def get_user_from_openid_identifyer(identifyer):
 
 
 #-------------------------------------------------------------------------------
-# AuthKit
-#-------------------------------------------------------------------------------
-# This section could be block remmed or removed and the rest of the site will still function as authorise is overwritten in the Custom Login Section
-
-def is_valid_user(u):
-    return u
-
-
-#-------------------------------------------------------------------------------
 # Custom Authentication
 #-------------------------------------------------------------------------------
 

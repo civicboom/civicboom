@@ -138,6 +138,11 @@ def load_environment(global_conf, app_conf):
     from civicboom.lib.cache import init_cache
     init_cache(config)
 
+    # set up cbtv
+    import cbutils.cbtv as t
+    if config.get('telemetry'):
+        t.set_log(config['telemetry'])
+
     init_model_extra() # This will trigger a set of additional initalizers
 
     return config

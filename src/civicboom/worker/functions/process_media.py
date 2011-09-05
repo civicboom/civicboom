@@ -40,15 +40,16 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     status_expire = int(config['media.processing.status_expire_time'])
     
     # temp hack while bulk importing
-    from boto.s3.connection import S3Connection
-    from boto.s3.key import Key
-    connection = S3Connection(config["api_key.aws.access"], config["api_key.aws.secret"])
-    bucket = connection.get_bucket(config["warehouse.s3.bucket"])
-    key = Key(bucket)
-    key.key = "media-original/"+file_hash
-    if key.exists():
-        log.info("media %s (%s) already processed, skipping" % (file_hash, file_name))
-        return
+    if config['warehouse.type'] == 's3':
+        from boto.s3.connection import S3Connection
+        from boto.s3.key import Key
+        connection = S3Connection(config["api_key.aws.access"], config["api_key.aws.secret"])
+        bucket = connection.get_bucket(config["warehouse.s3.bucket"])
+        key = Key(bucket)
+        key.key = "media-original/"+file_hash
+        if key.exists():
+            log.info("media %s (%s) already processed, skipping" % (file_hash, file_name))
+            return
 
     # AllanC - in time the memcache could be used to update the user with percentage information about the status of the processing
     #          This is returned to the user with a call to the media controller

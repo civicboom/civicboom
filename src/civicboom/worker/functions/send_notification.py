@@ -86,7 +86,7 @@ def send_notification(members, message): #members, rendered_message
                                 "kwargs": message,
                             }
                         )
-                    else:
+                    else:  # pragma: no cover - test mode uses inline rendering, this is stand-alone
                         l = TemplateLookup(
                             directories=['.', 'civicboom/templates'],
                             input_encoding='utf-8',

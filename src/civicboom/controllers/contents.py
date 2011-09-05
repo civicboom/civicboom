@@ -168,6 +168,7 @@ class ContentsController(BaseController):
 
     
     @web
+    @t_log(lambda f,a,k: "content search: "+str(k))
     def index(self, _filter=None, **kwargs):
         """
         GET /contents: Content Search
