@@ -2,9 +2,11 @@
 
 # todo:
 # click on an item to zoom to it
-# - zoom in, but have a max zoom (having a 0ms event filling the screen would be silly)
+# - zoom in, but have a max zoom (having a 0ms event filling the screen
+#   would be silly)
 # full-file navigation
-# - cbtv_events logs can last for hours, but only a minute at a time is sensibly viewable
+# - cbtv_events logs can last for hours, but only a minute at a time is
+#   sensibly viewable
 # close log after appending?
 # - holding it open blocks other threads?
 # - but it is opened at the start and should never be closed...
@@ -121,17 +123,33 @@ class App:
     def __control_box(self, master):
         f = Frame(master)
 
-        Label(f, text="  Start ").pack(side="left")
-        Spinbox(f, from_=0, to=int(time()), increment=10,  textvariable=self.render_start).pack(side="left")
-        Label(f, text="  Length ").pack(side="left")
-        Spinbox(f, from_=1, to=60,          increment=1,   textvariable=self.render_len).pack(side="left")
-        Label(f, text="  Zoom ").pack(side="left")
-        Spinbox(f, from_=100, to=5000,      increment=100, textvariable=self.scale).pack(side="left")
-        #Button(f, text="Render", command=self.render).pack(side="right")
-        Button(f, text="End",           command=self.end_event).pack(side="right")
-        Button(f, text="Next Bookmark", command=self.next_event).pack(side="right")
-        Button(f, text="Prev Bookmark", command=self.prev_event).pack(side="right")
-        Button(f, text="Start",         command=self.start_event).pack(side="right")
+        def _la(t):
+            Label(f,
+                text=t
+            ).pack(side="left")
+
+        def _sp(f, t, i, v):
+            Spinbox(f,
+                from_=f, to=t, increment=i,
+                textvariable=v
+            ).pack(side="left")
+
+        def _bu(t, c):
+            Button(f,
+                text=t, command=c
+            ).pack(side="right")
+
+        _la(f, "  Start ")
+        _sp(f, 0, int(time()), 10, self.render_start)
+        _la(f, "  Length ")
+        _sp(f, 1, 60, 1, self.render_len)
+        _la(f, "  Zoom ")
+        _sp(f, 100, 5000, 100, self.scale)
+
+        _bu("End", self.end_event)
+        _bu("Next Bookmark", self.next_event)
+        _bu("Prev Bookmark", self.prev_event)
+        _bu("Start", self.start_event)
 
         f.pack()
         return f
@@ -180,7 +198,7 @@ class App:
 
         # in windows, mouse wheel events always go to the root window o_O
         self.master.bind("<MouseWheel>", lambda e: self.scale_view(e,
-            ((1.0*1.1) if e.delta < 0 else (1.0/1.1))
+            ((1.0 * 1.1) if e.delta < 0 else (1.0 / 1.1))
         ))
 
         drag_move = """
@@ -247,7 +265,7 @@ class App:
             self.canvas.xview_moveto(x_pos - new_width * width_fraction)
 
     def truncate_text(self, text, w):
-        return text[:w/self.char_w]
+        return text[:w / self.char_w]
 
     def update(self, *args):
         """
@@ -274,7 +292,7 @@ class App:
         self.original_texts = {}
         self.canvas.configure(scrollregion=(
             0, 0,
-            self.render_len.get()*self.scale.get(),
+            self.render_len.get() * self.scale.get(),
             len(self.threads)*ROW_HEIGHT+20
         ))
         if self.char_w == -1:
@@ -298,7 +316,7 @@ class App:
         rl_px = int(_rl * _sc)
 
         for n in range(rs_px, rs_px+rl_px, 100):
-            label = " +%.3f" % (float(n)/_sc-_rl)
+            label = " +%.3f" % (float(n) / _sc - _rl)
             self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*ROW_HEIGHT, fill="#CCC")
             self.canvas.create_text(n-rs_px, 5, text=label, anchor="nw")
 
@@ -334,8 +352,8 @@ class App:
                     event_start = thread_level_starts[thread_idx].pop()
                     event_end = _time
                     if event_start < _rs + _rl:
-                        start_px  = (event_start-_rs) * _sc
-                        end_px    = (event_end-_rs) * _sc
+                        start_px  = (event_start - _rs) * _sc
+                        end_px    = (event_end - _rs) * _sc
                         length_px = end_px - start_px
                         stack_len = len(thread_level_starts[thread_idx])
                         self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
@@ -380,9 +398,11 @@ class App:
             self.canvas.itemconfigure(t2, state="disabled")
             self.canvas.tag_raise(r2)
             self.canvas.tag_raise(t2)
+
         def ttip_hide():
             self.canvas.itemconfigure(r2, state="hidden")
             self.canvas.itemconfigure(t2, state="hidden")
+
         def focus():
             # scale the canvas so that the (selected item width + padding == screen width)
             canvas_w = self.canvas.bbox(ALL)[2]
@@ -423,7 +443,7 @@ def display(database_file):
 
 def main(argv):
     parser = OptionParser()
-    parser.add_option("-i", "--import", dest="log_file", #default="cbtv.log",
+    parser.add_option("-i", "--import", dest="log_file",
             help="import log file to database", metavar="LOG")
     parser.add_option("-d", "--database", dest="database", default="cbtv.db",
             help="database file to use", metavar="DB")
