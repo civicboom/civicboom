@@ -65,6 +65,9 @@ def get_subdomain_format(environ=None):
 # URL Generation
 #-------------------------------------------------------------------------------
 
+from cbutils.cbtv import log as t_log
+
+@t_log("generating url")
 def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features

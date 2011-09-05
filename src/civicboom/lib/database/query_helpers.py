@@ -3,6 +3,7 @@ from sqlalchemy.util import NamedTuple
 
 from cbutils.misc import str_to_int
 from civicboom.lib.web import action_ok
+from cbutils.cbtv import log as t_log
 
 import logging
 log  = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ def __list_to_dict(results, list_to_dict_transform=None, **kwargs):
     except:
         return results
 
-
+@t_log("to_apilist")
 def to_apilist(results=[], list_to_dict_transform=None, **kwargs):
     """
     """
