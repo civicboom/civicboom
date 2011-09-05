@@ -282,6 +282,8 @@ class App:
         """
         Render settings changed, re-render with existing data
         """
+        if self.scale.get() < 100:
+            return
         self.render_clear()
         self.render_base()
         self.render_data()
