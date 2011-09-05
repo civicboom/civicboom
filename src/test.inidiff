@@ -1,7 +1,7 @@
 [app:main]
 online = false
 test_mode = true
-telemetry = false
+telemetry = /tmp/cb-website-test-telemetry
 
 cache_dir = /tmp/cb-website-test-data
 path.temp = /tmp/cb-website-test-temp
