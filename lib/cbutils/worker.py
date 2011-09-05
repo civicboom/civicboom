@@ -74,7 +74,7 @@ def flush():
     """
     while _local_queue:
         try:
-            job = _local_queue.pop()
+            job = _local_queue.pop(0)
             if _worker_queue:
                 log.info('Adding job to worker queue: %s' % job["task"])
                 _worker_queue.put(job)
