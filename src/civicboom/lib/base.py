@@ -18,14 +18,13 @@ from webhelpers.pylonslib.secure_form import authentication_token
 from civicboom.model.meta              import Session
 from civicboom.model                   import meta, Member
 from civicboom.lib.web                 import * #url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, session_delete, authenticate_form, cacheable, web_params_to_kwargs, current_url, current_referer
-from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_membership_tree as _get_membership_tree, get_message as _get_message, get_content as _get_content, get_members
-from civicboom.lib.database.etag_manager import gen_cache_key
+from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_membership_tree as _get_membership_tree, get_message as _get_message, get_content as _get_content, get_members, get_member_email as _get_member_email
 from civicboom.lib.database.query_helpers import to_apilist
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
-from civicboom.lib.accounts import deny_pending_user
+from civicboom.lib.accounts            import deny_pending_user
+from civicboom.lib.widget              import widget_defaults, setup_widget_env
 
-from civicboom.lib.widget import widget_defaults, setup_widget_env
 
 from cbutils.misc import now
 import cbutils.worker as worker
@@ -62,7 +61,6 @@ __all__ = [
     "web",
     "auth",
     "account_type", "role_required", "age_required",
-    "normalize_kwargs",
     #"account_types", #types for use with with account_type decorator
     
     #errors
@@ -86,7 +84,7 @@ __all__ = [
     "normalize_member",
     
     #cache
-    "gen_cache_key",
+    
     
     #log
     "user_log",
@@ -120,7 +118,7 @@ def x_(s):
 #-------------------------------------------------------------------------------
 
 def render(*args, **kwargs):
-    if not app_globals.cache_enabled:
+    if not config['beaker.cache.enabled']:
         if 'cache_key'    in kwargs:
             del kwargs['cache_key']
         if 'cache_expire' in kwargs:
@@ -169,7 +167,9 @@ def get_member(member_search, set_html_action_fallback=False, search_email=False
         if not c.logged_in_persona:
             raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
         member_search = c.logged_in_persona
-    member = _get_member(member_search, search_email=search_email)
+    member = _get_member(member_search)
+    if not member and search_email:
+        member = _get_member_email(member_search)
     if not member:
         raise action_error(_("member %s not found" % member_search), code=404)
     if member.status != "active":
@@ -215,7 +215,9 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
     """
     Shortcut to return content and raise not found or permission exceptions automatically (as these are common opertations every time a content is fetched)
     """
-    content = _get_content(id)
+    if not str(id).isdigit():
+        raise action_error(_("_content ID should be a number"), code=400)
+    content = _get_content(int(id))
     if not content:
         raise action_error(_("The _content you requested could not be found"), code=404)
     if content_type and content.__type__ != content_type:
@@ -245,26 +247,10 @@ def normalize_member(member):
     """
     Will return integer member_id or raise action_error
     """
-    if isinstance(member, int):
-        return member
-    return get_member(member).id
-    
-    #elif isinstance(member, basestring) and member.lower()=='me':
-    #    if c.logged_in_persona:
-    #        return c.logged_in_persona.id
-    #    else:
-    #        raise action_error(_("cannot reffer to 'me' when not logged in"), code=400)
-    #else:
-    #    try:
-    #        member = int(member)
-    #    except:
-    #        if always_return_id:
-    #            member = _get_member(member)
-    #            if member:
-    #                member = member.id
-    #if not member:
-    #    raise action_error(_(""), code=404)
-    #return member
+    try   : member = member.id
+    except: pass
+    assert isinstance(member, basestring)
+    return member
 
 
 #-------------------------------------------------------------------------------
@@ -310,6 +296,7 @@ class BaseController(WSGIController):
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
         c.host                     = request.environ.get('HTTP_HOST', request.environ.get('SERVER_NAME'))
+        c.etag_master_generated    = False
 
         request.environ['app_version'] = app_globals.version
         request.environ['node_name']   = platform.node()

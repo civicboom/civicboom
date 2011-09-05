@@ -304,10 +304,9 @@ class ContentActionsController(BaseController):
         
         @example https://test.civicboom.com/contents/1/comments.json
         """
-        content = get_content(id, is_viewable=True)
-        #comments = [c.to_dict() for c in content.comments]
-        #return action_ok_list(comments)
-        return to_apilist(content.comments, **kwargs)
+        #content = get_content(id, is_viewable=True)
+        #return to_apilist(content.comments, **kwargs)
+        return content_search(comments_to=id, **kwargs)
 
 
     #-----------------------------------------------------------------------------
@@ -368,4 +367,22 @@ class ContentActionsController(BaseController):
         @comment AllanC will currently return empty list - unimplemented
         """
         content = get_content(id, is_viewable=True)
+        return to_apilist()
+
+
+    #-----------------------------------------------------------------------------
+    # List - Boomed by
+    #-----------------------------------------------------------------------------
+    @web
+    def boomed_by(self, id, **kwargs):
+        """
+        GET /contents/{id}/boomed_by: Get list of members that have boomed this content (unimplemented)
+
+        shortcut to /members?boomed={id}
+
+        @type list
+        @api contents 1.0 (WIP)
+        
+        @comment AllanC will currently return empty list - unimplemented
+        """
         return to_apilist()

@@ -21,7 +21,7 @@ payment_actions_controller = PaymentActionsController()
 
 
 def get_payment_account(id):
-    return Session.query(PaymentAccount).filter(PaymentAccount.id==id).first()
+    return Session.query(PaymentAccount).get(id)
 
 def check_member(member):
     return has_role_required('editor', c.logged_in_persona_role) and member == c.logged_in_persona

@@ -1,5 +1,6 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener
+from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener, CacheChangeListener
+
 from civicboom.model.message import Message
 from cbutils.misc import update_dict
 from civicboom.lib.helpers import wh_url
@@ -15,6 +16,7 @@ from sqlalchemy.schema import DDL, CheckConstraint
 import urllib
 import hashlib
 import copy
+
 
 
 # many-to-many mappings need to be at the top, so that other classes can
@@ -107,8 +109,8 @@ def has_account_required(required, current):
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
-    group_id      = Column(Integer(), ForeignKey('member_group.id'), primary_key=True)
-    member_id     = Column(Integer(), ForeignKey('member.id')      , primary_key=True)
+    group_id      = Column(String(32), ForeignKey('member_group.id'), primary_key=True)
+    member_id     = Column(String(32), ForeignKey('member.id')      , primary_key=True)
     role          = Column(group_member_roles , nullable=False, default="contributor")
     status        = Column(group_member_status, nullable=False, default="active")
 
@@ -116,7 +118,7 @@ DDL('DROP TRIGGER IF EXISTS update_group_size ON map_user_to_group').execute_at(
 DDL("""
 CREATE OR REPLACE FUNCTION update_group_size() RETURNS TRIGGER AS $$
     DECLARE
-        tmp_group_id integer;
+        tmp_group_id text;
     BEGIN
         IF (TG_OP = 'INSERT') THEN
             tmp_group_id := NEW.group_id;
@@ -146,8 +148,8 @@ CREATE TRIGGER update_group_size
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
-    member_id     = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
-    follower_id   = Column(Integer(),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    member_id     = Column(String(32),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    follower_id   = Column(String(32),    ForeignKey('member.id'), nullable=False, primary_key=True)
     type          = Column(follow_type                          , nullable=False, default="normal")
     
     member   = relationship("Member", primaryjoin="Member.id==Follow.member_id"  )
@@ -157,8 +159,8 @@ DDL('DROP TRIGGER IF EXISTS update_follower_count ON map_member_to_follower').ex
 DDL("""
 CREATE OR REPLACE FUNCTION update_follower_count() RETURNS TRIGGER AS $$
     DECLARE
-        tmp_member_id integer;
-        tmp_follower_id integer;
+        tmp_member_id text;
+        tmp_follower_id text;
     BEGIN
         IF (TG_OP = 'INSERT') THEN
             tmp_member_id   := NEW.member_id;
@@ -232,10 +234,9 @@ class Member(Base):
     "Abstract class"
     __tablename__   = "member"
     __type__        = Column(member_type)
-    __mapper_args__ = {'polymorphic_on': __type__}
+    __mapper_args__ = {'polymorphic_on': __type__, 'extension': CacheChangeListener()}
     _member_status  = Enum("pending", "active", "suspended", name="member_status")
-    id              = Column(Integer(),      primary_key=True)
-    username        = Column(String(32),     nullable=False, unique=True, index=True) # FIXME: check for invalid chars, see feature #54
+    id              = Column(String(32),     primary_key=True)
     name            = Column(Unicode(250),   nullable=False)
     join_date       = Column(DateTime(),     nullable=False, default=func.now())
     status          = Column(_member_status, nullable=False, default="pending")
@@ -271,6 +272,7 @@ class Member(Base):
 
     # Content relation shortcuts
     #content             = relationship(          "Content", backref=backref('creator'), primaryjoin=and_("Member.id==Content.creator_id") )# ,"Content.__type__!='comment'"  # cant get this to work, we want to filter out comments
+    #, cascade="all,delete-orphan"
     
     #content_assignments = relationship("AssignmentContent")
     #content_articles    = relationship(   "ArticleContent")
@@ -291,7 +293,7 @@ class Member(Base):
     #groups               = relationship("Group"           , secondary=GroupMembership.__table__) # Could be reinstated with only "active" groups, need to add criteria
 
     __table_args__ = (
-        CheckConstraint("username ~* '^[a-z0-9_-]{4,}$'"),
+        CheckConstraint("id ~* '^[a-z0-9_-]{4,}$'"),
         CheckConstraint("length(name) > 0"),
         CheckConstraint("substr(extra_fields,1,1)='{' AND substr(extra_fields,length(extra_fields),1)='}'"),
         {}
@@ -301,7 +303,7 @@ class Member(Base):
     __to_dict__.update({
         'default': {
             'id'                : None ,
-            'name'              : lambda member: member.name if member.name else member.username , # Normalize the member name and return username if name not present
+            'name'              : lambda member: member.name if member.name else member.id , # Normalize the member name and return username if name not present
             'username'          : None ,
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
@@ -333,35 +335,41 @@ class Member(Base):
             #'groups_public'       : lambda member: [update_dict(gr.group.to_dict(),{'role':gr.role}) for gr in member.groups_roles if gr.status=="active" and gr.group.member_visibility=="public"] ,  #AllanC - also duplicated in members_actions.groups ... can this be unifyed
     })
     
+    @property
+    def username(self):
+        import warnings
+        warnings.warn("Member.username used", DeprecationWarning)
+        return self.id
 
     _config = None
 
     @property
     def config(self):
-        if not self.extra_fields:
+        if self.extra_fields == None:
             self.extra_fields = {}
         if not self._config:
             self._config = _ConfigManager(self.extra_fields)
         return self._config
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.name or self.id
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
     
     def __link__(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, sub_domain='www', qualified=True)
-
-    def __db_index__(self):
-        return self.username
+        return url('member', id=self.id, sub_domain='www', qualified=True)
 
     def hash(self):
         h = hashlib.md5()
-        for field in ("id", "username", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
+        for field in ("id", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
             h.update(str(getattr(self, field)))
         return h.hexdigest()
+
+    def invalidate_cache(self, remove=False):
+        from civicboom.lib.cache import invalidate_member
+        invalidate_member(self, remove=remove)
 
     def action_list_for(self, member, **kwargs):
         action_list = []
@@ -465,7 +473,7 @@ class Member(Base):
     @property
     def url(self):
         from civicboom.lib.web import url
-        return url('member', id=self.username, qualified=True)
+        return url('member', id=self.id, qualified=True)
 
     @property
     def avatar_url(self, size=80):
@@ -589,13 +597,13 @@ class Member(Base):
 
 GeometryDDL(Member.__table__)
 
-DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', username || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
+DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', id || ' ' || name || ' ' || description));").execute_at('after-create', Member.__table__)
 
 
 class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
-    id               = Column(Integer(),  ForeignKey('member.id'), primary_key=True)
+    id               = Column(String(32),  ForeignKey('member.id'), primary_key=True)
     last_check       = Column(DateTime(), nullable=False,   default=func.now(), doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location_current = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
@@ -615,7 +623,7 @@ class User(Member):
     __to_dict__['full'        ].update(_extra_user_fields)
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.name or self.id
 
     def hash(self):
         h = hashlib.md5(Member.hash(self))
@@ -651,7 +659,7 @@ CREATE TRIGGER update_location_time
 class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
-    id                         = Column(Integer(), ForeignKey('member.id'), primary_key=True)
+    id                         = Column(String(32), ForeignKey('member.id'), primary_key=True)
     join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
     member_visibility          = Column(group_member_visibility , nullable=False, default="public")
     default_content_visibility = Column(group_content_visibility, nullable=False, default="public")
@@ -664,7 +672,7 @@ class Group(Member):
     
 
     def __unicode__(self):
-        return self.name or self.username
+        return self.name or self.id
 
     @property
     def num_admins(self):
@@ -783,7 +791,7 @@ class Group(Member):
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
-    member_id   = Column(Integer(),    ForeignKey('member.id'), index=True)
+    member_id   = Column(String(32),   ForeignKey('member.id'), index=True)
     # FIXME: need full list; facebook, google, yahoo?
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
