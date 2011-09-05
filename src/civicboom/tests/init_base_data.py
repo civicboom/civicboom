@@ -43,7 +43,7 @@ def init_base_data():
 
         Session.add_all([u1, u1_login])
         Session.commit()
-        assert u1.id == 1
+        #assert u1.id == 1
         assert u1.login_details[0].type == "password"
         assert u1.login_details[0].token == hashlib.sha1("password").hexdigest()
         assert u1.login_details[0].token != hashlib.sha1("asdfasdf").hexdigest()
