@@ -137,7 +137,7 @@ class PaymentsController(BaseController):
         address_fields = PaymentAccount._address_config_order
         # Build validation schema
         schema = build_schema(
-            name_type       = formencode.validators.OneOf(['org','ind'], messages={'missing': 'Please select a type'}),
+            name_type       = formencode.validators.OneOf(['org','ind'], messages={'missing': 'Please select a type'}, not_empty=True),
             org_name        = formencode.validators.UnicodeString(),
             ind_name        = formencode.validators.UnicodeString(),
         )
@@ -149,7 +149,7 @@ class PaymentsController(BaseController):
         for address_field in address_fields:
             schema.fields[address_field] = formencode.validators.UnicodeString(not_empty=(address_field in PaymentAccount._address_required))
             
-        schema.fields['address_country'] = formencode.validators.OneOf(country_codes.keys(), messages={'missing': 'Please select a country'})
+        schema.fields['address_country'] = formencode.validators.OneOf(country_codes.keys(), messages={'missing': 'Please select a country'}, not_empty=True)
         kwargs['id'] = account.id
         data = {'payment':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='payment', template_error=c.template_error if hasattr(c, 'template_error') else 'payments/edit')
