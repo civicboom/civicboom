@@ -14,6 +14,7 @@
         self.id        = self.member.get('id')
         self.name      = self.member.get('name')
         self.actions   = d['actions']
+        self.current_user = c.logged_in_persona and self.id == c.logged_in_persona.id
     %>
 </%def>
 
@@ -30,7 +31,6 @@
         <div data-role="content">
             ${parent.flash_message()}
             ${member_details_full(self.member)}
-            <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
         </div>
         
         ${signout_navbar()}
@@ -47,89 +47,42 @@
     </div>
     
     % if config['development_mode']:
-        ## Persona switching
-        <div data-role="page" id="member_persona-${self.id}" class="member_persona">
-            ${persona()}
-        </div>
+        % if self.current_user:
+            ## Persona switching
+            <div data-role="page" id="member_persona-${self.id}" class="member_persona">
+                <div data-role="header">
+                    <h1>Switch persona</h1>
+                </div>
+                
+                <div data-role="content">
+                    ${persona()}
+                </div>
+            </div>
+        % endif
     % endif
     
-</%def>
-
-## Persona switch
-<%def name="persona()">
-    <table>
-        <%def name="persona_select(member, **kwargs)">
-            <%
-                current_persona = member==c.logged_in_persona
-            %>
-            <tr
-                % if current_persona:
-                    class   = "current_persona selectable"
-                    onclick = "window.location = '/profile';"
-                % else:
-                    class   = "selectable"
-                    onclick = "$(this).find('form').submit();"
-                % endif
-            >
-                <td>
-                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
-                </td>
-                <td>
-                    <p class="name">${member.name or member.username}</p>
-                    % for k,v in kwargs.iteritems():
-                        % if v:
-                            <p class="info">${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
-                        % endif
-                    % endfor
-                </td>
-                <td class="hide_if_js">
-                    % if not current_persona:
-                    ${h.secure_link(
-                        h.url(controller='account', action='set_persona', id=member.username, format='html') ,
-                        'switch user',
-                        css_class="persona_link",
-                    )}
-                    % endif
-                </td>
-            </tr>
-        </%def>
-        
-        <%
-            num_members = None
-            if hasattr(c.logged_in_persona, 'num_members'):
-                num_members = c.logged_in_persona.num_members
-        %>
-        
-        ## Show default persona (the user logged in)
-        ${persona_select(c.logged_in_user)}
-        
-        ## Show current persona (current group persona if applicable)
-        % if c.logged_in_persona != c.logged_in_user:
-            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
-        % endif
-        
-        ## Show currently logged in persona's groups:
-        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
-            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
-        % endfor
-    </table>
 </%def>
 
 ##-----------------------------------------------------------------------------
 ## Signout nav bar link
 ##-----------------------------------------------------------------------------
 <%def name="signout_navbar()">
-    % if "logout" in self.actions:
+    % if self.current_user:
         <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
             <div data-role="navbar" class="ui-navbar">
                 <ul>
                     <li>
-                        ${h.secure_link(
-                            h.url(controller='account', action='signout'),
-                            _('Sign out'),
-                            css_class="button",
-                        )}
+                        <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
                     </li>
+                    % if "logout" in self.actions:
+                        <li>
+                            ${h.secure_link(
+                                h.url(controller='account', action='signout'),
+                                _('Sign out'),
+                                css_class="button",
+                            )}
+                        </li>
+                    % endif
                 </ul>
             </div>
         </div>
@@ -271,7 +224,7 @@
 ## Message and notification bar
 ##-----------------------------------------------------------------------------
 <%def name="messages_bar()">
-    % if c.logged_in_user and c.logged_in_user.username == self.id and d.get('num_unread_messages') != None:
+    % if self.current_user and d.get('num_unread_messages') != None:
         <%
             unread_messages =       d['num_unread_messages']
             unread_notifications =  d['num_unread_notifications']
@@ -339,25 +292,60 @@
 </%def>
 
 ##-----------------------------------------------------------------------------
-## Creates the control bar/footer
+## Persona switch
 ##-----------------------------------------------------------------------------
-<%def name="control_bar()">
-    % if c.logged_in_user:
-        <div data-role="navbar" class="ui-navbar">
-            <ul>
-                <li>
-                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
-                </li>
-                <li>
-                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
-                </li>
-                <li>
-                    ${h.secure_link(
-                        h.url(controller='account', action='signout'),
-                        _('Sign out')
-                    )}
-                </li>
-            </ul>
-        </div>
-    % endif
+<%def name="persona()">
+    <h2>Select the persona you want to switch to</h2>
+    <ul data-role="listview" data-inset="true">
+        <%def name="persona_select(member, **kwargs)">
+            <%
+                current_persona = member==c.logged_in_persona
+            %>
+            <li
+                % if current_persona:
+                    class   = "current_persona"
+                    onclick = "window.location = '/profile';"
+                    data-theme  = "a"
+                % else:
+                    onclick = "$(this).find('form').submit();"
+                % endif
+            >
+                <img src="${member.avatar_url}" class="thumbnail" />
+                <h1 class="name">${member.name or member.username}</h1>
+                % for k,v in kwargs.iteritems():
+                    % if v:
+                        <p>${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
+                    % endif
+                % endfor
+                % if not current_persona:
+                        ${h.secure_link(
+                            h.url(controller='account', action='set_persona', id=member.username, format='html') ,
+                            'switch user',
+                            css_class='hidden',
+                        )}
+                % else:
+                    <p>This is your current persona</p>
+                % endif
+            </li>
+        </%def>
+        
+        <%
+            num_members = None
+            if hasattr(c.logged_in_persona, 'num_members'):
+                num_members = c.logged_in_persona.num_members
+        %>
+        
+        ## Show default persona (the user logged in)
+        ${persona_select(c.logged_in_user, followers=num_followers)}
+        
+        ## Show current persona (current group persona if applicable)
+        % if c.logged_in_persona != c.logged_in_user:
+            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+        % endif
+        
+        ## Show currently logged in persona's groups:
+        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
+            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+        % endfor
+    </ul>
 </%def>
