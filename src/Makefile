@@ -3,6 +3,7 @@ export PYTHONPATH := ../lib
 export PGHOST     := localhost
 export PGUSER     := civicboom
 export PGPASSWORD := civicboom
+export PGOPTIONS  := --client-min-messages=warning
 
 GIT_TAG    := $(shell git describe)
 
@@ -15,6 +16,7 @@ help:
 	#   ini         -- generate production / demo / test.ini files
 	# sass          -- run a daemon to turn scss into css
 	# test          -- run all nosetests
+	# blank-db      -- create a blank database
 	# test-db       -- create a blank database and fill it with test data
 	# live-db       -- create a blank database and fill it with live data
 	# run           -- run the site in development mode
@@ -55,6 +57,16 @@ release:
 
 ##############################################################################
 # i18n
+
+#         POT
+#       /  |  \
+#     /    |    \
+# PO.en  PO.fr  PO.zh
+#   |      |      |
+# MO.en  MO.fr  MO.zh
+#     \    |    /
+#       \  |  /
+#         All
 
 # Phase 1: extract messages into template
 civicboom/i18n/civicboom.pot: $(shell find -name "*.py" -or -name "*.mako")
@@ -124,18 +136,79 @@ test-coverage:
 test-profile:
 	time python -m cProfile -o ./data/prof.out /usr/bin/nosetests --verbose
 
-data/data-skel.pgdump: civicboom/model/*.py
-	../admin_scripts/init_cbdb
-	nosetests
-	sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump
 
-test-db: data/data-skel.pgdump
-	sudo -u postgres pg_restore --clean -d civicboom < data/data-skel.pgdump
+##############################################################################
+# database
+
+# clean:
+#   vanilla postgres install, no trace of civicboom
+#
+# empty:
+#   user created
+#   log database (with table)
+#   main database (no tables, no postgis)
+#
+# blank-db:
+#   add main tables from SQLAlchemy schema + postgis from source
+#
+# test-db:
+#   add main tables + postgis from test snapshot
+#
+# live-db:
+#   add main tables + postgis from live snapshot
+
+db-clean:
+	echo "DROP OWNED BY civicboom CASCADE" | sudo -u postgres psql -q || true
+	sudo -u postgres dropdb civicboom || true
+	sudo -u postgres dropdb civicboom_log || true
+	sudo -u postgres dropuser civicboom || true
+
+db-empty: db-clean
+	echo "create user civicboom with password '${PGPASSWORD}';" | sudo -u postgres psql -q
+	sudo -u postgres createdb -E utf8 -O civicboom civicboom
+	sudo -u postgres createdb -E utf8 -O civicboom civicboom_log
+	#
+	echo " \
+		CREATE TABLE events( \
+			id UUID PRIMARY KEY NOT NULL, \
+			node VARCHAR(64) NOT NULL, \
+			date_sent TIMESTAMP NOT NULL DEFAULT now(), \
+			module VARCHAR(250) NOT NULL, \
+			line_num INTEGER NOT NULL, \
+			username VARCHAR(64) NOT NULL, \
+			persona VARCHAR(64) NOT NULL, \
+			url TEXT NOT NULL, \
+			address INET NOT NULL, \
+			priority INT NOT NULL, \
+			message TEXT NOT NULL \
+		); \
+		CREATE INDEX events__date_sent ON events(date_sent); \
+		CREATE INDEX events__module ON events(module); \
+		CREATE INDEX events__username ON events(username); \
+		CREATE INDEX events__priority ON events(priority); \
+	" | psql -U civicboom -d civicboom_log -h localhost >/dev/null
+
+test-db:
+	if [ -f data/data-skel.pgdump ] ; \
+	then $(MAKE) db-empty ; sudo -u postgres pg_restore -d civicboom < data/data-skel.pgdump ; \
+	else $(MAKE) blank-db ; nosetests civicboom/tests/functional/test_stub.py || true ; sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump ; \
+	fi
 
 live-db:
-	ssh db1.civicboom.com sudo -u postgres pg_dump --clean -Fc civicboom > data/data-live.pgdump
-	#psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
-	sudo -u postgres pg_restore -d civicboom data/data-live.pgdump
+	$(MAKE) db-empty
+	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
+	sudo -u postgres pg_restore -d civicboom < data/data-live.pgdump
+
+blank-db:
+	$(MAKE) db-empty
+	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
+	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_ref_sys.sql
+	echo " \
+		alter table spatial_ref_sys owner to civicboom; \
+		alter table geometry_columns owner to civicboom; \
+		alter view geography_columns owner to civicboom; \
+	" | sudo -u postgres psql -q -d civicboom
+	paster setup-app development.ini
 
 
 ##############################################################################
@@ -167,7 +240,7 @@ cdnpush: js css ini
 ##############################################################################
 # other
 
-clean:
+clean: db-clean
 	git clean -d -f -x
 
 gource:
