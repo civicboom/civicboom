@@ -35,9 +35,10 @@
     <div class="frag_whitewrap">
         <h1>${_('Manage your payment account')}</h1>
         <div class="fl">
-            <p>${_('Payment account number')}: ${d['id']}</p>
-            <p>${_('Account type')}: ${_('_'+d['type']).capitalize()}</p>
-            <p>${_('Account status')}: ${d['billing_status']}</p>
+            <p><h3>${_('Account details')}</h3>
+            ${_('Payment account number')}: ${d['id']}<br />
+            ${_('Account type')}: ${_('_'+d['type']).capitalize()}<br />
+            ${_('Account status')}: ${d['billing_status']}</p>
         </div>
         <div class="fr" style="width: 50%;">
             <p><h3>${_('Name')}:</h3>${d['name']}</p>

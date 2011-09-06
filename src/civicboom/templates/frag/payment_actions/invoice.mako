@@ -34,10 +34,10 @@
             <div class="header">
                 <div class="company fl">
                     <img class="logo_img" src="/images/logo-v3-128x28.png?ut=1310987194" alt="Civicboom" /><br />
-                    Enterprise Hub,<br />
+                    <!-- Enterprise Hub,<br />
                     University of Kent,<br />
                     Canterbury, Kent<br />
-                    CT2 7NZ
+                    CT2 7NZ -->
                 </div>
                 <div class="fr detail">
                     <h1>${_('Invoice')}</h1>
@@ -143,10 +143,11 @@
                         </tr>
                     </tfoot>
                 </table>
-                <div class="foot" style="text-align: right">
-                    <b>${_('Registered Office')}:</b> Enterprise Hub, University of Kent, Canterbury, Kent CT2 7NZ, GB<br />
-                    ${_('Company No.')}: 01234567
-                    ${_('VAT Registration No.')}: 012 3456 78
+                <div class="foot">
+                    <b>${_('Registered Office')}:</b>
+                    Enterprise Hub, University of Kent, Canterbury, Kent, CT2 7NZ, GB<br />
+                    <b>${_('Company No.')}:</b> 06045754
+                    <b>${_('VAT Registration No.')}:</b> 012 3456 78
                 </div>
             </div>
         </div>
