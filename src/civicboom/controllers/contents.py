@@ -139,6 +139,10 @@ def sort_results(results, sort_fields):
             return getattr(AssignmentContent, field)
         return None
 
+    # Normalize sort_fields into a list if needed
+    if isinstance(sort_fields, basestring):
+        sort_fields = sort_fields.split(",")
+
     for sort_field in sort_fields:
         direction = asc
         if sort_field[0] == "-":
@@ -354,7 +358,7 @@ class ContentsController(BaseController):
             # FIXME: these brackets are a hack, SQLAlchemy does "blah AND filter", not "(blah) AND (filter)",
             # so filter="x OR y" = "blah AND x OR y" = "(blah AND x) OR y"
             results = results.filter("("+sql(feed)+")")
-            results = sort_results(results, kwargs.get('sort').split(","))
+            results = sort_results(results, kwargs.get('sort'))
             
             results = to_apilist(results, obj_type='contents', **kwargs)
             
