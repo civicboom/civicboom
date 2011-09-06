@@ -7,29 +7,30 @@ from civicboom.lib.base import url, _, current_url
 import re
 
 
-# in the form list_name, icon, display_text
-contents_list_titles = [
-    #list name , icon, description
-    ('all'                 , 'article'    , _('all').capitalize()   ),
-    ('drafts'              , 'draft'      , _("What I am working on now")   ),
-    ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
-    ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
-    ('responses'           , 'response'   , _("Responses I've written") ),
-    ('articles'            , 'article'    , _("My news")    ),
-]
-
-
 def get_list_titles(list_name):
+    contents_list_titles = [
+        # list name,             icon,          description
+        ('all'                 , 'article'    , _('all').capitalize()   ),
+        ('drafts'              , 'draft'      , _("What I am working on now")   ),
+        ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
+        ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
+        ('responses'           , 'response'   , _("Responses I've written") ),
+        ('articles'            , 'article'    , _("My news")    ),
+    ]
+
     for (list, icon, description) in contents_list_titles:
         if list == list_name:
             return (icon, description)
+
     return (list_name, list_name)
 
 
-setting_titles = {
-    'password'      :   _('Password and mobile access'),
-    'help_adverts'  :   _('Help and guides')
-}
+def setting_titles():
+    return {
+        'password'      :   _('Password and mobile access'),
+        'help_adverts'  :   _('Help and guides')
+    }
+
 
 setting_icons = {
     'general'       :   'general',
