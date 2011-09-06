@@ -23,13 +23,9 @@ class TestFormats(TestController):
     def test_sub_domains(self):
         def test_all_sub_domains():
             for sub_domain in ['mobile', 'widget']:
-                content_url = url('content', id=1         , sub_domain=sub_domain)
-                member_url  = url('member' , id='unittest', sub_domain=sub_domain)
-                self.assertNotIn('civicboom.com', content_url) # Tests should not be generating URL's to the live server
-                self.assertNotIn('civicboom.com', member_url)  # Tests should not be generating URL's to the live server
-                response = self.app.get(content_url, status=200)
+                response = self.app.get(url('content', id=1         ), extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain}, status=200)
                 self.assertIn('API Documentation', response)
-                response = self.app.get(member_url, status=200)
+                response = self.app.get(url('member' , id='unittest'), extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain}, status=200)
                 self.assertIn('unittest'         , response)
         
         test_all_sub_domains() # Logged in user
