@@ -133,9 +133,6 @@ test:
 test-coverage:
 	nosetests --verbose --with-coverage --cover-erase --cover-html --cover-html-dir=./data/coverage/
 
-test-profile:
-	time python -m cProfile -o ./data/prof.out /usr/bin/nosetests --verbose
-
 
 ##############################################################################
 # database
