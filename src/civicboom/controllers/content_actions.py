@@ -348,7 +348,7 @@ class ContentActionsController(BaseController):
         #if 'include_fields' not in kwargs:
         #    kwargs['include_fields']='creator'
         #return action_ok(data={'list': [c.to_dict(**kwargs) for c in content.responses]})
-        return content_search(response_to=id, **kwargs)
+        return content_search(response_to=id, exclude_fields='parent,parent_id', **kwargs)
     
     
     #-----------------------------------------------------------------------------

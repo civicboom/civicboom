@@ -1,6 +1,6 @@
 <%inherit file="../base_email.mako"/>
 
-<%def name="subject()">${_('Your content request')}</%def>
+<%def name="subject()">${_('Your _article request')}</%def>
 
 <%def name="body()">
   <%

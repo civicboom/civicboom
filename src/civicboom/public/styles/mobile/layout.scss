@@ -1,6 +1,15 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+/* for browsers without JS hide sections of the page */
+HTML.no-js .hide_if_nojs {
+  display: none;
+}
+
+HTML.js .hide_if_js {
+  display: none;
+}
+
 #flash_message.status_ok      { color: $cb-lightblue; }
 #flash_message.status_error   { color: red; }
 #flash_message.status_invalid { color: red; }
@@ -47,6 +56,10 @@
             margin: 0;
         }
     }
+}
+
+.hidden {
+    display: none !important;
 }
 
 .separator {

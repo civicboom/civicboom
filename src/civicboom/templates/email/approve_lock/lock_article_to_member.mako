@@ -9,6 +9,7 @@
     
     <h1>${_('Congratulations!')}</h1>
     <p >${_('Your _article %(article)s in response to %(parent)s has been requested for potential use by %(member)s') % formatted_links |n}</p>
+    <p >${_('You will have an "approved" tick against your associated _assignment, meaning you are a credible source of information for others and improving your profile on _site_name.')}</p>
     
     <h2>${_('What next?')}</h2>
     <p >${_('The content you created in response to the _assignment is now locked and no further edits can be made.')}</p>
@@ -21,7 +22,6 @@
       <li>${_('Link to assignees article on _site_name (using above link).')}</li>
       <li>${_('If multiple sources, link to the _assignment page (with all responses listed - including your approved content).')}</li>
     </ol>
-    <p >${_('You will also have "approved" tick against your associated published _assignment, meaning you are a credible source of information for others and improving your profile on _site_name.')}</p>
     
     ${self.footer()}
 </%def>
