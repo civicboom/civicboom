@@ -158,6 +158,7 @@ class MiscController(BaseController):
 <Image width="16" height="16">data:image/x-icon;base64,%s</Image>
 <Url type="text/html" method="get" template="https://www.civicboom.com/contents">
   <Param name="term" value="{searchTerms}"/>
+  <Param name="src" value="{referrer:source?}"/>
 </Url>
 <moz:SearchForm>https://www.civicboom.com/contents</moz:SearchForm>
 </OpenSearchDescription>""" % (base64.b64encode(file("civicboom/public/images/boom16.ico").read()), )
@@ -331,3 +332,4 @@ Disallow: /*.frag$
     def not_mobile(self):
         cookie_set('not_mobile', 'True')
         return redirect(url('current', sub_domain='web'))
+

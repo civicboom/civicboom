@@ -10,7 +10,7 @@ from civicboom.model import PaymentAccount, Invoice, InvoiceLine, BillingAccount
 from civicboom.lib.payment.paypal import *
 #from civicboom.controllers.groups import _get_group
 
-import copy
+import copy, datetime
 
 log      = logging.getLogger(__name__)
 
@@ -230,7 +230,7 @@ def paypal_express_check_transaction(reference):
     if 'Success' not in response.ACK:
         raise cbPaymentTransactionError('Error finding the PayPal transaction')
     result = {}
-    if response.PAYMENTSTATUS in ('Completed','Canceled-Reversal'):
+    if response.PAYMENTSTATUS in ('Completed', 'Canceled-Reversal', 'Cancelled-Reversal'):
         result['status'] = 'complete'
     elif response.PAYMENTSTATUS in ('Denied', 'Expired', 'Failed', 'Refunded', 'Reversed', 'Voided'):
         result['status'] = 'cancelled'
@@ -247,8 +247,9 @@ def paypal_recurring_check(reference):
         'Expired'    :'deactivated',
     }
     try:
-        response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
-    except:
+        response = paypal_interface.get_recurring_payments_profile_details(profileid=reference)
+    except Exception as e:
+        print e, str(e)
         raise cbPaymentAPIError('There was an error communicating with PayPal, please try again later')
     if 'Success' not in response.ACK:
         raise cbPaymentTransactionError('Error finding the PayPal subscription')
@@ -259,7 +260,7 @@ def paypal_recurring_check(reference):
     else:
         result['status'] = 'error'
     if 'LASTPAYMENTDATE' in response.raw:
-        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
+        last_date = datetime.datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
         result['create_transaction_if'] = {
             'timestamp' : last_date,
             'status'    : 'complete',

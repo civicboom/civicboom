@@ -184,6 +184,7 @@ class PayPalInterface(object):
             elif url_values['METHOD'] == 'CreateRecurringPaymentsProfile':
                 token = url['TOKEN']
                 test_data = self.config.test_data[token]
+                self.config.test_data['BP-%s'%token] = url
                 response = {
                     'ACK'                                       : 'Success',
                     'TOKEN'                                     : token,
@@ -192,18 +193,38 @@ class PayPalInterface(object):
                     'VERSION'                                   : url['VERSION'],
                     'BUILD'                                     : 'CB_TEST',
                     'PROFILESTATUS'                             : 'ActiveProfile',
-                    'PROFILEID'                                 : 'RECURRING-TEST',
+                    'PROFILEID'                                 : 'BP-%s'%token,
                 }
             elif url_values['METHOD'] == 'ManageRecurringPaymentsProfileStatus':
                 #token = url['TOKEN']
                 #test_data = self.config.test_data[token]
+                profileid = url['PROFILEID']
+                test_data = self.config.test_data[profileid]
                 response = {
                     'ACK'                                       : 'Success',
                     'TIMESTAMP'                                 : '',
                     'CORRELATIONID'                             : 'TESTCORID-cancel',
                     'VERSION'                                   : url['VERSION'],
                     'BUILD'                                     : 'CB_TEST',
+                    #'PROFILEID'                                 : profileid,
                 }
+            elif url_values['METHOD'] == 'GetRecurringPaymentsProfileDetails':
+                #token = url['TOKEN']
+                #test_data = self.config.test_data[token]
+                profileid = url['PROFILEID']
+                test_data = self.config.test_data[profileid]
+                response = {
+                    'ACK'                                       : 'Success',
+                    'TIMESTAMP'                                 : '',
+                    'CORRELATIONID'                             : 'TESTCORID-cancel',
+                    'VERSION'                                   : url['VERSION'],
+                    'BUILD'                                     : 'CB_TEST',
+                    'PROFILEID'                                 : profileid,
+                    'STATUS'                                    : 'Active',
+                    'LASTPAYMENTDATE'                           : test_data['PROFILESTARTDATE'],
+                    'LASTPAYMENTAMT'                            : test_data['AMT'],
+                }
+                pass
             response = urllib.urlencode(response)
             ###### Civicboom Unit Test Responses
         response = PayPalResponse(response, self.config)

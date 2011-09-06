@@ -167,7 +167,17 @@ for setting in settings_base.values():
 
 def build_meta(user, user_type, panel):
     settings_meta = dict( [ (setting['name'], setting ) for setting in copy.deepcopy(settings_base).values() if setting.get('who', user_type) == user_type and setting['group'].split('/')[0] == panel ] )
-    panels = dict( [ ( setting['group'].split('/')[0], {'panel':setting['group'].split('/')[0], 'weight':setting['weight'], 'title': setting_titles.get(setting['group'].split('/')[0]) if setting_titles.get(setting['group'].split('/')[0]) else setting['group'].split('/')[0]} ) for setting in settings_base.values() if setting.get('who', user_type) == user_type ] )
+    panels = dict( [
+        (
+            setting['group'].split('/')[0],
+            {
+                'panel':setting['group'].split('/')[0],
+                'weight':setting['weight'],
+                'title': setting_titles().get(setting['group'].split('/')[0]) if setting_titles().get(setting['group'].split('/')[0]) else setting['group'].split('/')[0]
+            }
+        )
+        for setting in settings_base.values() if setting.get('who', user_type) == user_type
+    ] )
     
     settings_hints = {}
     # Populate settings dictionary for this user
