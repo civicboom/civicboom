@@ -1,5 +1,6 @@
 
-from civicboom.model.meta import Base, location_to_string, JSONType, PaymentAccountTypeChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener, CacheChangeListener
+from civicboom.model.meta import Base, location_to_string, JSONType
+from civicboom.model.meta import PaymentAccountTypeChangeListener, PaymentAccountStatusChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener, CacheChangeListener
 
 from civicboom.model.message import Message
 from civicboom.lib.helpers import wh_url
@@ -514,7 +515,7 @@ class Member(Base):
     
     def can_publish_assignment(self):
         # AllanC - could be replaced with some form of 'get_permission('publish') ??? we could have lots of permissiong related methods ... just a thought
-        #from civicboom.lib.civicboom_lib import can_publish_assignment
+        #from civicboom.lib.constants import can_publish_assignment
         #return can_publish_assignment(self)
         #AllanC - TODO - check member payment level to acertain what the limit is - set limit to this users level
         # if not member.payment_level:
@@ -826,8 +827,8 @@ class PaymentAccount(Base):
     __tablename__    = "payment_account"
     id               = Column(Integer(), primary_key=True)
     type             = column_property(Column(account_types, nullable=False, default="free"), extension=PaymentAccountTypeChangeListener())
-    _billing_status  = Enum("ok", "invoiced","waiting", "failed", name="billing_status")
-    billing_status   = Column(_billing_status, nullable=False, default="ok")
+    _billing_status  = Enum("ok", "invoiced", "waiting", "failed", name="billing_status")
+    billing_status   = column_property(Column(_billing_status, nullable=False, default="ok"), extension=PaymentAccountStatusChangeListener())
     extra_fields     = Column(JSONType(mutable=True), nullable=False, default={})
     start_date       = Column(Date(),     nullable=False, default=now)
     currency         = Column(Unicode(), default="GBP", nullable=False)

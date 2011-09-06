@@ -9,7 +9,6 @@ src/data/*
 src/.coverage
 src/civicboom/public/warehouse
 src/civicboom/public/doc
-src/.sass-cache
 
 # ini files are stored as diffs from development.ini
 src/production.ini

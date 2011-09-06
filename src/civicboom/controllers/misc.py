@@ -18,6 +18,7 @@ content_search = ContentsController().index
 from civicboom.controllers.members import MembersController
 member_search = MembersController().index
 
+from civicboom.lib.web import cookie_set
 
 import datetime
 import random
@@ -91,7 +92,7 @@ class MiscController(BaseController):
 
     def search_redirector(self):
         if request.GET.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
-            return redirect(url(controller="members", action="index", term=request.GET.get("term")))
+            return redirect(url(controller="members", action="index", term=request.GET.get("term"), sort="-join_date"))
         elif request.GET.get("type") == _("_Assignments"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
         elif request.GET.get("type") == _("_Articles"):
@@ -157,6 +158,7 @@ class MiscController(BaseController):
 <Image width="16" height="16">data:image/x-icon;base64,%s</Image>
 <Url type="text/html" method="get" template="https://www.civicboom.com/contents">
   <Param name="term" value="{searchTerms}"/>
+  <Param name="src" value="{referrer:source?}"/>
 </Url>
 <moz:SearchForm>https://www.civicboom.com/contents</moz:SearchForm>
 </OpenSearchDescription>""" % (base64.b64encode(file("civicboom/public/images/boom16.ico").read()), )
@@ -323,3 +325,15 @@ Disallow: /*.frag$
                 'members'   : m,
             }
         )
+
+    #---------------------------------------------------------------------------
+    # Set not mobile cookie
+    #---------------------------------------------------------------------------
+    def not_mobile(self):
+        cookie_set('not_mobile', 'True')
+        referer = current_referer()
+        if referer:
+            referer = referer.replace('m.'     ,'www.')
+            referer = referer.replace('mobile.','www.')
+            return redirect(referer)
+        return redirect(url(controller='misc', action='titlepage', sub_domain='web'))

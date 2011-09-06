@@ -335,36 +335,47 @@ class TypeFilter(Filter):
 
 
 class DueDateFilter(Filter):
-    def __init__(self, comparitor, date):
+    def __init__(self, comparitor, date, or_null=False):
         assert comparitor in ["<", ">", "IS"], debug_type(comparitor)
         # FIXME: validate date
         self.comparitor = comparitor
         self.date = date
+        self.or_null = or_null
 
     @staticmethod
-    def from_string(s):
-        c = '='
-        d = s
-        if s[0] in ['<', '>']:
-            c = s[0]
-            d = s[1:]
-        if d == "now":
+    def from_string(string):
+        or_null = False
+        comparison = '='
+
+        if string[0] == "~":
+            or_null = True
+            string = string[1:]
+
+        if string[0] in ['<', '>']:
+            comparison = string[0]
+            string = string[1:]
+
+        if string == "now":
             pd = datetime.now()
         else:
-            pd = parse(d, dayfirst=True)
-        return DueDateFilter(c, pd)
+            pd = parse(string, dayfirst=True)
+        return DueDateFilter(comparison, pd, or_null)
 
     def __unicode__(self):
+        # FIXME: no or null
         return "AssignmentContent.due_date %s '%s'" % (self.comparitor, self.date)
 
     def __repr__(self):
-        return "DueDateFilter(%s, %s)" % (repr(self.comparitor), repr(self.date))
+        return "DueDateFilter(%s, %s, %s)" % (repr(self.comparitor), repr(self.date), repr(self.or_null))
 
     def __sql__(self):
         if type(self.date) == str:
-            return "content_assignment.due_date %s %s" % (self.comparitor, self.date)
+            base = "content_assignment.due_date %s %s" % (self.comparitor, self.date)
         else:
-            return "content_assignment.due_date %s '%s'" % (self.comparitor, self.date)
+            base = "content_assignment.due_date %s '%s'" % (self.comparitor, self.date)
+        if self.or_null:
+            base = base + " OR content_assignment.due_date IS NULL"
+        return base
 
 
 

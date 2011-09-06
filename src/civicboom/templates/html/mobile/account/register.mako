@@ -9,10 +9,10 @@
 
 <%def name="body()">
     <div data-role="page">
-        <div data-role="content">
+        <div data-role="content" id="register">
             ${components.title_logo()}
             <h1>Just a few more details and you'll be booming!</h1>
-            
+
             <div id="reg_form">
                 <form action="" method="post" data-ajax="false">
                     ## AllanC - Addition to show invalid states without the need to pass through the JS hide if the registration form is invalid - bit messy but works
@@ -20,62 +20,47 @@
                     % if c.result['status']!='invalid' or help_type_invalid:
                         ${help_type()}
                     % endif
-                    
+
                     ## AllanC - if we are not displaying the help selection - we still need to include the original selsection if it was valid
                     % if c.result['status']=='invalid' and not help_type_invalid:
                         <input type='hidden' name='help_type' value='${h.get_data_value('help_type','register')}'>
                     % endif
-                    
+
                     % if 'username' in c.required_fields:
                       ${username()}
                     % endif
-                    
+
                     % if 'name' in c.required_fields:
                       ${name()}
                     % endif
-                    
+
                     % if 'email' in c.required_fields:
                       ${email()}
                     % endif
-                    
+
                     % if 'password' in c.required_fields:
                       ${password()}
                     % endif
-                    
-                    % if 'dob' in c.required_fields:
+
+                    % if None and 'dob' in c.required_fields:
                       ${dob()}
                     % endif
-                    
+
                     ## recaptcha - if login account is not janrain
                     % if config['online'] and 'password' in c.required_fields:
                       ${captcha()}
                     % endif
-                    
+
                     % if True:
                       ${terms()}
                     % endif
-                    
+
                     ## Submit button
                     <div data-role="fieldcontain">
                         <input type="submit" name="submit" class="button" value="${_("Register")}"/>
                     </div>
                 </form>
             </div>
-            
-            <script type="text/javascript">
-                function pick_help(type) {
-                    $('#help_type_'+type).click();
-                    $('.newform.help').fadeOut(function() {
-                        $('.newform.user').fadeIn();
-                    });
-                }
-        
-                $('#user_details_back').click(function() {
-                    $('.newform.user').fadeOut(function() {
-                        $('.newform.help').fadeIn();
-                    });
-                });
-            </script>
        </div>
     </div>
 </%def>
@@ -155,7 +140,7 @@
     <div data-role="fieldcontain">
         ${invalid('terms')}
         <fieldset data-role="controlgroup">
-            <legend><b>Agree to <a href="/about/terms" target="_blank">terms</a></b></legend>
+            <legend><b>Agree to <a href="/about/terms" data-rel="dialog" data-transition="fade">terms</a></b></legend>
             <input type="checkbox" name="terms" id="terms" />
             <label for="terms">I agree</label>
         </fieldset>

@@ -62,7 +62,8 @@ class RegisterController(BaseController):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
         """
-        registration_template = "/html/web/account/register.mako"
+        # registration_template = "/html/%s/account/register.mako" % ("mobile" if c.subformat == "mobile" else "web")
+        registartion_template = "html/web/account/register.mako"
         
         c.new_user = _get_member(id)
         
@@ -123,6 +124,10 @@ class RegisterController(BaseController):
         c.logged_in_persona.status = "active"
         if form['help_type'] == 'org':
             c.logged_in_persona.extra_fields['help_type'] = form['help_type']
+        
+        # AllanC - in offline demo mode ensure every user has the maximum user rights
+        if config['demo_mode']:
+            c.logged_in_persona.account_type = 'corp_plus'
         
         Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
         Session.commit()

@@ -45,25 +45,25 @@
             % endif
         </ul>
     % endif
+    
+    <%def name="more_link(list)">
+        <%
+            href = None
+            count = list.get('count')
+            limit = list.get('limit')
+        
+            if not href and isinstance(list, dict) and list.get('kwargs'):
+                href_args   = [list.get('type')] 
+                href_kwargs = list.get('kwargs')
+            
+            if href_args or href_kwargs:
+                href_kwargs['private'] = True
+                href      = h.url(*href_args, **href_kwargs)
+        %>
+        ${href}
+    </%def>
 </%def>
 
-<%def name="more_link(list)">
-    <%
-        href = None
-        count = list.get('count')
-        limit = list.get('limit')
-    
-        if not href and isinstance(list, dict) and list.get('kwargs'):
-            href_args   = [list.get('type')] 
-            href_kwargs = list.get('kwargs')
-        
-        if href_args or href_kwargs:
-            href_kwargs['private'] = True
-            href      = h.url(*href_args, **href_kwargs)
-    %>
-    
-    ${href}
-</%def>
 
 ##------------------------------------------------------------------------------
 ## Generate li elements for a list of contents
