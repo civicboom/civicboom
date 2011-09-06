@@ -340,7 +340,8 @@ class App:
         _sc = self.scale.get()
 
         threads = self.threads
-        thread_level_starts = [[], ] * len(self.threads)
+        #thread_level_starts = [[], ] * len(self.threads)  # this bug is subtle and hilarious
+        thread_level_starts = [[] for n in range(len(self.threads))]
 
         for row in self.data:
             (_time, _node, _thread, _io, _text) = row
