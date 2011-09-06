@@ -355,7 +355,7 @@ class DueDateFilter(Filter):
             comparison = string[0]
             string = string[1:]
 
-        if date == "now":
+        if string == "now":
             pd = datetime.now()
         else:
             pd = parse(string, dayfirst=True)
