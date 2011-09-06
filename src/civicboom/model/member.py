@@ -514,7 +514,7 @@ class Member(Base):
     
     def can_publish_assignment(self):
         # AllanC - could be replaced with some form of 'get_permission('publish') ??? we could have lots of permissiong related methods ... just a thought
-        #from civicboom.lib.civicboom_lib import can_publish_assignment
+        #from civicboom.lib.constants import can_publish_assignment
         #return can_publish_assignment(self)
         #AllanC - TODO - check member payment level to acertain what the limit is - set limit to this users level
         # if not member.payment_level:

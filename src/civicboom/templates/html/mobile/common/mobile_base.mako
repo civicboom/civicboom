@@ -1,3 +1,7 @@
+% if hasattr(next, 'init_vars'):
+    ${next.init_vars()}
+% endif
+
 <html>
     <head>
         ${title()}
@@ -23,10 +27,21 @@
         <script type="text/javascript" src="/javascript/jquery-1.6.2.js"></script>
         <script type="text/javascript">
             $(document).bind("mobileinit", function(){
+                // Sets defaults for jquery mobile
+                $.mobile.page.prototype.options.degradeInputs.date = 'text';
+                $.mobile.defaultDialogTransition    = 'fade';
+                // $.mobile.ajaxEnabled = false;
+            });
+            
+            $(document).bind("pagecreate", function() {
+                // Little hacky, tell any forms created not to ajax submit
+                $('form').attr('data-ajax', 'false');
             });
         </script>
         <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
+        <script src="/javascript/jquery.ui.datepicker.mobile.js"></script>
     </head>
+    
   
     <body class="c-${c.controller} a-${c.action}">
         ${next.body()}
@@ -42,8 +57,8 @@
     </title>
 </%def>
 
-<%def name="error_message()">
-    <h3 id="error_message" class="status_${c.result['status']}">${c.result['message']}</h3>
+<%def name="flash_message()">
+    <h3 id="flash_message" class="status_${c.result['status']}">${c.result['message']}</h3>
     % if c.result['message'] != "":
     <script type="text/javascript">
         <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>

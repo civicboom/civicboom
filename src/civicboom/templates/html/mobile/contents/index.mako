@@ -28,5 +28,5 @@
 
 <%def name="content_main(list)">
     ${components.search_form()}
-    ${parent.list_contents(list, "woo")}
+    ${parent.list_contents(list)}
 </%def>

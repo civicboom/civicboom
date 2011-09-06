@@ -1,3 +1,7 @@
+<%
+    print "components"
+%>
+
 ##-----------------------------------------------------------------------------
 ## Title logo image
 ##-----------------------------------------------------------------------------
@@ -40,7 +44,7 @@
                     <option value="All">All content</option>
                     <option value="${_("_Assignments")}">${_("_Assignments")}</option>
                     <option value="${_("_Articles")}">${_("_Articles")}</option>
-                    <option value="${_("_Members")}">${_("_Users / _Groups")}</option>
+                    <option value="${_("_Users / _Groups")}">${_("_Users / _Groups")}</option>
                 </select>
                 <input type="submit" value="${_("Search")}">
             </form>

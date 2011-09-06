@@ -463,7 +463,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         href    = href,
         class_  = css_class + ' secure_show', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
         title   = title,
-        rel     = rel, # Proto: Relational attribute for jquerymobile to disable ajax sumbission
+        rel     = rel,
         # AllanC - the beast onclick even below does the following:
         #   - put yes/no proceed message up if specifyed
         #   - check if link has NOT class='disabled'

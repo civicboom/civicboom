@@ -5,7 +5,7 @@ from civicboom.model import User, Group
 from civicboom.lib.authentication   import get_user_from_openid_identifyer, get_user_and_check_password, signin_user, signin_user_and_redirect, signout_user, login_redirector, set_persona
 from civicboom.lib.services.janrain import janrain
 from civicboom.lib.accounts         import verify_email_hash, associate_janrain_account, set_password, has_account_without_password, send_verifiy_email
-from civicboom.lib.civicboom_lib    import get_action_objects_for_url
+from civicboom.lib.constants    import get_action_objects_for_url
 
 from civicboom.controllers.register import register_new_janrain_user
 

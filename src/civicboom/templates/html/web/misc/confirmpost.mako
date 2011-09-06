@@ -1,7 +1,7 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
 <%!
-    from civicboom.lib.civicboom_lib import get_action_objects_for_url
+    from civicboom.lib.constants import get_action_objects_for_url
 %>
 
 <%def name="html_class_additions()">blank_background</%def>
