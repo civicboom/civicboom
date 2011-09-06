@@ -26,24 +26,48 @@ Base = declarative_base()
 #===============================================================================
 # Events for:
 #    PaymentAccount.type change -> update PaymentAccount.members.account_type
+#    PaymentAccount.billing_status change -> update PaymentAccount.members.account_type
 #    PaymentAccount.members change -> update PaymentAccount.members/memb_appended/memb_removed
 #    Member.payment_account_id set None -> update Memb.account_type to 'free'
 #===============================================================================
+
+def working_account_type(account_type, billing_status):
+    if billing_status == 'failed':
+        return 'free'
+    return account_type
+
 class PaymentAccountTypeChangeListener(AttributeExtension):
     def set(self, state, value, oldvalue, initiator):
-        for member in state.obj().members:
-            member.account_type = value
+        me = state.obj()
+        me_type = working_account_type(value, me.billing_status)
+        for member in me.members:
+            member.account_type = me_type
         return value
+    
+class PaymentAccountStatusChangeListener(AttributeExtension):
+    def set(self, state, value, oldvalue, initiator):
+        me = state.obj()
+        me_type = working_account_type(me.type, value)
+        for member in me.members:
+            member.account_type = me_type
+        return value
+    
 class PaymentAccountMembersChangeListener(AttributeExtension):
     def set(self, state, value, oldvalue, initiator):
-        for member in state.obj().members:
-            member.account_type = value
+        me = state.obj()
+        me_type = working_account_type(me.type, me.billing_status)
+        for member in me.members:
+            member.account_type = me_type
         return value
+    
     def append(self, state, value, initiator):
-        value.account_type = state.obj().type
+        me = state.obj()
+        value.account_type = working_account_type(me.type, me.billing_status)
         return value
+    
     def remove(self, state, value, initiator):
         value.account_type = 'free'
+        
 class MemberPaymentAccountIdChangeListener(AttributeExtension):
     def set(self, state, value, oldvalue, initiator):
         if value == None:
