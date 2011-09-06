@@ -92,7 +92,7 @@ class MiscController(BaseController):
 
     def search_redirector(self):
         if request.GET.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
-            return redirect(url(controller="members", action="index", term=request.GET.get("term")))
+            return redirect(url(controller="members", action="index", term=request.GET.get("term"), sort="-join_date"))
         elif request.GET.get("type") == _("_Assignments"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
         elif request.GET.get("type") == _("_Articles"):
@@ -332,10 +332,8 @@ Disallow: /*.frag$
     def not_mobile(self):
         cookie_set('not_mobile', 'True')
         referer = current_referer()
-        print "--------"
-        print referer
-        referer = referer.replace('m.'     ,'www.')
-        referer = referer.replace('mobile.','www.')
-        print referer
-        print "--------"
-        return redirect(referer) #url('current', sub_domain='web')
+        if referer:
+            referer = referer.replace('m.'     ,'www.')
+            referer = referer.replace('mobile.','www.')
+            return redirect(referer)
+        return redirect(url(controller='misc', action='titlepage', sub_domain='web'))

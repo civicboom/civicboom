@@ -290,7 +290,7 @@ class InvoiceLine(Base):
     _config = None
     
     price_final = column_property(
-        price * (1-discount) * quantity
+        func.round(price * (1-discount) * quantity,2)
     )
     
 #    @property

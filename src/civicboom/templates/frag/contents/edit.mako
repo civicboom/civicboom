@@ -413,8 +413,8 @@
 							'uploader'   : '/flash/uploadify.swf',
 							'script'     : '/media',
 							'scriptData' : {
-								'content_id': ${self.id},
-								'member_id' : ${c.logged_in_persona.id},
+								'content_id': '${self.id}',
+								'member_id' : '${c.logged_in_persona.id}',
 								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
 							},
 							'cancelImg'  : '/images/cancel.png',

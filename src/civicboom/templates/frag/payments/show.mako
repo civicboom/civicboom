@@ -33,28 +33,29 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <div class="frag_whitewrap">
-        <h1>Manage your payment account</h1>
+        <h1>${_('Manage your payment account')}</h1>
         <div class="fl">
-            <p>Payment account number: ${d['id']}</p>
-            <p>Account type: ${_('_'+d['type']).capitalize()}</p>
-            <p>Account status: ${d['billing_status']}</p>
+            <p><h3>${_('Account details')}</h3>
+            ${_('Payment account number')}: ${d['id']}<br />
+            ${_('Account type')}: ${_('_'+d['type']).capitalize()}<br />
+            ${_('Account status')}: ${d['billing_status']}</p>
         </div>
         <div class="fr" style="width: 50%;">
-            <p><h3>Name:</h3>${d['name']}</p>
+            <p><h3>${_('Name')}:</h3>${d['name']}</p>
             <p>
-                <h3>Address:</h3>
+                <h3>${_('Address')}:</h3>
                 % for key in _address_config_order:
                     % if d['address'].get(key):
                         ${d['address'].get(key,'')}<br />
                     % endif
                 % endfor
             </p>
-            <p><a href="${h.url('edit_payment', id=d['id'])}">Edit account information</a></p>
+            <p><a href="${h.url('edit_payment', id=d['id'])}">${_('Edit account information')}</a></p>
         </div>
         <div class="cb"></div>
     </div>
     <div class="frag_whitewrap" style="float:left;width:42%; margin-right:0;">
-        <h2>Services</h2>
+        <h2>${_('Services')}</h2>
         <ul>
             % for service in d['services_full']:
                 <li>
@@ -62,14 +63,14 @@
                 </li>
             % endfor
         </ul>
-        <h2>Total cost:</h2>
+        <h2>${_('Total cost')}:</h2>
         <p>
             ${format_price(d['cost_taxed'])} billed every ${d['frequency']}<br />
         </p>
-        <p>All prices shown are inclusive of taxes</p>
+        <p>${_('All prices shown are inclusive of taxes')}</p>
     </div>
     <div class="frag_whitewrap" style="float:right;width:42%; margin-left:0;">
-        <h2>Payment Methods</h2>
+        <h2>${_('Payment Methods')}</h2>
         <ul>
             % for billing_account in d['billing_accounts']:
                 % if billing_account['status'] == 'active':
@@ -89,7 +90,7 @@
         </ul>
     </div>
     <div class="frag_whitewrap" style="float:right;width:42%; margin-left:0;">
-        <h2>Invoices</h2>
+        <h2>${_('Invoices')}</h2>
         <ul>
             % for invoice in d['invoices']:
                 <li>
@@ -102,11 +103,13 @@
     </div>
     <div class="cb"></div>
     <div class="frag_whitewrap">
-        <h2>Users and hubs associated with this account</h2>
+        <h2>${_('Users and hubs associated with this account')}</h2>
         <ul>
             % for member in d['members']:
                 <li>
-                    <a href="${h.url('member', id=member.get('username'))}">${member.get('name')}</a>
+                    <a href="${h.url('member', id=member.get('username'))}" onclick="cb_frag($(this), '${h.url('member', format='frag', id=member.get('username'))}'); return false;">
+                        ${member.get('name')}
+                    </a>
                     <div class="fr">
                         ${h.secure_link(
                             h.args_to_tuple('payment_action', action='member_remove', id=d['id'], username=member.get('username'), format='redirect') ,
@@ -119,6 +122,6 @@
             % endfor
         </ul>
         <br />
-        ${h.frag_link(value='Add members', title='Add members', href_tuple=h.args_to_tuple('invite', id=d['id'], invite='payment_add_user'))}
+        ${h.frag_link(value=_('Add members'), title=_('Add members'), href_tuple=h.args_to_tuple('invite', id=d['id'], invite='payment_add_user'))}
     </div>
 </%def>

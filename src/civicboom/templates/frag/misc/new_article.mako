@@ -30,12 +30,19 @@
                                         ${org.get('description')}
                                     </div>
                                 </div>
-                                <div class="fr">${h.secure_link(
-                                    h.args_to_tuple('new_content', parent_id=org.get('push_assignment')) ,
-                                    value           = _("Post a story") ,
-                                    value_formatted = h.literal("<span class='button'>%s</span>") % _('Post a story') ,
-                                    json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
-                                )}</div>
+                                <div class="fr">
+                                    % if org.get('push_assignment'):
+                                        ${h.secure_link(h.url('new_content', target_type='article', parent_id=org.get('push_assignment')  ), _("Post a story") , css_class="button")}
+                                        <%doc>
+                                        ${h.secure_link(
+                                            h.args_to_tuple('new_content', parent_id=org.get('push_assignment')) ,
+                                            value           = _("Post a story") ,
+                                            value_formatted = h.literal("<span class='button'>%s</span>") % _('Post a story') ,
+                                            json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+                                        )}
+                                        </%doc>
+                                    % endif
+                                </div>
                                 <div class="cb"></div>
                             </li>
                         % endfor
