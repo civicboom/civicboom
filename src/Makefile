@@ -8,7 +8,7 @@ GIT_TAG    := $(shell git describe)
 
 help:
 	# Usage: make <target>, where target is
-	# site          -- the three below (this should be done after git clone)
+	# site          -- the below (this should be done after git clone)
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
 	#   css         -- compress folders of css into single files
@@ -119,10 +119,10 @@ test:
 	nosetests --verbose
 
 test-coverage:
-	nosetests --verbose --with-coverage --cover-erase --cover-html --cover-html-dir=../coverage/
+	nosetests --verbose --with-coverage --cover-erase --cover-html --cover-html-dir=./data/coverage/
 
 test-profile:
-	time python -m cProfile -o /tmp/prof.out /usr/bin/nosetests --verbose
+	time python -m cProfile -o ./data/prof.out /usr/bin/nosetests --verbose
 
 data/data-skel.pgdump: civicboom/model/*.py
 	../admin_scripts/init_cbdb
@@ -154,16 +154,7 @@ run-worker:
 ##############################################################################
 # CDN
 
-cdnpush-ssh: js css ini
-	echo removing cache breaker from icons.css
-	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
-	../admin_scripts/upload-cdn-ssh.py \
-		--ini production.ini \
-		--version ${GIT_TAG} \
-		--exclude-file civicboom/public/cdn-exclude.txt \
-		civicboom/public
-
-cdnpush-rs: js css ini
+cdnpush: js css ini
 	echo removing cache breaker from icons.css
 	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-rs.py \
@@ -178,7 +169,6 @@ cdnpush-rs: js css ini
 
 clean:
 	git clean -d -f -x
-	rm -f /tmp/prof.out
 
 gource:
 	cd .. && gource \
@@ -188,7 +178,7 @@ gource:
 		ffmpeg -y -b 3000K -r 24 -f image2pipe -vcodec ppm -i - -vcodec mpeg4 gource.mp4
 
 stats:
-	python -m pstats /tmp/prof.out
+	python -m pstats ./data/prof.out
 
 pep8:
 	# 2XX = whitespace inside lines
@@ -216,11 +206,11 @@ stopsys:
 	sudo initctl stop cb-website
 	sudo initctl stop cb-worker
 
-cbtv.db: cbtv.log
-	../lib/cbutils/cbtv.py -i cbtv.log -d cbtv.db
+data/cbtv.db: data/cbtv.log
+	../lib/cbutils/cbtv.py -i ./data/cbtv.log -d ./data/cbtv.db
 
-tv: cbtv.db
-	../lib/cbutils/cbtv.py -d cbtv.db
+tv: data/cbtv.db
+	../lib/cbutils/cbtv.py -d ./data/cbtv.db
 
 
 ##############################################################################
@@ -229,8 +219,6 @@ tv: cbtv.db
 api-doc: civicboom/public/doc/index.html
 
 schemadiff: update.sql
-
-cdnpush: cdnpush-rs
 
 ini: production.ini demo.ini test.ini
 
