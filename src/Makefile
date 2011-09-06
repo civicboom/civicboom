@@ -133,8 +133,8 @@ test-db: data/data-skel.pgdump
 	sudo -u postgres pg_restore --clean -d civicboom < data/data-skel.pgdump
 
 live-db:
-	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
-	psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
+	ssh db1.civicboom.com sudo -u postgres pg_dump --clean -Fc civicboom > data/data-live.pgdump
+	#psql civicboom -c "truncate table spatial_ref_sys, geometry_columns;"
 	sudo -u postgres pg_restore -d civicboom data/data-live.pgdump
 
 
