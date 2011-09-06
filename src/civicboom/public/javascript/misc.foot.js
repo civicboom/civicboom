@@ -20,12 +20,14 @@ $.modal.defaults.onClose = function (dialog) {
 
 // janrain_app_id is set at the top of the footer scripts, then
 // misc.foot.js is loaded in the middle of the footer
+// RPXNOW is not loaded in offline (demo) mode, initialising it breaks all javascript
 if (typeof RPXNOW !== 'undefined') {
   RPXNOW.init({appId: janrain_app_id, xdReceiver: '/rpx_xdcomm.html'});
 }
 
 // Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
 function janrain_popup_share(url, options, variables) {
+  // RPXNOW is not loaded in offline (demo) mode
   if (typeof RPXNOW === 'undefined')
     return;
 	RPXNOW.loadAndRun(['Social'], function () {
