@@ -28,7 +28,9 @@
 		<script src="/javascript/jquery.jcarousel.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
+		% if config['online']:
 		<script src="/javascript/rpx.js"></script>
+		% endif
 		<script src="/javascript/misc.foot.js"></script>
 		<!-- maps -->
 		<script src="/javascript/gears_init.js"></script>
