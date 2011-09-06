@@ -17,21 +17,18 @@
 ## Creates the control bar
 ##-----------------------------------------------------------------------------
 <%def name="control_bar()">
-        <div data-role="navbar" class="ui-navbar">
-            <ul>
-                <li>
-                    <a href="${h.url(controller='misc', action='not_mobile')}" rel="external">NO MOBILE</a>
-                </li>
-                % if c.logged_in_user:
-                <li>
-                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
-                </li>
-                % endif
-                <li>
-                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
-                </li>
-            </ul>
-        </div>
+    <div data-role="navbar" class="ui-navbar">
+        <ul>
+            % if c.logged_in_user:
+            <li>
+                <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
+            </li>
+            % endif
+            <li>
+                <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
+            </li>
+        </ul>
+    </div>
 </%def>
 
 ##-----------------------------------------------------------------------------
