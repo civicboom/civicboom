@@ -44,23 +44,22 @@
             <h2 style="text-align: center;">${self.id}'s ${_('_content')}</h2>
             ${member_content_list(d)}
         </div>
+        
+        ${signout_navbar()}
     </div>
     
-    % if config['development_mode']:
-        % if self.current_user:
-            ## Persona switching
-            <div data-role="page" id="member_persona-${self.id}" class="member_persona">
-                <div data-role="header">
-                    <h1>Switch persona</h1>
-                </div>
-                
-                <div data-role="content">
-                    ${persona()}
-                </div>
+    % if self.current_user:
+        ## Persona switching
+        <div data-role="page" id="member_persona-${self.id}" class="member_persona">
+            <div data-role="header">
+                <h1>Switch persona</h1>
             </div>
-        % endif
+            
+            <div data-role="content">
+                ${persona()}
+            </div>
+        </div>
     % endif
-    
 </%def>
 
 ##-----------------------------------------------------------------------------
@@ -68,23 +67,26 @@
 ##-----------------------------------------------------------------------------
 <%def name="signout_navbar()">
     % if self.current_user:
-        <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
-            <div data-role="navbar" class="ui-navbar">
-                <ul>
+        <div data-role="footer" data-theme="a">
+        <div data-role="navbar" class="ui-navbar" data-theme="a">
+            <ul>
+                <li>
+                    <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
+                </li>
+                % if "logout" in self.actions:
                     <li>
-                        <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
+                        ${h.secure_link(
+                            h.url(controller='account', action='signout'),
+                            _('Sign out'),
+                            css_class="button",
+                        )}
                     </li>
-                    % if "logout" in self.actions:
-                        <li>
-                            ${h.secure_link(
-                                h.url(controller='account', action='signout'),
-                                _('Sign out'),
-                                css_class="button",
-                            )}
-                        </li>
-                    % endif
-                </ul>
-            </div>
+                % endif
+                <li>
+                    <a href="${h.url(controller='misc', action='not_mobile')}" rel="external">View full website</a>
+                </li>
+            </ul>
+        </div>
         </div>
     % endif
 </%def>
