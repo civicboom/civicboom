@@ -206,10 +206,10 @@ stopsys:
 	sudo initctl stop cb-website
 	sudo initctl stop cb-worker
 
-cbtv.db: cbtv.log
+data/cbtv.db: data/cbtv.log
 	../lib/cbutils/cbtv.py -i ./data/cbtv.log -d ./data/cbtv.db
 
-tv: cbtv.db
+tv: data/cbtv.db
 	../lib/cbutils/cbtv.py -d ./data/cbtv.db
 
 
