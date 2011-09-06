@@ -331,4 +331,5 @@ Disallow: /*.frag$
     #---------------------------------------------------------------------------
     def not_mobile(self):
         cookie_set('not_mobile', 'True')
-        return action_ok()
+        return redirect(url('current', sub_domain='web'))
+

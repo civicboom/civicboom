@@ -163,6 +163,31 @@ class TestPaymentController(TestController):
         self.part_check_member_status('test_payment_paypal_rec', 'ok')
         self.server_datetime('now')
         
+        # Move to next month & generate invoice so we can test (what greg believes to be) paypal recurring behaviour
+        self.server_datetime(datetime.datetime.now() + datetime.timedelta(days=27))
+        self.run_task('run_invoice_tasks')
+        
+        invoice = self.part_get_invoice('test_payment_paypal_rec')
+        invoice_id = invoice.id
+        print invoice.due_date, invoice, invoice.status
+        
+        self.assertEqual(invoice.status, 'billed')
+        
+        self.run_task('run_billing_account_tasks')
+        
+        transaction = Session.query(BillingTransaction).filter(and_(BillingTransaction.invoice_id==None,BillingTransaction.billing_account_id==bacct_id)).one()
+        self.assertIn('BP-TESTTOKEN', transaction.reference)
+        trans_id = transaction.id
+        
+        self.run_task('run_match_billing_transactions')
+        transaction = Session.query(BillingTransaction).get(trans_id)
+        self.assertIsNotNone(transaction)
+        
+        self.assertEqual(transaction.invoice_id, invoice_id)
+        self.assertIsNone(transaction.billing_account_id)
+        
+        #self.run_task('')
+        
         # Cancel billing account
         response = self.app.post(
             url(controller='payment_actions', id=self.payment_account_ids['test_payment_paypal_rec'], action='billing_account_deactivate', format='json'),
@@ -172,6 +197,8 @@ class TestPaymentController(TestController):
             },
             status=200
         )
+        
+        
         
         
     def test_payment_cancel_paypal(self):

@@ -367,11 +367,11 @@ class TaskController(BaseController):
         from civicboom.model.member import PaymentAccount
         
         paypal_to_civicboom_status = {
-            'Active'     :'active',
-            'Pending'    :'pending',
-            'Cancelled'  :'deactivated',
-            'Suspended'  :'flagged',
-            'Expired'    :'deactivated',
+            'active'     :'active',
+            'pending'    :'pending',
+            'cancelled'  :'deactivated',
+            'suspended'  :'flagged',
+            'expired'    :'deactivated',
         }
         
         billing_accounts = Session.query(BillingAccount)\
@@ -382,8 +382,8 @@ class TaskController(BaseController):
         for billing_account in billing_accounts:
             if billing_account.provider in payment.check_recurrings:
                 response = payment.check_recurrings[billing_account.provider](billing_account.reference)
-                if response.status != 'error':
-                    billing_account.status = paypal_to_civicboom_status[response['status']]
+                if response['status'] != 'error':
+                    billing_account.status = paypal_to_civicboom_status[response['status'].lower()]
                     if 'create_transaction_if' in response:
                         cti = response['create_transaction_if']
                         if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
@@ -426,19 +426,21 @@ class TaskController(BaseController):
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
         unmatched_txns = Session.query(BillingTransaction).filter(and_(BillingTransaction.invoice_id==None, BillingTransaction.billing_account_id!=None)).all()
         for txn in unmatched_txns:
-            within = datetime.timedelta(days=4)
+            within = datetime.timedelta(days=3)
             txn_date = txn.timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
             # Check for Invoices produced within 4 days of this transactions (28th->1st max 2.x days, 30th->1st max 2.x days, this should cover most eventualities)
             pending_invoices = txn.billing_account.payment_account.invoices.filter(
                 and_(
                     Invoice.status=='billed',
-                    Invoice.due_date > (txn_date-within), Invoice.due_date < (txn_date-within)
+                    Invoice.due_date > (txn_date-within),
+                    Invoice.due_date < (txn_date+within)
                 )
             ).filter(
                 Invoice.total_due > 0
             ).all()
             if pending_invoices:
                 txn.invoice = pending_invoices[0]
+                txn.billing_account = None
         Session.commit()
         return response_completed_ok
     #---------------------------------------------------------------------------
