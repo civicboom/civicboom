@@ -12,14 +12,17 @@
             self.account = d.get('payment', {})
             self.invalid = d.get('invalid', {})
         else:
-            self.account = {}
+            self.account = {'name_type': c.logged_in_user.extra_fields.get('help_type', 'ind')}
             self.invalid = {}
     %>
     <div class="frag_whitewrap">
         ${h.form('/payments')}
-        <h1>Just a few details before we can upgrade your account</h1>
+        <h1>${_('Just a few details before we can upgrade your account')}</h1>
         ${edit_frag.form_content(self)}
-        <div style="font-size: 75%">
+        <p>
+            ${_('By clicking Create below you confirm you agree to our Terms and Conditions.')}
+        </p>
+        <div class="terms-75">
             ${upgrade_plans.upgrade_details('create_account')}
         </div>
         ${h.end_form()}

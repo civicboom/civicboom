@@ -29,45 +29,6 @@
 </%def>
 
 <%def name="body()">
-    <style type="text/css">
-        .invoice .header, .invoice .customer {
-            padding-bottom: 1em;
-        }
-        .invoice .header .detail {
-            text-align: right;
-        }
-        .invoice .header .detail table {
-            text-align: left;
-        }
-        .invoice .header .detail table td {
-            padding-left: 1em;
-        }
-        .invoice .customer .section {
-            width: 50%;
-        }
-        .invoice .customer .section .header {
-            width: 30%;
-            font-weight: bold;
-        }
-        .invoice .customer .section .detail {
-            width: 70%;
-        }
-        .invoice .items table thead td, .invoice .items table tfoot .thead td {
-            padding-top: 0.75em;
-            padding-bottom: 0.25em;
-            font-weight: bold;
-            background-color: #DCE4F1;
-            border-bottom: 2px solid white
-        }
-        .invoice .items table tbody tr:nth-child(odd) td {
-            font-weight: bold;
-            background-color: #EEF6F3;
-        }
-        .invoice .items table tfoot tr td:nth-child(1) {
-            text-align: right;
-            padding-right: 1em;
-        }
-    </style>
     <div class="frag_whitewrap">
         <div class="invoice">
             <div class="header">
@@ -79,18 +40,18 @@
                     CT2 7NZ
                 </div>
                 <div class="fr detail">
-                    <h1>Invoice</h1>
+                    <h1>${_('Invoice')}</h1>
                     <table>
                         <tr>
-                            <td>Invoice #:</td>
+                            <td>${_('Invoice #')}:</td>
                             <td>${d['id']}</td>
                         </tr>
                         <tr>
-                            <td>Status:</td>
+                            <td>${_('Status')}:</td>
                             <td>${d['status'].capitalize()}</td>
                         </tr>
                         <tr>
-                            <td>Date:</td>
+                            <td>${_('Date')}:</td>
                             <td>${h.api_datestr_to_datetime(d['timestamp']).strftime('%a, %d %b %Y')}</td>
                         </tr>
                     </table>
@@ -100,7 +61,7 @@
             <div class="customer">
                 <div class="fl section name_address">
                     <div class="fl header">
-                        Bill To:
+                        ${_('Bill To')}:
                     </div>
                     <div class="fr detail">
                         <b>${d['payment_account']['name']}</b><br />
@@ -112,14 +73,14 @@
                 </div>
                 <div class="fr section overview">
                     <div class="fl header">
-                        Overview:
+                        ${_('Overview')}:
                     </div>
                     <div class="fr detail">
-                        Amount due: ${format_price(d['total_due'])}<br />
-                        Due by: ${h.api_datestr_to_datetime(d['due_date']).strftime('%a, %d %b %Y')}<br />
-                        Currency:${format_currency(True)}<br />
-                        Payment account #: ${d['payment_account']['id']}<br />
-                        VAT #: N/A
+                        ${_('Amount due')}: ${format_price(d['total_due'])}<br />
+                        ${_('Due by')}: ${h.api_datestr_to_datetime(d['due_date']).strftime('%a, %d %b %Y')}<br />
+                        ${_('Currency')}:${format_currency(True)}<br />
+                        ${_('Payment account #')}: ${d['payment_account']['id']}<br />
+                        ${_('VAT #')}: N/A
                     </div>
                 </div>
                 <div class="cb"></div>
@@ -129,16 +90,16 @@
                     <thead>
                         <tr>
                             <td>
-                                Item
+                                ${_('Item')}
                             </td>
                             <td>
-                                Unit Price
+                                ${_('Unit Price')}
                             </td>
                             <td>
-                                Quantity
+                                ${_('Quantity')}
                             </td>
                             <td>
-                                Price
+                                ${_('Price')}
                             </td>
                         </tr>
                     </thead>
@@ -166,26 +127,26 @@
                     <tfoot>
                         <tr class="thead">
                             <td colspan="3">&nbsp;</td>
-                            <td colspan="1">Totals</td>
+                            <td colspan="1">${_('Totals')}</td>
                         </tr>
                         <tr>
-                            <td colspan="3">Total Before Tax:</td>
+                            <td colspan="3">${_('Total Before Tax')}:</td>
                             <td>${format_price(d['total_pre_tax'])}</td>
                         </tr>
                         <tr>
-                            <td colspan="3">VAT (20.00%):</td>
+                            <td colspan="3">${_('VAT (20.00%)')}:</td>
                             <td>${format_price(d['total_tax'])}</td>
                         </tr>
                         <tr>
-                            <td colspan="3">Total:</td>
+                            <td colspan="3">${_('Total')}:</td>
                             <td>${format_price(d['total'])}</td>
                         </tr>
                     </tfoot>
                 </table>
                 <div class="foot" style="text-align: right">
-                    <b>Registered Office:</b> Enterprise Hub, University of Kent, Canterbury, Kent CT2 7NZ, GB<br />
-                    Company No.: 01234567
-                    VAT Registration No.: 012 3456 78
+                    <b>${_('Registered Office')}:</b> Enterprise Hub, University of Kent, Canterbury, Kent CT2 7NZ, GB<br />
+                    ${_('Company No.')}: 01234567
+                    ${_('VAT Registration No.')}: 012 3456 78
                 </div>
             </div>
         </div>
@@ -203,7 +164,7 @@
                 grouped_providers[group][key] = provider
         %>
         <div class="frag_whitewrap hide_if_print">
-            <h2>Payment Options</h2>
+            <h2>${_('Payment Options')}</h2>
             
             % for group_key in grouped_providers.keys():
                 <% group = grouped_providers[group_key] %>
@@ -227,7 +188,7 @@
         </div>
     % endif
     <div class="frag_whitewrap">
-        <h2>Payments applied</h2>
+        <h2>${_('Payments applied')}</h2>
         % for trans in d['transactions']:
             ${trans['provider']} - ${trans['status']} - ${trans['amount']}<br />
         % endfor

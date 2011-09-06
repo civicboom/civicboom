@@ -18,18 +18,10 @@
     <div class="frag_whitewrap">
         ${h.form(h.url('payment', id=self.id, format='redirect'), method='PUT')}
         ${form_content(self)}
-        <input type="submit" value="Save" class="button" />
+        <input type="submit" value="${_('Save')}" class="button" />
         ${h.end_form()}
     </div>
 </%def>
-
-<%doc>
-                % if 'invalid' in d and setting_name[0] in d['invalid']:
-                    <div class="setting_error">
-                        <span class="error-message">${d['invalid'][setting_name[0]]}</span>
-                    </div>
-                % endif
-</%doc>
 
 <%def name="form_content(self)">
     <%def name="invalid(name)">
@@ -37,14 +29,8 @@
                 <span class="error">${self.invalid[name]}</span>
         % endif
     </%def>
-    <style>
-        label {
-            display: inline-block;
-            width: 11em;
-        }
-    </style>
     <p>
-        Who is this payment account for?
+        ${_('Who is this payment account for?')}
     </p>
     <%def name="selectopt(value, current)">
         % if value==current:
@@ -52,40 +38,42 @@
         % endif
     </%def>
     <select name="name_type" id="name_type">
-        <option ${selectopt(org, self.account.get('name_type'))} value="org">The company / org you work for</option>
-        <option ${selectopt(org, self.account.get('name_type'))} value="ind">You personally, separate from any company</option>
+        <option ${selectopt('org', self.account.get('name_type'))} value="org">${_('The company / org you work for')}</option>
+        <option ${selectopt('ind', self.account.get('name_type'))} value="ind">${_('You personally, separate from any company')}</option>
     </select>
     ${invalid('name_type')}
     <br />
     <p class="org">
-        <label for="org_name">Company Name:</label>
+        <label for="org_name">${_('Company Name')}:</label>
         <input type="text" id="org_name" name="org_name" value="${self.account.get('org_name','')}" />
         ${invalid('org_name')}
     </p>
-    and / or
     <p class="ind">
-        <label for="ind_name">Your Name:</label>
+        <label for="ind_name">${_('Your Name')}:</label>
         <input type="text" id="ind_name" name="ind_name" value="${self.account.get('ind_name','')}" />
         ${invalid('ind_name')}
     </p>
+    <%
+        billing_fields = [
+        ('address_1', _('Line 1')),
+        ('address_2', _('Line 2')),
+        ('address_town', _('Town')),
+        ('address_county', _('County / State')),
+        ('address_postal', _('Postal code')),
+        ]
+    %>
     <p>
-        <%
-            billing_fields = [
-            ('address_1', _('Line 1')),
-            ('address_2', _('Line 2')),
-            ('address_town', _('Town')),
-            ('address_county', _('County / State')),
-            ('address_postal', _('Postal code')),
-            ]
-        %>
-        Billing Address:<br />
-        % for field, title in billing_fields:
-            <label for="${field}">${title}</label>
-            <input type="text" id="${field}" name="${field}" value="${self.account.get(field,'')}" />
-            ${invalid(field)}
-            <br />
-        % endfor
-        <label for="address_country">Country:</label>
+        ${_('Billing Address')}:
+    </p>
+    % for field, title in billing_fields:
+    <p>
+        <label for="${field}">${title}</label>
+        <input type="text" id="${field}" name="${field}" value="${self.account.get(field,'')}" />
+        ${invalid(field)}
+    </p>
+    % endfor
+    <p>
+        <label for="address_country">${_('Country')}:</label>
         <select id="address_country" name="address_country">
             % for code, country in webhelpers.constants.country_codes():
                 <option
@@ -96,8 +84,6 @@
             % endfor
         </select>
         ${invalid('address_country')}
-    </p>
-    <p>
-        Agree to terms
+       
     </p>
 </%def>
