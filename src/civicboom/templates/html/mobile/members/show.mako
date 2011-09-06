@@ -295,6 +295,7 @@
 ## Persona switch
 ##-----------------------------------------------------------------------------
 <%def name="persona()">
+    <h2>Select the persona you want to switch to</h2>
     <ul data-role="listview" data-inset="true">
         <%def name="persona_select(member, **kwargs)">
             <%
@@ -309,7 +310,7 @@
                     onclick = "$(this).find('form').submit();"
                 % endif
             >
-                ${member_includes.avatar(member, as_link=0)}
+                <img src="${member.avatar_url}" class="thumbnail" />
                 <h1 class="name">${member.name or member.username}</h1>
                 % for k,v in kwargs.iteritems():
                     % if v:
@@ -317,13 +318,13 @@
                     % endif
                 % endfor
                 % if not current_persona:
-                    <p style="display: none;">
                         ${h.secure_link(
                             h.url(controller='account', action='set_persona', id=member.username, format='html') ,
                             'switch user',
-                            css_class='hideable',
+                            css_class='hidden',
                         )}
-                    </p>
+                % else:
+                    <p>This is your current persona</p>
                 % endif
             </li>
         </%def>
@@ -335,7 +336,7 @@
         %>
         
         ## Show default persona (the user logged in)
-        ${persona_select(c.logged_in_user)}
+        ${persona_select(c.logged_in_user, followers=num_followers)}
         
         ## Show current persona (current group persona if applicable)
         % if c.logged_in_persona != c.logged_in_user:
