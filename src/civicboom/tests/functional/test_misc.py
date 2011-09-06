@@ -167,10 +167,7 @@ class TestMiscController(TestController):
         )
         
         # Force view of mobile page (should remove 'not_mobile' cookie)
-        #from civicboom.lib.web import url as cb_url
-        u = url(controller='misc', action='titlepage', sub_domain='mobile')
-        self.assertNotIn('civicboom.com', u) # Why is the URL generator generating an absolute URL to the live server in a test?
-        response = self.app.get( u )
+        response = self.app.get( url(controller='misc', action='titlepage') , extra_environ={'HTTP_HOST': 'mobile.civicboom_test.com'})
         
         response = self.app.get(
             url(controller='misc', action='titlepage'),
