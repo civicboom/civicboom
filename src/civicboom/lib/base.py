@@ -267,18 +267,18 @@ class BaseController(WSGIController):
             return
         
         # AllanC - useful for debug
-        # from pylons import session
-        # print ""
-        # print "CALL"
-        # print request.environ.get("pylons.routes_dict")
-        # print "GET"
-        # print request.GET
-        # print "POST"
-        # print request.POST
-        # print "SESSION"
-        # print session
-        # print "COOKIES"
-        # print request.cookies
+        #from pylons import session
+        #print ""
+        #print "CALL"
+        #print request.environ.get("pylons.routes_dict")
+        #print "GET"
+        #print request.GET
+        #print "POST"
+        #print request.POST
+        #print "SESSION"
+        #print session
+        #print "COOKIES"
+        #print request.cookies
         
         # Setup globals c ------------------------------------------------------
         c.result = action_ok()  # Default return object
@@ -287,12 +287,20 @@ class BaseController(WSGIController):
         current_request = request.environ.get("pylons.routes_dict")
         c.controller = current_request.get("controller")
         c.action     = current_request.get("action")
-        c.id         = current_request.get("id")
-        
+        c.id         = current_request.get("id")        
         #print "controller=%s action=%s id=%s" % (c.controller, c.action, c.id)
         
-        c.format                   = None #AllanC - c.format now handled by @auto_format_output in lib so the formatting is only applyed once
-        c.subformat                = None
+        c.format                   = current_request.get("format") or "html"
+        c.subformat                = get_subdomain_format()
+        c.auto_format_top_call     = False # Used as a flag to the auto_formatter to only output the top level decorator
+        
+        # Redirect to mobile site if needed
+        if c.subformat=='mobile' and cookie_get('not_mobile'): # If user is forcing m. then remove the not_mobile cookie
+            log.debug('removing not_mobile cookie')
+            cookie_delete('not_mobile')
+        if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile'):
+            redirect(url('current', sub_domain='mobile'))
+        
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
