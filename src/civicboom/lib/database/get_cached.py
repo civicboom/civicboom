@@ -81,10 +81,14 @@ def get_member(member):
         return Session.merge(result, load=False)
     return cache_func()
 
-def get_member_email(member_email):
-    assert type(member_email) in [str, unicode], debug_type(member_email)
+def get_member_email(member):
+    if not member:
+        return None
+    if isinstance(member, Member):
+        return member
+    assert type(member) in [str, unicode], debug_type(member)
     try:
-        return Session.query(User).filter_by(email=member_email).one()
+        return Session.query(User).filter_by(email=member).one()
     except NoResultFound:
         return None
     
