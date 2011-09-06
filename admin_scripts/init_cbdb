@@ -12,7 +12,6 @@ export PGOPTIONS='--client-min-messages=warning'
 echo "Removing old data"
 echo "DROP OWNED BY civicboom CASCADE" | psql -q
 dropdb civicboom     # civicboom doesn't completely own these databases,
-dropdb civicboom_gis # postgres owns the GIS metadata
 dropdb civicboom_log # why was this not here? :S
 dropuser civicboom
 
@@ -38,43 +37,6 @@ psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_re
 echo "  Granting extra permissions"
 echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom
 echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom
-
-
-##############################################################################
-# civicboom_gis
-
-echo "Creating civicboom_gis database"
-createdb -E utf8 -O civicboom civicboom_gis
-
-echo "  Loading PostGIS extras"
-psql -q -d civicboom_gis -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
-psql -q -d civicboom_gis -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_ref_sys.sql
-
-echo "  Granting extra permissions"
-echo "grant all on spatial_ref_sys to civicboom;"  | psql -q -d civicboom_gis
-echo "grant all on geometry_columns to civicboom;" | psql -q -d civicboom_gis
-
-PLACES="`dirname $0`/*.osm.bz2"
-if [ -f $PLACES ] ; then
-	echo "  Found $PLACES, populating location tables"
-	osm2pgsql \
-		--database civicboom_gis --host localhost \
-		--username civicboom \
-		--latlong --prefix osm \
-		$PLACES
-else
-	echo "  Can't find $PLACES, creating blank tables"
-	echo "<?xml version='1.0' encoding='UTF-8'?>
-<osm version=\"0.6\" generator=\"Osmosis 0.37-SNAPSHOT\">
-  <bound box=\"50.85861,0.03365,51.48229,1.60489\" origin=\"0.37-SNAPSHOT\"/>
-</osm>" > /tmp/min.osm
-	osm2pgsql \
-		--database civicboom_gis --host localhost \
-		--username civicboom \
-		--slim --latlong --prefix osm \
-		/tmp/min.osm 2>/dev/null
-	rm -f /tmp/min.osm
-fi
 
 
 ##############################################################################

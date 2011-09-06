@@ -332,6 +332,8 @@ Disallow: /*.frag$
     def not_mobile(self):
         cookie_set('not_mobile', 'True')
         referer = current_referer()
-        referer.replace('m.'     ,'www.')
-        referer.replace('mobile.','www.')
-        return redirect(referer) #url('current', sub_domain='web')
+        if referer:
+            referer = referer.replace('m.'     ,'www.')
+            referer = referer.replace('mobile.','www.')
+            return redirect(referer)
+        return redirect(url(controller='misc', action='titlepage', sub_domain='web'))

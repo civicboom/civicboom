@@ -767,10 +767,10 @@ def parent_approve(content, delay_commit=False):
     c.content = content
 
     # Email content parent
-    content.parent.creator.send_email(subject=_('content request'), content_html=render('/email/corporate/lock_article_to_organisation.mako'))
+    content.parent.creator.send_email(subject=_('content request'), content_html=render('/email/approve_lock/lock_article_to_organisation.mako'))
 
     # Email content creator
-    content.creator.send_email(subject=_('content approved'), content_html=render('/email/corporate/lock_article_to_member.mako'))
+    content.creator.send_email(subject=_('content approved'), content_html=render('/email/approve_lock/lock_article_to_member.mako'))
     #content.creator.send_notification(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
     # AllanC - TODO - need to generate notification
 
