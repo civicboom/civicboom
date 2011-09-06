@@ -130,7 +130,7 @@
 	${popup.popup_static('', window_popup, 'title_window_'+id)}
 	<a href="#" class="title_link_${id}">
 		<div class="window" id="${id}">
-			<img src="${img}_s.png" alt="${alt}" width="300" height="200" />
+			<img src="${img}_s.png" alt="${alt}"/>
 		</div>
 	</a>
 	<script>

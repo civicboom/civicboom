@@ -79,10 +79,6 @@ class TestPaymentController(TestController):
         self.assertEqual(getNumEmails(), emails + 1)
         self.assertIn('overdue', getLastEmail().content_text)
         
-        
-        
-        # Check another invoice has been generated
-        
         self.server_datetime('now')
         
     def test_payment_ok_paypal(self):
@@ -163,6 +159,31 @@ class TestPaymentController(TestController):
         self.part_check_member_status('test_payment_paypal_rec', 'ok')
         self.server_datetime('now')
         
+        # Move to next month & generate invoice so we can test (what greg believes to be) paypal recurring behaviour
+        self.server_datetime(datetime.datetime.now() + datetime.timedelta(days=27))
+        self.run_task('run_invoice_tasks')
+        
+        invoice = self.part_get_invoice('test_payment_paypal_rec')
+        invoice_id = invoice.id
+        print invoice.due_date, invoice, invoice.status
+        
+        self.assertEqual(invoice.status, 'billed')
+        
+        self.run_task('run_billing_account_tasks')
+        
+        transaction = Session.query(BillingTransaction).filter(and_(BillingTransaction.invoice_id==None,BillingTransaction.billing_account_id==bacct_id)).one()
+        self.assertIn('BP-TESTTOKEN', transaction.reference)
+        trans_id = transaction.id
+        
+        self.run_task('run_match_billing_transactions')
+        transaction = Session.query(BillingTransaction).get(trans_id)
+        self.assertIsNotNone(transaction)
+        
+        self.assertEqual(transaction.invoice_id, invoice_id)
+        self.assertIsNone(transaction.billing_account_id)
+        
+        #self.run_task('')
+        
         # Cancel billing account
         response = self.app.post(
             url(controller='payment_actions', id=self.payment_account_ids['test_payment_paypal_rec'], action='billing_account_deactivate', format='json'),
@@ -172,6 +193,8 @@ class TestPaymentController(TestController):
             },
             status=200
         )
+        self.server_datetime('now')
+        
         
         
     def test_payment_cancel_paypal(self):
@@ -212,6 +235,7 @@ class TestPaymentController(TestController):
         self.server_datetime('now')
         
     def test_all_billing_tasks(self):
+        self.server_datetime('now')
         self.run_task('run_billing_tasks')
         
         
@@ -241,7 +265,11 @@ class TestPaymentController(TestController):
         """
         Check member status against status parameter
         """
-        self.assertEqual(get_member(username).payment_account.billing_status, status)
+        member = get_member(username)
+        self.assertEqual(member.payment_account.billing_status, status)
+        
+        pac_type = 'free' if status == 'failed' else member.payment_account.type
+        self.assertEqual(member.account_type, pac_type)
         
     def part_sign_up(self, username, name_type="ind", type="plus"):
         """
@@ -274,7 +302,7 @@ class TestPaymentController(TestController):
         # Check each required field for invalid
         for field in ['name_type', '%s_name' % name_type, 'address_1', 'address_town', 'address_country', 'address_postal']:
             params_invalid = copy.deepcopy(params)
-            del params_invalid[field]
+            params_invalid[field] = ''
             response = self.app.post(
                 url('payments', format="json"),
                 params=params_invalid,

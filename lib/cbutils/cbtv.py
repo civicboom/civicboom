@@ -262,7 +262,7 @@ class App:
                 w = int(self.canvas.itemcget(t, 'width'))
                 tx = self.truncate_text(self.original_texts[t], w)
                 self.canvas.itemconfigure(t, text=tx)  # this seems slow? sure something similar was faster...
-            self.canvas.configure(scrollregion=self.canvas.bbox(ALL))
+            self.canvas.configure(scrollregion=self.canvas.bbox("grid"))
         # scroll the canvas so that the mouse still points to the same place
         if e:
             _xv = self.canvas.xview()
@@ -324,11 +324,11 @@ class App:
 
         for n in range(rs_px, rs_px+rl_px, 100):
             label = " +%.3f" % (float(n) / _sc - _rl)
-            self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*ROW_HEIGHT, fill="#CCC")
+            self.canvas.create_line(n-rs_px, 0, n-rs_px, 20+len(self.threads)*ROW_HEIGHT, fill="#CCC", tags="grid")
             self.canvas.create_text(n-rs_px, 5, text=label, anchor="nw")
 
         for n in range(0, len(self.threads)):
-            self.canvas.create_line(0, 20+ROW_HEIGHT*n, rl_px, 20+ROW_HEIGHT*n)
+            self.canvas.create_line(0, 20+ROW_HEIGHT*n, rl_px, 20+ROW_HEIGHT*n, tags="grid")
             self.canvas.create_text(0, 20+ROW_HEIGHT*n+5, text=" "+self.threads[n], anchor="nw")
 
     def render_data(self):
@@ -340,7 +340,8 @@ class App:
         _sc = self.scale.get()
 
         threads = self.threads
-        thread_level_starts = [[], ] * len(self.threads)
+        #thread_level_starts = [[], ] * len(self.threads)  # this bug is subtle and hilarious
+        thread_level_starts = [[] for n in range(len(self.threads))]
 
         for row in self.data:
             (_time, _node, _thread, _io, _text) = row
@@ -412,14 +413,14 @@ class App:
 
         def focus():
             # scale the canvas so that the (selected item width + padding == screen width)
-            canvas_w = self.canvas.bbox(ALL)[2]
+            canvas_w = self.canvas.bbox("grid")[2]
             view_w = self.canvas.winfo_width()
             rect_x = self.canvas.bbox(r)[0]
             rect_w = self.canvas.bbox(r)[2] - self.canvas.bbox(r)[0] + 20
             self.scale_view(n=float(view_w)/rect_w)
 
             # move the view so that the selected (item x1 = left edge of screen + padding)
-            canvas_w = self.canvas.bbox(ALL)[2]
+            canvas_w = self.canvas.bbox("grid")[2]
             rect_x = self.canvas.bbox(r)[0] - 5
             self.canvas.xview_moveto(float(rect_x)/canvas_w)
 
