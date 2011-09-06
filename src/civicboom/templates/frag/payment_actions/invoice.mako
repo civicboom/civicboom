@@ -147,7 +147,7 @@
                     <b>${_('Registered Office')}:</b>
                     Enterprise Hub, University of Kent, Canterbury, Kent, CT2 7NZ, GB<br />
                     <b>${_('Company No.')}:</b> 06045754
-                    <b>${_('VAT Registration No.')}:</b> 012 3456 78
+                    <b>${_('VAT Registration No.')}:</b> GB 981 7847 64
                 </div>
             </div>
         </div>
