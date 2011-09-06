@@ -15,6 +15,7 @@ src/.sass-cache
 src/production.ini
 src/demo.ini
 src/test.ini
+src/cbtv.log
 
 # Auto generated documents
 docs/*.json
