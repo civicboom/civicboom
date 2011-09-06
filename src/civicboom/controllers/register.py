@@ -124,6 +124,10 @@ class RegisterController(BaseController):
         if form['help_type'] == 'org':
             c.logged_in_persona.extra_fields['help_type'] = form['help_type']
         
+        # AllanC - in offline demo
+        if not config['online']:
+            c.logged_in_persona.account_type = 'corp_plus'
+        
         Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
         Session.commit()
         
