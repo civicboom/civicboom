@@ -298,8 +298,8 @@ class BaseController(WSGIController):
         if c.subformat=='mobile' and cookie_get('not_mobile'): # If user is forcing m. then remove the not_mobile cookie
             log.debug('removing not_mobile cookie')
             cookie_delete('not_mobile')
-        if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile'):
-            redirect(url('current', sub_domain='mobile'))
+        if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile') and c.subformat=='web':
+            redirect(url('current', sub_domain='m'))
         
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
