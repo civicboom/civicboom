@@ -15,7 +15,7 @@ ${d['member']['name']} (${d['member']['username']})
     ##    ${self.rss_content_item(content)}
     ##% endfor
     
-    % for list in [cb_list['items'] for cb_list in d.values() if isinstance(cb_list, dict) and cb_list.get('type')=='content']:
+    % for list in [cb_list['items'] for cb_list in d.values() if isinstance(cb_list, dict) and cb_list.get('type')=='contents']:
         % for content in list:
             ${self.rss_content_item(content)}
         % endfor
