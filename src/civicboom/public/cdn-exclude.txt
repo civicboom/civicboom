@@ -1,6 +1,7 @@
 fonts/*
 styles/*/*
 styles/common/icons/*
+images/test/*
 javascript/tiny_mce/*
 javascript/[a-zA-Z]*.js
 cdn-exclude.txt
