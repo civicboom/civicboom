@@ -237,6 +237,10 @@ class GroupsController(BaseController):
         group.members_roles.append(group_admin)
         group.payment_account = c.logged_in_persona.payment_account # The group is allocated the same payment account as the creator. All groups are free but if they want the plus features like approval and private content then this is needed
         
+        # GregM: Dirty hack, again... In demo mode users & groups don't have payment accounts, we need to override the account_type manually
+        if config['demo_mode']:
+            group.account_type = c.logged_in_persona.account_type
+        
         #AllanC - TODO - limit number of groups a payment account can support - the could be the differnece between plus and corporate
         
         # GregM: Create current user as admin of group too to allow them to admin group (until permission tree is sorted!)

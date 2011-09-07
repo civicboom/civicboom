@@ -20,7 +20,7 @@
         </div>
         
         <div class="special_button">
-            % if my_type in ['org', 'hub']:
+            % if False and my_type in ['org', 'hub']:
                 <a class="button" href="${url(controller='misc', action='what_is_a_hub')}">${_("Okay, I'm ready to learn about _groups!")}</a>
             % else:
                 <a class="button" href="${url(controller='profile', action='index')}">${_("Okay, I'm ready!")}</a>
