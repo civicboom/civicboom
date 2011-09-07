@@ -18,6 +18,8 @@
 <%def name="avatar(member, class_='', js_link_to_frag=True, new_window=False, img_class='', as_link=True, **kwargs)">
     % if member:
     <%
+        # AllanC - WOOOOOW!!! This is REALLY ineffiencet for passing multiple member objects that are not dicts already
+        #          Can this be profiled and checked as to how often this occours?
         if hasattr(member,'to_dict'):
             member = member.to_dict()
     %>

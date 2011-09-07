@@ -837,7 +837,7 @@
 
 <%def name="what_now_popup()">
     <div class="information">
-        <p>${member_includes.avatar(c.logged_in_persona)} ${c.logged_in_persona}</p>
+        <p>${member_includes.avatar(c.logged_in_persona)} <span style="font-size:250%; vertical-align: middle;">${c.logged_in_persona}</span></p>
         % if self.selected_type == "assignment":
         	<div class="popup-title">
         	    ${_("Once you post this request, it will appear:")}

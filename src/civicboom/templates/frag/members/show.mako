@@ -478,6 +478,17 @@
 <%def name="guides()">
     <% guide_count = 1 %>
     
+    ## Hub/widget hybrid advert
+    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
+        ${components.guidance(
+            contents=[self.guidance_content['hub'], self.guidance_content['widget']],
+            int=guide_count,
+            heading="What next?",
+            config_key="advert_hand_hub"
+        )}
+        <% guide_count += 1 %>
+    % endif
+    
     ## Request advert
     % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
         ${components.guidance(
@@ -494,7 +505,6 @@
         ${components.guidance(
             contents=[self.guidance_content["assignment"], self.guidance_content["article"]],
             int=guide_count,
-            heading=_("What next?"),
             config_key="advert_hand_content"
         )}
         <% guide_count += 1 %>
@@ -517,16 +527,6 @@
             contents=[self.guidance_content['widget']],
             int=guide_count,
             config_key="advert_hand_widget"
-        )}
-        <% guide_count += 1 %>
-    % endif
-    
-    ## Hub/widget hybrid advert
-    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
-        ${components.guidance(
-            contents=[self.guidance_content['hub'], self.guidance_content['widget']],
-            int=guide_count,
-            config_key="advert_hand_hub"
         )}
         <% guide_count += 1 %>
     % endif
