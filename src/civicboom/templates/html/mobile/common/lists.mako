@@ -130,7 +130,7 @@
     <%
         item_read = 1 if item['read'] else 0
     %>
-    <li 
+    <li onclick="$(this).attr('data-theme', 'c');"
     % if not item_read:
         data-theme="b"
     % endif    
