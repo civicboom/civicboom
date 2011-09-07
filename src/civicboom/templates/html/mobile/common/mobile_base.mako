@@ -2,6 +2,7 @@
     ${next.init_vars()}
 % endif
 
+<!DOCTYPE html>
 <html>
     <head>
         ${title()}

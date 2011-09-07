@@ -566,4 +566,8 @@ FOOTER {
 		width: 100%;
 		text-align: center;
 	}
+
+	BODY>DIV#app .windows {
+		display: none;
+	}
 }
