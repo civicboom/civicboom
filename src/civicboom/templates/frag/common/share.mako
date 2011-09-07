@@ -192,6 +192,10 @@ share_data = {
             }
         },
       };
+      var addthis_config = {
+          ui_click: true,
+          ui_cobrand: 'Civicboom'
+      }
     </script>
     <script type="text/javascript" src="//s7.addthis.com/js/250/addthis_widget.js#username=civicboom"></script>
 </%def>
