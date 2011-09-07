@@ -38,7 +38,13 @@
             <p><h3>${_('Account details')}</h3>
             ${_('Payment account number')}: ${d['id']}<br />
             ${_('Account type')}: ${_('_'+d['type']).capitalize()}<br />
-            ${_('Account status')}: ${d['billing_status']}</p>
+            ${_('Account status')}: ${d['billing_status']}
+            % if d['do_not_bill'] == 'True':
+                <br />
+                ${_('This account is set to be billed manually.')}
+            % endif
+            
+            </p>
         </div>
         <div class="fr" style="width: 50%;">
             <p><h3>${_('Name')}:</h3>${d['name']}</p>
