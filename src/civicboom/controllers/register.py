@@ -126,7 +126,7 @@ class RegisterController(BaseController):
             c.logged_in_persona.extra_fields['help_type'] = form['help_type']
         
         # AllanC - in offline demo mode ensure every user has the maximum user rights
-        if not config['online']:
+        if config['demo_mode']:
             c.logged_in_persona.account_type = 'corp_plus'
         
         Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
