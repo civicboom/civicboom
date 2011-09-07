@@ -368,7 +368,7 @@ def _find_template(result, type):
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
     #subformat = get_subdomain_format() # Proto: Set once in auto formatter with c.format to avoid unecessary repeated calls
-    subformat = c.subformat  
+    subformat = c.subformat
     if type == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -405,7 +405,6 @@ def _find_template(result, type):
             # HACK - AllanC - insert 1 so it's after os.path.join(type, list_part)
             if subformat=='widget':
                 paths.insert(1, os.path.join("html", subformat, c.widget['theme'], list_part)) # AllanC - widgets have a special case and can have multiple themes - hack here to inset at item 1
-            
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
