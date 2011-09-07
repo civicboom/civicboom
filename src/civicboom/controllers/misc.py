@@ -22,6 +22,7 @@ from civicboom.lib.web import cookie_set
 
 import datetime
 import random
+import re
 
 static_org_descriptions = {
     'kentonline': 'Join us in making the news in Kent, by telling us your stories, sending in videos, pictures and audio - help us build a news picture of Kent.',
@@ -333,7 +334,6 @@ Disallow: /*.frag$
         cookie_set('not_mobile', 'True')
         referer = current_referer()
         if referer:
-            referer = referer.replace('m.'     ,'www.')
-            referer = referer.replace('mobile.','www.')
+            re.sub("(m\.)|(mobile\.)", "www.", referer, 1)
             return redirect(referer)
         return redirect(url(controller='misc', action='titlepage', sub_domain='web'))
