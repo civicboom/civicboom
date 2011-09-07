@@ -294,11 +294,18 @@ class BaseController(WSGIController):
         c.subformat                = get_subdomain_format()
         c.auto_format_top_call     = False # Used as a flag to the auto_formatter to only output the top level decorator
         
+        # For development we cant fake a subdomain call when acessing 127.0.0.1.
+        # In the same way as we toggle_cache we can toogle_force_mobile
+        if cookie_get("force_mobile"):
+            log.debug('force_mobile cookie present')
+            c.subformat=='mobile'
+        
         # Redirect to mobile site if needed
         if c.subformat=='mobile' and cookie_get('not_mobile'): # If user is forcing m. then remove the not_mobile cookie
             log.debug('removing not_mobile cookie')
             cookie_delete('not_mobile')
         if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile') and c.subformat=='web':
+            print "redirecting"
             redirect(url('current', sub_domain='m'))
         
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
