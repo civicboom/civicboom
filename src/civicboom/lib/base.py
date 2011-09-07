@@ -305,7 +305,7 @@ class BaseController(WSGIController):
             if c.subformat=='mobile' and cookie_get('not_mobile'): # If user is forcing m. then remove the not_mobile cookie
                 log.debug('removing not_mobile cookie')
                 cookie_delete('not_mobile')
-            if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile') and c.subformat=='web':
+            if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile') and c.subformat=='web' and not config['development_mode']:
                 mobile_url = url('current', sub_domain='m')
                 log.debug('redirecting mobile user to %s' % mobile_url)
                 redirect(mobile_url)
