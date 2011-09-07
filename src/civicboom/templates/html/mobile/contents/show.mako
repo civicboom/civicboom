@@ -46,8 +46,8 @@
                 h.args_to_tuple('content', id=self.id, format='redirect'),
                 method = "DELETE",
                 value           = _("Delete"),
-                value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
-                json_form_complete_actions = "console.log('redirect to %s');" % h.url(controller='profile', action='index'),
+                value_formatted = h.literal("<button data-theme=\"a\">Yes, delete!</button>"),
+                json_form_complete_actions = "",
             )}
             <a href="#" data-rel="back" data-direction="reverse"><button>No, take me back!</button></a>
         </div>
