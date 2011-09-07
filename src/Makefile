@@ -158,6 +158,7 @@ db-clean:
 	echo "DROP OWNED BY civicboom CASCADE" | sudo -u postgres psql -q || true
 	sudo -u postgres dropdb civicboom || true
 	sudo -u postgres dropdb civicboom_log || true
+	sudo -u postgres dropdb civicboom_gis || true
 	sudo -u postgres dropuser civicboom || true
 
 db-empty: db-clean
