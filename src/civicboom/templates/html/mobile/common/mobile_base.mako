@@ -5,7 +5,10 @@
 <html>
     <head>
         ${title()}
-        <link rel="shortcut icon" href="/images/favicon.ico" />
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link rel="shortcut icon" href="/images/boom16.ico" />
         
         ## --- CSS imports ---
         % if config['development_mode']:

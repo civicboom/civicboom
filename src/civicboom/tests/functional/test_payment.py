@@ -418,6 +418,7 @@ class TestPaymentController(TestController):
         response = self.app.post(
             url(controller='payment_actions', action='regrade', id=self.payment_account_ids[username], format="json"),
             params=dict(
+                _authentication_token=self.auth_token,
                 new_type=type
             ),
             status=200)

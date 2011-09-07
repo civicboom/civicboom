@@ -102,8 +102,10 @@
                         auto    :   3,
                         wrap    :   'both',
                         initCallback    :   media_carousel_initCallback,
-                        buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
-                        buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
+                        % if len(contents) > 1:
+                            buttonNextHTML  :   "<img src='/images/misc/contenticons/carousel_next_32.png' alt='next' />",
+                            buttonPrevHTML  :   "<img src='/images/misc/contenticons/carousel_prev_32.png' alt='prev' />",
+                        % endif
                         itemVisibleInCallback   :   {
                             onAfterAnimation    :   show_preview_details_itemVisibleInCallback
                         },

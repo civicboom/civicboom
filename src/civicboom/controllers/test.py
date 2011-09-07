@@ -175,6 +175,18 @@ class TestController(BaseController):
             cookie_set("nocache", "caching disabled while this cookie exists")
             return "cache disabled"
 
+    def toggle_force_mobile(self):
+        """
+        For development, allow faking of mobile subdomain by setting a force_mobile cookie
+        """
+        if cookie_get("force_mobile"):
+            cookie_delete("force_mobile")
+            return "not force_mobile"
+        else:
+            cookie_set("force_mobile","force the mobile version of the site for development")
+            return "force_mobile"
+
+
     #---------------------------------------------------------------------------
     # runtime Config var modification
     #---------------------------------------------------------------------------

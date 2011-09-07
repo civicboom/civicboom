@@ -878,6 +878,7 @@ class PaymentAccount(Base):
             'services'              : lambda account: [service.to_dict() for service in account.services] ,
             'services_full'         : None ,
             'cost_taxed'            : None ,
+            'do_not_bill'           : None ,
     })
     
     members = relationship("Member", backref=backref('payment_account'), extension=PaymentAccountMembersChangeListener() ) # #AllanC - TODO: Double check the delete cascade, we dont want to delete the account unless no other links to the payment record exist
