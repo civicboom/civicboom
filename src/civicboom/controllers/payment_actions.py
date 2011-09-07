@@ -300,7 +300,7 @@ class PaymentActionsController(BaseController):
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
     
     @web
-    @authorize
+    @auth
     @role_required('admin')
     def regrade(self, id, **kwargs):
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()

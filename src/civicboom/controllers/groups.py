@@ -74,12 +74,12 @@ class CreateGroupSchema(GroupSchema):
 
 
 def _gen_username(base):
-    if Session.query(Member).filter(Member.username==base).count() == 0:
+    if Session.query(Member).filter(Member.id==base).count() == 0:
         return base
 
     if not re.search(base, "[0-9]$"):
         base = base + "2"
-    while Session.query(Member).filter(Member.username==base).count() > 0:
+    while Session.query(Member).filter(Member.id==base).count() > 0:
         name, num = re.match("(.*?)([0-9]+)", base).groups()
         base = name + str(int(num)+1)
     return base
