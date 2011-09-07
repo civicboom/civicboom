@@ -6,6 +6,7 @@
 */
 $.modal.defaults.closeClass = "simplemodalClose";
 $.modal.defaults.autoResize = true;
+$.modal.defaults.zIndex = 2000; /* OSM bits are 1000-1100 */
 $.modal.defaults.onOpen = function (dialog) {
 	dialog.overlay.fadeIn('slow');
 	dialog.container.fadeIn('slow');
