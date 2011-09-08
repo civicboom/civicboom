@@ -116,7 +116,7 @@ css:
 	$(MAKE) -C civicboom/public/styles
 
 sass-once:
-	cd civicboom/public/styles && sass --line-numbers */*.scss
+	cd civicboom/public/styles && sass --line-numbers --update .:.
 
 sass:
 	cd civicboom/public/styles && sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
