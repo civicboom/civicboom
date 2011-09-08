@@ -24,6 +24,8 @@ $.modal.defaults.onClose = function (dialog) {
 // RPXNOW is not loaded in offline (demo) mode, initialising it breaks all javascript
 if (typeof RPXNOW !== 'undefined') {
   RPXNOW.init({appId: janrain_app_id, xdReceiver: '/rpx_xdcomm.html'});
+} else {
+  addthis = {toolbox:function(){}};
 }
 
 // Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
