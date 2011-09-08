@@ -82,21 +82,21 @@ BODY>DIV#app {
         				text-decoration: none;
       			}
     		}
-  	}
-    
-    a {
-        color: $link-frag-colour;
-        text-decoration: none;
-        		
-        &:hover {
-            color: $link-hover-colour;
-            text-decoration: underline;
-            			
-            p, span {
-                text-decoration: inherit;
+        
+        a {
+            color: $link-frag-colour;
+            text-decoration: none;
+            		
+            &:hover {
+                color: $link-hover-colour;
+                text-decoration: underline;
+                			
+                p, span {
+                    text-decoration: inherit;
+                }
             }
         }
-    }
+  	}
 }
 
 FOOTER {

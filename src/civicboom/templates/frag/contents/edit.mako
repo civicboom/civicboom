@@ -259,6 +259,8 @@
                     data    : {
                         "_method": 'PUT',
                         "content": ed.getContent(),
+                        "title"  : $('#title_${self.id}').val(),
+                        ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
                         "mode"   : 'autosave',
                         "_authentication_token": '${h.authentication_token()}'
                     },
@@ -762,6 +764,13 @@
                             ##  - Standard HTML forms contain the name and value of the submit button pressed
                             ##  - JS Form submissions do not - this add's a fake input to the final submission to mimic this submit press
                             add_onclick_submit_field($(this));
+                            
+                            ## GrrrrregM: Damn this is annoying, we need to check if we're in a modal box & close if we are.
+                            var popup = $(this).parents('#simplemodal-data');
+                            console.log(popup);
+                            if (popup.length > 0) {
+                                $.modal.close();
+                            }
                             
                             ## AllanC - I dont like the fact we start setting global var's here ... could we move to cb_frag.js:cb_frag_set_variable() ??
                             % if show_content_frag_on_submit_complete:
