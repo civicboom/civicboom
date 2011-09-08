@@ -457,7 +457,7 @@
     <div style="padding-top: 20px;" class="acceptrequest">
     <table>
         <tr>
-        <td class="tip"></td>
+        <td class="tip hide_if_nojs"></td>
         <td>
         ## --- Publish -----------------------------------------------------------
         % if 'publish' in self.actions:
@@ -518,7 +518,7 @@
 </%doc>
         
         </td>
-        <td class="tip"><div>
+        <td class="tip hide_if_nojs"><div>
             <%
             %>
             <a href="" class="${self.popup_link_class}">${_("Why should you get involved?")}</a>
