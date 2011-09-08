@@ -25,6 +25,18 @@ Running the Site
 is included here for reference when people want to reset their code to a
 fresh state)
 
+
+Demoing the Site
+~~~~~~~~~~~~~~~~
+::
+
+  cd website/src/
+  make clean     # check that everything is fresh defaults
+  make site      # to set up translation files and compile icon map
+  make demo-db   # to init the db and popuplate with example data
+  make run-demo  # run the site in offline mode
+
+
 Using the site
 ~~~~~~~~~~~~~~
 - Add the following to the bottom of the /etc/hosts file
