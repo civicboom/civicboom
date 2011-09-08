@@ -99,29 +99,14 @@ BODY.c-misc.a-titlepage {
 
 	/* --- Windows --- */
 	.windows {
-	    font-size: 500%;
-	    // width: 800px;
-	    margin: 0.1em auto 0.1em auto;
+	    font-size: 75px;
+	    margin: auto;
 	    text-align: center;
 	    padding: 0;
-	    max-width: 1000px;
-	    
-	    .window_wrapper {
-    		margin: 0;
-    		padding: 0;
-    		display: inline-block;
-    		float: left;
-	    }
+		margin-top: 16px;
 
 	    .window {
-    		
-    		// border: 1px solid black;
-    		//height: 200px;
-    		//width: 300px;
-            display: inline-block;
-    		float: left;
     		padding: 0;
-    		
 
             // Transparency
             filter: alpha(opacity=80);
@@ -133,22 +118,15 @@ BODY.c-misc.a-titlepage {
             }
     		
     		img {
-    		//    margin: 0;
-    		//    height: 100%;
-    		//    width : 100%;
-                width: 250px;
+                width: 300px;
+				max-width: 20%;
                 @include drop_shadow(1px, 1px, 5px, #333);
     		}
 	    }
 
 	    .symbol {
-    		display: inline-block;
     		color: white;
-    		padding: 70px 5px 0 5px;
-    		float: left;
     		text-shadow: 1px 1px 5px #333;
-    		
-    		text-align: center;
 	    }
 	}
 
@@ -200,6 +178,12 @@ BODY.c-misc.a-titlepage {
 
 	.using-us .partners .partner {
 		float: left;
+	}
+}
+
+@media (max-width: 900px) {
+	BODY.c-misc.a-titlepage .title-box IMG {
+		display: none;
 	}
 }
 
