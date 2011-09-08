@@ -259,6 +259,8 @@
                     data    : {
                         "_method": 'PUT',
                         "content": ed.getContent(),
+                        "title"  : $('#title_${self.id}').val(),
+                        ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
                         "mode"   : 'autosave',
                         "_authentication_token": '${h.authentication_token()}'
                     },
