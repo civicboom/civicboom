@@ -280,7 +280,7 @@
         ## need to stay the same in order for search engines to recognise the
         ## current page as being a person or organisation's profile
         ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        <div class="frag_col hideable vcard">
+        <div class="frag_col hideable hide_if_nojs vcard">
         <div class="user-details">
             
             <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
