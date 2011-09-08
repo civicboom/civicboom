@@ -50,7 +50,7 @@
         <div style="clear: both;"></div>
     </div>
     
-    <div class="frag_data ${self.attr.frag_data_css_class}">
+    <div class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}">
         <div class="frag_whitewrap">
             <div class="frag_col">
                 ##% if isinstance(frag_content, types.FunctionType):
@@ -114,7 +114,7 @@
         ${popup.popup_frag(_('What next ...'), self.attr.popup_url)}
     % endif
     
-    <div class="frag_bars">
+    <div class="frag_bars hide_if_print">
         <div class="title_bar">
             <div class="common_actions">
                 ## AJAX Fragment refresh (not visible to user)
@@ -183,7 +183,7 @@
         </div>
         <div style="clear: both;"></div>
     </div>
-    <div class="frag_data ${self.attr.frag_data_css_class}">
+    <div class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}">
         <span style="clear: both; display: block;"></span>
         ##<div class="title">
             ## Title

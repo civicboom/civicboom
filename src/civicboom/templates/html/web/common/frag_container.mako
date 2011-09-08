@@ -21,7 +21,6 @@
 ##------------------------------------------------------------------------------
 ## Body
 ##------------------------------------------------------------------------------
-
 <%def name="body()">
 
     ## How To Use: Overriding body methods should be blank - they should set self.attr.frags

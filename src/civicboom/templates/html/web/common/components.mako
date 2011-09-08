@@ -96,7 +96,7 @@
 	    ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
 	    ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
 	    <input type='hidden' name='${config_key}' value='True'/>
-	    <input class='hide_guidance_submit' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
+	    <input class='hide_guidance_submit hide_if_nojs' src="/styles/common/icons/close_16.png" type='image' src="/styles/common/icons/close_16.png" name='submit' value='hide'/>
 	    <div class="mo-help-l">
 		${_("Click here to permanently hide this")}
 	    </div>

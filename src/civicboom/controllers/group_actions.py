@@ -61,7 +61,7 @@ class GroupActionsController(BaseController):
             raise_if_current_role_insufficent('admin', group)
         
         if group.remove_member(member):
-            user_log.info("Removed Member #%d (%s) from Group #%d (%s)" % (member.id, member.username, group.id, group.username))
+            user_log.info("Removed Member #%s (%s) from Group #%s (%s)" % (member.id, member.name, group.id, group.name))
             return action_ok(message='member removed sucessfully')
         raise action_error('unable to remove member', code=500)
 
@@ -92,7 +92,7 @@ class GroupActionsController(BaseController):
         
         group = get_group(id, is_current_persona_admin=True)
         if group.invite(member, role):
-            user_log.info("Invited %s to Group #%d (%s)" % (member, group.id, group.username))
+            user_log.info("Invited %s to Group #%s (%s)" % (member, group.id, group.name))
             return action_ok(_('%(member)s has been invited to join %(group)s') % {'member':member, 'group':group.name})
         raise action_error('unable to invite member', code=500)
     

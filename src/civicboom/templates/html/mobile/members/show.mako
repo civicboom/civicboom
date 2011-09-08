@@ -8,23 +8,28 @@
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
+<%def name="init_vars()">
+    <%
+        self.member    = d['member']
+        self.id        = self.member.get('id')
+        self.name      = self.member.get('name')
+        self.actions   = d['actions']
+        self.current_user = c.logged_in_persona and self.id == c.logged_in_persona.id
+    %>
+</%def>
+
 <%def name="page_title()">
-    ${_(d['member']['username'])}
+    ${self.id}
 </%def>
 
 <%def name="body()">
-    <%
-        self.member    = d['member']
-        self.id        = self.member['username']
-        self.name      = self.member.get('name')
-        self.actions   = d['actions']
-    %>
-    
+
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
+            ${parent.flash_message()}
             ${member_details_full(self.member)}
         </div>
         
@@ -36,28 +41,52 @@
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
+            <h2 style="text-align: center;">${self.id}'s ${_('_content')}</h2>
             ${member_content_list(d)}
         </div>
+        
+        ${signout_navbar()}
     </div>
+    
+    % if self.current_user:
+        ## Persona switching
+        <div data-role="page" id="member_persona-${self.id}" class="member_persona">
+            <div data-role="header">
+                <h1>Switch persona</h1>
+            </div>
+            
+            <div data-role="content">
+                ${persona()}
+            </div>
+        </div>
+    % endif
 </%def>
 
 ##-----------------------------------------------------------------------------
 ## Signout nav bar link
 ##-----------------------------------------------------------------------------
 <%def name="signout_navbar()">
-    % if "logout" in self.actions:
-        <div data-role="footer" data-position="inline" data-id="page_footer" data-theme="a">
-            <div data-role="navbar" class="ui-navbar">
-                <ul>
+    % if self.current_user:
+        <div data-role="footer" data-theme="a">
+        <div data-role="navbar" class="ui-navbar" data-theme="a">
+            <ul>
+                <li>
+                    <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
+                </li>
+                % if "logout" in self.actions:
                     <li>
                         ${h.secure_link(
                             h.url(controller='account', action='signout'),
                             _('Sign out'),
-                            rel = "external"
+                            css_class="button",
                         )}
                     </li>
-                </ul>
-            </div>
+                % endif
+                <li>
+                    <a href="${h.url(controller='misc', action='not_mobile')}" rel="external">View full website</a>
+                </li>
+            </ul>
+        </div>
         </div>
     % endif
 </%def>
@@ -122,7 +151,7 @@
                         ${username}'s website
                     </li>
                     <li>
-                        <a href="${website}" alt="${member['id']}'s website">
+                        <a href="${website}">
                             ${website}
                         </a>
                     </li>
@@ -153,42 +182,41 @@
 <%def name="actions_buttons()">
 
     % if c.logged_in_user and self.actions:
+            % if 'message' in self.actions:
+                <a href="${h.url(controller='messages', action='new', target=self.id)}" data-rel="dialog" data-transition="fade"><button>Send message</button></a>
+            % endif
+
             % if 'follow' in self.actions:
                 ${h.secure_link(
-                    h.url('member_action', action='follow'    , id=self.id) ,
+                    h.url('member_action', action='follow', id=self.id, format='redirect') ,
                     value           = _('Follow'),
                     value_formatted = h.literal("<button>%s</button>") % _('Follow'),
                     title           = _("Follow %s" % self.name) ,
-                    rel             = "external",
                 )}
             % endif
             
             % if 'unfollow' in self.actions:
                 ${h.secure_link(
-                    h.url('member_action', action='unfollow'  , id=self.id) ,
+                    h.url('member_action', action='unfollow', id=self.id, format='redirect') ,
                     value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
                     title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-                    rel             = "external",
                 )}
             % endif
             
             % if 'join' in self.actions:
                 ${h.secure_link(
-                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
                     value           = _('Join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
-                    rel             = "external",
                 )}
             % endif
             
-            ## AllanC - same as above, could be neater but works
             % if 'join_request' in self.actions:
                 ${h.secure_link(
-                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username) ,
+                    h.url('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
                     value           = _('Request to join _group') ,
                     value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
-                    rel             = "external",
                 )}
             % endif
     % endif
@@ -198,7 +226,7 @@
 ## Message and notification bar
 ##-----------------------------------------------------------------------------
 <%def name="messages_bar()">
-    % if c.logged_in_user and c.logged_in_user.username == self.id and d.get('num_unread_messages'):
+    % if self.current_user and d.get('num_unread_messages') != None:
         <%
             unread_messages =       d['num_unread_messages']
             unread_notifications =  d['num_unread_notifications']
@@ -258,33 +286,68 @@
             articles = data['articles']
         %>
         <div class="member_content">
-            ${list_includes.list_contents(requests, "Active requests")}
-            ${list_includes.list_contents(responses, "Responses")}
-            ${list_includes.list_contents(articles, "Stories")}
+            ${list_includes.list_contents(requests, "Active requests", more=1)}
+            ${list_includes.list_contents(responses, "Responses", more=1)}
+            ${list_includes.list_contents(articles, "Stories", more=1)}
         </div>
     % endif
 </%def>
 
 ##-----------------------------------------------------------------------------
-## Creates the control bar/footer
+## Persona switch
 ##-----------------------------------------------------------------------------
-<%def name="control_bar()">
-    % if c.logged_in_user:
-        <div data-role="navbar" class="ui-navbar">
-            <ul>
-                <li>
-                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
-                </li>
-                <li>
-                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
-                </li>
-                <li>
-                    ${h.secure_link(
-                        h.url(controller='account', action='signout'),
-                        _('Sign out')
-                    )}
-                </li>
-            </ul>
-        </div>
-    % endif
+<%def name="persona()">
+    <h2>Select the persona you want to switch to</h2>
+    <ul data-role="listview" data-inset="true">
+        <%def name="persona_select(member, **kwargs)">
+            <%
+                current_persona = member==c.logged_in_persona
+            %>
+            <li
+                % if current_persona:
+                    class   = "current_persona"
+                    onclick = "window.location = '/profile';"
+                    data-theme  = "a"
+                % else:
+                    onclick = "$(this).find('form').submit();"
+                % endif
+            >
+                <img src="${member.avatar_url}" class="thumbnail" />
+                <h1 class="name">${member.name or member.username}</h1>
+                % for k,v in kwargs.iteritems():
+                    % if v:
+                        <p>${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
+                    % endif
+                % endfor
+                % if not current_persona:
+                        ${h.secure_link(
+                            h.url(controller='account', action='set_persona', id=member.username, format='html') ,
+                            'switch user',
+                            css_class='hidden',
+                        )}
+                % else:
+                    <p>This is your current persona</p>
+                % endif
+            </li>
+        </%def>
+        
+        <%
+            num_members = None
+            if hasattr(c.logged_in_persona, 'num_members'):
+                num_members = c.logged_in_persona.num_members
+        %>
+        
+        ## Show default persona (the user logged in)
+        ${persona_select(c.logged_in_user, followers=num_followers)}
+        
+        ## Show current persona (current group persona if applicable)
+        % if c.logged_in_persona != c.logged_in_user:
+            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+        % endif
+        
+        ## Show currently logged in persona's groups:
+        % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
+            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+        % endfor
+    </ul>
 </%def>

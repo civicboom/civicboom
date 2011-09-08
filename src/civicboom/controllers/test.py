@@ -175,6 +175,18 @@ class TestController(BaseController):
             cookie_set("nocache", "caching disabled while this cookie exists")
             return "cache disabled"
 
+    def toggle_force_mobile(self):
+        """
+        For development, allow faking of mobile subdomain by setting a force_mobile cookie
+        """
+        if cookie_get("force_mobile"):
+            cookie_delete("force_mobile")
+            return "not force_mobile"
+        else:
+            cookie_set("force_mobile","force the mobile version of the site for development")
+            return "force_mobile"
+
+
     #---------------------------------------------------------------------------
     # runtime Config var modification
     #---------------------------------------------------------------------------
@@ -233,7 +245,7 @@ class TestController(BaseController):
     # Upgrade Account
     #---------------------------------------------------------------------------
     @web_params_to_kwargs
-    def set_account_type(self, id, account_type='plus'):
+    def set_account_type(self, id, account_type='plus', do_not_bill=True):
         """
         this is tempory measure for upgrading accounts
         It is used by the automated tests and should never be triggered by an actual user
@@ -241,4 +253,9 @@ class TestController(BaseController):
         TODO needs to be upgraded to take param of account it is going too
         """
         if get_member(id).set_payment_account(account_type):
+            # If account_type is free then no payment account is set on the member
+            if account_type != 'free':
+                Session.commit()
+                get_member(id).payment_account.do_not_bill = do_not_bill
+            Session.commit()
             return 'ok'

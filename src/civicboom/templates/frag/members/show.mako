@@ -206,20 +206,20 @@
         <div class="frag_list">
         <div class="member_details">
             <div class="col_left">
-            <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
-            % if self.member.get('website'):
-                <p class="website"><a href="${self.member['website']}" target="_blank">${h.nicen_url(self.member['website'])}</a></p>
-            % endif
-            % if self.member.get('description'):
-                <p class="description">${self.member['description']}</p>
-            % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
-                <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
-            % else:
-                <p class="description">This user has not added a description about themselves yet</p>
-            % endif
-            
-            <div class="separator"></div>
-            ${actions_buttons()}
+                <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+                % if self.member.get('website'):
+                    <p class="website"><a href="${self.member['website']}" target="_blank">${h.nicen_url(self.member['website'])}</a></p>
+                % endif
+                % if self.member.get('description'):
+                    <p class="description">${self.member['description']}</p>
+                % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
+                    <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
+                % else:
+                    <p class="description">This user has not added a description about themselves yet</p>
+                % endif
+                
+                <div class="separator"></div>
+                ${actions_buttons()}
             </div>
             
             <div class="col_right">
@@ -280,7 +280,7 @@
         ## need to stay the same in order for search engines to recognise the
         ## current page as being a person or organisation's profile
         ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        <div class="frag_col hideable vcard">
+        <div class="frag_col hideable hide_if_nojs vcard">
         <div class="user-details">
             
             <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
@@ -478,6 +478,17 @@
 <%def name="guides()">
     <% guide_count = 1 %>
     
+    ## Hub/widget hybrid advert
+    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
+        ${components.guidance(
+            contents=[self.guidance_content['hub'], self.guidance_content['widget']],
+            int=guide_count,
+            heading="What next?",
+            config_key="advert_hand_hub"
+        )}
+        <% guide_count += 1 %>
+    % endif
+    
     ## Request advert
     % if "advert_hand_assignment" in self.adverts_hand and not c.logged_in_user.config["advert_hand_assignment"]:
         ${components.guidance(
@@ -494,7 +505,6 @@
         ${components.guidance(
             contents=[self.guidance_content["assignment"], self.guidance_content["article"]],
             int=guide_count,
-            heading=_("What next?"),
             config_key="advert_hand_content"
         )}
         <% guide_count += 1 %>
@@ -517,16 +527,6 @@
             contents=[self.guidance_content['widget']],
             int=guide_count,
             config_key="advert_hand_widget"
-        )}
-        <% guide_count += 1 %>
-    % endif
-    
-    ## Hub/widget hybrid advert
-    % if "advert_hand_hub" in self.adverts_hand and not c.logged_in_user.config["advert_hand_hub"]:
-        ${components.guidance(
-            contents=[self.guidance_content['hub'], self.guidance_content['widget']],
-            int=guide_count,
-            config_key="advert_hand_hub"
         )}
         <% guide_count += 1 %>
     % endif

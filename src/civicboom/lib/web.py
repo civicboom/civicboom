@@ -9,7 +9,7 @@ from civicboom.lib.widget import widget_defaults
 
 import os
 import time
-import json
+import simplejson as json
 import re
 from decorator import decorator
 import logging
@@ -65,6 +65,9 @@ def get_subdomain_format(environ=None):
 # URL Generation
 #-------------------------------------------------------------------------------
 
+from cbutils.cbtv import log as t_log
+
+@t_log("generating url")
 def url(*args, **kwargs):
     """
     Passthough for Pylons URL generator with a few new features
@@ -246,14 +249,14 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, duration=3600*24*365, secure=None):
+def cookie_set(key, value, max_age=3600*24*365, secure=None):
     """
     duration in seconds
     """
     #print "COOKIE setting %s:%s" %(key, value)
     if secure == None:
         secure = (current_protocol() == "https")
-    response.set_cookie(key, value, max_age=duration, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
+    response.set_cookie(key, value, max_age=max_age, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
 
 
 def cookie_get(key):
@@ -364,7 +367,8 @@ def _find_template(result, type):
 
     # html is a meta-format -- if we are asked for a html template,
     # redirect to web, mobile or widget depending on the environment
-    subformat = get_subdomain_format()
+    #subformat = get_subdomain_format() # Proto: Set once in auto formatter with c.format to avoid unecessary repeated calls
+    subformat = c.subformat
     if type == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -401,7 +405,6 @@ def _find_template(result, type):
             # HACK - AllanC - insert 1 so it's after os.path.join(type, list_part)
             if subformat=='widget':
                 paths.insert(1, os.path.join("html", subformat, c.widget['theme'], list_part)) # AllanC - widgets have a special case and can have multiple themes - hack here to inset at item 1
-            
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
@@ -421,7 +424,8 @@ def _find_template_basic(controller=None, action=None, format=None):
     action = action or c.action
     format = format or c.format or "html"
     template_part = '%s/%s' % (controller, action)
-    subformat = get_subdomain_format()
+    #subformat = get_subdomain_format() # Proto: Set once in auto formatter with c.format to avoid unecessary repeated calls
+    subformat = c.subformat
     if format == "html":
         paths = [
             os.path.join("html", subformat, template_part),
@@ -452,7 +456,7 @@ def setup_format_processors():
             if n not in ['status', 'message', 'data']:
                 del result[n]
         cb = request.GET.get("callback")
-        json_data = json.dumps(result)
+        json_data = json.dumps(result, use_decimal=True)
         if cb and re.match("^[a-zA-Z][a-zA-Z0-9_]*$", cb):
             json_data = u"%s(%s)" % (cb, json_data)
         return json_data
@@ -472,6 +476,9 @@ def setup_format_processors():
         return render_template(result, 'frag')
         
     def format_html(result):
+        #print result
+        #import traceback
+        #traceback.print_stack()
         # AllanC - if we perform an HTML action but have not come from our site and used format='redirect' then we want the redirect to the html object that the action has been performed on rather than displaying an error
         if c.html_action_fallback_url: #and c.format == 'html'
             set_flash_message(result)
@@ -507,24 +514,50 @@ def setup_format_processors():
             
         #log.warning("Redirect loop detected for %s" % action_redirect)
         #return redirect("/")
-        
+    
+    def format_print(result):
+        if result.get('status', 'ok') == 'error':
+            return render_template(result, 'html')
+        frag = render_template(result, 'frag')
+        return render_mako('print/wrapper.mako', extra_vars={"inner_html": frag})
+    
     def format_ical(result):
         abort(501)
         
     def format_pdf(result):
-        abort(501)
+        import subprocess
+        print_formatted = format_print(result)
+        
+        import ho.pisa as pisa
+        import cStringIO as StringIO
+        
+        io = StringIO.StringIO()
+        
+        def link_handler(uri, rel):
+            if uri[0:4] != 'http':
+                uri = 'https://localhost' + uri
+            return uri
+            
+        pdf = pisa.pisaDocument(StringIO.StringIO(print_formatted.encode("UTF-8")), io, link_callback = link_handler, encoding="UTF-8")# path, link_callback, debug, show_error_as_pdf, default_css, xhtml, encoding, xml_output, raise_exception, capacity)
+        if not pdf.err:
+            response.headers['Content-type'] = "application/pdf"
+            return io.getvalue()
+        return pdf.err
+    
+    
 
-    return dict(
-        python   = lambda result:result,
-        json     = format_json,
-        xml      = format_xml,
-        rss      = format_rss,
-        html     = format_html,
-        frag     = format_frag,
-        redirect = format_redirect,
-        ical     = format_ical,
-        pdf      = format_pdf,
-    )
+    return {
+        'python'   : lambda result:result,
+        'json'     : format_json,
+        'xml'      : format_xml,
+        'rss'      : format_rss,
+        'html'     : format_html,
+        'frag'     : format_frag,
+        'redirect' : format_redirect,
+        'print'    : format_print,
+        'ical'     : format_ical,
+        'pdf'      : format_pdf,
+    }
 
 
 format_processors = setup_format_processors()
@@ -533,18 +566,18 @@ format_processors = setup_format_processors()
 @decorator
 def auto_format_output(target, *args, **kwargs):
     """
-    Once a controler aciton has finished processing it will return a python dict
+    Once a controller aciton has finished processing it will return a python dict
     This decorator inspects the python dict and converts the dict into one of the following:
         - JSON
         - XML
         - RSS
-        - HTML (with htmlfill overlay if nessisary) [auto selecting mobile template if needed]
+        - HTML (with htmlfill overlay if necessary) [auto selecting mobile template if needed]
             + Web
             + Mobile
         - HTML_FRAGMENT
             Used to generate fragments of pages for use with AJAX calls or as a component of a static page
         - PYTHON (just the plain python dict for internal calls)
-        - REDIRECT (compatable old borswer action to have session message set and redirected to referer)
+        - REDIRECT (compatable old broswer action to have session message set and redirected to referer)
         - ICAL (calender support)
         - PDF (generate PDF for printing/archiving)
             
@@ -561,11 +594,10 @@ def auto_format_output(target, *args, **kwargs):
 
     # If no format has been set, then this is the first time this decorator has been called
     # We only format the output on the 'first master call' through this decorator
-    # This allows us to freely call controler actions internally without haveing to worry about specifying a format because they will always return python dictionarys
-    auto_format_output_flag = False
-    if not c.format:
-        current_request = request.environ.get("pylons.routes_dict")
-        c.format        = current_request.get("format") or "html"
+    # This allows us to freely call controler actions internally without having to worry about specifying a format because they will always return python dictionarys
+    auto_format_output_flag = False # Each call to auto_format must have it's own local copy of auto_format_output_flag and not rely on the global c.
+    if not c.auto_format_top_call:
+        c.auto_format_top_call  = True # This prevent any subsiquent calls formatting therir output
         auto_format_output_flag = True
 
     try:
@@ -589,6 +621,7 @@ def auto_format_output(target, *args, **kwargs):
                 if c.html_action_fallback_url:
                     set_flash_message(result) # Set flash message
                     return redirect(c.html_action_fallback_url)
+            
             
     
     # After
@@ -675,14 +708,17 @@ def authenticate_form(_target, *args, **kwargs):
 
 
 def cacheable(time=60*60*24*365, anon_only=True):
+    """
+    A static decorator to inform nginx to cache the returned content
+    """
     def _cacheable(func, *args, **kwargs):
-        #if app_globals.cache_enabled: # AllanC - at the time of remming this production.ini had beaker.cache = False ... we want this cached for now. This should re-instated once the cache framework is finished
-        from pylons import request, response
-        if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
-            response.headers["Cache-Control"] = "public,max-age=%d" % time
-            response.headers["Vary"] = "Cookie"
-            if "Pragma" in response.headers:
-                del response.headers["Pragma"]
+        if config['cache.static_decorators.enabled']:
+            from pylons import request, response
+            if not anon_only or 'logged_in' not in request.cookies: # no cache for logged in users
+                response.headers["Cache-Control"] = "public,max-age=%d" % time
+                response.headers["Vary"] = "Cookie"
+                if "Pragma" in response.headers:
+                    del response.headers["Pragma"]
         return func(*args, **kwargs)
     return decorator(_cacheable)
 
@@ -732,6 +768,7 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     ->>> print test(1)
     -1 4
     """
+    
     if c.web_params_to_kwargs:
         return _target(*args, **kwargs) # If already processed, pass through
     
@@ -748,7 +785,7 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     if "kwargs" in _target.func_code.co_varnames:
         new_kwargs.update(params)
 
-    exclude_fields = ['pylons', 'environ', 'start_response']
+    exclude_fields = ['pylons', 'environ', 'start_response', 'controller', 'action', 'format', 'sub_domain'] # AllanC - it appears that routes variables are automatically forwarded as kwargs, they are to be removed, we dont want unneeded kwargs for caching. Could these not be set in the first place?
     for exclude_field in exclude_fields:
         if exclude_field in new_kwargs:
             del new_kwargs[exclude_field]
@@ -765,26 +802,3 @@ def web_params_to_kwargs(_target, *args, **kwargs):
 
     c.web_params_to_kwargs = (new_args, new_kwargs)
     return _target(*new_args, **new_kwargs) # Execute the wrapped function
-
-
-
-@decorator
-def normalize_kwargs(_target, *args, **kwargs):
-    """
-    Controller action can be called with a varity of kwargs
-    often these kwargs can be a combination of primitive types and objects
-    For caching and simplification of both calling and the body of these methods the kwargs can be normalize to primitive types
-    
-    Performance TODO investigation:
-    This could create serious ineffiencys by converting from objects to strings and then re-getting the objects again in the methods
-    We need to check if SQLAlchemy is smart enough to realise it already has the object in memory and does not need to perform a GET again from the DB
-    """
-    for key, value in kwargs.iteritems():
-        if not key.startswith('_'):
-            try   : value = value.__db_index__()
-            except: pass
-            # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-            value = str(value).strip()
-        kwargs[key] = value
-    
-    return _target(*args, **kwargs)

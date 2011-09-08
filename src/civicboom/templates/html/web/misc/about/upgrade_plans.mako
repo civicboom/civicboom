@@ -26,7 +26,7 @@
 </%def>
 
 
-<%def name="upgrade_details()">
+<%def name="upgrade_details(style=None)">
     <%
         plans = ['free', 'plus', 'corp']
         hilight_plan = 'plus'
@@ -36,26 +36,19 @@
                 'cost':  _('Free'),
             },
             'plus': {
-                'title': _('Pro Lite'),
+                'title': _('Lite'),
                 'cost':  _(u'£10/month'),
             },
             'corp': {
-                'title': _('Pro Premium'),
-                'cost':  _(u'£200/month'),
+                'title': _('Pro'),
+                'cost':  _(u'£300/month'),
             }
         }
         features = [
             {
-                'title': _('Up to 5 requests per month'),
-                'who'  : ['free'],
-            },
-            {
-                'title': _('Up to 20 requests per month'),
-                'who'  : ['plus'],
-            },
-            {
-                'title': _('Unlimited requests per month'),
-                'who'  : ['corp'],
+                'title': _('Requests per 30 day period'),
+                'who'  : ['free', 'plus', 'corp'],
+                'values':['5', '20', 'Unlimited']
             },
             {
                 'title': _('Scheduled requests'),
@@ -101,7 +94,11 @@
                     % for plan in plans:
                         <td class="item  ${'hilight' if plan == hilight_plan else ''}">
                             % if plan in feature['who']:
-                                <span class="icon16 i_accept"><span>Yes</span></span>
+                                % if feature.get('values'):
+                                    ${feature['values'][feature['who'].index(plan)]}
+                                % else:
+                                    <span class="icon16 i_accept"><span>Yes</span></span>
+                                % endif
                             % else:
                                 <span class="icon16 i_delete"><span>N/A</span></span>
                             % endif
@@ -119,16 +116,34 @@
                     </td>
                 % endfor
             </tr>
-            <tr class="upgrade">
-                <td></td>
-                % if len(plans)-2 > 0:
-                    % for x in range(len(plans)-2):
-                        <td></td>
+            % if style == 'create_account':
+                <tr class="upgrade" style="font-size: 125%">
+                    <td></td>
+                    % for plan in plans:
+                        <td>
+                            % if plan in ('plus','corp'):
+                                <input class="button" type="submit" name="plan_${plan}" value="${_('Create')}" />
+                            % endif
+                        </td>
                     % endfor
-                % endif
-                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">${_("Upgrade Now")}</a></td>
-                <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">${_("Learn More")}</a></td>
-            </tr>
+                    % if len(plans)-2 > 0:
+                        % for x in range(len(plans)-2):
+                            <td></td>
+                        % endfor
+                    % endif
+                </tr>
+            % else:
+                <tr class="upgrade">
+                    <td></td>
+                    % if len(plans)-2 > 0:
+                        % for x in range(len(plans)-2):
+                            <td></td>
+                        % endfor
+                    % endif
+                    <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">${_("Upgrade Now")}</a></td>
+                    <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">${_("Learn More")}</a></td>
+                </tr>
+            % endif
         </tfoot>
     </table>
     

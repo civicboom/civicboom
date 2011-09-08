@@ -28,7 +28,7 @@ class MediaController(BaseController):
         if 'file_data' in form and 'content_id' in form and 'member_id' in form and 'key' in form:
             form_file = form["file_data"]
             content = get_content(int(form['content_id']))
-            member  = get_member(int(form['member_id']))
+            member  = get_member(form['member_id'])
             if not member.check_action_key("attach to %d" % content.id, form['key']):
                 return "invalid action key"
             if not content.editable_by(member):
@@ -37,7 +37,7 @@ class MediaController(BaseController):
             media.load_from_file(tmp_file=form_file, original_name=form_file.filename)
             content.attachments.append(media)
             Session.commit()
-            user_log.info("Media #%d appended to Content #%d using a key from Member #%d" % (media.id, content.id, member.id))
+            user_log.info("Media #%d appended to Content #%d using a key from Member %s" % (media.id, content.id, member.id))
             return "ok"
         else:
             return "missing file_data or content_id"
@@ -61,7 +61,7 @@ class MediaController(BaseController):
         """DELETE /media/id: Delete an existing item"""
         m = None
         try:
-            m = Session.query(Media).filter(Media.id==id).first()
+            m = Session.query(Media).get(id)
         except:
             pass
         if not m:

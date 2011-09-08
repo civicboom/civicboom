@@ -9,13 +9,21 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
-from cbutils.misc import timedelta_str
+from cbutils.misc import timedelta_str, set_now
 
-from sqlalchemy import and_
+from sqlalchemy import and_, or_, null
+
+from sqlalchemy.orm import aliased
+
+from civicboom.lib.payment.functions import *
 
 import datetime
 
+import civicboom.lib.payment as payment
+
 log = logging.getLogger(__name__)
+
+from civicboom.lib.communication.email_lib import send_email as send_email
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
@@ -190,8 +198,251 @@ class TaskController(BaseController):
         )
         
         return response_completed_ok
+    
+    #---------------------------------------------------------------------------
+    # Run the below billing tasks (easier for overnight batches)
+    #---------------------------------------------------------------------------
+    def run_billing_tasks(self):
+        self.run_invoice_tasks()
+        self.run_transaction_tasks()
+        self.run_billing_account_tasks()
+        self.run_match_billing_transactions()
+        return response_completed_ok
+        
+    #---------------------------------------------------------------------------
+    # Create invoices (up to 7 days in advance)
+    # Sets payment account status in accordance with our payment rules
+    #---------------------------------------------------------------------------
+    def run_invoice_tasks(self):
+        # Import model objects
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
+        from civicboom.model.member import PaymentAccount
+        
+        # Set variables
+        time_now = now()
+        days_disable = 2
+        days_remind = 3
+        days_invoice_in = 7
+        seven_days = time_now + datetime.timedelta(days=days_invoice_in)
+        
+        def check_timestamp(timestamp, days):
+            if isinstance(timestamp, datetime.date):
+                timestamp = datetime.datetime.combine(timestamp, datetime.time(0))
+            if timestamp > time_now:
+                return False
+            return (time_now - timestamp).days >= days
+        
+        # For each billing frequency get accounts likely to be due in the next x days
+        for frequency in ["month", "year"]:
+            # Get accounts due in the next x days and have paid services:
+            unbilled_accounts = payment.db_methods.filter_start_dates(
+                    Session.query(PaymentAccount)\
+                    .filter(PaymentAccount.do_not_bill==False)\
+                    .filter(PaymentAccount.frequency == frequency),
+                    frequency, time_now, seven_days,
+                )\
+                .join((Service, Service.payment_account_type == PaymentAccount.type))\
+                .join((ServicePrice, ServicePrice.service_id == Service.id and ServicePrice.frequency == frequency))\
+                .filter(ServicePrice.amount > 0)\
+                .all()
+            # For each account found determine if invoice already exists & if not produces an invoice
+            for account in unbilled_accounts:
+                currency = account.currency
+                
+                # Calculate the start date we are going to try and invoice for
+                # If next start date is today we calculate for today!
+                start_date = payment.calculate_start_date(account.start_date, frequency, time_now)
+                
+                #Check for invoices with the start date already in the system (not disregarded though!)
+                check = account.invoices.filter(Invoice.status != "disregarded")\
+                    .join((InvoiceLine, InvoiceLine.invoice_id == Invoice.id))\
+                    .filter(InvoiceLine.start_date == start_date)\
+                    .join((Service, Service.id == InvoiceLine.service_id))\
+                    .filter(Service.payment_account_type == account.type).first()
+                if check:
+                    continue
+                
+                #Generate the invoice (note the invoice will be committed with status == 'unbilled'
+                invoice = payment.db_methods.generate_invoice(account, start_date)
+                
+                # Any Invoice changes need to go here!
+                
+                # Change invoice status to billed, no further changes can be made to invoice and related lines from now onwards!
+                invoice.status = "billed"
+                Session.commit()
+        
+        payment_account_status = [
+            "ok",
+            "invoiced",
+            "waiting",
+            "failed",
+        ]
+            
+        def send_email_admins(account, **kwargs):
+            for user in account.get_admins():
+                send_email(user, **kwargs)
+        
+        ## Process 2 new: Check all payment accounts with outstanding invoices
+        billed_accounts = Session.query(PaymentAccount)\
+            .join((Invoice, Invoice.payment_account_id == PaymentAccount.id))\
+            .filter(Invoice.status == "billed").all()
+        for account in billed_accounts:
+            max_acct_status = -1
+            count_unpaid = 0
+            # Check all billed invoices
+            for invoice in account.invoices.filter(Invoice.status == "billed").all():
+                if invoice.paid_total >= invoice.total:
+                    invoice.status = "paid"
+                    max_acct_status = max((max_acct_status, payment_account_status.index("ok" )))
+                elif check_timestamp(invoice.due_date, days_disable):
+                    max_acct_status = max((max_acct_status, payment_account_status.index("failed" )))
+                else:
+                    if check_timestamp(invoice.timestamp, days_remind):
+                        pass
+                    if invoice.due_date > time_now.date():
+                        max_acct_status = max((max_acct_status, payment_account_status.index("invoiced" )))
+                    else:
+                        max_acct_status = max((max_acct_status, payment_account_status.index("waiting" )))
+            # Update account
+            if max_acct_status > -1:
+                new_status      = payment_account_status[max_acct_status]
+                new_status_n    = max_acct_status
+                old_status      = invoice.payment_account.billing_status
+                old_status_n    = payment_account_status.index(old_status)
+                
+                if new_status_n != old_status_n:
+                    invoice.payment_account.billing_status = new_status
+                    Session.commit()
+                    if new_status == "failed":
+                        send_email_admins(account, subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
+                        #account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
+                        pass #Send account disabled email
+                    elif new_status == "waiting":
+                        send_email_admins(account, subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
+                        #account.send_email_admins(subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
+                        pass #Send account due email
+                    elif new_status == "invoiced":
+                        send_email_admins(account, subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
+                        #account.send_email_admins(subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
+                        pass #Send account invoiced email
+                    elif new_status == "ok":
+                        pass #Send account all ok, thank you, email
 
-
+        Session.commit()
+        return response_completed_ok
+    #---------------------------------------------------------------------------
+    # Update the status of any pending transactions
+    #---------------------------------------------------------------------------
+    def run_transaction_tasks(self):
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
+        from civicboom.model.member import PaymentAccount
+        transactions = Session.query(BillingTransaction)\
+            .filter(BillingTransaction.status=='pending')\
+            .filter(BillingTransaction.status_updated < (now() - datetime.timedelta(hours=3)))\
+            .all()
+        
+        for txn in transactions:
+            if txn.provider in payment.check_transactions:
+                try:
+                    response = payment.check_transactions[txn.provider](
+                        reference = txn.config['transaction_id']
+                    )
+                except:
+                    pass
+                else:
+                    txn.status = response['status']
+                    if txn.status == 'complete':
+                        if txn.invoice.total_paid >= txn.invoice.total:
+                            txn.invoice.status = 'paid'
+                    txn.status_updated = now()
+        
+        Session.commit()
+        return response_completed_ok
+    #---------------------------------------------------------------------------
+    # Update status of active and pending billing accounts & create any transactions
+    #  This is mostly for PayPal as they bill separately to our invoices
+    #---------------------------------------------------------------------------
+    def run_billing_account_tasks(self):
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
+        from civicboom.model.member import PaymentAccount
+        
+        paypal_to_civicboom_status = {
+            'active'     :'active',
+            'pending'    :'pending',
+            'cancelled'  :'deactivated',
+            'suspended'  :'flagged',
+            'expired'    :'deactivated',
+        }
+        
+        billing_accounts = Session.query(BillingAccount)\
+            .filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active'))\
+            .filter(BillingAccount.status_updated < (now() - datetime.timedelta(hours=3)))\
+            .all()
+        
+        for billing_account in billing_accounts:
+            if billing_account.provider in payment.check_recurrings:
+                response = payment.check_recurrings[billing_account.provider](billing_account.reference)
+                if response['status'] != 'error':
+                    billing_account.status = paypal_to_civicboom_status[response['status'].lower()]
+                    if 'create_transaction_if' in response:
+                        cti = response['create_transaction_if']
+                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
+                            txn = BillingTransaction()
+                            txn.timestamp       = cti['timestamp']
+                            txn.status          = cti['status']
+                            txn.amount          = cti['amount']
+                            txn.billing_account = billing_account
+                            txn.provider        = cti['provider']
+                            txn.reference       = cti['reference']
+            billing_account.status_updated = now()
+            
+#            if billing_account.provider == 'paypal_recurring':
+#                try:
+#                    response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
+#                except:
+#                    pass
+#                else:
+#                    if response.STATUS in paypal_to_civicboom_status.keys():
+#                        billing_account.status = paypal_to_civicboom_status[response.STATUS]
+#                    if 'LASTPAYMENTDATE' in response.raw:
+#                        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
+#                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider=='paypal_recurring', BillingTransaction.timestamp==last_date)).first():
+#                            txn = BillingTransaction()
+#                            txn.timestamp = last_date
+#                            txn.status = 'complete'
+#                            txn.amount = response.LASTPAYMENTAMT
+#                            txn.billing_account = billing_account
+#                            txn.provider = 'paypal_recurring'
+#                            txn.reference = response.PROFILEID
+#                            Session.add(txn)
+        Session.commit()
+        return response_completed_ok
+    #---------------------------------------------------------------------------
+    # Match any automated billing transactions to billed invoices
+    #  (e.g. paypal recurring payments, which annoyingly happen separately to
+    #   invoicing)
+    #---------------------------------------------------------------------------
+    def run_match_billing_transactions(self):
+        from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
+        unmatched_txns = Session.query(BillingTransaction).filter(and_(BillingTransaction.invoice_id==None, BillingTransaction.billing_account_id!=None)).all()
+        for txn in unmatched_txns:
+            within = datetime.timedelta(days=3)
+            txn_date = txn.timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
+            # Check for Invoices produced within 4 days of this transactions (28th->1st max 2.x days, 30th->1st max 2.x days, this should cover most eventualities)
+            pending_invoices = txn.billing_account.payment_account.invoices.filter(
+                and_(
+                    Invoice.status=='billed',
+                    Invoice.due_date > (txn_date-within),
+                    Invoice.due_date < (txn_date+within)
+                )
+            ).filter(
+                Invoice.total_due > 0
+            ).all()
+            if pending_invoices:
+                txn.invoice = pending_invoices[0]
+                txn.billing_account = None
+        Session.commit()
+        return response_completed_ok
     #---------------------------------------------------------------------------
     # Publish Sceduled Assignments
     #---------------------------------------------------------------------------
@@ -239,7 +490,6 @@ class TaskController(BaseController):
 
     def test(self):
         return "<task happened>"
-
 
     #---------------------------------------------------------------------------
     # One-off things

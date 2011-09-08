@@ -82,21 +82,21 @@ BODY>DIV#app {
         				text-decoration: none;
       			}
     		}
-  	}
-    
-    a {
-        color: $link-frag-colour;
-        text-decoration: none;
-        		
-        &:hover {
-            color: $link-hover-colour;
-            text-decoration: underline;
-            			
-            p, span {
-                text-decoration: inherit;
+        
+        a {
+            color: $link-frag-colour;
+            text-decoration: none;
+            		
+            &:hover {
+                color: $link-hover-colour;
+                text-decoration: underline;
+                			
+                p, span {
+                    text-decoration: inherit;
+                }
             }
         }
-    }
+  	}
 }
 
 FOOTER {
@@ -501,7 +501,8 @@ FOOTER {
 /*                                  Thin Mode                                 */
 /*----------------------------------------------------------------------------*/
 
-@media (min-width: 941px) and (max-width: 1200px) {
+/* special case for 960px and 1024px, which can't *quite* manage the full layout */
+@media (min-width: 901px) and (max-width: 1199px) {
 	HEADER #actions {
 		left: 150px;
 	}
@@ -509,8 +510,20 @@ FOOTER {
 		left: 430px;
 	}
 }
+@media (min-width: 901px) and (max-width: 1000px) {
+	HEADER #persona_select {
+		// 180 works down to 900px, but the lowest we expect to *actually* have is 940,
+		// any lower than that will probably be 800x600 and thus the other layout
+		//width: 180px;
+		width: 200px;
+		#persona_holder #persona_details {
+			width: 8.5em;
+		}
+	}
+}
 
-@media (max-width: 940px) {
+/* thin mode for 800x600 and lower */
+@media (max-width: 900px) {
 	HEADER {
 		min-width: 480px;
 		height: 137px;
@@ -541,7 +554,8 @@ FOOTER {
 	}
 
 	BODY>DIV#app {
-		margin-top: 86px;
+		margin-top: 16px;
+		top: 137px;
 	}
 
 	BODY>DIV#app #frag_containers {
@@ -565,5 +579,9 @@ FOOTER {
 		clear: both;
 		width: 100%;
 		text-align: center;
+	}
+
+	BODY>DIV#app .windows {
+		display: none;
 	}
 }

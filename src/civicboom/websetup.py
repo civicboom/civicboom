@@ -5,6 +5,9 @@ from civicboom.config.environment import load_environment
 
 from civicboom.model.meta import Base, Session
 from civicboom.model import License, Tag
+from civicboom.model.payment import Service, ServicePrice
+
+from decimal import *
 
 import pylons.test
 
@@ -185,6 +188,25 @@ CREATE TRIGGER update_rating
         ])
     Session.commit()
     # }}}
+    ###################################################################
+    ## Setup default payment_services
+    log.info("Populating default payment services")
+    
+    free = Service(payment_account_type="free", title="Free"        )
+    plus = Service(payment_account_type="plus", title="Pro Lite"    )
+    corp = Service(payment_account_type="corp", title="Pro Premium" )
+    
+    free_price_GBP_monthly = ServicePrice(free, "month", "GBP", Decimal(  '0')                   )
+    plus_price_GBP_monthly = ServicePrice(plus, "month", "GBP", Decimal( '10') / Decimal('1.20') ) 
+    corp_price_GBP_monthly = ServicePrice(corp, "month", "GBP", Decimal('200') / Decimal('1.20') )
+    
+    Session.add_all([
+        free, plus, corp,
+        free_price_GBP_monthly, plus_price_GBP_monthly, corp_price_GBP_monthly
+    ])
+    Session.commit()
+    
+    
     ###################################################################
 
     if pylons.test.pylonsapp:  # only populate when in test mode?

@@ -7,7 +7,7 @@ ${common.errors(fieldset)}
 		<td>
 <table>
 	<tr><th colspan="2">${_("Information")}</th></tr>
-	${common.render_short_field(fieldset.username)|n}
+	${common.render_short_field(fieldset.id)|n}
 </table>
 		</td>
 		<td>
@@ -15,6 +15,10 @@ ${common.errors(fieldset)}
 	<tr><th colspan="2">${_("Description")}</th></tr>
 	${common.render_short_field(fieldset.name)|n}
 	${common.render_short_field(fieldset.join_date)|n}
+</table>
+<table>
+    <tr><th colspan="2">${_("Payment Account")}</th></tr>
+    ${common.render_short_field(fieldset.payment_account)|n}
 </table>
 		</td>
 	</tr>

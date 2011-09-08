@@ -38,7 +38,12 @@ class ProfileController(BaseController):
         """
         # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
         
-        member_return = members_controller.show(id=c.logged_in_persona.username, private=True)
+
+        if c.format == "html" and c.subformat == 'web': # Proto: optimisation for web subformat, broke mobile without c.subformat check
+            return action_ok() # html format is just "include /profile.frag"
+
+        member_return = members_controller.show(id=c.logged_in_persona, private=True)
+
         member_return['data'].update(
             self.messages()['data']
         )

@@ -74,12 +74,12 @@ class CreateGroupSchema(GroupSchema):
 
 
 def _gen_username(base):
-    if Session.query(Member).filter(Member.username==base).count() == 0:
+    if Session.query(Member).filter(Member.id==base).count() == 0:
         return base
 
     if not re.search(base, "[0-9]$"):
         base = base + "2"
-    while Session.query(Member).filter(Member.username==base).count() > 0:
+    while Session.query(Member).filter(Member.id==base).count() > 0:
         name, num = re.match("(.*?)([0-9]+)", base).groups()
         base = name + str(int(num)+1)
     return base
@@ -228,14 +228,18 @@ class GroupsController(BaseController):
         
         # Create and set group admin here!
         group              = Group()
+        group.id           = group_dict['username']
         group.name         = group_dict['name']
-        group.username     = group_dict['username']
         group.status       = 'active'
         group_admin        = GroupMembership()
         group_admin.member = c.logged_in_persona
         group_admin.role   = "admin"
         group.members_roles.append(group_admin)
         group.payment_account = c.logged_in_persona.payment_account # The group is allocated the same payment account as the creator. All groups are free but if they want the plus features like approval and private content then this is needed
+        
+        # GregM: Dirty hack, again... In demo mode users & groups don't have payment accounts, we need to override the account_type manually
+        if config['demo_mode']:
+            group.account_type = c.logged_in_persona.account_type
         
         #AllanC - TODO - limit number of groups a payment account can support - the could be the differnece between plus and corporate
         
@@ -280,7 +284,7 @@ class GroupsController(BaseController):
         c.logged_in_persona = logged_in_persona
         c.logged_in_persona_role = logged_in_persona_role
         
-        user_log.info("Created Group #%d (%s)" % (group.id, group.username))
+        user_log.info("Created Group #%s (%s)" % (group.id, group.name))
         
         # AllanC - Temp email alert for new group
         send_email(config['email.event_alert'], subject='new group', content_text='%s - %s by %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_user.username))
@@ -379,7 +383,7 @@ class GroupsController(BaseController):
         @return 200 group deleted successfully
         """
         group = get_group(id, is_current_persona_admin=True)
-        user_log.info("Deleted Group #%d (%s)" % (group.id, group.username))
+        user_log.info("Deleted Group #%s (%s)" % (group.id, group.name))
         group.delete()
         c.html_action_fallback_url = url('/')
         set_persona(c.logged_in_user)

@@ -59,8 +59,9 @@ function cb_frag(current_element, url, list_type, from_history, callback) {
     var frag_div_id_next = frag_id_name + frag_count++; //frag_div_id+'1'; // AllanC - I know this only appends one to the end, but it works
     
     // Create new div with loading placeholder
-    frag_div.after('<div id="'+frag_div_id_next+'" class="'+new_fragment_class+'">'+fragment_div_loading_placeholder+'</div>'); // Append new '.frag' div populated with with load placeholder data //$(fragment_containers_id).append 
-    frag_loading = $('#'+frag_div_id_next);
+    frag_loading = $('<div id="'+frag_div_id_next+'" class="'+new_fragment_class+'">'+fragment_div_loading_placeholder+'</div>');
+    frag_div.after(frag_loading); // Append new '.frag' div populated with with load placeholder data //$(fragment_containers_id).append 
+    //frag_loading = $('#'+frag_div_id_next);
     
     // AllanC - Hack for IE7 Frag rendering
     //  1.) Make frag float:left

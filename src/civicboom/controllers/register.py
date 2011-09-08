@@ -62,6 +62,7 @@ class RegisterController(BaseController):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
         """
+        # registration_template = "/html/%s/account/register.mako" % ("mobile" if c.subformat == "mobile" else "web")
         registration_template = "/html/web/account/register.mako"
         
         c.new_user = _get_member(id)
@@ -77,7 +78,7 @@ class RegisterController(BaseController):
         
         # Build required fields list from current user data - the template will then display these and a custom validator will be created for them
         c.required_fields = ['username','email','password','name','dob']
-        if not c.logged_in_persona.username.startswith(new_user_prefix):
+        if not c.logged_in_persona.id.startswith(new_user_prefix):
             c.required_fields.remove('username')
         if c.logged_in_persona.email or c.logged_in_persona.email_unverified:
             c.required_fields.remove('email')
@@ -111,7 +112,7 @@ class RegisterController(BaseController):
         # If the validator has not forced a page render
         # then the data is fine - save the new user data
         if 'username' in form:
-            c.logged_in_persona.username         = form['username']
+            c.logged_in_persona.id               = form['username']
         if 'name'     in form:
             c.logged_in_persona.name             = form['name']
         if 'dob'      in form:
@@ -124,6 +125,10 @@ class RegisterController(BaseController):
         if form['help_type'] == 'org':
             c.logged_in_persona.extra_fields['help_type'] = form['help_type']
         
+        # AllanC - in offline demo mode ensure every user has the maximum user rights
+        if config['demo_mode']:
+            c.logged_in_persona.account_type = 'corp_plus'
+        
         Session.add(c.logged_in_persona) #AllanC - is this needed? Already in session?
         Session.commit()
         
@@ -134,7 +139,7 @@ class RegisterController(BaseController):
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako', extra_vars={'registered_user':c.logged_in_persona}))
         
         # AllanC - Temp email alert for new user
-        send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s - %s' % (c.logged_in_persona.username, c.logged_in_persona.name, c.logged_in_persona.email_normalized, form['help_type']))
+        send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s - %s' % (c.logged_in_persona.id, c.logged_in_persona.name, c.logged_in_persona.email_normalized, form['help_type']))
         
         user_log.info("Registered new user")
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
@@ -182,7 +187,7 @@ class RegisterController(BaseController):
         
         # Create new user
         u = User()
-        u.username         = kwargs['username']
+        u.id               = kwargs['username']
         u.email_unverified = kwargs['email']
         u.name             = given_username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
         Session.add(u)
@@ -213,7 +218,7 @@ class RegisterController(BaseController):
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
             return redirect(validation_url(u, controller='register', action='new_user'))
 
-        user_log.info("Sending verification email to %s (%s)" % (u.username, u.email_unverified))
+        user_log.info("Sending verification email to %s (%s)" % (u.id, u.email_unverified))
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
         
@@ -264,9 +269,9 @@ def register_new_janrain_user(profile):
     
     u = User()
     try:
-        u.username         = UniqueUsernameValidator().to_python(profile.get('displayName'))
+        u.id               = UniqueUsernameValidator().to_python(profile.get('displayName'))
     except Exception:
-        u.username         = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
+        u.id               = UniqueUsernameValidator().to_python(new_user_prefix+random_string())
     
     try:
         u.email            = UniqueEmailValidator().to_python(profile.get('verifiedEmail'))

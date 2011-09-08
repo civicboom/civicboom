@@ -34,6 +34,24 @@
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_media()}
     </div>
+    
+    <div data-role="page" id="confirm_delete">
+        <div data-role="header">
+            <h1>Delete posting?</h1>
+        </div>
+        <div data-role="content">
+            ${parent.flash_message()}
+            <h3>${_("Are you sure you want to delete")} "${self.title}"${_("? The posting will be permanently deleted from _site_name.")}</h3>
+            ${h.secure_link(
+                h.args_to_tuple('content', id=self.id, format='redirect'),
+                method = "DELETE",
+                value           = _("Delete"),
+                value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
+                json_form_complete_actions = "",
+            )}
+            <a href="#" data-rel="back" data-direction="reverse"><button>No, take me back!</button></a>
+        </div>
+    </div>
 </%def>
 
 <%def name="content_main()">
@@ -62,6 +80,24 @@
         <div class="content_text">
             ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
         </div>
+        
+        ## content actions!
+        % if config['development_mode']:
+            % if "respond" in self.actions:
+                ${h.secure_link(
+                    h.args_to_tuple('new_content', parent_id=self.id),
+                    value     = h.literal("<button>respond</button>"),
+                    rel = "external"
+                )}
+            % endif
+            
+            % if "edit" in self.actions:
+            % endif
+            
+            % if "delete" in self.actions:
+                <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>delete</button></a>
+            % endif
+        % endif
     </div>
 </%def>
 

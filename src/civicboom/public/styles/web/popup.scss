@@ -23,6 +23,11 @@
         div {
             // rmax-width: 30em;
         }
+        
+        .popup-icon {
+            float: left;
+            margin-right: 2em;
+        }
 
         .popup-title {
             font-size: 250%
@@ -70,6 +75,7 @@
         
         .button {
             padding: 1em;
+            margin-bottom: 1em;
         }
     }
 }

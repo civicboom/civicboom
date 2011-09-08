@@ -18,9 +18,11 @@ content_search = ContentsController().index
 from civicboom.controllers.members import MembersController
 member_search = MembersController().index
 
+from civicboom.lib.web import cookie_set
 
 import datetime
 import random
+import re
 
 static_org_descriptions = {
     'kentonline': 'Join us in making the news in Kent, by telling us your stories, sending in videos, pictures and audio - help us build a news picture of Kent.',
@@ -90,11 +92,11 @@ class MiscController(BaseController):
         return action_ok(data=data)
 
     def search_redirector(self):
-        if request.GET.get("type") == "Members": # these need to match the submit buttons
-            return redirect(url(controller="members", action="index", term=request.GET.get("term")))
-        elif request.GET.get("type") == "Requests":
+        if request.GET.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
+            return redirect(url(controller="members", action="index", term=request.GET.get("term"), sort="-join_date"))
+        elif request.GET.get("type") == _("_Assignments"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
-        elif request.GET.get("type") == "Stories":
+        elif request.GET.get("type") == _("_Articles"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
         else:
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
@@ -157,6 +159,7 @@ class MiscController(BaseController):
 <Image width="16" height="16">data:image/x-icon;base64,%s</Image>
 <Url type="text/html" method="get" template="https://www.civicboom.com/contents">
   <Param name="term" value="{searchTerms}"/>
+  <Param name="src" value="{referrer:source?}"/>
 </Url>
 <moz:SearchForm>https://www.civicboom.com/contents</moz:SearchForm>
 </OpenSearchDescription>""" % (base64.b64encode(file("civicboom/public/images/boom16.ico").read()), )
@@ -323,3 +326,14 @@ Disallow: /*.frag$
                 'members'   : m,
             }
         )
+
+    #---------------------------------------------------------------------------
+    # Set not mobile cookie
+    #---------------------------------------------------------------------------
+    def not_mobile(self):
+        cookie_set('not_mobile', 'True')
+        referer = current_referer()
+        if referer:
+            re.sub("(m\.)|(mobile\.)", "www.", referer, 1)
+            return redirect(referer)
+        return redirect(url(controller='misc', action='titlepage', sub_domain='web'))

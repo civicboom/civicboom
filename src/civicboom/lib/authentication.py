@@ -31,7 +31,7 @@ from sqlalchemy.orm.exc import NoResultFound
 # Pyhton package imports
 import hashlib
 from decorator import decorator
-import json
+import simplejson as json
 from urllib import quote_plus, unquote_plus
 
 # Logging
@@ -54,7 +54,7 @@ def get_user_and_check_password(username, password):
     """
     try:
         q = Session.query(User).select_from(join(User, UserLogin, User.login_details))
-        q = q.filter(User.username   == make_username(username))
+        q = q.filter(User.id         == make_username(username))
         q = q.filter(User.status     == 'active'  )
         q = q.filter(UserLogin.type  == 'password')
         q = q.filter(UserLogin.token == encode_plain_text_password(password))
@@ -87,15 +87,6 @@ def get_user_from_openid_identifyer(identifyer):
     except NoResultFound:
         return None
 
-
-
-#-------------------------------------------------------------------------------
-# AuthKit
-#-------------------------------------------------------------------------------
-# This section could be block remmed or removed and the rest of the site will still function as authorise is overwritten in the Custom Login Section
-
-def is_valid_user(u):
-    return u
 
 
 #-------------------------------------------------------------------------------
@@ -268,7 +259,7 @@ def get_lowest_role_for_user(user_list=None):
         user_list = session_get('logged_in_persona_path')
     
     if isinstance(user_list, basestring):
-        user_list = [int(i) for i in user_list.split(',')]
+        user_list = [make_username(i) for i in user_list.split(',')]
         
     if not isinstance(user_list, list):
         return None

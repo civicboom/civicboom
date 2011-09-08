@@ -16,7 +16,7 @@ class TestSigninActions(TestController):
           as a non logged in user, encouraging them to signup
         
         See
-         - civicboom.lib.civicboom_lib:get_action_objects_for_url():action_list
+         - civicboom.lib.constants:get_action_objects_for_url():action_list
         """
         def get(*args, **kwargs):
             response = self.app.get(*args, **kwargs)

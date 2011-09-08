@@ -13,3 +13,13 @@ BODY.c-account.a-signin {
         text-align: center;
     }
 }
+
+BODY.c-register.a-new_user {
+    label {
+        font-weight: bold;
+    }
+
+    .error {
+        color: red;
+    }
+}
