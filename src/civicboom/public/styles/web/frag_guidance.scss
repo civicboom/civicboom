@@ -3,6 +3,16 @@
 
 #frag_containers .frag_container {
 
+    /* --- hack because grab/approve guiance isn't inside a guidance class --- */
+   a {
+       .int, .guidance_text, .guidance_title, .guidance_content {
+          color: white;
+          &:hover {
+              color: white;
+          }
+       }
+   }
+
     /*---------------------------Frag Member Guidence------------------------------*/
     .guidance {
         color: white;
