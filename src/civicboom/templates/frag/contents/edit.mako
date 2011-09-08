@@ -763,6 +763,13 @@
                             ##  - JS Form submissions do not - this add's a fake input to the final submission to mimic this submit press
                             add_onclick_submit_field($(this));
                             
+                            ## GrrrrregM: Damn this is annoying, we need to check if we're in a modal box & close if we are.
+                            var popup = $(this).parents('#simplemodal-data');
+                            console.log(popup);
+                            if (popup.length > 0) {
+                                $.modal.close();
+                            }
+                            
                             ## AllanC - I dont like the fact we start setting global var's here ... could we move to cb_frag.js:cb_frag_set_variable() ??
                             % if show_content_frag_on_submit_complete:
                                 ## AllanC - Cleaner suggestion? - could this prompt aggregate be part of the python URL gen and not an appended string?
