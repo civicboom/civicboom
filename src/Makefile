@@ -116,6 +116,7 @@ css:
 	$(MAKE) -C civicboom/public/styles
 
 sass-once:
+	$(MAKE) -C civicboom/public/styles common/icons.scss
 	cd civicboom/public/styles && sass --line-numbers --update .:.
 
 sass:
