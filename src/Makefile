@@ -187,10 +187,12 @@ db-empty: db-clean
 	" | psql -U civicboom -d civicboom_log -h localhost >/dev/null
 
 test-db:
-	if [ -f data/data-skel.pgdump ] ; \
-	then $(MAKE) db-empty ; sudo -u postgres pg_restore -d civicboom < data/data-skel.pgdump ; \
-	else $(MAKE) blank-db ; nosetests civicboom/tests/functional/test_stub.py || true ; sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump ; \
-	fi
+	#if [ -f data/data-skel.pgdump ] ; \
+	#then $(MAKE) db-empty ; sudo -u postgres pg_restore -d civicboom < data/data-skel.pgdump ; \
+	#else $(MAKE) blank-db ; nosetests civicboom/tests/functional/test_stub.py || true ; sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump ; \
+	#fi
+	$(MAKE) blank-db
+	nosetests civicboom/tests/functional/test_stub.py
 
 live-db:
 	$(MAKE) db-empty
