@@ -12,9 +12,10 @@ help:
 	# site          -- the below (this should be done after git clone)
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
+	#   sass-once   -- compile scss files into css ones
 	#   css         -- compress folders of css into single files
 	#   ini         -- generate production / demo / test.ini files
-	# sass          -- run a daemon to turn scss into css
+	# sass          -- run a daemon to turn scss into css automatically
 	# test          -- run all nosetests
 	# blank-db      -- create a blank database
 	# test-db       -- create a blank database and fill it with test data
@@ -114,9 +115,11 @@ js:
 css:
 	$(MAKE) -C civicboom/public/styles
 
+sass-once:
+	cd civicboom/public/styles && sass --line-numbers */*.scss
+
 sass:
-	cd civicboom/public/styles
-	sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
+	cd civicboom/public/styles && sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
 
 # redirecting stdout means that the file is created even if the process fails.
 # the mv on the second line only happens if it succeeds
@@ -187,10 +190,12 @@ db-empty: db-clean
 	" | psql -U civicboom -d civicboom_log -h localhost >/dev/null
 
 test-db:
-	if [ -f data/data-skel.pgdump ] ; \
-	then $(MAKE) db-empty ; sudo -u postgres pg_restore -d civicboom < data/data-skel.pgdump ; \
-	else $(MAKE) blank-db ; nosetests civicboom/tests/functional/test_stub.py || true ; sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump ; \
-	fi
+	#if [ -f data/data-skel.pgdump ] ; \
+	#then $(MAKE) db-empty ; sudo -u postgres pg_restore -d civicboom < data/data-skel.pgdump ; \
+	#else $(MAKE) blank-db ; nosetests civicboom/tests/functional/test_stub.py || true ; sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump ; \
+	#fi
+	$(MAKE) blank-db
+	nosetests civicboom/tests/functional/test_stub.py
 
 live-db:
 	$(MAKE) db-empty
@@ -295,4 +300,4 @@ ini: production.ini demo.ini test.ini
 
 i18n: i18n-en
 
-site: i18n js css api-doc ini
+site: i18n js sass-once css api-doc ini
