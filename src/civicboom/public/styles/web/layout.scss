@@ -510,6 +510,17 @@ FOOTER {
 		left: 430px;
 	}
 }
+@media (min-width: 901px) and (max-width: 1000px) {
+	HEADER #persona_select {
+		// 180 works down to 900px, but the lowest we expect to *actually* have is 940,
+		// any lower than that will probably be 800x600 and thus the other layout
+		//width: 180px;
+		width: 200px;
+		#persona_holder #persona_details {
+			width: 8.5em;
+		}
+	}
+}
 
 /* thin mode for 800x600 and lower */
 @media (max-width: 900px) {
