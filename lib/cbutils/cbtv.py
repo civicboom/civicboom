@@ -14,7 +14,7 @@
 from __future__ import print_function
 from decorator import decorator
 import threading
-from time import time
+import time
 from optparse import OptionParser
 import sqlite3
 import sys
@@ -34,29 +34,41 @@ _output = None
 
 
 def set_log(fn):
+    """
+    set the filename of the telemetry log
+    """
     global _output
     _output = open(fn, "a", 1)
 
 
 def log_msg(text, io):
+    """
+    Log a bit of text with a given type
+    """
     tn = threading.current_thread().name.replace(" ", "-")
     if _output:
-        print("%f %s %s %s %s\n" % (time(), platform.node(), tn, io, text), file=_output, end='')
+        print("%f %s %s %s %s\n" % (time.time(), platform.node(), tn, io, text), file=_output, end='')
 
 
 def log_bookmark(text):
+    """Shortcut to log some text with the bookmark type"""
     log_msg(text, "!")
 
 
 def log_start(text):
+    """Shortcut to log some text with the event-start type"""
     log_msg(text, "+")
 
 
 def log_end(text):
+    """Shortcut to log some text with the event-end type"""
     log_msg(text, "-")
 
 
 def log(text, bookmark=False):
+    """Decorator to log event-start at the start of a function
+    call and event-end at the end, optionally with a bookmark
+    at the start"""
     @decorator
     def _log(function, *args, **kwargs):
         if callable(text):
@@ -99,20 +111,6 @@ def compile_log(log_file, database_file):
     db.commit()
 
 
-def get_start(cursor, start_hint=1, io="+"):
-    return list(cursor.execute(
-        "SELECT min(timestamp) FROM cbtv_events WHERE timestamp > ? AND type = ?",
-        [start_hint, io]
-    ))[0][0]
-
-
-def get_end(cursor, end_hint=0, io="-"):
-    return list(cursor.execute(
-        "SELECT max(timestamp) FROM cbtv_events WHERE timestamp < ? AND type = ?",
-        [end_hint, io]
-    ))[0][0]
-
-
 #######################################################################
 # GUI Out
 #######################################################################
@@ -124,7 +122,7 @@ try:
 except ImportError:
     have_tk = False
 
-class App:
+class _App:
     def __control_box(self, master):
         f = Frame(master)
 
@@ -145,7 +143,7 @@ class App:
             ).pack(side="right")
 
         _la("  Start ")
-        _sp(0, int(time()), 10, self.render_start)
+        _sp(0, int(time.time()), 10, self.render_start)
         _la("  Length ")
         _sp(1, 60, 1, self.render_len)
         _la("  Zoom ")
@@ -166,8 +164,8 @@ class App:
         db = sqlite3.connect(database_file)
         self.c = db.cursor()
 
-        self.threads = sorted(n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv_events"))
-        self.render_start = DoubleVar(master, get_start(self.c, 0))
+        self.threads = [n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv_events ORDER BY thread")]
+        self.render_start = DoubleVar(master, self.get_start(0))
         self.render_len = IntVar(master, 30)
         self.scale = IntVar(master, 1000)
 
@@ -220,26 +218,40 @@ class App:
 
         self.update()
 
+
+    def get_start(self, start_hint=1, io="+"):
+        return list(self.c.execute(
+            "SELECT min(timestamp) FROM cbtv_events WHERE timestamp > ? AND type = ?",
+            [start_hint, io]
+        ))[0][0]
+
+
+    def get_end(self, end_hint=0, io="-"):
+        return list(self.c.execute(
+            "SELECT max(timestamp) FROM cbtv_events WHERE timestamp < ? AND type = ?",
+            [end_hint, io]
+        ))[0][0]
+
     def end_event(self):
-        next_ts = get_end(self.c, sys.maxint, "!")
+        next_ts = self.get_end(sys.maxint, "!")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
 
     def next_event(self):
-        next_ts = get_start(self.c, self.render_start.get(), "!")
+        next_ts = self.get_start(self.render_start.get(), "!")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
 
     def prev_event(self):
-        prev_ts = get_end(self.c, self.render_start.get(), "!")
+        prev_ts = self.get_end(self.render_start.get(), "!")
         if prev_ts:
             self.render_start.set(prev_ts)
         self.canvas.xview_moveto(0)
 
     def start_event(self):
-        next_ts = get_start(self.c, 0, "!")
+        next_ts = self.get_start(0, "!")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
@@ -444,12 +456,12 @@ def display(database_file):
     root.title(NAME)
     #root.state("zoomed")
     #_center(root)
-    App(root, database_file)
+    _App(root, database_file)
     root.mainloop()
     return 0
 
 
-def main(argv):
+def _main(argv):
     parser = OptionParser()
     parser.add_option("-i", "--import", dest="log_file",
             help="import log file to database", metavar="LOG")
@@ -465,4 +477,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(_main(sys.argv))

@@ -785,7 +785,9 @@ def web_params_to_kwargs(_target, *args, **kwargs):
     if "kwargs" in _target.func_code.co_varnames:
         new_kwargs.update(params)
 
-    exclude_fields = ['pylons', 'environ', 'start_response', 'controller', 'action', 'format', 'sub_domain'] # AllanC - it appears that routes variables are automatically forwarded as kwargs, they are to be removed, we dont want unneeded kwargs for caching. Could these not be set in the first place?
+    # AllanC - it appears that routes variables are automatically forwarded as kwargs, they are to be removed, we dont want unneeded kwargs for caching. Could these not be set in the first place?
+    # 'client_contact' is removed at the is not relevent for the API calls but should be logged in the request should we need to contact API users (see API docs)
+    exclude_fields = ['pylons', 'environ', 'start_response', 'controller', 'action', 'format', 'sub_domain', 'client_contact'] 
     for exclude_field in exclude_fields:
         if exclude_field in new_kwargs:
             del new_kwargs[exclude_field]
