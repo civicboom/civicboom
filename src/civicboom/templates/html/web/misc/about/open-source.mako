@@ -46,6 +46,11 @@ repoze.profile: filter results by filename:
 puppet: constantly disabling and re-enabling services:
   report: http://projects.puppetlabs.com/issues/7296
   status:
+
+tk: canvas text clipping
+  report: http://sourceforge.net/tracker/?func=detail&aid=3403387&group_id=12997&atid=112997
+  patch :
+  status:
 -->
 <div>
 <b>Front End:</b>

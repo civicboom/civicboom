@@ -205,8 +205,16 @@ class PasswordValidator(validators.FancyValidator):
         non_letters = self.letter_regex.sub('', value)
         if len(non_letters) < self.non_letter:
             raise formencode.Invalid(self.message("non_letter", state, non_letter=self.non_letter), value, state)
-        if re.search('^%s+$' % value[0], value):
+
+        def check_string_repeated(value):
+            first = value[0]
+            for i in range(len(value)):
+                if value[i] != first:
+                    return False
+            return True
+        if check_string_repeated(value):
             raise formencode.Invalid(self.message("repeated_char", state), value, state)
+        
         return encode_plain_text_password(value)
 
 
