@@ -8,8 +8,8 @@
     <%
         type =  media.get('type')
         
-        media_width  = config['media.display.video.width' ]
-        media_height = config['media.display.video.height']
+        media_width  = 320 #config['media.display.video.width' ]
+        media_height = 240 #config['media.display.video.height']
     %>
     % if type == "image":
         <a href="${h.url('medium', id=media['hash'])}"><img src="${media['media_url']}" alt="${media['caption']}" style="max-width: ${media_width}px; max-height: ${media_height}px;"/></a>

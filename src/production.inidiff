@@ -22,11 +22,6 @@ cache.static_decorators.enabled = True
 feature.aggregate.email = True
 feature.aggregate.twitter_global = True
 
-media.display.video.height = 450
-media.display.video.width = 600
-media.media.height = 360
-media.media.width = 480
-
 path.temp = /tmp/cb-website-temp
 
 setting.admin_users = subtle,calaldees,gothack,hodgson1,shish,prototo
