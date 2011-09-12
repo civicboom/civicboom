@@ -106,7 +106,6 @@ class TestSignup(TestController):
             status=400
         )
         self.assertIn('repeated', response)
-
         
         response = self.app.post(
             link,
@@ -125,8 +124,8 @@ class TestSignup(TestController):
         response = self.app.post(
             link,
             params={
-                'password'        : u'password',
-                'password_confirm': u'password',
+                'password'        : u'$password', # passwords should allow for non alpha newmeric characters
+                'password_confirm': u'$password',
                 'dob'             : u'2009-01-01', # Too young
                 'terms'           : u'checked',
                 'help_type'       : u'ind',

@@ -16,10 +16,25 @@ Running the Site
 ::
 
   cd website/src/
-  make           # bring up menu
+  make clean     # check that everything is fresh defaults
   make site      # to set up translation files and compile icon map
   make test-db   # to init the db and popuplate with test data
   make run       # run the site
+
+(make clean shouldn't be necessary with a fresh checkout, the instruction
+is included here for reference when people want to reset their code to a
+fresh state)
+
+
+Demoing the Site
+~~~~~~~~~~~~~~~~
+::
+
+  cd website/src/
+  make clean     # check that everything is fresh defaults
+  make site      # to set up translation files and compile icon map
+  make demo-db   # to init the db and popuplate with example data
+  make run-demo  # run the site in offline mode
 
 
 Using the site
