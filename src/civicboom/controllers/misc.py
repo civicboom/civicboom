@@ -328,10 +328,10 @@ Disallow: /*.frag$
         )
 
     #---------------------------------------------------------------------------
-    # Set not mobile cookie
+    # Set force_web cookie
     #---------------------------------------------------------------------------
-    def not_mobile(self):
-        cookie_set('not_mobile', 'True')
+    def force_web(self):
+        cookie_set('force_web', 'True')
         referer = current_referer()
         if referer:
             re.sub("(m\.)|(mobile\.)", "www.", referer, 1)

@@ -35,6 +35,7 @@
                 $.mobile.page.prototype.options.degradeInputs.date = 'text';
                 $.mobile.defaultDialogTransition    = 'fade';
                 // $.mobile.ajaxEnabled = false;
+                $.mobile.selectmenu.prototype.options.nativeMenu = false;
             });
             
             $(document).bind("pagecreate", function() {
@@ -42,8 +43,9 @@
                 $('form').attr('data-ajax', 'false');
             });
         </script>
-        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b2.js"></script>
-        <script src="/javascript/jquery.ui.datepicker.mobile.js"></script>
+        <script type="text/javascript" src="/javascript/jquery.mobile-1.0b3.js"></script>
+        ## Not currently used
+        ## <script src="/javascript/jquery.ui.datepicker.mobile.js"></script>
     </head>
     
   
