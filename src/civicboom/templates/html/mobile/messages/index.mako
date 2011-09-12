@@ -30,7 +30,12 @@
         
         <div data-role="content">
             ${parent.flash_message()}
-            ${parent.list_messages(self.list, self.type)}
+            % if self.count:
+                ${parent.list_messages(self.list, self.type)}
+            % else:
+                <p>You have no ${title or list['type']}</p>
+                <p><a href="${h.url(controller='profile', action='index')}" rel="external">Return to profile</a></p>
+            % endif
         </div>
         
         ${parent.pagination()}

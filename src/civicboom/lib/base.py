@@ -294,21 +294,20 @@ class BaseController(WSGIController):
         c.subformat                = get_subdomain_format()
         c.auto_format_top_call     = False # Used as a flag to the auto_formatter to only output the top level decorator
         
-        # For development we cant fake a subdomain call when acessing 127.0.0.1.
+        # For development we cant fake a subdomain call when acessing 127.0.0.1 :(
         # In the same way as we toggle_cache we can toogle_force_mobile
-        if cookie_get("force_mobile"):
+        if cookie_get("force_mobile") and not cookie_get('force_web'):
             log.debug('force_mobile cookie present')
             c.subformat = 'mobile'
         # If we are not forcing mobile - attempt to redirect first time mobile viewers to the correct subdomain
-        else:
-            # Redirect to mobile site if needed
-            if c.subformat=='mobile' and cookie_get('not_mobile'): # If user is forcing m. then remove the not_mobile cookie
-                log.debug('removing not_mobile cookie')
-                cookie_delete('not_mobile')
-            if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('not_mobile') and c.subformat=='web' and not config['development_mode']:
-                mobile_url = url('current', sub_domain='m')
-                log.debug('redirecting mobile user to %s' % mobile_url)
-                redirect(mobile_url)
+        # Redirect to mobile site if needed
+        if not cookie_get("force_mobile") and cookie_get('force_web') and c.subformat=='mobile': # If user is forcing m. then remove the force_web cookie
+            log.debug('removing force_web cookie')
+            cookie_delete('force_web')
+        if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('force_web') and c.subformat=='web':
+            mobile_url = url('current', sub_domain='m')
+            log.debug('redirecting mobile user to %s' % mobile_url)
+            redirect(mobile_url)
         
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None

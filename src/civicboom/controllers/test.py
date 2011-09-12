@@ -181,9 +181,11 @@ class TestController(BaseController):
         """
         if cookie_get("force_mobile"):
             cookie_delete("force_mobile")
+            cookie_delete('force_web')
             return "not force_mobile"
         else:
             cookie_set("force_mobile","force the mobile version of the site for development")
+            cookie_delete('force_web')
             return "force_mobile"
 
 
