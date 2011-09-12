@@ -21,16 +21,19 @@
         self.actions   = d.get('actions', [])
     %>
     <div data-role="page" data-theme="b" id="content-main-${self.id}" class="content_page">
+        ${components.swipe_event('#content-main-%s' % self.id, '#content-info-%s' % self.id, 'left')}
         ${components.header(next_link="#content-info-"+str(self.id))}
         ${content_main()}
     </div>
     
     <div data-role="page" data-theme="b" id="content-info-${self.id}" class="content_page">
+        ${components.swipe_event('#content-info-%s' % self.id, '#content-main-%s' % self.id, 'right')}
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_info()}
     </div>
     
     <div data-role="page" data-theme="b" id="content-media-${self.id}" class="content_page">
+        ${components.swipe_event('#content-media-%s' % self.id, '#content-main-%s' % self.id, 'right')}
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_media()}
     </div>
