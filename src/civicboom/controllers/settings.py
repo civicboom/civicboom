@@ -493,10 +493,6 @@ class SettingsController(BaseController):
         # Form has passed validation - continue to save/commit changes
         settings    = data['settings']
         
-        print '###'
-        print dir(settings['avatar']), settings['avatar'].type
-        print '###'
-        
         # Save special properties that need special processing
         # (could have a dictionary of special processors here rather than having this code cludge this controller action up)
         # GregM: check kwargs as if no new avatar and has current avatar this FAILS!
