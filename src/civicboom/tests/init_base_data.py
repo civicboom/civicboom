@@ -172,15 +172,16 @@ def init_base_data():
         log.info("Populating tables with demo base data")
         log.debug("Users")
 
+        # user to log in as
         u1 = User()
         u1.id            = u"unittest"
-        u1.name          = u"Mr U. Test"
+        u1.name          = u"Johnny Test"
         u1.join_date     = datetime.datetime.now()
         u1.status        = "active"
         u1.email         = u"test+unittest@civicboom.com"
         u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
         u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
-        u1.description   = u"A user for automated tests to log in as"
+        u1.description   = u"Just your average guy, with an interest in journalism"
 
         u1_login = UserLogin()
         u1_login.user   = u1
@@ -191,6 +192,38 @@ def init_base_data():
 
         Session.add_all([u1, u1_login])
         Session.commit()
+
+        # A world to interact with. Stuff taken from Deus Ex: Human Revolution :P
+        def _user(id, name, desc):
+            u = User()
+            u.id            = id
+            u.name          = name
+            u.join_date     = datetime.datetime.now()
+            u.status        = "active"
+            u.email         = u"test+%s@civicboom.com" % id
+            u.description   = desc
+            u.set_payment_account('plus', delay_commit=True)
+            Session.add_all([u])
+            Session.commit()
+            return u
+
+        def _group(id, name, members):
+            g = Group()
+            g.id     = id
+            g.name   = name
+            g.status = "active"
+            for member in members:
+                g.join(member)
+            return g
+
+        morgan = _user("morgan", "Morgan Everett", "Owner of the world's biggest media group")
+
+        eliza = _user("eliza", "Eliza Cassan", "Lead anchor for the world's most popular news network")
+        eliza.location_home = "SRID=4326;POINT(1.0652 51.2976)"  # FIXME: location: olympic stadium of montreal
+        eliza.location_current = "SRID=4326;POINT(1.0803 51.2789)"
+
+        picus_group = _group("picus-group", "Picus Communications Group", [morgan])
+        picus_group = _group("picus-tv", "Picus TV", [picus_group, eliza])
 
 
     if config['data_base'] == 'test':  # development, test
