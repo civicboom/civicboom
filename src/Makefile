@@ -190,21 +190,7 @@ db-empty: db-clean
 		CREATE INDEX events__priority ON events(priority); \
 	" | psql -U civicboom -d civicboom_log -h localhost >/dev/null
 
-test-db:
-	#if [ -f data/data-skel.pgdump ] ; \
-	#then $(MAKE) db-empty ; sudo -u postgres pg_restore -d civicboom < data/data-skel.pgdump ; \
-	#else $(MAKE) blank-db ; nosetests civicboom/tests/functional/test_stub.py || true ; sudo -u postgres pg_dump -Fc civicboom > data/data-skel.pgdump ; \
-	#fi
-	$(MAKE) blank-db
-	nosetests civicboom/tests/functional/test_stub.py
-
-live-db:
-	$(MAKE) db-empty
-	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
-	sudo -u postgres pg_restore -d civicboom < data/data-live.pgdump
-
-blank-db:
-	$(MAKE) db-empty
+db-blank: db-empty
 	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
 	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_ref_sys.sql
 	echo " \
@@ -212,7 +198,24 @@ blank-db:
 		alter table geometry_columns owner to civicboom; \
 		alter view geography_columns owner to civicboom; \
 	" | sudo -u postgres psql -q -d civicboom
-	paster setup-app development.ini
+
+blank-db:
+	$(MAKE) db-blank
+	paster setup-app production.ini
+
+test-db:
+	$(MAKE) db-blank
+	#nosetests civicboom/tests/functional/test_stub.py
+	paster setup-app test.ini
+
+demo-db:
+	$(MAKE) db-blank
+	paster setup-app demo.ini
+
+live-db:
+	$(MAKE) db-empty
+	ssh db1.civicboom.com sudo -u postgres pg_dump -Fc civicboom > data/data-live.pgdump
+	sudo -u postgres pg_restore -d civicboom < data/data-live.pgdump
 
 
 ##############################################################################
