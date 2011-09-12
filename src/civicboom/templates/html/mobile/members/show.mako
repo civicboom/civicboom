@@ -24,8 +24,11 @@
 
 <%def name="body()">
 
+
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
+        ${components.swipe_event('#member-details-%s' % self.id, '#member-extra-%s' % self.id, 'left')}
+        
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
@@ -38,6 +41,8 @@
     
     ## Extra info (content/boomed/etc)
     <div data-role="page" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
+        ${components.swipe_event('#member-extra-%s' % self.id, '#member-details-%s' % self.id, 'right')}
+        
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">
@@ -128,7 +133,6 @@
         <%
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
-            username = member['username']
             description = member['description']
             website = member['website']
         %>
@@ -136,7 +140,7 @@
             ## Avatar/name
             <h3>${member['name']}</h3>
             ${member_includes.avatar(member, as_link=0, img_class="avatar")}
-            <p>Username: <b>${username}</b></p>
+            <p>Username: <b>${self.name}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
             
             <div class="separator" style="padding: 0.5em;"></div>
@@ -148,7 +152,7 @@
                 ## User website
                 % if website:
                     <li data-role="list-divider" role="heading">
-                        ${username}'s website
+                        ${self.name}'s website
                     </li>
                     <li>
                         <a href="${website}">
@@ -160,7 +164,7 @@
                 ## User description
                 % if description:
                     <li data-role="list-divider" role="heading">
-                        ${username}'s description
+                        ${self.name}'s description
                     </li>
                     <li>
                         ${description}

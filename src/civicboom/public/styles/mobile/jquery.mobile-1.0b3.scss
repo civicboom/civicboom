@@ -1,5 +1,5 @@
 /*!
- * jQuery Mobile v1.0b2
+ * jQuery Mobile v1.0b3
  * http://jquerymobile.com/
  *
  * Copyright 2010, jQuery Project
@@ -681,6 +681,11 @@ a.ui-link-inherit {
   -webkit-border-radius: .6em;
   border-radius: .6em; }
 
+.ui-corner-none {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0; }
+
 /* Interaction cues
 -----------------------------------------------------------------------------------------------------------*/
 
@@ -811,7 +816,7 @@ a.ui-link-inherit {
 .ui-icon-checkbox-off, .ui-icon-radio-off {
   background-color: transparent; }
 
-.ui-checkbox-on .ui-icon, .ui-radio-on .ui-icon {
+.ui-icon-checkbox-on, .ui-checkbox-on .ui-icon, .ui-radio-on .ui-icon {
   background-color: #4596ce;
   /* NOTE: this hex should match the active state color. It's repeated here for cascade */ }
 
@@ -1024,6 +1029,20 @@ a.ui-link-inherit {
   .ui-page {
     min-height: 300px; } }
 
+/* native overflow scrolling */
+
+.ui-page.ui-mobile-touch-overflow, .ui-mobile-touch-overflow.ui-native-fixed .ui-content {
+  overflow: auto;
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  -moz-overflow-scrolling: touch;
+  -o-overflow-scrolling: touch;
+  -ms-overflow-scrolling: touch;
+  overflow-scrolling: touch; }
+
+.ui-page.ui-mobile-pre-transition {
+  display: block; }
+
 /* loading screen */
 
 .ui-loading {
@@ -1129,6 +1148,39 @@ a.ui-link-inherit {
 
 .ui-page-fullscreen .ui-content {
   padding: 0; }
+
+/* native fixed headers and footers */
+
+.ui-mobile-touch-overflow {
+  &.ui-page {
+    &.ui-native-fixed, &.ui-native-fullscreen {
+      overflow: visible; } }
+  &.ui-native-fixed {
+    .ui-header, .ui-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      z-index: 200; } }
+  &.ui-page.ui-native-fixed .ui-footer {
+    top: auto;
+    bottom: 0; }
+  &.ui-native-fixed .ui-content {
+    padding-top: 2.5em;
+    padding-bottom: 3em;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    position: absolute; }
+  &.ui-native-fullscreen {
+    .ui-content {
+      padding-top: 0;
+      padding-bottom: 0; }
+    .ui-header, .ui-footer {
+      opacity: .9; } } }
+
+.ui-native-bars-hidden {
+  display: none; }
 
 /* icons sizing */
 
@@ -2197,7 +2249,7 @@ ol.ui-listview .ui-li-jsnumbering:before {
   padding: 0; }
 
 .ui-li .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li {
-  padding: .7em 75px .7em 15px;
+  padding: .7em 15px .7em 15px;
   display: block; }
 
 .ui-li-has-thumb .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-thumb {
@@ -2207,6 +2259,15 @@ ol.ui-listview .ui-li-jsnumbering:before {
 .ui-li-has-icon .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-icon {
   min-height: 20px;
   padding-left: 40px; }
+
+.ui-li-has-count .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-count {
+  padding-right: 45px; }
+
+.ui-li-has-arrow .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-arrow {
+  padding-right: 30px; }
+
+.ui-li-has-arrow.ui-li-has-count .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-arrow.ui-li-has-count {
+  padding-right: 75px; }
 
 .ui-li-heading {
   font-size: 16px;
@@ -2383,9 +2444,12 @@ div {
     position: absolute;
     top: 1px;
     height: 100%;
-    width: 50%; }
-  &.ui-slider-handle-snapping {
-    -webkit-transition: left 100ms linear; }
+    width: 50%; } }
+
+a.ui-slider-handle-snapping {
+  -webkit-transition: left 100ms linear; }
+
+div {
   &.ui-slider-labelbg {
     position: absolute;
     top: 0;

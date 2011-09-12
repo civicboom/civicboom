@@ -32,8 +32,8 @@ warehouse.url = civicboom-static.s3.amazonaws.com
 
 api_key.paypal.url                 = https://api-3t.paypal.com/nvp
 api_key.paypal.url_express         = https://www.paypal.com/webscr?cmd=_express-checkout&token=
-api_key.paypal.username            = payment+paypal_api1.civicboom.com
-api_key.paypal.password            = CZZ62YD9PYSJDZFV
-api_key.paypal.signature           = AzZhrFDlNJ6qRWuWPP8V-jncNbGiANZnm4mXhDL44rcmwxJDvTh8cEnB 
+api_key.paypal.username            = e.hodgson_api1.civicboom.com
+api_key.paypal.password            = XZNFH5B9UGDNG4GP
+api_key.paypal.signature           = AFcWxV21C7fd0v3bYYYRCpSSRl31APlaC8We7JCnEI-WvG.ot.1b89di
 
 worker.queue.type = redis

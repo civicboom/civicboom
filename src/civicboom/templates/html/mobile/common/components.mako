@@ -32,7 +32,7 @@
 </%def>
 
 ##-----------------------------------------------------------------------------
-## Standard search for for content and member index pages
+## Standard search for content and member index pages
 ##-----------------------------------------------------------------------------
 <%def name="search_form()">
     <div data-role="collapsible" data-collapsed="true" class="search_form">
@@ -40,7 +40,7 @@
         <p>
             <form action="${url(controller='misc', action='search_redirector')}" data-ajax="false">
                 <input type="search" name="term" placeholder="${_("Find _assignments, _articles and _members")}">
-                <select name="type">
+                <select name="type" data-theme="b">
                     <option value="All">All content</option>
                     <option value="${_("_Assignments")}">${_("_Assignments")}</option>
                     <option value="${_("_Articles")}">${_("_Articles")}</option>
@@ -75,4 +75,20 @@
         </div>
         ${control_override() if control_override else control_bar()}
     </div>
+</%def>
+
+##-----------------------------------------------------------------------------
+## Create a swipe event catcher to change to the given page
+##-----------------------------------------------------------------------------
+<%def name="swipe_event(anchor, to, direction='')">
+    <script type="text/javascript">
+        $('${anchor}').live('swipe${direction}', function(event) {
+            $.mobile.changePage($('${to}'), {
+                transition: "slide",
+                % if direction == "right":
+                    reverse: true,
+                % endif
+            });
+        });
+    </script>
 </%def>
