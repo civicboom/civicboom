@@ -14,6 +14,7 @@ from cbutils.text import clean_html_markup, strip_html_tags
 # Misc Imports
 from dateutil.parser import parse as parse_date
 import re
+import cgi
 
 
 def x_(s):
@@ -267,3 +268,15 @@ class EmptyValidator(validators.FancyValidator):
             raise formencode.Invalid(self.message("invalid", state), value, state)
         else:
             return value
+
+class FileTypeValidator(validators.FancyValidator):
+    messages = {
+        'invalid'   : x_('The file uploaded is not of a valid type, please try a different format.'),
+    }
+    file_type_re = re.compile('^[-\w\+]+/[-\w\+]+$')
+
+    def _to_python(self, value, state):
+        if isinstance(value, cgi.FieldStorage):
+            if self.file_type_re.match(value.type) == None:
+                raise formencode.Invalid(self.message("invalid", state), value, state)
+        return value
