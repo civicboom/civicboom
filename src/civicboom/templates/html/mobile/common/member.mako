@@ -31,7 +31,9 @@
 ##------------------------------------------------------------------------------
 <%def name="member_thumbnail_list(member_list)">
     % for member in member_list['items']:
-        ${avatar(member, img_class="thumbnail_small")}
+        <span class="member_avatar_small">
+            ${avatar(member, img_class="thumbnail_small")}
+        </span>
     % endfor
 </%def>
 

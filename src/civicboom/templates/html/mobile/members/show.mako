@@ -128,7 +128,6 @@
         <%
             if hasattr(member,'to_dict'):
                 member = member.to_dict()
-            username = member['username']
             description = member['description']
             website = member['website']
         %>
@@ -136,7 +135,7 @@
             ## Avatar/name
             <h3>${member['name']}</h3>
             ${member_includes.avatar(member, as_link=0, img_class="avatar")}
-            <p>Username: <b>${username}</b></p>
+            <p>Username: <b>${self.name}</b></p>
             <p>Type: <b>${member['type'].capitalize()}</b></p>
             
             <div class="separator" style="padding: 0.5em;"></div>
@@ -148,7 +147,7 @@
                 ## User website
                 % if website:
                     <li data-role="list-divider" role="heading">
-                        ${username}'s website
+                        ${self.name}'s website
                     </li>
                     <li>
                         <a href="${website}">
@@ -160,7 +159,7 @@
                 ## User description
                 % if description:
                     <li data-role="list-divider" role="heading">
-                        ${username}'s description
+                        ${self.name}'s description
                     </li>
                     <li>
                         ${description}

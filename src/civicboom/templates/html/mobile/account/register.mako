@@ -42,7 +42,7 @@
                       ${password()}
                     % endif
 
-                    % if None and 'dob' in c.required_fields:
+                    % if 'dob' in c.required_fields:
                       ${dob()}
                     % endif
 
@@ -101,6 +101,7 @@
 </%def>
 
 <%def name="dob()">
+    <%doc>
     <div data-role="fieldcontain">
         ${invalid('dob')}
         <label for="dob"><b>Date of birth</b></label>
@@ -113,6 +114,11 @@
             });
         </script>
         <small>Civicboom has age restrictions for some features, See <a href="/about/terms" target="_blank">Terms</a>.</small>
+    </div>
+    </%doc>
+    <div data-role="fieldcontain">
+        <label for="dob"><b>Date of birth</b> <small>(yyyy-mm-dd)</small></label>
+        <input id="dob" name="dob" type="text" />
     </div>
 </%def>
 
