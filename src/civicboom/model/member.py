@@ -371,7 +371,7 @@ class Member(Base):
     def hash(self):
         h = hashlib.md5()
         for field in ("id", "name", "join_date", "status", "avatar", "utc_offset"): #TODO: includes relationship fields in list?
-            h.update(str(getattr(self, field)))
+            h.update(unicode(getattr(self, field)).encode('utf-8'))
         return h.hexdigest()
 
     def invalidate_cache(self, remove=False):
@@ -635,7 +635,7 @@ class User(Member):
     def hash(self):
         h = hashlib.md5(Member.hash(self))
         for field in ("email",):
-            h.update(str(getattr(self, field)))
+            h.update(unicode(getattr(self, field)).encode('utf-8'))
         for login in self.login_details:
             h.update(login.token)
         return h.hexdigest()
