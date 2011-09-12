@@ -14,14 +14,13 @@ log = logging.getLogger(__name__)
 
 
 def init_base_data():
-        log.info("Populating tables with base test data")
+    # Notifications disabled because no i18n is setup
+    from pylons import config
+    config['feature.notifications'] = False
 
-        # Notifications disabled because no i18n is setup
-        from pylons import config
-        config['feature.notifications'] = False
-
-
-        ###############################################################
+    ###############################################################
+    def test_base():
+        log.info("Populating tables with test base data")
         log.debug("Users")
 
         u1 = User()
@@ -167,3 +166,36 @@ def init_base_data():
                 member.config[member_config_var] = 'init'
 
         assert list(Session.query(User).filter(User.id=="MrNotExists")) == []
+
+
+    def demo_base():
+        log.info("Populating tables with demo base data")
+        log.debug("Users")
+
+        u1 = User()
+        u1.id            = u"unittest"
+        u1.name          = u"Mr U. Test"
+        u1.join_date     = datetime.datetime.now()
+        u1.status        = "active"
+        u1.email         = u"test+unittest@civicboom.com"
+        u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
+        u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
+        u1.description   = u"A user for automated tests to log in as"
+
+        u1_login = UserLogin()
+        u1_login.user   = u1
+        u1_login.type   = "password"
+        u1_login.token  = hashlib.sha1("password").hexdigest()
+
+        u1.set_payment_account('plus', delay_commit=True)
+
+        Session.add_all([u1, u1_login])
+        Session.commit()
+
+
+    if config['data_base'] == 'test':  # development, test
+        test_base()
+    if config['data_base'] == 'demo':  # demo
+        demo_base()
+    if config['data_base'] == 'none':  # production
+        pass
