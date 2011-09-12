@@ -24,8 +24,11 @@
 
 <%def name="body()">
 
+
     ## Main member detail page (username/description/etc)
     <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
+        ${components.swipe_event('#member-details-%s' % self.id, '#member-extra-%s' % self.id, 'left')}
+        
         ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
         
         <div data-role="content">
@@ -38,6 +41,8 @@
     
     ## Extra info (content/boomed/etc)
     <div data-role="page" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
+        ${components.swipe_event('#member-extra-%s' % self.id, '#member-details-%s' % self.id, 'right')}
+        
         ${components.header(title=self.name, back_link="#member-details-"+self.id)}
         
         <div data-role="content">

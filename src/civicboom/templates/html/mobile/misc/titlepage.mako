@@ -13,6 +13,7 @@
     	        <p>
     	           <a href="${h.url(controller="contents", action="index")}">${_("or start exploring _site_name!")}</a>
                 </p>
+                <p><a href="${h.url(controller='misc', action='not_mobile')}" rel="external">Click here to view the desktop website</a></p>
             </div>
 	    </div>
 	</div>
