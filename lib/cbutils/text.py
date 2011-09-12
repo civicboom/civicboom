@@ -108,7 +108,7 @@ def clean_html(text):
 #-------------------------------------------------------------------------------
 
 
-def scan_for_embedable_view_and_autolink(text, remove=False, protocol='http', size=(300,225)):
+def scan_for_embedable_view_and_autolink(text, remove=False, protocol='http'): #, size=(300,225)
     """
     Scan trhough content text looking for video URL's
     Replace them with embed tags
@@ -126,10 +126,10 @@ def scan_for_embedable_view_and_autolink(text, remove=False, protocol='http', si
             text = re.sub(regex_youtube  , '', text)
             text = re.sub(regex_googlevid, '', text)
         else:
-            text = re.sub(regex_youtube  , '<object width="%(width)s" height="%(height)s"><param name="wmode" value="transparent"></param><param name="movie" value="%(protocol)s://www.youtube.com/v/\\1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="%(protocol)s://www.youtube.com/v/\\1" type="application/x-shockwave-flash" wmode="transparent" allowscriptaccess="always" allowfullscreen="true" width="%(width)s" height="%(height)s"></embed></object>\\2' % dict(width=size[0], height=size[1], protocol=protocol), text)
-            text = re.sub(regex_googlevid, '<embed id=VideoPlayback src=%(protocol)s://video.google.com/googleplayer.swf?docid=\\1&fs=true style=width:%(width)spx;height:%(height)spx wmode="transparent" allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash></embed>\\2' % dict(width=size[0], height=size[1], protocol=protocol) , text)
-            #text = re.sub(regex_youtube  , r'<object width="300" height="225"><param name="wmode" value="transparent"></param><param name="movie" value="http://www.youtube.com/v/\1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/\1" type="application/x-shockwave-flash" wmode="transparent" allowscriptaccess="always" allowfullscreen="true" width="300" height="225"></embed></object>\2', text)
-            #text = re.sub(regex_googlevid, r'<embed id=VideoPlayback src=http://video.google.com/googleplayer.swf?docid=\1&fs=true style=width:300px;height:225px wmode="transparent" allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash></embed>\2', text)
+            #text = re.sub(regex_youtube  , '<object width="%(width)s" height="%(height)s"><param name="wmode" value="transparent"></param><param name="movie" value="%(protocol)s://www.youtube.com/v/\\1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="%(protocol)s://www.youtube.com/v/\\1" type="application/x-shockwave-flash" wmode="transparent" allowscriptaccess="always" allowfullscreen="true" width="%(width)s" height="%(height)s"></embed></object>\\2' % dict(width=size[0], height=size[1], protocol=protocol), text)
+            text = re.sub(regex_youtube   , '<iframe class="video_embed" src="%(protocol)s://www.youtube.com/embed/\\1" frameborder="0" allowfullscreen></iframe>' % dict(protocol=protocol), text)
+            # Google video embed removed as we have removed our pixel sizes from the config
+            #text = re.sub(regex_googlevid , '<embed id=VideoPlayback src=%(protocol)s://video.google.com/googleplayer.swf?docid=\\1&fs=true style=width:%(width)spx;height:%(height)spx wmode="transparent" allowFullScreen=true allowScriptAccess=always type=application/x-shockwave-flash></embed>\\2' % dict(width=size[0], height=size[1], protocol=protocol) , text)
     except:
         pass
     return text

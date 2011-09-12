@@ -22,6 +22,7 @@ import copy
 import tempfile
 import Image
 import formencode
+import re
 
 from civicboom.lib.communication.messages import generators
 
@@ -138,7 +139,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'email':            civicboom.lib.form_validators.registration.UniqueEmailValidator(),
                     'password':         civicboom.lib.form_validators.base.PasswordValidator(),
                     'password_current': civicboom.lib.form_validators.base.CurrentUserPasswordValidator(),
-                    'file':             formencode.validators.FieldStorageUploadConverter(),
+                    'file':             formencode.All(formencode.validators.FieldStorageUploadConverter(), civicboom.lib.form_validators.base.FileTypeValidator(file_type_re=re.compile('^image/[-\w\+]+$'))),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
                     'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
