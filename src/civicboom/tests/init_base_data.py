@@ -194,7 +194,7 @@ def init_base_data():
         Session.commit()
 
         # A world to interact with. Stuff taken from Deus Ex: Human Revolution :P
-        def _user(id, name, desc):
+        def _user(id, name, desc=''):
             u = User()
             u.id            = id
             u.name          = name
@@ -207,23 +207,45 @@ def init_base_data():
             Session.commit()
             return u
 
-        def _group(id, name, members):
+        def _group(id, name, members, desc=''):
             g = Group()
             g.id     = id
             g.name   = name
             g.status = "active"
+            g.description = desc
             for member in members:
                 g.join(member)
             return g
 
+        def _content(type, title, content, creator, parent=None):
+            if type == "article":
+                c = ArticleContent()
+            if type == "assignment":
+                c = AssignmentContent()
+            if type == "comment":
+                c = CommentContent()
+            c.title   = title
+            c.content = content
+            c.creator = creator
+            c.parent  = parent
+            Session.add(c)
+            Session.commit()
+
         morgan = _user("morgan", "Morgan Everett", "Owner of the world's biggest media group")
+        bob_page = _user("bob-page", "Bob Page", "Some guy, nothing special")
+        walton = _user("walton", "Walton Simons", "Some guy, nothing special")
 
         eliza = _user("eliza", "Eliza Cassan", "Lead anchor for the world's most popular news network")
         eliza.location_home = "SRID=4326;POINT(1.0652 51.2976)"  # FIXME: location: olympic stadium of montreal
         eliza.location_current = "SRID=4326;POINT(1.0803 51.2789)"
 
-        picus_group = _group("picus-group", "Picus Communications Group", [morgan])
-        picus_group = _group("picus-tv", "Picus TV", [picus_group, eliza])
+        mj12 = _group("mj12", "Majestic 12", [morgan, bob_page, walton])  # FIXME: this group wants privacy
+        picus_group = _group("picus-group", "Picus Communications Group", [morgan], "One Globe. One source for news")
+        picus_tv = _group("picus-tv", "Picus TV", [picus_group, eliza], "One Globe. One source for news")
+        picus_daily = _group("picus-daily", "Picus Daily Standard", [picus_group, eliza], "One Globe. One source for news")
+
+        _content("article", "Biohazard Bomb Triggered at Sarif Manufacturing Plant", "[...]", picus_daily)
+        _content("article", "Anti-aug terrorist at large", "[...]", picus_daily)
 
 
     if config['data_base'] == 'test':  # development, test
