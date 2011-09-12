@@ -6,6 +6,7 @@ port = 5080
 
 [app:main]
 telemetry =
+data_base = none
 
 smtp_server      = smtp.googlemail.com
 smtp_port        = 587
