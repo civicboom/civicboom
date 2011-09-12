@@ -8,6 +8,7 @@ from civicboom.lib.database.get_cached import get_tag, get_license
 
 import hashlib
 import datetime
+import os
 
 import logging
 log = logging.getLogger(__name__)
@@ -172,29 +173,21 @@ def init_base_data():
         log.info("Populating tables with demo base data")
         log.debug("Users")
 
-        # user to log in as
-        u1 = User()
-        u1.id            = u"unittest"
-        u1.name          = u"Johnny Test"
-        u1.join_date     = datetime.datetime.now()
-        u1.status        = "active"
-        u1.email         = u"test+unittest@civicboom.com"
-        u1.location_home = "SRID=4326;POINT(1.0652 51.2976)"
-        u1.location_current = "SRID=4326;POINT(1.0803 51.2789)"
-        u1.description   = u"Just your average guy, with an interest in journalism"
+        def _get_avatar(id):
+            base = "civicboom/public/warehouse"
+            src = "%s/%s.png" % (base, id)
+            if os.path.exists(src):
+                d = file(src).read()
+                h = hashlib.sha1(d).hexdigest()
+                try:
+                    os.makedirs("%s/avatars" % base)
+                except OSError as e:
+                    pass # dir exists
+                file("%s/avatars/%s" % (base, h), "wb").write(d)
+                return h
+            return None
 
-        u1_login = UserLogin()
-        u1_login.user   = u1
-        u1_login.type   = "password"
-        u1_login.token  = hashlib.sha1("password").hexdigest()
-
-        u1.set_payment_account('plus', delay_commit=True)
-
-        Session.add_all([u1, u1_login])
-        Session.commit()
-
-        # A world to interact with. Stuff taken from Deus Ex: Human Revolution :P
-        def _user(id, name, desc=''):
+        def _user(id, name, desc='', av=None):
             u = User()
             u.id            = id
             u.name          = name
@@ -202,6 +195,7 @@ def init_base_data():
             u.status        = "active"
             u.email         = u"test+%s@civicboom.com" % id
             u.description   = desc
+            u.avatar        = _get_avatar(id)
             u.set_payment_account('plus', delay_commit=True)
             Session.add_all([u])
             Session.commit()
@@ -213,6 +207,7 @@ def init_base_data():
             g.name   = name
             g.status = "active"
             g.description = desc
+            g.avatar = _get_avatar(id)
             for member in members:
                 g.join(member)
             return g
@@ -231,16 +226,32 @@ def init_base_data():
             Session.add(c)
             Session.commit()
 
+        # user to log in as
+        unittest = _user("unittest", "Johnny Test", "Just your average guy, with an interest in journalism")
+        unittest.location_home = "SRID=4326;POINT(1.0652 51.2976)"
+        unittest.location_current = "SRID=4326;POINT(1.0803 51.2789)"
+        unittest.set_payment_account('plus', delay_commit=True)
+
+        unittest_login = UserLogin()
+        unittest_login.user   = unittest
+        unittest_login.type   = "password"
+        unittest_login.token  = hashlib.sha1("password").hexdigest()
+
+        Session.add_all([unittest, unittest_login])
+        Session.commit()
+
+        # A world to interact with. Stuff taken from Deus Ex: Human Revolution :P
         morgan = _user("morgan", "Morgan Everett", "Owner of the world's biggest media group")
         bob_page = _user("bob-page", "Bob Page", "Some guy, nothing special")
         walton = _user("walton", "Walton Simons", "Some guy, nothing special")
+
+        mj12 = _group("mj12", "Majestic 12", [morgan, bob_page, walton])  # FIXME: this group wants privacy
+        picus_group = _group("picus-group", "Picus Communications", [morgan], "One Globe. One source for news")
 
         eliza = _user("eliza", "Eliza Cassan", "Lead anchor for the world's most popular news network")
         eliza.location_home = "SRID=4326;POINT(1.0652 51.2976)"  # FIXME: location: olympic stadium of montreal
         eliza.location_current = "SRID=4326;POINT(1.0803 51.2789)"
 
-        mj12 = _group("mj12", "Majestic 12", [morgan, bob_page, walton])  # FIXME: this group wants privacy
-        picus_group = _group("picus-group", "Picus Communications Group", [morgan], "One Globe. One source for news")
         picus_tv = _group("picus-tv", "Picus TV", [picus_group, eliza], "One Globe. One source for news")
         picus_daily = _group("picus-daily", "Picus Daily Standard", [picus_group, eliza], "One Globe. One source for news")
 
