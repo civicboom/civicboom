@@ -83,7 +83,7 @@
                     </li>
                 % endif
                 <li>
-                    <a href="${h.url(controller='misc', action='not_mobile')}" rel="external">View full website</a>
+                    <a href="${h.url(controller='misc', action='force_web')}" rel="external">View full website</a>
                 </li>
             </ul>
         </div>
