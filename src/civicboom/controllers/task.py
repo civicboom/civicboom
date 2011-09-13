@@ -366,14 +366,6 @@ class TaskController(BaseController):
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
         from civicboom.model.member import PaymentAccount
         
-        paypal_to_civicboom_status = {
-            'active'     :'active',
-            'pending'    :'pending',
-            'cancelled'  :'deactivated',
-            'suspended'  :'flagged',
-            'expired'    :'deactivated',
-        }
-        
         billing_accounts = Session.query(BillingAccount)\
             .filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active'))\
             .filter(BillingAccount.status_updated < (now() - datetime.timedelta(hours=3)))\
@@ -383,7 +375,7 @@ class TaskController(BaseController):
             if billing_account.provider in payment.check_recurrings:
                 response = payment.check_recurrings[billing_account.provider](billing_account.reference)
                 if response['status'] != 'error':
-                    billing_account.status = paypal_to_civicboom_status[response['status'].lower()]
+                    billing_account.status = response['status']
                     if 'create_transaction_if' in response:
                         cti = response['create_transaction_if']
                         if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
