@@ -226,9 +226,10 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
         if not content.viewable_by(c.logged_in_persona):
             raise errors.error_view_permission()
             #raise action_error(_("The _content you requested is not viewable"), code=403)
-        if content.__type__ == "comment":
-            user_log.debug("Attempted to view a comment as an article")
-            raise action_error(_('Attempted to view a comment as _article'))
+        # AllanC - humm .. had to remark this error because we needed content_actions:actions to return a list so the delete test case checks actions beforehand
+        #if content.__type__ == "comment":
+        #    user_log.debug("Attempted to view a comment as an article")
+        #    raise action_error(_('Attempted to view a comment as _article'))
     if is_editable and not content.editable_by(c.logged_in_persona):
         # AllanC TODO: need to check role in group to see if they can do this
         raise action_error(_("You do not have permission to edit this _content"), code=403)
