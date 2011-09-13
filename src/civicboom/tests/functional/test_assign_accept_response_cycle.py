@@ -96,7 +96,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.assignment_response_id_3 = int(response_json['data']['id'])
         self.assertNotEqual(self.assignment_response_id_3, 0)
         
-        # Check Responses ------------------------------------------------------
+        # Check Responses are present ------------------------------------------
         
         self.log_in_as('unittest')
         
@@ -108,17 +108,30 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.assertIn('to seen'        , response)
         self.assertEqual(len(response_json['data']['responses']['items']), 3)
         
+        # Check other users dont have approve/seen/dissacociate actions --------
+        
+        for user in ['unitfriend', 'kitten']:
+            self.log_in_as(user)
+            for id in [self.assignment_response_id_1, self.assignment_response_id_2, self.assignment_response_id_3]:
+                actions = self.get_actions(id)
+                for action in ['approve', 'seen', 'dissasociate']:
+                    self.assertNotIn(action, actions)
+        
+        self.log_in_as('unittest')
+        
         # Approve --------------------------------------------------------------
         
         #self.set_account_type('plus') # Double enforce that unittest is a plus user
         
         num_emails = getNumEmails()
         
+        self.assertIn('approve', self.get_actions(self.assignment_response_id_1))
         response = self.app.post(
             url('content_action', action='approve'    , id=self.assignment_response_id_1, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        self.assertNotIn('approve', self.get_actions(self.assignment_response_id_1))
 
         # Check that the emails have been generated and sent to the correct users once approved
         self.assertEqual(getNumEmails(), num_emails + 2)
@@ -132,11 +145,13 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         # Disassociate ---------------------------------------------------------
         
+        self.assertIn('dissasociate', self.get_actions(self.assignment_response_id_2))
         response = self.app.post(
             url('content_action', action='disassociate', id=self.assignment_response_id_2, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        self.assertNotIn('dissasociate', self.get_actions(self.assignment_response_id_2))
         
         # Test 2nd time fail - GregM: Should this fail?
 #        response = self.app.post(
@@ -147,11 +162,13 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         # Seen -----------------------------------------------------------------
         
+        self.assertIn('seen', self.get_actions(self.assignment_response_id_3))
         response = self.app.post(
             url('content_action', action='seen',        id=self.assignment_response_id_3, format='json'),
             params={'_authentication_token': self.auth_token,},
             status=200
         )
+        self.assertNotIn('seen', self.get_actions(self.assignment_response_id_3))
         
         # Check Approved and Dissassociate -------------------------------------
         
@@ -263,6 +280,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         num_accepted  = len(response_json['data']['assignments_accepted']['items'])
         
         # Withdraw before accepting (should error)
+        self.assertNotIn('withdraw', self.get_actions(self.assignment_id)) # Withdraw should not be an action as there isnt an accept record generated yet
         response = self.app.post(
             url('content_action', action='withdraw', id=self.assignment_id, format='json'),
             params={'_authentication_token': self.auth_token,},
@@ -282,6 +300,7 @@ class TestAssignAcceptResponseCycleController(TestController):
         self.withdraw_assignment(self.assignment_id)
         
         # Accept again (should reject)
+        self.assertNotIn('accept', self.get_actions(self.assignment_id)) # Withdraw should not be an action as there isnt an accept record generated yet
         response = self.app.post(
             url('content_action', action='accept', id=self.assignment_id, format='json'),
             params={'_authentication_token': self.auth_token,},
