@@ -121,6 +121,7 @@
                             h.args_to_tuple('payment_action', action='member_remove', id=d['id'], username=member.get('username'), format='redirect') ,
                             value           = _('Remove') ,
                             title           = _("Remove %s") % member.get('name', '') ,
+                            json_form_complete_actions = "cb_frag_reload(current_element); " #% url('payment', id=self.id),
                         )}
                     </div>
                     
