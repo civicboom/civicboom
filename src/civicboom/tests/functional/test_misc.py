@@ -156,8 +156,8 @@ class TestMiscController(TestController):
         )
         # FIXME: test environ['is_mobile']
 
-        # Set not_mobile cookie to override redirction
-        response = self.app.get( url(controller='misc', action='not_mobile') )
+        # Set force_web cookie to override redirction
+        response = self.app.get( url(controller='misc', action='force_web') )
         
         # test mobile is not redirected
         response = self.app.get(
@@ -166,7 +166,7 @@ class TestMiscController(TestController):
             status = 200,
         )
         
-        # Force view of mobile page (should remove 'not_mobile' cookie)
+        # Force view of mobile page (should remove 'force_web' cookie)
         response = self.app.get( url(controller='misc', action='titlepage') , extra_environ={'HTTP_HOST': 'mobile.civicboom_test.com'})
         
         response = self.app.get(
