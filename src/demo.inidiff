@@ -3,6 +3,7 @@ demo_mode = true
 online = false
 test_mode = true
 telemetry =
+data_base = demo
 
 media.video.bitrate = 600
 

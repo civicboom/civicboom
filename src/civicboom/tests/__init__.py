@@ -40,8 +40,12 @@ __all__ = ['environ', 'url', 'TestController',
            'json', 're'
            ]
 
-# Invoke websetup with the current config file
-SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
+# we import tests/init_base_data during websetup, but only want
+# this to trigger in test mode. Possibly init_base_data shouldn't
+# be in tests/ ?
+if pylons.test.pylonsapp:
+    # Invoke websetup with the current config file
+    SetupCommand('setup-app').run([pylons.test.pylonsapp.config['__file__']])
 
 
 environ = {}
