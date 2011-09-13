@@ -292,6 +292,17 @@ class TestController(TestCase):
             return response_json['data']
         return response
     
+    def get_actions(self, id, id_type=None): 
+        # AllanC - as this is just for testing, we can differneciate between content and member id's with .isdiget()
+        if not id_type:
+            if isinstance(id, int) or id.isdigit():
+                id_type = 'content'
+            else:
+                id_type = 'member'
+        response      = self.app.get(url('%s_action' % id_type, action='actions', id=id, format='json'), status=200)
+        response_json = json.loads(response.body)
+        return response_json['data']['list']
+    
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
             '_authentication_token': self.auth_token,
@@ -344,6 +355,7 @@ class TestController(TestCase):
         # Todo - check notifications
 
     def delete_content(self, id):
+        self.assertIn('delete', self.get_actions(id))
         response = self.app.delete(
             url('content', id=id, format="json"),
             params={'_authentication_token': self.auth_token,},
@@ -363,6 +375,9 @@ class TestController(TestCase):
         
 
     def follow(self, username, trusted=False):
+        #actions = self.get_actions(username) # AllanC - this does not work as once an invite is sent the options are follow and unfollow(reject invitation)
+        #self.assertIn   (  'follow', actions)
+        #self.assertNotIn('unfollow', actions)
         response = self.app.post(
             url('member_action', action='follow', id=username, format='json'),
             params={
@@ -380,6 +395,9 @@ class TestController(TestCase):
             
     
     def unfollow(self, username):
+        #actions = self.get_actions(username)
+        #self.assertNotIn(  'follow', actions)
+        #self.assertIn   ('unfollow', actions)
         response = self.app.post(
             url('member_action', action='unfollow', id=username, format='json'),
             params={
