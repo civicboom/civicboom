@@ -115,10 +115,10 @@
                     onclick = "$(this).find('form').submit();"
                 % endif
             >
-                <td>
+                <td class="avatar">
                     <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
                 </td>
-                <td>
+                <td class="name">
                     <p class="name">${member.name or member.username}</p>
                     % for k,v in kwargs.iteritems():
                         % if v:
@@ -126,7 +126,7 @@
                         % endif
                     % endfor
                 </td>
-                <td>
+                <td class="messages">
                   <a class   = "icon16 i_message"
                      href    = "${h.url('messages',list='to')}"
                      title   = "${_('Messages')}"
@@ -175,6 +175,11 @@
         % endfor
         <tr class="extras">
             <td colspan="4">
+                % if c.logged_in_persona.payment_account_id:
+                    <a href="${h.url('payments')}">${_('My payment account')}</a>
+                % else:
+                    <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
+                % endif
                 <span style="float:right;">
                     ${h.secure_link(
                         h.url(controller='account', action='signout'),
