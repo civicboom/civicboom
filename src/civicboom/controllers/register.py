@@ -62,8 +62,8 @@ class RegisterController(BaseController):
         """
         Register new user - look at exisiting user record and identify additioinal required fields to complete upload
         """
-        # registration_template = "/html/%s/account/register.mako" % ("mobile" if c.subformat == "mobile" else "web")
-        registration_template = "/html/web/account/register.mako"
+        registration_template = "/html/%s/account/register.mako" % ("mobile" if c.subformat == "mobile" else "web")
+        # registration_template = "/html/web/account/register.mako"
         
         c.new_user = _get_member(id)
         
@@ -145,7 +145,9 @@ class RegisterController(BaseController):
         set_flash_message(_("Congratulations, you have successfully signed up to _site_name."))
         # GregM: prompt_aggregate on new user :D
         ##signin_user_and_redirect(c.logged_in_persona, 'registration', prompt_aggregate=True)
-        signin_user_and_redirect(c.logged_in_persona, 'registration', redirect_url=url(controller='misc', action='how_to'))
+        # Proto: only want to show profile introduction page if the user is registering using the desktop website
+        redirection_uri = url(controller='misc', action='how_to') if c.subformat == "web" else url(controller='profile', action='index')
+        signin_user_and_redirect(c.logged_in_persona, 'registration', redirect_url=redirection_uri)
         ##redirect('/')
 
     @web

@@ -9,6 +9,7 @@ import random
 import datetime
 import pprint
 import re
+import unicodedata
 
 import logging
 log = logging.getLogger(__name__)
@@ -198,6 +199,9 @@ def make_username(title):
     >>> make_username("Bob's Cake Factory")
     'bob-s-cake-factory'
     """
+    # GregM: Normalise unicode chars to ascii equivalents first before performing replace
+    #        Stops Si(a with a hat)n becoming si-n
+    title = unicodedata.normalize("NFKD", unicode(title)).encode("ascii", "ignore")
     return re.sub("[^\w-]", "-", title.lower()).strip("-")
 
 
