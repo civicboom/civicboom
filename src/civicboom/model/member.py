@@ -252,6 +252,7 @@ class Member(Base):
     #payment_account_id = Column(Integer(),   ForeignKey('payment_account.id'), nullable=True)
     salt            = Column(Binary(length=256), nullable=False, default=_generate_salt)
     description     = Column(UnicodeText(),  nullable=False, default=u"")
+    verified        = Column(Boolean(),      nullable=False, default=False)
     extra_fields    = Column(JSONType(mutable=True), nullable=False, default={})
 
     num_following            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
