@@ -209,9 +209,8 @@ CREATE TRIGGER update_rating
     
     ###################################################################
 
-    if pylons.test.pylonsapp:  # only populate when in test mode?
-        from civicboom.tests.init_base_data import init_base_data
-        init_base_data()
+    from civicboom.tests.init_base_data import init_base_data
+    init_base_data()
 
     log.info("Successfully set up tables")
 
