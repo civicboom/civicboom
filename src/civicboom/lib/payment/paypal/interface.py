@@ -16,6 +16,8 @@ from civicboom.lib.payment.paypal.settings import PayPalConfig
 from civicboom.lib.payment.paypal.response import PayPalResponse
 from civicboom.lib.payment.paypal.exceptions import PayPalError, PayPalAPIResponseError
 
+from civicboom.lib.payment.urllib2_ssl import url_opener
+
 logger = logging.getLogger('paypal.interface')
    
 class PayPalInterface(object):
@@ -102,7 +104,8 @@ class PayPalInterface(object):
         if not self.config.CB_TEST_DATA:
             data = urllib.urlencode(url)
             req = urllib2.Request(self.config.API_ENDPOINT, data)
-            response = urllib2.urlopen(req).read()
+            # GregM: Use our own url_opener which checks server certs against Ubuntu CA certs file
+            response = url_opener.open(req).read()
         ###### Civicboom Unit Test Responses
         else:
             if not hasattr(self.config, 'test_counter'):
