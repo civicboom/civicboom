@@ -146,8 +146,9 @@
             % endif
         </tfoot>
     </table>
-    
-    ${popup.popup_static('Upgrade your account', upgrade_popup, '', html_class="upgrade_popup")}
+    % if style != 'create_account':
+        ${popup.popup_static('Upgrade your account', upgrade_popup, '', html_class="upgrade_popup")}
+    % endif
 </%def>
 
 <%def name="upgrade_popup()">
