@@ -1,15 +1,9 @@
 #!/usr/bin/python
 
 # todo:
-# click on an item to zoom to it
-# - zoom in, but have a max zoom (having a 0ms event filling the screen
-#   would be silly)
 # full-file navigation
 # - cbtv_events logs can last for hours, but only a minute at a time is
 #   sensibly viewable
-# close log after appending?
-# - holding it open blocks other threads?
-# - but it is opened at the start and should never be closed...
 
 from __future__ import print_function
 from decorator import decorator
@@ -428,7 +422,7 @@ class _App:
             canvas_w = self.canvas.bbox("grid")[2]
             view_w = self.canvas.winfo_width()
             rect_x = self.canvas.bbox(r)[0]
-            rect_w = self.canvas.bbox(r)[2] - self.canvas.bbox(r)[0] + 20
+            rect_w = max(self.canvas.bbox(r)[2] - self.canvas.bbox(r)[0] + 20, 10)
             self.scale_view(n=float(view_w)/rect_w)
 
             # move the view so that the selected (item x1 = left edge of screen + padding)
