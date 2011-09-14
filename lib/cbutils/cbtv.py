@@ -36,37 +36,37 @@ def set_log(fn):
     _output = open(fn, "a", 1)
 
 
-def log_msg(text, io):
+def log_msg(function, text, io):
     """
     Log a bit of text with a given type
     """
     tn = threading.current_thread().name.replace(" ", "-")
     if _output:
-        print("%f %s %d %s %s %s\n" % (
+        print("%f %s %d %s %s %s %s\n" % (
             time.time(),
             platform.node(), os.getpid(), tn,
-            io, text
+            io, function, text
         ), file=_output, end='')
 
 
-def log_bookmark(text):
+def log_bookmark(function, text=None):
     """Shortcut to log some text with the bookmark type"""
-    log_msg(text, "BMARK")
+    log_msg(function, text, "BMARK")
 
 
-def log_start(text):
+def log_start(function, text=None):
     """Shortcut to log some text with the event-start type"""
-    log_msg(text, "START")
+    log_msg(function, text, "START")
 
 
-def log_end(text):
+def log_end(function, text=None):
     """Shortcut to log some text with the event-end (success) type"""
-    log_msg(text, "ENDOK")
+    log_msg(function, text, "ENDOK")
 
 
-def log_error(text):
+def log_error(function, text=None):
     """Shortcut to log some text with the event-end (error) type"""
-    log_msg(text, "ENDER")
+    log_msg(function, text, "ENDER")
 
 
 def log(text, bookmark=False, exceptions=True):
@@ -79,19 +79,18 @@ def log(text, bookmark=False, exceptions=True):
             _text = text(function, args, kwargs)
         else:
             _text = text
-        # _text = function.func_name+":"+_text
         try:
             if bookmark:
-                log_bookmark(_text)
-            log_start(_text)
+                log_bookmark(function.func_name, _text)
+            log_start(function.func_name, _text)
             d = function(*args, **kwargs)
-            log_end(_text)
+            log_end(function.func_name, _text)
             return d
         except Exception as e:
             if exceptions:
-                log_error(_text)
+                log_error(functions.func_name, _text)
             else:
-                log_end(_text)
+                log_end(functions.func_name, _text)
             raise
     return _log
 
@@ -110,7 +109,7 @@ def compile_log(log_file, database_file):
             process integer not null,
             thread varchar(32) not null,
             type char(5) not null,
-            function text not null
+            function text not null,
             text text not null
         )
     """)
