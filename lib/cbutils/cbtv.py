@@ -4,6 +4,8 @@
 # full-file navigation
 # - cbtv_events logs can last for hours, but only a minute at a time is
 #   sensibly viewable
+# mark lock claim / release
+# - seeing what is locking software is good
 
 from __future__ import print_function
 from decorator import decorator
