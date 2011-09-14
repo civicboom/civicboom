@@ -43,7 +43,7 @@
 			flash_message({ message: '${c.result['message']}', status: '${c.result['status']}' });
 		</script>
 	% endif
-
+    <input type="hidden" class="frag_refresh" value="${d['frag_refresh']}" />
 	<form onsubmit="" class="inviteform frag_whitewrap" method="POST" action="${h.url('current')}">
 		<input type="hidden" class="search-limit" name="search-limit" value="${d['search-limit']}" />
 		<input type="hidden" name="id" value="${d.get('id')}" />

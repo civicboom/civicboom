@@ -41,38 +41,39 @@ search_limit = 6
 
 invite_types = {
     'group' : {
-        'key'    : 'member',
-        'type'   : 'group',
-        'get'    : get_member,
-        'show'   : members_controller.show,
-        'check'  : check_member,
-        'method' : 'invite',
-        'roles'  : roles_group,
+        'key'           : 'member',
+        'type'          : 'group',
+        'get'           : get_member,
+        'show'          : members_controller.show,
+        'check'         : check_member,
+        'method'        : 'invite',
+        'roles'         : roles_group,
     },
-    'assignment' : {
-        'key'    : 'content',
-        'type'   : 'assignment',
-        'get'    : get_content,
-        'show'   : contents_controller.show,
-        'check'  : check_assignment,
-        'method' : 'invite',
+    'assignment'        : {
+        'key'           : 'content',
+        'type'          : 'assignment',
+        'get'           : get_content,
+        'show'          : contents_controller.show,
+        'check'         : check_assignment,
+        'method'        : 'invite',
     },
     'trusted_follower' : {
-        'key'    : 'member',
+        'key'           : 'member',
         
-        'get'    : get_member,
-        'show'   : members_controller.show,
-        'check'  : check_member,
-        'method' : 'follower_invite_trusted',
+        'get'           : get_member,
+        'show'          : members_controller.show,
+        'check'         : check_member,
+        'method'        : 'follower_invite_trusted',
     },
     'payment_add_user' : {
-        'key'    : 'payment_account',
+        'key'           : 'payment_account',
         
-        'get'    : get_payment_account,
-        'show'   : payments_controller.show,
-        'check'  : check_payment_account,
-        'method' : 'member_add',
-        'exclude': 'members',
+        'get'           : get_payment_account,
+        'show'          : payments_controller.show,
+        'check'         : check_payment_account,
+        'method'        : 'member_add',
+        'exclude'       : 'members',
+        'frag_refresh'  : url('payments'),
     }
 }
 
@@ -248,6 +249,7 @@ class InviteController(BaseController):
             'exclude-members' : ','.join(object_exclude_members),
             'actions'         : [],
             'invite-role'     : role,
+            'frag_refresh'    : type.get('frag_refresh', '')
         } )
         
         if error_list:

@@ -197,7 +197,10 @@ def wh_url(folder, filename):
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:
-        return proto+config["warehouse.url"]+"/"+folder+"/"+filename
+        if config['warehouse.type'] == "local":
+            return proto+request.environ.get("HTTP_HOST")+config["warehouse.url"]+"/"+folder+"/"+filename
+        else:
+            return proto+config["warehouse.url"]+"/"+folder+"/"+filename
 
 
 def uniqueish_id(*args):

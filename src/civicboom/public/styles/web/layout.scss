@@ -215,6 +215,12 @@ HEADER #persona_select {
 		-moz-transition: right 0.15s ease-in;
 		-o-transition: right 0.15s ease-in;
 		transition: right 0.15s ease-in;
+		.avatar {
+		  width: 30px;
+		}
+		.messages {
+		  width: 43px;
+		}
 	}
 	&:hover table {
 		//display: block;

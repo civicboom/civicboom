@@ -770,6 +770,7 @@
                             console.log(popup);
                             if (popup.length > 0) {
                                 $.modal.close();
+                                console.log('OMG WHAT?!');
                             }
                             
                             ## AllanC - I dont like the fact we start setting global var's here ... could we move to cb_frag.js:cb_frag_set_variable() ??

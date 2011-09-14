@@ -2,6 +2,7 @@
 online = false
 test_mode = true
 telemetry = /tmp/cb-website-test-telemetry
+data_base = test
 
 cache_dir = /tmp/cb-website-test-data
 path.temp = /tmp/cb-website-test-temp

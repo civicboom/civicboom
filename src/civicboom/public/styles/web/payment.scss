@@ -1,6 +1,5 @@
 .frag_data.c-payments, .frag_data.c-payment_actions {
 	&.a-new, &.a-edit {
-	  .frag_container {
       label {
         display: inline-block;
         width: 12em;
@@ -23,7 +22,6 @@
       .terms-75 {
         font-size: 75%;
       }
-    }
 	}
 	
   p {
@@ -31,7 +29,6 @@
   }
 	
   &.a-index, &.a-show {
-    .frag_container {
       label {
         display: inline-block;
         width: 12em;
@@ -54,7 +51,6 @@
       .terms-75 {
         font-size: 75%;
       }
-    }
   }
   .invoice {
     .header, .customer {
