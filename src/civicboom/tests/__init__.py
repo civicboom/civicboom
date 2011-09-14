@@ -512,6 +512,9 @@ class TestController(TestCase):
         return comment_id
 
     def accept_assignment(self, id):
+        actions = self.get_actions(id)
+        self.assertIn   (  'accept', actions)
+        self.assertNotIn('withdraw', actions)
         response = self.app.post( # Accept assignment
             url('content_action', action='accept', id=id, format='json') ,
             params = {'_authentication_token': self.auth_token,} ,
@@ -520,6 +523,9 @@ class TestController(TestCase):
         self.assertIn('accepted', response)
 
     def withdraw_assignment(self, id):
+        actions = self.get_actions(id)
+        self.assertNotIn(  'accept', actions)
+        self.assertIn   ('withdraw', actions)
         response = self.app.post(
             url('content_action', action='withdraw', id=id, format='json'),
             params={'_authentication_token': self.auth_token,},
