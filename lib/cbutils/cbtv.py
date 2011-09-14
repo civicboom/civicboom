@@ -13,6 +13,7 @@ from optparse import OptionParser
 import sqlite3
 import sys
 import platform
+import os
 
 
 NAME = "Civicboom TV"
@@ -41,25 +42,34 @@ def log_msg(text, io):
     """
     tn = threading.current_thread().name.replace(" ", "-")
     if _output:
-        print("%f %s %s %s %s\n" % (time.time(), platform.node(), tn, io, text), file=_output, end='')
+        print("%f %s %d %s %s %s\n" % (
+            time.time(),
+            platform.node(), os.getpid(), tn,
+            io, text
+        ), file=_output, end='')
 
 
 def log_bookmark(text):
     """Shortcut to log some text with the bookmark type"""
-    log_msg(text, "!")
+    log_msg(text, "BMARK")
 
 
 def log_start(text):
     """Shortcut to log some text with the event-start type"""
-    log_msg(text, "+")
+    log_msg(text, "START")
 
 
 def log_end(text):
-    """Shortcut to log some text with the event-end type"""
-    log_msg(text, "-")
+    """Shortcut to log some text with the event-end (success) type"""
+    log_msg(text, "ENDOK")
 
 
-def log(text, bookmark=False):
+def log_error(text):
+    """Shortcut to log some text with the event-end (error) type"""
+    log_msg(text, "ENDER")
+
+
+def log(text, bookmark=False, exceptions=True):
     """Decorator to log event-start at the start of a function
     call and event-end at the end, optionally with a bookmark
     at the start"""
@@ -74,9 +84,15 @@ def log(text, bookmark=False):
             if bookmark:
                 log_bookmark(_text)
             log_start(_text)
-            return function(*args, **kwargs)
-        finally:
+            d = function(*args, **kwargs)
             log_end(_text)
+            return d
+        except Exception as e:
+            if exceptions:
+                log_error(_text)
+            else:
+                log_end(_text)
+            raise
     return _log
 
 
@@ -91,16 +107,20 @@ def compile_log(log_file, database_file):
         CREATE TABLE IF NOT EXISTS cbtv_events(
             timestamp float not null,
             node varchar(32) not null,
+            process integer not null,
             thread varchar(32) not null,
-            type char(1) not null,
+            type char(5) not null,
+            function text not null
             text text not null
         )
     """)
     for line in open(log_file):
         c.execute(
-            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?, ?)",
-            line.strip().split(" ", 4)
+            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?, ?, ?, ?)",
+            line.strip().split(" ", 6)
         )
+    c.execute("CREATE INDEX IF NOT EXISTS ts_idx ON cbtv_events(timestamp)")
+    c.execute("CREATE INDEX IF NOT EXISTS ty_idx ON cbtv_events(type)")
     c.close()
     db.commit()
 
@@ -213,39 +233,39 @@ class _App:
         self.update()
 
 
-    def get_start(self, start_hint=1, io="+"):
+    def get_start(self, start_hint=1, io="START"):
         return list(self.c.execute(
             "SELECT min(timestamp) FROM cbtv_events WHERE timestamp > ? AND type = ?",
             [start_hint, io]
         ))[0][0]
 
 
-    def get_end(self, end_hint=0, io="-"):
+    def get_end(self, end_hint=0, io="ENDOK"):
         return list(self.c.execute(
             "SELECT max(timestamp) FROM cbtv_events WHERE timestamp < ? AND type = ?",
             [end_hint, io]
         ))[0][0]
 
     def end_event(self):
-        next_ts = self.get_end(sys.maxint, "!")
+        next_ts = self.get_end(sys.maxint, "BMARK")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
 
     def next_event(self):
-        next_ts = self.get_start(self.render_start.get(), "!")
+        next_ts = self.get_start(self.render_start.get(), "BMARK")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
 
     def prev_event(self):
-        prev_ts = self.get_end(self.render_start.get(), "!")
+        prev_ts = self.get_end(self.render_start.get(), "BMARK")
         if prev_ts:
             self.render_start.set(prev_ts)
         self.canvas.xview_moveto(0)
 
     def start_event(self):
-        next_ts = self.get_start(0, "!")
+        next_ts = self.get_start(0, "BMARK")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
@@ -350,16 +370,16 @@ class _App:
         thread_level_starts = [[] for n in range(len(self.threads))]
 
         for row in self.data:
-            (_time, _node, _thread, _io, _text) = row
+            (_time, _node, _process, _thread, _io, _function, _text) = row
             _time = float(_time)
             thread_idx = threads.index(_thread)
 
             # when an event starts, take note of the start time
-            if _io == "+":
+            if _io == "START":
                 thread_level_starts[thread_idx].append(_time)
 
             # when the event ends, render it
-            elif _io == "-":
+            elif _io == "ENDOK" or _io == "ENDER":
                 # if we start rendering mid-file, we may see the ends
                 # of events that haven't started yet
                 if len(thread_level_starts[thread_idx]):
@@ -370,20 +390,21 @@ class _App:
                         end_px    = (event_end - _rs) * _sc
                         length_px = end_px - start_px
                         stack_len = len(thread_level_starts[thread_idx])
-                        self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
+                        self.show(int(start_px), int(length_px), thread_idx, stack_len, _function, _text, _io=="ENDOK")
 
             elif _io == "!":
                 pass  # render bookmark
 
-    def show(self, start, length, thread, level, text):
+    def show(self, start, length, thread, level, function, text, ok):
         text = " " + text
         _time_mult = float(self.scale.get()) / 1000.0
-        tip = "%dms @%dms:\n%s" % (float(length) / _time_mult, float(start) / _time_mult, text)
+        tip = "%dms @%dms: %s\n%s" % (float(length) / _time_mult, float(start) / _time_mult, function, text)
 
+        fill = "#CFC" if ok else "#FCC"
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
             start+length, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT,
-            fill="#CFC", outline="#484",
+            fill=fill, outline="#484",
         )
         t = self.canvas.create_text(
             start, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
