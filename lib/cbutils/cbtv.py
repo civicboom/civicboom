@@ -356,7 +356,7 @@ class _App:
 
         for n in range(0, len(self.threads)):
             self.canvas.create_line(0, 20+ROW_HEIGHT*n, rl_px, 20+ROW_HEIGHT*n, tags="grid")
-            self.canvas.create_text(0, 20+ROW_HEIGHT*n+5, text=" "+self.threads[n], anchor="nw")
+            self.canvas.create_text(0, 20+ROW_HEIGHT*(n+1)-5, text=" "+self.threads[n], anchor="sw")
 
     def render_data(self):
         """
