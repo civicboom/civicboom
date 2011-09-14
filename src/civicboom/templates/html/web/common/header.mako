@@ -175,10 +175,12 @@
         % endfor
         <tr class="extras">
             <td colspan="4">
-                % if c.logged_in_persona.payment_account_id:
-                    <a href="${h.url('payments')}">${_('My payment account')}</a>
-                % else:
-                    <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
+                % if config['development_mode'] and c.logged_in_persona_role == 'admin':
+                    % if c.logged_in_persona.payment_account_id:
+                        <a href="${h.url('payments')}">${_('My payment account')}</a>
+                    % else:
+                        <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
+                    % endif
                 % endif
                 <span style="float:right;">
                     ${h.secure_link(
