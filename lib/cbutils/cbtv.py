@@ -18,8 +18,8 @@ import platform
 import os
 
 
-NAME = "Civicboom TV"
-ROW_HEIGHT = 140
+NAME = "Context"
+ROW_HEIGHT = 80
 BLOCK_HEIGHT = 20
 
 
@@ -146,28 +146,28 @@ class _App:
                 text=t
             ).pack(side="left")
 
-        def _sp(fr, t, i, v):
+        def _sp(fr, t, i, v, w=10):
             Spinbox(f,
                 from_=fr, to=t, increment=i,
-                textvariable=v
+                textvariable=v, width=w
             ).pack(side="left")
 
         def _bu(t, c):
             Button(f,
-                text=t, command=c
+                image=t, command=c, padding=0
             ).pack(side="right")
 
         _la("  Start ")
-        _sp(0, int(time.time()), 10, self.render_start)
+        _sp(0, int(time.time()), 10, self.render_start, 15)
         _la("  Length ")
-        _sp(1, 60, 1, self.render_len)
+        _sp(1, 60, 1, self.render_len, 3)
         _la("  Zoom ")
-        _sp(100, 5000, 100, self.scale)
+        _sp(100, 5000, 100, self.scale, 5)
 
-        _bu("End", self.end_event)
-        _bu("Next Bookmark", self.next_event)
-        _bu("Prev Bookmark", self.prev_event)
-        _bu("Start", self.start_event)
+        _bu(self.img_end, self.end_event)
+        _bu(self.img_next, self.next_event)
+        _bu(self.img_prev, self.prev_event)
+        _bu(self.img_start, self.start_event)
 
         f.pack()
         return f
@@ -187,6 +187,11 @@ class _App:
         self.render_start.trace_variable("w", self.update)
         self.render_len.trace_variable("w", self.update)
         self.scale.trace_variable("w", self.render)
+
+        self.img_start = PhotoImage(file="start.ppm")
+        self.img_prev = PhotoImage(file="prev.ppm")
+        self.img_next = PhotoImage(file="next.ppm")
+        self.img_end = PhotoImage(file="end.ppm")
 
         self.h = Scrollbar(master, orient=HORIZONTAL)
         self.v = Scrollbar(master, orient=VERTICAL)
@@ -402,10 +407,11 @@ class _App:
         tip = "%dms @%dms: %s\n%s" % (float(length) / _time_mult, float(start) / _time_mult, function, text)
 
         fill = "#CFC" if ok else "#FCC"
+        outl = "#484" if ok else "#844"
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
             start+length, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT,
-            fill=fill, outline="#484",
+            fill=fill, outline=outl,
         )
         t = self.canvas.create_text(
             start, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
@@ -421,7 +427,7 @@ class _App:
         r2 = self.canvas.create_rectangle(
             start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
             start+max(length, 200), 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT*6+2,
-            state="hidden", fill="white"
+            state="hidden", fill="#FFA", outline="#AA8"
         )
         t2 = self.canvas.create_text(
             start+2, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
