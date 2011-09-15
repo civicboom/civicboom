@@ -4,6 +4,8 @@
 # full-file navigation
 # - cbtv_events logs can last for hours, but only a minute at a time is
 #   sensibly viewable
+# - bookmarks window, just a list of <timestamp> <bookmark text>, double
+#   click to go there
 # mark lock claim / release
 # - seeing what is locking software is good
 
