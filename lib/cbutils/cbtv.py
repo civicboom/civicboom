@@ -8,6 +8,9 @@
 #   click to go there
 # mark lock claim / release
 # - seeing what is locking software is good
+# demo mode
+# - really limited: hardcode the demo data within the binary
+# - less limited: allow people to see ~3 seconds of data at once
 
 from __future__ import print_function
 from decorator import decorator
