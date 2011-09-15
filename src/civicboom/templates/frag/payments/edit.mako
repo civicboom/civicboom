@@ -4,7 +4,6 @@
 <%!
     import webhelpers.constants
     country_codes = webhelpers.constants.country_codes()
-    print country_codes
     country_sort = ['GB', 'US']
     country_dict = dict(country_codes)
     country_map = []
@@ -14,7 +13,6 @@
     country_codes = [(key, country_dict[key]) for key in country_dict.keys()]
     country_codes.sort(key=lambda tup:tup[1])
     country_map.extend(country_codes)
-    print country_map
 %>
 
 <%def name="body()">
