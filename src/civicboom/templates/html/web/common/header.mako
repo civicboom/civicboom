@@ -175,7 +175,7 @@
         % endfor
         <tr class="extras">
             <td colspan="4">
-                % if config['development_mode'] and c.logged_in_persona_role == 'admin':
+                % if c.logged_in_persona_role == 'admin':
                     % if c.logged_in_persona.payment_account_id:
                         <a href="${h.url('payments')}">${_('My payment account')}</a>
                     % else:
