@@ -14,7 +14,7 @@
 </%def>
 
 <%def name="frag()">
-	##<!--#include file=""-->
+	##<!--#include virtual=""-->
     <%
 		frag = "/frag/%s" % self.attr.frag
 	%>

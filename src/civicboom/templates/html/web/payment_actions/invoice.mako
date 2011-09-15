@@ -17,7 +17,7 @@
 </%def>
 
 <%def name="payment()">
-    <!--#include file="${h.url(controller='payments', action='show', id=d['payment_account']['id'], format='frag')}"-->
+    <!--#include virtual="${h.url(controller='payments', action='show', id=d['payment_account']['id'], format='frag')}"-->
 </%def>
 
 <%def name="invoice()">

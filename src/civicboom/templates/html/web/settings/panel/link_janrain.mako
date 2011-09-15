@@ -27,5 +27,5 @@
 </%def>
 
 <%def name="help()">
-  <!--#include file="/help/link_accounts"-->
+  <!--#include virtual="/help/link_accounts"-->
 </%def>

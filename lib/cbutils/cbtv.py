@@ -1,15 +1,11 @@
 #!/usr/bin/python
 
 # todo:
-# click on an item to zoom to it
-# - zoom in, but have a max zoom (having a 0ms event filling the screen
-#   would be silly)
 # full-file navigation
 # - cbtv_events logs can last for hours, but only a minute at a time is
 #   sensibly viewable
-# close log after appending?
-# - holding it open blocks other threads?
-# - but it is opened at the start and should never be closed...
+# mark lock claim / release
+# - seeing what is locking software is good
 
 from __future__ import print_function
 from decorator import decorator
@@ -19,10 +15,11 @@ from optparse import OptionParser
 import sqlite3
 import sys
 import platform
+import os
 
 
-NAME = "Civicboom TV"
-ROW_HEIGHT = 140
+NAME = "Context"
+ROW_HEIGHT = 80
 BLOCK_HEIGHT = 20
 
 
@@ -41,31 +38,40 @@ def set_log(fn):
     _output = open(fn, "a", 1)
 
 
-def log_msg(text, io):
+def log_msg(function, text, io):
     """
     Log a bit of text with a given type
     """
     tn = threading.current_thread().name.replace(" ", "-")
     if _output:
-        print("%f %s %s %s %s\n" % (time.time(), platform.node(), tn, io, text), file=_output, end='')
+        print("%f %s %d %s %s %s %s\n" % (
+            time.time(),
+            platform.node(), os.getpid(), tn,
+            io, function, text
+        ), file=_output, end='')
 
 
-def log_bookmark(text):
+def log_bookmark(function, text=None):
     """Shortcut to log some text with the bookmark type"""
-    log_msg(text, "!")
+    log_msg(function, text, "BMARK")
 
 
-def log_start(text):
+def log_start(function, text=None):
     """Shortcut to log some text with the event-start type"""
-    log_msg(text, "+")
+    log_msg(function, text, "START")
 
 
-def log_end(text):
-    """Shortcut to log some text with the event-end type"""
-    log_msg(text, "-")
+def log_end(function, text=None):
+    """Shortcut to log some text with the event-end (success) type"""
+    log_msg(function, text, "ENDOK")
 
 
-def log(text, bookmark=False):
+def log_error(function, text=None):
+    """Shortcut to log some text with the event-end (error) type"""
+    log_msg(function, text, "ENDER")
+
+
+def log(text, bookmark=False, exceptions=True):
     """Decorator to log event-start at the start of a function
     call and event-end at the end, optionally with a bookmark
     at the start"""
@@ -75,14 +81,19 @@ def log(text, bookmark=False):
             _text = text(function, args, kwargs)
         else:
             _text = text
-        # _text = function.func_name+":"+_text
         try:
             if bookmark:
-                log_bookmark(_text)
-            log_start(_text)
-            return function(*args, **kwargs)
-        finally:
-            log_end(_text)
+                log_bookmark(function.func_name, _text)
+            log_start(function.func_name, _text)
+            d = function(*args, **kwargs)
+            log_end(function.func_name, _text)
+            return d
+        except Exception as e:
+            if exceptions:
+                log_error(functions.func_name, _text)
+            else:
+                log_end(functions.func_name, _text)
+            raise
     return _log
 
 
@@ -97,16 +108,20 @@ def compile_log(log_file, database_file):
         CREATE TABLE IF NOT EXISTS cbtv_events(
             timestamp float not null,
             node varchar(32) not null,
+            process integer not null,
             thread varchar(32) not null,
-            type char(1) not null,
+            type char(5) not null,
+            function text not null,
             text text not null
         )
     """)
     for line in open(log_file):
         c.execute(
-            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?, ?)",
-            line.strip().split(" ", 4)
+            "INSERT INTO cbtv_events VALUES(?, ?, ?, ?, ?, ?, ?)",
+            line.strip().split(" ", 6)
         )
+    c.execute("CREATE INDEX IF NOT EXISTS ts_idx ON cbtv_events(timestamp)")
+    c.execute("CREATE INDEX IF NOT EXISTS ty_idx ON cbtv_events(type)")
     c.close()
     db.commit()
 
@@ -131,28 +146,28 @@ class _App:
                 text=t
             ).pack(side="left")
 
-        def _sp(fr, t, i, v):
+        def _sp(fr, t, i, v, w=10):
             Spinbox(f,
                 from_=fr, to=t, increment=i,
-                textvariable=v
+                textvariable=v, width=w
             ).pack(side="left")
 
         def _bu(t, c):
             Button(f,
-                text=t, command=c
+                image=t, command=c, padding=0
             ).pack(side="right")
 
         _la("  Start ")
-        _sp(0, int(time.time()), 10, self.render_start)
+        _sp(0, int(time.time()), 10, self.render_start, 15)
         _la("  Length ")
-        _sp(1, 60, 1, self.render_len)
+        _sp(1, 60, 1, self.render_len, 3)
         _la("  Zoom ")
-        _sp(100, 5000, 100, self.scale)
+        _sp(100, 5000, 100, self.scale, 5)
 
-        _bu("End", self.end_event)
-        _bu("Next Bookmark", self.next_event)
-        _bu("Prev Bookmark", self.prev_event)
-        _bu("Start", self.start_event)
+        _bu(self.img_end, self.end_event)
+        _bu(self.img_next, self.next_event)
+        _bu(self.img_prev, self.prev_event)
+        _bu(self.img_start, self.start_event)
 
         f.pack()
         return f
@@ -172,6 +187,11 @@ class _App:
         self.render_start.trace_variable("w", self.update)
         self.render_len.trace_variable("w", self.update)
         self.scale.trace_variable("w", self.render)
+
+        self.img_start = PhotoImage(file="start.ppm")
+        self.img_prev = PhotoImage(file="prev.ppm")
+        self.img_next = PhotoImage(file="next.ppm")
+        self.img_end = PhotoImage(file="end.ppm")
 
         self.h = Scrollbar(master, orient=HORIZONTAL)
         self.v = Scrollbar(master, orient=VERTICAL)
@@ -219,39 +239,39 @@ class _App:
         self.update()
 
 
-    def get_start(self, start_hint=1, io="+"):
+    def get_start(self, start_hint=1, io="START"):
         return list(self.c.execute(
             "SELECT min(timestamp) FROM cbtv_events WHERE timestamp > ? AND type = ?",
             [start_hint, io]
         ))[0][0]
 
 
-    def get_end(self, end_hint=0, io="-"):
+    def get_end(self, end_hint=0, io="ENDOK"):
         return list(self.c.execute(
             "SELECT max(timestamp) FROM cbtv_events WHERE timestamp < ? AND type = ?",
             [end_hint, io]
         ))[0][0]
 
     def end_event(self):
-        next_ts = self.get_end(sys.maxint, "!")
+        next_ts = self.get_end(sys.maxint, "BMARK")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
 
     def next_event(self):
-        next_ts = self.get_start(self.render_start.get(), "!")
+        next_ts = self.get_start(self.render_start.get(), "BMARK")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
 
     def prev_event(self):
-        prev_ts = self.get_end(self.render_start.get(), "!")
+        prev_ts = self.get_end(self.render_start.get(), "BMARK")
         if prev_ts:
             self.render_start.set(prev_ts)
         self.canvas.xview_moveto(0)
 
     def start_event(self):
-        next_ts = self.get_start(0, "!")
+        next_ts = self.get_start(0, "BMARK")
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
@@ -341,7 +361,7 @@ class _App:
 
         for n in range(0, len(self.threads)):
             self.canvas.create_line(0, 20+ROW_HEIGHT*n, rl_px, 20+ROW_HEIGHT*n, tags="grid")
-            self.canvas.create_text(0, 20+ROW_HEIGHT*n+5, text=" "+self.threads[n], anchor="nw")
+            self.canvas.create_text(0, 20+ROW_HEIGHT*(n+1)-5, text=" "+self.threads[n], anchor="sw")
 
     def render_data(self):
         """
@@ -356,16 +376,16 @@ class _App:
         thread_level_starts = [[] for n in range(len(self.threads))]
 
         for row in self.data:
-            (_time, _node, _thread, _io, _text) = row
+            (_time, _node, _process, _thread, _io, _function, _text) = row
             _time = float(_time)
             thread_idx = threads.index(_thread)
 
             # when an event starts, take note of the start time
-            if _io == "+":
+            if _io == "START":
                 thread_level_starts[thread_idx].append(_time)
 
             # when the event ends, render it
-            elif _io == "-":
+            elif _io == "ENDOK" or _io == "ENDER":
                 # if we start rendering mid-file, we may see the ends
                 # of events that haven't started yet
                 if len(thread_level_starts[thread_idx]):
@@ -376,20 +396,22 @@ class _App:
                         end_px    = (event_end - _rs) * _sc
                         length_px = end_px - start_px
                         stack_len = len(thread_level_starts[thread_idx])
-                        self.show(int(start_px), int(length_px), thread_idx, stack_len, _text)
+                        self.show(int(start_px), int(length_px), thread_idx, stack_len, _function, _text, _io=="ENDOK")
 
             elif _io == "!":
                 pass  # render bookmark
 
-    def show(self, start, length, thread, level, text):
+    def show(self, start, length, thread, level, function, text, ok):
         text = " " + text
         _time_mult = float(self.scale.get()) / 1000.0
-        tip = "%dms @%dms:\n%s" % (float(length) / _time_mult, float(start) / _time_mult, text)
+        tip = "%dms @%dms: %s\n%s" % (float(length) / _time_mult, float(start) / _time_mult, function, text)
 
+        fill = "#CFC" if ok else "#FCC"
+        outl = "#484" if ok else "#844"
         r = self.canvas.create_rectangle(
             start,        20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT,
             start+length, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT,
-            fill="#CFC", outline="#484",
+            fill=fill, outline=outl,
         )
         t = self.canvas.create_text(
             start, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+3,
@@ -405,7 +427,7 @@ class _App:
         r2 = self.canvas.create_rectangle(
             start,                  20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
             start+max(length, 200), 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT*6+2,
-            state="hidden", fill="white"
+            state="hidden", fill="#FFA", outline="#AA8"
         )
         t2 = self.canvas.create_text(
             start+2, 20+thread*ROW_HEIGHT+level*BLOCK_HEIGHT+BLOCK_HEIGHT+2,
@@ -428,7 +450,7 @@ class _App:
             canvas_w = self.canvas.bbox("grid")[2]
             view_w = self.canvas.winfo_width()
             rect_x = self.canvas.bbox(r)[0]
-            rect_w = self.canvas.bbox(r)[2] - self.canvas.bbox(r)[0] + 20
+            rect_w = max(self.canvas.bbox(r)[2] - self.canvas.bbox(r)[0] + 20, 10)
             self.scale_view(n=float(view_w)/rect_w)
 
             # move the view so that the selected (item x1 = left edge of screen + padding)
