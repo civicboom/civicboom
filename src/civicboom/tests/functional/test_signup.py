@@ -188,29 +188,67 @@ class TestSignup(TestController):
     def test_signup_and_follow_default_user(self):
         self.log_out()
         
+        default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup') # Remeber auto follow config var to reset at end of test
+        
         # Fake config setting
+        self.config_var('setting.username_to_auto_follow_on_signup', 'puppy') # Change auto follow on signup config var
         
-        default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup')
-        self.config_var('setting.username_to_auto_follow_on_signup', 'unittest')
+        # Setup unitfriend to allow mutual registration follows
+        self.log_in_as('unitfriend')
+        response = self.app.post(
+            url('setting',id="me",format="json"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'allow_registration_follows' : 'true',
+            },
+            status=200
+        )
+        self.log_out()
         
-        num_emails = getNumEmails()
         
         # Request new user email for new user
         response = self.app.post(
             url(controller='register', action='email', format="json"),
             params={
-                'username': u'test_signup_follow',
-                'email'   : u'test+signup_autofollow@civicboom.com',
+                'username'     : u'test_signup_follow',
+                'email'        : u'test+signup_autofollow@civicboom.com',
+                'follow'       : '  bunny,  kitten   ',
+                'follow_mutual': 'unitfriend',
             },
         )
         
-        # 2 emails should be generated, the welcome! and the 'new_follower' email to unittest
-        # AllanC -  ADDITION - the default is that new follower is not a default email alert, so we are only checking for 'welcome'
-        self.assertEqual(getNumEmails(), num_emails + 2)
-
+        # Check for link in email
+        link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', getLastEmail().content_text+' ').group(1))
+        self.assertIn('hash', link)
+        
+        num_notifications = self.getNumNotificationsInDB()
+        # Complete the registration process - this will trigger the new_follower noifications
+        response = self.app.post(
+            link,
+            params={
+                'password'        : 'password',
+                'password_confirm': 'password',
+                'dob'             : u'1980-01-01',
+                'name'            : u'This is my full name',
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
+            },
+        )
+        
+        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + 5) # test_signup_follow has - 4 new_follower notifications. unitfriend has 1 new_follower notification
+        # Check contents of notifcications generated
+        notifications = self.getNotificationsFromDB(5)
+        notification_targets  = [n.target_id for n in notifications]
+        notification_subjects = [n.subject   for n in notifications]
+        for member in ['puppy','bunny','kitten','unitfriend','test_signup_follow']:
+            self.assertIn(member, notification_targets)
+        for subject in notification_subjects:
+            self.assertEquals('new follower', subject)
+        
         from civicboom.lib.database.get_cached import get_member
         get_member('test_signup_follow').delete()
-
+        
         # Set back the config var so tests run after this are not affected
         self.config_var('setting.username_to_auto_follow_on_signup', default_auto_follow)
         self.config_var('setting.username_to_auto_follow_on_signup', '')

@@ -138,6 +138,15 @@ class RegisterController(BaseController):
         
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako', extra_vars={'registered_user':c.logged_in_persona}))
         
+        # Follow pending users from extra_fields
+        for member in [_get_member(username) for username in c.logged_in_persona.extra_fields.pop('on_register_follow'       ,'').split(',')]:
+            if member:
+                c.logged_in_persona.follow(member, delay_commit=True)
+        for member in [_get_member(username) for username in c.logged_in_persona.extra_fields.pop('on_register_follow_mutual','').split(',')]:
+            if member and member.config['allow_registration_follows']:
+                member.follow(c.logged_in_persona, delay_commit=True)
+        Session.commit()
+        
         # AllanC - Temp email alert for new user
         send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s - %s' % (c.logged_in_persona.id, c.logged_in_persona.name, c.logged_in_persona.email_normalized, form['help_type']))
         
@@ -195,16 +204,11 @@ class RegisterController(BaseController):
         Session.add(u)
         Session.commit()
         
-        # Automatically Follow Users from config and referers from other sites
-        follow_username_list = []
-        for username_list in [config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]:
-            follow_username_list += username_list.split(',')
-        for member in [_get_member(username.strip()) for username in follow_username_list                     ]:
-            if member:
-                u.follow(member)
-        for member in [_get_member(username.strip()) for username in kwargs.get('follow_mutual','').split(',')]:
-            if member and member.config['allow_registration_follows']:
-                member.follow(u)
+        # Automatically Follow Users from config and referers from other sites - These will be run once the user completes registration
+        u.extra_fields.update({
+            'on_register_follow'       : ','.join([username.strip() for username in ','.join([config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]).split(',')]), # AllanC - this monster line is huge confusing and awesome!
+            'on_register_follow_mutual': kwargs.get('follow_mutual','') ,
+        })
         
         # Accept assignment
         if 'accept_assignment' in kwargs:
