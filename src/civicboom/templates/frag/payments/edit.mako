@@ -3,6 +3,18 @@
 
 <%!
     import webhelpers.constants
+    country_codes = webhelpers.constants.country_codes()
+    print country_codes
+    country_sort = ['GB', 'US']
+    country_dict = dict(country_codes)
+    country_map = []
+    for key in country_sort:
+        country_map.append((key, country_dict[key]))
+        del country_dict[key]
+    country_codes = [(key, country_dict[key]) for key in country_dict.keys()]
+    country_codes.sort(key=lambda tup:tup[1])
+    country_map.extend(country_codes)
+    print country_map
 %>
 
 <%def name="body()">
@@ -75,7 +87,7 @@
     <p>
         <label for="address_country">${_('Country')}:</label>
         <select id="address_country" name="address_country">
-            % for code, country in webhelpers.constants.country_codes():
+            % for code, country in country_map:
                 <option
                     % if self.account.get('address_country') == code:
                         selected="selected"
