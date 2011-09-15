@@ -300,9 +300,21 @@ class PaymentActionsController(BaseController):
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
     
     @web
+    @authorize
+    @role_required('admin')
+    def regrade_plans(self, id, **kwargs):
+        from civicboom.controllers.payments import PaymentsController
+        return PaymentsController().show(id=id)
+    
+    @web
     @auth
     @role_required('admin')
     def regrade(self, id, **kwargs):
+        if id == "me":
+            if c.logged_in_persona.payment_account_id:
+                id = c.logged_in_persona.payment_account_id
+            else:
+                return redirect(url('new_payment'))
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)
