@@ -16,11 +16,11 @@ log      = logging.getLogger(__name__)
 
 class PaymentActionsController(BaseController):
     
-    # Only allow these actions if in development mode
-    def __before__(self, action, **params):
-        if not config['development_mode']==True:
-            return abort(404)
-        BaseController.__before__(self)
+#    # Only allow these actions if in development mode
+#    def __before__(self, action, **params):
+#        if not config['development_mode']==True:
+#            return abort(404)
+#        BaseController.__before__(self)
     
     @web
     @auth
@@ -95,7 +95,7 @@ class PaymentActionsController(BaseController):
         
         invoice = Session.query(Invoice).filter(and_(Invoice.id==invoice_id, Invoice.payment_account_id==account.id)).first()
         
-        if not invoice or invoice.status not in ['billed', 'paid']:
+        if not invoice or invoice.status not in ['billed', 'paid', 'disregarded']:
             raise action_error(_('This invoice does not exist'), code=404)
         
         data = invoice.to_dict(list_type='full')
@@ -300,9 +300,21 @@ class PaymentActionsController(BaseController):
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
     
     @web
+    @authorize
+    @role_required('admin')
+    def regrade_plans(self, id, **kwargs):
+        from civicboom.controllers.payments import PaymentsController
+        return PaymentsController().show(id=id)
+    
+    @web
     @auth
     @role_required('admin')
     def regrade(self, id, **kwargs):
+        if id == "me":
+            if c.logged_in_persona.payment_account_id:
+                id = c.logged_in_persona.payment_account_id
+            else:
+                return redirect(url('new_payment'))
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)
@@ -370,7 +382,8 @@ class PaymentActionsController(BaseController):
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
             # Check billed invoice line
-            prev_invoice_line = get_invoice_line("billed", psd) or []
+            prev_invoice_line = get_invoice_line("billed", psd)
+            prev_invoice_line = [prev_invoice_line] if prev_invoice_line else []
             giv = get_invoice_line("billed", nsd)
             if giv:
                 prev_invoice_line.append(giv)

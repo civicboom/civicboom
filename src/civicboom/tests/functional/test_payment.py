@@ -27,6 +27,8 @@ class TestPaymentController(TestController):
         
         # Regrade org to free so as to get it out of the way...
         self.part_regrade('test_payment_org', 'free')
+        self.part_regrade('test_payment_org', 'corp')
+        self.part_regrade('test_payment_org', 'free')
         # Check 0 invoices still billed for free acct
         assert len(get_member('test_payment_org').payment_account.invoices.filter(Invoice.status=='billed').all()) == 0
         
@@ -246,7 +248,7 @@ class TestPaymentController(TestController):
         """
         Get the invoice at offset for username
         """
-        return get_member(username).payment_account.invoices[offset]
+        return get_member(username).payment_account.invoices.order_by(Invoice.id.desc()).all()[offset]
         
     def part_pay_invoice_manual(self, invoice, amount=None):
         """
@@ -422,7 +424,13 @@ class TestPaymentController(TestController):
                 new_type=type
             ),
             status=200)
-        
+        response = self.app.post(
+            url(controller='payment_actions', action='regrade', id=self.payment_account_ids[username], format="json"),
+            params=dict(
+                _authentication_token=self.auth_token,
+                new_type=type
+            ),
+            status=400)
         assert get_member(username).payment_account.type == type
     
     def part_get_billing_account(self, username):
