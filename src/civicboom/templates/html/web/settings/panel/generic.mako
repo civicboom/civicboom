@@ -27,5 +27,5 @@
 </%def>
 
 <%def name="help()">
-  <!--#include file="/help/settings"-->
+  <!--#include virtual="/help/settings"-->
 </%def>

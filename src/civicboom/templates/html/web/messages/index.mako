@@ -18,7 +18,7 @@
 </%def>
 
 <%def name="profile()">
-    <!--#include file="${h.url(controller='profile', action='index', format='frag')}"-->
+    <!--#include virtual="${h.url(controller='profile', action='index', format='frag')}"-->
 	##<%include file="/frag/members/show.mako"/>
 </%def>
 
