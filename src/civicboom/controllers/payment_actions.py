@@ -16,11 +16,11 @@ log      = logging.getLogger(__name__)
 
 class PaymentActionsController(BaseController):
     
-    # Only allow these actions if in development mode
-    def __before__(self, action, **params):
-        if not config['development_mode']==True:
-            return abort(404)
-        BaseController.__before__(self)
+#    # Only allow these actions if in development mode
+#    def __before__(self, action, **params):
+#        if not config['development_mode']==True:
+#            return abort(404)
+#        BaseController.__before__(self)
     
     @web
     @auth
