@@ -95,7 +95,7 @@ class PaymentActionsController(BaseController):
         
         invoice = Session.query(Invoice).filter(and_(Invoice.id==invoice_id, Invoice.payment_account_id==account.id)).first()
         
-        if not invoice or invoice.status not in ['billed', 'paid']:
+        if not invoice or invoice.status not in ['billed', 'paid', 'disregarded']:
             raise action_error(_('This invoice does not exist'), code=404)
         
         data = invoice.to_dict(list_type='full')
@@ -382,7 +382,8 @@ class PaymentActionsController(BaseController):
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
             # Check billed invoice line
-            prev_invoice_line = get_invoice_line("billed", psd) or []
+            prev_invoice_line = get_invoice_line("billed", psd)
+            prev_invoice_line = [prev_invoice_line] if prev_invoice_line else []
             giv = get_invoice_line("billed", nsd)
             if giv:
                 prev_invoice_line.append(giv)
