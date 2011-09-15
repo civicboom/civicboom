@@ -22,15 +22,15 @@
 </%def>
 
 <%def name="parent()">
-	<!--#include file="${url('content', id=d['content']['parent']['id'], format='frag', exclude_actions='all' )}"-->
+	<!--#include virtual="${url('content', id=d['content']['parent']['id'], format='frag', exclude_actions='all' )}"-->
 </%def>
 
 <%def name="help()">
     % if   d['content']['type'] == 'assignment' or d['content'].get('target_type') == 'assignment':
-	<!--#include file="/help/create_assignment"-->
+	<!--#include virtual="/help/create_assignment"-->
     % elif d['content']['parent']:
-    <!--#include file="/help/create_response"-->
+    <!--#include virtual="/help/create_response"-->
     % elif d['content']['type'] == 'article'    or d['content'].get('target_type') == 'article'   :
-    <!--#include file="/help/create_article"-->
+    <!--#include virtual="/help/create_article"-->
     % endif
 </%def>

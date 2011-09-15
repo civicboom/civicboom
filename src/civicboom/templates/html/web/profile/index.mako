@@ -16,19 +16,19 @@
 </%def>
 
 <%def name="profile()">
-    <!--#include file="/profile.frag"-->
+    <!--#include virtual="/profile.frag"-->
 </%def>
 
 <%def name="help()">
     % if   d['member']['type'] == 'user':
-	<!--#include file="/help/profile"-->
+	<!--#include virtual="/help/profile"-->
     % elif d['member']['type'] == 'group':
-    <!--#include file="/help/group_persona"-->
+    <!--#include virtual="/help/group_persona"-->
     % endif
 </%def>
 
 <%def name="assignments()">
-<!--#include file="${h.url('contents', format='frag', list='assignments_active')}"-->
+<!--#include virtual="${h.url('contents', format='frag', list='assignments_active')}"-->
 </%def>
 
 <%def name="featured()">
@@ -36,8 +36,8 @@
 from civicboom.model.meta import location_to_string
 %>
 % if c.logged_in_user and c.logged_in_user.location_current:
-    <!--#include file="${h.url(controller='misc', action='featured', format='frag', location=location_to_string(c.logged_in_user.location_current))}"-->
+    <!--#include virtual="${h.url(controller='misc', action='featured', format='frag', location=location_to_string(c.logged_in_user.location_current))}"-->
 % else:
-    <!--#include file="${h.url(controller='misc', action='featured', format='frag')}"-->
+    <!--#include virtual="${h.url(controller='misc', action='featured', format='frag')}"-->
 % endif
 </%def>

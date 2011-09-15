@@ -11,5 +11,5 @@
 
 <%def name="feedback()">
     ${frag.frag_basic('Feedback', 'dialog', feedback_frag.feedback_form)}
-    ##<!--#include file="/misc/feedback.frag"-->
+    ##<!--#include virtual="/misc/feedback.frag"-->
 </%def>

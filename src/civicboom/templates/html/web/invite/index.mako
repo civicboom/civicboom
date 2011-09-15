@@ -34,5 +34,5 @@
 </%def>
 
 <%def name="frag()">
-	<!--#include file="${self.attr.frag_url}"-->
+	<!--#include virtual="${self.attr.frag_url}"-->
 </%def>
