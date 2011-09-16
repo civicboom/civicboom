@@ -17,6 +17,9 @@
             img {border:0;}
         </style>
     </head>
+    <%
+        site_url = h.url(controller='misc', action='titlepage', protocol='https', sub_domain='www', qualified=True)
+    %>
     <body>
 <table bgcolor="#DCE4F1" border="0" cellpadding="0" cellspacing="0">
     <tr>
