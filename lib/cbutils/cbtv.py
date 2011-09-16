@@ -530,7 +530,13 @@ def _main(argv):
             help="database file to use", metavar="DB")
     parser.add_option("-g", "--geometry", dest="geometry",
             help="location and size of window", metavar="GEO")
+    parser.add_option("-r", "--row-height", dest="row_height", default=140,
+            type=int, help="height of the rows", metavar="PX")
     (options, args) = parser.parse_args(argv)
+
+    # lol constants
+    global ROW_HEIGHT
+    ROW_HEIGHT=options.row_height
 
     if options.log_file and options.database:
         compile_log(options.log_file, options.database)
