@@ -8,6 +8,11 @@
     import hmac
     import hashlib
     
+    def clean_string(s):
+        if isinstance(s, basestring):
+            return s.replace("'", "\\'")
+        return ''
+    
     def __(s):
         return s
         
@@ -473,19 +478,16 @@ share_data = {
         from civicboom.lib.aggregation import aggregation_dict
         cd = aggregation_dict(content, safe_strings=True)
         cd['url'] = h.url('content', id=content['id'], qualified=True)
-        def clean(s):
-            if isinstance(s, basestring):
-                return s.replace("'", "\\'")
-            return ''
-        share_usergen_default = clean(_(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')})
+        
+        share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')}
     %>
     $(function() {
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
         var url       = content.url;
         var variables = {
-            share_display:                '${_(share_data_tag)}',
-            action_share_description:   '${_(share_data_desc)}',
-            share_usergen_default:        '${_(share_usergen_default) | n}',
+            share_display:                '${clean_string(_(share_data_tag))}',
+            action_share_description:     '${clean_string(_(share_data_desc))}',
+            share_usergen_default:        '${clean_string(_(share_usergen_default)) | n}',
             action_page_title:           content.title,
             action_page_description:     content.user_generated_content,
             action_links:                 content.action_links,
@@ -513,19 +515,15 @@ share_data = {
                                                 'href': h.url('member', id=member['username'], qualified=True),
                                             }, ],
         }
-        def clean(s):
-            if isinstance(s, basestring):
-                return s.replace("'", "\\'")
-            return ''
-        share_usergen_default = clean(_(share_data_type) % {'name': cd['title']})
+        share_usergen_default = _(share_data_type) % {'name': cd['title']}
     %>
     $(function() {
         var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
         var url       = content.url;
         var variables = {
-            share_display:              '${clean(_(share_data_tag))}',
-            action_share_description:   '${clean(_(share_data_desc))}',
-            share_usergen_default:      '${clean(_(share_usergen_default)) | n}',
+            share_display:              '${clean_string(_(share_data_tag))}',
+            action_share_description:   '${clean_string(_(share_data_desc))}',
+            share_usergen_default:      '${clean_string(_(share_usergen_default)) | n}',
             action_page_title:          content.title,
             action_page_description:    content.user_generated_content,
             action_links:               content.action_links,
