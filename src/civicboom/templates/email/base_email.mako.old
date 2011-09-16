@@ -1,0 +1,75 @@
+
+<%def name="subject()">${_('_site_name')}</%def>
+
+##<%def name="subject()">${_("_site_name: _tagline")}</%def>
+
+<%def name="body()">\
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>${self.subject() if callable(self.subject) else self.subject}</title>
+        <meta name="keywords" content="" />
+        <meta name="Authors"  content="" />
+        <meta name="robots"   content="all" />
+        <style type="text/css">
+            body {border:0; margin:0; padding:0; font-family: sans-serif;}
+            .head {padding: 1em 4em;}
+            .head h1 {margin:0;}
+            .head img {margin-bottom:30px; border:none; max-width:200px;}
+            .back {padding: 2em; background: #DCE4F1; border-radius:0.5em; -moz-border-radius:0.5em; -webkit-border-radius:0.5em;}
+            .wrap {padding: 2em; background: #fff; border-radius:0.5em; -moz-border-radius:0.5em; -webkit-border-radius:0.5em;}
+            .hi {margin: 0; margin-bottom: 0.25em;}
+            .post a {color: #005493; font: normal normal bold sans-serif;}
+            .twitter {float: right; text-align: right;}
+            .twitter a {color: #005493; text-decoration: none; font-weight: bold; font-size: 125%; font-family: sans-serif;}
+            .twitter a img {float: right;}
+            .foot {font-size: 75%; width: 75%; float: left;}
+            .cb {clear: both;}
+        </style>
+    </head>
+    
+    <%
+		site_url = h.url(controller='misc', action='titlepage', protocol='https', sub_domain='www', qualified=True)
+    %>
+    <body>
+        <div class="head">
+            <h1>
+                <a href="${site_url}?r=e_l">
+                    <img src="${site_url}images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" />
+                </a>
+            </h1>
+        </div>
+        <div class="back">
+            <div class="wrap">
+                <h2 class="hi">Hi,</h2>
+                <p>
+                    ${next.body() if callable(self.body) else self.body}
+                </p>
+            </div>
+            <h2 class="post">
+                <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a>
+            </h2>
+            <div class="twitter">
+                <a href="http://twitter.com/civicboom">
+                    <img src="${site_url}images/twitter-email.png" alt="Twitter"><br />
+                    Follow us
+                </a>
+            </div>
+            <div class="foot">
+                If you'd rather not receive notifications from Civicboom, you can unsubscribe by going to your account
+                settings. You can also manage all your notifications from your settings. Please don't reply to this
+                message. No one will read it as it's been sent from an unmonitored email account. Which is a shame.
+                So if you do want to get in touch please use <a href="mailto:contact@civicboom.com">contact@civicboom.com</a>. Thank you.
+            </div>
+            <div class="cb"></div>
+        </div>
+    </body>
+</html>
+</%def>
+
+<%def name="footer()">
+    <br/>
+    <p>${_("Thanks!")}</p>
+    <p>${_("_site_name team.")}</p>
+</%def>
