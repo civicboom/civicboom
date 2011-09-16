@@ -4,8 +4,13 @@
 # full-file navigation
 # - cbtv_events logs can last for hours, but only a minute at a time is
 #   sensibly viewable
+# - bookmarks window, just a list of <timestamp> <bookmark text>, double
+#   click to go there
 # mark lock claim / release
 # - seeing what is locking software is good
+# demo mode
+# - really limited: hardcode the demo data within the binary
+# - less limited: allow people to see ~3 seconds of data at once
 
 from __future__ import print_function
 from decorator import decorator
@@ -90,9 +95,9 @@ def log(text, bookmark=False, exceptions=True):
             return d
         except Exception as e:
             if exceptions:
-                log_error(functions.func_name, _text)
+                log_error(function.func_name, _text)
             else:
-                log_end(functions.func_name, _text)
+                log_end(function.func_name, _text)
             raise
     return _log
 

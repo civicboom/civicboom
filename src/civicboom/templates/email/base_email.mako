@@ -12,49 +12,66 @@
         <meta name="keywords" content="" />
         <meta name="Authors"  content="" />
         <meta name="robots"   content="all" />
-##        <style type="text/css">
-##            body {font-family: sans-serif; font-size: small;}
-##            h2   {border-bottom: 2px solid black;}
-##            p    {margin: 0em;}
-##        </style>
+        <style type="text/css">
+            body {border:0; margin:0; padding:0; font-family: sans-serif;}
+            img {border:0;}
+        </style>
     </head>
-    
     <%
-		site_url = h.url(controller='misc', action='titlepage', protocol='https', sub_domain='www', qualified=True)
+        site_url = h.url(controller='misc', action='titlepage', protocol='https', sub_domain='www', qualified=True)
     %>
-    <body style="border:0; margin:0; padding:0; font-family: sans-serif;">
-        <div style="padding: 1em 4em;">
-            <h1 style="margin:0;">
-                <a href="${site_url}?r=e_l">
-                    <img src="${site_url}/images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
-                </a>
-            </h1>
-        </div>
-        <div style="padding: 2em; background: #DCE4F1;border-radius:0.5em;-moz-border-radius:0.5em;-webkit-border-radius:0.5em;">
-            <div style="padding: 2em; background: #fff;border-radius:0.5em;-moz-border-radius:0.5em;-webkit-border-radius:0.5em;">
-                <h2 style="margin: 0; margin-bottom: 0.25em;">Hi,</h2>
-                <p>
-                    ${next.body() if callable(self.body) else self.body}
-                </p>
-            </div>
+    <body>
+<table bgcolor="#DCE4F1" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td bgcolor="#FFFFFF">&nbsp;</td>
+        <td bgcolor="#FFFFFF">
+            <a href="${site_url}?r=e_l">
+                <img src="${site_url}images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" />
+            </a>
+        </td>
+        <td bgcolor="#FFFFFF">&nbsp;</td>
+    </tr><tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr><tr>
+        <td width="20">&nbsp;</td>
+        <td bgcolor="#FFFFFF">
+            <h2>Hi,</h2>
+            <p>${next.body() if callable(self.body) else self.body}</p>
+        </td>
+        <td width="20">&nbsp;</td>
+    </tr><tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr><tr>
+        <td>&nbsp;</td>
+        <td>
             <h2>
-                <a style="color: #005493; font: normal normal bold sans-serif;" href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a>
+                <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a><br />
             </h2>
-            <div style="float: right; text-align: right:">
-                <a style="color: #005493; text-decoration: none; font: normal normal bold 125% sans-serif;" href="http://twitter.com/civicboom">
-                    <img src="${site_url}/images/twitter-email.png" alt="Twitter" style="float: right;"><br />
-                    Follow us
-                </a>
-            </div>
-            <div style="font-size: 75%; width: 75%; float: left;">
-                If you'd rather not receive notifications from Civicboom, you can unsubscribe by going to your account
-                settings. You can also manage all your notifications from your settings. Please don't reply to this
-                message. No one will read it as it's been sent from an unmonitored email account. Which is a shame.
-                So if you do want to get in touch please use <a href="mailto:contact@civicboom.com">contact@civicboom.com</a>. Thank you.
-            </div>
-            <div style="clear: both"></div>
-        </div>
-    </body>
+            <a href="http://twitter.com/civicboom">
+                <img src="${site_url}images/twitter-email.png" alt="Twitter"><br />
+                Follow us
+            </a>
+        </td>
+        <td>&nbsp;</td>
+    </tr><tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr><tr>
+        <td>&nbsp;</td>
+        <td>
+            If you'd rather not receive notifications from Civicboom, you can unsubscribe by going to your account
+            settings. You can also manage all your notifications from your settings. Please don't reply to this
+            message. No one will read it as it's been sent from an unmonitored email account. Which is a shame.
+            So if you do want to get in touch please use <a href="mailto:contact@civicboom.com">contact@civicboom.com</a>. Thank you.
+        </td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
 </html>
 </%def>
 
