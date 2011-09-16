@@ -302,7 +302,7 @@ class _App:
 
         # load data
         bm_values = []
-        for ts, tx in self.c.execute("SELECT timestamp, text FROM cbtv_events WHERE type = 'BMARK'"):
+        for ts, tx in self.c.execute("SELECT timestamp, text FROM cbtv_events WHERE type = 'BMARK' ORDER BY timestamp"):
             bm_values.append(ts)
             tss = datetime.datetime.fromtimestamp(ts).strftime("%Y/%m/%d %H:%M:%S") # .%f
             li.insert(END, "%s: %s" % (tss, tx))
