@@ -45,7 +45,12 @@ teardown = _default_teardown
 ##############################################################################
 # Shared API
 
-def add_worker_function(name, f):
+def add_worker_function(f, name=None):
+    if not callable(f):
+        raise Exception('function passed is not callable')
+    if not name:
+        name = f.__name__
+    log.debug("Registering worker thread '%s'" % name)
     _worker_functions[name] = f
 
 def init_queue(q):
