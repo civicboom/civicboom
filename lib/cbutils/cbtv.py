@@ -11,6 +11,7 @@ from __future__ import print_function
 from decorator import decorator
 import threading
 import time
+import datetime
 from optparse import OptionParser
 import sqlite3
 import sys
@@ -19,7 +20,7 @@ import os
 
 
 NAME = "Context"
-ROW_HEIGHT = 80
+ROW_HEIGHT = 140
 BLOCK_HEIGHT = 20
 
 
@@ -153,9 +154,14 @@ class _App:
             ).pack(side="left")
 
         def _bu(t, c):
-            Button(f,
-                image=t, command=c, padding=0
-            ).pack(side="right")
+            if isinstance(t, PhotoImage):
+                Button(f,
+                    image=t, command=c, padding=0
+                ).pack(side="right")
+            else:
+                Button(f,
+                    text=t, command=c, padding=0
+                ).pack(side="right")
 
         _la("  Start ")
         _sp(0, int(time.time()), 10, self.render_start, 15)
@@ -166,6 +172,7 @@ class _App:
 
         _bu(self.img_end, self.end_event)
         _bu(self.img_next, self.next_event)
+        _bu("Bookmarks", self.open_bookmarks)
         _bu(self.img_prev, self.prev_event)
         _bu(self.img_start, self.start_event)
 
@@ -275,6 +282,29 @@ class _App:
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
+
+    def open_bookmarks(self):
+        t = Toplevel(self.master)
+        t.lift(self.master)
+        t.grid_columnconfigure(0, weight=1)
+        t.grid_rowconfigure(0, weight=1)
+        t.wm_attributes("-topmost", 1)
+        li = Listbox(t, height=10, width=40)
+        li.grid(    column=0, row=0, sticky=(N, E, S, W))
+        #go = Button(t, text="Go")
+        #go.grid(    column=0, row=1, sticky=(S, E))
+        t.title("Bookmarks")
+
+        bm_values = []
+        for ts, tx in self.c.execute("SELECT timestamp, text FROM cbtv_events WHERE type = 'BMARK'"):
+            bm_values.append(ts)
+            tss = datetime.datetime.fromtimestamp(ts).strftime("%Y/%m/%d %H:%M:%S") # .%f
+            li.insert(END, "%s: %s" % (tss, tx))
+
+        def _lbox_selected(*args):
+            selected_idx = int(li.curselection()[0])
+            self.render_start.set(bm_values[selected_idx])
+        li.bind('<Double-Button-1>', _lbox_selected)
 
     def scale_view(self, e=None, n=1):
         # get the old pos
