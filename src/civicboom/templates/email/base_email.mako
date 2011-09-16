@@ -26,7 +26,7 @@
         <div style="padding: 1em 4em;">
             <h1 style="margin:0;">
                 <a href="${site_url}?r=e_l">
-                    <img src="${site_url}/images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
+                    <img src="${site_url}images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" style="margin-bottom:30px; border:none; max-width:200px;"/>
                 </a>
             </h1>
         </div>
@@ -42,7 +42,7 @@
             </h2>
             <div style="float: right; text-align: right:">
                 <a style="color: #005493; text-decoration: none; font: normal normal bold 125% sans-serif;" href="http://twitter.com/civicboom">
-                    <img src="${site_url}/images/twitter-email.png" alt="Twitter" style="float: right;"><br />
+                    <img src="${site_url}images/twitter-email.png" alt="Twitter" style="float: right;"><br />
                     Follow us
                 </a>
             </div>
