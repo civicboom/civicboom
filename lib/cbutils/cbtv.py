@@ -165,9 +165,9 @@ class _App:
 
         _la("  Start ")
         _sp(0, int(time.time()), 10, self.render_start, 15)
-        _la("  Length ")
+        _la("  Seconds ")
         _sp(1, 60, 1, self.render_len, 3)
-        _la("  Zoom ")
+        _la("  Pixels per second ")
         _sp(100, 5000, 100, self.scale, 5)
 
         _bu(self.img_end, self.end_event)
@@ -188,17 +188,17 @@ class _App:
 
         self.threads = [n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv_events ORDER BY thread")]
         self.render_start = DoubleVar(master, self.get_start(0))
-        self.render_len = IntVar(master, 30)
+        self.render_len = IntVar(master, 10)
         self.scale = IntVar(master, 1000)
 
         self.render_start.trace_variable("w", self.update)
         self.render_len.trace_variable("w", self.update)
         self.scale.trace_variable("w", self.render)
 
-        self.img_start = PhotoImage(file="start.ppm")
-        self.img_prev = PhotoImage(file="prev.ppm")
-        self.img_next = PhotoImage(file="next.ppm")
-        self.img_end = PhotoImage(file="end.ppm")
+        self.img_start = PhotoImage(file="start.gif")
+        self.img_prev = PhotoImage(file="prev.gif")
+        self.img_next = PhotoImage(file="next.gif")
+        self.img_end = PhotoImage(file="end.gif")
 
         self.h = Scrollbar(master, orient=HORIZONTAL)
         self.v = Scrollbar(master, orient=VERTICAL)
@@ -284,23 +284,30 @@ class _App:
         self.canvas.xview_moveto(0)
 
     def open_bookmarks(self):
+        # base gui
         t = Toplevel(self.master)
         t.lift(self.master)
         t.grid_columnconfigure(0, weight=1)
         t.grid_rowconfigure(0, weight=1)
         t.wm_attributes("-topmost", 1)
-        li = Listbox(t, height=10, width=40)
-        li.grid(    column=0, row=0, sticky=(N, E, S, W))
-        #go = Button(t, text="Go")
-        #go.grid(    column=0, row=1, sticky=(S, E))
         t.title("Bookmarks")
 
+        li = Listbox(t, height=10, width=40)
+        li.grid(column=0, row=0, sticky=(N, E, S, W))
+
+        sb = Scrollbar(t, orient=VERTICAL, command=li.yview)
+        sb.grid(column=1, row=0, sticky=(N, S))
+
+        li.config(yscrollcommand=sb.set)
+
+        # load data
         bm_values = []
         for ts, tx in self.c.execute("SELECT timestamp, text FROM cbtv_events WHERE type = 'BMARK'"):
             bm_values.append(ts)
             tss = datetime.datetime.fromtimestamp(ts).strftime("%Y/%m/%d %H:%M:%S") # .%f
             li.insert(END, "%s: %s" % (tss, tx))
 
+        # load events
         def _lbox_selected(*args):
             selected_idx = int(li.curselection()[0])
             self.render_start.set(bm_values[selected_idx])
