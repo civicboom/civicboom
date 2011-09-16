@@ -99,9 +99,11 @@ class TestFlagContentController(TestController):
         self.assertIn('monkey', content)
         self.assertIn('nigle' , content)
         
-        email_response = getLastEmail()
-        self.assertEquals(email_response.email_to, config['email.moderator'])
+        email_response = getLastEmail(to=config['email.moderator'])
         self.assertIn('profanity_filter', email_response.content_text)
+        self.assertIn('cock'            , email_response.content_text)
+        self.assertIn('bollox'          , email_response.content_text)
+        self.assertIn('slag'            , email_response.content_text)
         
         # my god this content is dispcable, take it offline
         # set to content invisible

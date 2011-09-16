@@ -20,15 +20,17 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 # Search imports
 from civicboom.model.filters import *
 from sqlalchemy.orm       import joinedload
+from sqlalchemy           import asc, desc
 
 # Other imports
-
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
-
+from time import time
 
 # Logging setup
 log      = logging.getLogger(__name__)
+
+
 
 # Unneeded
 #from sqlalchemy.orm       import join,  defer
@@ -37,7 +39,7 @@ log      = logging.getLogger(__name__)
 #from geoalchemy import Point
 #from dateutil.parser import parse as parse_date # AllanC - unneeded?
 #import re
-#from time import time
+
 
 
 
@@ -743,19 +745,18 @@ class ContentsController(BaseController):
             job_dict = {
                 'task'    : job_name,
                 'content' : content.id,
-                'url_base': url('',qualified=True)
             }
             job_dict.update(kwargs)
             worker.add_job(job_dict)
         
         if submit_type=='publish' and permissions['can_publish'] and content.__type__ in publishable_types:
             if not content.private and config['feature.profanity_filter']:
-                add_job('profanity_check')
+                add_job('profanity_check', url_base=url('',qualified=True))
             add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
         
         if content.__type__ == 'comment':
             if config['feature.profanity_filter']:
-                add_job('profanity_check')
+                add_job('profanity_check', url_base=url('',qualified=True))
             add_job('content_notifications')
         
         

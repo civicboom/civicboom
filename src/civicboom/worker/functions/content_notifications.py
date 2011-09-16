@@ -8,7 +8,7 @@ from civicboom.lib.communication       import messages
 import datetime
 
 
-def content_notifications(content, publishing_for_first_time):
+def content_notifications(content, publishing_for_first_time=True):
     content = get_content(content)
     
     assert content
