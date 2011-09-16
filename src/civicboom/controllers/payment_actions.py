@@ -10,6 +10,7 @@ from civicboom.model.member import account_types_level
 from decimal import Decimal
 import civicboom.lib.payment as payment
 import datetime
+from civicboom.lib.communication.email_lib import send_email
 #from civicboom.controllers.groups import _get_group
 
 log      = logging.getLogger(__name__)
@@ -347,16 +348,10 @@ class PaymentActionsController(BaseController):
                     .filter(InvoiceLine.service_id == current_service.id).first()
                     
             def send_admin_email(extra_error):
-                send_email(
-                    subject=_('Welcome to _site_name'),
-                    content_html=render('/email/payment/admin/regrade_failed.mako',
-                        extra_vars={
-                            'persona':c.logged_in_persona,
-                            'new_account_type': new_account_type,
-                            'extra_error': extra_error,
-                        })
+                send_email(config['email.payment_alert'],
+                    subject='Regrade Fail',
+                    content_text='Oops, something went wrong when %s (account %s) tried to regrade. %s' % (c.logged_in_persona.id, account.id, extra_error),
                 )
-                pass
             
             # Check paid invoice line
             prev_invoice_line = get_invoice_line("paid", psd)
@@ -377,7 +372,7 @@ class PaymentActionsController(BaseController):
                     apply_payment.append(apply_payment_prev)
                 else:
                     # Kick back to manual refund.
-                    #send_admin_email('More than one service needing refund on previous paid invoice!')
+                    send_admin_email('More than one service needing refund on previous paid invoice!')
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
@@ -393,7 +388,7 @@ class PaymentActionsController(BaseController):
                     line.invoice.status = "disregarded"
                 else:
                     # Kick back to manual refund.
-                    #send_admin_email('More than one service needing refund on %s billed invoice!' % line.invoice.timestamp)
+                    send_admin_email('More than one service needing refund on %s billed invoice!' % line.invoice.timestamp)
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
@@ -408,7 +403,7 @@ class PaymentActionsController(BaseController):
                     apply_payment_next.reference = prev_invoice_line.invoice_id
                     apply_payment.append(apply_payment_next)
                 else:
-                    #send_admin_email('More than one service needing refund on next paid invoice!')
+                    send_admin_email('More than one service needing refund on next paid invoice!')
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
         
