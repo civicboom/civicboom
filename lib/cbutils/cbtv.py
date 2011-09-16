@@ -95,9 +95,9 @@ def log(text, bookmark=False, exceptions=True):
             return d
         except Exception as e:
             if exceptions:
-                log_error(functions.func_name, _text)
+                log_error(function.func_name, _text)
             else:
-                log_end(functions.func_name, _text)
+                log_end(function.func_name, _text)
             raise
     return _log
 
