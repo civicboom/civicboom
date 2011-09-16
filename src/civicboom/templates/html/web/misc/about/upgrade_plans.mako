@@ -5,6 +5,11 @@
 <%def name="title()">${_("Payment Plans")}</%def>
 
 <%def name="body()">
+    ${blurb()}
+    ${upgrade_details()}
+</%def>
+
+<%def name="blurb()">
     <h1>${_('_site_name plans')}</h1>
     <p>
         ${_('_site_name is free to use')} - 
@@ -14,15 +19,13 @@
         ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />
         ${_("There are no long-term commitments - just upgrade and pay on a month-by-month basis. If you want to revert to the free plan, you can. Hover over each of the features for more details.")}
     </p>
-    ${upgrade_details()}
 </%def>
-
 
 <%def name="popup_()">
     <h1>Hold up!</h1>
     <p>You're trying to perform an action that is a paid-for service as part of the Premium account</p>
     
-    ${upgrade_details()}
+    ${upgrade_details(style="popup")}
 </%def>
 
 
@@ -126,22 +129,30 @@
                             % endif
                         </td>
                     % endfor
-                    % if len(plans)-2 > 0:
-                        % for x in range(len(plans)-2):
-                            <td></td>
-                        % endfor
-                    % endif
                 </tr>
             % else:
-                <tr class="upgrade">
+                <tr class="upgrade"
+                % if style == 'regrade_plans':
+                    style="font-size: 125%"
+                % endif
+                >
                     <td></td>
-                    % if len(plans)-2 > 0:
-                        % for x in range(len(plans)-2):
-                            <td></td>
-                        % endfor
-                    % endif
-                    <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('Upgrading my account'); $('.upgrade_popup').modal(); return false;">${_("Upgrade Now")}</a></td>
-                    <td><a href="#" class="button hide_if_nojs" onclick="$('#upgrade_enquiry').val('More information'); $('.upgrade_popup').modal(); return false;">${_("Learn More")}</a></td>
+                    % for plan in plans:
+                        <td>
+                            % if plan in ('plus','corp'):
+                                ${h.secure_link(
+                                    h.url('payment_action', id='me', action='regrade', new_type=plan),
+                                    _('Upgrade'),
+                                    css_class="button"
+                                )}
+                            % endif
+                        </td>
+                    % endfor
+##                    % if len(plans)-2 > 0:
+##                        % for x in range(len(plans)-3):
+##                            <td></td>
+##                        % endfor
+##                    % endif
                 </tr>
             % endif
         </tfoot>

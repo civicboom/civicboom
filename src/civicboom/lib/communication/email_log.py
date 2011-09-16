@@ -33,8 +33,16 @@ def getNumEmails():
     return len(emails)
 
 
-def getLastEmail(offset = 1):
-    return emails[0 - offset]
+def getLastEmail(offset = 1, to=None):
+    if to:
+        indexs = range(len(emails))
+        indexs.reverse()
+        for i in indexs:
+            if emails[i].email_to == to:
+                return emails[i]
+        return None
+    else:
+        return emails[0 - offset]
 
 
 def getEmailSubjects():
