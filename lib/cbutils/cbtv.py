@@ -510,12 +510,14 @@ def _center(root):
     root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
-def display(database_file):
+def display(database_file, geometry=None):
     root = Tk()
     root.title(NAME)
     #root.state("zoomed")
     #_center(root)
     _App(root, database_file)
+    if geometry:
+        root.geometry(geometry)
     root.mainloop()
     return 0
 
@@ -526,13 +528,15 @@ def _main(argv):
             help="import log file to database", metavar="LOG")
     parser.add_option("-d", "--database", dest="database", default="cbtv.db",
             help="database file to use", metavar="DB")
+    parser.add_option("-g", "--geometry", dest="geometry",
+            help="location and size of window", metavar="GEO")
     (options, args) = parser.parse_args(argv)
 
     if options.log_file and options.database:
         compile_log(options.log_file, options.database)
 
     elif options.database and have_tk:
-        display(options.database)
+        display(options.database, options.geometry)
 
 
 if __name__ == "__main__":
