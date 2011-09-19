@@ -5,6 +5,7 @@ A collection of text processing tools for Text, HTML and JSON
 import re
 import xml.sax.saxutils as saxutils
 import unicodedata
+import difflib
 
 #-------------------------------------------------------------------------------
 
@@ -170,6 +171,7 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
     text = re.sub(r'(?is)<style.*</style>',r'',text)       # The style tag has contents that are not human readable, dispose of contents and not just the tag
     text = re.sub(r'(?i)<br>|<br/>|</p>|</li>',r'\n',text) # Replace any ends of sections with new lines
     text = re.sub(r'(?i)<li>',r' - ',text)                 # List items should have starters (enchancement? numbers for ol?)
+    text = re.sub(r'(?i)\&nbsp\;', r' ', text)
 
     def heading_replace(m):
         # improvement idea: use str.center(width[, fillchar]) Return centered in a string of length width. Padding is done using the specified fillchar (default is a space).
@@ -393,3 +395,27 @@ def profanity_check(text):
         profanity_response['CleanText'] = ' '.join(text_words).replace(' -lt- ', '<').replace(' -gt- ', '>') # unescape the '<' '>' back
     
     return profanity_response
+
+def get_diff_words(a,b):
+    """
+    Used for comparing profanity checked text and rereving the words that at differnt
+    
+    Reference - http://docs.python.org/library/difflib.html#difflib.context_diff
+    
+    AllanC - TODO. it is possible that because the output from context_diff is a string, it is possible for a malitious user to insert the string '----\n' to abort the process
+    
+    >>> get_diff_words('The monkey jumped over the moon', 'The badger jumped over the donkey')
+    ['monkey', 'moon']
+    >>>> t = u'This content is FUCKING disgusting'
+    >>>> get_diff_words(t, profanity_check(t)['CleanText'])
+    [u'FUCKING']
+    """
+    words = []
+    a = a.split(' ')
+    b = b.split(' ')
+    for word in difflib.context_diff(a,b):
+        if word.endswith('----\n'):
+            break
+        if word.startswith('! '):
+            words.append(word[2:])
+    return words

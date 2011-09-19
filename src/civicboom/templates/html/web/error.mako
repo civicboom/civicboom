@@ -46,7 +46,7 @@
 
 		<hr>
         <h3>Feedback</h3>
-        <!--#include file="/misc/feedback.frag"-->
+        <!--#include virtual="/misc/feedback.frag"-->
 
 	</body>
 </html>

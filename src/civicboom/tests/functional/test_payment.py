@@ -27,6 +27,8 @@ class TestPaymentController(TestController):
         
         # Regrade org to free so as to get it out of the way...
         self.part_regrade('test_payment_org', 'free')
+        self.part_regrade('test_payment_org', 'corp')
+        self.part_regrade('test_payment_org', 'free')
         # Check 0 invoices still billed for free acct
         assert len(get_member('test_payment_org').payment_account.invoices.filter(Invoice.status=='billed').all()) == 0
         
@@ -42,7 +44,7 @@ class TestPaymentController(TestController):
         # Should send email as two days max unpaid
         emails = getNumEmails()
         self.run_task('run_invoice_tasks')
-        assert emails + 1 == getNumEmails()
+        self.assertEqual(getNumEmails(), emails + 2) # 2 as admin is sent an email too
         self.part_check_member_status('test_payment_ind', 'failed')
         
         # Get outstanding invoice balance, ensure > 0 and manually pay 5 towards
@@ -68,7 +70,7 @@ class TestPaymentController(TestController):
         invoices = len(get_member('test_payment_ind').payment_account.invoices.all())
         self.server_datetime(datetime.datetime.now() + datetime.timedelta(days=27))
         self.run_task('run_invoice_tasks')
-        self.assertEqual(getNumEmails(), emails + 1)
+        self.assertEqual(getNumEmails(), emails + 2) # 2 as admin is sent an email too
         self.assertEqual(len(get_member('test_payment_ind').payment_account.invoices.all()), invoices + 1)
         self.assertIn('invoiced', getLastEmail().content_text)
         # Move to invoice due date and test for invoice due email
@@ -76,7 +78,7 @@ class TestPaymentController(TestController):
         due_date = get_member('test_payment_ind').payment_account.invoices.filter(Invoice.status=='billed').one().due_date
         self.server_datetime(datetime.datetime.combine(due_date, datetime.time(0,0,0)))
         self.run_task('run_invoice_tasks')
-        self.assertEqual(getNumEmails(), emails + 1)
+        self.assertEqual(getNumEmails(), emails + 2) # 2 as admin is sent an email too
         self.assertIn('overdue', getLastEmail().content_text)
         
         self.server_datetime('now')
@@ -246,7 +248,7 @@ class TestPaymentController(TestController):
         """
         Get the invoice at offset for username
         """
-        return get_member(username).payment_account.invoices[offset]
+        return get_member(username).payment_account.invoices.order_by(Invoice.id.desc()).all()[offset]
         
     def part_pay_invoice_manual(self, invoice, amount=None):
         """
@@ -422,7 +424,13 @@ class TestPaymentController(TestController):
                 new_type=type
             ),
             status=200)
-        
+        response = self.app.post(
+            url(controller='payment_actions', action='regrade', id=self.payment_account_ids[username], format="json"),
+            params=dict(
+                _authentication_token=self.auth_token,
+                new_type=type
+            ),
+            status=400)
         assert get_member(username).payment_account.type == type
     
     def part_get_billing_account(self, username):

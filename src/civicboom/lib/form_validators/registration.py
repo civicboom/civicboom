@@ -165,5 +165,6 @@ class ReCaptchaValidator(validators.FancyValidator):
 #-------------------------------------------------------------------------------
 
 class RegisterSchemaEmailUsername(DefaultSchema):
+    filter_extra_fields = False
     username  = UniqueUsernameValidator(not_empty=True)
     email     = UniqueEmailValidator   (not_empty=True)

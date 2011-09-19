@@ -4,7 +4,7 @@
 ## Title - Override
 ##------------------------------------------------------------------------------
 
-<%def name="title()">${_('Invoice')}</%def>
+<%def name="title()">${_('Regrade plans')}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -12,14 +12,10 @@
 
 <%def name="body()">
     <%        
-        self.attr.frags = [payment, invoice]
+        self.attr.frags = [regrade_plans]
     %>
 </%def>
 
-<%def name="payment()">
-    <!--#include virtual="${h.url(controller='payments', action='show', id=d['payment_account']['id'], format='frag')}"-->
-</%def>
-
-<%def name="invoice()">
-    <%include file="/frag/payment_actions/invoice.mako"/>
+<%def name="regrade_plans()">
+    <%include file="/frag/payment_actions/regrade_plans.mako"/>
 </%def>
