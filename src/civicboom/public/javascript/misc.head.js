@@ -115,18 +115,16 @@ function updateMedia(id, hash, jquery_element) {
     jquery_element = media_jquery_objects[id];
   }
   if (typeof media_thumbnail_timers[id] == 'undefined')
-    media_thumbnail_timers[id] = setInterval ('updateMedia('+id+',\''+hash+'\')', 1000);
-  $.getJSON(
-    '/media/' + hash + '.json',
-    processingStatus
-  );
+    media_thumbnail_timers[id] = setInterval ('updateMedia('+id+',"'+hash+'")', 1000);
   function processingStatus(data) {
-    _status = data.data.media.processing_status;
+    _status = false;
+    try {
+      _status = data.data.media.processing_status;
+    } catch (e) {}
     if(!_status) {
-      //Y.log ('uM got thumb');
-      _thumbnail = data.data.media.thumbnail_url
+      _thumbnail = data.data.media.thumbnail_url;
       clearInterval(media_thumbnail_timers[id]);
-      // delete media_thumbnail_timers[id]; FIXME: uncomment this line before go-live!
+      delete media_thumbnail_timers[id];
       jquery_element.find('img').attr('src', _thumbnail + "?" + (new Date().getTime()));
       jquery_element.find('span').text('').css('display', 'none'); 
     }
@@ -134,6 +132,10 @@ function updateMedia(id, hash, jquery_element) {
       jquery_element.find('span').css('display', 'inline').text(_status);
     }
   }
+  $.getJSON(
+    '/media/' + hash + '.json',
+    processingStatus
+  );
 }
 
 function appendAttr(element, name, append) {
@@ -147,12 +149,19 @@ function setAttrIf(element, name, val) {
 }
 
 function removeMedia(jquery_element) {
-	var url = "/media/"+jquery_element.attr('name').split('_')[2]+".json";
-	var post = [{name: "id", value: jquery_element.attr('name').split('_')[2]},
+  var id = jquery_element.attr('name').split('_')[2];
+	var url = "/media/"+id+".json";
+	var post = [
+	      {name: "id", value: id},
 				{name: "_method", value: "DELETE"},
-				{name: "_authentication_token", value: jquery_element.parents('form').find('#_authentication_token').val()}];
+				{name: "_authentication_token", value: jquery_element.parents('form').find('#_authentication_token').val()}
+	   ];
 	$.post( url, post, function(data) {
 		jquery_element.parents('li').remove();
+		if (typeof media_thumbnail_timers[id] != 'undefined') {
+      clearInterval(media_thumbnail_timers[id]);
+      delete media_thumbnail_timers[id];
+    }
 	});
 	return false;
 }

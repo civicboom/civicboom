@@ -65,7 +65,7 @@ class Media(Base):
         #'full+actions': copy.deepcopy(__to_dict__['default']) ,
     })
     __to_dict__['full'].update({
-            'processing_status' : lambda media: app_globals.memcache.get(str("media_processing_%s" % media.id)) ,
+            'processing_status' : lambda media: app_globals.memcache.get(str("media_processing_%s" % media.hash)) ,
     })
 
 
