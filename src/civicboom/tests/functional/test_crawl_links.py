@@ -2,6 +2,7 @@ from civicboom.tests import *
 from BeautifulSoup import BeautifulSoup
 
 from pylons import config
+from nose.plugins.skip import SkipTest
 
 # This regexp will match any url starting with http(s):// not within civicboom.com or just # or mailto:*
 not_civicboom = re.compile(r'((http(s{0,1})://(?!(www\.){0,1}civicboom\.com))|#|mailto\:.*).*')
