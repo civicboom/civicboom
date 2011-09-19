@@ -36,7 +36,9 @@ def main(argv):
 
     c = SafeConfigParser()
     c.read(options.ini)
-    w.config = c.defaults()
+    w.config = {}
+    for opt in c.options("app:main"):
+        w.config[opt] = c.get("app:main", opt)
     w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
     if ("error_email_from" in w.config) and ("email_to" in w.config):
