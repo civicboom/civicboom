@@ -3,7 +3,7 @@ from civicboom.model.meta import Base, location_to_string, JSONType, CacheChange
 from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
-from cbutils.misc import now
+from cbutils.misc import now, debug_type
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
@@ -217,7 +217,8 @@ class Content(Base):
         from civicboom.lib.cache import invalidate_content
         invalidate_content(self, remove=remove)
 
-    def action_list_for(self, member, **kwargs):
+    def action_list_for(self, member, role):
+        assert not member or isinstance(member, Member), debug_type(member) # just a double check in case any of the codebase pass's a member dict here accidentaly
         action_list = []
         if self.editable_by(member):
             action_list.append('edit')
@@ -227,11 +228,11 @@ class Content(Base):
             action_list.append('flag')
         if self.private == False:
             action_list.append('aggregate')
-        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
+        if self.creator == member and has_role_required('editor', role):
             action_list.append('delete')
         return action_list
 
-    def editable_by(self, member):
+    def editable_by(self, member, **kwargs):
         """
         Check to see if a member object has the rights to edit this content
         
@@ -239,7 +240,7 @@ class Content(Base):
         """
         if self.edit_lock:
             return False
-        if self.creator == member:
+        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
             return True
         # TODO check groups of creator to see if member is in the owning group
         return False
@@ -413,9 +414,9 @@ class DraftContent(Content):
         Content.clone(self, content)
         self.publish_id = content.id
         
-    def action_list_for(self, member, **kwargs):
-        action_list = Content.action_list_for(self, member, **kwargs)
-        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
+    def action_list_for(self, member, role='admin'):
+        action_list = Content.action_list_for(self, member, role)
+        if self.creator == member and has_role_required('editor', role):
             action_list.append('publish')
         return action_list
 
@@ -458,18 +459,17 @@ class UserVisibleContent(Content):
     __to_dict__['full'        ].update(_extra_user_visible_fields)
 
 
-    def action_list_for(self, member, **kwargs):
-        action_list = Content.action_list_for(self, member, **kwargs)
+    def action_list_for(self, member, role='admin'):
+        action_list = Content.action_list_for(self, member, role)
         action_list.append('respond')
-        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
+        if self.creator == member and has_role_required('editor', role):
             action_list.append('update')
             action_list.append('delete')
-        if self.is_parent_owner(member) and member.has_account_required('plus'): # observing member need a paid account
-            if has_role_required('editor', kwargs.get('role', 'admin')):
-                if self.approval == 'none':
-                    action_list.append('approve')
-                    action_list.append('seen')
-                    action_list.append('dissasociate')
+        if self.is_parent_owner(member) and has_role_required('editor', role): # and member.has_account_required('plus'): # AllanC - Although we return the actions here, the Template decides what message to display by checking has_account_required. I REALLY don't like this, it means the action list dose not represent the actions the user can perform
+            if self.approval == 'none':
+                action_list.append('approve')
+                action_list.append('seen')
+                action_list.append('dissasociate')
         #AllanC: TODO - if has not boomed before - check boom list:
         if self.creator != member:
             action_list.append('boom')
@@ -587,8 +587,8 @@ class AssignmentContent(UserVisibleContent):
         Content.__init__(self)
         self.__type__ = 'assignment'
 
-    def action_list_for(self, member, **kwargs):
-        action_list = UserVisibleContent.action_list_for(self, member, **kwargs)
+    def action_list_for(self, member, role='admin'):
+        action_list = UserVisibleContent.action_list_for(self, member, role)
         if self.creator == member:
             action_list.append('invite_to_assignment')
         if self.acceptable_by(member):

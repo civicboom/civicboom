@@ -112,7 +112,7 @@
         </tbody>
         <tfoot>
             <tr class="foot">
-                <td class="title">${_('Cost')}</td>
+                <td class="title">${_('Cost (excluding VAT)')}</td>
                 % for plan in plans:
                     <td class="item  ${'hilight' if plan == hilight_plan else ''}">
                         ${plan_details[plan]['cost']}
