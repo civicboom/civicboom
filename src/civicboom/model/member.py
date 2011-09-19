@@ -310,7 +310,7 @@ class Member(Base):
         'default': {
             'id'                : None ,
             'name'              : lambda member: member.name if member.name else member.id , # Normalize the member name and return username if name not present
-            'username'          : None ,
+            'username'          : None , # AllanC - this should be depricated as it is a mirror of the id. This may need careful combing of the templates before removal
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
             'location_home'     : lambda member: location_to_string(member.location_home) ,

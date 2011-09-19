@@ -384,7 +384,7 @@
 						
 						## Clients with    javascript can have live updates from the media controller
 						<script type="text/javascript">
-							updateMedia($('#media_attachment_${id}'), ${id}, ${media['hash']});
+							updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
 						</script>
 						<!-- End media still undergoing proceccesing -->
 					% endif
