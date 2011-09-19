@@ -103,6 +103,7 @@ for gen in generators:
     if not gen[0] in ignore_generators:
         add_setting('route_'+gen[0], str(gen[2]).capitalize(), group='notifications/notifications', weight=i, type="set", value=('n','e'), default=gen[1])
         i = i + 1
+add_setting('no_marketing_emails'       , _('Stop all _site_name marketing & update emails'), group='notifications/other', weight=i, type='boolean')
 
 add_setting('location_home'             , _('Home Location' )            , group='location/location'  , weight=300, type='location' )
 add_setting('location_home_name'        , _('Home Location' )            , group='location/location'  , weight=301, type='string_location' )
