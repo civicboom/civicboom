@@ -1,6 +1,8 @@
 from civicboom.tests import *
 from BeautifulSoup import BeautifulSoup
 
+from pylons import config
+
 # This regexp will match any url starting with http(s):// not within civicboom.com or just # or mailto:*
 not_civicboom = re.compile(r'((http(s{0,1})://(?!(www\.){0,1}civicboom\.com))|#|mailto\:.*).*')
 
@@ -18,7 +20,8 @@ class TestCrawlSite(TestController):
     error_count = 0
     
     def setUp(self):
-        pass
+        if not config['test.crawl_links']:
+            raise SkipTest('Crawl not enabled in config - crawl test skipped')
     
     def test_crawl(self):
         self.crawl('/', None)       # Crawl when not logged in

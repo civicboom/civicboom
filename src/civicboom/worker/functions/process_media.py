@@ -84,7 +84,8 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         size = (int(config["media.media.width"]), int(config["media.media.height"]))
         _ffmpeg([
             "-y", "-i", tmp_file, "-ar", "22050",
-            "-s", "%dx%d" % (size[0], size[1]), "-b", config["media.video.bitrate"],
+            "-s", "%dx%d" % (size[0], size[1]),
+            "-b", int(config["media.video.bitrate"]) * 1024,
             processed.name
         ])
         m.setex(status_key, "copying video", status_expire)
