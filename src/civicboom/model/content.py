@@ -465,7 +465,7 @@ class UserVisibleContent(Content):
         if self.creator == member and has_role_required('editor', role):
             action_list.append('update')
             action_list.append('delete')
-        if self.is_parent_owner(member) and has_role_required('editor', role) and member.has_account_required('plus'): # observing member need a paid account
+        if self.is_parent_owner(member) and has_role_required('editor', role): # and member.has_account_required('plus'): # AllanC - Although we return the actions here, the Template decides what message to display by checking has_account_required. I REALLY don't like this, it means the action list dose not represent the actions the user can perform
             if self.approval == 'none':
                 action_list.append('approve')
                 action_list.append('seen')

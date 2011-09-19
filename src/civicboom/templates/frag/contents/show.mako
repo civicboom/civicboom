@@ -1065,10 +1065,13 @@ r = (d['content']['rating'] * 5)
 ## Response guide (this is a huge mess forgive me ;____;)
 ##------------------------------------------------------------------------------
 <%def name="response_guide()">
-    % if c.logged_in_persona and self.content.get('parent').get('creator').get('username') == c.logged_in_persona.username:
-        % if 'approve' in self.actions or 'dissasociate' in self.actions:
-        ## --- Response guide ---
+    ##% if c.logged_in_persona and self.content.get('parent').get('creator').get('username') == c.logged_in_persona.username:
+    ## AllanC - this is undeeded as this processing is done at the model level
+    % if 'approve' in self.actions or 'dissasociate' in self.actions:
         <div class="guidance">
+        % if c.logged_in_persona.has_account_required('plus'):
+        ## --- Response guide ---
+        
            <h1>${_("What now? You can:")}</h1>
            <div class="content response_guide">
                <table><tr><td style="width: 48%;">
@@ -1118,8 +1121,15 @@ r = (d['content']['rating'] * 5)
                     ${_("Pst! Or you can do nothing")}
                </tr></td></table>
            </div>
+        
+        ## Else No 'plus account'
+        % else:
+            <h1>${_("Upgrade your account:")}</h1>
+            <div class="content response_guide">
+                <p>${_("You could have the ability to moderate this content.")} <a href="${h.url(controller='misc', action='about', id='upgrade_plans')}">${_("Upgrade Now")}</a></p>
+            </div>
+        % endif
            <div style="clear: both;"></div>
         </div>
-        % endif
     % endif
 </%def>

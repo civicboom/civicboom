@@ -360,7 +360,7 @@ class Member(Base):
         return self._config
 
     def __unicode__(self):
-        return self.name or self.id
+        return "%s (%s)" % (self.name, self.id)
 
     def __str__(self):
         return unicode(self).encode('ascii', 'replace')
