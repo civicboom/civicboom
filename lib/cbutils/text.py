@@ -5,7 +5,6 @@ A collection of text processing tools for Text, HTML and JSON
 import re
 import xml.sax.saxutils as saxutils
 import unicodedata
-import difflib
 
 #-------------------------------------------------------------------------------
 
@@ -409,12 +408,14 @@ def get_diff_words(a,b):
     >>>> get_diff_words(t, profanity_check(t)['CleanText'])
     [u'FUCKING']
     """
-    words = []
-    a = a.split(' ')
-    b = b.split(' ')
-    for word in difflib.context_diff(a,b):
-        if word.endswith('----\n'):
-            break
-        if word.startswith('! '):
-            words.append(word[2:])
-    return words
+    if isinstance(a, basestring): a = a.split(' ')
+    if isinstance(b, basestring): b = b.split(' ')
+    # Old Difflib way - lame - why did I not use sets in the first place? Thanks Shish
+    #words = []
+    #for word in difflib.context_diff(a,b):
+    #    if word.endswith('----\n'):
+    #        break
+    #    if word.startswith('! '):
+    #        words.append(word[2:])
+    #return words
+    return list(set(a)-set(b))
