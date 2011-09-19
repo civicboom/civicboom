@@ -4,6 +4,7 @@ import logging
 import logging.handlers
 import optparse
 import sys
+import os
 
 from ConfigParser import SafeConfigParser
 import cbutils.worker as w
@@ -34,9 +35,11 @@ def main(argv):
         log_opts["filename"] = options.log_file
     logging.basicConfig(**log_opts)
 
-    c = SafeConfigParser()
+    c = SafeConfigParser({'here': os.getcwd()})
     c.read(options.ini)
-    w.config = c.defaults()
+    w.config = {}
+    for opt in c.options("app:main"):
+        w.config[opt] = c.get("app:main", opt)
     w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
     if ("error_email_from" in w.config) and ("email_to" in w.config):
