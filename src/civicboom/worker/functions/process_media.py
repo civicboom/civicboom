@@ -85,7 +85,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         _ffmpeg([
             "-y", "-i", tmp_file, "-ar", "22050",
             "-s", "%dx%d" % (size[0], size[1]),
-            "-b", int(config["media.video.bitrate"]) * 1024,
+            #"-b", "%s" % (int(config["media.video.bitrate"]) * 1024), # AllanC - had to rem this out because the flash player dies with other bitrates. Investigate later properly
             processed.name
         ])
         m.setex(status_key, "copying video", status_expire)
