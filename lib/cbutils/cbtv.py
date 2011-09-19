@@ -16,6 +16,7 @@ from __future__ import print_function
 from decorator import decorator
 import threading
 import time
+import datetime
 from optparse import OptionParser
 import sqlite3
 import sys
@@ -24,7 +25,7 @@ import os
 
 
 NAME = "Context"
-ROW_HEIGHT = 80
+ROW_HEIGHT = 140
 BLOCK_HEIGHT = 20
 
 
@@ -158,19 +159,25 @@ class _App:
             ).pack(side="left")
 
         def _bu(t, c):
-            Button(f,
-                image=t, command=c, padding=0
-            ).pack(side="right")
+            if isinstance(t, PhotoImage):
+                Button(f,
+                    image=t, command=c, padding=0
+                ).pack(side="right")
+            else:
+                Button(f,
+                    text=t, command=c, padding=0
+                ).pack(side="right")
 
         _la("  Start ")
         _sp(0, int(time.time()), 10, self.render_start, 15)
-        _la("  Length ")
+        _la("  Seconds ")
         _sp(1, 60, 1, self.render_len, 3)
-        _la("  Zoom ")
+        _la("  Pixels per second ")
         _sp(100, 5000, 100, self.scale, 5)
 
         _bu(self.img_end, self.end_event)
         _bu(self.img_next, self.next_event)
+        _bu("Bookmarks", self.open_bookmarks)
         _bu(self.img_prev, self.prev_event)
         _bu(self.img_start, self.start_event)
 
@@ -186,17 +193,17 @@ class _App:
 
         self.threads = [n[0] for n in self.c.execute("SELECT DISTINCT thread FROM cbtv_events ORDER BY thread")]
         self.render_start = DoubleVar(master, self.get_start(0))
-        self.render_len = IntVar(master, 30)
+        self.render_len = IntVar(master, 10)
         self.scale = IntVar(master, 1000)
 
         self.render_start.trace_variable("w", self.update)
         self.render_len.trace_variable("w", self.update)
         self.scale.trace_variable("w", self.render)
 
-        self.img_start = PhotoImage(file="start.ppm")
-        self.img_prev = PhotoImage(file="prev.ppm")
-        self.img_next = PhotoImage(file="next.ppm")
-        self.img_end = PhotoImage(file="end.ppm")
+        self.img_start = PhotoImage(file="start.gif")
+        self.img_prev = PhotoImage(file="prev.gif")
+        self.img_next = PhotoImage(file="next.gif")
+        self.img_end = PhotoImage(file="end.gif")
 
         self.h = Scrollbar(master, orient=HORIZONTAL)
         self.v = Scrollbar(master, orient=VERTICAL)
@@ -280,6 +287,36 @@ class _App:
         if next_ts:
             self.render_start.set(next_ts)
         self.canvas.xview_moveto(0)
+
+    def open_bookmarks(self):
+        # base gui
+        t = Toplevel(self.master)
+        t.lift(self.master)
+        t.grid_columnconfigure(0, weight=1)
+        t.grid_rowconfigure(0, weight=1)
+        t.wm_attributes("-topmost", 1)
+        t.title("Bookmarks")
+
+        li = Listbox(t, height=10, width=40)
+        li.grid(column=0, row=0, sticky=(N, E, S, W))
+
+        sb = Scrollbar(t, orient=VERTICAL, command=li.yview)
+        sb.grid(column=1, row=0, sticky=(N, S))
+
+        li.config(yscrollcommand=sb.set)
+
+        # load data
+        bm_values = []
+        for ts, tx in self.c.execute("SELECT timestamp, text FROM cbtv_events WHERE type = 'BMARK' ORDER BY timestamp"):
+            bm_values.append(ts)
+            tss = datetime.datetime.fromtimestamp(ts).strftime("%Y/%m/%d %H:%M:%S") # .%f
+            li.insert(END, "%s: %s" % (tss, tx))
+
+        # load events
+        def _lbox_selected(*args):
+            selected_idx = int(li.curselection()[0])
+            self.render_start.set(bm_values[selected_idx])
+        li.bind('<Double-Button-1>', _lbox_selected)
 
     def scale_view(self, e=None, n=1):
         # get the old pos
@@ -478,12 +515,14 @@ def _center(root):
     root.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 
-def display(database_file):
+def display(database_file, geometry=None):
     root = Tk()
     root.title(NAME)
     #root.state("zoomed")
     #_center(root)
     _App(root, database_file)
+    if geometry:
+        root.geometry(geometry)
     root.mainloop()
     return 0
 
@@ -494,13 +533,21 @@ def _main(argv):
             help="import log file to database", metavar="LOG")
     parser.add_option("-d", "--database", dest="database", default="cbtv.db",
             help="database file to use", metavar="DB")
+    parser.add_option("-g", "--geometry", dest="geometry",
+            help="location and size of window", metavar="GEO")
+    parser.add_option("-r", "--row-height", dest="row_height", default=140,
+            type=int, help="height of the rows", metavar="PX")
     (options, args) = parser.parse_args(argv)
+
+    # lol constants
+    global ROW_HEIGHT
+    ROW_HEIGHT=options.row_height
 
     if options.log_file and options.database:
         compile_log(options.log_file, options.database)
 
     elif options.database and have_tk:
-        display(options.database)
+        display(options.database, options.geometry)
 
 
 if __name__ == "__main__":
