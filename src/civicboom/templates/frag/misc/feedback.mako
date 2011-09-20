@@ -77,9 +77,9 @@ ${_('What did you expect to happen:')}
             </tr>
             <tr>
                 <td>${_('Prove you are human:')}</td>
-                <td>
+                <td style="padding: 3px 0 0 3px">
                     <input type="text" name="simple_captcha" />
-                    <p>${_('type "%s" into this box') % "xyz"}</p>
+                    <br>${_('type "%s" into this box') % "xyz"}
                 </td>
             </tr>
             % endif
