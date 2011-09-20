@@ -483,7 +483,7 @@
     <div style="float:right;">
       % if list=="to":
       <a href    = "${url('message', id=message['id'])}"
-         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_2'); return false;"
          class   = "icon16 i_message" title="Open / Reply"
       >
       </a>
@@ -513,7 +513,7 @@
       % if 'content' in message:
   
 		  <a href    = "${url('message', id=message['id'])}"
-             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_2'); return false;"
           >
               <p class="subject" style="height:16px;">${message['subject']}</p>
           </a>
@@ -527,7 +527,7 @@
       % else:
           
           <a href    = "${url('message', id=message['id'])}"
-             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_1'); return false;"
+             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_2'); return false;"
           >
               <p class="subject" style="height:16px;">${message['subject']}</p>
           </a>

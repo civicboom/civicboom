@@ -2,7 +2,7 @@
 
 <%!
     ##frag_container_css_class  = 'frag_bridge'
-    frag_col_sizes = [1]
+    frag_col_sizes = [2]
 %>
 
 <%def name="body()">
