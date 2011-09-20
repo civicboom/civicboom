@@ -395,6 +395,7 @@ def form(*args, **kwargs):
             return false;
         """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
         )
+    kwargs['novalidate'] = 'novalidate'
 
     # put the href generated url back in the right place
     if len(args)>0 and isinstance(args[0], tuple):
