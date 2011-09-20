@@ -57,11 +57,13 @@ class UniqueUsernameValidator(validators.FancyValidator):
 
 
 class UniqueEmailValidator(validators.Email):
+    check_unverifyed_emails = False
     not_empty = True
 
     def __init__(self, *args, **kwargs):
-        from pylons import config
+        self.check_unverifyed_emails = kwargs.pop('check_unverifyed_emails', self.check_unverifyed_emails)
         kwargs['resolve_domain'] = False
+        from pylons import config
         if config['online']:
             kwargs['resolve_domain'] = True
         validators.Email.__init__(self, *args, **kwargs)
@@ -71,7 +73,10 @@ class UniqueEmailValidator(validators.Email):
         from pylons import tmpl_context as c
         if c.logged_in_persona and c.logged_in_persona.email == value: # If the current user has this email then bypass the validator
             return value
-        if Session.query(User).filter(User.email==value).count() > 0:
+        email_count = Session.query(User).filter(User.email==value).count()
+        if self.check_unverifyed_emails:
+            email_count += Session.query(User).filter(User.email_unverified==value).count()
+        if email_count > 0:
             raise formencode.Invalid(_('This email address is already registered with us. Please use a different address, or retrieve your password using the password recovery link.'), value, state)
         return value
 

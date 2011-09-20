@@ -95,7 +95,12 @@ class AccountController(BaseController):
 
         # Authenticate with Janrain
         if 'token' in kwargs:
-            c.auth_info = janrain('auth_info', token=kwargs.get('token'))
+            if config['test_mode'] and kwargs.get('fake_janrain_return'):
+                import json
+                c.auth_info = json.loads(kwargs.get('fake_janrain_return'))
+            else:
+                c.auth_info = janrain('auth_info', token=kwargs.get('token'))
+            
             if c.auth_info:
                 c.logged_in_user = get_user_from_openid_identifyer(c.auth_info['profile']['identifier']) #Janrain guarntees the identifyer to be set
                 login_provider   = c.auth_info['profile']['providerName']
@@ -125,9 +130,7 @@ class AccountController(BaseController):
                 #pass
             
             c.logged_in_user = register_new_janrain_user(c.auth_info['profile'])             # Create new user from Janrain profile data
-            # added to assiciate_janrain civicboomlib call #janrain('map', identifier=c.auth_info['profile']['identifier'], primaryKey=u.id) # Let janrain know this users primary key id, this is needed for agrigation posts
-            signin_user_and_redirect(c.logged_in_user, login_provider=login_provider)
-            #redirect(url(controller='register', action='new_user', id=u.id)) #No need to redirect to register as the base controler will do this
+            signin_user_and_redirect(c.logged_in_user, login_provider=login_provider, redirect_url=url(controller="profile", action="index"))
             
         # If not authenticated or any janrain info then error
         user_log.warning("Failed to log in as '%s'" % kwargs.get('username', ''))

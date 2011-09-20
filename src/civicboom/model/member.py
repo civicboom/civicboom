@@ -115,7 +115,7 @@ def has_account_required(required, current):
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
     group_id      = Column(String(32), ForeignKey('member_group.id'), primary_key=True)
-    member_id     = Column(String(32), ForeignKey('member.id')      , primary_key=True)
+    member_id     = Column(String(32), ForeignKey('member.id', onupdate="cascade")      , primary_key=True)
     role          = Column(group_member_roles , nullable=False, default="contributor")
     status        = Column(group_member_status, nullable=False, default="active")
 
@@ -153,8 +153,8 @@ CREATE TRIGGER update_group_size
 
 class Follow(Base):
     __tablename__ = "map_member_to_follower"
-    member_id     = Column(String(32),    ForeignKey('member.id'), nullable=False, primary_key=True)
-    follower_id   = Column(String(32),    ForeignKey('member.id'), nullable=False, primary_key=True)
+    member_id     = Column(String(32),    ForeignKey('member.id', onupdate="cascade"), nullable=False, primary_key=True)
+    follower_id   = Column(String(32),    ForeignKey('member.id', onupdate="cascade"), nullable=False, primary_key=True)
     type          = Column(follow_type                          , nullable=False, default="normal")
     
     member   = relationship("Member", primaryjoin="Member.id==Follow.member_id"  )
@@ -611,7 +611,7 @@ DDL("CREATE INDEX member_fts_idx ON member USING gin(to_tsvector('english', id |
 class User(Member):
     __tablename__    = "member_user"
     __mapper_args__  = {'polymorphic_identity': 'user'}
-    id               = Column(String(32),  ForeignKey('member.id'), primary_key=True)
+    id               = Column(String(32),  ForeignKey('member.id', onupdate="cascade"), primary_key=True)
     last_check       = Column(DateTime(), nullable=False,   default=now, doc="The last time the user checked their messages. You probably want to use the new_messages derived boolean instead.")
     new_messages     = Column(Boolean(),  nullable=False,   default=False) # FIXME: derived
     location_current = Golumn(Point(2),   nullable=True,    doc="Current location, for geo-targeted assignments. Nullable for privacy")
@@ -667,7 +667,7 @@ CREATE TRIGGER update_location_time
 class Group(Member):
     __tablename__      = "member_group"
     __mapper_args__    = {'polymorphic_identity': 'group'}
-    id                         = Column(String(32), ForeignKey('member.id'), primary_key=True)
+    id                         = Column(String(32), ForeignKey('member.id', onupdate="cascade"), primary_key=True)
     join_mode                  = Column(group_join_mode         , nullable=False, default="invite")
     member_visibility          = Column(group_member_visibility , nullable=False, default="public")
     default_content_visibility = Column(group_content_visibility, nullable=False, default="public")
@@ -799,7 +799,7 @@ class Group(Member):
 class UserLogin(Base):
     __tablename__    = "member_user_login"
     id          = Column(Integer(),    primary_key=True)
-    member_id   = Column(String(32),   ForeignKey('member.id'), index=True)
+    member_id   = Column(String(32),   ForeignKey('member.id', onupdate="cascade"), index=True)
     # FIXME: need full list; facebook, google, yahoo?
     #type        = Column(Enum("password", "openid", name="login_type"), nullable=False, default="password")
     type        = Column(String( 32),  nullable=False, default="password") # String because new login types could be added via janrain over time
