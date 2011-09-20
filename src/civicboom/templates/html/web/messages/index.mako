@@ -12,7 +12,7 @@
 <%def name="body()">
     <%  
         self.attr.frags          = [profile , messages]
-        self.attr.frag_col_sizes = [      2 ,        1]
+        self.attr.frag_col_sizes = [      2 ,        2]
         self.attr.frag_classes   = [   None ,     None]
     %>
 </%def>
