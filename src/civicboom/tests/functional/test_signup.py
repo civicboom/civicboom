@@ -25,7 +25,6 @@ class TestSignup(TestController):
         logout
         login
         """
-        #self.log_out()
         
         # Request new user email for user that already exisits - reject
         response = self.app.post(
@@ -177,6 +176,13 @@ class TestSignup(TestController):
                 'help_type'       : u'ind',
             },
         )
+        
+        # Check redirect to 'how_to' after registration
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('how_to', response_location)
+        
         self.assertEqual(getNumEmails(), num_emails + 2) # Check welcome email sent # and lizzies email for every member signup
         #email_response = getLastEmail()
         #self.assertIn('civicboom', email_response.content_text)
@@ -190,8 +196,7 @@ class TestSignup(TestController):
     # Signup & autofollow user
     #---------------------------------------------------------------------------
     def test_signup_and_follow_default_user(self):
-        #self.log_out()
-        
+
         default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup') # Remeber auto follow config var to reset at end of test
         
         # Fake config setting
@@ -297,3 +302,73 @@ class TestSignup(TestController):
         
         # Cleanup
         self.delete_member('test_signup_multiple_again')
+
+    #---------------------------------------------------------------------------
+    # Signup with Janrain
+    #---------------------------------------------------------------------------
+    def test_signup_janrain(self):
+        # See http://documentation.janrain.com/profiledata for more info
+        fake_janrain_return = json.dumps({
+            u'profile': {
+                u'preferredUsername': u'janrain_test',
+                u'displayName'      : u'janrain_test',
+                u'name'             : {
+                    u'givenName' : u'Janrain',
+                    u'formatted' : u'Janrain Test',
+                    u'familyName': u'Test'
+                },
+                u'providerName' : u'Google',
+                u'googleUserId' : u'000000000000000000000',
+                u'url'          : u'https://www.google.com/profiles/000000000000000000000',
+                u'email'        : u'janrain_test@civicboom.com',
+                #u'verifiedEmail': u'janrain_test@civicboom.com',
+                u'identifier'   : u'https://www.google.com/profiles/000000000000000000000',
+                u'primaryKey'   : u'janrain_test',
+                u'photo'        : u'https://www.civicboom.com/images/logo.png',
+                u'birthday'     : u'1980-01-01',
+            },
+            u'stat': u'ok',
+        })
+        
+        response = self.app.post(
+            url(controller='account', action='signin'),
+            params={
+                'token'              :'00000000000000000000000000000000',
+                'fake_janrain_return': fake_janrain_return,
+            },
+        )
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('id="reg_form"', response.body) # Check that we have arrived at the registration page
+        
+        # Complete the registration
+        response = self.app.post(
+            response_location,
+            params={
+                'name'            : u'Janrain Test Display Name', # This is automatically filled in on the regisration form
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
+            },
+        )
+        
+        # Logout
+        self.log_out()
+        
+        # Attempt Login
+        response = self.app.post(
+            url(controller='account', action='signin'),
+            params={
+                'token'              :'00000000000000000000000000000000',
+                'fake_janrain_return': fake_janrain_return,
+            },
+        )
+        # Check redirect to profile
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('profile'                  , response_location)
+        self.assertIn('Janrain Test Display Name', response.body    ) # Check that we have arrived at profile page. Should have display name
+        
+        self.delete_member('janrain_test')
+        

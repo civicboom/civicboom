@@ -301,15 +301,6 @@ def register_new_janrain_user(profile):
     
     Session.add(u)
     
-    #u_login = UserLogin()
-    #u_login.user   = u
-    #u_login.type   = profile['providerName']
-    #u_login.token  = profile['identifier']
-    #Session.add(u_login)
-    associate_janrain_account(u, profile['providerName'], profile['identifier'])
-    
-    #Session.commit() # unneeded as associate_janrain_account has a commit in to map accounts
-    
     u.config['dob']     = profile.get('birthday') #Config vars? auto commiting?
     u.config['website'] = profile.get('url')
     
@@ -320,6 +311,8 @@ def register_new_janrain_user(profile):
             raise Exception('janrain dob is lower than min age')
     except:
         del u.config['dob']
+    
+    associate_janrain_account(u, profile['providerName'], profile['identifier'])
     
     # Future addition and enhancements
     #   with janrain we could get a list of friends/contnact and automatically follow them?
