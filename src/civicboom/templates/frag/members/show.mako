@@ -552,7 +552,7 @@
             <div class="content">
                 <ul>
                     <li>
-                        <a onclick="cb_frag($(this), '${h.url('messages', list='to',           format='frag')}', 'frag_col_1'); return false;" href="${h.url('messages', list='to')}">
+                        <a onclick="cb_frag($(this), '${h.url('messages', list='to',           format='frag')}', 'frag_col_2'); return false;" href="${h.url('messages', list='to')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_message"     ></span>
                                 <div class="icon_overlay_red"
@@ -564,14 +564,14 @@
                         </a>
                     </li>
                     <li>
-                        <a onclick="cb_frag($(this), '${h.url('messages', list='sent',         format='frag')}', 'frag_col_1'); return false;" href="${h.url('messages', list='sent')}">
+                        <a onclick="cb_frag($(this), '${h.url('messages', list='sent',         format='frag')}', 'frag_col_2'); return false;" href="${h.url('messages', list='sent')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_message_sent"></span>
                             </div>${_('Sent')}
                         </a>
                     </li>
                     <li>
-                        <a onclick="cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;" href="${h.url('messages', list='notification')}">
+                        <a onclick="cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_2'); return false;" href="${h.url('messages', list='notification')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_notification"></span>
                                 <div class="icon_overlay_red"
