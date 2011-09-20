@@ -10,6 +10,10 @@ from civicboom.tests import *
 
 class TestSignup(TestController):
 
+    def setUp(self):
+        pass # Dont log in by default
+
+
     #---------------------------------------------------------------------------
     # Signup
     #---------------------------------------------------------------------------
@@ -21,13 +25,13 @@ class TestSignup(TestController):
         logout
         login
         """
-        self.log_out()
+        #self.log_out()
         
         # Request new user email for user that already exisits - reject
         response = self.app.post(
             url(controller='register', action='email', format="json"),
             params={
-                'username': u'unittest',
+                'username': u'unittest', # reject existing username
             },
             status=400,
         )
@@ -36,7 +40,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
-                'email'   : u'test+unittest@civicboom.com'
+                'email'   : u'test+unittest@civicboom.com' # reject existing email address
             },
             status=400,
         )
@@ -186,7 +190,7 @@ class TestSignup(TestController):
     # Signup & autofollow user
     #---------------------------------------------------------------------------
     def test_signup_and_follow_default_user(self):
-        self.log_out()
+        #self.log_out()
         
         default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup') # Remeber auto follow config var to reset at end of test
         
@@ -246,9 +250,50 @@ class TestSignup(TestController):
         for subject in notification_subjects:
             self.assertEquals('new follower', subject)
         
-        from civicboom.lib.database.get_cached import get_member
-        get_member('test_signup_follow').delete()
+        # Cleanup
+        self.delete_member('test_signup_follow')
         
         # Set back the config var so tests run after this are not affected
         self.config_var('setting.username_to_auto_follow_on_signup', default_auto_follow)
         self.config_var('setting.username_to_auto_follow_on_signup', '')
+
+
+    #---------------------------------------------------------------------------
+    # Signup with the same unverifyed email address multiple times
+    #---------------------------------------------------------------------------
+    def test_signup_multiple_unveifyed(self):
+        """
+        Signup with the same unverifyed email address multiple times
+        This should not create new users but send the email again
+        """
+        from civicboom.model import User
+        from civicboom.model.meta import Session
+        
+        num_users  = Session.query(User).count()
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url(controller='register', action='email'),
+            params={
+                'username': u'test_signup_multiple',
+                'email'   : u'test+multiple@civicboom.com',
+            },
+        )
+        self.assertEqual(Session.query(User).count(), num_users  + 1)
+        self.assertEqual(getNumEmails()             , num_emails + 1)
+        
+        num_users  = Session.query(User).count()
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url(controller='register', action='email'),
+            params={
+                'username': u'test_signup_multiple_again', # Username should be updated
+                'email'   : u'test+multiple@civicboom.com',
+            },
+        )
+        self.assertEqual(Session.query(User).count(), num_users     ) # No new user should be generated
+        self.assertEqual(getNumEmails()             , num_emails + 1) # signup email should be resent
+        self.assertIsNone   (Session.query(User).get('test_signup_multiple')      ) # Check old user not exists and has been renamed
+        self.assertIsNotNone(Session.query(User).get('test_signup_multiple_again')) # Check user exists
+        
+        # Cleanup
+        self.delete_member('test_signup_multiple_again')
