@@ -53,8 +53,8 @@ class Boom(Base):
 
 class Rating(Base):
     __tablename__ = "map_ratings"
-    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade")              , nullable=False, primary_key=True)
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id')      , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade"), nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False)
 
     __table_args__ = (
@@ -65,8 +65,8 @@ class Rating(Base):
 
 class Interest(Base):
     __tablename__ = "map_interest"
-    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade")              , nullable=False, primary_key=True)
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id')      , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade"), nullable=False, primary_key=True)
 
 
 class Content(Base):
