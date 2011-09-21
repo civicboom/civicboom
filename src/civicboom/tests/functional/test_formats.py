@@ -20,7 +20,7 @@ class TestFormats(TestController):
                 self.assertIn("Mr U. Test", response)
                 # Message Lists
                 if self.logged_in_as:
-                    response = self.app.get(url('messages', list='notification', format=format), status=200)
+                    response = self.app.get(url('messages', list='notification', sort='timestamp', format=format), status=200)
                     self.assertIn('Base Notification', response)
                 
                 # Content
@@ -61,7 +61,7 @@ class TestFormats(TestController):
                 # Message
                 if self.logged_in_as and sub_domain not in ['widget']:
                     # Check messages template
-                    response = get_(url('messages')     , sub_domain)
+                    response = get_(url('messages', sort='timestamp'), sub_domain)
                     self.assertIn('Base Notification', response)
                     response = get_(url('message', id=1), sub_domain)
                     self.assertIn('Base Message', response)
