@@ -803,12 +803,13 @@ def parent_disassociate(content, delay_commit=False):
 def rate_content(content, member, rating):
     content = get_content(content)
     member  = get_member(member)
+    rating_value = int(rating)
 
     if not content:
         raise action_error(_('unable to find content'), code=404)
     if not member:
         raise action_error(_('unable to find member'), code=404)
-    if rating and int(rating)<0 or int(rating)>5:
+    if rating and rating_value<0 or rating_value>5:
         raise action_error(_("Ratings can only be in the range 0 to 5"), code=400)
 
     # remove any existing ratings
@@ -816,27 +817,21 @@ def rate_content(content, member, rating):
     # will optimise remove->add as modify-existing, and the
     # SQL trigger will break
     try:
-        q = Session.query(Rating)
-        q = q.filter(Rating.content_id==content.id)
-        q = q.filter(Rating.member    ==member)
-        existing = q.one()
+        existing = Session.query(Rating).filter(Rating.content==content).filter(Rating.member ==member).one()
         Session.delete(existing)
         Session.commit()
     except NoResultFound:
         pass
 
+    # rating = 0 = remove vote
     # add a new one
-    if rating:
-        rating = int(rating)
-        
-        # rating = 0 = remove vote
-        if rating > 0:
-            r = Rating()
-            r.content_id = content.id
-            r.member     = member
-            r.rating     = rating
-            Session.add(r)
-            Session.commit()
+    if rating_value > 0:
+        r = Rating()
+        r.content = content
+        r.member  = member
+        r.rating  = rating_value
+        Session.add(r)
+        Session.commit()
 
     # AllanC - TODO - rate notification needed
     
