@@ -18,6 +18,8 @@ class TestFormats(TestController):
                 if self.logged_in_as:
                     response = self.app.get(url('messages', list='notification', format=format), status=200)
                     self.assertIn('Base Notification', response)
+                    response = self.app.get(url('message', id=1), status=200)
+                    self.assertIn('Base Message', response)
         
         test_all_formats() # Logged in user
         self.log_out()
@@ -37,6 +39,8 @@ class TestFormats(TestController):
                     # Check messages template
                     response = self.app.get(url('messages'), extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain}, status=200)
                     self.assertIn('Base Notification', response)
+                    response = self.app.get(url('message', id=1), extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain}, status=200)
+                    self.assertIn('Base Message', response)
         
         test_all_sub_domains() # Logged in user
         self.log_out()
