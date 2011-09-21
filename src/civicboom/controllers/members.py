@@ -52,7 +52,9 @@ def _init_search_filters():
             word = re.sub("[^a-zA-Z0-9_-]", "", word)
             if word:
                 parts.append(word)
-
+        
+        # AllanC - TODO This behaviour is incorrect ... I perform a serach for name='unit' and I expect it to find both 'unittest' and 'unitfriend', it finds neither
+        
         if parts:
             text = " | ".join(parts)
             return query.filter("""
