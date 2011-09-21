@@ -84,6 +84,7 @@
     <script type="text/javascript">
         $('${anchor}').live('swipe${direction}', function(event) {
             $.mobile.changePage($('${to}'), {
+                changeHash: false,
                 transition: "slide",
                 % if direction == "right":
                     reverse: true,
