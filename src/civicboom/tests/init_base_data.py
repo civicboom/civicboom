@@ -157,6 +157,29 @@ def init_base_data():
         Session.commit()
         assert c.id == 3
 
+        ###############################################################
+        log.debug("Messages")
+        
+        m1 = Message()
+        m1.target = u1
+        m1.source = u2
+        m1.subject = 'Base Message'
+        m1.content = 'Base message'
+        
+        m2 = Message()
+        m2.target = u1
+        m2.subject = 'Base Notification'
+        m2.content = 'Base notification'
+        
+        Session.add_all([m1,m2])
+        Session.commit()
+        
+        assert m1.id == 1
+        assert m2.id == 2
+        
+        ###############################################################
+        log.debug("Settings")
+        
         # Set settings var's so in development we dont get the popups all the time
         member_config      = [u1, u2]
         member_config_vars = ['help_popup_created_user',
