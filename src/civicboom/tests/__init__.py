@@ -23,6 +23,8 @@ from sqlalchemy           import or_, and_, not_, null
 from paste.fixture import TestApp
 import cbutils.worker as worker
 
+from cbutils.misc import substring_in
+
 from civicboom.lib.database.query_helpers import to_apilist
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
@@ -669,13 +671,17 @@ class TestController(TestCase):
         self.assertEqual(len(response_json['data']['error-list']), 1)
         self.assertEqual(response_json['status'], 'ok')
 
-    def assertSubStringIn(self, substring, string_list):
-        found = False
-        for i in string_list:
-            if substring in i:
-                fount = True
-                return True
-        raise AssertionError('%s not found in subelements of %s' % (substring, string_list))
+    def assertSubStringIn(self, substrings, string_list):
+        if substring_in(substrings, string_list):
+            return True
+        raise AssertionError('%s not found in subelements of %s' % (substrings, string_list))
+    
+    def assertIsBetween(self, x, low, high):
+        try:
+            self.assertGreaterEqual(x, low )
+            self.assertLessEqual   (x, high)
+        except:
+            raise AssertionError('%d is not between %d and %d' % (x,low,high))
     
     def run_task(self, task, **kwargs):
         response = self.app.get(

@@ -167,8 +167,9 @@ class TestMiscController(TestController):
         )
         
         # Force view of mobile page (should remove 'force_web' cookie)
-        response = self.app.get( url(controller='misc', action='titlepage') , extra_environ={'HTTP_HOST': 'mobile.civicboom_test.com'})
+        response = self.app.get( url(controller='misc', action='titlepage') , extra_environ={'HTTP_HOST': 'm.civicboom.com'})
         
+        # The next view of the titlepage should redirect back to mobile version
         response = self.app.get(
             url(controller='misc', action='titlepage'),
             extra_environ={'HTTP_USER_AGENT': 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_2 like Mac OS X; fr-fr) AppleWebKit/528.18 (KHTML, like Gecko) Mobile/7D11'},
