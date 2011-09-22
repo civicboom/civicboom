@@ -8,20 +8,20 @@ from civicboom.lib.database.get_cached import get_tag, get_license
 
 import hashlib
 import datetime
+import os
 
 import logging
 log = logging.getLogger(__name__)
 
 
 def init_base_data():
-        log.info("Populating tables with base test data")
+    # Notifications disabled because no i18n is setup
+    from pylons import config
+    config['feature.notifications'] = False
 
-        # Notifications disabled because no i18n is setup
-        from pylons import config
-        config['feature.notifications'] = False
-
-
-        ###############################################################
+    ###############################################################
+    def test_base():
+        log.info("Populating tables with test base data")
         log.debug("Users")
 
         u1 = User()
@@ -157,6 +157,29 @@ def init_base_data():
         Session.commit()
         assert c.id == 3
 
+        ###############################################################
+        log.debug("Messages")
+        
+        m1 = Message()
+        m1.target = u1
+        m1.source = u2
+        m1.subject = 'Base Message'
+        m1.content = 'Base message'
+        
+        m2 = Message()
+        m2.target = u1
+        m2.subject = 'Base Notification'
+        m2.content = 'Base notification'
+        
+        Session.add_all([m1,m2])
+        Session.commit()
+        
+        assert m1.id == 1
+        assert m2.id == 2
+        
+        ###############################################################
+        log.debug("Settings")
+        
         # Set settings var's so in development we dont get the popups all the time
         member_config      = [u1, u2]
         member_config_vars = ['help_popup_created_user',
@@ -167,3 +190,156 @@ def init_base_data():
                 member.config[member_config_var] = 'init'
 
         assert list(Session.query(User).filter(User.id=="MrNotExists")) == []
+
+
+    def demo_base():
+        log.info("Populating tables with demo base data")
+        log.debug("Users")
+
+        wh_base = "civicboom/public/warehouse"
+        for n in ["avatars", "media-thumbnail"]:
+            try:
+                os.makedirs("%s/%s" % (wh_base, n))
+            except OSError as e:
+                pass # dir exists
+
+        def _get_avatar(id):
+            src = "%s/%s.png" % (wh_base, id)
+            if os.path.exists(src):
+                d = file(src).read()
+                h = hashlib.sha1(d).hexdigest()
+                file("%s/avatars/%s" % (wh_base, h), "wb").write(d)
+                return h
+            return None
+
+        def _user(id, name, desc='', av=None):
+            u = User()
+            u.id            = id
+            u.name          = name
+            u.join_date     = datetime.datetime.now()
+            u.status        = "active"
+            u.email         = u"test+%s@civicboom.com" % id
+            u.description   = desc
+            u.avatar        = _get_avatar(id)
+            u.set_payment_account('plus', delay_commit=True)
+            Session.add_all([u])
+            Session.commit()
+            return u
+
+        def _group(id, name, members, desc=''):
+            g = Group()
+            g.id     = id
+            g.name   = name
+            g.status = "active"
+            g.description = desc
+            g.avatar = _get_avatar(id)
+            for member in members:
+                g.join(member)
+            return g
+
+        def _content(type, title, content, creator, parent=None, media=[]):
+            if type == "draft":
+                c = DraftContent()
+            if type == "article":
+                c = ArticleContent()
+            if type == "assignment":
+                c = AssignmentContent()
+            if type == "comment":
+                c = CommentContent()
+            c.title   = title
+            c.content = content
+            c.creator = creator
+            c.parent  = parent
+            from glob import glob
+            for fn in media:
+                path = glob("civicboom/public/warehouse/%s.*" % fn)
+                if path:
+                    path = path[0]
+                    data = file(path).read()
+                    m = Media()
+                    m.name = fn
+                    m.type = "image"
+                    m.subtype = "png"
+                    m.hash = hashlib.sha1(data).hexdigest()
+                    m.filesize = len(data)
+                    file("%s/media-thumbnail/%s" % (wh_base, m.hash), "wb").write(data)
+                    c.attachments.append(m)
+            Session.add(c)
+            Session.commit()
+            return c
+
+        def _msg(src, dst, subject, content, read=False):
+            m = Message()
+            m.source = src
+            m.target = dst
+            m.subject = subject
+            m.content = content
+            m.read = read
+            Session.add_all([m])
+            Session.commit()
+            return m
+
+        # user to log in as
+        unittest = _user("unittest", "Jonny Test", "Just your average guy, with an interest in journalism")
+        unittest.location_home = "SRID=4326;POINT(1.0652 51.2976)"
+        unittest.location_current = "SRID=4326;POINT(1.0803 51.2789)"
+        unittest.set_payment_account('plus', delay_commit=True)
+
+        unittest_login = UserLogin()
+        unittest_login.user   = unittest
+        unittest_login.type   = "password"
+        unittest_login.token  = hashlib.sha1("password").hexdigest()
+
+        Session.add_all([unittest, unittest_login])
+        Session.commit()
+
+        # A world to interact with. Stuff taken from Deus Ex: Human Revolution :P
+        archie = _user("archie", "Archie Reynmann", "Some guy, nothing special")
+        morgan = _user("morgan", "Morgan Everett", "Owner of the world's biggest media group")
+        bob_page = _user("bob-page", "Bob Page", "Some guy, nothing special")
+        walton = _user("walton", "Walton Simons", "Some guy, nothing special")
+
+        picus_group = _group("picus-group", "Picus Communications", [morgan], "One Globe. One source for news")
+        mj12 = _group("mj12", "Majestic 12", [morgan, bob_page, walton])  # FIXME: this group wants privacy
+        mj12.location_home = "SRID=4326;POINT(-115.746267 37.646401)"
+
+        eliza = _user("eliza", "Eliza Cassan", "Lead anchor for the world's most popular news network")
+
+        picus_tv = _group("picus-tv", "Picus TV", [picus_group, eliza], "One Globe. One source for news")
+        picus_daily = _group("picus-daily", "Picus Daily Standard", [picus_group, eliza], "One Globe. One source for news")
+
+        _content("assignment", "Battle of the Bands: Photos wanted" , "[...]", picus_daily)
+        _content("assignment", "Travel photo of the day: Send yours for a chance to win an SLR camera" , "[...]", mj12)
+        c1 = _content("article", "Bomb Triggered at Sarif Manufacturing Plant", "[...]", picus_daily)
+        _content("assignment", "Where in the world is Carmen Sandiego?", "I've been looking for her for ages, no luck :(", unittest, media=["carmen"])
+        c11 = _content("article", "Anti-aug terrorist at large", "[...]", picus_daily, parent=c1)
+        c2 = _content("article", "Riots break out at Sarif HQ", "[...]", picus_daily)
+        _content("assignment", "Egypt: Have you had to cancel your holiday?" , "[...]", walton)
+        c21 = _content("assignment", "Wanted: videos from your streets", "We have a camera crew at the center of the riots, but how is the rest of the city holding up?", picus_tv, parent=c2)
+        c111 = _content("assignment", "Have you seen Zeke Sanders?", "[...]", picus_tv, parent=c11, media=["m-zeke"])
+        _content("assignment", "Have you ever suffered from road rage? Stories wanted", "[...]", bob_page)
+        c3 = _content("assignment", "Flooding on East Street", "Reports are coming in that the river is breeching causing fast moving floods around East Street. Are you there? Send us your videos", picus_tv, parent=c2)
+        c31 = _content("article", "Video of the floods", "Things are all go round here! Here's an interview with someone at the scene", unittest, media=["flood"])
+
+        d1 = _content("draft", "Report from regional team meeting", "[...]", unittest)
+        d2 = _content("draft", "Conference video", "[...]", unittest)
+        d3 = _content("draft", "Bankers' bonuses: What I think", "[...]", unittest)
+        d4 = _content("draft", "Operation Stack", "[...]", unittest)
+
+        m1 = _msg(eliza, unittest, "Have you got any more photos from the floods?", "We could use some high-quality stills for the print edition")
+        m2 = _msg(mj12, unittest, "An offer you won't refuse", "We need someone with skills like yours. Meet us by the old cake factory at midnight.")
+        m3 = _msg(morgan, unittest, "Going to the gig tonight?", "Looks like a lot of papers are on the hunt for photos, check it out")
+
+        for n in [eliza, picus_group, picus_tv, picus_daily]:
+            n.location_home = "SRID=4326;POINT(-73.549647 45.557904)"
+        from random import random
+        for n in [c1, c11, c111, c2, c21]:
+            n.location_home = "SRID=4326;POINT(%f %f)" % (51+random()-0.5, 0+random()-0.5)
+
+
+    if config['data_base'] == 'test':  # development, test
+        test_base()
+    if config['data_base'] == 'demo':  # demo
+        demo_base()
+    if config['data_base'] == 'none':  # production
+        pass

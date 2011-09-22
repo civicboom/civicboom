@@ -79,12 +79,17 @@ function refreshSearch(element, extra_fields) {
 function postInviteFrag(element, extra_fields) {
 	var form = element.parents('form');
 	var frag = form.parents('.frag_container');
+	var frag_refresh = frag.find('.frag_refresh').val();
 	var formArray = formArrayNoPlaceholders(form);
 	if (typeof extra_fields != 'undefined')
 		formArray = formArray.concat(extra_fields);
 	if (typeof element.attr('name') != 'undefined')
 		formArray.push({'name': element.attr('name'), 'value': element.val()});
 	$.post("/invite/index.frag", formArray, function (data) {
+	  if (frag_refresh) {
+	    cb_frag_reload(frag_refresh);
+	    console.log(frag_refresh);
+	  }
 		frag.html(data);
 	});
 	return false;

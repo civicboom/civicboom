@@ -11,6 +11,6 @@
 </%def>
 
 <%def name="new_article()">
-    ##<!--#include file="${h.url(controller='misc', action='new_article', format='frag')}"-->
+    ##<!--#include virtual="${h.url(controller='misc', action='new_article', format='frag')}"-->
     <%include file="/frag/misc/new_article.mako"/>
 </%def>

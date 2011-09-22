@@ -31,8 +31,8 @@ class Media(Base):
     type          = Column(_media_types,     nullable=False, doc="MIME type, eg 'text', 'video'")
     subtype       = Column(String(32),       nullable=False, doc="MIME subtype, eg 'jpeg', '3gpp'")
     hash          = Column(String(40),       nullable=False, index=True)
-    caption       = Column(UnicodeText(),    nullable=False)
-    credit        = Column(UnicodeText(),    nullable=False)
+    caption       = Column(UnicodeText(),    nullable=False, default='')
+    credit        = Column(UnicodeText(),    nullable=False, default='')
     filesize      = Column(Integer(),        nullable=True, doc="the length of the processed media file in bytes")
     location      = Golumn(Point(2),         nullable=True)
     timestamp     = Column(DateTime(),       nullable=False, default=now)
@@ -65,7 +65,7 @@ class Media(Base):
         #'full+actions': copy.deepcopy(__to_dict__['default']) ,
     })
     __to_dict__['full'].update({
-            'processing_status' : lambda media: app_globals.memcache.get(str("media_processing_%s" % media.id)) ,
+            'processing_status' : lambda media: app_globals.memcache.get(str("media_processing_%s" % media.hash)) ,
     })
 
 

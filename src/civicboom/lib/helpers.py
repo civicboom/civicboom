@@ -197,7 +197,10 @@ def wh_url(folder, filename):
     # all other folders (media, avatars) are served from our beefy-but-slow-to
     # update warehouse (currently amazon S3)
     else:
-        return proto+config["warehouse.url"]+"/"+folder+"/"+filename
+        if config['warehouse.type'] == "local":
+            return proto+request.environ.get("HTTP_HOST")+config["warehouse.url"]+"/"+folder+"/"+filename
+        else:
+            return proto+config["warehouse.url"]+"/"+folder+"/"+filename
 
 
 def uniqueish_id(*args):
@@ -392,6 +395,7 @@ def form(*args, **kwargs):
             return false;
         """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
         )
+    kwargs['novalidate'] = 'novalidate'
 
     # put the href generated url back in the right place
     if len(args)>0 and isinstance(args[0], tuple):

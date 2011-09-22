@@ -384,7 +384,7 @@
 						
 						## Clients with    javascript can have live updates from the media controller
 						<script type="text/javascript">
-							updateMedia($('#media_attachment_${id}'), ${id}, ${media['hash']});
+							updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
 						</script>
 						<!-- End media still undergoing proceccesing -->
 					% endif
@@ -767,7 +767,6 @@
                             
                             ## GrrrrregM: Damn this is annoying, we need to check if we're in a modal box & close if we are.
                             var popup = $(this).parents('#simplemodal-data');
-                            console.log(popup);
                             if (popup.length > 0) {
                                 $.modal.close();
                             }

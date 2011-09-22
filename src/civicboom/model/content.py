@@ -3,7 +3,7 @@ from civicboom.model.meta import Base, location_to_string, JSONType, CacheChange
 from civicboom.model.member import Member, has_role_required
 from civicboom.model.media import Media
 
-from cbutils.misc import now
+from cbutils.misc import now, debug_type
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import Unicode, UnicodeText, String
@@ -42,7 +42,7 @@ class ContentTagMapping(Base):
 class Boom(Base):
     __tablename__ = "map_booms"
     content_id    = Column(Integer(),    ForeignKey('content.id'), nullable=False, primary_key=True)
-    member_id     = Column(String(32),   ForeignKey('member.id') , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade") , nullable=False, primary_key=True)
     timestamp     = Column(DateTime(),   nullable=False, default=now)
     member        = relationship("Member" , primaryjoin='Member.id==Boom.member_id')
     content       = relationship("Content", primaryjoin='Content.id==Boom.content_id')
@@ -53,8 +53,8 @@ class Boom(Base):
 
 class Rating(Base):
     __tablename__ = "map_ratings"
-    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(String(32),   ForeignKey('member.id')              , nullable=False, primary_key=True)
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id')      , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade"), nullable=False, primary_key=True)
     rating        = Column(Integer(),    nullable=False)
 
     __table_args__ = (
@@ -65,8 +65,8 @@ class Rating(Base):
 
 class Interest(Base):
     __tablename__ = "map_interest"
-    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id'), nullable=False, primary_key=True)
-    member_id     = Column(String(32),   ForeignKey('member.id')              , nullable=False, primary_key=True)
+    content_id    = Column(Integer(),    ForeignKey('content_user_visible.id')      , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade"), nullable=False, primary_key=True)
 
 
 class Content(Base):
@@ -97,7 +97,7 @@ class Content(Base):
     id              = Column(Integer(),        primary_key=True)
     title           = Column(Unicode(250),     nullable=False, default=u"Untitled")
     content         = Column(UnicodeText(),    nullable=False, default=u"", doc="The body of text")
-    creator_id      = Column(String(32),       ForeignKey('member.id'),  nullable=False, index=True)
+    creator_id      = Column(String(32),       ForeignKey('member.id', onupdate="cascade"),  nullable=False, index=True)
     parent_id       = Column(Integer(),        ForeignKey('content.id'), nullable=True,  index=True)
     location        = GeometryColumn(Point(2), nullable=True   ) # FIXME: area rather than point? AllanC - Point for now, need to consider referenceing polygon areas in future? (more research nedeed)
     creation_date   = Column(DateTime(),       nullable=False, default=now)
@@ -217,7 +217,8 @@ class Content(Base):
         from civicboom.lib.cache import invalidate_content
         invalidate_content(self, remove=remove)
 
-    def action_list_for(self, member, **kwargs):
+    def action_list_for(self, member, role):
+        assert not member or isinstance(member, Member), debug_type(member) # just a double check in case any of the codebase pass's a member dict here accidentaly
         action_list = []
         if self.editable_by(member):
             action_list.append('edit')
@@ -227,9 +228,11 @@ class Content(Base):
             action_list.append('flag')
         if self.private == False:
             action_list.append('aggregate')
+        if self.creator == member and has_role_required('editor', role):
+            action_list.append('delete')
         return action_list
 
-    def editable_by(self, member):
+    def editable_by(self, member, **kwargs):
         """
         Check to see if a member object has the rights to edit this content
         
@@ -237,7 +240,7 @@ class Content(Base):
         """
         if self.edit_lock:
             return False
-        if self.creator == member:
+        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
             return True
         # TODO check groups of creator to see if member is in the owning group
         return False
@@ -411,11 +414,10 @@ class DraftContent(Content):
         Content.clone(self, content)
         self.publish_id = content.id
         
-    def action_list_for(self, member, **kwargs):
-        action_list = Content.action_list_for(self, member, **kwargs)
-        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
+    def action_list_for(self, member, role='admin'):
+        action_list = Content.action_list_for(self, member, role)
+        if self.creator == member and has_role_required('editor', role):
             action_list.append('publish')
-            action_list.append('delete')
         return action_list
 
 
@@ -457,18 +459,17 @@ class UserVisibleContent(Content):
     __to_dict__['full'        ].update(_extra_user_visible_fields)
 
 
-    def action_list_for(self, member, **kwargs):
-        action_list = Content.action_list_for(self, member, **kwargs)
+    def action_list_for(self, member, role='admin'):
+        action_list = Content.action_list_for(self, member, role)
         action_list.append('respond')
-        if self.creator == member and has_role_required('editor', kwargs.get('role', 'admin')):
+        if self.creator == member and has_role_required('editor', role):
             action_list.append('update')
             action_list.append('delete')
-        if self.is_parent_owner(member):# and member.has_account_required('plus'): # observing member need a paid account
-            if has_role_required('editor', kwargs.get('role', 'admin')):
-                if self.approval == 'none':
-                    action_list.append('approve')
-                    action_list.append('seen')
-                    action_list.append('dissasociate')
+        if self.is_parent_owner(member) and has_role_required('editor', role): # and member.has_account_required('plus'): # AllanC - Although we return the actions here, the Template decides what message to display by checking has_account_required. I REALLY don't like this, it means the action list dose not represent the actions the user can perform
+            if self.approval == 'none':
+                action_list.append('approve')
+                action_list.append('seen')
+                action_list.append('dissasociate')
         #AllanC: TODO - if has not boomed before - check boom list:
         if self.creator != member:
             action_list.append('boom')
@@ -586,8 +587,8 @@ class AssignmentContent(UserVisibleContent):
         Content.__init__(self)
         self.__type__ = 'assignment'
 
-    def action_list_for(self, member, **kwargs):
-        action_list = UserVisibleContent.action_list_for(self, member, **kwargs)
+    def action_list_for(self, member, role='admin'):
+        action_list = UserVisibleContent.action_list_for(self, member, role)
         if self.creator == member:
             action_list.append('invite_to_assignment')
         if self.acceptable_by(member):
@@ -650,7 +651,7 @@ class MemberAssignment(Base):
     __tablename__ = "member_assignment"
     _assignment_status = Enum("pending", "accepted", "withdrawn", "responded", name="assignment_status")
     content_id    = Column(Integer(),    ForeignKey('content_assignment.id'), nullable=False, primary_key=True)
-    member_id     = Column(String(32),   ForeignKey('member.id')            , nullable=False, primary_key=True)
+    member_id     = Column(String(32),   ForeignKey('member.id', onupdate="cascade")            , nullable=False, primary_key=True)
     status        = Column(_assignment_status,  nullable=False)
     member_viewed = Column(Boolean(),    nullable=False, default=False, doc="a flag to keep track to see if the member invited has actually viewed this page")
     #update_date   = Column(DateTime(),   nullable=False, default=func.now(), doc="Controlled by postgres trigger")
@@ -775,7 +776,7 @@ class ContentEditHistory(Base):
     __tablename__ = "content_edit_history"
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(String(32),    ForeignKey('member.id'),  nullable=False, index=True)
+    member_id     = Column(String(32),    ForeignKey('member.id', onupdate="cascade"),  nullable=False, index=True)
     timestamp     = Column(DateTime(),    nullable=False, default=now)
     source        = Column(Unicode(250),  nullable=False, default="other", doc="civicboom, mobile, another_webpage, other service")
     text_change   = Column(UnicodeText(), nullable=False)
@@ -786,7 +787,7 @@ class FlaggedContent(Base):
     _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
     id            = Column(Integer(),     primary_key=True)
     content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(String(32),    ForeignKey('member.id') , nullable=True )
+    member_id     = Column(String(32),    ForeignKey('member.id', onupdate="cascade") , nullable=True )
     timestamp     = Column(DateTime(),    nullable=False, default=now)
     type          = Column(_flag_type,    nullable=False)
     comment       = Column(UnicodeText(), nullable=False, default="", doc="optional should the user want to add additional details")

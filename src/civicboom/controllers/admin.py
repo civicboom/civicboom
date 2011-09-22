@@ -158,6 +158,8 @@ class AdminControllerBase(BaseController):
         response.headers['Content-type'] = "text/csv; charset=utf-8"
         csv = []
         for user in Session.query(User).all():
+            if user.config.get('no_marketing_emails'):
+                continue
             csv.append(','.join([user.username, user.name or "", user.email_normalized or "", user.status]))
         return "\n".join(csv)
 

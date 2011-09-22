@@ -151,8 +151,8 @@ function cb_frag_load(jquery_element, url) {
 
 function cb_frag_remove(jquery_element, callback, from_history) {
     var parent = jquery_element.parents('.'+fragment_container_class); // find parent
-  if (typeof cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer') != 'undefined')
-    clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
+    if (typeof cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer') != 'undefined')
+        clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
     parent.toggle(scroll_duration, function(){
         parent.remove();
         // If no fragments on screen redirect to default page
@@ -210,7 +210,12 @@ function cb_frag_reload(param, exclude_frag) {
     }
     
     function get_parent_container_element_source(jquery_element) {
-        var container_element   = jquery_element.parents('.'+fragment_container_class);
+        var container_element;
+        if (jquery_element.hasClass(fragment_container_class)) {
+            container_element   = jquery_element;
+        } else {
+            container_element   = jquery_element.parents('.'+fragment_container_class);
+        }
         var frag_source_element = container_element.find('.'+fragment_source_class);
         var frag_source_href    = frag_source_element.attr('href');
         return [container_element, frag_source_href];
@@ -225,7 +230,10 @@ function cb_frag_reload(param, exclude_frag) {
         var frag_source  = elem_source_pair[1];
         clear_autosave_timer(jquery_element); 
         display_reload_feedback(frag_element);
-        frag_element.load(frag_source);
+        frag_element.load(frag_source, function (text, status, xhr) {
+            if (xhr.status == 404)
+                cb_frag_remove(jquery_element);
+        });
     }
     
     function reload_frags_containing(array_of_urls, exclude_frag) {
@@ -250,7 +258,7 @@ function cb_frag_reload(param, exclude_frag) {
         });
         
         // normalize exclude fragment if present
-        if (exclude_frag && !exclude_frag.hasClass('fragment_container_class')) {
+        if (exclude_frag && !exclude_frag.hasClass(fragment_container_class)) {
             exclude_frag = exclude_frag.parents('.'+fragment_container_class);
         }
         // Go though all frags found reloading them
@@ -258,7 +266,10 @@ function cb_frag_reload(param, exclude_frag) {
             var frag_element = frags_to_refresh[frag_source]
             if (exclude_frag==null || exclude_frag.attr('id')!=frag_element.attr('id')) {
                 display_reload_feedback(frag_element);
-                frag_element.load(frag_source);
+                frag_element.load(frag_source, function (text, status, xhr) {
+                    if (xhr.status == 404)
+                        cb_frag_remove(jquery_element);
+                });
             }
         }
     }

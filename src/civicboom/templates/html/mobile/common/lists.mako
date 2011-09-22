@@ -31,7 +31,7 @@
         <ul data-role="listview" data-inset="true" data-split-icon="delete" data-split-theme="d">
             % if title:
                 <li data-role="list-divider" role="heading">
-                    ${title}
+                    ${title.capitalize()}
                     <span class="ui-li-count">${list['count']}</span>    
                 </li>
             % endif

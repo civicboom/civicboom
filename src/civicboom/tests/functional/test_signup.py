@@ -10,6 +10,10 @@ from civicboom.tests import *
 
 class TestSignup(TestController):
 
+    def setUp(self):
+        pass # Dont log in by default
+
+
     #---------------------------------------------------------------------------
     # Signup
     #---------------------------------------------------------------------------
@@ -21,13 +25,12 @@ class TestSignup(TestController):
         logout
         login
         """
-        self.log_out()
         
         # Request new user email for user that already exisits - reject
         response = self.app.post(
             url(controller='register', action='email', format="json"),
             params={
-                'username': u'unittest',
+                'username': u'unittest', # reject existing username
             },
             status=400,
         )
@@ -36,7 +39,7 @@ class TestSignup(TestController):
             url(controller='register', action='email', format="json"),
             params={
                 'username': u'unittest2',
-                'email'   : u'test+unittest@civicboom.com'
+                'email'   : u'test+unittest@civicboom.com' # reject existing email address
             },
             status=400,
         )
@@ -173,6 +176,13 @@ class TestSignup(TestController):
                 'help_type'       : u'ind',
             },
         )
+        
+        # Check redirect to 'how_to' after registration
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('how_to', response_location)
+        
         self.assertEqual(getNumEmails(), num_emails + 2) # Check welcome email sent # and lizzies email for every member signup
         #email_response = getLastEmail()
         #self.assertIn('civicboom', email_response.content_text)
@@ -186,31 +196,179 @@ class TestSignup(TestController):
     # Signup & autofollow user
     #---------------------------------------------------------------------------
     def test_signup_and_follow_default_user(self):
-        self.log_out()
+
+        default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup') # Remeber auto follow config var to reset at end of test
         
         # Fake config setting
+        self.config_var('setting.username_to_auto_follow_on_signup', 'puppy') # Change auto follow on signup config var
         
-        default_auto_follow = self.config_var('setting.username_to_auto_follow_on_signup')
-        self.config_var('setting.username_to_auto_follow_on_signup', 'unittest')
+        # Setup unitfriend to allow mutual registration follows
+        self.log_in_as('unitfriend')
+        response = self.app.post(
+            url('setting',id="me",format="json"),
+            params={
+                '_method': 'PUT',
+                '_authentication_token': self.auth_token,
+                'allow_registration_follows' : 'true',
+            },
+            status=200
+        )
+        self.log_out()
         
-        num_emails = getNumEmails()
         
         # Request new user email for new user
         response = self.app.post(
             url(controller='register', action='email', format="json"),
             params={
-                'username': u'test_signup_follow',
-                'email'   : u'test+signup_autofollow@civicboom.com',
+                'username'     : u'test_signup_follow',
+                'email'        : u'test+signup_autofollow@civicboom.com',
+                'follow'       : '  bunny,  kitten   ',
+                'follow_mutual': 'unitfriend',
             },
         )
         
-        # 2 emails should be generated, the welcome! and the 'new_follower' email to unittest
-        # AllanC -  ADDITION - the default is that new follower is not a default email alert, so we are only checking for 'welcome'
-        self.assertEqual(getNumEmails(), num_emails + 2)
-
-        from civicboom.lib.database.get_cached import get_member
-        get_member('test_signup_follow').delete()
-
+        # Check for link in email
+        link = str(re.search(r'https?://(?:.*?)(/.*?)[\'"\s]', getLastEmail().content_text+' ').group(1))
+        self.assertIn('hash', link)
+        
+        num_notifications = self.getNumNotificationsInDB()
+        # Complete the registration process - this will trigger the new_follower noifications
+        response = self.app.post(
+            link,
+            params={
+                'password'        : 'password',
+                'password_confirm': 'password',
+                'dob'             : u'1980-01-01',
+                'name'            : u'This is my full name',
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
+            },
+        )
+        
+        self.assertEquals(self.getNumNotificationsInDB(), num_notifications + 5) # test_signup_follow has - 4 new_follower notifications. unitfriend has 1 new_follower notification
+        # Check contents of notifcications generated
+        notifications = self.getNotificationsFromDB(5)
+        notification_targets  = [n.target_id for n in notifications]
+        notification_subjects = [n.subject   for n in notifications]
+        for member in ['puppy','bunny','kitten','unitfriend','test_signup_follow']:
+            self.assertIn(member, notification_targets)
+        for subject in notification_subjects:
+            self.assertEquals('new follower', subject)
+        
+        # Cleanup
+        self.delete_member('test_signup_follow')
+        
         # Set back the config var so tests run after this are not affected
         self.config_var('setting.username_to_auto_follow_on_signup', default_auto_follow)
         self.config_var('setting.username_to_auto_follow_on_signup', '')
+
+
+    #---------------------------------------------------------------------------
+    # Signup with the same unverifyed email address multiple times
+    #---------------------------------------------------------------------------
+    def test_signup_multiple_unveifyed(self):
+        """
+        Signup with the same unverifyed email address multiple times
+        This should not create new users but send the email again
+        """
+        from civicboom.model import User
+        from civicboom.model.meta import Session
+        
+        num_users  = Session.query(User).count()
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url(controller='register', action='email'),
+            params={
+                'username': u'test_signup_multiple',
+                'email'   : u'test+multiple@civicboom.com',
+            },
+        )
+        self.assertEqual(Session.query(User).count(), num_users  + 1)
+        self.assertEqual(getNumEmails()             , num_emails + 1)
+        
+        num_users  = Session.query(User).count()
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url(controller='register', action='email'),
+            params={
+                'username': u'test_signup_multiple_again', # Username should be updated
+                'email'   : u'test+multiple@civicboom.com',
+            },
+        )
+        self.assertEqual(Session.query(User).count(), num_users     ) # No new user should be generated
+        self.assertEqual(getNumEmails()             , num_emails + 1) # signup email should be resent
+        self.assertIsNone   (Session.query(User).get('test_signup_multiple')      ) # Check old user not exists and has been renamed
+        self.assertIsNotNone(Session.query(User).get('test_signup_multiple_again')) # Check user exists
+        
+        # Cleanup
+        self.delete_member('test_signup_multiple_again')
+
+    #---------------------------------------------------------------------------
+    # Signup with Janrain
+    #---------------------------------------------------------------------------
+    def test_signup_janrain(self):
+        # See http://documentation.janrain.com/profiledata for more info
+        fake_janrain_return = json.dumps({
+            u'profile': {
+                u'preferredUsername': u'janrain_test',
+                u'displayName'      : u'janrain_test',
+                u'name'             : {
+                    u'givenName' : u'Janrain',
+                    u'formatted' : u'Janrain Test',
+                    u'familyName': u'Test'
+                },
+                u'providerName' : u'Google',
+                u'googleUserId' : u'000000000000000000000',
+                u'url'          : u'https://www.google.com/profiles/000000000000000000000',
+                u'email'        : u'janrain_test@civicboom.com',
+                #u'verifiedEmail': u'janrain_test@civicboom.com',
+                u'identifier'   : u'https://www.google.com/profiles/000000000000000000000',
+                u'primaryKey'   : u'janrain_test',
+                u'photo'        : u'https://www.civicboom.com/images/logo.png',
+                u'birthday'     : u'1980-01-01',
+            },
+            u'stat': u'ok',
+        })
+        
+        response = self.app.post(
+            url(controller='account', action='signin'),
+            params={
+                'token'              :'00000000000000000000000000000000',
+                'fake_janrain_return': fake_janrain_return,
+            },
+        )
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('id="reg_form"', response.body) # Check that we have arrived at the registration page
+        
+        # Complete the registration
+        response = self.app.post(
+            response_location,
+            params={
+                'name'            : u'Janrain Test Display Name', # This is automatically filled in on the regisration form
+                'terms'           : u'checked',
+                'help_type'       : u'ind',
+            },
+        )
+        
+        # Logout
+        self.log_out()
+        
+        # Attempt Login
+        response = self.app.post(
+            url(controller='account', action='signin'),
+            params={
+                'token'              :'00000000000000000000000000000000',
+                'fake_janrain_return': fake_janrain_return,
+            },
+        )
+        # Check redirect to profile
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('profile'                  , response_location)
+        self.assertIn('Janrain Test Display Name', response.body    ) # Check that we have arrived at profile page. Should have display name
+        
+        self.delete_member('janrain_test')
+        

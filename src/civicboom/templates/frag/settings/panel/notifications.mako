@@ -63,27 +63,58 @@
     %>
     
     % for group_name in setting_groups.keys():
-      <table class="zebra" style="width: 100%">
-        <tr>
-          <th>Type<span style="float: right;">via&nbsp;&nbsp;</span></th>
-          % for notif_type in notification_types:
-            <th>${notif_names.get(notif_type, '').replace('Notification', 'Website').capitalize()}</th>
-          % endfor
-        </tr>
-      % for setting_name in setting_groups[group_name]:
-        <tr>
-          <td>${d['settings_meta'][setting_name[0]]['description']}</td>
-          % for notif_type in notification_types:
-            <td>
-              <select class="yesno" name="${setting_name[0]}-${notif_type[0]}">
-                <option class="yes" ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
-                <option class="no"  ${select(setting_name[0],notif_type[0],False)} value="">No</option>
-              </select>
-            </td>
-          % endfor
-        </tr>
-      % endfor
-      </table>
+        % if group_name == 'notifications':
+            <table class="zebra" style="width: 100%">
+                <tr>
+                    <th>Type<span style="float: right;">via&nbsp;&nbsp;</span></th>
+                    % for notif_type in notification_types:
+                        <th>${notif_names.get(notif_type, '').replace('Notification', 'Website').capitalize()}</th>
+                    % endfor
+                </tr>
+                % for setting_name in setting_groups[group_name]:
+                    <tr>
+                        <td>${d['settings_meta'][setting_name[0]]['description']}</td>
+                        % for notif_type in notification_types:
+                            <td>
+                                <select class="yesno" name="${setting_name[0]}-${notif_type[0]}">
+                                    <option class="yes" ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
+                                    <option class="no"  ${select(setting_name[0],notif_type[0],False)} value="">No</option>
+                                </select>
+                            </td>
+                        % endfor
+                    </tr>
+                % endfor
+            </table>
+        % else:
+        <div class="setting_block">
+            <div class="setting_group_name setting_pad">${group_name.replace('_',' ').capitalize()}</div>
+                % for setting_name in setting_groups[group_name]:
+                    <%
+                        setting_meta  = d['settings_meta'][setting_name[0]]
+                        setting_type  = None
+                        if 'type' in setting_meta:
+                            setting_type  = setting_meta['type']
+                        if setting_type == 'string_location':
+                            continue
+                        setting_value = ''
+                        setting_values = setting_meta.get('value')
+                        if setting_name[0] in d['settings']:
+                            setting_value = d['settings'][setting_name[0]]
+                    %>
+                    
+                    <div class="setting_name_long setting_pad">${d['settings_meta'][setting_name[0]]['description']}</div>
+                    <div class="setting_field_short setting_pad">
+                        <%
+                            selected = setting_value and setting_value!=''
+                        %>
+                        <select class="yesno" name="${setting_name[0]}" id="${setting_name[0]}">
+                            <option class="yes" value="True" ${'selected="selected"' if selected else ''}>Yes</option>
+                            <option class="no" value="" ${'selected="selected"' if not selected else ''}>No</option>
+                        </select>
+                    </div>
+                % endfor
+            </div>
+        % endif
     % endfor
     <input class="button" type="submit" name="submit" value="${_('Save settings')}" style="margin: 16px;"/>
 ${h.end_form()}

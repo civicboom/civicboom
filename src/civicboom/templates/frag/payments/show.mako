@@ -34,7 +34,7 @@
 <%def name="body()">
     <div class="frag_whitewrap">
         <h1>${_('Manage your payment account')}</h1>
-        <div class="fl">
+        <div class="fl" style="width: 50%">
             <p><h3>${_('Account details')}</h3>
             ${_('Payment account number')}: ${d['id']}<br />
             ${_('Account type')}: ${_('_'+d['type']).capitalize()}<br />
@@ -56,7 +56,14 @@
                     % endif
                 % endfor
             </p>
-            <p><a href="${h.url('edit_payment', id=d['id'])}">${_('Edit account information')}</a></p>
+        </div>
+        <div class="cb">
+            <div class="fl" style="width: 50%;">
+                <p><a href="${h.url('payment_action', action='regrade_plans', id=d['id'])}">Upgrade / downgrade</a></p>
+            </div>
+            <div class="fr" style="width: 50%;">
+                <p><a href="${h.url('edit_payment', id=d['id'])}">${_('Edit account information')}</a></p>
+            </div>
         </div>
         <div class="cb"></div>
     </div>
@@ -121,6 +128,7 @@
                             h.args_to_tuple('payment_action', action='member_remove', id=d['id'], username=member.get('username'), format='redirect') ,
                             value           = _('Remove') ,
                             title           = _("Remove %s") % member.get('name', '') ,
+                            json_form_complete_actions = "cb_frag_reload(current_element); " #% url('payment', id=self.id),
                         )}
                     </div>
                     

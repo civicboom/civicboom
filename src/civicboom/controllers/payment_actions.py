@@ -10,17 +10,18 @@ from civicboom.model.member import account_types_level
 from decimal import Decimal
 import civicboom.lib.payment as payment
 import datetime
+from civicboom.lib.communication.email_lib import send_email
 #from civicboom.controllers.groups import _get_group
 
 log      = logging.getLogger(__name__)
 
 class PaymentActionsController(BaseController):
     
-    # Only allow these actions if in development mode
-    def __before__(self, action, **params):
-        if not config['development_mode']==True:
-            return abort(404)
-        BaseController.__before__(self)
+#    # Only allow these actions if in development mode
+#    def __before__(self, action, **params):
+#        if not config['development_mode']==True:
+#            return abort(404)
+#        BaseController.__before__(self)
     
     @web
     @auth
@@ -95,7 +96,7 @@ class PaymentActionsController(BaseController):
         
         invoice = Session.query(Invoice).filter(and_(Invoice.id==invoice_id, Invoice.payment_account_id==account.id)).first()
         
-        if not invoice or invoice.status not in ['billed', 'paid']:
+        if not invoice or invoice.status not in ['billed', 'paid', 'disregarded']:
             raise action_error(_('This invoice does not exist'), code=404)
         
         data = invoice.to_dict(list_type='full')
@@ -300,9 +301,21 @@ class PaymentActionsController(BaseController):
         return redirect(h.url(controller='payment_actions', id=txn.invoice.payment_account.id, action='invoice', invoice_id=txn.invoice.id))
     
     @web
+    @authorize
+    @role_required('admin')
+    def regrade_plans(self, id, **kwargs):
+        from civicboom.controllers.payments import PaymentsController
+        return PaymentsController().show(id=id)
+    
+    @web
     @auth
     @role_required('admin')
     def regrade(self, id, **kwargs):
+        if id == "me":
+            if c.logged_in_persona.payment_account_id:
+                id = c.logged_in_persona.payment_account_id
+            else:
+                return redirect(url('new_payment'))
         account = Session.query(PaymentAccount).filter(PaymentAccount.id == id).first()
         if not account:
             raise action_error(_('Payment account does not exist'), code=404)
@@ -335,16 +348,10 @@ class PaymentActionsController(BaseController):
                     .filter(InvoiceLine.service_id == current_service.id).first()
                     
             def send_admin_email(extra_error):
-                send_email(
-                    subject=_('Welcome to _site_name'),
-                    content_html=render('/email/payment/admin/regrade_failed.mako',
-                        extra_vars={
-                            'persona':c.logged_in_persona,
-                            'new_account_type': new_account_type,
-                            'extra_error': extra_error,
-                        })
+                send_email(config['email.payment_alert'],
+                    subject='Regrade Fail',
+                    content_text='Oops, something went wrong when %s (account %s) tried to regrade. %s' % (c.logged_in_persona.id, account.id, extra_error),
                 )
-                pass
             
             # Check paid invoice line
             prev_invoice_line = get_invoice_line("paid", psd)
@@ -365,12 +372,13 @@ class PaymentActionsController(BaseController):
                     apply_payment.append(apply_payment_prev)
                 else:
                     # Kick back to manual refund.
-                    #send_admin_email('More than one service needing refund on previous paid invoice!')
+                    send_admin_email('More than one service needing refund on previous paid invoice!')
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
             # Check billed invoice line
-            prev_invoice_line = get_invoice_line("billed", psd) or []
+            prev_invoice_line = get_invoice_line("billed", psd)
+            prev_invoice_line = [prev_invoice_line] if prev_invoice_line else []
             giv = get_invoice_line("billed", nsd)
             if giv:
                 prev_invoice_line.append(giv)
@@ -380,7 +388,7 @@ class PaymentActionsController(BaseController):
                     line.invoice.status = "disregarded"
                 else:
                     # Kick back to manual refund.
-                    #send_admin_email('More than one service needing refund on %s billed invoice!' % line.invoice.timestamp)
+                    send_admin_email('More than one service needing refund on %s billed invoice!' % line.invoice.timestamp)
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
                 
@@ -395,7 +403,7 @@ class PaymentActionsController(BaseController):
                     apply_payment_next.reference = prev_invoice_line.invoice_id
                     apply_payment.append(apply_payment_next)
                 else:
-                    #send_admin_email('More than one service needing refund on next paid invoice!')
+                    send_admin_email('More than one service needing refund on next paid invoice!')
                     # also raise error to admins?
                     raise action_error(_("Sorry we can't automatically change your account type, please contact us using the feedback form."), code=400)
         

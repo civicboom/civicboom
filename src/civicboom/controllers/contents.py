@@ -2,14 +2,12 @@
 from civicboom.lib.base import *
 
 # Datamodel and database session imports
-from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, Boom, UserVisibleContent
+from civicboom.model                   import Media, Content, CommentContent, DraftContent, CommentContent, ArticleContent, AssignmentContent, UserVisibleContent # Boom, 
 from civicboom.lib.database.get_cached import get_license, get_tag, get_assigned_to, get_content as _get_content
 from civicboom.model.content           import _content_type as content_types, publishable_types
 
 # Other imports
-from civicboom.lib.communication import messages
 from civicboom.lib.database.polymorphic_helpers import morph_content_to
-from civicboom.lib.database.actions             import respond_assignment
 
 # Cache
 from civicboom.lib.cache import _cache, get_cache_key, normalize_kwargs_for_cache, gen_key_for_lists
@@ -19,24 +17,29 @@ import formencode
 import civicboom.lib.form_validators.base
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-
 # Search imports
 from civicboom.model.filters import *
-from civicboom.model      import Content, Member
-from sqlalchemy           import or_, and_, null, func, Unicode, asc, desc
-from sqlalchemy.orm       import join, joinedload, defer
-from geoalchemy import Point
-import datetime
-from dateutil.parser import parse as parse_date
+from sqlalchemy.orm       import joinedload
+from sqlalchemy           import asc, desc
 
 # Other imports
-import re
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
 from time import time
 
 # Logging setup
 log      = logging.getLogger(__name__)
+
+
+
+# Unneeded
+#from sqlalchemy.orm       import join,  defer
+#from civicboom.model      import Content, Member
+#from sqlalchemy           import or_, and_, null, func, Unicode, asc, desc # AllanC unneeded?
+#from geoalchemy import Point
+#from dateutil.parser import parse as parse_date # AllanC - unneeded?
+#import re
+
 
 
 
@@ -716,82 +719,48 @@ class ContentsController(BaseController):
             #         This is NOT acceptable for ints, floats, longs, or None
             #         I wanted to override __setitem__ in the extra fields object to do this conversion in the same day obj_to_dict works, but alas SQLAlchemy does some magic
         
-        def send_notifications():
-            # -- Publishing --------------------------------------------------------
-            if  submit_type=='publish'     and \
-                permissions['can_publish'] and \
-                content.__type__ in publishable_types:
-                
-                # GregM: Content can now stay private after publishing :)
-                #content.private = False # TODO: all published content is currently public ... this will not be the case for all publish in future
-                
-                # Notifications ----------------------------------------------------
-                # AllanC - as notifications not need commit anymore this can be done after?
-                message_to_all_creator_followers = None
-                if starting_content_type != content.__type__ or called_from_create_method:
-                    # Send notifications about NEW published content
-                    if   content.__type__ == "article"   :
-                        message_to_all_creator_followers = messages.article_published_by_followed(creator=content.creator, article   =content)
-                    elif content.__type__ == "assignment":
-                        message_to_all_creator_followers = messages.assignment_created           (creator=content.creator, assignment=content)
-                    
-                    # if this is a response - notify parent content creator
-                    if content.parent:
-                        content.parent.creator.send_notification(
-                            messages.new_response(member=content.creator, content=content, parent=content.parent, you=content.parent.creator)
-                        )
-                        
-                        # if it is a response, mark the accepted status as 'responded'
-                        respond_assignment(content.parent, content.creator, delay_commit=True)
-                    
-                    content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
-                    
-                    user_log.info("published new Content #%d" % (content.id, ))
-                    # Aggregate new content
-                    content.aggregate_via_creator() # Agrigate content over creators known providers
-                else:
-                    # Send notifications about previously published content has been UPDATED
-                    if   content.__type__ == "assignment":
-                        if content.update_date < now() - datetime.timedelta(days=1): # AllanC - if last updated > 24 hours ago then send an update notification - this is to stop notification spam as users update there assignment 10 times in a row
-                            message_to_all_creator_followers = messages.assignment_updated(creator=content.creator, assignment=content)
-                    # going straight to publish, content may not have an ID as it's
-                    # not been added and committed yet (this happens below)
-                    #user_log.info("updated published Content #%d" % (content.id, ))
-                    
-                if message_to_all_creator_followers:
-                    content.creator.send_notification_to_followers(message_to_all_creator_followers, private=content.private)
-            
-            # AllanC - is this the correct place to have comment notifications created?, as they cant be updated .. we can just gen the notifications safly once here?
-            if content.__type__ == "comment":
-                content.parent.creator.send_notification(
-                    messages.comment(member=content.creator, content=content, you=content.parent.creator)
-                )
+        publishing_for_first_time = starting_content_type != content.__type__ or called_from_create_method
+        
+        if publishing_for_first_time:
+            content.comments = [] # Clear comments when upgraded from draft to published content? we dont want observers comments 
         
         # -- Save to Database --------------------------------------------------
         Session.add(content)
         Session.commit()
-        #content.invalidate_cache()  # Invalidate any cache associated with this content - AllanC unneeded as this triggers automatically on change and commit
-        user_log.debug("updated Content #%d" % (content.id, )) # todo - move this so we dont get duplicate entrys with the publish events above
         
-        send_notifications()
-        Session.commit()
-        
-        # Profanity Check --------------------------------------------------
-        if config['feature.profanity_filter']:
-            if (submit_type=='publish' and content.private==False) or content.__type__ == 'comment':
-                worker.add_job({
-                    'task'     : 'profanity_check',
-                    'content_id': content.id,
-                    'url_base' : url('',qualified=True) #'http://www.civicboom.com/' , # AllanC - get this from the ENV instead please
-                })
-        
-        # -- Redirect (if needed)-----------------------------------------------
-        
+        # -- Optional - abort with error after preserving draft ----------------
         # We raise any errors at the end because we still want to save any draft content even if the content is not published
         if error:
-            #log.debug("raising the error")
-            #log.debug(error)
+            user_log.info("Content #%d error updating \n %s" % (content.id, error))
             raise error
+        
+        # -- Log activity ------------------------------------------------------
+        if publishing_for_first_time:
+            user_log.info("Content #%d created/published" % (content.id, ))
+        else:
+            user_log.info("Content #%d updated"           % (content.id, ))
+        
+        # Queue Worker Jobs-- --------------------------------------------------
+        def add_job(job_name, **kwargs):
+            job_dict = {
+                'task'    : job_name,
+                'content' : content.id,
+            }
+            job_dict.update(kwargs)
+            worker.add_job(job_dict)
+        
+        if submit_type=='publish' and permissions['can_publish'] and content.__type__ in publishable_types:
+            if not content.private and config['feature.profanity_filter']:
+                add_job('profanity_check', url_base=url('',qualified=True))
+            add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+        
+        if content.__type__ == 'comment':
+            if config['feature.profanity_filter']:
+                add_job('profanity_check', url_base=url('',qualified=True))
+            add_job('content_notifications')
+        
+        
+        # -- Redirect (if needed)-----------------------------------------------
         
         if not content_redirect:
             if   submit_type == 'publish' and permissions['can_publish']:

@@ -4,6 +4,7 @@ import logging
 import logging.handlers
 import optparse
 import sys
+import os
 
 from ConfigParser import SafeConfigParser
 import cbutils.worker as w
@@ -34,9 +35,11 @@ def main(argv):
         log_opts["filename"] = options.log_file
     logging.basicConfig(**log_opts)
 
-    c = SafeConfigParser()
+    c = SafeConfigParser({'here': os.getcwd()})
     c.read(options.ini)
-    w.config = c.defaults()
+    w.config = {}
+    for opt in c.options("app:main"):
+        w.config[opt] = c.get("app:main", opt)
     w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
     if ("error_email_from" in w.config) and ("email_to" in w.config):
@@ -77,10 +80,10 @@ def set_up_environment():
     from civicboom.worker.functions.process_media     import process_media
     from civicboom.worker.functions.profanity_check   import profanity_check
     from civicboom.worker.functions.worker_workout    import worker_workout
-    w.add_worker_function('process_media'     , process_media    )
-    w.add_worker_function('send_notification' , send_notification)
-    w.add_worker_function('profanity_check'   , profanity_check  )
-    w.add_worker_function('worker_workout'    , worker_workout   )
+    w.add_worker_function( process_media    )
+    w.add_worker_function( send_notification)
+    w.add_worker_function( profanity_check  )
+    w.add_worker_function( worker_workout   )
 
     # make sure that the database is open before each job, and closed after it
     log.info("Init database")

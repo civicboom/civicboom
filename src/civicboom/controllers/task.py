@@ -27,6 +27,11 @@ from civicboom.lib.communication.email_lib import send_email as send_email
 
 response_completed_ok = "task:ok" #If this is changed please update tasks.py to reflect the same "task ok" string
 
+def send_payment_admin_email(subject, content_text):
+    send_email(config['email.payment_alert'],
+        subject=subject,
+        content_text=content_text,
+    )
 
 def normalize_datetime(datetime):
     return datetime.replace(minute=0, second=0, microsecond=0)
@@ -315,17 +320,21 @@ class TaskController(BaseController):
                     Session.commit()
                     if new_status == "failed":
                         send_email_admins(account, subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
+                        send_payment_admin_email('Account disabled %s' % invoice.payment_account.name, 'Account #%s (%s) has been disabled for non payment!' % (invoice.payment_account.id, invoice.payment_account.name))
                         #account.send_email_admins(subject=_('_site_name: Service disabled'), content_html=render('/email/payment/account_failed.mako', extra_vars={}))
                         pass #Send account disabled email
                     elif new_status == "waiting":
+                        send_payment_admin_email('Account set WAITING %s' % invoice.payment_account.name, 'Account #%s (%s) has an invoice with due date today (will be disabled soon!)!' % (invoice.payment_account.id, invoice.payment_account.name))
                         send_email_admins(account, subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
                         #account.send_email_admins(subject=_('_site_name: Invoice nearly overdue'), content_html=render('/email/payment/account_waiting.mako', extra_vars={}))
                         pass #Send account due email
                     elif new_status == "invoiced":
+                        send_payment_admin_email('Account set INVOICED %s' % invoice.payment_account.name, 'Account #%s (%s) has been invoiced!' % (invoice.payment_account.id, invoice.payment_account.name))
                         send_email_admins(account, subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
                         #account.send_email_admins(subject=_('_site_name: Account invoiced'), content_html=render('/email/payment/account_invoiced.mako', extra_vars={}))
                         pass #Send account invoiced email
                     elif new_status == "ok":
+                        send_payment_admin_email('Account set OK %s' % invoice.payment_account.name, 'Account #%s (%s) has paid their invoice(s)!' % (invoice.payment_account.id, invoice.payment_account.name))
                         pass #Send account all ok, thank you, email
 
         Session.commit()
@@ -366,14 +375,6 @@ class TaskController(BaseController):
         from civicboom.model.payment import Service, ServicePrice, Invoice, InvoiceLine, BillingAccount, BillingTransaction, PaymentAccountService
         from civicboom.model.member import PaymentAccount
         
-        paypal_to_civicboom_status = {
-            'active'     :'active',
-            'pending'    :'pending',
-            'cancelled'  :'deactivated',
-            'suspended'  :'flagged',
-            'expired'    :'deactivated',
-        }
-        
         billing_accounts = Session.query(BillingAccount)\
             .filter(or_(BillingAccount.status=='pending', BillingAccount.status=='active'))\
             .filter(BillingAccount.status_updated < (now() - datetime.timedelta(hours=3)))\
@@ -383,7 +384,7 @@ class TaskController(BaseController):
             if billing_account.provider in payment.check_recurrings:
                 response = payment.check_recurrings[billing_account.provider](billing_account.reference)
                 if response['status'] != 'error':
-                    billing_account.status = paypal_to_civicboom_status[response['status'].lower()]
+                    billing_account.status = response['status']
                     if 'create_transaction_if' in response:
                         cti = response['create_transaction_if']
                         if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider==cti['provider'], BillingTransaction.timestamp==cti['timestamp'])).first():
@@ -396,25 +397,6 @@ class TaskController(BaseController):
                             txn.reference       = cti['reference']
             billing_account.status_updated = now()
             
-#            if billing_account.provider == 'paypal_recurring':
-#                try:
-#                    response = paypal_interface.get_recurring_payments_profile_details(profileid=billing_account.reference)
-#                except:
-#                    pass
-#                else:
-#                    if response.STATUS in paypal_to_civicboom_status.keys():
-#                        billing_account.status = paypal_to_civicboom_status[response.STATUS]
-#                    if 'LASTPAYMENTDATE' in response.raw:
-#                        last_date = datetime.strptime(response.LASTPAYMENTDATE, '%Y-%m-%dT%H:%M:%SZ')
-#                        if not Session.query(BillingTransaction).filter(and_(BillingTransaction.provider=='paypal_recurring', BillingTransaction.timestamp==last_date)).first():
-#                            txn = BillingTransaction()
-#                            txn.timestamp = last_date
-#                            txn.status = 'complete'
-#                            txn.amount = response.LASTPAYMENTAMT
-#                            txn.billing_account = billing_account
-#                            txn.provider = 'paypal_recurring'
-#                            txn.reference = response.PROFILEID
-#                            Session.add(txn)
         Session.commit()
         return response_completed_ok
     #---------------------------------------------------------------------------
@@ -441,6 +423,8 @@ class TaskController(BaseController):
             if pending_invoices:
                 txn.invoice = pending_invoices[0]
                 txn.billing_account = None
+            else:
+                send_payment_admin_email('Unmatched Transaction %s' % txn.id, "We've searched as hard as we can, but the Civicboom hamsters and I can't find the invoice to match transaction %s to. Maybe your human eyes are better after all!" % txn.id)
         Session.commit()
         return response_completed_ok
     #---------------------------------------------------------------------------

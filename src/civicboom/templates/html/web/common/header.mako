@@ -52,13 +52,26 @@
                 var _total = 0;
                 for (var key in icons) {
                     if (typeof data.data[key] != 'undefined') {
+                        var jQe = $(icons[key]); 
                         //alert (icons[key].html());
-                        $(icons[key]).html('&nbsp;' + data.data[key] + '&nbsp;');
+                        jQe.html('&nbsp;' + data.data[key] + '&nbsp;');
+                        if (data.data[key] == 0) {
+                            jQe.css('display', 'none');
+                        } else {
+                            jQe.css('display', 'inline');
+                        }
                         _total += (data.data[key] * 1);
                     }
                 }
-                if (typeof icons['_total'] != 'undefined')
-                    $(icons['_total']).html('&nbsp;' + _total + '&nbsp;')
+                if (typeof icons['_total'] != 'undefined') {
+                    var jQe = $(icons['_total']);
+                    jQe.html('&nbsp;' + _total + '&nbsp;');
+                    if (_total == 0) {
+                        jQe.css('display', 'none');
+                    } else {
+                        jQe.css('display', 'inline');
+                    }
+                }
             }
         });
     }
@@ -72,9 +85,11 @@
 </script>
 
 <%def name="messageIcon(messages, id)">
-    % if messages > 0:
-        <div class="icon_overlay_red ${id}">&nbsp;${messages}&nbsp;</div>
-    % endif
+        <div class="icon_overlay_red ${id}"
+            % if messages == 0:
+                style="display:none;"
+            % endif
+        >&nbsp;${messages}&nbsp;</div>
 </%def>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;" onclick="window.location='/profile';">
@@ -115,10 +130,10 @@
                     onclick = "$(this).find('form').submit();"
                 % endif
             >
-                <td>
+                <td class="avatar">
                     <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
                 </td>
-                <td>
+                <td class="name">
                     <p class="name">${member.name or member.username}</p>
                     % for k,v in kwargs.iteritems():
                         % if v:
@@ -126,7 +141,7 @@
                         % endif
                     % endfor
                 </td>
-                <td>
+                <td class="messages">
                   <a class   = "icon16 i_message"
                      href    = "${h.url('messages',list='to')}"
                      title   = "${_('Messages')}"
@@ -175,6 +190,13 @@
         % endfor
         <tr class="extras">
             <td colspan="4">
+                % if c.logged_in_persona_role == 'admin':
+                    % if c.logged_in_persona.payment_account_id:
+                        <a href="${h.url('payments')}">${_('My payment account')}</a>
+                    % else:
+                        <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
+                    % endif
+                % endif
                 <span style="float:right;">
                     ${h.secure_link(
                         h.url(controller='account', action='signout'),

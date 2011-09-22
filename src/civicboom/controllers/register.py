@@ -138,6 +138,15 @@ class RegisterController(BaseController):
         
         c.logged_in_persona.send_email(subject=_('Welcome to _site_name'), content_html=render('/email/welcome.mako', extra_vars={'registered_user':c.logged_in_persona}))
         
+        # Follow pending users from extra_fields
+        for member in [_get_member(username) for username in c.logged_in_persona.extra_fields.pop('on_register_follow'       ,'').split(',')]:
+            if member:
+                c.logged_in_persona.follow(member, delay_commit=True)
+        for member in [_get_member(username) for username in c.logged_in_persona.extra_fields.pop('on_register_follow_mutual','').split(',')]:
+            if member and member.config['allow_registration_follows']:
+                member.follow(c.logged_in_persona, delay_commit=True)
+        Session.commit()
+        
         # AllanC - Temp email alert for new user
         send_email(config['email.event_alert'], subject='new signup', content_text='%s - %s - %s - %s' % (c.logged_in_persona.id, c.logged_in_persona.name, c.logged_in_persona.email_normalized, form['help_type']))
         
@@ -180,31 +189,31 @@ class RegisterController(BaseController):
         # will return a valid username (bob-bobson). Have the username exactly
         # as given as their default display name.
         given_username = kwargs.get("username", "")
-
+        
         # Check the username and email and raise any problems via the flash message session system
         try:
             kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
         except formencode.Invalid as error:
             raise action_error(status='invalid', message=error.msg, code=400)
         
-        # Create new user
-        u = User()
-        u.id               = kwargs['username']
-        u.email_unverified = kwargs['email']
-        u.name             = given_username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
-        Session.add(u)
-        Session.commit()
-        
-        # Automatically Follow Users from config and referers from other sites
-        follow_username_list = []
-        for username_list in [config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]:
-            follow_username_list += username_list.split(',')
-        for member in [_get_member(username.strip()) for username in follow_username_list                     ]:
-            if member:
-                u.follow(member)
-        for member in [_get_member(username.strip()) for username in kwargs.get('follow_mutual','').split(',')]:
-            if member and member.config['allow_registration_follows']:
-                member.follow(u)
+        # Try to get existing user for this email address - else create new user
+        u = Session.query(User).filter(User.status=='pending').filter(User.email_unverified==kwargs['email']).first()
+        if u:
+            u.id               = kwargs['username'] # Update the user.id - this should be unique becuase of the validator above. Should be safe as the original user never completed registration
+        else:
+            # Create new user
+            u = User()
+            u.id               = kwargs['username']
+            u.email_unverified = kwargs['email']
+            u.name             = given_username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
+            Session.add(u)
+            Session.commit()
+            
+        # Automatically Follow Users from config and referers from other sites - These will be run once the user completes registration
+        u.extra_fields.update({
+            'on_register_follow'       : ','.join([username.strip() for username in ','.join([config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]).split(',')]), # AllanC - this monster line is huge confusing and awesome!
+            'on_register_follow_mutual': kwargs.get('follow_mutual','') ,
+        })
         
         # Accept assignment
         if 'accept_assignment' in kwargs:
@@ -219,7 +228,7 @@ class RegisterController(BaseController):
         
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
             return redirect(validation_url(u, controller='register', action='new_user'))
-
+        
         user_log.info("Sending verification email to %s (%s)" % (u.id, u.email_unverified))
         # Send email verification link
         send_verifiy_email(u, controller='register', action='new_user', message=_('complete the registration process'))
@@ -292,15 +301,6 @@ def register_new_janrain_user(profile):
     
     Session.add(u)
     
-    #u_login = UserLogin()
-    #u_login.user   = u
-    #u_login.type   = profile['providerName']
-    #u_login.token  = profile['identifier']
-    #Session.add(u_login)
-    associate_janrain_account(u, profile['providerName'], profile['identifier'])
-    
-    #Session.commit() # unneeded as associate_janrain_account has a commit in to map accounts
-    
     u.config['dob']     = profile.get('birthday') #Config vars? auto commiting?
     u.config['website'] = profile.get('url')
     
@@ -311,6 +311,8 @@ def register_new_janrain_user(profile):
             raise Exception('janrain dob is lower than min age')
     except:
         del u.config['dob']
+    
+    associate_janrain_account(u, profile['providerName'], profile['identifier'])
     
     # Future addition and enhancements
     #   with janrain we could get a list of friends/contnact and automatically follow them?

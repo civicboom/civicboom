@@ -1,7 +1,13 @@
 [app:main]
 online = false
 test_mode = true
-telemetry = /tmp/cb-website-test-telemetry
+
+# enabled this to perform deeper testing of links. This is disbaled by default as it takes extended time to complete
+test.crawl_links = false
+
+telemetry =
+#/tmp/cb-website-test-telemetry
+data_base = test
 
 cache_dir = /tmp/cb-website-test-data
 path.temp = /tmp/cb-website-test-temp
