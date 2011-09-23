@@ -38,7 +38,7 @@ def send_notification(members, message): #members, rendered_message
             send_notification(member, message)
             #if member.__type__ == 'group':
             #    send_notification(get_group_member_username_list(member), **kwargs)
-        #Session.commit() # No need to commits as all workers commit at end by default
+        Session.commit() # No need to commits as all workers commit at end by default
         
     # Single member
     else:

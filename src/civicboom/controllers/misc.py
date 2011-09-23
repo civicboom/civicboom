@@ -332,8 +332,6 @@ Disallow: /*.frag$
     #---------------------------------------------------------------------------
     def force_web(self):
         cookie_set('force_web', 'True', secure=False, sub_domain='') # The force web cookie is for all domains
-        from pylons import response
-        print response.set_cookie
         referer = current_referer()
         if referer:
             re.sub("(m\.)|(mobile\.)", "www.", referer, 1)
