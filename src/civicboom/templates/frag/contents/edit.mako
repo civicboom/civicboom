@@ -112,9 +112,7 @@
             ${invalid_messages()}
             ${base_content()}
             ${media()}
-            % if self.selected_type == 'assignment':
-                ${content_type()}
-            % endif
+            ${content_extra_fields()}
             ${location()}
             % if not self.content.get('parent'):
                 ${privacy()}
@@ -223,8 +221,8 @@
         ##${form_instruction(_("Got an opinion? want to ask a question?"))}
         
         ##<p>
-            <label for="title_${self.id}">${_('Add your title')}</label>
-            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
+            <label for="title_${self.id}">${_('Add your story title')}</label>
+            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a story title')}"/><br />
             ##${popup(_("extra info"))}
         ##</p>
         <div class="separator"></div>
@@ -478,12 +476,82 @@
 </%def>
 
 ##------------------------------------------------------------------------------
-## Content Type
+## Content Extras
 ##------------------------------------------------------------------------------
-<%def name="content_type()">
-##    <fieldset>
-##        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
-##        <div class="hideable">
+<%def name="content_extra_fields()">
+    <%doc>
+        AllanC - Some content types have extra fields
+                 Currently only assignment have extra fields
+    </%doc>
+
+
+    % if self.selected_type == 'assignment':
+    
+    <fieldset>
+        <label>${_("Click here to set a deadline!")}</label>
+        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <span class="icon16 i_plus"></span>
+            <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
+        </legend>
+        <div class="hideable">
+            <div class="separator"></div>
+            <div id="content_type_additional_fields">
+                ## See CSS for "active" class
+                <div id="type_assignment_extras" class="hideable, additional_fields">
+                    <%
+                        due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
+                        event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
+                        auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime') or '')
+                    %>
+                    <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
+                    <input class="detail" type="datetime" name="due_date"   value="${due_date}" />
+                    
+                    ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
+                    ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
+                    
+                    ## http://trentrichardson.com/examples/timepicker/
+                    % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
+                        <span class="padded"><label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label></span>
+                        <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
+                    % endif
+                    
+                    <%doc>
+                    <p>${_("Response License:")}
+                    <table>
+                    <% from civicboom.lib.database.get_cached import get_licenses %>
+                    % for license in get_licenses():
+                        <tr>
+                        <%
+                            license_selected = ''
+                            if type == "assigment" and 'default_response_license' in self.content and license.id == self.content['default_response_license_id']:
+                                license_selected = h.literal('checked="checked"')
+                        %>
+                        <td><input id="licence_${license.id}" type="radio" name="default_response_license_id" value="${license.id" ${license_selected} /></td>
+                        <td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
+                        <td><label for="licence_${license.id}">${license.description}</label></td>
+                        </tr>
+                        ##${popup(_(license.description))}
+                    % endfor
+                    </table>
+                    </%doc>
+                </div>
+            </div>
+        
+        </div>
+    </fieldset>
+    <div class="separator"></div>
+    % endif
+    
+    <%doc>
+        AllanC - Old selection of content type
+
+        AllanC - orringinal a way of selecting the type for the content, this became the extra fields submitted for special content types
+                 currently only assignments have extra fields
+                 
+    <fieldset>
+        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
+        <div class="hideable">
+
 
         
         <%
@@ -511,7 +579,7 @@
             </td>
         </%def>
         
-        <%doc>
+
         % if type == "draft":
             <table id="type_selection"><tr>
             % for t in types:
@@ -521,59 +589,9 @@
         % else:
             ${type}
         % endif
-        </%doc>
-            
-    <fieldset>
-        <label>${_("Click here to set a deadline!")}</label>
-        <legend onclick="toggle_edit_section($(this));" class="edit_input">
-            <span class="icon16 i_plus"></span>
-            <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
-        </legend>
-        <div class="hideable">
-        <div class="separator"></div>
-        <div id="content_type_additional_fields">
-            ## See CSS for "active" class
-            <div id="type_assignment_extras" class="hideable, additional_fields">
-                <%
-                    due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
-                    event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
-                    auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime') or '')
-                %>
-                <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
-                <input class="detail" type="datetime" name="due_date"   value="${due_date}" />
-                
-                ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
-                ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
-                
-                ## http://trentrichardson.com/examples/timepicker/
-                % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
-                    <span class="padded"><label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label></span>
-                    <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
-                % endif
-                
-                <%doc>
-                <p>${_("Response License:")}
-				<table>
-				<% from civicboom.lib.database.get_cached import get_licenses %>
-				% for license in get_licenses():
-					<tr>
-					<%
-					    license_selected = ''
-					    if type == "assigment" and 'default_response_license' in self.content and license.id == self.content['default_response_license_id']:
-						    license_selected = h.literal('checked="checked"')
-					%>
-					<td><input id="licence_${license.id}" type="radio" name="default_response_license_id" value="${license.id" ${license_selected} /></td>
-					<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
-					<td><label for="licence_${license.id}">${license.description}</label></td>
-					</tr>
-					##${popup(_(license.description))}
-				% endfor
-                </table>
-                </%doc>
-            </div>
-        </div>
-
-
+        
+        --------------------------------------
+    
         <script type="text/javascript">
             // Reference: http://www.somacon.com/p143.php
             // set the radio button with the given value as being checked
@@ -606,11 +624,8 @@
             
             highlightType('${selected_type}'); //Set the default highlighted item to be the content type
         </script>
-		##</div>
-    ##</fieldset>
-        </div>
-    </fieldset>
-    <div class="separator"></div>
+    </%doc>
+    
 </%def>
 
 

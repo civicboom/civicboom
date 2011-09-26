@@ -1,8 +1,8 @@
+<!DOCTYPE html>
 % if hasattr(next, 'init_vars'):
     ${next.init_vars()}
+    ## AllanC - is init vars actually needed here? init_vars was a horrible hack to enable the frag rendered to prepare variables to style the frag holders (icons for actions, titles), is this needed in the mobile variant?
 % endif
-
-<!DOCTYPE html>
 <html>
     <head>
         ${title()}
@@ -66,8 +66,9 @@
 <%def name="flash_message()">
     <h3 id="flash_message" class="status_${c.result['status']}">${c.result['message']}</h3>
     % if c.result['message'] != "":
-    <script type="text/javascript">
+    <script type="text/javascript">    
         <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+        ## AllanC is json_message actually used here? is this needed?
     </script>
     % endif
 </%def>
