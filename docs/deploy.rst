@@ -7,7 +7,9 @@ Push to master to build packages
 for pushing all of develop
 --------------------------
 ::
-
+  git checkout master                            # Ensure master is up to date
+  git pull
+  git checkout develop                                       
   git tag                                        # list tags so you can see the most recent one, and pick a number one higher
   git flow release start <tag name, eg 0.6.5>
   <any final changes specific to this release>   # normally nothing needs to be done
