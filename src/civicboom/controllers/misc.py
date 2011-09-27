@@ -334,6 +334,6 @@ Disallow: /*.frag$
         cookie_set('force_web', 'True', secure=False, sub_domain='') # The force web cookie is for all domains
         referer = current_referer()
         if referer:
-            re.sub("(m\.)|(mobile\.)", "www.", referer, 1)
+            referer = re.sub("(m\.)|(mobile\.)", "www.", referer, 1)
             return redirect(referer)
         return redirect(url(controller='misc', action='titlepage', sub_domain='web'))

@@ -414,6 +414,7 @@ def _find_template(result, type):
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
+            log.debug('Rendering Template %s.mako' % path)
             return path+".mako"
     
     # TO BE REMOVED
@@ -708,7 +709,8 @@ def authenticate_form(_target, *args, **kwargs):
         if c.format in ['html','redirect']:
             c.target_url = current_url()
             c.post_values = param_dict
-            return render_mako("html/web/misc/confirmpost.mako")
+            #return render_mako("html/web/misc/confirmpost.mako")
+            return action_ok(template='misc/confirmpost', code=response.status_int)
         else:
             raise action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
 

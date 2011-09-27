@@ -25,7 +25,7 @@ def send_notification(members, message): #members, rendered_message
     Threaded message system
     Save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
-
+    
     from cbutils.worker import config
 
     message['source'] = get_member(message.get('source') or message.get('source_id')) or message.get('source') # Attempt to normalize source member
@@ -79,7 +79,8 @@ def send_notification(members, message): #members, rendered_message
                             return template_path
                         return 'email/notifications/default.mako'
                     
-                    if config['debug'] == True or config['debug'] == "true": # debug is a string, so config['debug'] == "false" == True
+                    #if config['debug'] == True or config['debug'] == "true": # debug is a string, so config['debug'] == "false" == Trues
+                    if config['worker.queue.type'] == 'inline':
                         c = render_mako(
                             notification_template(message.get('name')) ,
                             extra_vars ={
