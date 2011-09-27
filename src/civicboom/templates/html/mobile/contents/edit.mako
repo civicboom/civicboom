@@ -36,9 +36,12 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
+<div data-role="page">
+    <div data-role="content">
     ## page structure defs
     ${content_edit()}
-    
+    </div>
+</div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -76,7 +79,7 @@
         % if not self.content.get('parent'):
             ${privacy()}
         % endif
-        ##${edit_full.tags()}
+        ${edit_full.tags(self.content)}
         ${submit_buttons()}
         ${license()}
         

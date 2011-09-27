@@ -9,6 +9,8 @@
     ${_(d['content']['title'])}
 </%def>
 
+##------------------------------------------------------------------------------
+
 ## page structure defs
 <%def name="body()">
     <%
@@ -57,6 +59,8 @@
     </div>
 </%def>
 
+##------------------------------------------------------------------------------
+
 <%def name="content_main()">
     <div data-role="content">
         <div class="content_title">
@@ -104,6 +108,8 @@
     </div>
 </%def>
 
+##------------------------------------------------------------------------------
+
 <%def name="content_info()">
     <div data-role="content">
         <div class="content_details">
@@ -121,7 +127,9 @@
                 ## Content info
                 <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
-                    <li><h3>Published:</h3> ${self.content['publish_date']}</li>
+                    % if self.content.get('publish_date'):
+                        <li><h3>Published:</h3> ${self.content.get('publish_date')}</li>
+                    % endif
                     % if self.content.get('tags'):
                         <li><h3>Tags:</h3> ${", ".join(self.content['tags'])}</li>
                     % endif
@@ -141,6 +149,8 @@
         </div>
     </div>
 </%def>
+
+##------------------------------------------------------------------------------
 
 <%def name="content_media()">
     % if len(self.media):

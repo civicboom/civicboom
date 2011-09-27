@@ -117,7 +117,7 @@
             % if not self.content.get('parent'):
                 ${privacy()}
             % endif
-            ${tags()}
+            ${tags(self.content)}
             ${submit_buttons()}
             ${license()}
         ${h.end_form()}
@@ -312,22 +312,22 @@
 ##------------------------------------------------------------------------------
 ## Tags
 ##------------------------------------------------------------------------------
-<%def name="tags()">
+<%def name="tags(content)">
     <fieldset>
-        <label for="tags_${self.id}">${_("Tags")}</label>
+        <label for="tags_${content['id']}">${_("Tags")}</label>
         <%
         tags = []
         separator = config['setting.content.tag_string_separator']
-        if   isinstance(self.content['tags'], list):
-            tags = self.content['tags']
-        elif isinstance(self.content['tags'], basestring):
-            tags = self.content['tags'].split(separator)
+        if   isinstance(content['tags'], list):
+            tags = content['tags']
+        elif isinstance(content['tags'], basestring):
+            tags = content['tags'].split(separator)
             
         tags_string = u""
         for tag in tags:
             tags_string += tag + separator
         %>
-        <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
+        <input class="detail edit_input" name="tags_string" type="text" value="${tags_string}" id="tags_${content['id']}"/>
         <span>(${_('separated by commas')})</span>
         ##${popup(_("extra_info"))}
     </fieldset>

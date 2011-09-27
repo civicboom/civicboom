@@ -21,83 +21,84 @@
         site_url = h.url(controller='misc', action='titlepage', protocol='https', sub_domain='www', qualified=True)
     %>
     <body>
-<table bgcolor="#DCE4F1" border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">
-            <a href="${site_url}?r=e_l">
-                <img src="${site_url}images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" />
-            </a>
-        </td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-    </tr><tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr><tr>
-        <td width="20">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="20">&nbsp;</td>
-    </tr><tr>
-        <td width="20">&nbsp;</td>
-        <td bgcolor="#FFFFFF" width="20">&nbsp;</td>
-        <td bgcolor="#FFFFFF">
-            <h2>Hi,</h2>
-            <p>${next.body() if callable(self.body) else self.body}</p>
-        </td>
-        <td bgcolor="#FFFFFF" width="20">&nbsp;</td>
-        <td width="20">&nbsp;</td>
-    </tr><tr>
-        <td width="20">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td bgcolor="#FFFFFF">&nbsp;</td>
-        <td width="20">&nbsp;</td>
-    </tr><tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr><tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>
-            <h2>
-                <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a><br />
-            </h2>
-            <a href="http://twitter.com/civicboom">
-                <img src="${site_url}images/twitter-email.png" alt="Twitter"><br />
-                Follow us
-            </a>
-        </td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr><tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr><tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>
-            If you'd rather not receive notifications from Civicboom, you can unsubscribe by going to your account
-            settings. You can also manage all your notifications from your settings. Please don't reply to this
-            message. No one will read it as it's been sent from an unmonitored email account. Which is a shame.
-            So if you do want to get in touch please use <a href="mailto:contact@civicboom.com">contact@civicboom.com</a>. Thank you.
-        </td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr>
-</table>
+        <table bgcolor="#DCE4F1" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">
+                    <a href="${site_url}?r=e_l">
+                        <img src="${site_url}images/logo-v3-128x28.png" alt="${_("_site_name: _tagline")}" />
+                    </a>
+                </td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+            </tr><tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr><tr>
+                <td width="20">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td width="20">&nbsp;</td>
+            </tr><tr>
+                <td width="20">&nbsp;</td>
+                <td bgcolor="#FFFFFF" width="20">&nbsp;</td>
+                <td bgcolor="#FFFFFF">
+                    <h2>Hi,</h2>
+                    <p>${next.body() if callable(self.body) else self.body}</p>
+                </td>
+                <td bgcolor="#FFFFFF" width="20">&nbsp;</td>
+                <td width="20">&nbsp;</td>
+            </tr><tr>
+                <td width="20">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td bgcolor="#FFFFFF">&nbsp;</td>
+                <td width="20">&nbsp;</td>
+            </tr><tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr><tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>
+                    <h2>
+                        <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a><br />
+                    </h2>
+                    <a href="http://twitter.com/civicboom">
+                        <img src="${site_url}images/twitter-email.png" alt="Twitter"><br />
+                        Follow us
+                    </a>
+                </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr><tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr><tr>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>
+                    If you'd rather not receive notifications from Civicboom, you can unsubscribe by going to your account
+                    settings. You can also manage all your notifications from your settings. Please don't reply to this
+                    message. No one will read it as it's been sent from an unmonitored email account. Which is a shame.
+                    So if you do want to get in touch please use <a href="mailto:contact@civicboom.com">contact@civicboom.com</a>. Thank you.
+                </td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </body>
 </html>
 </%def>
 
