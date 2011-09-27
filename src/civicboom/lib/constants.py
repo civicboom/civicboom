@@ -65,9 +65,10 @@ def get_action_objects_for_url(action_url=None):
         (re.compile('/follow'                                    ) , 'follow'     , _('follow a _member')    ),
         (re.compile('/boom'                                      ) , 'boom'       , _('boom _content')       ),
         (re.compile('/contents/new\?parent_id='                  ) , 'new_respose', _('create a response')   ),
-        (re.compile('/contents/new\?target_type=article'         ) , 'new_article', _('post a _article') ),
+        (re.compile('/contents/new\?target_type=article'         ) , 'new_article', _('post a _article')     ),
         (re.compile('/contents\?(.*?)type=comment(.*?)parent_id=') , 'comment'    , _('make a comment')      ), #AllanC - I weep at the inefficency and code duplication
         (re.compile('/contents\?(.*?)parent_id=(.*?)type=comment') , 'comment'    , _('make a comment')      ),
+        (re.compile('/contents/new'                              ) , 'new_article', _('create new content')  ), # Failsafe for new aticle is all 
     ]
 
     # If performing an action we may want to display a custom message with the login

@@ -1,16 +1,13 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 ## includes
-<%namespace name="components"      file="/html/mobile/common/components.mako" />
-<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
-<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 
-<%def name="page_title()">
-    ${_("Edit~")}
-</%def>
+<%namespace name="edit_full" file="/frag/contents/edit.mako" />
 
-##------------------------------------------------------------------------------
-## Variables
+##<%namespace name="components"      file="/html/mobile/common/components.mako" />
+##<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
+##<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
+
 ##------------------------------------------------------------------------------
 
 <%def name="init_vars()">
@@ -26,120 +23,162 @@
         
         self.attr.title     = _('Edit ') + _('_'+self.selected_type)
         self.attr.icon_type = 'edit'
-        
-        if self.selected_type == 'assignment':
-            self.attr.help_frag = 'create_assignment'
-        if self.selected_type == 'article':
-            self.attr.help_frag = 'create_article'
-        if self.selected_type == 'article' and self.content.get('parent'):
-            self.attr.help_frag = 'create_response'
     %>
 </%def>
 
-## page structure defs
-<%def name="body()">
-    <div data-role="page">
-        ${components.header()}
-        <div data-role="content">
 
-            ${parent.flash_message()}
+##------------------------------------------------------------------------------
 
-            ${h.form(
-                h.args_to_tuple('content', id=self.id, format="redirect"),
-                id           = 'edit_%s' % self.id,
-                name         = "content",
-                method       = 'PUT',
-                multipart    = True,
-            )}
-            
-                <div data-role="fieldcontain" data-theme="b">
-                    ## TITLE
-                    <label for="title_${self.id}">${_('Add your title')}</label>
-                    <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a title')}"/><br />
-
-                    ## CONTENT
-                    <%
-                        area_id = h.uniqueish_id("content")
-                    %>
-                    <label for="${area_id}">${_("Add more detail and supporting links, etc")}</label>
-                    <textarea class="editor edit_input" name="content" id="${area_id}">${self.content['content']}</textarea>
-                    
-                    ## TAGS
-                    <fieldset>
-                        <label for="tags_${self.id}">${_("Tags")}</label>
-                        <%
-                            tags = []
-                            separator = config['setting.content.tag_string_separator']
-                            if   isinstance(self.content['tags'], list):
-                                tags = self.content['tags']
-                            elif isinstance(self.content['tags'], basestring):
-                                tags = self.content['tags'].split(separator)
-                                
-                            tags_string = u""
-                            for tag in tags:
-                                tags_string += tag + separator
-                        %>
-                        <input class="detail edit_input" id="tags_${self.id}" name="tags_string" type="text" value="${tags_string}"/>
-                        <span>(${_('separated by commas')})</span>
-                    </fieldset>
-                    
-                </div>
-                <div data-role="fieldcontain" data-theme="b">
-                    ${submit()}
-                </div>
-                
-            ${h.end_form()}
-
-        </div>
-    </div>
+<%def name="page_title()">
+    ${_(d['content']['title'])}
 </%def>
 
-## SUBMISSION HACKING CORNER :D
-<%def name="submit()">
+##------------------------------------------------------------------------------
 
-    <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r', onclick_js='')">
-        <%
-            button_id = "submit_%s_%s" % (name, self.id)
-            if not title_text:
-                title_text = _(name)
-        %>
+<%def name="body()">
+    ## page structure defs
+    ${content_edit()}
     
-        <input
-            type    = "submit"
-            id      = "${button_id}"
-            name    = "submit_${name}"
-            class   = "submit_${name} button"
-            value   = "${title_text}"
-            onclick = "
-                % if onclick_js:
-                    ${onclick_js}
-                % else:
-                    ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                    
-                    ## If button enabled
-                    if (!$(this).hasClass('disabled_filter')) {
-                        ## Disable this button
-                        $(this).addClass('disabled_filter');
-                        
-                        ## Fake that a static submit button has been pressed
-                        ##  - Standard HTML forms contain the name and value of the submit button pressed
-                        ##  - JS Form submissions do not - this add's a fake input to the final submission to mimic this submit press
-                        add_onclick_submit_field($(this));
-                        
-                        ## AllanC - I dont like the fact we start setting global var's here ... could we move to cb_frag.js:cb_frag_set_variable() ??
-                        % if show_content_frag_on_submit_complete:
-                            ## AllanC - Cleaner suggestion? - could this prompt aggregate be part of the python URL gen and not an appended string?
-                            submit_complete_${self.id}_url = '${url('content', id=self.id, format="html")}';
-                        % endif
-                        
-                        ## Re-enable button after 1 second
-                        setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));
-                    }
+</%def>
+
+##------------------------------------------------------------------------------
+
+<%def name="content_edit()">
+
+    <h1>
+        % if self.content.get('parent'):
+            ${_("You are responding to: %s") % self.content['parent']['title']}
+        % elif self.selected_type == 'assignment':
+            ${_("Ask for stories")}
+        % elif self.selected_type == 'article':
+            ${_("Post a story")}
+        % endif
+    </h1>
+
+    ## parent?
+
+    ${h.form(
+        ##h.args_to_tuple(
+        h.url('content', id=self.id, format="redirect"),
+        id           = 'edit_%s' % self.id,
+        name         = "content",
+        method       = 'PUT',
+        multipart    = True,
+        ##pre_onsubmit = "tinyMCE.triggerSave(true,true);",
+        ##json_form_complete_actions = "json_submit_complete_for_%(id)s();" % dict(id=self.id)
+    )}
+        
+        ${edit_full.invalid_messages()}
+        ${base_content()}
+        ${media()}
+        ${content_extra_fields()}
+        ${location()}
+        % if not self.content.get('parent'):
+            ${privacy()}
+        % endif
+        ##${edit_full.tags()}
+        ${submit_buttons()}
+        ${license()}
+        
+    ${h.end_form()}
+
+</%def>
+
+##------------------------------------------------------------------------------
+
+<%def name="base_content()">
+    ## auto save?
+    <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter a story title')}"/><br />
+    <textarea id="content_${self.id}" name="content" class="editor edit_input"       >${self.content['content']}</textarea>
+</%def>
+
+##------------------------------------------------------------------------------
+
+<%def name="media()">
+
+    <ul class="media_files">
+        <!-- List existing media -->
+        % for media in self.content['attachments']:
+            <% id = media['id'] %>
+            <li class="media_file" id="media_attachment_${id}">
+                <div class="file_type_overlay icon16 i_${media['type']}"></div>
+                <a href="${media['original_url']}"><!--
+                    --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                --></a>
+                % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
+                    <!-- Media still undergoing proceccesing -->
+                    ## Clients without javascript could have the current status hard in the HTML text
+                    ## Clients with    javascript can have live updates from the media controller
+                    <!-- End media still undergoing proceccesing -->
                 % endif
-            "
-        />
+                <span id="media_status_${id}" style="display: none">(status)</span>
+                
+                <div class="media_fields">
+                    <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove icon16 i_delete"/></p>
+                    <p><label for="media_caption_${id}">${_("Caption")}    </label><input id="media_caption_${id}" name="media_caption_${id}" type="text"                 value="${media['caption']}"/></p>
+                    <p><label for="media_credit_${id}" >${_("Credited to")}</label><input id="media_credit_${id}"  name="media_credit_${id}"  type="text"                 value="${media['credit']}" /></p>
+                </div>
+            </li>
+        % endfor
+    </ul>
+    
+    <div class="media_preview">
+        <div class="media_preview_none">${_("Select a file to upload")}</div>
+    </div>
+    <div class="media_fields">
+        <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
+        <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" /></p>
+        <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" /></p>
+    </div>              
+
+</%def>
+
+##------------------------------------------------------------------------------
+
+<%def name="content_extra_fields()">
+
+    % if self.selected_type == 'assignment':
+        Due date n stuff
+    % endif
+</%def>
+
+##------------------------------------------------------------------------------    
+
+<%def name="location()">
+    ## location
+    ## (just a use my location) tick box
+</%def>
+
+<%def name="privacy()">
+privacy
+</%def>
+
+<%def name="license()">
+licence
+</%def>
+
+##------------------------------------------------------------------------------
+
+<%def name="submit_buttons()">
+
+    <%def name="submit_button(name, text)">
+        <input type='submit' name='submit_${name}' value='${text}'>
     </%def>
 
-    ${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}
-
+    ## Preview + Publish
+    % if self.content['type'] == "draft":
+        ${submit_button('draft'  , _("Save draft"))}
+        ${submit_button('preview', _("Preview draft"))}
+        % if 'publish' in self.actions:
+            ${submit_button('publish', _("Post"))}
+        % endif        
+    ## Update
+    % else:
+        % if 'update' in self.actions:
+        ${submit_button('publish', _("Update"))}
+        % endif
+        <a class="button" href="${h.url('content', id=self.id)}">${_("View Content")}</a>
+    % endif
 </%def>
+
+##------------------------------------------------------------------------------
