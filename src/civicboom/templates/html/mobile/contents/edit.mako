@@ -90,9 +90,39 @@
 ##------------------------------------------------------------------------------
 
 <%def name="base_content()">
-    ## auto save?
+    
+    ## Content
     <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter a story title')}"/><br />
     <textarea id="content_${self.id}" name="content" class="editor edit_input"       >${self.content['content']}</textarea>
+    
+    ## Autosave
+    <script type="text/javascript">
+        function ajaxSave() {
+            $.ajax({
+                type    : 'POST',
+                dataType: 'json',
+                url     : "${url('content', id=self.id, format='json')}",
+                data    : {
+                    "_method": 'PUT',
+                    "title"  : $('#title_${self.id}'  ).val(),
+                    "content": $('#content_${self.id}').val(),
+                    ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
+                    "mode"   : 'autosave',
+                    "_authentication_token": '${h.authentication_token()}'
+                },
+                success: function(data) {
+                    flash_message(data);
+                },
+                error: function (jqXHR, status, error) {
+                    flash_message({status:'error', message:'${_('Error automatically saving your content')}'});
+                },
+            });
+        }
+        % if self.content['type'] == "draft":
+            setInterval('ajaxSave()', 60 * 1000));
+        % endif
+    </script>
+
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -141,7 +171,16 @@
 <%def name="content_extra_fields()">
 
     % if self.selected_type == 'assignment':
-        Due date n stuff
+        <%
+            due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
+            event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
+            auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime') or '')[:16]
+        %>
+        <input class="detail" type="datetime" name="due_date"                      value="${due_date}"                      />
+        <input class="detail" type="datetime" name="event_date"                    value="${event_date}"                    />
+        % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
+        <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
+        % endif
     % endif
 </%def>
 

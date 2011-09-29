@@ -501,7 +501,7 @@
                     <%
                         due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
                         event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
-                        auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime') or '')
+                        auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime')                                                          or '')[:16]
                     %>
                     <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
                     <input class="detail" type="datetime" name="due_date"   value="${due_date}" />
