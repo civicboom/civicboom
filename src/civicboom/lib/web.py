@@ -60,6 +60,10 @@ def get_subdomain_format(environ=None):
         return "mobile"
     return 'web'
 
+def get_domain(environ=None):
+    if not environ:
+        environ = request.environ
+    return ".".join(environ.get("HTTP_HOST", "").split(".")[1:])
 
 #-------------------------------------------------------------------------------
 # URL Generation
@@ -249,14 +253,16 @@ def cookie_remove(key):
     return value
 
 
-def cookie_set(key, value, max_age=3600*24*365, secure=None):
+def cookie_set(key, value, max_age=3600*24*365, secure=None, sub_domain=None, domain=None):
     """
     duration in seconds
     """
     #print "COOKIE setting %s:%s" %(key, value)
     if secure == None:
         secure = (current_protocol() == "https")
-    response.set_cookie(key, value, max_age=max_age, secure=secure, path='/') #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
+    if sub_domain != None:
+        domain = sub_domain+'.'+(domain or get_domain())
+    response.set_cookie(key, value, max_age=max_age, secure=secure, path='/', domain=domain) #, domain=request.environ.get("HTTP_HOST", "") # AllanC - domain remarked because firefox 3.5 was not retaining the logged_in cookie with domain localhost
 
 
 def cookie_get(key):
@@ -408,6 +414,7 @@ def _find_template(result, type):
     
     for path in paths:
         if os.path.exists(os.path.join(config['path.templates'], path+".mako")):
+            log.debug('Rendering Template %s.mako' % path)
             return path+".mako"
     
     # TO BE REMOVED
@@ -702,7 +709,8 @@ def authenticate_form(_target, *args, **kwargs):
         if c.format in ['html','redirect']:
             c.target_url = current_url()
             c.post_values = param_dict
-            return render_mako("html/web/misc/confirmpost.mako")
+            #return render_mako("html/web/misc/confirmpost.mako")
+            return action_ok(template='misc/confirmpost', code=response.status_int)
         else:
             raise action_error(message="Cross-site request forgery detected, request denied: include a valid authentication_token in your form POST")
 

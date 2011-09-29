@@ -207,3 +207,28 @@ def make_username(title):
 
 def debug_type(var):
     return "%s:%s" % (type(var), repr(var))
+
+def substring_in(substrings, string_list):
+    """
+    Find a substrings in a list of string_list
+    Think of it as
+      is 'bc' in ['abc', 'def']
+    
+    >>> substring_in( 'bc'      , ['abc','def','ghi'])
+    True
+    >>> substring_in( 'jkl'     , ['abc','def','ghi'])
+    False
+    >>> substring_in(['zx','hi'], ['abc','def','ghi'])
+    True
+    >>> substring_in(['zx','yw'], ['abc','def','ghi'])
+    False
+    """
+    if isinstance(substrings, basestring):
+        substrings = [substrings]
+    if not isinstance(string_list, list) or not isinstance(substrings, list):
+        raise TypeError('params mustbe lists')
+    for s in string_list:
+        for ss in substrings:
+            if ss in s:
+                return True
+    return False

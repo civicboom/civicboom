@@ -73,7 +73,7 @@ invite_types = {
         'check'         : check_payment_account,
         'method'        : 'member_add',
         'exclude'       : 'members',
-        'frag_refresh'  : url('payments'),
+        'frag_refresh'  : '/payments' #url('payments'), # AllanC - url may not have been defined at this point, it was failing tests on my machine only as it was the first test run.
     }
 }
 

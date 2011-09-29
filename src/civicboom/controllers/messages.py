@@ -93,6 +93,8 @@ class MessagesController(BaseController):
                 kwargs['include_fields'] = "source, source_name"
             if kwargs.get('list') in ['sent']:
                 kwargs['include_fields'] = "target, target_name"
+        if 'sort' not in kwargs:
+            kwargs['sort'] = '-timestamp'
         
         results = Session.query(Message)
         
@@ -112,7 +114,11 @@ class MessagesController(BaseController):
                 raise action_error(_('list %s not supported') % kwargs['list'], code=400)
                 
         # Sort
-        results = results.order_by(Message.timestamp.desc())
+        # AllanC - botched, this is not implmented properly
+        if kwargs['sort'] == '-timestamp':
+            results = results.order_by(Message.timestamp.desc())
+        elif kwargs['sort'] == 'timestamp':
+            results = results.order_by(Message.timestamp.asc())
         
         return to_apilist(results, obj_type='messages', **kwargs)
 

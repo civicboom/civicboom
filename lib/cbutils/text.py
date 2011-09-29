@@ -405,8 +405,8 @@ def get_diff_words(a,b):
     
     >>> get_diff_words('The monkey jumped over the moon', 'The badger jumped over the donkey')
     ['monkey', 'moon']
-    >>>> t = u'This content is FUCKING disgusting'
-    >>>> get_diff_words(t, profanity_check(t)['CleanText'])
+    >>> t = u'This content is FUCKING disgusting'
+    >>> get_diff_words(t, profanity_check(t)['CleanText'])
     [u'FUCKING']
     """
     if isinstance(a, basestring): a = a.split(' ')

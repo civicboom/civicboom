@@ -65,7 +65,7 @@ cacheable_lists = {
         'assignments' : {'list':'assignments', 'creator':None},
         'responses'   : {'list':'responses'  , 'creator':None},
 
-        'boomed_by'   : {'boomed_by'  : None},
+        #'boomed_by'   : {'boomed_by'  : None},
         'response_to' : {'response_to': None},
         'comments_to' : {'comments_to': None},
         #'assignments_accepted': {'accepted_by': None},
@@ -389,12 +389,13 @@ def invalidate_content(content, remove=False):
         #assert parent_id
         if parent_id:
             invalidate_list_version('contents_index', 'comments_to', parent_id) # Comments always have a parent id
-        else:
-            log.error('no parent_id on comment!!!!, the lists will not be invalidated')
+        #else:
+            # unfortunatly this is part of normal operation. We somestimes don't have a parent during some processing flush's so we cant enforce the assertion here
+            # log.error('no parent_id on comment!!!!, the lists will not be invalidated')
         
     else:
         
-        invalidate_list_version('contents_index','content', creator_id)
+        invalidate_list_version('contents_index','content'  , creator_id)
         
         if parent_id:
             invalidate_list_version('contents_index', 'response_to', parent_id ) # Invalidate responses to the parent content
@@ -409,7 +410,7 @@ def invalidate_content(content, remove=False):
             
         if content.__type__ == 'assignment':
             invalidate_list_version('contents_index', 'assignments' , creator_id)
-
+    
     # If removing the content item entirely - invalidate all sub lists
     if remove:
         for list in ['comments_to', 'response_to']:

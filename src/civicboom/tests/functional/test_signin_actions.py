@@ -1,7 +1,14 @@
 from civicboom.tests import *
 
 
+
 class TestSigninActions(TestController):
+
+    def get(self, *args, **kwargs):
+        response = self.app.get(*args, **kwargs)
+        if response.status >= 300 and response.status <= 399:
+            response = response.follow()
+        return response
 
     #---------------------------------------------------------------------------
     # Signin Actions
@@ -18,24 +25,21 @@ class TestSigninActions(TestController):
         See
          - civicboom.lib.constants:get_action_objects_for_url():action_list
         """
-        def get(*args, **kwargs):
-            response = self.app.get(*args, **kwargs)
-            if response.status >= 300 and response.status <= 399:
-                response = response.follow()
-            return response
         
         def run_get_actions(action_responses, **kwargs):
             for action_response in action_responses:
-                response = get(action_response[0], **kwargs)
+                response = self.get(action_response[0], **kwargs)
                 self.assertIn(action_response[1], response.body)
         
         # Get when logged in - but directed from another website - test XsiteForgery messaage
         
         action_responses = [
-            ('/members/unittest/follow'         ,'want to <b>follow '        ),
+            ('/members/unittest/follow'         ,'want to <b>follow '          ),
             ('/contents/1/boom'                 ,'want to <b>boom '            ),
             ('/contents/new?parent_id=1'        ,'want to <b>create a response'),
-            ('/contents/new?target_type=article','want to <b>post a '      ),
+            ('/contents/new?target_type=article','want to <b>post a '          ),
+            # comments needed
+            #('/contents/new'                    ,'????????'          ),
         ]
         run_get_actions(action_responses, status=403)
         
@@ -46,5 +50,25 @@ class TestSigninActions(TestController):
             ('/contents/1/boom'                 ,'you will Boom'    ),
             ('/contents/new?parent_id=1'        ,'you will respond' ),
             ('/contents/new?target_type=article','you will '        ),
+            # comments needed
+            ('/contents/new'                    ,'create new content'),
         ]
         run_get_actions(action_responses)
+
+
+    #---------------------------------------------------------------------------
+    # Signin Actions - on mobile
+    #---------------------------------------------------------------------------
+
+    def test_signin_actions_mobile(self):
+        
+        response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'}, status=403)
+        self.assertIn('want to <b>follow ', response.body)
+        self.assertIn('mobileinit'        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
+        
+        self.log_out()
+        
+        # AllanC - TODO - This test fails .. this test tests for the CORRECT behaviour! we need the mobile signin page to be view here
+        response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'})
+        self.assertIn('you will follow', response.body)
+        self.assertIn('mobileinit'     , response.body) 

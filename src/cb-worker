@@ -140,7 +140,7 @@ def set_up_environment():
         else:
             Session.rollback()
         if exception:
-            log.exception('Error in worker:')
+            log.exception('Error in worker (%s):' % (job, ))
 
     w.setup = setup
     w.teardown = teardown

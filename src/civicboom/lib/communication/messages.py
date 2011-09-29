@@ -165,8 +165,8 @@ def send_notification(members, message):
     if isinstance(members, basestring):
         members = members.split(',') # split member names if comma separated list
     if not isinstance(members, list): 
-        members = [members] # Put single member in list
-    members = [m.username if hasattr(m,'username') else m for m in members] # Convert member objects into username strings
+        members = [members] # Put single member in list, (it could be a member object)
+    members = [m.id if hasattr(m,'id') else m for m in members] # Convert member objects into username strings
     
     # Get message as dict (shallow copy defensivly if nessisary)
     if isinstance(message, dict):
@@ -174,7 +174,6 @@ def send_notification(members, message):
     if hasattr(message, 'to_dict'):
         message = message.to_dict()
     
-
     # Thread the send operation
     # Each member object is retreved and there message preferences observed (by the message thread) for each type of message
     worker.add_job({
