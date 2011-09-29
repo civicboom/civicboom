@@ -1,8 +1,5 @@
 <!DOCTYPE html>
 <%
-    self.page_id    = ''
-    self.page_role  = "page"
-    self.title      = ''
     
     self.link_back = None
     self.link_next = None
@@ -12,7 +9,8 @@
 % endif
 <html>
     <head>
-        <title>${_('_site_name Mobile')}: ${self.title}</title>
+        <%def name="title()"></%def>
+        <title>${_('_site_name Mobile')}: ${self.title()}</title>
         
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
@@ -77,23 +75,45 @@
     
   
     <body class="c-${c.controller} a-${c.action}">
-        ## AllanC
-        ## The 'role' divs should be part of the base template - here -
-        ## in multiple areas we are calling parent.flash_message() - this is not a scalable tidy way of doing this - it will be remodeled
-        <div data-role="${self.page_role}" data-theme="b" id="${self.page_id}" class="">
-            <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
-                ${self.header()}
-            </div>        
-            <div data-role="content">
-                ${self.flash_message()}
-                ${next.body()}
-            </div>
-            <div data-role="footer" data-position="fixed" data-fullscreen="true">
-                ${self.footer()}
-            </div>
-        </div>
+        ##${self.flash_message()}
+        ${next.body()}
     </body>
 </html>
+
+
+
+
+
+##------------------------------------------------------------------------------
+## Templates
+##------------------------------------------------------------------------------
+
+<%def name="page()">
+    <div data-role="page" data-theme="b" \
+        % if hasattr(caller, 'page_id'):
+        id="${caller.page_id()}" \
+        % endif
+        % if hasattr(caller, 'page_class'):
+        class="${caller.page_class()}" \
+        % endif
+    >
+        % if hasattr(caller, 'header'):
+        <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
+            ${caller.header()}
+        </div>
+        % endif
+        <div data-role="content">
+            ${caller.content()}
+        </div>
+        % if hasattr(caller, 'footer'):
+        <div data-role="footer" data-position="fixed" data-fullscreen="true">
+            ${caller.footer()}
+        </div>
+        % endif
+    </div>
+</%def>
+
+
 
 
 <%def name="header()">

@@ -1,44 +1,48 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 <%def name="body()">
-    ${next.body()}
+    <%self:page>
+        <%def name="page_id()">${next.page_id()}</%def>
+        <%def name="content()">${next.content()}</%def>
+        <%def name="footer()" >
+            <%
+                import copy
+                
+                args, kwargs = c.web_params_to_kwargs
+                kwargs = copy.copy(kwargs)
+                if 'format' in kwargs:
+                    del kwargs['format']
+                list   = d['list']
+                offset = list['offset']
+                limit  = list['limit']
+                count  = list['count']
+                items  = len(list['items'])
+            %>
+            
+            % if offset > 0 or offset + items < count:
+                <div data-role="navbar" class="ui-navbar">
+                    <ul>
+                    % if offset > 0:
+                        <li>
+                            <% kwargs['offset'] = offset - limit %>
+                            <a href="${h.url('current', format='html', **kwargs)}" class="prev" data-direction="reverse">${_("Previous")}</a>
+                        </li>
+                    % endif
+                    % if offset + items < count:
+                        <li>
+                            <% kwargs['offset'] = offset + limit %>
+                            <a href="${h.url('current', format='html', **kwargs)}" class="next">${_("Next")}</a>
+                        </li>
+                    % endif
+                    </ul>
+                </div>
+            % endif
+        </%def>
+    </%self:page>
 </%def>
 
 
-<%def name="footer()">
-    <%
-        import copy
-        
-        args, kwargs = c.web_params_to_kwargs
-        kwargs = copy.copy(kwargs)
-        if 'format' in kwargs:
-            del kwargs['format']
-        list   = d['list']
-        offset = list['offset']
-        limit  = list['limit']
-        count  = list['count']
-        items  = len(list['items'])
-    %>
-    
-    % if offset > 0 or offset + items < count:
-        <div data-role="navbar" class="ui-navbar">
-            <ul>
-            % if offset > 0:
-                <li>
-                    <% kwargs['offset'] = offset - limit %>
-                    <a href="${h.url('current', format='html', **kwargs)}" class="prev" data-direction="reverse">${_("Previous")}</a>
-                </li>
-            % endif
-            % if offset + items < count:
-                <li>
-                    <% kwargs['offset'] = offset + limit %>
-                    <a href="${h.url('current', format='html', **kwargs)}" class="next">${_("Next")}</a>
-                </li>
-            % endif
-            </ul>
-        </div>
-    % endif
-</%def>
+
 
 
 <%def name="search_form()">

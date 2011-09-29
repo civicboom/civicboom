@@ -1,24 +1,18 @@
 <%inherit file="/html/mobile/common/lists.mako"/>
 
-<%!
-    title_dict = {
-        'to'          : _("messages"),
-        'sent'        : _("sent messages"),
-        'notification': _("notifications"),
-    }
-%>
-
-<%def name="init_vars()">
-<%
-    self.title      = _("Messages")
-    self.page_id    = "messages"
-    self.page_class = "messages"
-%>
-</%def>
 
 
-<%def name="body()">
+<%def name="title()"     >${_("Messages")}</%def>
+<%def name="page_id()"   >messages</%def>
+<%def name="page_class()">messages</%def>
+<%def name="content()">
     <%
+        title_dict = {
+            'to'          : _("messages"),
+            'sent'        : _("sent messages"),
+            'notification': _("notifications"),
+        }
+        
         list  = d['list']
         title = title_dict.get(list['kwargs']['list'], 'messages')
     %>

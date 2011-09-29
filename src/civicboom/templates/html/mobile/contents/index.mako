@@ -1,14 +1,8 @@
 <%inherit file="/html/mobile/common/lists.mako"/>
 
-<%def name="init_vars()">
-<%
-    self.title      = _("Explore _content")
-    self.page_id    = "explore_content"
-%>
-</%def>
-
-
-<%def name="body()">
+<%def name="title()"  >${_("Explore _content")}</%def>
+<%def name="page_id()">explore_content</%def>
+<%def name="content()">
     ${self.search_form()}
     ${parent.generate_list(d['list'], content_li, title=_('Content'))}
 </%def>
