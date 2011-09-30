@@ -154,14 +154,21 @@ class AdminControllerBase(BaseController):
         """
         Output CSV of all users ov civicboom
         """
+        
+        help_type_filter = request.params.get('help_type')
+        
         from civicboom.model import User
         response.headers['Content-type'] = "text/csv; charset=utf-8"
         csv = []
         for user in Session.query(User).all():
             if user.config.get('no_marketing_emails'):
                 continue
+            if help_type_filter and user.config.get('help_type', 'ind') != help_type_filter:
+                continue
             csv.append(','.join([user.username, user.name or "", user.email_normalized or "", user.status]))
         return "\n".join(csv)
+    
+    
 
     def moderate(self):
         """
