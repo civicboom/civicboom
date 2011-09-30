@@ -1,8 +1,9 @@
 <%inherit file="/html/mobile/common/lists.mako"/>
 
-<%def name="title()"  >${_("Explore _users and _groups")}</%def>
-<%def name="page_id()">explore_member</%def>
-<%def name="content()">
+<%def name="title()"       >${_("Explore _users and _groups")}</%def>
+
+<%def name="page_id()"     >explore_member</%def>
+<%def name="page_content()">
     ${parent.generate_list(d['list'], member_li, title=_('Members'), more=None)}
 </%def>
 

@@ -1,14 +1,23 @@
 <%inherit file="/html/mobile/common/lists.mako"/>
 
-<%def name="title()"  >${_("Explore _content")}</%def>
-<%def name="page_id()">explore_content</%def>
-<%def name="content()">
+<%def name="title()">${_("Explore _content")}</%def>
+
+<%def name="page_id()"     >explore_content</%def>
+<%def name="page_content()">
     ${self.search_form()}
-    ${parent.generate_list(d['list'], content_li, title=_('Content'))}
+    ##${parent.generate_list(d['list'], content_li, title=_('Content'))}
+    ${list_contents(d['list'])}
 </%def>
 
-
-
+##------------------------------------------------------------------------------
+## 
+##------------------------------------------------------------------------------
+<%def name="list_contents(contents, title=None)">
+    <%
+        title = title if title else _('Content')
+    %>
+    ${parent.generate_list(contents, content_li, title)}
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Generate a single li element for the given content item

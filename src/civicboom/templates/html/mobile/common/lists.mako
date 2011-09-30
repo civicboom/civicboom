@@ -2,9 +2,9 @@
 
 <%def name="body()">
     <%self:page>
-        <%def name="page_id()">${next.page_id()}</%def>
-        <%def name="content()">${next.content()}</%def>
-        <%def name="footer()" >
+        <%def name="page_id()"     >${next.page_id()}</%def>
+        <%def name="page_content()">${next.page_content()}</%def>
+        <%def name="page_footer()" >
             <%
                 import copy
                 

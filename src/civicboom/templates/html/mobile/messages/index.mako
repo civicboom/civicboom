@@ -1,11 +1,10 @@
 <%inherit file="/html/mobile/common/lists.mako"/>
 
+<%def name="title()">${_("Messages")}</%def>
 
-
-<%def name="title()"     >${_("Messages")}</%def>
-<%def name="page_id()"   >messages</%def>
-<%def name="page_class()">messages</%def>
-<%def name="content()">
+<%def name="page_id()"     >messages</%def>
+<%def name="page_class()"  >messages</%def>
+<%def name="page_content()">
     <%
         title_dict = {
             'to'          : _("messages"),

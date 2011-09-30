@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<%
-    
-    self.link_back = None
-    self.link_next = None
-%>
 % if hasattr(self, 'init_vars'):
     ${self.init_vars()}
 % endif
@@ -97,17 +92,18 @@
         class="${caller.page_class()}" \
         % endif
     >
-        % if hasattr(caller, 'header'):
+        ${caller.body()}
+        % if hasattr(caller, 'page_header'):
         <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
-            ${caller.header()}
+            ${caller.page_header()}
         </div>
         % endif
         <div data-role="content">
-            ${caller.content()}
+            ${caller.page_content()}
         </div>
-        % if hasattr(caller, 'footer'):
+        % if hasattr(caller, 'page_footer'):
         <div data-role="footer" data-position="fixed" data-fullscreen="true">
-            ${caller.footer()}
+            ${caller.page_footer()}
         </div>
         % endif
     </div>
@@ -116,18 +112,18 @@
 
 
 
-<%def name="header()">
+<%def name="header(link_back=None, link_next=None)">
     <div class="header">
-        % if self.link_back:
-            <a href="${self.link_back}" class="back_link" data-direction="reverse">
+        % if link_back:
+            <a href="${link_back}" class="back_link" data-direction="reverse">
                 <span><</span>
             </a>
         % endif
         <a href="/" rel="external">
             <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />
         </a>
-        % if self.link_next:
-            <a href="${self.link_next}" class="next_link">
+        % if link_next:
+            <a href="${link_next}" class="next_link">
                 <span>></span>
             </a>
         % endif
