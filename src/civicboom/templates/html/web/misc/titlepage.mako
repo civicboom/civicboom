@@ -17,10 +17,56 @@
 			${front_windows()}
 			${front_tagline()}
 			${start_button()}
+			${social_media()}
 	</div>
 	<br />
 </%def>
 	
+##------------------------------------------------------------------------------
+## Start button
+##------------------------------------------------------------------------------
+<%def name="social_media()">
+    <style type="text/css">
+        #social_media {
+            position: absolute;
+            left: 14px;
+            bottom: 10px;
+        }
+    </style>
+    <div id="social_media">
+    
+        ## Facebook (Oh holy god)
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {return;}
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+        <div class="fb-like" data-href="http://www.facebook.com/pages/Civicboom/170296206384428" data-send="false" data-layout="button_count" data-width="350" data-show-faces="true" data-font="arial"></div>
+        <div style="clear: both; height: 6px;"></div>
+        
+        ## Google +1
+        <!-- Place this tag where you want the +1 button to render -->
+        <g:plusone size="medium" annotation="inline" width="350"></g:plusone>
+        
+        <!-- Place this render call where appropriate -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+        <div style="clear: both; height: 2px;"></div>
+    
+        ## Twitter
+        <a href="https://twitter.com/Civicboom" class="twitter-follow-button">Follow @Civicboom</a>
+        <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
+        
+    </div>
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Start button
