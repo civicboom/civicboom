@@ -1079,13 +1079,13 @@ r = (d['content']['rating'] * 5)
                         ${h.secure_link(
                             h.args_to_tuple('content_action', action='approve', format='redirect', id=self.id),
                             value           = _('Approve & _Lock'),
-                            value_formatted = h.literal("<table class=\"approve\"><tr><td class=\"int\">1.</td><td><p class=\"guidance_title\">"+_("Grab it!")+"</p><p class=\"guidance_text\">"+_("Want to publish or use this content? Click here!")+"</p></td></tr></table>"),
+                            value_formatted = h.literal("<table class=\"approve\"><tr><td class=\"int\">1.</td><td><p class=\"guidance_title\">"+_("_Lock it!")+"</p><p class=\"guidance_text\">"+_("Want to publish or use this content? Click here!")+"</p></td></tr></table>"),
                             title           = _("Approve and _lock this content so no further editing is possible"),
                             confirm_text    = _('Click OK to approve this. Once approved, no further changes can be made by the creator, and further details will be sent to your inbox.'),
                             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
                             modal_params = dict(
                                 title   = _('_Lock and approve this'),
-                                message = HTML.p(_("When something is grabbed and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
+                                message = HTML.p(_("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
                                 buttons = dict(
                                     yes = _('Yes. _Lock and approve'),
                                     no  = _('No. Take me back'),
