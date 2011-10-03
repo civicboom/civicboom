@@ -1,6 +1,8 @@
 if (typeof window.boom == 'undefined') {
 	// Civicboom stays in the boom object
-	window.boom = {
+	// Internet Explorer for Windows Mobile does not support modifying the window object directly,
+	// however all browsers place global variables as properties of the window object.
+	boom = {
 		// Base host to load content from
 		base_host: 'https://www.civicboom.com',
 		// Callback id counter
