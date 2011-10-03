@@ -76,14 +76,9 @@ def main(argv):
 def set_up_environment():
     # give the worker some functions
     log.info("Init functions")
-    from civicboom.worker.functions.send_notification import send_notification
-    from civicboom.worker.functions.process_media     import process_media
-    from civicboom.worker.functions.profanity_check   import profanity_check
-    from civicboom.worker.functions.worker_workout    import worker_workout
-    w.add_worker_function( process_media    )
-    w.add_worker_function( send_notification)
-    w.add_worker_function( profanity_check  )
-    w.add_worker_function( worker_workout   )
+    from civicboom.worker import init_worker_functions
+    from civicboom.worker.functions.worker_workout import worker_workout
+    init_worker_functions(w, [worker_workout])
 
     # make sure that the database is open before each job, and closed after it
     log.info("Init database")
