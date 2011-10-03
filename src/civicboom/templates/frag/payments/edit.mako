@@ -96,4 +96,9 @@
         ${invalid('address_country')}
        
     </p>
+    <p>
+        <p><b>Please only fill out the following if you business is VAT registered within the European Commission</b></p>
+        <label for="vat_no">${_('VAT No.')}</label>
+        <input type="text" id="vat_no" name="vat_no" value="${self.account.get('vat_no','')}"
+    </p>
 </%def>

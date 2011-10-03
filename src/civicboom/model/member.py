@@ -841,7 +841,7 @@ class PaymentAccount(Base):
     do_not_bill      = Column(Boolean(), nullable=False, default=False)
     _address_config_order = ['address_1', 'address_2', 'address_town', 'address_county', 'address_postal', 'address_country']
     _address_required= ('address_1', 'address_town', 'address_country', 'address_postal')
-    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type'))
+    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type', 'vat_no'))
     
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
