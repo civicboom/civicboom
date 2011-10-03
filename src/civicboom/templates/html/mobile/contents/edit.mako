@@ -1,16 +1,17 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-## includes
-
+<%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
 <%namespace name="edit_full" file="/frag/contents/edit.mako" />
 
-##<%namespace name="components"      file="/html/mobile/common/components.mako" />
-##<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
-##<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
+
 
 ##------------------------------------------------------------------------------
 
-<%def name="init_vars()">
+<%def name="page_title()">${_(d['content']['title'])}</%def>
+
+##------------------------------------------------------------------------------
+
+<%def name="body()">
     <%
         self.content = d['content']
         self.id      = d['content']['id']
@@ -24,24 +25,21 @@
         self.attr.title     = _('Edit ') + _('_'+self.selected_type)
         self.attr.icon_type = 'edit'
     %>
-</%def>
-
-
-##------------------------------------------------------------------------------
-
-<%def name="page_title()">
-    ${_(d['content']['title'])}
-</%def>
-
-##------------------------------------------------------------------------------
-
-<%def name="body()">
-<div data-role="page">
-    <div data-role="content">
-    ## page structure defs
-    ${content_edit()}
-    </div>
-</div>
+    
+    <%self:page>
+        <%def name="page_id()"   >content-edit-${id}</%def>
+        ##${self.swipe_event('#content-main-%s' % id, '#content-info-%s' % id, 'left')}
+        <%def name="page_content()">
+        
+            % if self.content['parent']:
+            <ul data-role="listview" data-inset="true">
+                ${content_list_includes.parent_content(self.content)}
+            </ul>
+            % endif
+            
+            ${content_edit()}
+        </%def>
+    </%self:page>
 </%def>
 
 ##------------------------------------------------------------------------------

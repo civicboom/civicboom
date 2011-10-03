@@ -80,41 +80,39 @@
         </%def>
         <%def name="page_content()">
             <div class="content_details">
-                    ## Creator info
-                    <ul data-role="listview" data-inset="true">
-                        <li data-role="list-divider" role="heading">Creator</li>
-                        ${member_includes.member_details_short(creator, li_only=1)}
-                    </ul>
-                    
-                    ## Parent
-                    <ul data-role="listview" data-inset="true">
-                        ${content_list_includes.parent_content(content)}
-                    </ul>
-                    
-                    ## Content info
-                    <ul data-role="listview" data-inset="true">
-                        <li data-role="list-divider" role="heading">${content['type'].capitalize()} information</li>
-                        % if content.get('publish_date'):
-                            <li><h3>Published:</h3> ${content.get('publish_date')}</li>
-                        % endif
-                        % if content.get('tags'):
-                            <li><h3>Tags:</h3> ${", ".join(content['tags'])}</li>
-                        % endif
-                        % if content.get('views'):
-                            <li><h3>Views:</h3> ${content['views']}</li>
-                        % endif
-                        % if content.get('boom_count'):
-                            <li><h3>Booms:</h3> ${content['boom_count']}</li>
-                        % endif
-                    </ul>
-                    
-                    ## Responses
-                    <ul data-role="listview" data-inset="true">
-                        ${content_list_includes.list_contents(responses, "Responses")}
-                    </ul>
+                ## Creator info
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider" role="heading">Creator</li>
+                    ${member_includes.member_details_short(creator, li_only=1)}
+                </ul>
+                
+                ## Parent
+                <ul data-role="listview" data-inset="true">
+                    ${content_list_includes.parent_content(content)}
+                </ul>
+                
+                ## Content info
+                <ul data-role="listview" data-inset="true">
+                    <li data-role="list-divider" role="heading">${content['type'].capitalize()} information</li>
+                    % if content.get('publish_date'):
+                        <li><h3>Published:</h3> ${content.get('publish_date')}</li>
+                    % endif
+                    % if content.get('tags'):
+                        <li><h3>Tags:</h3> ${", ".join(content['tags'])}</li>
+                    % endif
+                    % if content.get('views'):
+                        <li><h3>Views:</h3> ${content['views']}</li>
+                    % endif
+                    % if content.get('boom_count'):
+                        <li><h3>Booms:</h3> ${content['boom_count']}</li>
+                    % endif
+                </ul>
+                
+                ## Responses
+                <ul data-role="listview" data-inset="true">
+                    ${content_list_includes.list_contents(responses, "Responses")}
                 </ul>
             </div>
-
         </%def>
     </%self:page>
     

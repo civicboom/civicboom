@@ -8,36 +8,83 @@
 <%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 <%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
 
-<%def name="init_vars()">
-    <%
-        self.member    = d['member']
-        self.id        = self.member.get('id')
-        self.name      = self.member.get('name')
-        self.actions   = d['actions']
-        self.current_user = c.logged_in_persona and self.id == c.logged_in_persona.id
-    %>
-</%def>
 
-<%def name="page_title()">
-    ${self.id}
-</%def>
+<%def name="page_title()">${d['member'].get('name')}</%def>
 
 <%def name="body()">
-
+    <%
+        member    = d['member']
+        id        = self.member.get('id')
+        name      = self.member.get('name')
+        actions   = d['actions']
+        current_user = c.logged_in_persona and self.id == c.logged_in_persona.id
+    %>
 
     ## Main member detail page (username/description/etc)
-    <div data-role="page" data-theme="b" id="member-details-${self.id}" class="member_details_page">
-        ${components.swipe_event('#member-details-%s' % self.id, '#member-extra-%s' % self.id, 'left')}
-        
-        ${components.header(title=self.name, next_link="#member-extra-"+self.id)}
-        
-        <div data-role="content">
-            ${parent.flash_message()}
-            ${member_details_full(self.member)}
-        </div>
-        
-        ${signout_navbar()}
-    </div>
+    <%self:page>
+        <%def name="page_id()"     >member-details-${id}</%def>
+        <%def name="page_class()"  >member_details_page</%def>
+        ${self.swipe_event('#member-details-%s' % id, '#member-extra-%s' % id, 'left')}
+        <%def name="header()">
+            ${self.header(title=self.name, next_link="#member-extra-%s" % id)}
+        </%def>
+        <%def name="page_content()">
+            ##${parent.flash_message()}
+            ## BODY
+            ##${signout_navbar()}
+            
+            ## Full user details for member/profile pages
+            ## Includes username/etc, description, followers/etc
+            
+            ##% if member:
+            <%
+                if hasattr(member,'to_dict'):
+                    member = member.to_dict()
+                description = member['description']
+                website = member['website']
+            %>
+            <div class="member_details">
+                ## Avatar/name
+                <h3>${member['name']}</h3>
+                ${member_includes.avatar(member, as_link=0, img_class="avatar")}
+                <p>Username: <b>${self.name}</b></p>
+                <p>Type: <b>${member['type'].capitalize()}</b></p>
+                
+                <div class="separator" style="padding: 0.5em;"></div>
+                
+                ${messages_bar()}
+                ${actions_buttons()}
+                
+                <ul data-role="listview" data-inset="true">
+                    ## User website
+                    % if website:
+                        <li data-role="list-divider" role="heading">
+                            ${self.name}'s website
+                        </li>
+                        <li>
+                            <a href="${website}">
+                                ${website}
+                            </a>
+                        </li>
+                    % endif
+                    
+                    ## User description
+                    % if description:
+                        <li data-role="list-divider" role="heading">${name}'s description</li>
+                        <li>${description}</li>
+                    % endif
+                </ul>
+                
+                ${member_list("following")}
+                ${member_list("followers")}
+                ${member_list("groups")}
+                ${member_list("members")}
+            </div>
+            ##% endif
+        </%def>
+    </%self:page>
+    
+    
     
     ## Extra info (content/boomed/etc)
     <div data-role="page" data-theme="b" id="member-extra-${self.id}" class="member_extra_page">
@@ -124,61 +171,6 @@
     % endif
 </%def>
 
-##-----------------------------------------------------------------------------
-## Full user details for member/profile pages
-## Includes username/etc, description, followers/etc
-##-----------------------------------------------------------------------------
-<%def name="member_details_full(member)">
-    % if member:
-        <%
-            if hasattr(member,'to_dict'):
-                member = member.to_dict()
-            description = member['description']
-            website = member['website']
-        %>
-        <div class="member_details">
-            ## Avatar/name
-            <h3>${member['name']}</h3>
-            ${member_includes.avatar(member, as_link=0, img_class="avatar")}
-            <p>Username: <b>${self.name}</b></p>
-            <p>Type: <b>${member['type'].capitalize()}</b></p>
-            
-            <div class="separator" style="padding: 0.5em;"></div>
-            
-            ${messages_bar()}
-            ${actions_buttons()}
-            
-            <ul data-role="listview" data-inset="true">
-                ## User website
-                % if website:
-                    <li data-role="list-divider" role="heading">
-                        ${self.name}'s website
-                    </li>
-                    <li>
-                        <a href="${website}">
-                            ${website}
-                        </a>
-                    </li>
-                % endif
-                
-                ## User description
-                % if description:
-                    <li data-role="list-divider" role="heading">
-                        ${self.name}'s description
-                    </li>
-                    <li>
-                        ${description}
-                    </li>
-                % endif
-            </ul>
-                
-            ${member_list("following")}
-            ${member_list("followers")}
-            ${member_list("groups")}
-            ${member_list("members")}
-        </div>
-    % endif
-</%def>
 
 ##-----------------------------------------------------------------------------
 ## Member action buttons (follow, etc)
