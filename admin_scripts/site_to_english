@@ -52,8 +52,8 @@ def trans(text, locations):
         ("respond", "respond"),
         
         ("disassociate", "remove"),
-        ("lock", "grab"),
         ("locked", "grabbed"),
+        ("lock", "grab"),
         
         ("member",     "member"),
         ("user",       "user"),
