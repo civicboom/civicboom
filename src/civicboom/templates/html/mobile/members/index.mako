@@ -1,5 +1,8 @@
 <%inherit file="/html/mobile/common/lists.mako"/>
 
+<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
+
+
 <%def name="title()"       >${_("Explore _users and _groups")}</%def>
 
 <%def name="page_id()"     >explore_member</%def>
@@ -7,6 +10,35 @@
     ${parent.generate_list(d['list'], member_li, title=_('Members'), more=None)}
 </%def>
 
+##------------------------------------------------------------------------------
+## 
+##------------------------------------------------------------------------------
+
+<%def name="list_members_avatars(members, title=None)">
+    <%
+        title = title if title else _('Members')
+        if isinstance(members, dict):
+            count   = members['count']
+            members = members['items']
+        else:
+            count   = len(members)
+    %>
+    % if members:
+        ## AllanC - TODO - Can this be unified with generate_list?
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider" role="heading">
+                ## AllanC - TODO - member avatar lists need to open up full members_index page of followers etc
+                ${title.capitalize()}
+                <span class="ui-li-count">${count}</span>
+            </li>
+            <li class="ui-li ui-li-static ui-body-c">
+                % for member in members:
+                    <span class="member_avatar_small">${member_includes.avatar(member, img_class="thumbnail_small")}</span>
+                % endfor
+            </li>
+        </ul>
+    % endif
+</%def>
 
 ##------------------------------------------------------------------------------
 ## Generate a single li element for the given member
@@ -30,3 +62,5 @@
         </a>
     </li>
 </%def>
+
+

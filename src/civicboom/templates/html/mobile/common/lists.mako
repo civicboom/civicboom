@@ -71,21 +71,26 @@
 ##------------------------------------------------------------------------------
 ## Generate li elements for a list
 ##------------------------------------------------------------------------------
-<%def name="generate_list(list, method, title=None, more=None)">
+<%def name="generate_list(list, render_item_func, title=None, more=True)">
     % if method and list.get('count') and list['count']:
         <ul data-role="listview" data-inset="true" data-split-icon="delete" data-split-theme="d">
             % if title:
-                <li data-role="list-divider" role="heading">
-                    ${title.capitalize()}
-                    <span class="ui-li-count">${list['count']}</span>    
+                <li data-role="list-divider" role="heading">'
+                    ${title.capitalize()} <span class="ui-li-count">${list['count']}</span>
                 </li>
             % endif
             % for item in list['items']:
-                ${method(item)}
+                ${render_item_func(item)}
             % endfor
-            % if more != None and list.get('count') > list.get('limit'):
+            % if more and list.get('count') > list.get('limit'):
                 <li>
-                    <a href="${more_link(list)}">See all ${list.get('count')} ${title.lower()}</a>
+                    <a href="${more_link(list)}">
+                        % if title:
+                            ${_('See all %s %s' % (list.get('count'), title.lower()))}
+                        % else:
+                            ${_('more')}
+                        % endif
+                    </a>
                 </li>
             % endif
         </ul>
