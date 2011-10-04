@@ -49,7 +49,7 @@
         
         ## Google +1
         <!-- Place this tag where you want the +1 button to render -->
-        <g:plusone size="medium" annotation="inline" width="350"></g:plusone>
+        <g:plusone size="medium" annotation="inline" width="350" href="https://www.civicboom.com/"></g:plusone>
         
         <!-- Place this render call where appropriate -->
         <script type="text/javascript">
