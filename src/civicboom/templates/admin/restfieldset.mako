@@ -48,7 +48,7 @@ from pylons import url
 			<p><a class="ui-state-default ui-corner-all" href="${models['DraftContent']}">Drafts</a></p>
 			<hr>
 			<p><a class="ui-state-default ui-corner-all" href="${models['ContentEditHistory']}">Content Edit History</a></p>
-			<p><a class="ui-state-default ui-corner-all" href="${models['FlaggedContent']}">Content Flags</a></p>
+			<p><a class="ui-state-default ui-corner-all" href="${models['FlaggedEntity']}">Flags</a></p>
 		</td>
 		<td>
 			<p><a class="ui-state-default ui-corner-all" href="${models['User']}">Users</a></p>
@@ -95,7 +95,7 @@ from pylons import url
 	<tr><th colspan="3">${_("Statistics")}</th></tr>
 	<%
 from civicboom.model.meta import Session
-from civicboom.model import Content, User, Group, Media, FlaggedContent
+from civicboom.model import Content, User, Group, Media, FlaggedEntity
 	%>
 	<tr>
 		<td>
@@ -103,7 +103,7 @@ from civicboom.model import Content, User, Group, Media, FlaggedContent
 				<li>
 					${Session.query(Content).count()} ${_("bits of content")}
 					(<a href="/admin/Content/models?Content--status=pending">${Session.query(Content).filter(Content.visible==False).count()} ${_("not visible")}</a>,
-					<a href="/admin/FlaggedContent/models">${Session.query(FlaggedContent).count()} ${_("flagged")}</a>)
+					<a href="/admin/FlaggedEntity/models">${Session.query(FlaggedEntity).count()} ${_("flagged")}</a>)
 				</li>
 				<li>
 					${Session.query(User).count()} ${_("users")}
