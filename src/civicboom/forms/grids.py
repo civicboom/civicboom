@@ -57,12 +57,12 @@ DraftContentGrid.configure(include=[
         ])
 
 
-FlaggedContentGrid = Grid(model.FlaggedContent)
-FlaggedContentGrid.configure(include=[
-        FlaggedContentGrid.content,
-        FlaggedContentGrid.type.readonly(),
-        FlaggedContentGrid.member,
-        FlaggedContentGrid.comment.readonly(),
+FlaggedEntityGrid = Grid(model.FlaggedEntity)
+FlaggedEntityGrid.configure(include=[
+        FlaggedEntityGrid.offending_content,
+        FlaggedEntityGrid.type.readonly(),
+        FlaggedEntityGrid.raising_member,
+        FlaggedEntityGrid.comment.readonly(),
         ])
 
 MemberGrid = Grid(model.Member)

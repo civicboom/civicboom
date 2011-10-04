@@ -114,7 +114,7 @@ def run_one_job(job_details):
             live = False
             job_success = True
         else:
-            log.error("Unrecognised job type: %s" % function_name)
+            log.error("Unrecognised job type: %s - %s" % (function_name, job_details))
             job_success = True
     except Exception as e:
         job_success = False

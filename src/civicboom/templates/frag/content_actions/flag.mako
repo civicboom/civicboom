@@ -24,8 +24,8 @@
 ##      <p class="form_instructions">${_('Flag this _content as inappropriate')}</p>
       ${h.form(h.args_to_tuple(controller='content_actions', action='flag', id=id, format='redirect'), json_form_complete_actions="cb_frag_remove(current_element);")}
           <select name="type">
-              <% from civicboom.model.content import FlaggedContent %>
-              % for type in [type for type in FlaggedContent._flag_type.enums if type!="automated"]:
+              <% from civicboom.model import FlaggedEntity %>
+              % for type in [type for type in FlaggedEntity._flag_type.enums if type!="automated"]:
               <option value="${type}">${_(type.capitalize())}</option>
               % endfor
           </select>

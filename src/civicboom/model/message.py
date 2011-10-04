@@ -24,6 +24,7 @@ class Message(Base):
     target      = relationship("Member", primaryjoin="Message.target_id==Member.id", backref=backref('messages_to'  , cascade="all, delete-orphan"))
     source      = relationship("Member", primaryjoin="Message.source_id==Member.id", backref=backref('messages_from', cascade="all, delete-orphan"))
 
+    flags       = relationship("FlaggedEntity" , backref=backref('offending_message'), cascade="all,delete-orphan")
 
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({
@@ -58,6 +59,13 @@ class Message(Base):
     def delete(self):
         from civicboom.lib.database.actions import del_message
         return del_message(self)
+
+    def flag(self, **kargs):
+        """
+        Flag message
+        """
+        from civicboom.lib.database.actions import flag
+        flag(self, **kargs)
 
 DDL('DROP TRIGGER IF EXISTS update_num_unread ON message').execute_at('before-drop', Message.__table__)
 DDL("""

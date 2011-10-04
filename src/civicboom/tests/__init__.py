@@ -374,7 +374,13 @@ class TestController(TestCase):
         from civicboom.lib.database.get_cached import get_member
         member = get_member(username)
         member.delete()
-        
+
+    def delete_message(self, id):
+        response = self.app.delete(
+            url('message', id=id, format="json"),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
 
     def follow(self, username, trusted=False):
         #actions = self.get_actions(username) # AllanC - this does not work as once an invite is sent the options are follow and unfollow(reject invitation)
