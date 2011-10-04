@@ -20,7 +20,7 @@ paypal_config = PayPalConfig(
     API_SIGNATURE = config['api_key.paypal.signature'],
     CB_TEST_DATA  = True if config.get('test_mode') else False,
     DEBUG_LEVEL   = 0,
-    API_ENVIRONMENT = config['api_key.paypal.environment'])
+    API_ENVIRONMENT = config['api_key.paypal.environment']
 )
 
 paypal_interface = PayPalInterface(config=paypal_config)
