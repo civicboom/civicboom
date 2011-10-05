@@ -225,7 +225,7 @@
     
     <td class="creator_avatar">
         ${member_includes.avatar(self.content['creator'], class_="thumbnail_small")}
-        ${_("By: %s") % HTML.a(self.content['creator']['name'], href=url('member', id=self.content['creator']['username']), rel='author') | n}
+        ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
     </td>
     
     </tr></table>

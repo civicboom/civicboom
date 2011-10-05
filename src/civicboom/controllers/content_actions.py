@@ -219,7 +219,7 @@ class ContentActionsController(BaseController):
         """
         @auth
         def flag_action(id, type='offensive', comment='', **kwargs):
-            get_content(id).flag(member=c.logged_in_persona, type=type, comment=comment, moderator_address=config['email.moderator'])
+            get_content(id).flag(raising_member=c.logged_in_user, type=type, comment=comment, moderator_address=config['email.moderator'])
             user_log.debug("Flagged Content #%d as %s" % (int(id), type))
             return action_ok(_("An administrator has been alerted to this content"))
             #raise action_error(_("Error flaging content, please email us"))

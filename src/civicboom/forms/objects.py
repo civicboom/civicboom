@@ -118,15 +118,15 @@ CommentContent.configure(include=[
         CommentContent.creation_date,
         ])
 
-FlaggedContent = FieldSet(model.FlaggedContent)
-FlaggedContent.engine = CustomTemplateEngine("flagged")
-FlaggedContent.configure(include=[
-        FlaggedContent.content.readonly(),
-        FlaggedContent.content_id.readonly(),
-        FlaggedContent.member.readonly(),
-        FlaggedContent.timestamp.readonly(),
-        FlaggedContent.type.readonly(),
-        FlaggedContent.comment.readonly(),
+FlaggedEntity = FieldSet(model.FlaggedEntity)
+FlaggedEntity.engine = CustomTemplateEngine("flagged")
+FlaggedEntity.configure(include=[
+        FlaggedEntity.offending_content.readonly(),
+        FlaggedEntity.offending_content_id.readonly(),
+        FlaggedEntity.raising_member.readonly(),
+        FlaggedEntity.timestamp.readonly(),
+        FlaggedEntity.type.readonly(),
+        FlaggedEntity.comment.readonly(),
         ])
 
 Member = FieldSet(model.Member)
