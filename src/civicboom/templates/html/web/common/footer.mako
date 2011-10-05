@@ -8,7 +8,7 @@
 <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
 
 <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
-<a class="icon16 i_facebook" href="http://www.facebook.com/home.php#!/pages/Civicboom/141877465841094" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
+<a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
 <a class="icon16 i_mobile"   href="${url(controller='misc', action='about', id='mobile')}"             title="${_('Get the _site_name mobile app')}"><span>${_("_site_name Mobile App")}</span></a>
 </div>
 
