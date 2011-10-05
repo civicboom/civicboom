@@ -5,6 +5,7 @@ import logging.handlers
 import optparse
 import sys
 import os
+import json
 
 from ConfigParser import SafeConfigParser
 import cbutils.worker as w
@@ -70,9 +71,13 @@ def main(argv):
     set_up_environment()
     if options.test:
         add_test_jobs()
+
     if options.add_job:
-        w.add_job(json.loads(options.add_job))
-    run()
+        j = json.loads(options.add_job)
+        log.info("Manually adding job: %s" % j)
+        w.add_job(j)
+    else:
+        run()
 
     return 0
 
