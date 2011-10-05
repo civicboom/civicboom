@@ -24,6 +24,8 @@ def main(argv):
     option_parser.add_option('--test',
         help='add some test jobs', default=False,
         action="store_true")
+    option_parser.add_option('--add', dest="add_job",
+        help='manually add a job', metavar="JOB")
     options, args = option_parser.parse_args(argv)
 
     log_opts = dict(
@@ -68,6 +70,8 @@ def main(argv):
     set_up_environment()
     if options.test:
         add_test_jobs()
+    if options.add_job:
+        w.add_job(json.loads(options.add_job))
     run()
 
     return 0
