@@ -19,8 +19,7 @@
     %>
     
     <%self:page>
-        <%def name="page_id()"   >content-main-${id}</%def>
-        <%def name="page_class()">content_page</%def>
+        <%def name="page_attr()">id="content-main-${id}" class="content_page"</%def>
         ${self.swipe_event('#content-main-%s' % id, '#content-info-%s' % id, 'left')}
         <%def name="page_header()">
             ${self.header(link_next="#content-info-%s" % id)}
@@ -72,8 +71,7 @@
     </%self:page>
     
     <%self:page>
-        <%def name="page_id()"   >content-info-${id}</%def>
-        <%def name="page_class()">content_page</%def>
+        <%def name="page_attr()">id="content-info-${id}" class="content_page"</%def>
         ${self.swipe_event('#content-info-%s' % id, '#content-main-%s' % id, 'right')}
         <%def name="page_header()">
             ${self.header(link_back="#content-main-%s" % id)}
@@ -119,8 +117,7 @@
 
     % if len(media):
     <%self:page>
-        <%def name="page_id()"   >content-media-${id}</%def>
-        <%def name="page_class()">content_page</%def>
+        <%def name="page_attr()">id="content-media-${id}" class="content_page"</%def>
         ${self.swipe_event('#content-media-%s' % id, '#content-main-%s' % id, 'right')}
         <%def name="page_header()">
             ${self.header(link_back="#content-main-%s" % id)}

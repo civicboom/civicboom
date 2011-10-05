@@ -84,14 +84,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="page()">
-    <div data-role="page" data-theme="b" \
-        % if hasattr(caller, 'page_id'):
-        id="${caller.page_id()}" \
-        % endif
-        % if hasattr(caller, 'page_class'):
-        class="${caller.page_class()}" \
-        % endif
-    >
+    <div data-role="page" data-theme="b" ${caller.page_attr()}>
         ${caller.body()}
         % if hasattr(caller, 'page_header'):
         <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
@@ -102,7 +95,13 @@
             ${caller.page_content()}
         </div>
         % if hasattr(caller, 'page_footer'):
-        <div data-role="footer" data-position="fixed" data-fullscreen="true">
+        <div data-role="footer" \
+            % is hasattr(caller, 'footer_attr'):
+                ${caller.header_attr()}
+            % else:
+                data-position="fixed" data-fullscreen="true" \
+            % endif
+        >
             ${caller.page_footer()}
         </div>
         % endif
