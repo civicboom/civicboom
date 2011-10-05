@@ -8,7 +8,7 @@ import json
 def create_autocompleter(url):
     class AutoCompleteRenderer(FieldRenderer):
         def render(self, options={}):
-            value = self._value if (hasattr(self, '_value') and self._value) else ''
+            value = self.value if (hasattr(self, 'value') and self.value) else ''
             cn = ""
             for name, val in options:
                 if str(val) == value:
@@ -48,7 +48,7 @@ $('#%(name)s_name').autocomplete({
 
 class DatePickerFieldRenderer(FieldRenderer):
     def render(self):
-        value = self._value if (hasattr(self, '_value') and self._value) else ''
+        value = self.value if (hasattr(self, 'value') and self.value) else ''
         vars = dict(name=self.name, value=value.split(".")[0])
         return """
 <input id="%(name)s" name="%(name)s" type="text" value="%(value)s">
@@ -60,7 +60,7 @@ $('#%(name)s').datepicker({dateFormat: 'yy-mm-dd'})
 
 class EnumFieldRenderer(FieldRenderer):
     def render(self):
-        value = self._value if (hasattr(self, '_value') and self._value) else ''
+        value = self.value if (hasattr(self, 'value') and self.value) else ''
         opts = ""
         if self.field._columns[0].nullable:
             opts = opts + "<option value>None</option>\n"
@@ -76,7 +76,7 @@ class EnumFieldRenderer(FieldRenderer):
      
 class RadioSetRelationRenderer(RadioSet):
     def render(self, options, **kwargs):
-        value = self._value
+        value = self.value
         self.radios = []
         if callable(options):
             options = options(self.field.parent)
@@ -99,7 +99,7 @@ class RadioSetRelationRenderer(RadioSet):
 
 class CheckBoxSetRelationRenderer(CheckBoxSet):
     def render(self, options, **kwargs):
-        value = self._value
+        value = self.value
         self.radios = []
         if callable(options):
             options = options(self.field.parent)

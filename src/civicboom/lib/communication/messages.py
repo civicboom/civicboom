@@ -8,11 +8,12 @@ m2 = Member()
 m1.send_notification(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
-from pylons import config
+#from pylons import config
 from pylons.i18n          import lazy_ugettext as _
 from webhelpers.html      import HTML
 
 import cbutils.worker as worker
+
 
 import logging
 log = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class MessageData(object):
         we call that to turn it into an HTML link to be put in the message;
         if not, use __unicode__ and include it as a string.
         """
+        from cbutils.worker import config # AllanC - HACK!!! could be worker config or pylons config - import here is bad - we need a better way of doing this
         if config['feature.notifications']: # Only generate messages if notifications enabled - required to bypass requireing the internationalisation module to be activated
             linked = {}
             for key in kwargs:
@@ -157,6 +159,8 @@ for _name, _default_route, _subject, _content in generators:
 def send_notification(members, message):
     """
     """
+    from cbutils.worker import config # AllanC - HACK!!! could be worker config or pylons config - import here is bad - we need a better way of doing this
+    
     # If notifications not enabled return silently
     if not config['feature.notifications']:
         return
