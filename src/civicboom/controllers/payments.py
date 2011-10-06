@@ -177,18 +177,18 @@ class PaymentsController(BaseController):
             schema.fields[address_field] = formencode.validators.UnicodeString(not_empty=(address_field in PaymentAccount._address_required))
             
         schema.fields['address_country'] = formencode.validators.OneOf(country_codes.keys(), messages={'missing': 'Please select a country'}, not_empty=True)
-        if kwargs.get('address_country') in country_ec_vat:
-            if kwargs.get('vat_no'):
-                kwargs['vat_no'] = kwargs.get('address_country','') + kwargs['vat_no']
-            schema.fields['vat_no'] = tax_code_validator
-        else:
-            schema.fields['vat_no'] = formencode.validators.Empty()
+#        if kwargs.get('address_country') in country_ec_vat:
+#            if kwargs.get('vat_no'):
+#                kwargs['vat_no'] = kwargs.get('address_country','') + kwargs['vat_no']
+#            schema.fields['vat_no'] = tax_code_validator
+#        else:
+#            schema.fields['vat_no'] = formencode.validators.Empty()
         data = {'payment':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='payment', template_error=c.template_error if hasattr(c, 'template_error') else 'payments/edit')
         form = data['payment']
              
-        if form.get('vat_no'):
-            form['vat_no'] = form['vat_no'][2:]
+#        if form.get('vat_no'):
+#            form['vat_no'] = form['vat_no'][2:]
         
         for field in account._user_edit_config:
             if form.get(field):
