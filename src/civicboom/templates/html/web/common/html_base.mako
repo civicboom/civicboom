@@ -50,12 +50,15 @@ css_web    = glob("civicboom/public/styles/web/*.css")
 css_all    = css_common + css_web
 css_all    = [n[len("civicboom/public/"):] for n in css_all]
 css_all.sort()
+css_all.remove('styles/web/messages.css')
 %>
-% for css in css_all:
-	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
-% endfor
+    <style type="text/css" media="screen">
+        % for css in css_all:
+        @import url("${h.wh_url("public", css)}");
+        % endfor
+    </style>
 % else:
-	<link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/web.css")}" />
+	<link rel="stylesheet" type="text/css" media="screen" href="${h.wh_url("public", "styles/web.css")}" />
 % endif
     <link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
 ##-------------------
