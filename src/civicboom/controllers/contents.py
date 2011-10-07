@@ -758,7 +758,11 @@ class ContentsController(BaseController):
         if submit_type=='publish' and permissions['can_publish'] and content.__type__ in publishable_types:
             if not content.private and config['feature.profanity_filter']:
                 add_job('profanity_check', url_base=url('',qualified=True))
-            add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            # AllanC - GOD DAM IT!!! - we cant have the messages happening in the worker because we cant use the translation. This is ANOYING! I wanted the profanity filter to clean the content BEFORE messages were twittered out etc
+            #          for now I have put it back inline .. but this REALLY needs sorting
+            #add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            from civicboom.worker.functions.content_notifications import content_notifications
+            content_notifications(content, publishing_for_first_time=publishing_for_first_time)
         
         if content.__type__ == 'comment':
             if config['feature.profanity_filter']:
