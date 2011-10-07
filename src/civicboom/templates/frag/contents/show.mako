@@ -706,9 +706,11 @@
                     <i>${h.time_ago(comment['creation_date'])} ${_('ago')}</i>
                 </p>
             </td>
+            % if c.logged_in_persona:
             <td>
                 ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
             </td>
+            % endif
         </tr>
         % endfor
     </table>
