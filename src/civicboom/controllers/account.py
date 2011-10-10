@@ -75,7 +75,6 @@ class AccountController(BaseController):
             if action_objects:
                 c.action_objects = action_objects
                 #return render("/html/web/account/signin_frag.mako")
-            
             #return render("/html/web/account/signin.mako")
             return action_ok()
 

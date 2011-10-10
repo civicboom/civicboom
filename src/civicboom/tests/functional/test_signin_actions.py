@@ -7,7 +7,7 @@ class TestSigninActions(TestController):
     def get(self, *args, **kwargs):
         response = self.app.get(*args, **kwargs)
         if response.status >= 300 and response.status <= 399:
-            response = response.follow()
+            response = response.follow(**kwargs)
         return response
 
     #---------------------------------------------------------------------------
@@ -62,13 +62,15 @@ class TestSigninActions(TestController):
 
     def test_signin_actions_mobile(self):
         
-        response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'}, status=403)
-        self.assertIn('want to <b>follow ', response.body)
-        self.assertIn('mobileinit'        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
+        # When logged in - follow without authentication token - should trigger cross site check
+        #response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'}, status=403)
+        #self.assertIn('want to <b>follow ', response.body)
+        #self.assertIn('mobileinit'        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
         
         self.log_out()
         
+        # Logged out, should provide a customised signin page with description of the action to perform
         # AllanC - TODO - This test fails .. this test tests for the CORRECT behaviour! we need the mobile signin page to be view here
         response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'})
         self.assertIn('you will follow', response.body)
-        self.assertIn('mobileinit'     , response.body) 
+        self.assertIn('mobileinit'     , response.body)

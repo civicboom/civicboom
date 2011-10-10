@@ -188,41 +188,39 @@ $(function() {
                 creator_name = assignment['creator']['name'] or assignment['creator']['username']
                 content_title = assignment['title'] or None
             %>
-            <p>By signing  in/up you will accept the <b>${assignment['title']}</b> request that has been set by <b>${creator_name}</b></p>
-            
+            <p>${_('By signing  in/up you will accept the <b>%s</b> request that has been set by <b>%s</b>') % (assignment['title'], creator_name)}</p>
         ## Follow
         % elif c.action_objects['action'] == 'follow':
             <%
                 member      = c.action_objects['action_object'].get('member')
                 member_name = member['name']
             %>
-            <p>By signing in/up you will follow <b>${member_name}</b> </p>
+            <p>${_('By signing in/up you will follow <b>%s</b>') % member_name}</p>
         
         % elif c.action_objects['action'] == 'boom':
             <%
                 content      = c.action_objects['action_object'].get('content')
                 creator_name = content['creator']['name']
             %>
-            <p>By signing in/up you will Boom the _content <b>${content['title']}</b> by <b>${creator_name}</b></p>
+            <p>${_('By signing in/up you will Boom the _content <b>$%s</b> by <b>%s</b>') % (content['title'],creator_name)}</p>
             
         %elif  c.action_objects['action'] == 'new_respose':
             <%
                 content      = c.action_objects['action_object'].get('content')
                 creator_name = content['creator']['name']
             %>
-            <p>By signing in/up you will respond to the _assignment <b>${content['title']}</b> by <b>${creator_name}</b></p>
+            <p>${_('By signing in/up you will respond to the _assignment <b>%s</b> by <b>%s</b>') % (content['title'],creator_name)}</p>
         
         %elif  c.action_objects['action'] == 'comment':
             <%
                 content       = c.action_objects['action_object'].get('content')
             %>
-            <p>By signing in/up you make a comment on <b>${content.get('title')}</b> </p>
-        
+            <p>${_('By signing in/up you make a comment on <b>%s</b>') % (content.get('title'))}</p>
         %else:
             ##c.action_objects['action'] == 'new_article':
             <%
             %>
-            <p>By signing in/up you will ${c.action_objects['description']}</p>
+            <p>${_('By signing in/up you will %s') % c.action_objects['description']}</p>
         % endif
         
         ##${c.action_objects['description']}
