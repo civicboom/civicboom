@@ -212,9 +212,10 @@ class TestPermissionsController(TestController):
         self.log_in_as('unittest')
         self.set_persona('publish_permission_test')
         
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='publish_permission_test', format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200

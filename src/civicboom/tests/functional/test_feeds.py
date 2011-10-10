@@ -71,4 +71,5 @@ class TestFeedsController(TestController):
 
 
     def part_delete(self):
-        response = self.app.delete(url('feed', id=self.f2_id, format='json'))
+        response = self.app.post(url('feed', id=self.f2_id, format='json'),
+            params= {'_method': 'delete',})

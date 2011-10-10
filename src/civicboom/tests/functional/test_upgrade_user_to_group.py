@@ -39,9 +39,10 @@ class TestUpgradeUserToGroup(TestController):
         self.set_persona('user_to_group')
         
         # Delete and cleanup group and member
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='user_to_group', format='json'),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200
