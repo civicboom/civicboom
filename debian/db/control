@@ -2,6 +2,6 @@ Package: cb-website-db
 Version: VERSION
 Architecture: all
 Maintainer: Shish <shish@civicboom.com>
-Pre-Depends: debconf(>=0.2.17), postgresql-9.0, postgresql-9.0-postgis, osm2pgsql, redis-server
+Pre-Depends: debconf(>=0.2.17), postgresql-9.1, postgresql-9.1-postgis, osm2pgsql, redis-server
 Conflicts: postgresql-8.4, postgresql-client-8.4
 Description: The database settings for civicboom
