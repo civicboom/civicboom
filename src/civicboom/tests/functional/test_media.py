@@ -26,7 +26,7 @@ class TestMediaController(TestController):
     #    response = self.app.post(url('medium', id=1), params=dict(_method='put'))
 
     #def test_delete(self):
-    #    response = self.app.delete(url('medium', id=1), params={'_authentication_token': self.auth_token}, status=403)
+    #    response = self.app.post(url('medium', id=1), params={'_method': 'delete', '_authentication_token': self.auth_token}, status=403)
 
     #def test_delete_browser_fakeout(self):
     #    response = self.app.post(url('medium', id=1), params=dict(_method='delete'))
