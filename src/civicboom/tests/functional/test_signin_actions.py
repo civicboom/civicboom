@@ -63,9 +63,9 @@ class TestSigninActions(TestController):
     def test_signin_actions_mobile(self):
         
         # When logged in - follow without authentication token - should trigger cross site check
-        #response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'}, status=403)
-        #self.assertIn('want to <b>follow ', response.body)
-        #self.assertIn('mobileinit'        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
+        response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'}, status=403)
+        self.assertIn('want to <b>follow ', response.body)
+        self.assertIn('mobileinit'        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
         
         self.log_out()
         
