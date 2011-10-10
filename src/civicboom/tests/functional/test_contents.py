@@ -479,27 +479,30 @@ class TestContentsController(TestController):
     ## delete ################################################################
 
     def part_can_delete_own_article(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=self.my_article_id, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200
         )
 
     def part_cant_delete_someone_elses_article(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=self.his_article_id, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=403
         )
 
     def part_cant_delete_article_that_doesnt_exist(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=0, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=404

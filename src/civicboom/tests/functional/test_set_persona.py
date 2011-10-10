@@ -82,9 +82,10 @@ class TestSetPersonaController(TestController):
         
         # TODO - CHECK ROLE?
         
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='set_persona_test2', format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200
@@ -92,9 +93,10 @@ class TestSetPersonaController(TestController):
         
         self.set_persona('set_persona_test')
         
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='set_persona_test', format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200
@@ -180,9 +182,10 @@ class TestSetPersonaController(TestController):
 
         self.log_in_as('unitfriend')
         self.set_persona('set_persona_test2')
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='set_persona_test2', format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200
