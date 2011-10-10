@@ -106,6 +106,7 @@
                         ${loc.location_picker(field_name=setting_name[0], width='100%', height='300px', always_show_map=True, label_class="norm", lon=lon, lat=lat)}
                     % elif setting_type == 'display':
                     	<input name="${setting_name[0]}" type="text" readonly="readonly" ${placeholder()} value="${setting_value}">
+                        <p class="setting_description">${_('This setting is only for reference and cannot be changed')}</p>
                     % else:
                     	<input name="${setting_name[0]}" type="text" ${readonly()} ${placeholder()} value="${setting_value}">
                     % endif
