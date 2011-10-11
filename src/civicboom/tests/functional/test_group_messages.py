@@ -23,9 +23,10 @@ class TestGroupsMessages(TestController):
         self.assertNotEqual(group_id, 0)
     
     def delete_group(self, group_name):
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id=group_name, format='json'),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200
