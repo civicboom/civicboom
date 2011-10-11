@@ -27,14 +27,14 @@ $title-kerning: 0.08em;
     background: $bot;
     background: -moz-linear-gradient(top                      ,                  $top 20% ,                  $bot 100% );
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.20, $top    ), color-stop(1.00, $bot     ));
-    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$top', endColorstr='$bot');
+    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$top}', endColorstr='#{$bot}');
 
 }
 @mixin horiz_gradient_mid($top-bot, $mid) {
     background: #e5edf3;
     background: -moz-linear-gradient(top                      ,                  $top-bot 00% ,                 $mid 50% ,                  $top-bot 100%  );
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0.00, $top-bot    ), color-stop(0.5, $mid    ), color-stop(1.00, $top-bot      ));
-    /* filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='$top-bot', endColorstr='$mid'); */
+    filter    : progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$top-bot}', endColorstr='#{$mid}'); /* IE dose not support mid gradients, just use hoizontal*/
 }
 
 @mixin border_radius($rad) {

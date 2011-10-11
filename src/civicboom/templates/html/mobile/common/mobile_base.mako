@@ -13,18 +13,13 @@
         
         ## --- CSS imports ---
         % if config['development_mode']:
-            <%
-                from glob import glob
-                css_mobile = glob("civicboom/public/styles/mobile/*.css")
-                css_all    = css_mobile
-                css_all    = [n[len("civicboom/public/"):] for n in css_all]
-                css_all.sort()
-            %>
-        % for css in css_all:
-            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
-        % endfor
+        <style type="text/css">
+            % for css in h.css_files('mobile', include_common=False):
+            @import url("${h.wh_url("public", css)}");
+            % endfor
+        </style>
         % else:
-            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
+        <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
         % endif
         ## ------
         
