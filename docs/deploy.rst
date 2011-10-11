@@ -28,6 +28,10 @@ for fixing individual urgent bugs
   git push origin master <tag name>              # push the new tag and associated changes
   git checkout develop                           # don't forget to go back to develop before doing more work
 
+shortcut
+--------
+::
+  make release                                   # will automatically do all of the first one
 
 
 Install the packages

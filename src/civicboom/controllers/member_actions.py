@@ -14,8 +14,38 @@ class MemberActionsController(BaseController):
     """
     Actions and lists that can be performed on a member
     
-    @comment AllanC the id value given to these lists could be str, int or loaded object
+    @comment AllanC the id value given to these lists could be str username or loaded db object
     """
+
+    #-----------------------------------------------------------------------------
+    # Action - Flag
+    #-----------------------------------------------------------------------------
+    @web
+    def flag(self, id, **kwargs):
+        """
+        POST /members/{id}/flag: Flag this content for administrator attention
+        @type action
+        @api contents 1.0 (WIP)
+        
+        @param type      what the type of the problem is
+               offensive
+               spam
+               copyright
+               other
+        @param comment   a text string for the user's comment
+        """
+        @auth
+        def flag_action(id, type='offensive', comment='', **kwargs):
+            get_member(id).flag(raising_member=c.logged_in_user, type=type, comment=comment, moderator_address=config['email.moderator'])
+            user_log.debug("Flagged Member #%s as %s" % (id, type))
+            return action_ok(_("An administrator has been alerted to this member"))
+        
+        # AllanC - as this is a special case we can render templates if the user trys to GET data
+        if request.environ['REQUEST_METHOD'] == 'GET':
+            return action_ok() # This will then trigger the auto-formatter to auto select the appropiate template for the format specified
+        else:
+            return flag_action(id, **kwargs)
+
 
     #---------------------------------------------------------------------------
     # Action - Follow Member

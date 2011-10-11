@@ -51,6 +51,11 @@ tk: canvas text clipping
   report: http://sourceforge.net/tracker/?func=detail&aid=3403387&group_id=12997&atid=112997
   patch :
   status:
+
+pyinstaller: tk bundling
+  report: http://www.pyinstaller.org/ticket/339#comment:6
+  patch: see report
+  status:
 -->
 <div>
 <b>Front End:</b>

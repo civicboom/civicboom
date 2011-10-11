@@ -298,9 +298,10 @@ class TestGroupsController(TestController):
         #self.set_persona('test_group')
         
         # Try deleting when logged in as 'unittest' ... should fail as 'unittest' is not an admin anymore
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='test_group', format='json'),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=403
@@ -319,9 +320,10 @@ class TestGroupsController(TestController):
         self.log_in_as('unitfriend')
         self.set_persona('test_group')
         
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='test_group', format='json'),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200

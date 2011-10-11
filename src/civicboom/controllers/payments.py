@@ -14,10 +14,37 @@ import civicboom.lib.form_validators
 import civicboom.lib.form_validators.base
 import civicboom.lib.form_validators.registration
 
-import time
+import time, re
 
 log      = logging.getLogger(__name__)
 
+country_ec_vat = ['AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'EL', 'ES', 'FI', 'FR', 'HU', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK', 'GB']
+
+# Compiled regex for every EC state's vat registration number format
+tax_code_regex = re.compile(
+    '^('
+    '((EE|EL|DE|PT)([0-9]{9}))|' \
+    '((FI|HU|LU|MT|SI)([0-9]{8}))|' \
+    '((PL|SK)([0-9]{10}))|' \
+    '((IT|LV)([0-9]{11}))|' \
+    '((SE)([0-9]{12}))|' \
+    '((BE)(0?[0-9]{9}))|' \
+    '((CY)([0-9]{8}[A-Z]))|' \
+    '((CZ)([0-9]{8,10}))|' \
+    '((DK)(([0-9]{2}\ ?){3}[0-9]{2}))|' \
+    '((ES)(([0-9A-Z][0-9]{7}[A-Z])|([A-Z][0-9]{7}[0-9A-Z])))|' \
+    '((FR)([0-9A-Z]{2}\ ?[0-9]{9}))|' \
+    '((GB)(([1-9][0-9]{2}\ ?[0-9]{4}\ ?[0-9]{2})|([1-9][0-9]{2}\ ?[0-9]{4}\ ?[0-9]{2}\ ?[0-9]{3})|((GD|HA)[0-9]{3})))|' \
+    '((IE)([0-9][0-9A-Z\+\*][0-9]{5}[A-Z]))|' \
+    '((LT)(([0-9]{9}|[0-9]{12})))|' \
+    '((NL)([0-9]{9}B[0-9]{2}))|' \
+    '((AT)(U[0-9]{8}))|' \
+    '((BG)([0-9]{9,10}))|' \
+    '((RO)([0-9]{2,10}))' \
+    ')$'
+)
+
+tax_code_validator = formencode.validators.Regex(tax_code_regex, strip=True, not_empty=False)
 
 class PaymentsController(BaseController):
     """
@@ -150,19 +177,47 @@ class PaymentsController(BaseController):
             schema.fields[address_field] = formencode.validators.UnicodeString(not_empty=(address_field in PaymentAccount._address_required))
             
         schema.fields['address_country'] = formencode.validators.OneOf(country_codes.keys(), messages={'missing': 'Please select a country'}, not_empty=True)
-        kwargs['id'] = account.id
+#        if kwargs.get('address_country') in country_ec_vat:
+#            if kwargs.get('vat_no'):
+#                kwargs['vat_no'] = kwargs.get('address_country','') + kwargs['vat_no']
+#            schema.fields['vat_no'] = tax_code_validator
+#        else:
+#            schema.fields['vat_no'] = formencode.validators.Empty()
         data = {'payment':kwargs}
         data = validate_dict(data, schema, dict_to_validate_key='payment', template_error=c.template_error if hasattr(c, 'template_error') else 'payments/edit')
         form = data['payment']
+             
+#        if form.get('vat_no'):
+#            form['vat_no'] = form['vat_no'][2:]
         
-        if form.get('ind_name'):
-            account.config['ind_name'] = form['ind_name']
-        if form.get('org_name'):
-            account.config['org_name'] = form['org_name']
+        for field in account._user_edit_config:
+            if form.get(field):
+                account.config[field] = form[field]
+            elif account.config.get(field):
+                del account.config[field]
+                
+        if account.config.get('address_country') in country_ec_vat:
+            if account.config['address_country'] == 'GB':
+                account.taxable = True
+            elif account.config.get('vat_no'):
+                account.taxable = False
+            else:
+                account.taxable = True
+        else:
+            account.taxable = False
         
-        for field_name in address_fields:
-            if form.get(field_name):
-                account.config[field_name] = form[field_name]
+#        if form.get('ind_name'):
+#            account.config['ind_name'] = form['ind_name']
+#        elif account.config.get('ind_name'):
+#            del account.config['ind_name']
+#        if form.get('org_name'):
+#            account.config['org_name'] = form['org_name']
+#        elif account.config.get('org_name'):
+#            del account.config['org_name']
+#        
+#        for field_name in address_fields:
+#            if form.get(field_name):
+#                account.config[field_name] = form[field_name]
         
         # account.frequency = 'month' This can be changed in the future
         

@@ -3,6 +3,8 @@ from civicboom.model.meta import Base, location_to_string, JSONType
 from civicboom.model.meta import PaymentAccountTypeChangeListener, PaymentAccountStatusChangeListener, PaymentAccountMembersChangeListener, MemberPaymentAccountIdChangeListener, CacheChangeListener
 
 from civicboom.model.message import Message
+from civicboom.model.flags import FlaggedEntity
+
 from civicboom.lib.helpers import wh_url
 
 from cbutils.misc import now
@@ -262,11 +264,12 @@ class Member(Base):
     # AllanC - TODO - derived field trigger needed
     account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by Python MapperExtension event on PaymentAccount")
 
+    flags           = relationship("FlaggedEntity" , backref=backref('offending_member'), cascade="all,delete-orphan", primaryjoin="Member.id==FlaggedEntity.offending_member_id")
+    
     content_edits   = relationship("ContentEditHistory",  backref=backref('member', order_by=id))
 
     groups_roles         = relationship("GroupMembership" , backref="member", cascade="all,delete-orphan", lazy='joined') #AllanC- TODO: needs eagerload group? does lazy=joined do it?
     ratings              = relationship("Rating"          , backref=backref('member'), cascade="all,delete-orphan")
-    flags                = relationship("FlaggedContent"  , backref=backref('member'), cascade="all,delete-orphan")
     feeds                = relationship("Feed"            , backref=backref('member'), cascade="all,delete-orphan")
 
     # AllanC - I wanted to remove these but they are still used by actions.py because they are needed to setup the base test data
@@ -502,10 +505,6 @@ class Member(Base):
         # last resort, fall back to our own default
         return wh_url("public", "images/default/avatar_%s.png" % self.__type__)
 
-    def delete(self):
-        from civicboom.lib.database.actions import del_member
-        return del_member(self)
-
     def add_to_interests(self, content):
         from civicboom.lib.database.actions import add_to_interests
         return add_to_interests(self, content)
@@ -568,6 +567,13 @@ class Member(Base):
         """
         return (key == self.get_action_key(action))
 
+    def flag(self, **kargs):
+        """
+        Flag member as breaking T&C (can throw exception if fails)
+        """
+        from civicboom.lib.database.actions import flag
+        flag(self, **kargs)
+
     def get_action_key(self, action):
         """
         Generate a key, anyone with this key is allowed to perform
@@ -620,7 +626,8 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverified = Column(Unicode(250), nullable=True)
 
-    login_details    = relationship("UserLogin", backref=('user'), cascade="all,delete-orphan")
+    login_details    = relationship("UserLogin"    , backref=('user')                 , cascade="all,delete-orphan")
+    flaged           = relationship("FlaggedEntity", backref=backref('raising_member'), cascade="all,delete-orphan", primaryjoin="Member.id==FlaggedEntity.raising_member_id")
 
     __to_dict__ = copy.deepcopy(Member.__to_dict__)
     _extra_user_fields = {
@@ -841,7 +848,7 @@ class PaymentAccount(Base):
     do_not_bill      = Column(Boolean(), nullable=False, default=False)
     _address_config_order = ['address_1', 'address_2', 'address_town', 'address_county', 'address_postal', 'address_country']
     _address_required= ('address_1', 'address_town', 'address_country', 'address_postal')
-    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type'))
+    _user_edit_config = set(_address_config_order) | set(('ind_name', 'org_name', 'name_type', 'vat_no'))
     
     __to_dict__ = copy.deepcopy(Base.__to_dict__)
     __to_dict__.update({

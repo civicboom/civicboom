@@ -15,18 +15,13 @@
         ## CSS
         ##----------------------------------------------------------------------
         % if config['development_mode']:
-            <%
-                from glob import glob
-                css_mobile = glob("civicboom/public/styles/mobile/*.css")
-                css_all    = css_mobile
-                css_all    = [n[len("civicboom/public/"):] for n in css_all]
-                css_all.sort()
-            %>
-            % for css in css_all:
-            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
+        <style type="text/css">
+            % for css in h.css_files('mobile', include_common=False):
+            @import url("${h.wh_url("public", css)}");
             % endfor
+        </style>
         % else:
-            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
+        <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
         % endif
 
         ##----------------------------------------------------------------------
@@ -36,8 +31,9 @@
             ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
             <%
                 js_all =[
-                    '/javascript/jquery-1.6.2.js',
-                    '/javascript/jquery.mobile-1.0b3.js',
+                    'javascript/jquery-1.6.2.js',
+                    'javascript/jquery.mobile.cb_settings.js',
+                    'javascript/jquery.mobile-1.0b3.js',
                 ]
             %>
             % for js in js_all:
@@ -47,25 +43,6 @@
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.js")}"></script>
         % endif
-        
-        ##----------------------------------------------------------------------
-        ## Javascript - init
-        ##----------------------------------------------------------------------
-        <script type="text/javascript">
-            $(document).bind("mobileinit", function(){
-                // Sets defaults for jquery mobile
-                $.mobile.page.prototype.options.degradeInputs.date = 'text';
-                $.mobile.defaultDialogTransition    = 'fade';
-                // $.mobile.ajaxEnabled = false;
-                $.mobile.selectmenu.prototype.options.nativeMenu = false;
-            });
-            
-            $(document).bind("pagecreate", function() {
-                // Little hacky, tell any forms created not to ajax submit
-                $('form').attr('data-ajax', 'false');
-            });
-        </script>
-
     </head>
     
   
@@ -96,7 +73,7 @@
         </div>
         % if hasattr(caller, 'page_footer'):
         <div data-role="footer" \
-            % is hasattr(caller, 'footer_attr'):
+            % if hasattr(caller, 'footer_attr'):
                 ${caller.header_attr()}
             % else:
                 data-position="fixed" data-fullscreen="true" \

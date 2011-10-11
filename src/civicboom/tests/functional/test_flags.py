@@ -2,6 +2,8 @@ from civicboom.tests import *
 
 from pylons import config
 
+from civicboom.model.meta import Session
+from civicboom.model import FlaggedEntity
 
 class TestFlagContentController(TestController):
 
@@ -62,7 +64,7 @@ class TestFlagContentController(TestController):
     #---------------------------------------------------------------------------
     # Test Profanity Filter
     #---------------------------------------------------------------------------
-    def test_flag_profanity(self):
+    def test_flag_content_profanity(self):
         """
         create content with 'naughty words'
         check alert sent
@@ -116,3 +118,71 @@ class TestFlagContentController(TestController):
         # Set config vars back to origninal settings
         #config_var('online'                  , config_online          )
         self.config_var('feature.profanity_filter', config_profanity_filter)
+
+
+    #---------------------------------------------------------------------------
+    # Test Member Flaging
+    #---------------------------------------------------------------------------
+    def test_flag_member(self):
+        self.sign_up_as('spam_man')
+        
+        self.log_in_as('unittest')
+        
+        num_emails = getNumEmails()
+        
+        response = self.app.post(
+            url('member_action', action='flag', id='spam_man', format='json') ,
+            params = {
+                '_authentication_token': self.auth_token,
+                'type'    : 'spam'                      ,
+                'comment' : 'This member says they are bulgarian royaly and wants my account details. I think not.' ,
+            } ,
+        )
+        
+        self.assertEqual(getNumEmails(), num_emails + 1)
+        email_response = getLastEmail()
+        self.assertEquals(email_response.email_to, config['email.moderator'])
+        self.assertIn('wants my account details', email_response.content_text)
+        
+        self.assertEquals(Session.query(FlaggedEntity).filter(FlaggedEntity.raising_member_id=='unittest').filter(FlaggedEntity.offending_member_id=='spam_man').count(), 1)
+        
+        # AllanC - TODO - follow the whole flow though?
+        
+        self.delete_member('spam_man')
+        # Double check delete cascade
+        self.assertEquals(Session.query(FlaggedEntity).filter(FlaggedEntity.raising_member_id=='unittest').filter(FlaggedEntity.offending_member_id=='spam_man').count(), 0)
+        
+    #---------------------------------------------------------------------------
+    # Test Message Flaging
+    #---------------------------------------------------------------------------
+    def test_flag_message(self):
+        
+        
+        
+        self.send_member_message('unitfriend', subject='You smell', content='I hate you')
+        
+        self.log_in_as('unitfriend')
+        
+        message = self.get_messages()['list']['items'][0]
+        self.assertIn('hate you', message['content'])
+        
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url('message_action', action='flag', id=message['id'], format='json') ,
+            params = {
+                '_authentication_token': self.auth_token,
+                'type'    : 'offensive',
+                'comment' : 'They said they hated me, and I smell ... sniff' ,
+            } ,
+        )
+        
+        self.assertEqual(getNumEmails(), num_emails + 1)
+        email_response = getLastEmail()
+        self.assertEquals(email_response.email_to, config['email.moderator'])
+        self.assertIn('They said', email_response.content_text)
+        
+        # Get raised flag from DB, will error on fail, then delete/cleanup
+        flag = Session.query(FlaggedEntity).filter(FlaggedEntity.raising_member_id=='unitfriend').filter(FlaggedEntity.offending_message_id==message['id']).one()
+        Session.delete(flag)
+        
+        self.delete_message(message['id'])

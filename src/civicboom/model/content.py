@@ -127,7 +127,7 @@ class Content(Base):
     license         = relationship("License")
     
     comments        = relationship("CommentContent", order_by=creation_date.asc(), cascade="all", primaryjoin="(CommentContent.id==Content.parent_id) & (Content.visible==True)")
-    flags           = relationship("FlaggedContent", backref=backref('content'), cascade="all,delete-orphan")
+    flags           = relationship("FlaggedEntity" , backref=backref('offending_content'), cascade="all,delete-orphan")
 
     __table_args__ = (
         CheckConstraint("length(title) > 0"),
@@ -224,7 +224,7 @@ class Content(Base):
             action_list.append('edit')
         if self.viewable_by(member):
             action_list.append('view')
-        if self.private == False and self.creator != member:
+        if member and self.private == False and self.creator != member:
             action_list.append('flag')
         if self.private == False:
             action_list.append('aggregate')
@@ -283,8 +283,8 @@ class Content(Base):
         """
         Flag content as offensive or spam (can throw exception if fails)
         """
-        from civicboom.lib.database.actions import flag_content
-        flag_content(self, **kargs)
+        from civicboom.lib.database.actions import flag
+        flag(self, **kargs)
     
     def delete(self):
         """
@@ -471,7 +471,7 @@ class UserVisibleContent(Content):
                 action_list.append('seen')
                 action_list.append('dissasociate')
         #AllanC: TODO - if has not boomed before - check boom list:
-        if self.creator != member:
+        if member and self.creator != member:
             action_list.append('boom')
         return action_list
 
@@ -782,15 +782,3 @@ class ContentEditHistory(Base):
     text_change   = Column(UnicodeText(), nullable=False)
 
 
-class FlaggedContent(Base):
-    __tablename__ = "flagged_content"
-    _flag_type = Enum("offensive", "spam", "copyright", "automated", "other", name="flag_type")
-    id            = Column(Integer(),     primary_key=True)
-    content_id    = Column(Integer(),     ForeignKey('content.id'), nullable=False, index=True)
-    member_id     = Column(String(32),    ForeignKey('member.id', onupdate="cascade") , nullable=True )
-    timestamp     = Column(DateTime(),    nullable=False, default=now)
-    type          = Column(_flag_type,    nullable=False)
-    comment       = Column(UnicodeText(), nullable=False, default="", doc="optional should the user want to add additional details")
-
-    def __str__(self):
-        return "%s - %s (%s)" % (self.member.username if self.member else "System", self.comment, self.type)

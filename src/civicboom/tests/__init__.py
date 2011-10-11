@@ -153,6 +153,7 @@ class TestController(TestCase):
             self.auth_token   = response.session['_authentication_token']
             self.logged_in_as = username
             self.logged_in_password = password
+            print self.auth_token
 
     def log_out(self):
         if self.logged_in_as:
@@ -358,9 +359,9 @@ class TestController(TestCase):
 
     def delete_content(self, id):
         self.assertIn('delete', self.get_actions(id))
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=id, format="json"),
-            params={'_authentication_token': self.auth_token,},
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
             status=200
         )
 
@@ -374,7 +375,13 @@ class TestController(TestCase):
         from civicboom.lib.database.get_cached import get_member
         member = get_member(username)
         member.delete()
-        
+
+    def delete_message(self, id):
+        response = self.app.post(
+            url('message', id=id, format="json"),
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
+            status=200
+        )
 
     def follow(self, username, trusted=False):
         #actions = self.get_actions(username) # AllanC - this does not work as once an invite is sent the options are follow and unfollow(reject invitation)

@@ -24,6 +24,9 @@ import datetime
 import random
 import re
 
+import logging
+log      = logging.getLogger(__name__)
+
 static_org_descriptions = {
     'kentonline': 'Join us in making the news in Kent, by telling us your stories, sending in videos, pictures and audio - help us build a news picture of Kent.',
     'gradvine'  : 'Be part of a new online student community with the Gradvine. Get involved in creating your own news and online portfolio: Upload images, video and text then share it with Gradvine...and the world. Our network spans the whole of the UK, with a website just like this for every UK university and town. So your voice will be heard everywhere.'
@@ -278,13 +281,19 @@ Disallow: /*.frag$
             # all articles, then we don't want to limit to assignments
             #if 'due_date' not in kwargs and kwargs.get('type') == "assignment":
             #    kwargs['due_date'] = ">now"
-            kwargs['update_date'] = ">"+str(now() - datetime.timedelta(days=5))
-            kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
-            content_list = content_search(**kwargs)['data']['list']
-            random.shuffle( content_list['items'] )
-            return_list = []
             
-            content_list['items'][:return_items]
+            # AllanC - Because we were not getting new content on the site - if one of these returns gives back nothing, redo the query with a longer timeframe
+            #          This shouldnt be to much of a problem as this is cached server side every 10 mins .,.. once we get popular it will always break on the first try
+            for days_jump in [i*7 for i in range(1,5)]:
+                kwargs['update_date'] = ">"+str(now() - datetime.timedelta(days=days_jump)) 
+                kwargs['exclude_content'] = ",".join([str(content['id']) for content in featured_content])
+                content_list = content_search(**kwargs)['data']['list']
+                if len(content_list['items']) >= return_items:
+                    break
+                log.info('Too few content retured for %s - attempting query again with day range of %d' % (kwargs, days_jump))
+                
+            random.shuffle( content_list['items'] )
+            content_list['items'] = content_list['items'][:return_items]
             #content_list['count'] = len(content_list['items'])
             for content_item in content_list['items']:
                 featured_content.append(content_item)
@@ -302,12 +311,11 @@ Disallow: /*.frag$
         # Featured content dictionary
         f = {}
         ##f['top_viewed_assignments' ] = rnd_content_items(return_items=2, sort='-views'        , type='assignment', limit=5)
-        f['recent'                 ] = rnd_content_items(return_items=2, sort='-update_date'  , limit=3)
-        f['most_responses'         ] = rnd_content_items(return_items=2, sort='-num_responses', limit=3)
+        f['recent'                 ] = rnd_content_items(return_items=3, sort='-update_date'  , limit=5)
+        f['most_responses'         ] = rnd_content_items(return_items=3, sort='-num_responses', limit=5)
         if request.GET.get("location"):
-            f['near_me'            ] = rnd_content_items(return_items=2, sort='distance'      , location=request.GET.get("location"), limit=3)
-        f['recent_assignments'     ] = rnd_content_items(return_items=2, sort='-update_date'  , list='assignments_active', limit=3)
-        
+            f['near_me'            ] = rnd_content_items(return_items=3, sort='distance'      , limit=5, location=request.GET.get("location"))
+        f['recent_assignments'     ] = rnd_content_items(return_items=3, sort='-update_date'  , limit=5, list='assignments_active')
         
         # New members
         m ={}

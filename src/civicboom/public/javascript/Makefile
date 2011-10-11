@@ -33,6 +33,7 @@ FOOT=\
 
 MOBILE=\
 	jquery-1.6.2.js \
+	jquery.mobile.cb_settings.js \
 	jquery.mobile-1.0b3.js \
 	#jquery.ui.datepicker.mobile.js \
 
