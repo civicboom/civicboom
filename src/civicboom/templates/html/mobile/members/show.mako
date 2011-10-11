@@ -21,8 +21,8 @@
         #    member = member.to_dict()
         
         member    = d['member']
-        id        = self.member.get('id')
-        name      = self.member.get('name')
+        id        = member.get('id')
+        name      = member.get('name')
         current_user = c.logged_in_persona and self.id == c.logged_in_persona.id
         actions   = d['actions']
     %>
@@ -181,7 +181,7 @@
     ##--------------------------------------------------------------------------
     ## Persona switch
     ##--------------------------------------------------------------------------
-    % if self.current_user:
+    % if current_user:
     <self:page>
         <%def name="page_attr()"   >id="member_persona-${id}" class="member_persona"</%def>
         <%def name="page_header()" ><h1>Switch persona</h1></%def>
@@ -239,8 +239,7 @@
                     ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
                 % endfor
             </ul>
-            </%def>
-        % endif
+        </%def>
     </self:page>
     % endif
     

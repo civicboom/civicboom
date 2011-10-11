@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 % if hasattr(self, 'init_vars'):
-    ${self.init_vars()}
+${self.init_vars()}
 % endif
 <html>
     <head>
@@ -15,21 +15,21 @@
         ## CSS
         ##----------------------------------------------------------------------
         % if config['development_mode']:
-        <style type="text/css">
-            % for css in h.css_files('mobile', include_common=False):
-            @import url("${h.wh_url("public", css)}");
-            % endfor
-        </style>
+            <style type="text/css">
+                % for css in h.css_files('mobile', include_common=False):
+                @import url("${h.wh_url("public", css)}");
+                % endfor
+            </style>
         % else:
-        <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
+            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
         % endif
 
         ##----------------------------------------------------------------------
         ## Javascript
         ##----------------------------------------------------------------------
         % if config['development_mode']:
-            ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
             <%
+                # AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
                 js_all =[
                     'javascript/jquery-1.6.2.js',
                     'javascript/jquery.mobile.cb_settings.js',
@@ -37,14 +37,12 @@
                 ]
             %>
             % for js in js_all:
-            ##<script type="text/javascript" src="${h.wh_url("public", js)}"></script>
-            <script type="text/javascript" src="${js}"></script>
+            <script type="text/javascript" src="${h.wh_url("public", js)}"></script>
             % endfor
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.js")}"></script>
         % endif
     </head>
-    
   
     <body class="c-${c.controller} a-${c.action}">
         ##${self.flash_message()}
