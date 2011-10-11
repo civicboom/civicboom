@@ -224,7 +224,7 @@ class Content(Base):
             action_list.append('edit')
         if self.viewable_by(member):
             action_list.append('view')
-        if self.private == False and self.creator != member:
+        if member and self.private == False and self.creator != member:
             action_list.append('flag')
         if self.private == False:
             action_list.append('aggregate')
@@ -471,7 +471,7 @@ class UserVisibleContent(Content):
                 action_list.append('seen')
                 action_list.append('dissasociate')
         #AllanC: TODO - if has not boomed before - check boom list:
-        if self.creator != member:
+        if member and self.creator != member:
             action_list.append('boom')
         return action_list
 
