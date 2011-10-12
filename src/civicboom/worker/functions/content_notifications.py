@@ -1,4 +1,7 @@
-from cbutils.worker import config
+# AllanC - FOR FUCKS SAKE!! ... The inconsistancys in importing the config are providing serious issues
+#from cbutils.worker import config
+from pylons import config
+
 from cbutils.misc   import now, debug_type
 
 from civicboom.lib.database.get_cached import get_content
