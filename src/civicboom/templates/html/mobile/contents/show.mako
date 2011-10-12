@@ -9,6 +9,8 @@
     ${_(d['content']['title'])}
 </%def>
 
+##------------------------------------------------------------------------------
+
 ## page structure defs
 <%def name="body()">
     <%
@@ -21,16 +23,19 @@
         self.actions   = d.get('actions', [])
     %>
     <div data-role="page" data-theme="b" id="content-main-${self.id}" class="content_page">
+        ${components.swipe_event('#content-main-%s' % self.id, '#content-info-%s' % self.id, 'left')}
         ${components.header(next_link="#content-info-"+str(self.id))}
         ${content_main()}
     </div>
     
     <div data-role="page" data-theme="b" id="content-info-${self.id}" class="content_page">
+        ${components.swipe_event('#content-info-%s' % self.id, '#content-main-%s' % self.id, 'right')}
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_info()}
     </div>
     
     <div data-role="page" data-theme="b" id="content-media-${self.id}" class="content_page">
+        ${components.swipe_event('#content-media-%s' % self.id, '#content-main-%s' % self.id, 'right')}
         ${components.header(back_link="#content-main-"+str(self.id))}
         ${content_media()}
     </div>
@@ -53,6 +58,8 @@
         </div>
     </div>
 </%def>
+
+##------------------------------------------------------------------------------
 
 <%def name="content_main()">
     <div data-role="content">
@@ -101,6 +108,8 @@
     </div>
 </%def>
 
+##------------------------------------------------------------------------------
+
 <%def name="content_info()">
     <div data-role="content">
         <div class="content_details">
@@ -118,7 +127,9 @@
                 ## Content info
                 <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
-                    <li><h3>Published:</h3> ${self.content['publish_date']}</li>
+                    % if self.content.get('publish_date'):
+                        <li><h3>Published:</h3> ${self.content.get('publish_date')}</li>
+                    % endif
                     % if self.content.get('tags'):
                         <li><h3>Tags:</h3> ${", ".join(self.content['tags'])}</li>
                     % endif
@@ -138,6 +149,8 @@
         </div>
     </div>
 </%def>
+
+##------------------------------------------------------------------------------
 
 <%def name="content_media()">
     % if len(self.media):

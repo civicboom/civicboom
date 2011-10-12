@@ -14,6 +14,7 @@ from webhelpers.html      import HTML
 
 import cbutils.worker as worker
 
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -31,7 +32,8 @@ class MessageData(object):
         we call that to turn it into an HTML link to be put in the message;
         if not, use __unicode__ and include it as a string.
         """
-        if config['feature.notifications']: # Only generate messages if notifications enabled - required to bypass requireing the internationalisation module to be activated
+        #from cbutils.worker import config # AllanC - HACK!!! could be worker config or pylons config - import here is bad - we need a better way of doing this
+        if config and config.get('feature.notifications', True): # Only generate messages if notifications enabled - required to bypass requireing the internationalisation module to be activated
             linked = {}
             for key in kwargs:
                 if hasattr(kwargs[key], "__link__"):
@@ -157,16 +159,18 @@ for _name, _default_route, _subject, _content in generators:
 def send_notification(members, message):
     """
     """
+    #from cbutils.worker import config # AllanC - HACK!!! could be worker config or pylons config - import here is bad - we need a better way of doing this
+    
     # If notifications not enabled return silently
-    if not config['feature.notifications']:
+    if not (config and config.get('feature.notifications', True)):
         return
     
     # Normalize list of usernames
     if isinstance(members, basestring):
         members = members.split(',') # split member names if comma separated list
     if not isinstance(members, list): 
-        members = [members] # Put single member in list
-    members = [m.username if hasattr(m,'username') else m for m in members] # Convert member objects into username strings
+        members = [members] # Put single member in list, (it could be a member object)
+    members = [m.id if hasattr(m,'id') else m for m in members] # Convert member objects into username strings
     
     # Get message as dict (shallow copy defensivly if nessisary)
     if isinstance(message, dict):
@@ -174,7 +178,6 @@ def send_notification(members, message):
     if hasattr(message, 'to_dict'):
         message = message.to_dict()
     
-
     # Thread the send operation
     # Each member object is retreved and there message preferences observed (by the message thread) for each type of message
     worker.add_job({

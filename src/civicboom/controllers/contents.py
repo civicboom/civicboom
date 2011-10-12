@@ -23,6 +23,7 @@ from sqlalchemy.orm       import joinedload
 from sqlalchemy           import asc, desc
 
 # Other imports
+from cbutils.misc import substring_in
 from cbutils.text import strip_html_tags
 import cbutils.worker as worker
 from time import time
@@ -679,17 +680,22 @@ class ContentsController(BaseController):
             content.private = True
         
         # Update Existing Media - Form Fields
-        for media in content.attachments:
-            # Update media item fields
-            caption_key = "media_caption_%d" % (media.id)
-            if caption_key in kwargs:
-                media.caption = kwargs[caption_key]
-            credit_key = "media_credit_%d"   % (media.id)
-            if credit_key in kwargs:
-                media.credit = kwargs[credit_key]
-            # Remove media if required
-            if "file_remove_%d" % media.id in kwargs:
-                content.attachments.remove(media)
+        media_caption_prefix = "media_caption_"
+        media_credit_prefix  = "media_credit_"
+        media_remove_prefix  = "file_remove_"
+        # Check if media attachments need updating
+        if substring_in([media_caption_prefix, media_credit_prefix, media_remove_prefix], kwargs.keys()): # AllanC - bit intesnsive, but content.attachments triggers a commit and query. This is an overhead we want to avoid.
+            for media in content.attachments:
+                # Update media item fields
+                caption_key = "%s%d" % (media_caption_prefix, media.id)
+                credit_key  = "%s%d" % (media_credit_prefix , media.id)
+                if caption_key in kwargs:
+                    media.caption = kwargs[caption_key]
+                if credit_key in kwargs:
+                    media.credit = kwargs[credit_key]
+                # Remove media if required
+                if "%s%d" % (media_remove_prefix, media.id) in kwargs:
+                    content.attachments.remove(media)
         
         # Add Media - if file present in form post
         if 'media_file' in kwargs and kwargs['media_file'] != "":
@@ -752,7 +758,12 @@ class ContentsController(BaseController):
         if submit_type=='publish' and permissions['can_publish'] and content.__type__ in publishable_types:
             if not content.private and config['feature.profanity_filter']:
                 add_job('profanity_check', url_base=url('',qualified=True))
-            add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            # AllanC - GOD DAM IT!!! - we cant have the messages happening in the worker because we cant use the translation. This is ANOYING! I wanted the profanity filter to clean the content BEFORE messages were twittered out etc
+            #          for now I have put it back inline .. but this REALLY needs sorting
+            #add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            from civicboom.worker.functions.content_notifications import content_notifications
+            content_notifications(content, publishing_for_first_time=publishing_for_first_time)
+            Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
         
         if content.__type__ == 'comment':
             if config['feature.profanity_filter']:

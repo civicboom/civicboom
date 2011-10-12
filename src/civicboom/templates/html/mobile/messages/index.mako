@@ -15,13 +15,17 @@
 </%def>
 
 <%def name="body()">
-    <%   
+    <%
         self.list =     d['list']
         self.messages = self.list['items']
         self.count =    self.list['count']
-        self.type =     self.list['type']
-        if self.list['kwargs'].get('list'):
-            self.list['kwargs']['list']
+        self.type =     self.list['kwargs']['list']
+        if self.type == "to":
+            self.type = "messages"
+        elif self.type == "sent":
+            self.type = "sent messages"
+        else:
+            self.type = "notifications"
     %>
     
     ## Main member detail page (username/description/etc)
@@ -33,7 +37,7 @@
             % if self.count:
                 ${parent.list_messages(self.list, self.type)}
             % else:
-                <p>You have no ${title or list['type']}</p>
+                <p>You have no ${self.type}</p>
                 <p><a href="${h.url(controller='profile', action='index')}" rel="external">Return to profile</a></p>
             % endif
         </div>

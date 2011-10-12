@@ -199,23 +199,23 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         # Owner should not be able to delete the content because it is locked
         #self.assertNotIn('delete', self.get_actions(self.assignment_response_id_1)) # AllanC - This SHOULD not be in the actions list :(
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=self.assignment_response_id_1, format="json"),
-            params={'_authentication_token': self.auth_token,},
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
             status=403
         )
         
         self.delete_content(self.assignment_response_id_2)
         #self.assertIn('delete', self.get_actions(self.assignment_response_id_2))
-        #response = self.app.delete(
+        #response = self.app.post(
         #    url('content', id=self.assignment_response_id_2, format="json"),
-        #    params={'_authentication_token': self.auth_token,},
+        #    params={'_method': 'delete', '_authentication_token': self.auth_token,},
         #    status=200
         #)
         
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=self.assignment_response_id_3, format="json"),
-            params={'_authentication_token': self.auth_token,},
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
             status=403
         )
         
@@ -326,9 +326,9 @@ class TestAssignAcceptResponseCycleController(TestController):
         
         self.log_in_as('unittest')
         
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=self.assignment_id, format="json"),
-            params={'_authentication_token': self.auth_token,},
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
             status=200
         )
         

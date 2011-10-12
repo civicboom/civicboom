@@ -170,7 +170,10 @@ def convert_html_to_plain_text(content_html, ommit_links=False):
     text = re.sub(r'(?is)<style.*</style>',r'',text)       # The style tag has contents that are not human readable, dispose of contents and not just the tag
     text = re.sub(r'(?i)<br>|<br/>|</p>|</li>',r'\n',text) # Replace any ends of sections with new lines
     text = re.sub(r'(?i)<li>',r' - ',text)                 # List items should have starters (enchancement? numbers for ol?)
-    text = re.sub(r'(?i)\&nbsp\;', r' ', text)
+    text = re.sub(r'(?i)\&nbsp\;', r' ', text)             # Replace html entities with plaintext equivalent
+    text = re.sub(r'(?i)\&lt\;', r'<', text)
+    text = re.sub(r'(?i)\&gt\;', r'>', text)
+    text = re.sub(r'(?i)\&amp\;', r'&', text)              # Ensure &amp; is the last replacement to ensure &amp;lt; is replaced with &lt; and not <
 
     def heading_replace(m):
         # improvement idea: use str.center(width[, fillchar]) Return centered in a string of length width. Padding is done using the specified fillchar (default is a space).
@@ -405,8 +408,8 @@ def get_diff_words(a,b):
     
     >>> get_diff_words('The monkey jumped over the moon', 'The badger jumped over the donkey')
     ['monkey', 'moon']
-    >>>> t = u'This content is FUCKING disgusting'
-    >>>> get_diff_words(t, profanity_check(t)['CleanText'])
+    >>> t = u'This content is FUCKING disgusting'
+    >>> get_diff_words(t, profanity_check(t)['CleanText'])
     [u'FUCKING']
     """
     if isinstance(a, basestring): a = a.split(' ')

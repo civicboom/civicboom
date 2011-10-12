@@ -1,3 +1,9 @@
+<%def name="kwargs_attrs(**kwargs)">
+    % for key, value in kwargs.iteritems():
+${key}="${value}" 
+    % endfor
+</%def>
+
 ##------------------------------------------------------------------------------
 ## Member Autocomplete - used? where?
 ##------------------------------------------------------------------------------
@@ -12,6 +18,24 @@
 </%def>
 
 ##------------------------------------------------------------------------------
+## Member Link
+##------------------------------------------------------------------------------
+<%def name="member_link(member, js_link_to_frag=True, new_window=False, class_='', **kwargs)">
+<%
+    if js_link_to_frag:
+        js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))
+    else:
+        js_link_to_frag = ''
+        
+    if new_window:
+        new_window = 'target="_blank"'
+    else:
+        new_window = ''
+%>
+<a href="${h.url('member', id=member['username'])}" title="${member['name']}" class="${class_}" ${js_link_to_frag} ${new_window} ${kwargs_attrs(**kwargs)}>${member['name']}</a>
+</%def>
+
+##------------------------------------------------------------------------------
 ## Member Avatar - display a member as text/image + link to profile + follow actions
 ##------------------------------------------------------------------------------
 
@@ -22,21 +46,26 @@
         #          Can this be profiled and checked as to how often this occours?
         if hasattr(member,'to_dict'):
             member = member.to_dict()
-    %>
+            
+
+        if js_link_to_frag:
+            js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))
+        else:
+            js_link_to_frag = ''
+            
+        if new_window:
+            new_window = 'target="_blank"'
+        else:
+            new_window = ''
+
+    %>\
+    <%def name="member_link()"><a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}></%def>
+    ##% if include_name == 'prefix':
+    ##  nothing
+    ##% endif
     <div class="thumbnail ${class_}">
-        <%
-            if js_link_to_frag:
-                js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))
-            else:
-                js_link_to_frag = ''
-                
-            if new_window:
-                new_window = 'target="_blank"'
-            else:
-                new_window = ''
-        %>
 	% if as_link:
-		<a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}>
+		${member_link()}
 	% endif
           <img src="${member['avatar_url']}" alt="${member['username']}" class="img ${img_class}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
 	% if as_link:

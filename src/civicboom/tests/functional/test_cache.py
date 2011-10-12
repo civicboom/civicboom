@@ -6,9 +6,17 @@ from civicboom.lib.cache import cache_separator, key_var_separator, list_item_se
 
 from nose.plugins.skip import SkipTest
 
+ver_threshold = 2 # AllanC - when updating items the updates events fire multiple times in some cases so the version number could jump 2 or 3 at a time. If we are incrementing version numbers greater than this threshold then error
+
 # -- Utils ---------------------------------------------------------------------
 
 def get_etag_dict(response):
+    """
+    A response object will contain an eTag if it is set.
+    This extracts the eTag from the response and attempts to break it into it's component parts
+    Under normal circunstances the eTag is not ment to be deconstructed in this way. It is only ment to reflect a simple "change in state".
+    For testing it is a neat way to assess the state of the cache
+    """
     etag_dict = {}
     etag = response.header('etag')
     etag = etag[1:-1] # Remove first and last char as these are double quotes
@@ -37,6 +45,15 @@ class TestCache(TestController):
             raise SkipTest('Cache not enabled in config - cache test skipped')
     
     def _test_list(self, func_get_list, func_create, func_remove='content', list_version_key_to_check=None):
+        """
+        func_get_list - a function to perform a get/post and return a response
+        func_create   - a function that will modify the list aquired by funct_get_list
+        func_remove   - a string to indicate 'content' or 'member' to remove OR a function to do custom removal of the created object
+        """
+        
+        def check_list_version(key, ver):
+            self.assertIsBetween(int(get_etag_dict(response)[key]), ver+1, ver+ver_threshold) # Check list_version has incremented by 1 - it should not increment more than 1 because only one medification has been performed
+        
         # Get content list
         response         = func_get_list()
         response_json    = json.loads(response.body)
@@ -49,7 +66,7 @@ class TestCache(TestController):
             #print "%s:%s" %(list_version_key_to_check, list_version)
         
         # Create content
-        id = func_create()
+        id = func_create() # a record the id of the item created
         
         # Get new list
         response         = func_get_list()
@@ -59,30 +76,33 @@ class TestCache(TestController):
         self.assertEqual   (response_json['data']['list']['count'], list_count + 1 ) # Check list count has incremented by 1
         self.assertIn      (str(id)                               , response.body  ) # Loose presence check
         if list_version_key_to_check:
-            self.assertEqual(int(get_etag_dict(response)[list_version_key_to_check]), list_version + 1) # Optinaly check list_version has incremented by 1 - it should not increment more than 1 because only one medification has been performed
+            check_list_version(list_version_key_to_check, list_version)
         
-        # Some items like comments cant be removed - this is optinal cleanup and test
-        if func_remove:
-            list_etag  = response.header('etag') # Record the start of the list
-            if list_version_key_to_check:
-                list_version = int(get_etag_dict(response)[list_version_key_to_check])
-            
-            # Cleanup
-            if callable(func_remove):
-                func_remove(id)
-            elif func_remove=='content':
-                self.delete_content(id)
-            elif func_remove=='member':
-                self.delete_member(id)
-            
-            # Get new list
-            response         = func_get_list()
-            response_json    = json.loads(response.body)
-            # Check Assertions
-            self.assertNotEqual(response.header('etag')               , list_etag ) # Check list etag has changed
-            self.assertEqual   (response_json['data']['list']['count'], list_count) # Check list count is the same as it was to begin with
-            if list_version_key_to_check:
-                self.assertEqual(int(get_etag_dict(response)[list_version_key_to_check]), list_version + 1) # Optinaly check list_version has incremented by 1 - it should not increment more than 1
+        # Abort if no remove method spcifyed (we have tested all we can)
+        if not func_remove:
+            return
+        
+        # Remove the created item
+        list_etag  = response.header('etag') # Record the start of the list
+        if list_version_key_to_check:
+            list_version = int(get_etag_dict(response)[list_version_key_to_check])
+        
+        # Cleanup
+        if callable(func_remove):
+            func_remove(id)
+        elif func_remove=='content':
+            self.delete_content(id)
+        elif func_remove=='member':
+            self.delete_member(id)
+        
+        # Check list updated on remove
+        response         = func_get_list()
+        response_json    = json.loads(response.body)
+        # Check list assertions
+        self.assertNotEqual(response.header('etag')               , list_etag ) # Check list etag has changed
+        self.assertEqual   (response_json['data']['list']['count'], list_count) # Check list count is the same as it was to begin with
+        if list_version_key_to_check:
+            check_list_version(list_version_key_to_check, list_version)
 
     
     # -- Content List --------------------------------------------------------
@@ -98,9 +118,9 @@ class TestCache(TestController):
         self._test_list(lambda: self.app.get(url('contents'      , creator='me', list='assignments', format='json')), lambda: self.create_content(title='cache test', type='assignment'             ), list_version_key_to_check='assignments')
         self._test_list(lambda: self.app.get(url('contents'      , creator='me', list='responses'  , format='json')), lambda: self.create_content(title='cache test', type='article'   , parent_id=1), list_version_key_to_check='responses'  )
         self._test_list(lambda: self.app.get(url('content_action', id=1        , action='responses', format='json')), lambda: self.create_content(title='cache test', type='article'   , parent_id=1), list_version_key_to_check='response_to')
-        self._test_list(lambda: self.app.get(url('content_action', id=1        , action='comments' , format='json')), lambda: self.comment(1,'cache_test')                                           , list_version_key_to_check='comments_to', func_remove=None)
+        self._test_list(lambda: self.app.get(url('content_action', id=1        , action='comments' , format='json')), lambda: self.comment(1,'cache_test')                                           , list_version_key_to_check='comments_to') #, func_remove=None
         
-        #'boomed_by'   : {'boomed_by': None},        
+        #'boomed_by'   : {'boomed_by': None},
 
 
 

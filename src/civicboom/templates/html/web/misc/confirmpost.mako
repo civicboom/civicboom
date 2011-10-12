@@ -7,10 +7,6 @@
 <%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Confirm action")}</%def>
 
-<%
-    action_objects     = get_action_objects_for_url()
-    action_description = action_objects.get('description') or _('perform an action')
-%>
 
 <style>
     .accept_action {
@@ -26,6 +22,17 @@
 </style>
 
 <center class="accept_action">
+${confirm_message()}
+</center>
+
+##------------------------------------------------------------------------------
+
+<%def name="confirm_message()">
+    <%
+        action_objects     = get_action_objects_for_url()
+        action_description = action_objects.get('description') or _('perform an action')
+    %>
+    
     ${h.form(c.target_url)}
         <br /><h1>${_("Great! You're nearly there...")}</h1>
         <br /><p>${_("If you want to <b>%s</b>, click ") % action_description |n} <input type="submit" value="${_("continue!")}" class="button"></p>
@@ -35,4 +42,4 @@
         <br /><p>Or to go to your profile click <a class="button" href="/profile">${_("profile")}</a>
     ${h.end_form()}
     ## <p style="font-style: italic;">${_("(We are double checking because you could have been tricked into performing an action that you did not want to do)")}</p>
-</center>
+</%def>

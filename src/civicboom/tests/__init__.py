@@ -23,6 +23,8 @@ from sqlalchemy           import or_, and_, not_, null
 from paste.fixture import TestApp
 import cbutils.worker as worker
 
+from cbutils.misc import substring_in
+
 from civicboom.lib.database.query_helpers import to_apilist
 
 from civicboom.lib.communication.email_log import getLastEmail, getNumEmails, emails
@@ -151,6 +153,7 @@ class TestController(TestCase):
             self.auth_token   = response.session['_authentication_token']
             self.logged_in_as = username
             self.logged_in_password = password
+            print self.auth_token
 
     def log_out(self):
         if self.logged_in_as:
@@ -356,9 +359,9 @@ class TestController(TestCase):
 
     def delete_content(self, id):
         self.assertIn('delete', self.get_actions(id))
-        response = self.app.delete(
+        response = self.app.post(
             url('content', id=id, format="json"),
-            params={'_authentication_token': self.auth_token,},
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
             status=200
         )
 
@@ -372,7 +375,13 @@ class TestController(TestCase):
         from civicboom.lib.database.get_cached import get_member
         member = get_member(username)
         member.delete()
-        
+
+    def delete_message(self, id):
+        response = self.app.post(
+            url('message', id=id, format="json"),
+            params={'_method': 'delete', '_authentication_token': self.auth_token,},
+            status=200
+        )
 
     def follow(self, username, trusted=False):
         #actions = self.get_actions(username) # AllanC - this does not work as once an invite is sent the options are follow and unfollow(reject invitation)
@@ -669,13 +678,17 @@ class TestController(TestCase):
         self.assertEqual(len(response_json['data']['error-list']), 1)
         self.assertEqual(response_json['status'], 'ok')
 
-    def assertSubStringIn(self, substring, string_list):
-        found = False
-        for i in string_list:
-            if substring in i:
-                fount = True
-                return True
-        raise AssertionError('%s not found in subelements of %s' % (substring, string_list))
+    def assertSubStringIn(self, substrings, string_list):
+        if substring_in(substrings, string_list):
+            return True
+        raise AssertionError('%s not found in subelements of %s' % (substrings, string_list))
+    
+    def assertIsBetween(self, x, low, high):
+        try:
+            self.assertGreaterEqual(x, low )
+            self.assertLessEqual   (x, high)
+        except:
+            raise AssertionError('%d is not between %d and %d' % (x,low,high))
     
     def run_task(self, task, **kwargs):
         response = self.app.get(

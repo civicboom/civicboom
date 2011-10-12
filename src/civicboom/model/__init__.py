@@ -4,11 +4,12 @@ from sqlalchemy import orm
 
 from civicboom.model import meta
 from civicboom.model.content import Content, CommentContent, DraftContent, UserVisibleContent, ArticleContent, AssignmentContent, SyndicatedContent
-from civicboom.model.content import FlaggedContent, Boom, Interest
+from civicboom.model.content import Boom, Interest
 from civicboom.model.content import License, Tag, ContentEditHistory, Media
 from civicboom.model.content import MemberAssignment, Rating
 from civicboom.model.member  import Member, User, UserLogin, Group, GroupMembership, Follow, PaymentAccount, account_types
 from civicboom.model.message import Message
+from civicboom.model.flags   import FlaggedEntity
 from civicboom.model.media   import Media
 from civicboom.model.feed    import Feed
 from civicboom.model.payment import Service, PaymentAccountService, Invoice, InvoiceLine, BillingAccount, BillingTransaction

@@ -2,8 +2,8 @@ from pylons.templating  import render_mako as render #for rendering emails
 from pylons.i18n.translation import _
 
 from civicboom.model.meta    import Session
-from civicboom.model         import Rating
-from civicboom.model.content import MemberAssignment, AssignmentContent, FlaggedContent, Boom, Content
+from civicboom.model         import Rating, FlaggedEntity
+from civicboom.model.content import MemberAssignment, AssignmentContent, Boom, Content
 from civicboom.model.member  import *
 from civicboom.model.payment import *
 
@@ -645,13 +645,20 @@ def del_member(member):
     Session.commit()
 
 
-def flag_content(content, member=None, type="automated", comment=None, url_base=None, delay_commit=False, moderator_address=None):
+def flag(obj, raising_member=None, type="automated", comment=None, url_base=None, delay_commit=False, moderator_address=None):
     """
     if url_base is included an alternate URL generator to avert the use of the pylons one
     """
-    flag = FlaggedContent()
-    flag.member  = get_member(member)
-    flag.content = get_content(content)
+    flag = FlaggedEntity()
+    flag.raising_member = get_member(raising_member)
+    
+    if isinstance(obj, Content):
+        flag.offending_content = obj
+    if isinstance(obj, Member):
+        flag.offending_member = obj
+    if isinstance(obj, Message):
+        flag.offending_message = obj
+        
     flag.comment = strip_html_tags(comment)
     flag.type    = type
     Session.add(flag)
@@ -661,30 +668,28 @@ def flag_content(content, member=None, type="automated", comment=None, url_base=
         Session.flush()
     
     # Send email to alert moderator
-    member_username = 'profanity_filter'
+    raising_member_username = 'profanity_filter'
     try:
-        member_username = flag.member.username
+        raising_member_username = flag.raising_member.id
     except:
         pass
-    
-    content_text = """
+  
+
+    # Base email text
+    email_text_dict = {
+        "raising_member": raising_member_username,
+        "type"         : type,
+        "comment"      : flag.comment,
+        "action_ignore": '',
+        "action_delete": '',
+    }
+    email_text = """
 --- Report ---
 
-Reporter: %(reporter)s
+Reporter: %(raising_member)s
 Category: %(type)s
 
 %(comment)s
-
-
---- Reported Content ---
-
-Title:  %(content_title)s
-        %(content_url)s
-Author: %(member_name)s
-        %(member_url)s
-
-%(content_body)s
-
 
 --- Actions ---
 
@@ -693,24 +698,46 @@ If the content is ok, click here to remove the flag:
 
 If the content is not ok, click here to hide it from the site:
   %(action_delete)s
-""" % {
-        "reporter"     : member_username,
-        "type"         : type,
-        "comment"      : flag.comment,
-        "member_name"  : flag.content.creator.username,
-        "member_url"   : url('member', id=flag.content.creator.username, qualified=True, sub_domain="www"),
-        "content_url"  : url('content', id=flag.content.id, qualified=True, sub_domain="www"),
-        "content_title": flag.content.title,
-        "content_body" : flag.content.content,
-        "action_ignore": url("admin/moderate?kay=yay&content_id="+str(flag.content.id), qualified=True), #sub_domain="www"),
-        "action_delete": url("admin/moderate?kay=nay&content_id="+str(flag.content.id), qualified=True), #sub_domain="www"),
-    }
-    
+
+"""
+
+
+    # Additional Content text
+    if flag.offending_content:
+        email_text_dict.update({
+            "creator_name" : flag.offending_content.creator.id,
+            "creator_url"  : url('member' , id=flag.offending_content.creator.id, qualified=True, sub_domain="www"),
+            "content_url"  : url('content', id=flag.offending_content.id        , qualified=True, sub_domain="www"),
+            "content_title": flag.offending_content.title,
+            "content_body" : flag.offending_content.content,
+            
+            "action_ignore": url("admin/moderate?kay=yay&content_id=%s" % flag.offending_content.id, qualified=True), #sub_domain="www"),
+            "action_delete": url("admin/moderate?kay=nay&content_id=%s" % flag.offending_content.id, qualified=True), #sub_domain="www"),
+        })
+        email_text = email_text + """
+--- Reported Content ---
+
+Title:  %(content_title)s
+        %(content_url)s
+Author: %(creator_name)s
+        %(creator_url)s
+
+%(content_body)s
+"""
+
+    if flag.offending_member:
+        log.error('member flaging not implemented yet')
+
+    if flag.offending_message:
+        log.error('message flaging not implemented yet')
+
+
+    email_text = email_text % email_text_dict
     send_email(
         moderator_address,
         subject      = 'flagged content [%s]' % type,
-        content_text = content_text,
-        content_html = "<pre>"+content_text+"</pre>",
+        content_text = email_text,
+        content_html = "<pre>"+email_text+"</pre>",
     )
 
 
@@ -803,12 +830,13 @@ def parent_disassociate(content, delay_commit=False):
 def rate_content(content, member, rating):
     content = get_content(content)
     member  = get_member(member)
+    rating_value = int(rating)
 
     if not content:
         raise action_error(_('unable to find content'), code=404)
     if not member:
         raise action_error(_('unable to find member'), code=404)
-    if rating and int(rating)<0 or int(rating)>5:
+    if rating and rating_value<0 or rating_value>5:
         raise action_error(_("Ratings can only be in the range 0 to 5"), code=400)
 
     # remove any existing ratings
@@ -816,27 +844,21 @@ def rate_content(content, member, rating):
     # will optimise remove->add as modify-existing, and the
     # SQL trigger will break
     try:
-        q = Session.query(Rating)
-        q = q.filter(Rating.content_id==content.id)
-        q = q.filter(Rating.member    ==member)
-        existing = q.one()
+        existing = Session.query(Rating).filter(Rating.content==content).filter(Rating.member ==member).one()
         Session.delete(existing)
         Session.commit()
     except NoResultFound:
         pass
 
+    # rating = 0 = remove vote
     # add a new one
-    if rating:
-        rating = int(rating)
-        
-        # rating = 0 = remove vote
-        if rating > 0:
-            r = Rating()
-            r.content_id = content.id
-            r.member     = member
-            r.rating     = rating
-            Session.add(r)
-            Session.commit()
+    if rating_value > 0:
+        r = Rating()
+        r.content = content
+        r.member  = member
+        r.rating  = rating_value
+        Session.add(r)
+        Session.commit()
 
     # AllanC - TODO - rate notification needed
     

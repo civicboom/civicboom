@@ -161,34 +161,38 @@ class TestMessagesController(TestController):
     ## delete ################################################################
 
     def part_delete_message(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('message', id=self.m5_id, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             }
         )
 
     def part_delete_notification(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('message', id=self.n3_id, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             }
         )
 
     def part_delete_someone_elses(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('message', id=self.m1_id, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=403
         )
 
     def part_delete_non_exist(self):
-        response = self.app.delete(
+        response = self.app.post(
             url('message', id=0, format="json"),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=404

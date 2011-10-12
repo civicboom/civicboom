@@ -1,8 +1,8 @@
+<!DOCTYPE html>
 % if hasattr(next, 'init_vars'):
     ${next.init_vars()}
+    ## AllanC - is init vars actually needed here? init_vars was a horrible hack to enable the frag rendered to prepare variables to style the frag holders (icons for actions, titles), is this needed in the mobile variant?
 % endif
-
-<!DOCTYPE html>
 <html>
     <head>
         ${title()}
@@ -13,18 +13,13 @@
         
         ## --- CSS imports ---
         % if config['development_mode']:
-            <%
-                from glob import glob
-                css_mobile = glob("civicboom/public/styles/mobile/*.css")
-                css_all    = css_mobile
-                css_all    = [n[len("civicboom/public/"):] for n in css_all]
-                css_all.sort()
-            %>
-        % for css in css_all:
-            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", css)}" />
-        % endfor
+        <style type="text/css">
+            % for css in h.css_files('mobile', include_common=False):
+            @import url("${h.wh_url("public", css)}");
+            % endfor
+        </style>
         % else:
-            <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
+        <link rel="stylesheet" type="text/css" href="${h.wh_url("public", "styles/mobile.css")}" />
         % endif
         ## ------
         
@@ -66,8 +61,9 @@
 <%def name="flash_message()">
     <h3 id="flash_message" class="status_${c.result['status']}">${c.result['message']}</h3>
     % if c.result['message'] != "":
-    <script type="text/javascript">
+    <script type="text/javascript">    
         <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+        ## AllanC is json_message actually used here? is this needed?
     </script>
     % endif
 </%def>
