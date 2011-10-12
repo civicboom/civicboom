@@ -17,10 +17,14 @@ def status(**kargs):
     from pylons import config as p_config
     t = Twitter(
         auth=OAuth(
-            w_config['api_key.twitter.oauth_token'],
-            w_config['api_key.twitter.oauth_token_secret'],
-            w_config['api_key.twitter.consumer_key'],
-            w_config['api_key.twitter.consumer_secret']
+            w_config.get('api_key.twitter.oauth_token',
+                p_config.get('api_key.twitter.oauth_token')),
+            w_config.get('api_key.twitter.oauth_token_secret',
+                p_config.get('api_key.twitter.oauth_token_secret')),
+            w_config.get('api_key.twitter.consumer_key',
+                p_config.get('api_key.twitter.consumer_key')),
+            w_config.get('api_key.twitter.consumer_secret',
+                p_config.get('api_key.twitter.consumer_secret'))
         ),
         secure=True, #options['secure']
         api_version='1',
