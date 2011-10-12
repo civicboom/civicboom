@@ -543,9 +543,10 @@ class TestSettingsController(TestController):
         response = self.app.get(url('setting_action', id="me", action="general", format='json'), status=200)
         assert 'member_visibility' in response.body
         
-        response = self.app.delete(
+        response = self.app.post(
             url('group', id='test_settings_group', format='json'),
             params={
+                '_method': 'delete',
                 '_authentication_token': self.auth_token
             },
             status=200

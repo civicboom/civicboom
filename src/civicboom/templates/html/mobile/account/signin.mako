@@ -2,12 +2,19 @@
 
 ## includes
 <%namespace name="components"      file="/html/mobile/common/components.mako" />
+<%namespace name="signin_web_inlcudes"      file="/html/web/account/signin.mako" />
 
 <%def name="page_title()">
 	${_("Sign in")}
 </%def>
 
 <%def name="body()">
+    <div data-role="page">
+        <div data-role="content">
+            ${signin_web_inlcudes.signin_actions()}
+        </div>
+    </div>
+
     <div data-role="page">
         <div data-role="content">
             ${components.title_logo()}

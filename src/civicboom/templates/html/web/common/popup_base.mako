@@ -24,7 +24,7 @@
         </div>
         
         <div class="popup_content">
-        % if next:
+        % if next and hasattr(next, 'body'):
             ${next.body()}
         % endif
         % if isinstance(content, types.FunctionType):
