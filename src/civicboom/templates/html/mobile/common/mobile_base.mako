@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-% if hasattr(self, 'init_vars'):
-${self.init_vars()}
-% endif
+##% if hasattr(self, 'init_vars'):
+##${self.init_vars()}
+##% endif
 <html>
     <head>
         <%def name="title()"></%def>
@@ -86,40 +86,42 @@ ${self.init_vars()}
 
 
 
-<%def name="header(link_back=None, link_next=None)">
-    <div class="header">
-        % if link_back:
-            <a href="${link_back}" class="back_link" data-direction="reverse">
-                <span><</span>
-            </a>
-        % endif
-        <a href="/" rel="external">
-            <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />
-        </a>
-        % if link_next:
-            <a href="${link_next}" class="next_link">
-                <span>></span>
-            </a>
-        % endif
-        <div class="separator"></div>
-    </div>
-    
-    % if hasattr(self, 'control_bar'):
-    ${self.control_bar()}
-    % else:
-    <div data-role="navbar" class="ui-navbar">
-        <ul>
-            % if c.logged_in_user:
-            <li>
-                <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
-            </li>
+<%def name="header(title=None, link_back=None, link_next=None)">
+    <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
+        <div class="header">
+            % if link_back:
+                <a href="${link_back}" class="back_link" data-direction="reverse">
+                    <span><</span>
+                </a>
             % endif
-            <li>
-                <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
-            </li>
-        </ul>
+            <a href="/" rel="external">
+                <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />
+            </a>
+            % if link_next:
+                <a href="${link_next}" class="next_link">
+                    <span>></span>
+                </a>
+            % endif
+            <div class="separator"></div>
+        </div>
+        
+        % if hasattr(self, 'control_bar'):
+        ${self.control_bar()}
+        % else:
+        <div data-role="navbar" class="ui-navbar">
+            <ul>
+                % if c.logged_in_user:
+                <li>
+                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
+                </li>
+                % endif
+                <li>
+                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
+                </li>
+            </ul>
+        </div>
+        % endif
     </div>
-    % endif
 </%def>
 
 <%def name="footer()">

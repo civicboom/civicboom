@@ -2,9 +2,9 @@
 
 <%def name="title()">${_("Messages")}</%def>
 
-<%def name="page_id()"     >messages</%def>
-<%def name="page_class()"  >messages</%def>
-<%def name="page_content()">
+<%def name="list_id()"     >messages</%def>
+<%def name="list_class()"  >messages</%def>
+<%def name="list_content()">
     <%
         title_dict = {
             'to'          : _("messages"),
@@ -18,8 +18,8 @@
     % if list.get('count'):
         ${parent.generate_list(list, message_li, title=title, more=None)}
     % else:
-        <p>You have no ${title}</p>
-        <p><a href="${h.url(controller='profile', action='index')}" rel="external">Return to profile</a></p>
+        <p>${_("You have no %s") % title}</p>
+        <p><a href="${h.url(controller='profile', action='index')}" rel="external">${_('Return to profile')}</a></p>
     % endif
 </%def>
 
@@ -41,7 +41,7 @@
         <a href="${url('message', id=item['id'])}" data-ajax="true" data-rel="dialog" data-transition="fade">
             <h3>${item['subject']}</h3>
             % if item.get('source'):
-                <p><b>From ${item['source']['username']}</b></p>
+                <p><b>${_("From %s") % item['source']['username']}</b></p>
             % endif
             <p>${item['content']}</p>
             <p>${item['timestamp']}</p>

@@ -1,36 +1,31 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-## includes
-<%namespace name="components"      file="/html/mobile/common/components.mako" />
+
 <%namespace name="signin_web_inlcudes"      file="/html/web/account/signin.mako" />
 
-<%def name="page_title()">
-	${_("Sign in")}
-</%def>
+<%def name="title()">${_("Sign in")}</%def>
 
 <%def name="body()">
     <div data-role="page">
         <div data-role="content">
-            ${signin_web_inlcudes.signin_actions()}
-        </div>
-    </div>
-
-    <div data-role="page">
-        <div data-role="content">
-            ${components.title_logo()}
+            ${self.title_logo()}
     	    ${parent.flash_message()}
+            
+            ## AllanC - is this the correct place for this?
+            ${signin_web_inlcudes.signin_actions()}
+            
         	<div class="signin_title">
         	   <h1>${_("Sign in to _site_name!")}</h1>
         	</div>
-	       ${signin()}
-           % if config['development_mode']:
+	        ${signin()}
+            % if config['development_mode']:
                 <div class="signin_title">
                    <h1>${_("Don't have an account? Sign up to _site_name now!")}</h1>
                 </div>
                 ${signup()}
                 <hr />
                 ${janrain()}
-           % endif
+            % endif
 	   </div>
 	</div>
 </%def>

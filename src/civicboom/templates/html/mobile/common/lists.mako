@@ -1,10 +1,15 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 <%def name="body()">
-    <%self:page>
-        <%def name="page_attr()"   >id="${next.page_id()}"</%def>
-        <%def name="page_content()">${next.page_content()}</%def>
-        <%def name="page_footer()" >
+    <div data-role="page" data-theme="b" id="${next.list_id()} class="${next.list_class()}">
+        
+        ## Content -------------------------------------------------------------
+        <div data-role="content">
+            ${next.list_content()}
+        </div>
+        
+        ## Footer --------------------------------------------------------------
+        <div data-role="footer" data-position="fixed" data-fullscreen="true">
             <%
                 import copy
                 
@@ -18,7 +23,6 @@
                 count  = list['count']
                 items  = len(list['items'])
             %>
-            
             % if offset > 0 or offset + items < count:
                 <div data-role="navbar" class="ui-navbar">
                     <ul>
@@ -37,8 +41,9 @@
                     </ul>
                 </div>
             % endif
-        </%def>
-    </%self:page>
+        </div>
+        
+    </div>
 </%def>
 
 
@@ -72,10 +77,11 @@
 ## Generate li elements for a list
 ##------------------------------------------------------------------------------
 <%def name="generate_list(list, render_item_func, title=None, more=True)">
-    % if method and list.get('count') and list['count']:
+
+    % if render_item_func and list.get('count') and list['count']:
         <ul data-role="listview" data-inset="true" data-split-icon="delete" data-split-theme="d">
             % if title:
-                <li data-role="list-divider" role="heading">'
+                <li data-role="list-divider" role="heading">
                     ${title.capitalize()} <span class="ui-li-count">${list['count']}</span>
                 </li>
             % endif

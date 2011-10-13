@@ -18,13 +18,16 @@
         actions   = d.get('actions', [])
     %>
     
-    <%self:page>
-        <%def name="page_attr()">id="content-main-${id}" class="content_page"</%def>
+    
+    ## Content Text ------------------------------------------------------------
+    
+    <div data-role="page" data-theme="b" id="content-main-${id}" class="content_page">
+        
         ${self.swipe_event('#content-main-%s' % id, '#content-info-%s' % id, 'left')}
-        <%def name="page_header()">
-            ${self.header(link_next="#content-info-%s" % id)}
-        </%def>
-        <%def name="page_content()">
+        
+        ${self.header(link_next="#content-info-%s" % id)}
+        
+        <div data-role="content">
             <div class="content_title">
                 <h1>${title}</h1>
             </div>
@@ -67,16 +70,19 @@
                     <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>delete</button></a>
                 % endif
             % endif
-        </%def>
-    </%self:page>
+        </div>
+    </div>
     
-    <%self:page>
-        <%def name="page_attr()">id="content-info-${id}" class="content_page"</%def>
+    
+    ## Details & responses -----------------------------------------------------
+    
+    <div data-role="page" data-theme="b" id="content-info-${id}" class="content_page">
+        
         ${self.swipe_event('#content-info-%s' % id, '#content-main-%s' % id, 'right')}
-        <%def name="page_header()">
-            ${self.header(link_back="#content-main-%s" % id)}
-        </%def>
-        <%def name="page_content()">
+        
+        ${self.header(link_back="#content-main-%s" % id)}
+        
+        <div data-role="content">
             <div class="content_details">
                 ## Creator info
                 <ul data-role="listview" data-inset="true">
@@ -111,18 +117,20 @@
                     ${content_list_includes.list_contents(responses, "Responses")}
                 </ul>
             </div>
-        </%def>
-    </%self:page>
+        </div>
+    </div>
     
 
+    ## Media -------------------------------------------------------------------
+
     % if len(media):
-    <%self:page>
-        <%def name="page_attr()">id="content-media-${id}" class="content_page"</%def>
+    <div data-role="page" data-theme="b" id="content-media-${id}" class="content_page">
+        
         ${self.swipe_event('#content-media-%s' % id, '#content-main-%s' % id, 'right')}
-        <%def name="page_header()">
-            ${self.header(link_back="#content-main-%s" % id)}
-        </%def>
-        <%def name="page_content()">
+
+        ${self.header(link_back="#content-main-%s" % id)}
+
+        <div data-role="content">
             <div class="media_list">
                 % for item in media:
                     <div class="media_item">
@@ -145,11 +153,14 @@
                     </div>
                 % endfor
             </div>
-        </%def>
-    </%self:page>
+        </div>
+        
+    </div>
     % endif
     
-
+    
+    ## Delete ------------------------------------------------------------------
+    
     <div data-role="page" id="confirm_delete">
         <div data-role="header">
             <h1>Delete posting?</h1>

@@ -2,8 +2,9 @@
 
 <%def name="title()">${_("Explore _content")}</%def>
 
-<%def name="page_id()"     >explore_content</%def>
-<%def name="page_content()">
+<%def name="list_id()"     >explore_content</%def>
+<%def name="list_class()"  ></%def>
+<%def name="list_content()">
     ${self.search_form()}
     ##${parent.generate_list(d['list'], content_li, title=_('Content'))}
     ${list_contents(d['list'])}

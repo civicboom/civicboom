@@ -5,8 +5,9 @@
 
 <%def name="title()"       >${_("Explore _users and _groups")}</%def>
 
-<%def name="page_id()"     >explore_member</%def>
-<%def name="page_content()">
+<%def name="list_id()"     >explore_member</%def>
+<%def name="list_class()"  ></%def>
+<%def name="list_content()">
     ${parent.generate_list(d['list'], member_li, title=_('Members'), more=None)}
 </%def>
 

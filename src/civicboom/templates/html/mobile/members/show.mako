@@ -1,40 +1,32 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-##-----------------------------------------------------------------------------
-## includes
-##-----------------------------------------------------------------------------
-
 <%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
-<%namespace name="member_list_includes"  file="/html/mobile/members/index.mako" />
-
-<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
-
-<%namespace name="frag_list"       file="/frag/common/frag_lists.mako" />
+<%namespace name="member_list_includes"  file="/html/mobile/members/index.mako"  />
+<%namespace name="member_includes"       file="/html/mobile/common/member.mako"  />
+<%namespace name="frag_list"             file="/frag/common/frag_lists.mako"     />
 
 
-<%def name="page_title()">${d['member'].get('name')}</%def>
+<%def name="title()">${d['member'].get('name')}</%def>
 
 <%def name="body()">
     <%
-        # AllanC - hu? - this only renders an API return, withc is always a dict? so why is this here?
-        #if hasattr(member,'to_dict'):
-        #    member = member.to_dict()
-        
         member    = d['member']
         id        = member.get('id')
         name      = member.get('name')
-        current_user = c.logged_in_persona and self.id == c.logged_in_persona.id
         actions   = d['actions']
+        
+        self.current_user = c.logged_in_persona and id == c.logged_in_persona.id
     %>
     
-    ##--------------------------------------------------------------------------
-    ## Main member detail page (username/description/etc)
-    ##--------------------------------------------------------------------------
-    <%self:page>
+    ## Main member detail page (username/description/etc) ----------------------
+    
+    <div data-role="page" data-theme="b" id="member-details-${id}" class="member_details_page">
+        
         ${self.swipe_event('#member-details-%s' % id, '#member-extra-%s' % id, 'left')}
-        <%def name="page_attr()"   >id="member-details-${id}" class="member_details_page"</%def>
-        <%def name="header()"      >${self.header(title=self.name, next_link="#member-extra-%s" % id)}</%def>
-        <%def name="page_content()">
+
+        ${self.header(title=name, link_next="#member-extra-%s" % id)}
+        
+        <div data-role="content">
             ##${parent.flash_message()}
             ## BODY
             ##${signout_navbar()}
@@ -42,8 +34,6 @@
             ## Full user details for member/profile pages
             ## Includes username/etc, description, followers/etc
             
-            ##% if member:
-
             <div class="member_details">
                 ## Avatar/name
                 <h3>${member['name']}</h3>
@@ -144,19 +134,25 @@
                 % endfor
 
             </div>
-        </%def>
-        <%def name="footer_attr()">data-theme="a"</%def>
-        <%def name="footer()"     >${signout_navbar()}</%def>
-    </%self:page>
+            
+        </div>
+        
+        ## Footer --------------------------------------------------------------
+        
+        ${footer_signout()}
+    </div>
     
     ##--------------------------------------------------------------------------
     ## Extra info (content/boomed/etc)
     ##--------------------------------------------------------------------------
-    <%self:page>
+
+    <div data-role="page" data-theme="b" id="member-extra-${id}" class="member_extra_page">
+        
         ${self.swipe_event('#member-extra-%s' % id, '#member-details-%s' % id, 'right')}
-        <%def name="page_attr()"   >id="member-extra-${id}" class="member_extra_page"</%def>
-        <%def name="header()"      >${self.header(title=name, back_link="#member-details-%s"%id)}</%def>
-        <%def name="page_content()">
+
+        ${self.header(title=name, link_back="#member-details-%s"%id)}
+        
+        <div data-role="content">
             <h2 style="text-align: center;">${name}'s ${_('_content')}</h2>
             
             ## List the content relating to this user
@@ -171,21 +167,24 @@
                     ${content_list_includes.list_contents(d[list_name], title=title)}
                 % endfor
             </div>
-        </%def>
+        </div>
             
-        <%def name="footer_attr()">data-theme="a"</%def>
-        <%def name="footer()"     >${signout_navbar()}</%def>
-    </%self:page>
+        ${footer_signout()}
+    </div>
 
 
     ##--------------------------------------------------------------------------
     ## Persona switch
     ##--------------------------------------------------------------------------
-    % if current_user:
-    <self:page>
-        <%def name="page_attr()"   >id="member_persona-${id}" class="member_persona"</%def>
-        <%def name="page_header()" ><h1>Switch persona</h1></%def>
-        <%def name="page_content()">
+    % if self.current_user:
+    <div data-role="page" data-theme="b" id="member_persona-${id}" class="member_persona">
+        
+        <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
+            <h1>Switch persona</h1>
+        </div>
+            
+            
+        <div data-role="content">
             <h2>Select the persona you want to switch to</h2>
             <ul data-role="listview" data-inset="true">
                 <%def name="persona_select(member, **kwargs)">
@@ -239,8 +238,9 @@
                     ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
                 % endfor
             </ul>
-        </%def>
-    </self:page>
+        </div>
+        
+    </div>
     % endif
     
 </%def>
@@ -248,14 +248,16 @@
 ##-----------------------------------------------------------------------------
 ## Signout nav bar link
 ##-----------------------------------------------------------------------------
-<%def name="signout_navbar()">
-    % if self.current_user:
+<%def name="footer_signout()">
+% if self.current_user:
+    <div data-role="footer" data-theme="a">
         <div data-role="navbar" class="ui-navbar" data-theme="a">
             <ul>
                 <li>
-                    <a href="#member_persona-${self.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
+                    <a href="#member_persona-${c.logged_in_persona.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
                 </li>
-                % if "logout" in self.actions:
+                ## Unneeded - if we are activating this code, we are already logged in - therefore we CAN logout
+                ##% if "logout" in self.actions:
                     <li>
                         ${h.secure_link(
                             h.url(controller='account', action='signout'),
@@ -263,15 +265,18 @@
                             css_class="button",
                         )}
                     </li>
-                % endif
+                ##% endif
                 <li>
                     <a href="${h.url(controller='misc', action='force_web')}" rel="external">View full website</a>
                 </li>
             </ul>
         </div>
-        </div>
-    % endif
+    </div>
+% endif
 </%def>
+
+
+
 
 <%doc>
 ##-----------------------------------------------------------------------------
@@ -302,14 +307,3 @@
     % endif
 </%def>
 </%doc>
-
-
-
-
-##-----------------------------------------------------------------------------
-## 
-##-----------------------------------------------------------------------------
-
-
-
-
