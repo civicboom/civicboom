@@ -2,6 +2,7 @@ from pylons import url as url_pylons, session, request, response, config, tmpl_c
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, secure_form
+from pylons.controllers.util  import etag_cache as pylons_etag_cache # Used for removing eTags on errors
 
 from cbutils.cbxml import dictToXMLString
 
@@ -610,11 +611,14 @@ def auto_format_output(target, *args, **kwargs):
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
-        if not auto_format_output_flag: #c.format == "python":
+        if not auto_format_output_flag: # If this is not the top level call then keep propergating the error up wards
             raise ae
         else:
-            result = ae.original_dict
-
+            result = ae.original_dict # else, capture the error as the result to format and return
+            
+            pylons_etag_cache("") # remove any etags because errors should never be cached.
+            
+            # Special processing for some types of error code
             if result.get('code') == 404 and request.environ.get("HTTP_REFERER", "-") == "-":
                 # 404 with no referer is normally a web spider
                 pass
@@ -633,7 +637,8 @@ def auto_format_output(target, *args, **kwargs):
     
     # After
     # Is result a dict with data?
-    if auto_format_output_flag and isinstance(result, dict): #and 'data' in result # Sometimes we only return a status and msg, cheking for data is overkill
+    if auto_format_output_flag and isinstance(result, dict):
+        
         # set the HTTP status code
         if 'code' in result:
             response.status = int(result['code'])

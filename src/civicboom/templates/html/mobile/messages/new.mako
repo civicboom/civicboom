@@ -7,17 +7,17 @@
         target = kwargs.get("target")
     %>
     
-    <%self:page>
-        ##<%def name="page_attr()"></%def>
-        <%def name="page_header()">
+    <div data-role="page" data-theme="b">
+        <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
             <h1>
                 ${_("Send a message")}
                 % if target:
                     to ${target}
                 % endif
             </h1>
-        </%def>
-        <%def name="page_content()">
+        </div>
+        
+        <div data-role="content">
             ${h.form(h.args_to_tuple('messages', format='redirect'), json_form_complete_actions="$('.ui-dialog').dialog('close');)")}
                 <div data-role="fieldcontain">
                     % if target:
@@ -38,6 +38,7 @@
                     <input type="submit" value="${_("Send")}">
                 </div>
             ${h.end_form()}
-        </%def>
-    </%self>
+        </div>
+        
+    </div>
 </%def>

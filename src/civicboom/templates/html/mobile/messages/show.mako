@@ -30,13 +30,15 @@
             
             ## If this is my message, allow deletes
             % if message.get('target_id') == c.logged_in_persona.id):
-                ${h.secure_link(
-                    h.args_to_tuple('message', id=self.message['id'], format='redirect') ,
-                    method="DELETE",
-                    value_formatted=h.literal("<button>%s</button>" % "Delete"),
-                    title=_("Delete"),
-                    json_form_complete_actions = "" ,
-                )}
+                ${self.form_button(h.url('message', id=self.message['id'], format='redirect'), _('Delete'), method='delete')}
+                
+                ##${h.secure_link(
+                ##    h.args_to_tuple('message', id=self.message['id'], format='redirect') ,
+                ##    method="DELETE",
+                ##    value_formatted=h.literal("<button>%s</button>" % "Delete"),
+                ##    title=_("Delete"),
+                ##    json_form_complete_actions = "" ,
+                ##)}
             % endif
             
             ## If this is from another member, show reply

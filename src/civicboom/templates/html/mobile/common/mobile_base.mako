@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-##% if hasattr(self, 'init_vars'):
-##${self.init_vars()}
-##% endif
 <html>
     <head>
         <%def name="title()"></%def>
@@ -16,7 +13,10 @@
         ##----------------------------------------------------------------------
         % if config['development_mode']:
             <style type="text/css">
-                % for css in h.css_files('mobile', include_common=False):
+                <%
+                    css_all = h.css_files('mobile', include_common=False)
+                %>
+                % for css in css_all:
                 @import url("${h.wh_url("public", css)}");
                 % endfor
             </style>
@@ -33,7 +33,7 @@
                 js_all =[
                     'javascript/jquery-1.6.2.js',
                     'javascript/jquery.mobile.cb_settings.js',
-                    'javascript/jquery.mobile-1.0b3.js',
+                    'javascript/jquery.mobile-1.0rc1.js',
                 ]
             %>
             % for js in js_all:
@@ -57,7 +57,7 @@
 ##------------------------------------------------------------------------------
 ## Templates
 ##------------------------------------------------------------------------------
-
+<%doc>
 <%def name="page()">
     <div data-role="page" data-theme="b" ${caller.page_attr()}>
         ${caller.body()}
@@ -82,7 +82,7 @@
         % endif
     </div>
 </%def>
-
+</%doc>
 
 
 
@@ -163,4 +163,10 @@
             <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-684x150.png")}' alt='${_("_site_name")}' />
         </a>
     </div>
+</%def>
+
+<%def name="form_button(action_url, title, method='post')">
+    ${h.secure_form(action_url, method=method, data_ajax=False)}
+    <input type="submit" value="${title}">
+    ${h.end_form()}
 </%def>

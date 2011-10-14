@@ -73,43 +73,54 @@
 
                 
                 ## Action Buttons ----------------------------------------------
+                ## TODO
+                ## AllanC - these actions should use AJAX returns
+                
                 % if actions:
                     % if 'message' in actions:
                         <a href="${h.url(controller='messages', action='new', target=id)}" data-rel="dialog" data-transition="fade"><button>Send message</button></a>
                     % endif
             
                     % if 'follow' in actions:
-                        ${h.secure_link(
-                            h.url('member_action', action='follow', id=id, format='redirect') ,
-                            value           = _('Follow'),
-                            value_formatted = h.literal("<button>%s</button>") % _('Follow'),
-                            title           = _("Follow %s" % name) ,
-                        )}
+                        ${self.form_button(h.url('member_action', action='follow', id=id, format='redirect'), _('Follow'))}
+                        
+                        ##${h.secure_link(
+                        ##    h.url('member_action', action='follow', id=id, format='redirect') ,
+                        ##    value           = _('Follow'),
+                        ##    value_formatted = h.literal("<button>%s</button>") % _('Follow'),
+                        ##    title           = _("Follow %s" % name) ,
+                        ##)}
                     % endif
                     
                     % if 'unfollow' in actions:
-                        ${h.secure_link(
-                            h.url('member_action', action='unfollow', id=id, format='redirect') ,
-                            value           = _('Stop Following') if 'follow' not in actions else _('Ignore invite') ,
-                            value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
-                            title           = _("Stop following %s" % name) if 'follow' not in actions else _('Ignore invite from %s' % name) ,
-                        )}
+                        ${self.form_button(h.url('member_action', action='unfollow', id=id, format='redirect'), _('Unfollow'))}
+                        
+                        ##${h.secure_link(
+                        ##    h.url('member_action', action='unfollow', id=id, format='redirect') ,
+                        ##    value           = _('Stop Following') if 'follow' not in actions else _('Ignore invite') ,
+                        ##    value_formatted = h.literal("<button>%s</button>") % _('Stop Following'),
+                        ##    title           = _("Stop following %s" % name) if 'follow' not in actions else _('Ignore invite from %s' % name) ,
+                        ##)}
                     % endif
                     
                     % if 'join' in actions:
-                        ${h.secure_link(
-                            h.url('group_action', action='join'       , id=id, member=c.logged_in_persona.id, format='redirect') ,
-                            value           = _('Join _group') ,
-                            value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
-                        )}
+                        ${self.form_button(h.url('group_action', action='join', id=id, member=c.logged_in_persona.id, format='redirect'), _('Join _group'))}
+                        
+                        ##${h.secure_link(
+                        ##    h.url('group_action', action='join'       , id=id, member=c.logged_in_persona.id, format='redirect') ,
+                        ##    value           = _('Join _group') ,
+                        ##    value_formatted = h.literal("<button>%s</button>") % _('Join _Group'),
+                        ##)}
                     % endif
                     
                     % if 'join_request' in actions:
-                        ${h.secure_link(
-                            h.url('group_action', action='join'       , id=id, member=c.logged_in_persona.id, format='redirect') ,
-                            value           = _('Request to join _group') ,
-                            value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
-                        )}
+                        ${self.form_button(h.url('group_action', action='join', id=id, member=c.logged_in_persona.id, format='redirect'), _('Request to join _group'))}
+                        
+                        ##${h.secure_link(
+                        ##    h.url('group_action', action='join'       , id=id, member=c.logged_in_persona.id, format='redirect') ,
+                        ##    value           = _('Request to join _group') ,
+                        ##    value_formatted = h.literal("<button>%s</button>") % _('Request to join _group'),
+                        ##)}
                     % endif
                 % endif
                 
@@ -168,7 +179,7 @@
                 % endfor
             </div>
         </div>
-            
+        
         ${footer_signout()}
     </div>
 
@@ -208,11 +219,12 @@
                             % endif
                         % endfor
                         % if not current_persona:
-                                ${h.secure_link(
-                                    h.url(controller='account', action='set_persona', id=member.username, format='html') ,
-                                    'switch user',
-                                    css_class='hidden',
-                                )}
+                                ${self.form_button(h.url(controller='account', action='set_persona', id=member.username, format='html'), _('Switch persona'), class_='hidden')}
+                                ##${h.secure_link(
+                                ##    h.url(controller='account', action='set_persona', id=member.username, format='html') ,
+                                ##    'switch user',
+                                ##    css_class='hidden',
+                                ##)}
                         % else:
                             <p>This is your current persona</p>
                         % endif
@@ -259,11 +271,12 @@
                 ## Unneeded - if we are activating this code, we are already logged in - therefore we CAN logout
                 ##% if "logout" in self.actions:
                     <li>
-                        ${h.secure_link(
-                            h.url(controller='account', action='signout'),
-                            _('Sign out'),
-                            css_class="button",
-                        )}
+                        ${self.form_button(h.url(controller='account', action='signout'), _('Signout'))}
+                        ##${h.secure_link(
+                        ##    h.url(controller='account', action='signout'),
+                        ##    _('Sign out'),
+                        ##    css_class="button",
+                        ##)}
                     </li>
                 ##% endif
                 <li>

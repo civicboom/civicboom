@@ -1,7 +1,7 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 <%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
-<%namespace name="edit_full" file="/frag/contents/edit.mako" />
+<%namespace name="edit_full"             file="/frag/contents/edit.mako"         />
 
 
 
@@ -26,20 +26,12 @@
         self.attr.icon_type = 'edit'
     %>
     
-    <%self:page>
-        <%def name="page_id()"   >content-edit-${id}</%def>
+    <div data-role="page" data-theme="b" id="content-edit-${self.id}">
         ##${self.swipe_event('#content-main-%s' % id, '#content-info-%s' % id, 'left')}
-        <%def name="page_content()">
-        
-            % if self.content['parent']:
-            <ul data-role="listview" data-inset="true">
-                ${content_list_includes.parent_content(self.content)}
-            </ul>
-            % endif
-            
+        <div data-role="content">
             ${content_edit()}
-        </%def>
-    </%self:page>
+        </div>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -56,7 +48,14 @@
         % endif
     </h1>
 
-    ## parent?
+    <%doc>
+    % if self.content['parent']:
+    <ul data-role="listview" data-inset="true">
+        ${content_list_includes.parent_content(self.content)}
+    </ul>
+    % endif
+    </%doc>
+
 
     ${h.form(
         ##h.args_to_tuple(
@@ -77,7 +76,7 @@
         % if not self.content.get('parent'):
             ${privacy()}
         % endif
-        ${edit_full.tags(self.content)}
+
         ${submit_buttons()}
         ${license()}
         
@@ -88,44 +87,52 @@
 ##------------------------------------------------------------------------------
 
 <%def name="base_content()">
-    
-    ## Content
-    <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter a story title')}"/><br />
-    <textarea id="content_${self.id}" name="content" class="editor edit_input"       >${self.content['content']}</textarea>
-    
-    ## Autosave
-    <script type="text/javascript">
-        function ajaxSave() {
-            $.ajax({
-                type    : 'POST',
-                dataType: 'json',
-                url     : "${url('content', id=self.id, format='json')}",
-                data    : {
-                    "_method": 'PUT',
-                    "title"  : $('#title_${self.id}'  ).val(),
-                    "content": $('#content_${self.id}').val(),
-                    ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
-                    "mode"   : 'autosave',
-                    "_authentication_token": '${h.authentication_token()}'
-                },
-                success: function(data) {
-                    flash_message(data);
-                },
-                error: function (jqXHR, status, error) {
-                    flash_message({status:'error', message:'${_('Error automatically saving your content')}'});
-                },
-            });
-        }
-        % if self.content['type'] == "draft":
-            setInterval('ajaxSave()', 60 * 1000));
-        % endif
-    </script>
+<div data-role="collapsible" data-content-theme="c" data-collapsed="false">
+    <h3>Content</h3>
+    <fieldset data-role="fieldcontain">
+        <label   for="title_${self.id}">${_('Title')}</label>
+        <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter a story title')}"/>
+        <label   for="content_${self.id}">${_('Content')}</label>
+        <textarea id="content_${self.id}" name="content" class="editor edit_input"       >${self.content['content']}</textarea>
+        ${edit_full.tags(self.content)}
+    </fieldset>
+</div>
+
+## Autosave
+<script type="text/javascript">
+    function ajaxSave() {
+        $.ajax({
+            type    : 'POST',
+            dataType: 'json',
+            url     : "${url('content', id=self.id, format='json')}",
+            data    : {
+                "_method": 'PUT',
+                "title"  : $('#title_${self.id}'  ).val(),
+                "content": $('#content_${self.id}').val(),
+                ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
+                "mode"   : 'autosave',
+                "_authentication_token": '${h.authentication_token()}'
+            },
+            success: function(data) {
+                flash_message(data);
+            },
+            error: function (jqXHR, status, error) {
+                flash_message({status:'error', message:'${_('Error automatically saving your content')}'});
+            },
+        });
+    }
+    % if self.content['type'] == "draft":
+        setInterval('ajaxSave()', 60 * 1000));
+    % endif
+</script>
 
 </%def>
 
 ##------------------------------------------------------------------------------
 
 <%def name="media()">
+<div data-role="collapsible" data-content-theme="c">
+    <h3>${_('Media')}</h3>
 
     <ul class="media_files">
         <!-- List existing media -->
@@ -160,8 +167,8 @@
         <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
         <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" /></p>
         <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" /></p>
-    </div>              
-
+    </div>
+</div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -220,5 +227,3 @@ licence
         <a class="button" href="${h.url('content', id=self.id)}">${_("View Content")}</a>
     % endif
 </%def>
-
-##------------------------------------------------------------------------------

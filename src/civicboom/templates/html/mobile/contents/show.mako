@@ -4,7 +4,7 @@
 <%namespace name="member_includes"       file="/html/mobile/common/member.mako" />
 <%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
 
-<%def name="title()"  >${d['content']['title']}</%def>
+<%def name="title()">${d['content']['title']}</%def>
 
 
 <%def name="body()">
@@ -32,7 +32,7 @@
                 <h1>${title}</h1>
             </div>
             
-            ##----Media----
+            ## Media thumbnails ------------------------------------------------
             <div class="top_media media_list">
                 <%
                     count = len(media)
@@ -48,28 +48,35 @@
                 % endif
             </div>
             
-            ##----Content----
+            ## Content ---------------------------------------------------------
             <div class="content_text">
                 ${h.literal(h.scan_for_embedable_view_and_autolink(content['content']))}
             </div>
             
-            ## content actions
-            % if config['development_mode']:
-                % if "respond" in actions:
-                    ${h.secure_link(
-                        h.args_to_tuple('new_content', parent_id=id),
-                        value     = h.literal("<button>respond</button>"),
-                        rel = "external"
-                    )}
-                % endif
+            ## Actions ---------------------------------------------------------
+            % if "respond" in actions:
+                ## AllanC - TODO - require a way of detecting platform type and launching app if required - or at least prompting user to install or use generic
                 
-                % if "edit" in actions:
-                % endif
-                
-                % if "delete" in actions:
-                    <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>delete</button></a>
-                % endif
+                ## Use secure_form directly as we do not need secure_links functionality in the mobile space, submit buttons are automatically styled
+                ${h.secure_form(h.url('new_content', parent_id=id), data_ajax=False)}
+                <input type="submit" value="${_('Respond')}">
+                ${h.end_form()}
+                ##${h.secure_link(
+                ##    #h.args_to_tuple('new_content', parent_id=id),
+                ##    h.url('new_content', parent_id=id),
+                ##    value     = h.literal("<button>Respond</button>"),
+                ##    #rel = "external"
+                ##)}
             % endif
+            
+            % if "edit" in actions:
+                <a href="${h.url('edit_content', id=self.id)}"><button>${_('Edit')}</button></a>
+            % endif
+            
+            % if "delete" in actions:
+                <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>${_('Delete')}</button></a>
+            % endif
+
         </div>
     </div>
     
@@ -158,9 +165,8 @@
     </div>
     % endif
     
-    
     ## Delete ------------------------------------------------------------------
-    
+    % if "delete" in actions:
     <div data-role="page" id="confirm_delete">
         <div data-role="header">
             <h1>Delete posting?</h1>
@@ -168,16 +174,21 @@
         <div data-role="content">
             ##${parent.flash_message()}
             <h3>${_("Are you sure you want to delete")} "${title}"${_("? The posting will be permanently deleted from _site_name.")}</h3>
-            ${h.secure_link(
-                h.args_to_tuple('content', id=id, format='redirect'),
-                method = "DELETE",
-                value           = _("Delete"),
-                value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
-                json_form_complete_actions = "",
-            )}
+            
+            ${self.form_button(h.url('content', id=id, member=c.logged_in_persona.id, format='redirect'), _('Delete'), method="delete")}
+            
+            ##${h.secure_link(
+            ##    h.args_to_tuple('content', id=id, format='redirect'),
+            ##    method = "DELETE",
+            ##    value           = _("Delete"),
+            ##    value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
+            ##    json_form_complete_actions = "",
+            ##)}
             <a href="#" data-rel="back" data-direction="reverse"><button>No, take me back!</button></a>
         </div>
     </div>
+    % endif
+    
 </%def>
 
 
