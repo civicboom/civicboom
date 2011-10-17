@@ -203,9 +203,10 @@
 			var latitude = position.coords.latitude;
 			var longitude = position.coords.longitude;
             // Set the form location value
+            $('#location').val(""+ longitude + " " + latitude)
         }
         
-        <%doc>
+        
         ## AllanC - needs to bind to checkbox selected event?
         
         $("#content-edit-${self.id}").live('pageinit', function() {
@@ -214,9 +215,12 @@
                geo_position_js.getCurrentPosition(set_location);
             }
         });
-        </%doc>
-        
     </script>
+    
+    ##<input type="checkbox" name="auto_get_location" onclick="">
+    
+    <input id="location" type="text" name="location" value="${self.content['location']}">
+    
     ## location
     ## (just a use my location) tick box
     ## can we get this from the browser?
