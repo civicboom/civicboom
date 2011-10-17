@@ -34,6 +34,7 @@
                     'javascript/jquery-1.6.2.js',
                     'javascript/jquery.mobile.cb_settings.js',
                     'javascript/jquery.mobile-1.0rc1.js',
+                    'javascript/geo.js',
                 ]
             %>
             % for js in js_all:
@@ -42,6 +43,9 @@
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.js")}"></script>
         % endif
+        <script type="text/javascript">
+            $.fixedToolbars.setTouchToggleEnabled(false);
+        </script>
     </head>
   
     <body class="c-${c.controller} a-${c.action}">
@@ -86,7 +90,7 @@
 
 
 
-<%def name="header(title=None, link_back=None, link_next=None)">
+<%def name="header(title=None, link_back=None, link_next=None, nav_bar=None)">
     <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
         <div class="header">
             % if link_back:
@@ -105,26 +109,33 @@
             <div class="separator"></div>
         </div>
         
-        % if hasattr(self, 'control_bar'):
-        ${self.control_bar()}
-        % else:
-        <div data-role="navbar" class="ui-navbar">
-            <ul>
-                % if c.logged_in_user:
-                <li>
-                    <a href="${h.url(controller='profile', action='index')}" rel="external">Profile</a>
-                </li>
-                % endif
-                <li>
-                    <a href="${h.url(controller='contents', action='index')}" rel="external">Explore</a>
-                </li>
-            </ul>
-        </div>
+        % if callable(nav_bar):
+            <div data-role="navbar" class="ui-navbar">
+                <ul>
+                    ${nav_bar()}
+                </ul>
+            </div>
         % endif
+        
     </div>
 </%def>
 
 <%def name="footer()">
+    <div data-role="footer" data-id="nav" data-position="fixed">
+		<div data-role="navbar">
+			<ul>
+                <li><a data-icon="search" href="${h.url('contents')        }">Explore</a></li>
+                % if c.logged_in_persona:
+                <li><a data-icon="info"   href="${h.url('contents')        }">Feeds</a></li>
+				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages">Messages ${c.logged_in_persona.num_unread_messages} ${c.logged_in_persona.num_unread_notifications}</a></li>
+                <li><a data-icon="home"   href="${h.url(controller='profile', action="index")}">Profile</a></li>
+                % else:
+                <li><a data-icon="search" href="${h.url(controller='account', action='signin')}">Signin</a></li>
+                % endif
+                ##class="ui-btn-active ui-state-persist"
+			</ul>
+		</div><!-- /navbar -->
+	</div><!-- /footer -->
 </%def>
 
 <%def name="flash_message()">

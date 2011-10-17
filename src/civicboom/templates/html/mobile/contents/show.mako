@@ -70,7 +70,7 @@
             % endif
             
             % if "edit" in actions:
-                <a href="${h.url('edit_content', id=self.id)}"><button>${_('Edit')}</button></a>
+                <a href="${h.url('edit_content', id=id)}"><button>${_('Edit')}</button></a>
             % endif
             
             % if "delete" in actions:
@@ -78,6 +78,8 @@
             % endif
 
         </div>
+        
+        ${self.footer()}
     </div>
     
     
@@ -125,6 +127,8 @@
                 </ul>
             </div>
         </div>
+        
+        ${self.footer()}
     </div>
     
 
@@ -162,6 +166,7 @@
             </div>
         </div>
         
+        ${self.footer()}
     </div>
     % endif
     

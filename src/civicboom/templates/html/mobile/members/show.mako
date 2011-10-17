@@ -23,8 +23,44 @@
     <div data-role="page" data-theme="b" id="member-details-${id}" class="member_details_page">
         
         ${self.swipe_event('#member-details-%s' % id, '#member-extra-%s' % id, 'left')}
+        
+        ${self.header(title=name, link_next="#member-extra-%s" % id, nav_bar=(profile_nav_bar if self.current_user else None))}
+        
+        <%def name="profile_nav_bar()">
+            <li>
+                <a href="#member-persona-${id}" data-rel="dialog" data-transition="fade">Switch persona</a>
+            </li>
+            <li>
+                ${h.secure_link(
+                    h.url(controller='account', action='signout'),
+                    _('Sign out'),
+                    #css_class="button",
+                )}
+            </li>
+        </%def>
+        
+        <%doc>
+        % :
+            <div data-role="footer" data-theme="a">
+                <div data-role="navbar" class="ui-navbar" data-theme="a">
+                    <ul>
+                        <li>
+                            
+                        </li>
+                        ## Unneeded - if we are activating this code, we are already logged in - therefore we CAN logout
+                        ##% if "logout" in self.actions:
+                        ##${self.form_button(h.url(controller='account', action='signout'), _('Signout'))}
 
-        ${self.header(title=name, link_next="#member-extra-%s" % id)}
+                        ##% endif
+                        <li>
+                            <a href="${h.url(controller='misc', action='force_web')}" rel="external">View full website</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        % endif
+        </%doc>
+
         
         <div data-role="content">
             ##${parent.flash_message()}
@@ -42,35 +78,6 @@
                 <p>Type: <b>${member['type'].capitalize()}</b></p>
                 
                 <div class="separator" style="padding: 0.5em;"></div>
-                
-                ## Message and notification bar --------------------------------
-                ## AllanC - only for profile view - can this be abstracted?
-                % if d.get('num_unread_messages'):
-                    <%
-                        unread_messages =       d['num_unread_messages']
-                        unread_notifications =  d['num_unread_notifications']
-                    %>
-                    <div class="messages ui-grid-b" data-theme="b">
-                        <div class="ui-block-a">
-                            <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages
-                            % if unread_messages:
-                                <br />(${unread_messages} new)
-                            % endif
-                            </a>
-                        </div>
-                        <div class="ui-block-b">
-                            <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
-                        </div>
-                        <div class="ui-block-c">
-                            <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications
-                            % if unread_notifications:
-                                <br />(${unread_notifications} new)
-                            % endif
-                            </a>
-                        </div>
-                    </div>
-                % endif
-
                 
                 ## Action Buttons ----------------------------------------------
                 ## TODO
@@ -150,7 +157,7 @@
         
         ## Footer --------------------------------------------------------------
         
-        ${footer_signout()}
+        ${self.footer()}
     </div>
     
     ##--------------------------------------------------------------------------
@@ -160,7 +167,7 @@
     <div data-role="page" data-theme="b" id="member-extra-${id}" class="member_extra_page">
         
         ${self.swipe_event('#member-extra-%s' % id, '#member-details-%s' % id, 'right')}
-
+        
         ${self.header(title=name, link_back="#member-details-%s"%id)}
         
         <div data-role="content">
@@ -180,15 +187,54 @@
             </div>
         </div>
         
-        ${footer_signout()}
+        ${self.footer()}
+    </div>
+
+
+    % if self.current_user:
+    
+    ##--------------------------------------------------------------------------
+    ## Messages
+    ##--------------------------------------------------------------------------
+    <div data-role="page" data-theme="b" id="messages">
+
+        ## Message and notification bar --------------------------------
+        ## AllanC - only for profile view - can this be abstracted?
+        % if d.get('num_unread_messages'):
+            <%
+                unread_messages =       d['num_unread_messages']
+                unread_notifications =  d['num_unread_notifications']
+            %>
+            <div class="messages ui-grid-b" data-theme="b">
+                <div class="ui-block-a">
+                    <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages
+                    % if unread_messages:
+                        <br />(${unread_messages} new)
+                    % endif
+                    </a>
+                </div>
+                <div class="ui-block-b">
+                    <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
+                </div>
+                <div class="ui-block-c">
+                    <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications
+                    % if unread_notifications:
+                        <br />(${unread_notifications} new)
+                    % endif
+                    </a>
+                </div>
+            </div>
+        % endif
+        
+        ${self.footer()}
     </div>
 
 
     ##--------------------------------------------------------------------------
-    ## Persona switch
+    ## Persona switch (page)
     ##--------------------------------------------------------------------------
-    % if self.current_user:
-    <div data-role="page" data-theme="b" id="member_persona-${id}" class="member_persona">
+
+    <div data-role="page" data-theme="b" id="member-persona-{id}" class="member_persona">
         
         <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
             <h1>Switch persona</h1>
@@ -255,37 +301,6 @@
     </div>
     % endif
     
-</%def>
-
-##-----------------------------------------------------------------------------
-## Signout nav bar link
-##-----------------------------------------------------------------------------
-<%def name="footer_signout()">
-% if self.current_user:
-    <div data-role="footer" data-theme="a">
-        <div data-role="navbar" class="ui-navbar" data-theme="a">
-            <ul>
-                <li>
-                    <a href="#member_persona-${c.logged_in_persona.id}" data-rel="dialog" data-transition="fade">Switch persona</a>
-                </li>
-                ## Unneeded - if we are activating this code, we are already logged in - therefore we CAN logout
-                ##% if "logout" in self.actions:
-                    <li>
-                        ${self.form_button(h.url(controller='account', action='signout'), _('Signout'))}
-                        ##${h.secure_link(
-                        ##    h.url(controller='account', action='signout'),
-                        ##    _('Sign out'),
-                        ##    css_class="button",
-                        ##)}
-                    </li>
-                ##% endif
-                <li>
-                    <a href="${h.url(controller='misc', action='force_web')}" rel="external">View full website</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-% endif
 </%def>
 
 

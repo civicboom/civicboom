@@ -2,6 +2,45 @@
 
 <%def name="body()">
     <div data-role="page" data-theme="b" id="${next.list_id()} class="${next.list_class()}">
+
+        ## Next/Prev Navigation ------------------------------------------------
+        <%
+            import copy
+            args, kwargs = c.web_params_to_kwargs
+            kwargs = copy.copy(kwargs)
+            if 'format' in kwargs:
+                del kwargs['format']
+            list   = d['list']
+            offset = list['offset']
+            limit  = list['limit']
+            count  = list['count']
+            items  = len(list['items'])
+            
+            url_prev = None
+            url_next = None
+            
+            if offset > 0:
+                kwargs['offset'] = offset - limit
+                url_prev = h.url('current', **kwargs)
+            if offset + items < count:
+                kwargs['offset'] = offset + limit
+                url_next = h.url('current', **kwargs)
+        %>
+        
+        <%def name="list_nav_links()">
+            % if url_prev:
+                <a href="${url_prev}" class="prev ui-btn-left"  data-role="button" data-icon="arrow_l" data-direction="reverse" >${_("Previous")}</a>
+            % endif
+            % if url_next:
+                <a href="${url_next}" class="next ui-btn-right" data-role="button" data-icon="arrow_r"                          >${_("Next")}</a>
+            % endif
+        </%def>
+        
+        ## Header --------------------------------------------------------------
+        <div data-role="header" class="ui-bar" data-position="inline">
+            <h1>Search</h1>
+            ${list_nav_links()}
+        </div>
         
         ## Content -------------------------------------------------------------
         <div data-role="content">
@@ -9,39 +48,12 @@
         </div>
         
         ## Footer --------------------------------------------------------------
-        <div data-role="footer" data-position="fixed" data-fullscreen="true">
-            <%
-                import copy
-                
-                args, kwargs = c.web_params_to_kwargs
-                kwargs = copy.copy(kwargs)
-                if 'format' in kwargs:
-                    del kwargs['format']
-                list   = d['list']
-                offset = list['offset']
-                limit  = list['limit']
-                count  = list['count']
-                items  = len(list['items'])
-            %>
-            % if offset > 0 or offset + items < count:
-                <div data-role="navbar" class="ui-navbar">
-                    <ul>
-                    % if offset > 0:
-                        <li>
-                            <% kwargs['offset'] = offset - limit %>
-                            <a href="${h.url('current', format='html', **kwargs)}" class="prev" data-direction="reverse">${_("Previous")}</a>
-                        </li>
-                    % endif
-                    % if offset + items < count:
-                        <li>
-                            <% kwargs['offset'] = offset + limit %>
-                            <a href="${h.url('current', format='html', **kwargs)}" class="next">${_("Next")}</a>
-                        </li>
-                    % endif
-                    </ul>
-                </div>
-            % endif
-        </div>
+        % if url_prev or url_next:
+        <div data-role="footer" class="ui-bar" data-position="inline">${list_nav_links()}</div>
+        % endif
+        
+        ## Fixed footer --------------------------------------------------------
+        ${self.footer()}
         
     </div>
 </%def>

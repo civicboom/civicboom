@@ -122,7 +122,7 @@
         });
     }
     % if self.content['type'] == "draft":
-        setInterval('ajaxSave()', 60 * 1000));
+        setInterval('ajaxSave()', 60 * 1000);
     % endif
 </script>
 
@@ -164,7 +164,7 @@
         <div class="media_preview_none">${_("Select a file to upload")}</div>
     </div>
     <div class="media_fields">
-        <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></p>
+        <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Attach media")}" class="file_upload"/></p>
         <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" /></p>
         <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" /></p>
     </div>
@@ -174,8 +174,9 @@
 ##------------------------------------------------------------------------------
 
 <%def name="content_extra_fields()">
-
     % if self.selected_type == 'assignment':
+    <div data-role="collapsible" data-content-theme="c">
+        <h3>${_('_assignment Dates')}</h3>
         <%
             due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
             event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
@@ -186,14 +187,40 @@
         % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
         <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
         % endif
+    </div>
     % endif
 </%def>
 
 ##------------------------------------------------------------------------------    
 
 <%def name="location()">
+<div data-role="collapsible" data-content-theme="c">
+    <h3>${_('Location')}</h3>
+    ## AllanC - part of head
+    ##<script src="/javascript/geo.js"></script>
+    <script type="text/javascript">
+        function set_location(position) {
+			var latitude = position.coords.latitude;
+			var longitude = position.coords.longitude;
+            // Set the form location value
+        }
+        
+        <%doc>
+        ## AllanC - needs to bind to checkbox selected event?
+        
+        $("#content-edit-${self.id}").live('pageinit', function() {
+        ##$(document).bind("pageinit", function(event) {
+            if (geo_position_js.init()) {
+               geo_position_js.getCurrentPosition(set_location);
+            }
+        });
+        </%doc>
+        
+    </script>
     ## location
     ## (just a use my location) tick box
+    ## can we get this from the browser?
+</div>
 </%def>
 
 <%def name="privacy()">
@@ -217,7 +244,7 @@ licence
         ${submit_button('draft'  , _("Save draft"))}
         ${submit_button('preview', _("Preview draft"))}
         % if 'publish' in self.actions:
-            ${submit_button('publish', _("Post"))}
+            ${submit_button('publish', _("Publish"))}
         % endif        
     ## Update
     % else:

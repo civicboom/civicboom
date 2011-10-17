@@ -6,7 +6,7 @@
 <%def name="body()">
     <div data-role="page">
         <div data-role="content" id="register">
-            ${self..title_logo()}
+            ${self.title_logo()}
             <h1>${_("Just a few more details and you'll be booming!")}</h1>
 
             <div id="reg_form">
@@ -113,8 +113,9 @@
     </div>
     </%doc>
     <div data-role="fieldcontain">
+        ${invalid('dob')}
         <label for="dob"><b>Date of birth</b> <small>(yyyy-mm-dd)</small></label>
-        <input id="dob" name="dob" type="text" />
+        <input id="dob" name="dob" type="text" value="${h.get_data_value('dob','register','')}" />
     </div>
 </%def>
 
