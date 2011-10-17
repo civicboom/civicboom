@@ -398,12 +398,6 @@
             <!-- End list existing media -->
             
             <!-- Add media -->
-            % if c.logged_in_user.username == "unittest" or ( self.content.get('parent') and self.content.get('parent').get('creator').get('username') == 'video-capture-beta-testers' ):
-            <li class="hide_if_nojs">
-            	${media_recorder()}
-            </li>
-            % endif
-            
             <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
 				<input id="file_upload" name="file_upload" type="file" />
@@ -446,6 +440,15 @@
                 </div>              
             </li>
             <!-- End Add media -->
+            <!-- Record media -->
+##            % if c.logged_in_user.username == "unittest" or ( self.content.get('parent') and self.content.get('parent').get('creator').get('username') == 'video-capture-beta-testers' ):
+            <li>
+                <p>${_('Record directly from your webcam and/or microphone!')}</p>
+                <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
+                ${media_recorder()}
+            </li>
+##            % endif
+            <!-- End Record media -->
 
         </ul>
         </div>
@@ -468,7 +471,7 @@
 				refreshProgress($('form#edit_$(self.id}'));
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
 	</script>
 	<div class="media_recorder" style="left:0px;width:360px;height:371px;" id="media_recorder_${self.id}">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
