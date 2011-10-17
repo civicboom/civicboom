@@ -443,7 +443,7 @@
             <!-- Record media -->
 ##            % if c.logged_in_user.username == "unittest" or ( self.content.get('parent') and self.content.get('parent').get('creator').get('username') == 'video-capture-beta-testers' ):
             <li>
-                <p>${_('Record directly from your webcam and/or microphone!')}</p>
+                <p>${_('Or: record directly from your webcam and/or microphone!')}</p>
                 <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
                 ${media_recorder()}
             </li>
