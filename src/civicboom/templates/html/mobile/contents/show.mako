@@ -73,6 +73,12 @@
                 <a href="${h.url('edit_content', id=id)}"><button>${_('Edit')}</button></a>
             % endif
             
+            % if "publish" in actions:
+                ${h.secure_form(h.url('content', id=id, format='redirect', submit_publish='publish'), data_ajax=False, method="put")}
+                <input type="submit" value="${_('Publish')}">
+                ${h.end_form()}
+            % endif
+            
             % if "delete" in actions:
                 <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>${_('Delete')}</button></a>
             % endif

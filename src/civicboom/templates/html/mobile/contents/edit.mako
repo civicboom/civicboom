@@ -1,5 +1,9 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
+<%!
+import html2text
+%>
+
 <%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
 <%namespace name="edit_full"             file="/frag/contents/edit.mako"         />
 
@@ -93,8 +97,9 @@
         <label   for="title_${self.id}">${_('Title')}</label>
         <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter a story title')}"/>
         <label   for="content_${self.id}">${_('Content')}</label>
-        <textarea id="content_${self.id}" name="content" class="editor edit_input"       >${self.content['content']}</textarea>
+        <textarea id="content_${self.id}" name="content" class="editor edit_input">${html2text.html2text(self.content['content'])}</textarea>
         ${edit_full.tags(self.content)}
+        <input id="content_text_format_${self.id}" type="hidden" name="content_text_format" value="markdown" />
     </fieldset>
 </div>
 
@@ -107,8 +112,9 @@
             url     : "${url('content', id=self.id, format='json')}",
             data    : {
                 "_method": 'PUT',
-                "title"  : $('#title_${self.id}'  ).val(),
-                "content": $('#content_${self.id}').val(),
+                "title"              : $('#title_${self.id}'  ).val(),
+                "content"            : $('#content_${self.id}').val(),
+                "content_text_format": $('#content_text_format_${self.id}').val(),
                 ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
                 "mode"   : 'autosave',
                 "_authentication_token": '${h.authentication_token()}'
@@ -209,12 +215,14 @@
         
         ## AllanC - needs to bind to checkbox selected event?
         
+        % if not self.content.get('location'):
         $("#content-edit-${self.id}").live('pageinit', function() {
         ##$(document).bind("pageinit", function(event) {
             if (geo_position_js.init()) {
                geo_position_js.getCurrentPosition(set_location);
             }
         });
+        % endif
     </script>
     
     ##<input type="checkbox" name="auto_get_location" onclick="">

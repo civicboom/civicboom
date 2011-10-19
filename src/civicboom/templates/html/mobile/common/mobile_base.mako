@@ -124,13 +124,13 @@
     <div data-role="footer" data-id="nav" data-position="fixed">
 		<div data-role="navbar">
 			<ul>
-                <li><a data-icon="search" href="${h.url('contents')        }">Explore</a></li>
+                <li><a data-icon="search" href="${h.url('contents')                                   }" rel="external">Explore</a></li>
                 % if c.logged_in_persona:
-                <li><a data-icon="info"   href="${h.url('contents')        }">Feeds</a></li>
-				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages">Messages ${c.logged_in_persona.num_unread_messages} ${c.logged_in_persona.num_unread_notifications}</a></li>
-                <li><a data-icon="home"   href="${h.url(controller='profile', action="index")}">Profile</a></li>
+                <li><a data-icon="info"   href="${h.url('contents')                                   }" rel="external">Feeds</a></li>
+				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages" rel="external">Messages ${c.logged_in_persona.num_unread_messages} ${c.logged_in_persona.num_unread_notifications}</a></li>
+                <li><a data-icon="home"   href="${h.url(controller='profile', action="index")         }" rel="external">Profile</a></li>
                 % else:
-                <li><a data-icon="search" href="${h.url(controller='account', action='signin')}">Signin</a></li>
+                <li><a data-icon="search" href="${h.url(controller='account', action='signin')        }" rel="external">Signin</a></li>
                 % endif
                 ##class="ui-btn-active ui-state-persist"
 			</ul>

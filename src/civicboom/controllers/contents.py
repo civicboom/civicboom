@@ -24,7 +24,10 @@ from sqlalchemy           import asc, desc
 
 # Other imports
 from cbutils.misc import substring_in
-from cbutils.text import strip_html_tags
+from cbutils.text import clean_html_markup, strip_html_tags
+
+import markdown
+
 import cbutils.worker as worker
 from time import time
 
@@ -69,8 +72,8 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     filter_extra_fields = False
     ignore_key_missing  = True
     type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
-    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, strip=True, max=250, min=2, html='strip_html_tags')
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
+    title       = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, strip=True, max=250, min=2)
+    #content     = civicboom.lib.form_validators.base.CleanHTMLValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
@@ -89,7 +92,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 class ContentCommentSchema(ContentSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'], html='strip_html_tags')
+    #content     = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'])
 
 
 #-------------------------------------------------------------------------------
@@ -519,6 +522,8 @@ class ContentsController(BaseController):
         @type action
         @api contents 1.0 (WIP)
 
+        @param content_text_format the content fields can be in a varity of differnt formats. The dfault is 'html', this will clean the HTML down to allowed tags. 'markdown' can be used and will be converted to html
+
         @return 200   success
         @return 403   lacking permission to edit
         @return 404   no content to be edited
@@ -526,6 +531,7 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
+        
         #print("--KWARGS--")
         #print(kwargs)
         #print("")
@@ -663,6 +669,16 @@ class ContentsController(BaseController):
                                 setattr(content, key, value)
                         except:
                             log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
+        
+        # Process Content body format
+        # AllanC - the content could be submitted in a varity of differnt text formats, by default it's html - that html requires cleaning - else convert input to html
+        content_text_format = kwargs.get('content_text_format', 'html') if kwargs.get('content') else None
+        if kwargs.get('type') or content.__type__ == 'comment':
+            content.content == strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
+        elif content_text_format == 'html':
+            content.content = clean_html_markup(kwargs['content']) # HTML is default input, clean it down to allowed tags
+        elif content_text_format == 'markdown':
+            content.content = markdown.markdown(kwargs['content']) # Markdown needs to be processsed to html
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():

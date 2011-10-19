@@ -21,8 +21,8 @@ class NewMessageSchema(civicboom.lib.form_validators.base.DefaultSchema):
     #target                     = MemberValidator()
     #subject                    = formencode.validators.String(not_empty=False, max=255)
     #content                    = formencode.validators.String(not_empty=False)
-    subject = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, max=255) 
-    content = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True)
+    subject = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, max=255)
+    content = civicboom.lib.form_validators.base.CleanHTMLValidator(not_empty=True)
 
 new_message_schema = NewMessageSchema()
 
