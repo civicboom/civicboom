@@ -173,6 +173,10 @@
         <div data-role="content">
             <h2 style="text-align: center;">${name}'s ${_('_content')}</h2>
             
+            % if self.current_user:
+            <button>New</button>
+            % endif
+            
             ## List the content relating to this user
             ## Includes assignments, articles, responses, etc
             <div class="member_content">

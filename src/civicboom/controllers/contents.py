@@ -839,6 +839,7 @@ class ContentsController(BaseController):
         """
         # url('content', id=ID)
         content = get_content(id, is_editable=True)
+        c.html_action_fallback_url = url(controller='profile', action='index')
         user_log.info("Deleting content %d" % content.id)
         
         # AllanC - Short term hack

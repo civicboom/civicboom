@@ -186,7 +186,7 @@
             ##${parent.flash_message()}
             <h3>${_("Are you sure you want to delete")} "${title}"${_("? The posting will be permanently deleted from _site_name.")}</h3>
             
-            ${self.form_button(h.url('content', id=id, member=c.logged_in_persona.id, format='redirect'), _('Delete'), method="delete")}
+            ${self.form_button(h.url('content', id=id, format='redirect'), _('Delete'), method="delete")}
             
             ##${h.secure_link(
             ##    h.args_to_tuple('content', id=id, format='redirect'),
