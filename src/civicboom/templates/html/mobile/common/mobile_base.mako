@@ -43,9 +43,6 @@
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.js")}"></script>
         % endif
-        <script type="text/javascript">
-            $.fixedToolbars.setTouchToggleEnabled(false);
-        </script>
     </head>
   
     <body class="c-${c.controller} a-${c.action}">
@@ -124,18 +121,19 @@
     <div data-role="footer" data-id="nav" data-position="fixed">
 		<div data-role="navbar">
 			<ul>
-                <li><a data-icon="search" href="${h.url('contents')                                   }" rel="external">Explore</a></li>
+                <li><a data-icon="search" href="${h.url('contents')                                   }" rel="external">${_('Explore')}</a></li>
                 % if c.logged_in_persona:
-                <li><a data-icon="info"   href="${h.url('contents')                                   }" rel="external">Feeds</a></li>
+                <li><a data-icon="info"   href="${h.url('contents')                                   }" rel="external">${_('Feeds')}</a></li>
+                <li><a data-icon="grid"   href="${h.url(controller='misc', action='new_content')      }" rel="external">${_('New _article')}</a></li>
                 <%
                     num_messages = c.logged_in_persona.num_unread_messages + c.logged_in_persona.num_unread_notifications
                     if not num_messages:
                         num_messages = ''
                 %>
-				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages" rel="external">${num_messages} Messages</a></li>
-                <li><a data-icon="home"   href="${h.url(controller='profile', action="index")         }" rel="external">Profile</a></li>
+				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages" rel="external">${_('%d Messages') % num_messages}</a></li>
+                <li><a data-icon="home"   href="${h.url(controller='profile', action="index")         }" rel="external">${_('Profile')}</a></li>
                 % else:
-                <li><a data-icon="search" href="${h.url(controller='account', action='signin')        }" rel="external">Signin</a></li>
+                <li><a data-icon="search" href="${h.url(controller='account', action='signin')        }" rel="external">${_('Signin')}</a></li>
                 % endif
                 ##class="ui-btn-active ui-state-persist"
 			</ul>

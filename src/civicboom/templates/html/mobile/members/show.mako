@@ -173,17 +173,15 @@
         <div data-role="content">
             <h2 style="text-align: center;">${name}'s ${_('_content')}</h2>
             
-            % if self.current_user:
-            <button>New</button>
-            % endif
-            
             ## List the content relating to this user
             ## Includes assignments, articles, responses, etc
             <div class="member_content">
                 <% content_lists = [
-                    (_("Active requests"), 'assignments_active'),
-                    (_("Responses"      ), 'responses'         ),
-                    (_("Stories"        ), 'articles'          ),
+                    (_("Drafts"               ), 'drafts'            ),
+                    (_("Active _assignments"  ), 'assignments_active'),
+                    (_("Previous _assignments"), 'assignments_active'),
+                    (_("Responses"            ), 'responses'         ),
+                    (_("Stories"              ), 'articles'          ),
                 ] %>
                 % for title, list_name in content_lists:
                     ${content_list_includes.list_contents(d[list_name], title=title)}

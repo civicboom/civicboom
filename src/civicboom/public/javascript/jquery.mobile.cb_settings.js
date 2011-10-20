@@ -4,6 +4,7 @@ $(document).bind("mobileinit", function(){
     $.mobile.defaultDialogTransition    = 'fade';
     // $.mobile.ajaxEnabled = false;
     $.mobile.selectmenu.prototype.options.nativeMenu = false;
+    $.mobile.fixedToolbars.setTouchToggleEnabled(false);
 });
 
 $(document).bind("pagecreate", function() {

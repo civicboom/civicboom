@@ -673,12 +673,13 @@ class ContentsController(BaseController):
         # Process Content body format
         # AllanC - the content could be submitted in a varity of differnt text formats, by default it's html - that html requires cleaning - else convert input to html
         content_text_format = kwargs.get('content_text_format', 'html') if kwargs.get('content') else None
-        if kwargs.get('type') or content.__type__ == 'comment':
-            content.content == strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
-        elif content_text_format == 'html':
-            content.content = clean_html_markup(kwargs['content']) # HTML is default input, clean it down to allowed tags
-        elif content_text_format == 'markdown':
-            content.content = markdown.markdown(kwargs['content']) # Markdown needs to be processsed to html
+        if content_text_format:
+            if kwargs.get('type') or content.__type__ == 'comment':
+                content.content == strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
+            elif content_text_format == 'html':
+                content.content = clean_html_markup(kwargs['content']) # HTML is default input, clean it down to allowed tags
+            elif content_text_format == 'markdown':
+                content.content = markdown.markdown(kwargs['content']) # Markdown needs to be processsed to html
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
