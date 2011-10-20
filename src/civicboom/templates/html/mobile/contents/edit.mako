@@ -31,11 +31,17 @@ import html2text
     %>
     
     <div data-role="page" data-theme="b" id="content-edit-${self.id}">
+        ${self.header()}
+        
+        ## AllanC - could use swipe events to see parent conent?
         ##${self.swipe_event('#content-main-%s' % id, '#content-info-%s' % id, 'left')}
+        
         <div data-role="content">
             ${content_edit()}
         </div>
     </div>
+    
+    ${confirm_dialogs(self.content)}
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -77,12 +83,13 @@ import html2text
         ${media()}
         ${content_extra_fields()}
         ${location()}
+        ${license()}
         % if not self.content.get('parent'):
             ${privacy()}
         % endif
 
         ${submit_buttons()}
-        ${license()}
+
         
     ${h.end_form()}
 
@@ -200,10 +207,9 @@ import html2text
 ##------------------------------------------------------------------------------    
 
 <%def name="location()">
-<div data-role="collapsible" data-content-theme="c">
+<div data-role="collapsible" data-theme="c" data-content-theme="c">
     <h3>${_('Location')}</h3>
-    ## AllanC - part of head
-    ##<script src="/javascript/geo.js"></script>
+
     <script type="text/javascript">
         function set_location(position) {
 			var latitude = position.coords.latitude;
@@ -212,40 +218,46 @@ import html2text
             $('#location').val(""+ longitude + " " + latitude)
         }
         
-        
-        ## AllanC - needs to bind to checkbox selected event?
-        
-        % if not self.content.get('location'):
-        $("#content-edit-${self.id}").live('pageinit', function() {
-        ##$(document).bind("pageinit", function(event) {
+        function get_location() {
             if (geo_position_js.init()) {
                geo_position_js.getCurrentPosition(set_location);
             }
+        }
+        
+        % if not self.content.get('location'):
+        $("#content-edit-${self.id}").live('pageinit', function() {
+            get_location();
         });
         % endif
     </script>
     
     ##<input type="checkbox" name="auto_get_location" onclick="">
-    
-    <input id="location" type="text" name="location" value="${self.content['location']}">
-    
-    ## location
-    ## (just a use my location) tick box
-    ## can we get this from the browser?
+    <label for="location">${_('GPS locaiton')}</label>
+    <input id="location" type="text" name="location" value="${self.content['location']}" checked="checked" readonly="readonly"/>
+    <button onclick="get_location(); return false;">Update GPS Location</button>
 </div>
 </%def>
 
 <%def name="privacy()">
-privacy
+<div data-role="collapsible" data-theme="c" data-content-theme="c">
+    <h3>${_('Content Visability')}</h3>
+    
+</div>
 </%def>
 
 <%def name="license()">
-licence
+<div data-role="collapsible" data-theme="c" data-content-theme="c">
+    <h3>${_('License')}</h3>
+    <p>${_('This content will be posted under the')} <a href="http://creativecommons.org/licenses/by/2.0/uk/" rel="external">Creative Commons Attributed Licence.</a> <img src="/images/licenses/CC-BY.png" />
+</div>
 </%def>
 
 ##------------------------------------------------------------------------------
 
+
 <%def name="submit_buttons()">
+
+    <hr/>
 
     <%def name="submit_button(name, text)">
         <input type='submit' name='submit_${name}' value='${text}'>
@@ -263,6 +275,56 @@ licence
         % if 'update' in self.actions:
         ${submit_button('publish', _("Update"))}
         % endif
-        <a class="button" href="${h.url('content', id=self.id)}">${_("View Content")}</a>
+        <a data-role="button" data-theme="c" href="${h.url('content', id=self.id)}">${_("View Content")}</a>
     % endif
+    
+    <hr/>
+    
+    <a data-role="button" data-theme="c" href="#confirm_discard" data-rel="dialog" data-transition="fade">${_('Return to profile')}</a>
+    <a data-role="button" data-theme="c" href="#confirm_delete"  data-rel="dialog" data-transition="fade">${_('Delete')}</a>
+
+</%def>
+
+
+<%def name="confirm_dialogs(content)">
+    <%doc>
+        These are reusable dialog templates.
+        These can be included by other templates.
+        They do not all need to be linked to - including all of them here is not a problem
+    </%doc>
+
+    <div data-role="page" id="confirm_discard">
+        <div data-role="header"><h1>${_('Discard changes?')}</h1></div>
+        <div data-role="content">
+            <h3>${_('You will loose any unsaved changs to this _content')}</h3>
+            <a href="${h.url(controller='profile', action='index')}"><button>${_('Return to profile (discard changes)')}</button></a>
+            <a href="#" data-rel="back" data-direction="reverse"><button>${_('No, take me back!')}</button></a>
+        </div>
+    </div>
+
+    ## Delete Dialog------------------------------------------------------------
+    ##% if "delete" in d.get('actions', []):
+    <div data-role="page" id="confirm_delete">
+        <div data-role="header"><h1>${_('Delete _content?')}</h1></div>
+        <div data-role="content">
+            <h3>${_("Are you sure you want to delete '%s'? The posting will be permanently deleted from _site_name.") % content.get('title')}</h3>
+            ${self.form_button(h.url('content', id=content['id'], format='redirect'), _('Delete'), method="delete")}
+            <a data-role="button" href="#" data-rel="back" data-direction="reverse">${_('No, take me back!')}</a>
+        </div>
+    </div>
+    ##% endif
+
+    ## AllanC - NOTE! this is NOT to be used for the main Publish action ... as this publishes the existing draft and does not submit the rest of the current form
+    <div data-role="page" id="confirm_publish">
+        <div data-role="header"><h1>${_('Publish _content?')}</h1></div>
+        <div data-role="content">
+            <h3>${_('You are about to publish "%s" as "%s".') % (content.get('title'), c.logged_in_persona.name)}</h3>
+            <p>${_('All your followers will be notifyed and it will be visible for other _site_name users to see')}</p>
+            ${h.secure_form(h.url('content', id=content['id'], format='redirect', submit_publish='publish'), data_ajax=False, method="put")}
+            <input type="submit" value="${_('Publish')}">
+            ${h.end_form()}
+            <a data-role="button" href="#" data-rel="back" data-direction="reverse">${_('No, take me back!')}</a>
+        </div>
+    </div>
+    
 </%def>

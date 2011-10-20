@@ -33,7 +33,7 @@
                 js_all =[
                     'javascript/jquery-1.6.2.js',
                     'javascript/jquery.mobile.cb_settings.js',
-                    'javascript/jquery.mobile-1.0rc1.js',
+                    'javascript/jquery.mobile-1.0rc2.js',
                     'javascript/geo.js',
                 ]
             %>

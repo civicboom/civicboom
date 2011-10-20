@@ -200,6 +200,9 @@
     ##--------------------------------------------------------------------------
     <div data-role="page" data-theme="b" id="messages">
 
+        ${self.header()}
+
+        <div data-role="content">
         ## Message and notification bar --------------------------------
         ## AllanC - only for profile view - can this be abstracted?
         % if d.get('num_unread_messages'):
@@ -207,26 +210,13 @@
                 unread_messages =       d['num_unread_messages']
                 unread_notifications =  d['num_unread_notifications']
             %>
-            <div class="messages ui-grid-b" data-theme="b">
-                <div class="ui-block-a">
-                    <a href="${h.url('messages', list='to', format='html' )}" rel="external">Messages
-                    % if unread_messages:
-                        <br />(${unread_messages} new)
-                    % endif
-                    </a>
-                </div>
-                <div class="ui-block-b">
-                    <a href="${h.url('messages', list='sent', format='html' )}" rel="external">Sent</a>
-                </div>
-                <div class="ui-block-c">
-                    <a href="${h.url('messages', list='notification', format='html' )}" rel="external">Notifications
-                    % if unread_notifications:
-                        <br />(${unread_notifications} new)
-                    % endif
-                    </a>
-                </div>
-            </div>
+            <ul data-role="listview">
+                <li><a href="${h.url('messages', list='to'          )}" >${_('Messages')     }<span class="ui-li-count">${unread_messages} new</span></a></li>
+                <li><a href="${h.url('messages', list='sent'        )}" >${_('Sent Messages')}<span class="ui-li-count"></span></a></li>
+                <li><a href="${h.url('messages', list='notification')}" >${_('Notifications')}<span class="ui-li-count">${unread_notifications} new</span></a></li>
+            </ul>
         % endif
+        </div>
         
         ${self.footer()}
     </div>

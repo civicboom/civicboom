@@ -4,6 +4,8 @@
 
 <%def name="body()">
     <div data-role="page" data-theme="b" id="new_content">
+        ${self.header()}
+        
         <div data-role="content">            
             ${self.form_button(h.url('new_content', target_type='assignment'), _("Ask for _articles"))}
             ${self.form_button(h.url('new_content', target_type='article'   ), _("Post a _article")  )}

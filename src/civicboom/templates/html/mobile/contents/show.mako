@@ -1,8 +1,9 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
 
-<%namespace name="member_includes"       file="/html/mobile/common/member.mako" />
+<%namespace name="member_includes"       file="/html/mobile/common/member.mako"  />
 <%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
+<%namespace name="content_edit_includes" file="/html/mobile/contents/edit.mako"  />
 
 <%def name="title()">${d['content']['title']}</%def>
 
@@ -57,30 +58,22 @@
             % if "respond" in actions:
                 ## AllanC - TODO - require a way of detecting platform type and launching app if required - or at least prompting user to install or use generic
                 
-                ## Use secure_form directly as we do not need secure_links functionality in the mobile space, submit buttons are automatically styled
                 ${h.secure_form(h.url('new_content', parent_id=id), data_ajax=False)}
                 <input type="submit" value="${_('Respond')}">
                 ${h.end_form()}
-                ##${h.secure_link(
-                ##    #h.args_to_tuple('new_content', parent_id=id),
-                ##    h.url('new_content', parent_id=id),
-                ##    value     = h.literal("<button>Respond</button>"),
-                ##    #rel = "external"
-                ##)}
             % endif
             
             % if "edit" in actions:
-                <a href="${h.url('edit_content', id=id)}"><button>${_('Edit')}</button></a>
+                ## AllanC - TODO - require a way of detecting platform type and launching app if required - or at least prompting user to install or use generic
+                <a data-role="button" href="${h.url('edit_content', id=id)}">${_('Edit')}</a>
             % endif
             
             % if "publish" in actions:
-                ${h.secure_form(h.url('content', id=id, format='redirect', submit_publish='publish'), data_ajax=False, method="put")}
-                <input type="submit" value="${_('Publish')}">
-                ${h.end_form()}
+                <a data-role="button" href="#confirm_publish" data-rel="dialog" data-transition="fade">${_('Publish')}</a>
             % endif
             
             % if "delete" in actions:
-                <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>${_('Delete')}</button></a>
+                <a data-role="button" href="#confirm_delete" data-rel="dialog" data-transition="fade">${_('Delete')}</a>
             % endif
 
         </div>
@@ -176,29 +169,8 @@
     </div>
     % endif
     
-    ## Delete ------------------------------------------------------------------
-    % if "delete" in actions:
-    <div data-role="page" id="confirm_delete">
-        <div data-role="header">
-            <h1>Delete posting?</h1>
-        </div>
-        <div data-role="content">
-            ##${parent.flash_message()}
-            <h3>${_("Are you sure you want to delete")} "${title}"${_("? The posting will be permanently deleted from _site_name.")}</h3>
-            
-            ${self.form_button(h.url('content', id=id, format='redirect'), _('Delete'), method="delete")}
-            
-            ##${h.secure_link(
-            ##    h.args_to_tuple('content', id=id, format='redirect'),
-            ##    method = "DELETE",
-            ##    value           = _("Delete"),
-            ##    value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
-            ##    json_form_complete_actions = "",
-            ##)}
-            <a href="#" data-rel="back" data-direction="reverse"><button>No, take me back!</button></a>
-        </div>
-    </div>
-    % endif
+
+    ${content_edit_includes.confirm_dialogs(content)}
     
 </%def>
 
