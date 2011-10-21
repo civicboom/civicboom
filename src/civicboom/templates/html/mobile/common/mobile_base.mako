@@ -55,36 +55,6 @@
 
 
 
-##------------------------------------------------------------------------------
-## Templates
-##------------------------------------------------------------------------------
-<%doc>
-<%def name="page()">
-    <div data-role="page" data-theme="b" ${caller.page_attr()}>
-        ${caller.body()}
-        % if hasattr(caller, 'page_header'):
-        <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
-            ${caller.page_header()}
-        </div>
-        % endif
-        <div data-role="content">
-            ${caller.page_content()}
-        </div>
-        % if hasattr(caller, 'page_footer'):
-        <div data-role="footer" \
-            % if hasattr(caller, 'footer_attr'):
-                ${caller.header_attr()}
-            % else:
-                data-position="fixed" data-fullscreen="true" \
-            % endif
-        >
-            ${caller.page_footer()}
-        </div>
-        % endif
-    </div>
-</%def>
-</%doc>
-
 
 
 <%def name="header(title=None, link_back=None, link_next=None, nav_bar=None)">
@@ -113,9 +83,17 @@
                 </ul>
             </div>
         % endif
-        
+    
+        % if c.result['message']:
+        <div class="flash_message ui-bar ui-bar-e">
+            <h3  style="float:left;  margin-top:8px;" id="flash_message" class="status_${c.result['status']}">${c.result['message']}</h3>
+            <div style="float:right; margin-top:4px;" ><a href="#" data-role="button" data-icon="delete" data-iconpos="notext" onclick="$('.flash_message').slideUp(function(){$(this).remove()}); return false;">Button</a></div>
+        </div>
+        % endif
     </div>
 </%def>
+
+
 
 <%def name="footer()">
     <div data-role="footer" data-id="nav" data-position="fixed">
@@ -123,7 +101,7 @@
 			<ul>
                 <li><a data-icon="search" href="${h.url('contents')                                   }" rel="external">${_('Explore')}</a></li>
                 % if c.logged_in_persona:
-                <li><a data-icon="info"   href="${h.url('contents')                                   }" rel="external">${_('Feeds')}</a></li>
+                ##<li><a data-icon="info"   href="${h.url('contents')                                   }" rel="external">${_('Feeds')}</a></li>
                 <li><a data-icon="grid"   href="${h.url(controller='misc', action='new_content')      }" rel="external">${_('New _article')}</a></li>
                 <%
                     num_messages = c.logged_in_persona.num_unread_messages + c.logged_in_persona.num_unread_notifications
@@ -141,15 +119,7 @@
 	</div><!-- /footer -->
 </%def>
 
-<%def name="flash_message()">
-    <h3 id="flash_message" class="status_${c.result['status']}">${c.result['message']}</h3>
-    % if c.result['message'] != "":
-    <script type="text/javascript">    
-        <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
-        ## AllanC is json_message actually used here? is this needed?
-    </script>
-    % endif
-</%def>
+
 
 
 
@@ -184,3 +154,37 @@
     <input type="submit" value="${title}">
     ${h.end_form()}
 </%def>
+
+
+
+
+
+##------------------------------------------------------------------------------
+## Depricated reference
+##------------------------------------------------------------------------------
+<%doc>
+<%def name="page()">
+    <div data-role="page" data-theme="b" ${caller.page_attr()}>
+        ${caller.body()}
+        % if hasattr(caller, 'page_header'):
+        <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
+            ${caller.page_header()}
+        </div>
+        % endif
+        <div data-role="content">
+            ${caller.page_content()}
+        </div>
+        % if hasattr(caller, 'page_footer'):
+        <div data-role="footer" \
+            % if hasattr(caller, 'footer_attr'):
+                ${caller.header_attr()}
+            % else:
+                data-position="fixed" data-fullscreen="true" \
+            % endif
+        >
+            ${caller.page_footer()}
+        </div>
+        % endif
+    </div>
+</%def>
+</%doc>
