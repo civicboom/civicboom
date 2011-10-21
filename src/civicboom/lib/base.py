@@ -220,6 +220,13 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
     content = _get_content(int(id))
     if not content:
         raise action_error(_("The _content you requested could not be found"), code=404)
+    if set_html_action_fallback:
+        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
+        # if we perform an action but dont have a page to display an error occurs
+        # we set a url fallback.
+        # This bool can be set to auto generate this as a convenience
+        # It is set here first because if there are any errors we need the fallback set before the problem occours
+        c.html_action_fallback_url = url('content', id=content.id)
     if content_type and content.__type__ != content_type:
         raise action_error(_("The _content you requested was not %s" % content_type), code=404)
     if is_viewable:
@@ -235,12 +242,6 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
         raise action_error(_("You do not have permission to edit this _content"), code=403)
     if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
         raise action_error(_("You are not the owner of the parent _content"), code=403)
-    if set_html_action_fallback:
-        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
-        # if we perform an action but dont have a page to display an error occurs
-        # we set a url fallback.
-        # This bool can be set to auto generate this as a convenience
-        c.html_action_fallback_url = url('content', id=content.id)
     return content
 
 

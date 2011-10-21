@@ -837,10 +837,12 @@ class ContentsController(BaseController):
         @return 200   content deleted successfully
         @return 403   lacking permission
         @return 404   no content to delete
+        
+        @comment AllanC Note that calling format='redirect' from the content item itself WIL raise a content not found error as the operation has just removed the content. Redirect is still allowed as a format because you may be removeing an item from a list and want to be redirected back to the listing page
         """
         # url('content', id=ID)
-        content = get_content(id, is_editable=True)
-        c.html_action_fallback_url = url(controller='profile', action='index')
+        content = get_content(id, is_editable=True, set_html_action_fallback=True)
+        c.html_action_fallback_url = url(controller='profile', action='index') # AllanC - if the content is fetuched successfuly then the fallback needs to be overriden as the profile, because on success the content will not exisit anymore
         user_log.info("Deleting content %d" % content.id)
         
         # AllanC - Short term hack

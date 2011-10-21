@@ -65,6 +65,12 @@ class TestContentsController(TestController):
         
         for content_id in contents:
             self.delete_content(content_id)
+
+    def test_delete_redirect(self):
+        """
+        When an item of content is deleted in standard redirect mode, it redirects to the item that has just been deleted, because the item is not there, it returns a content not found message
+        """
+        pass
         
     
     def test_all(self):

@@ -308,7 +308,7 @@ import html2text
         <div data-role="header"><h1>${_('Delete _content?')}</h1></div>
         <div data-role="content">
             <h3>${_("Are you sure you want to delete '%s'? The posting will be permanently deleted from _site_name.") % content.get('title')}</h3>
-            ${self.form_button(h.url('content', id=content['id'], format='redirect'), _('Delete'), method="delete")}
+            ${self.form_button(h.url('content', id=content['id']), _('Delete'), method="delete")}
             <a data-role="button" href="#" data-rel="back" data-direction="reverse">${_('No, take me back!')}</a>
         </div>
     </div>
