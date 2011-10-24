@@ -171,7 +171,9 @@ class MiscController(BaseController):
     def robots(self):
         response.headers['Content-type'] = "text/plain"
         subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
-        if subdomain == "www":
+        if config['debug']:
+            return "User-agent: *\nDisallow: /invalid/-/allow/all\n"
+        elif subdomain == "www":
             return """
 User-agent: *
 Disallow: /misc/get_widget/
