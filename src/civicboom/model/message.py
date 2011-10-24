@@ -63,7 +63,7 @@ class Message(Base):
 
     def __type__(self, member=None):
         """
-        
+         oh jesus, this is duplicated in the messages_index method as well as a post to_dict overlay
         """
         try:
             member = member.id
@@ -71,13 +71,13 @@ class Message(Base):
             pass
         if not member:
             return None
-        if     self.source_id == member and not self.target_id:
+        if     self.source_id == member and     self.target_id          :
             return 'sent'
-        if     self.source_id == member and not self.target_id:
+        if     self.source_id == member and not self.target_id          :
             return 'public'
-        if     self.source_id           and     self.target_id:
+        if     self.source_id           and     self.target_id == member:
             return 'to'
-        if not self.source_id           and     self.target_id:
+        if not self.source_id           and     self.target_id == member:
             return 'notification'
 
 

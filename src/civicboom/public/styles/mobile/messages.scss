@@ -1,0 +1,22 @@
+/* BODY.c-messages.a-index { */
+
+$msg_padding: 1em;
+
+    .conversation {
+        li {
+            padding: $msg_padding;
+            list-style-type: none;
+            clear: both;
+            p {
+                padding: $msg_padding/2;
+            }
+        }
+        .sent {
+            img {float: left; margin-right: $msg_padding/2;}
+            .timestamp {float: right; clear: both;}
+        }
+        .to {
+            img {float: right; margin-left: $msg_padding/2;}
+            .timestamp {float: left; clear: both;}
+        }
+    }

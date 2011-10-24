@@ -15,6 +15,7 @@
             <style type="text/css">
                 <%
                     css_all = h.css_files('mobile', include_common=False)
+                    css_all.insert(0,'styles/common/yui-3.2.0-reset-fonts.css')
                 %>
                 % for css in css_all:
                 @import url("${h.wh_url("public", css)}");

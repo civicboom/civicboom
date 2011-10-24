@@ -95,7 +95,7 @@ class MessagesController(BaseController):
                          lookup table has been referenced at least once :/
         """
         # url('messages')
-        print kwargs
+        
         # Pre-process kwargs ---------------------------------------------------
         
         kwargs['_logged_in_persona'] = c.logged_in_persona.id
@@ -113,9 +113,10 @@ class MessagesController(BaseController):
             kwargs['sort'] = '-timestamp'
         if 'conversation_with' in kwargs and 'limit' not in kwargs:
             kwargs['limit'] = 5
+            kwargs['include_fields'] += "source"
         
         # Create Cache key based on kwargs -------------------------------------
-        print kwargs
+        
         cache_key = get_cache_key('messages_index', kwargs)
         cache_key = None # AllanC - temp addition to ensure no messages lists are cached until they are tested properly
         
@@ -132,7 +133,6 @@ class MessagesController(BaseController):
             if 'target' in kwargs['include_fields']:
                 results = results.options(joinedload('target'))
             if 'conversation_with' in kwargs:
-                print "conversation"
                 results = results.filter(
                     or_(
                         and_(Message.source_id==c.logged_in_persona.id    , Message.target_id==kwargs['conversation_with']) ,
@@ -313,7 +313,10 @@ class MessagesController(BaseController):
             Session.commit()
         
         kwargs['list_type']='full'
-        return action_ok(data={'message': message.to_dict(**kwargs)})
+        message_dict = message.to_dict(**kwargs)
+        message_dict_insert_type(message_dict)
+        
+        return action_ok(data={'message': message_dict})
 
 
     @web

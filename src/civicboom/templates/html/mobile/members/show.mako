@@ -85,7 +85,8 @@
                 
                 % if actions:
                     % if 'message' in actions:
-                        <a href="${h.url(controller='messages', action='new', target=id)}" data-rel="dialog" data-transition="fade"><button>Send message</button></a>
+                        ##<a href="${h.url(controller='messages', action='new', target=id)}" data-rel="dialog" data-transition="fade"><button>Send message</button></a>
+                        <a href="${h.url('member_action', action='conversation', id=id)}" data-role="button">${_('Send message')}</a>
                     % endif
             
                     % if 'follow' in actions:

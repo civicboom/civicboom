@@ -47,16 +47,7 @@
             % if message.get('source_id'):
                 <div data-role="collapsible" data-collapsed="true" class="search_form">
                     <h3>Reply</h3>
-                    ${h.form(h.url('new_message'))}
-                        <div data-role="fieldcontain">
-                            <input type="hidden" name="target" value="${message['source'] if isinstance(message['source'],basestring) else message['source']['username']}"/>
-                            <label for="subject">${_("Subject")}</label>
-                            <input type="text" name="subject" value="Re: ${message['subject']}">
-                            <label for="content">Content</label>
-                            <textarea name="content"></textarea>
-                            <input type="submit" value="${_("Send")}">
-                        </div>
-                    ${h.end_form()}
+                    ${reply_to(message['source'], "Re: %s" % message['subject'])}
                 </div>
             % endif
         </div>
@@ -66,3 +57,20 @@
     </div>
 </%def>
 
+
+<%def name="reply(reply_to, subject=None)">
+
+        ${h.form(h.url('messages', format='redirect'))}
+            <div data-role="fieldcontain">
+                <input type="hidden" name="target" value="${reply_to if isinstance(reply_to,basestring) else reply_to['username']}"/>
+                % if subject!=None:
+                <label for="subject">${_("Subject")}</label>
+                <input type="text" name="subject" value="${subject}">
+                <label for="content">Message</label>
+                % endif
+                <textarea name="content"></textarea>
+                <input type="submit" value="${_("Send")}">
+            </div>
+        ${h.end_form()}
+
+</%def>
