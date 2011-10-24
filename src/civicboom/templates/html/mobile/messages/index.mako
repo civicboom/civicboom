@@ -13,7 +13,7 @@
         }
         
         list  = d['list']
-        title = title_dict.get(list['kwargs']['list'], 'messages')
+        title = title_dict.get(list['kwargs']['list'], _('messages'))
     %>
     % if list.get('count'):
         ${parent.generate_list(list, message_li, title=title, more=None)}

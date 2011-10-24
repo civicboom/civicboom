@@ -2,10 +2,12 @@ from civicboom.lib.base import *
 from civicboom.model.filters import *
 from civicboom.controllers.members  import MembersController
 from civicboom.controllers.contents import ContentsController
+from civicboom.controllers.messages import MessagesController
 from cbutils.misc import update_dict
 
 content_search = ContentsController().index
 member_search  = MembersController().index
+messages_search  = MessagesController().index
 
 log      = logging.getLogger(__name__)
 
@@ -367,6 +369,19 @@ class MemberActionsController(BaseController):
     #---------------------------------------------------------------------------
     # List shortcuts
     #---------------------------------------------------------------------------
+    
+    @web
+    @authorize
+    def conversation(self, id):
+        """
+        GET /members/{name}/conversation: list all messages between you and this member
+        
+        @type list
+        
+        @comment AllanC this is a shotcut to messages(converstion_with=member)
+        """
+        return messages_search(conversation_with=id)
+    
     @web
     def assignments_accepted(self, id, **kwargs):
         """

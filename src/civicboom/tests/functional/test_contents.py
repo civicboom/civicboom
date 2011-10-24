@@ -70,6 +70,9 @@ class TestContentsController(TestController):
         """
         When an item of content is deleted in standard redirect mode, it redirects to the item that has just been deleted, because the item is not there, it returns a content not found message
         """
+        # POST delete format=redirect fake_http_referer as url(list fo content)
+        # POST delete format=html     fake_http_referer as url(this content)
+        # POST delete format=html     when no logged in ?
         pass
         
     

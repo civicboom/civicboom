@@ -205,7 +205,6 @@
         <div data-role="content">
         ## Message and notification bar --------------------------------
         ## AllanC - only for profile view - can this be abstracted?
-        % if d.get('num_unread_messages'):
             <%
                 unread_messages =       d['num_unread_messages']
                 unread_notifications =  d['num_unread_notifications']
@@ -215,7 +214,7 @@
                 <li><a href="${h.url('messages', list='sent'        )}" >${_('Sent Messages')}<span class="ui-li-count"></span></a></li>
                 <li><a href="${h.url('messages', list='notification')}" >${_('Notifications')}<span class="ui-li-count">${unread_notifications} new</span></a></li>
             </ul>
-        % endif
+
         </div>
         
         ${self.footer()}
@@ -256,16 +255,13 @@
                                 <p>${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
                             % endif
                         % endfor
+                        <%doc>
                         % if not current_persona:
-                                ${self.form_button(h.url(controller='account', action='set_persona', id=member.username, format='html'), _('Switch persona'), class_='hidden')}
-                                ##${h.secure_link(
-                                ##    h.url(controller='account', action='set_persona', id=member.username, format='html') ,
-                                ##    'switch user',
-                                ##    css_class='hidden',
-                                ##)}
+                            ${self.form_button(h.url(controller='account', action='set_persona', id=member.username, format='html'), _('Switch persona'), class_='hidden')}
                         % else:
                             <p>This is your current persona</p>
                         % endif
+                        </%doc>
                     </li>
                 </%def>
                 
