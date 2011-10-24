@@ -36,11 +36,13 @@ from civicboom.lib.form_validators.registration      import RegisterSchemaEmailU
 from formencode import validators#, htmlfill
 from civicboom.lib.form_validators.dict_overlay import validate_dict
 
-from cbutils.misc import random_string, calculate_age
+from cbutils.misc import random_string, calculate_age, make_username
 
 from civicboom.lib.form_validators.base import IsoFormatDateConverter
 api_datestr_to_datetime = IsoFormatDateConverter().to_python
 #from civicboom.lib.helpers import api_datestr_to_datetime #This is not suffience because some of the DOB's are not in API form. We may need to normaliz this in future
+
+from sqlalchemy           import or_
 
 log      = logging.getLogger(__name__)
 
@@ -190,17 +192,31 @@ class RegisterController(BaseController):
         # as given as their default display name.
         given_username = kwargs.get("username", "")
         
-        # Check the username and email and raise any problems via the flash message session system
-        try:
-            kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
-        except formencode.Invalid as error:
-            raise action_error(status='invalid', message=error.msg, code=400)
+        # Pre validate the username - need to clean it before the validator fires
+        if 'username' in kwargs:
+            kwargs['username'] = make_username(unicode(kwargs['username'].strip()))
         
-        # Try to get existing user for this email address - else create new user
-        u = Session.query(User).filter(User.status=='pending').filter(User.email_unverified==kwargs['email']).first()
+        # Is pending username or unvalidaed email exisits then update the users details and resend the validation email
+        u = Session.query(User).filter(User.status=='pending').filter(
+                or_(
+                    User.email_unverified == kwargs.get('email'),
+                    User.id               == kwargs.get('username')
+                )
+            ).first() # Try to get existing user for this email address - else create new user
         if u:
-            u.id               = kwargs['username'] # Update the user.id - this should be unique becuase of the validator above. Should be safe as the original user never completed registration
+            if kwargs.get('username'):
+                u.id               = kwargs['username'] # Update the user.id - this should be unique becuase of the validator above. Should be safe as the original user never completed registration
+            if kwargs.get('email'):
+                u.email_unverified = kwargs['email']
+        
         else:
+            
+            # Check the username and email and raise any problems via the flash message session system
+            try:
+                kwargs = RegisterSchemaEmailUsername().to_python(kwargs) #dict(request.params)
+            except formencode.Invalid as error:
+                raise action_error(status='invalid', message=error.msg, code=400)
+            
             # Create new user
             u = User()
             u.id               = kwargs['username']
@@ -208,22 +224,22 @@ class RegisterController(BaseController):
             u.name             = given_username  # display name will be asked for in step #2. For now, copying username is a good enough space filler
             Session.add(u)
             Session.commit()
+                
+            # Automatically Follow Users from config and referers from other sites - These will be run once the user completes registration
+            u.extra_fields.update({
+                'on_register_follow'       : ','.join([username.strip() for username in ','.join([config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]).split(',')]), # AllanC - this monster line is huge confusing and awesome!
+                'on_register_follow_mutual': kwargs.get('follow_mutual','') ,
+            })
             
-        # Automatically Follow Users from config and referers from other sites - These will be run once the user completes registration
-        u.extra_fields.update({
-            'on_register_follow'       : ','.join([username.strip() for username in ','.join([config['setting.username_to_auto_follow_on_signup'], kwargs.get('follow',''), kwargs.get('follow_mutual','')]).split(',')]), # AllanC - this monster line is huge confusing and awesome!
-            'on_register_follow_mutual': kwargs.get('follow_mutual','') ,
-        })
-        
-        # Accept assignment
-        if 'accept_assignment' in kwargs:
-            log.debug("auto accepting not implemented yet")
-            # TODO: Implement
-            #assignment = get_assignment(request.params['accept_assignment'])
-            #accept_assignment_status = accept_assignment(new_member, assignment)
-            #if accept_assignment_status == True:
-            #    refered_by_member.send_notification(messages.assignment_accepted(member=new_member, assignment=assignment))
-        
+            # Accept assignment
+            if 'accept_assignment' in kwargs:
+                log.debug("auto accepting not implemented yet")
+                # TODO: Implement
+                #assignment = get_assignment(request.params['accept_assignment'])
+                #accept_assignment_status = accept_assignment(new_member, assignment)
+                #if accept_assignment_status == True:
+                #    refered_by_member.send_notification(messages.assignment_accepted(member=new_member, assignment=assignment))
+            
         Session.commit()
         
         if config['demo_mode'] and (c.format=='html' or c.format=='redirect'):
