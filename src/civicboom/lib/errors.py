@@ -13,7 +13,6 @@ def error_view_permission():
             message  = _('The _content you requested is not viewable') ,
         )
 
-
 #@property
 def error_account_level():
     return action_error(
