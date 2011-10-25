@@ -187,10 +187,10 @@ def build_meta(user, user_type, panel):
         if settings_meta[setting_name].get('who', user_type) == user_type:
             if setting_name == 'email' and user.email_unverified != None:
                 settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
-                                             '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
+                                             '<li>' + _('You have signed up to _site_name via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
                                              '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
-                                             '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
-                                             _('OR enter new email address below and check your email.')
+                                             '</ol>' + _('To verify your email: please check your email account (%s) and follow the instructions.') % user.email_unverified + '<br />' + \
+                                             _('OR enter new email address above and check your email.')
                 #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
             if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
                 del settings_meta[setting_name]
@@ -200,9 +200,9 @@ def build_meta(user, user_type, panel):
                     if not '_readonly' in settings_meta[setting_name]['type']:
                         settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
                     if not 'password' in [login.type for login in user.login_details]:
-                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above). You will need to verify your address and create a password to use our mobile app.")
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see General settings). You will need to verify your address and create a password to use our mobile app.")
                     else:
-                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see General settings).")
     data = dict( settings_meta=settings_meta,
                  settings_hints=settings_hints,
                  panels=panels,
