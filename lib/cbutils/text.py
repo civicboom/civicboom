@@ -53,7 +53,7 @@ def split_word(text, max_chars):
 
 #-------------------------------------------------------------------------------
 
-html_tags_allowed = (r'br',r'br/',r'ul',r'/ul',r'ol',r'/ol',r'li',r'/li',r'/a',r'strong',r'/strong',r'em',r'/em',r'p',r'/p')
+html_tags_allowed = (r'h1',r'h2',r'h3',r'h4','h5',r'/h1',r'/h2',r'/h3',r'/h4','/h5',r'br',r'br/',r'ul',r'/ul',r'ol',r'/ol',r'li',r'/li',r'/a',r'strong',r'/strong',r'em',r'/em',r'p',r'/p')
 
 
 def clean_html_markup(text):
@@ -69,6 +69,12 @@ def clean_html_markup(text):
     we need to perform an saxutils.escape to remove malicious markup that has not been though our site and posted directly.
     so the purpose of this here is to convert these characters created by the rich text, knowing that they will be escaped next line
     This levels the playing field, malicious &lt &gt are converted to < > and escaped in the same way
+    
+    >>> clean_html_markup(u'<h1>Test</h1><p>Test</p>')
+    u'<h1>Test</h1><p>Test</p>'
+    >>> clean_html_markup(u'<h1>Test</h1><P style="no">clean</P><br/><a href="#" onclick="h4ckzors">me</a>')
+    u'<h1>Test</h1><p>clean</p><br/><a href="#">me</a>'
+
     """
     text = re.sub(r'<style(.*?)style>', " ", text) #Strip STYLE (under no circumstances do we want this)
     text = re.sub("&nbsp;"," ",text)               #Replace escaped spaces
@@ -81,12 +87,12 @@ def clean_html_markup(text):
 
     def process_tag(m):
         tag_contents = m.group(1)
-        tag_type     = tag_contents.split(" ")[0]
+        tag_type     = tag_contents.split(" ")[0].lower()
         if tag_type in html_tags_allowed:
             return "<%s>" % tag_type
         if tag_contents.startswith("a "):
             url = ""
-            url_find = re.search(r'href="(.*)"', tag_contents) # Question, why have the " not been escaped to &quot; ? I dont like this saxutils should have escaped them
+            url_find = re.search(r'href="(.*?)"', tag_contents) # Question, why have the " not been escaped to &quot; ? I dont like this saxutils should have escaped them
             if url_find:
                 url = url_find.group(1)
             return r'<a href="' + saxutils.unescape(url) + r'">'
@@ -141,6 +147,12 @@ def strip_html_tags(text):
     """
     Removes anything between html tags <>
     Needs updating to match > or end of string, in case a tag was not closed
+    
+    >>> strip_html_tags(u'<h1>Test</h1>')
+    u'Test'
+    >>> strip_html_tags(u'<h1>Test</h1>\n<p style="no">clean</p>\n\n<br/><a href="#">me</a>')
+    u'Test \n clean \n\n me'
+    
     """
     #import webhelpers.markdown.HtmlBlockPreprocessor - using proper modules to do this would be good, couldnt work out how to use this HTML processor
     #text = webhelpers.html.converters.markdown(text)

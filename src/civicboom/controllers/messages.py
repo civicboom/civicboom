@@ -2,6 +2,8 @@ from civicboom.lib.base import *
 import civicboom.lib.communication.messages as messages
 from civicboom.model import Message
 
+from civicboom.lib.cache import _cache, get_cache_key, normalize_kwargs_for_cache
+
 from sqlalchemy.orm       import joinedload
 from sqlalchemy           import or_, and_, null
 
@@ -21,8 +23,8 @@ class NewMessageSchema(civicboom.lib.form_validators.base.DefaultSchema):
     #target                     = MemberValidator()
     #subject                    = formencode.validators.String(not_empty=False, max=255)
     #content                    = formencode.validators.String(not_empty=False)
-    subject = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, max=255) 
-    content = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True)
+    subject = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=False, max=255)
+    content = civicboom.lib.form_validators.base.CleanHTMLValidator(not_empty=True)
 
 new_message_schema = NewMessageSchema()
 
@@ -43,6 +45,15 @@ list_filters = {
     'notification': lambda results: results.filter(and_(Message.source_id==null()                 , Message.target_id==c.logged_in_persona.id     )) ,
 }
 
+def message_dict_insert_type(message):
+    if message['source_id']==c.logged_in_persona.id and message['target_id']                        :
+        message['type'] = 'sent'
+    if message['source_id']                         and message['target_id']==c.logged_in_persona.id:
+        message['type'] = 'to'
+    if message['source_id']==None                   and message['target_id']==c.logged_in_persona.id:
+        message['type'] = 'notification'
+    if message['source_id']==c.logged_in_persona.id and message['target_id']==None                  :
+        message['type'] = 'public'
 
 
 #-------------------------------------------------------------------------------
@@ -71,6 +82,7 @@ class MessagesController(BaseController):
                from          ?
                public        ?
                notification  ?
+        @param converation_with member_id to have conversation with
 
         @return 200   a list of messages
                 list  the list
@@ -84,8 +96,12 @@ class MessagesController(BaseController):
         """
         # url('messages')
         
+        # Pre-process kwargs ---------------------------------------------------
+        
+        kwargs['_logged_in_persona'] = c.logged_in_persona.id
+        
         # Setup search criteria
-        if 'list' not in kwargs:
+        if 'list' not in kwargs and 'conversation_with' not in kwargs:
             kwargs['list'] = 'all'
         if 'include_fields' not in kwargs:
             kwargs['include_fields'] = ""
@@ -95,32 +111,63 @@ class MessagesController(BaseController):
                 kwargs['include_fields'] = "target, target_name"
         if 'sort' not in kwargs:
             kwargs['sort'] = '-timestamp'
+        if 'conversation_with' in kwargs and 'limit' not in kwargs:
+            #kwargs['limit'] = 5
+            kwargs['include_fields'] += "source"
         
-        results = Session.query(Message)
+        # Create Cache key based on kwargs -------------------------------------
         
-        # Eager loading of linked fields
-        #  this could be generifyed and use in members/index and contents/index
-        #  the code is simple, but repreative and could be condenced in a sensible way
-        if 'source' in kwargs['include_fields']:
-            results = results.options(joinedload('source'))
-        if 'target' in kwargs['include_fields']:
-            results = results.options(joinedload('target'))
+        cache_key = get_cache_key('messages_index', kwargs)
+        cache_key = None # AllanC - temp addition to ensure no messages lists are cached until they are tested properly
         
+        # Construct Query with provided kwargs ---------------------------------
+        # Everything past here can be cached based on the kwargs state
         
-        if 'list' in kwargs:
-            if kwargs['list'] in list_filters:
-                results = list_filters[kwargs['list']](results)
-            else:
-                raise action_error(_('list %s not supported') % kwargs['list'], code=400)
-                
-        # Sort
-        # AllanC - botched, this is not implmented properly
-        if kwargs['sort'] == '-timestamp':
-            results = results.order_by(Message.timestamp.desc())
-        elif kwargs['sort'] == 'timestamp':
-            results = results.order_by(Message.timestamp.asc())
-        
-        return to_apilist(results, obj_type='messages', **kwargs)
+        def messages_index(**kwargs):
+            results = Session.query(Message)
+            # Eager loading of linked fields
+            #  this could be generifyed and use in members/index and contents/index
+            #  the code is simple, but repreative and could be condenced in a sensible way
+            if 'source' in kwargs['include_fields']:
+                results = results.options(joinedload('source'))
+            if 'target' in kwargs['include_fields']:
+                results = results.options(joinedload('target'))
+            if 'conversation_with' in kwargs:
+                results = results.filter(
+                    or_(
+                        and_(Message.source_id==c.logged_in_persona.id    , Message.target_id==kwargs['conversation_with']) ,
+                        and_(Message.source_id==kwargs['conversation_with'], Message.target_id==c.logged_in_persona.id    ) ,
+                    )
+                )
+            elif 'list' in kwargs:
+                if kwargs['list'] in list_filters:
+                    results = list_filters[kwargs['list']](results)
+                else:
+                    raise action_error(_('list %s not supported') % kwargs['list'], code=400)
+                    
+            # Sort
+            # AllanC - botched, this is not implmented properly
+            if kwargs['sort'] == '-timestamp':
+                results = results.order_by(Message.timestamp.desc())
+            elif kwargs['sort'] == 'timestamp':
+                results = results.order_by(Message.timestamp.asc())
+            
+            apilist = to_apilist(results, obj_type='messages', **kwargs)
+            
+            # Post processing of list
+            # AllanC - the model is not aware of the currently logged in user
+            #          we are performing logic to identify what each message is
+            #          we cant have this as a object method because it's already turned into a dict by this point.
+            for message in apilist['data']['list']['items']:
+                message_dict_insert_type(message)
+            
+            return apilist
+            
+        cache      = _cache.get('messages_index')
+        cache_func = lambda: messages_index(**kwargs)
+        if cache and cache_key:
+            return cache.get(key=cache_key, createfunc=cache_func)
+        return cache_func()
 
 
     @web
@@ -227,6 +274,7 @@ class MessagesController(BaseController):
         # url('message', id=ID)
         
         message = get_message(id, is_target=True)
+        c.html_action_fallback_url = url('messages', list=message.__type__(c.logged_in_persona)) # AllanC - if the message is fetuched successfuly then the fallback needs to be overriden as the profile, because on success the mssage will not exisit anymore
         user_log.info("Deleted Message #%d" % (message.id, ))
         message.delete()
         
@@ -265,7 +313,10 @@ class MessagesController(BaseController):
             Session.commit()
         
         kwargs['list_type']='full'
-        return action_ok(data={'message': message.to_dict(**kwargs)})
+        message_dict = message.to_dict(**kwargs)
+        message_dict_insert_type(message_dict)
+        
+        return action_ok(data={'message': message_dict})
 
 
     @web

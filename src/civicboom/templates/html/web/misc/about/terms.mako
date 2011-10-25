@@ -2,7 +2,11 @@
 <%def name="title()">${_("Terms and conditions")}</%def>
 
 <h1>Terms and Conditions</h1>
+${terms_list()}
 
+
+<%def name="terms_list()">
+## AllanC - TODO - internationalise terms? maybe we can have a dict with lists to auto create this html formated list?
 <ol class='legal'>
 
 <li><b>Civicboom Terms of Service</b>
@@ -195,6 +199,8 @@
 <p>v0.2 - Date of latest amendment January 2011
 <p>The Service Limited registered office: 37 Warren Street, London, W1T 6AD
 <p>Company Number: 06045754.
+
+</%def>
 
 
 <%def name="breadcrumbs()">
