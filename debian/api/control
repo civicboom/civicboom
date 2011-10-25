@@ -7,5 +7,6 @@ Pre-Depends: python, python-cbmisc(>=0.3.18-75), debconf(>=0.2.17),
  python-psycopg2, python-imaging, python-boto, python-meld3, python-rackspace-cloudfiles,
  python-nose, python-coverage, python-dns, python-decorator, python-dateutil,
  python-lxml, python-pybabel, python-mako(>=0.3.6), python-redis, python-beautifulsoup,
+ python-markdown,
  ffmpeg(>=4:0.6)
 Description: The code for the main civicboom website rewrite
