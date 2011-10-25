@@ -10,7 +10,7 @@
 ##------------------------------------------------------------------------------
 ## Member Avatar - display a member as text/image + link to profile
 ##------------------------------------------------------------------------------
-<%def name="avatar(member, class_='', js_link_to_frag=True, new_window=False, img_class='', as_link=True, **kwargs)">
+<%def name="avatar(member, class_='', img_class='', as_link=True, **kwargs)">
     % if member:
         <%
             if hasattr(member,'to_dict'):
@@ -26,16 +26,7 @@
     % endif
 </%def>
 
-##------------------------------------------------------------------------------
-## List member thumbnails
-##------------------------------------------------------------------------------
-<%def name="member_thumbnail_list(member_list)">
-    % for member in member_list['items']:
-        <span class="member_avatar_small">
-            ${avatar(member, img_class="thumbnail_small")}
-        </span>
-    % endfor
-</%def>
+
 
 ##------------------------------------------------------------------------------
 ## Short member details - Username, real name and user type + avatar

@@ -5,6 +5,27 @@ from civicboom.model import Message, Member
 
 
 class TestMessagesController(TestController):
+    
+    def test_conversation_with(self):
+        # Create a mini conversation
+        self.log_in_as('unittest')
+        self.send_member_message('unitfriend', 'best friend', 'you are my bestest friend ever. (msg1)')
+        self.log_in_as('unitfriend')
+        self.send_member_message('unittest', 're', 'No, im not, you are creaping me out, never message me again (msg2)')
+        self.log_in_as('unittest')
+        self.send_member_message('unitfriend', 're', 'But what of the sweet moments we have shared ... DOES THAT MEAN NOTHING TO YOU!!! (msg3)')
+        
+        # Check the HTML render of the conversation contains the 3 messages
+        # if they are present in the HTML they are present in the API return
+        response      = self.app.get(url('member_action', id='unitfriend', action="conversation"))
+        self.assertIn('msg1', response.body)
+        self.assertIn('msg2', response.body)
+        self.assertIn('msg3', response.body)
+        
+        
+    
+    #---------------------------------------------------------------------------
+    
     def test_all(self):
         self.part_setup()
 

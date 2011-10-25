@@ -31,6 +31,12 @@ FOOT=\
 	OpenLayers.js \
 	minimap.js \
 
+MOBILE=\
+	jquery-1.6.2.js \
+	jquery.mobile.cb_settings.js \
+	jquery.mobile-1.0rc2.js \
+	geo.js \
+	#jquery.ui.datepicker.mobile.js \
 
 all: _combined.head.js _combined.foot.js
 
@@ -40,8 +46,10 @@ _combined.head.js: Makefile $(HEAD)
 _combined.foot.js: Makefile $(FOOT)
 	cat $(FOOT) | yui-compressor --type js -o _combined.foot.js
 
+_combined.mobile.js: Makefile $(MOBILE)
+
 clean:
-	rm -f _combined.head.js _combined.foot.js
+	rm -f _combined.head.js _combined.foot.js _combined.mobile.js
 
 
 #

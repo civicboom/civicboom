@@ -191,8 +191,8 @@ db-empty: db-clean
 	" | psql -U civicboom -d civicboom_log -h localhost >/dev/null
 
 db-blank: db-empty
-	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/postgis.sql
-	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.0/contrib/postgis-1.5/spatial_ref_sys.sql
+	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.1/contrib/postgis-1.5/postgis.sql
+	sudo -u postgres psql -q -d civicboom -f /usr/share/postgresql/9.1/contrib/postgis-1.5/spatial_ref_sys.sql
 	echo " \
 		alter table spatial_ref_sys owner to civicboom; \
 		alter table geometry_columns owner to civicboom; \
