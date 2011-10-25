@@ -65,6 +65,8 @@
                 <a href="${link_back}" class="back_link" data-direction="reverse">
                     <span><</span>
                 </a>
+            ##% else:
+            ##    <a href="#" class="back_link" data-rel="back"><span><</span></a>
             % endif
             <a href="/" rel="external">
                 <img class='logo_img' src='${h.wh_url("public", "images/logo-v3-128x28.png")}' alt='${_("_site_name")}' />

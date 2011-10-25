@@ -674,7 +674,7 @@ class ContentsController(BaseController):
         # AllanC - the content could be submitted in a varity of differnt text formats, by default it's html - that html requires cleaning - else convert input to html
         content_text_format = kwargs.get('content_text_format', 'html') if kwargs.get('content') else None
         if content_text_format:
-            if kwargs.get('type') or content.__type__ == 'comment':
+            if content.__type__ == 'comment': #kwargs.get('type') == 'comment' or 
                 content.content == strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
             elif content_text_format == 'html':
                 content.content = clean_html_markup(kwargs['content']) # HTML is default input, clean it down to allowed tags

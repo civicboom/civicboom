@@ -10,13 +10,14 @@ $msg_padding: 1em;
             p {
                 padding: $msg_padding/2;
             }
+            margin-bottom: 1em;
         }
         .sent {
-            img {float: left; margin-right: $msg_padding/2;}
+            img {float: left; margin-right: $msg_padding/2; width: 4em;}
             .timestamp {float: right; clear: both;}
         }
         .to {
-            img {float: right; margin-left: $msg_padding/2;}
+            img {float: right; margin-left: $msg_padding/2; width: 4em;}
             .timestamp {float: left; clear: both;}
         }
     }

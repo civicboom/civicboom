@@ -8,37 +8,18 @@
         messages = d['list']['items']
         messages.reverse()
     %>
-
-    <%doc>
-    <div data-role="page" data-theme="b" id="member-details-${id}" class="member_details_page">
+    
+    <div data-role="page" id="conversation-with-${conversation_with}">
         
-        <div data-role="content">
-            hi
-        </div>
-        
-        ${self.footer()}
-    </div>
-    </%doc>
-
-
-    <div data-role="page" id="conversation-with-${conversation_with}" >
-        
-        ${self.header(title = _('Conversation with %s') % conversation_with)}
+        ${self.header(title = _('Conversation with %s') % conversation_with, link_back=h.url('messages', list='to'))}
         
         <div data-role="content" class="conversation">
             <ul>
                 ##data-role="listview"
             % for message in messages:
-                <li class="${message['type']}">
-                    <%doc>
-                        % if message['type'] == 'sent':
-                            data-theme="b"
-                        % else:
-                            data-theme="d"
-                        % endif
-                    >
-                    </%doc>
-                    <img src="${message['source']['avatar_url']}"/>
+                <% bar_theme = "c" if message['type']=='sent' else "b" %>
+                <li class="${message['type']} ui-bar ui-bar-${bar_theme} ui-corner-all">
+                    <img src="${message['source']['avatar_url']}" class="ui-corner-all"/>
                     <p>${message['content']}</p>
                     <p class="timestamp">${_('%s ago') % h.time_ago(message['timestamp'])}</p>
                 </li>
@@ -46,11 +27,21 @@
             </ul>
             
             ${message_includes.reply(conversation_with)}
+            <a name="conversation_end"></a> 
         </div>
         
         ${self.footer()}
         
     </div>
     
-
+    <%doc>
+    ## AllanC - Attempt at auto scroll to bottom ... failed
+    <script type="text/javascript">
+    $("#conversation-with-${conversation_with}").live('pageinit', function() {
+        ##$.mobile.changePage("#conversation_end");
+        $.mobile.silentScroll(1000);
+    });
+    </script>
+    </%doc>
+    
 </%def>

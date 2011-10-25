@@ -61,16 +61,18 @@
 <%def name="reply(reply_to, subject=None)">
 
         ${h.form(h.url('messages', format='redirect'))}
-            <div data-role="fieldcontain">
+            ##<div data-role="fieldcontain">
                 <input type="hidden" name="target" value="${reply_to if isinstance(reply_to,basestring) else reply_to['username']}"/>
-                % if subject!=None:
+                % if subject==None:
+                <input type="hidden" name="subject" value="message">
+                % else:
                 <label for="subject">${_("Subject")}</label>
                 <input type="text" name="subject" value="${subject}">
                 <label for="content">Message</label>
                 % endif
                 <textarea name="content"></textarea>
                 <input type="submit" value="${_("Send")}">
-            </div>
+            ##</div>
         ${h.end_form()}
 
 </%def>

@@ -7,9 +7,9 @@
 
 <%def name="body()">
     <div data-role="page">
+        ${self.header()}
         <div data-role="content">
-            ${self.title_logo()}
-    	    ${parent.flash_message()}
+            ##${self.title_logo()}
             
             ## AllanC - is this the correct place for this?
             ${signin_web_inlcudes.signin_actions()}

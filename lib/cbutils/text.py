@@ -53,7 +53,7 @@ def split_word(text, max_chars):
 
 #-------------------------------------------------------------------------------
 
-html_tags_allowed = (r'br',r'br/',r'ul',r'/ul',r'ol',r'/ol',r'li',r'/li',r'/a',r'strong',r'/strong',r'em',r'/em',r'p',r'/p')
+html_tags_allowed = (r'h1',r'h2',r'h3',r'h4','h5',r'/h1',r'/h2',r'/h3',r'/h4','/h5',r'br',r'br/',r'ul',r'/ul',r'ol',r'/ol',r'li',r'/li',r'/a',r'strong',r'/strong',r'em',r'/em',r'p',r'/p')
 
 
 def clean_html_markup(text):
@@ -141,6 +141,12 @@ def strip_html_tags(text):
     """
     Removes anything between html tags <>
     Needs updating to match > or end of string, in case a tag was not closed
+    
+    >>> strip_html_tags(u'<h1>Test</h1>')
+    u'Test'
+    >>> strip_html_tags(u'<h1>Test</h1>\n<p style="no">clean</p>\n\n<br/><a href="#">me</a>')
+    u'Test \n clean \n\n me'
+    
     """
     #import webhelpers.markdown.HtmlBlockPreprocessor - using proper modules to do this would be good, couldnt work out how to use this HTML processor
     #text = webhelpers.html.converters.markdown(text)
