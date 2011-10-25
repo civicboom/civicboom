@@ -318,7 +318,7 @@ import html2text
     <div data-role="page" id="confirm_publish">
         <div data-role="header"><h1>${_('Publish _content?')}</h1></div>
         <div data-role="content">
-            <h3>${_('You are about to publish "%s" as "%s".') % (content.get('title'), c.logged_in_persona.name)}</h3>
+            <h3>${_('You are about to publish "%s" as "%s".') % (content.get('title'), content['creator']['name'])}</h3>
             <p>${_('All your followers will be notifyed and it will be visible for other _site_name users to see')}</p>
             ${h.secure_form(h.url('content', id=content['id'], format='redirect', submit_publish='publish'), data_ajax=False, method="put")}
             <input type="submit" value="${_('Publish')}">

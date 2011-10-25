@@ -605,7 +605,6 @@ class ContentsController(BaseController):
             if kwargs.get('target_type'):
                 kwargs['type'] = kwargs['target_type']
         
-
         # -- Publish Permission-------------------------------------------------
         # some permissions like permissions['can_publish'] could be related to payment, we want to still save the data, but we might not want to go through with the whole publish procedure
         # The content will save and the error will be raised at the end.
@@ -641,6 +640,7 @@ class ContentsController(BaseController):
         # NOTE: This is the ONLY way comments can be made from a group.
         # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
         #   maybe bits need to be added to 'create' to avoid this issue
+        
         if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
            content.parent_id and \
            submit_type == 'publish' and \
@@ -674,8 +674,8 @@ class ContentsController(BaseController):
         # AllanC - the content could be submitted in a varity of differnt text formats, by default it's html - that html requires cleaning - else convert input to html
         content_text_format = kwargs.get('content_text_format', 'html') if kwargs.get('content') else None
         if content_text_format:
-            if content.__type__ == 'comment': #kwargs.get('type') == 'comment' or 
-                content.content == strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
+            if kwargs.get('type',content.__type__) == 'comment': #kwargs.get('type') == 'comment' or
+                content.content = strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
             elif content_text_format == 'html':
                 content.content = clean_html_markup(kwargs['content']) # HTML is default input, clean it down to allowed tags
             elif content_text_format == 'markdown':

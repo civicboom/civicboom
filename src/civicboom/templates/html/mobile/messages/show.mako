@@ -47,7 +47,7 @@
             % if message.get('source_id'):
                 <div data-role="collapsible" data-collapsed="true" class="search_form">
                     <h3>Reply</h3>
-                    ${reply_to(message['source'], "Re: %s" % message['subject'])}
+                    ${reply(message['source'], "Re: %s" % message['subject'])}
                 </div>
             % endif
         </div>
