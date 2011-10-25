@@ -108,9 +108,10 @@ Thats *all* folks
         
         id = self.create_content(title='HTML Clean Test', content=html_content)
         content = self.get_content(id)['content']
-        
-        self.assertNotIn('style='            , content['content'])
-        self.assertNotIn('js-h4ckzor'        , content['content'])
+
+        self.assertNotIn('style='               , content['content'])
+        self.assertNotIn('js-h4ckzor'           , content['content'])
+        self.assertIn   ('<h1>HTML Cleaner</h1>', content['content'])
         ##self.assertIn   ('<a href="url">'       , content['content'])
         
         self.delete_content(id)
