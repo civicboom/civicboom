@@ -47,6 +47,7 @@ _combined.foot.js: Makefile $(FOOT)
 	cat $(FOOT) | yui-compressor --type js -o _combined.foot.js
 
 _combined.mobile.js: Makefile $(MOBILE)
+	cat $(MOBILE) | yui-compressor --type js -o _combined.mobile.js
 
 clean:
 	rm -f _combined.head.js _combined.foot.js _combined.mobile.js
