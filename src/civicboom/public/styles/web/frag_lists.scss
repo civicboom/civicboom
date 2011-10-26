@@ -7,9 +7,9 @@
 
 #frag_containers .frag_container .frag_data {
 	.frag_list {
-    .action_pad {
-      margin-right: 1px;
-    }
+        .action_pad {
+            margin-right: 1px;
+        }
 		font-size: 88%;
 		@include drop_shadow(1px, 1px, 1px, #666);
 
@@ -76,9 +76,9 @@
 
 		@include border_radius($frag-radius);
 
-    td {
-        padding-bottom: 0.5em;
-    }
+        td {
+            padding-bottom: 0.5em;
+        }
 
 		li, ul {
 			padding-bottom: 1em;
