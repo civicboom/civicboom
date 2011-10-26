@@ -60,55 +60,21 @@
             % endif
         </h1>
         <div class="separator"></div>
-        
-        <!-- Toggle Section -->
-        <script type="text/javascript">
-            var icon_more = 'icon_plus';
-            var icon_less = 'icon_down';
-            function toggle_edit_section(jquery_element) {
-                $(jquery_element).next().slideToggle();
-                var icon = $(jquery_element).find('.icon');
-                if (icon.hasClass('icon_plus')) {
-                    icon.removeClass(icon_more);
-                    icon.addClass(icon_less);
-                }
-                else if (icon.hasClass(icon_less)) {
-                    icon.removeClass(icon_less);
-                    icon.addClass(icon_more);
-                }
-            }
-        </script>
-        
-        
-        
-        ## pre_onsubmit is needed to save the contents of the TinyMCE component back to the text area
-        ##  reference - http://www.dreamincode.net/forums/topic/52581-textarea-value-not-updating/
         ${h.form(
             h.args_to_tuple('content', id=self.id, format="redirect"),
             id           = 'edit_%s' % self.id,
             name         = "content",
             method       = 'PUT',
             multipart    = True,
-            pre_onsubmit = "tinyMCE.triggerSave(true,true);",
-            json_form_complete_actions = "json_submit_complete_for_%(id)s();" % dict(id=self.id)
+            data         = dict(
+                json_complete = "[ ['update', null, '%s'], ['update', ['%s','%s'] ] ]" %
+                (url('content', id=self.id, format='frag', prompt_aggregate='True' if prompt_aggregate else ''),
+                    url('content', id=self.id),
+                    url('content', id=self.content['parent']['id']) if self.content.get('parent') else ''
+                ),
+            ),
+            class_      = 'auto_save' if self.content['type'] == 'draft' else ''
         )}
-            ## AllanC - whenthe AJAX submit it complete it will call the function below
-            ##          The onclick event of the actual submit buttons can set a variable to direct the fragment refresh
-            <script type="text/javascript">
-                submit_complete_${self.id}_url = null;
-                function json_submit_complete_for_${self.id}() {
-                    if (submit_complete_${self.id}_url) {
-                        ##cb_frag_load($('#edit_${self.id}'), submit_complete_${self.id}_url); ## Why update just this frag, if we set the frag source then it will be reloaded along with the reload of other frags with this content id
-                        cb_frag_set_source($('#edit_${self.id}'), submit_complete_${self.id}_url);
-                        submit_complete_${self.id}_url = null;
-                        % if self.content.get('parent'):
-                        cb_frag_reload(['contents/${self.id}','contents/${self.content['parent']['id']}']);
-                        % else:
-                        cb_frag_reload('contents/${self.id}');
-                        % endif
-                    }
-                }
-            </script>
             ${invalid_messages()}
             ${base_content()}
             ${media()}
@@ -140,41 +106,69 @@
 
 <%def name="actions_common()">
     % if self.id:
-        ${h.confirmed_link(
-            _('Discard Changes and view'),
-            icon='close_edit',
-            href=h.url('content', id=self.id),
-            modal_params = dict(
-                title   = 'Discard changes',
-                message = HTML.p('You are about to discard any changes you have made, are you sure you wish to continue?'),
-                buttons = dict(
-                    yes = 'Yes. Discard',
-                    no  = 'No. Take me back',
-                ),
-                icon_image = '/images/misc/contenticons/disassociate.png',
-            ),
-        )}
+        <a class="link_update_frag"
+            href="${h.url('content', id=self.id)}"
+            data-frag="${h.url('content', id=self.id, format='frag')}"
+            data-confirm="Are you sure you wish to discard changes?"
+            data-confirm-yes="Yes. Discard"
+            data-confirm-no="No. Take me back">
+            <span class="icon16 i_close_edit"></span>Discard Changes and view
+        </a>
         
         <span class="separtor"></span>
-        
         % if 'delete' in self.actions:
+        
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
-            method="DELETE" ,
-            value=_('Delete') ,
-            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
-            confirm_text=_("Are your sure you want to delete this content?") ,
-            #json_form_complete_actions = "cb_frag_remove($(this));" ,
-            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
-            modal_params = dict(
-                title='Delete posting',
-                message='Are you sure you want to delete this posting?',
-                buttons=dict(
-                    yes="Yes. Delete",
-                    no="No. Take me back!",
-                )
+            method          = "DELETE",
+            value           = _('Delete'),
+            value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
+            link_data       = dict(
+                confirm = _("Are you sure you want to delete this posting?"),
+                confirm_yes = _("Yes. Delete"),
+                confirm_no = _("No. Take me back!"),
             ),
         )}
+<!--         <span class="secure_link">
+            <form class="hide_if_js"
+                action="${h.url('content', id=self.id, format='redirect')}"
+                method="post"
+                data-json="${h.url('content', id=self.id, format='json')}"
+                data-json-complete="[ ['remove'],['update', ['${h.url('content', id=self.id)}','${h.url('content', id=self.content['parent']['id']) if self.content.get('parent') else ''}']] ]"
+            >
+                <input type="hidden" name="_method" value="DELETE" />
+                <input type="hidden" name="_authentication_token" value="" />
+                <input type="submit" name="Delete" value="Delete" />
+            </form>
+            <a class="hide_if_nojs link_secure"
+                href="#"
+                data-confirm="Are you sure you want to delete this posting?"
+                data-confirm-yes="Yes. Delete"
+                data-confirm-no="No. Take me back!"
+            ><span class="icon16 i_delete"></span>Delete</a>
+        </span> -->
+        
+##        ${h.secure_link(
+##            h.args_to_tuple('content', id=self.id, format='redirect'),
+##            method="DELETE" ,
+##            value=_('Delete') ,
+##            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
+##            confirm_text=_("Are your sure you want to delete this content?") ,
+##            data         =
+##                dict(json_complete = "[ ['remove'], ['update', ['%s','%s'] ] ]" %
+##                (url('content', id=self.id),
+##                url('content', id=self.content['parent']['id']) if self.content.get('parent') else '') 
+##            ),
+##            modal_params = dict(
+##                title='Delete posting',
+##                message='Are you sure you want to delete this posting?',
+##                buttons=dict(
+##                    yes="Yes. Delete",
+##                    no="No. Take me back!",
+##                )
+##            ),
+##        )}
+        ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
         <span class="separtor"></span>
         % endif
         
@@ -222,7 +216,7 @@
         
         ##<p>
             <label for="title_${self.id}">${_('Add your story title')}</label>
-            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a story title')}"/><br />
+            <input id="title_${self.id}" name="title" type="text" class="edit_input auto_save" value="${self.content['title']}" placeholder="${_('Enter a story title')}"/><br />
             ##${popup(_("extra info"))}
         ##</p>
         <div class="separator"></div>
@@ -231,53 +225,7 @@
 		area_id = h.uniqueish_id("content")
 		%>
 		<label for="${area_id}">${_("Add more detail and supporting links, etc")}</label>
-		<textarea class="editor edit_input" name="content" id="${area_id}">${self.content['content']}</textarea>
-        <!-- http://tinymce.moxiecode.com/ -->
-        
-		<script type="text/javascript">
-			$(function() {
-                tinyMCE.init({
-                    mode     : "exact" ,
-                    elements : "${area_id}" ,
-                    theme    : "advanced" ,
-                    theme_advanced_buttons1 : "bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,link,unlink",
-                    theme_advanced_buttons2 : "",
-                    theme_advanced_buttons3 : "",
-                    theme_advanced_toolbar_location : "top",
-                    theme_advanced_toolbar_align    : "left",
-                });
-			});
-            function ajaxSave() {
-                var ed = tinyMCE.get('${area_id}');
-                ed.setProgressState(1); // Show progress spinner
-                $.ajax({
-                    type    : 'POST',
-                    dataType: 'json',
-                    url     : "${url('content', id=self.id, format='json')}",
-                    data    : {
-                        "_method": 'PUT',
-                        "content": ed.getContent(),
-                        "title"  : $('#title_${self.id}').val(),
-                        ## AllanC - it may be possible to autosave other fields here, however, caution, what happens if a user is half way through editing a date and the autosave kicks in and the validators fire?. This needs testing issue #698
-                        "mode"   : 'autosave',
-                        "_authentication_token": '${h.authentication_token()}'
-                    },
-                    success: function(data) {
-                        ed.setProgressState(0);
-                        flash_message(data);
-                    },
-                    error: function (jqXHR, status, error) {
-                        ed.setProgressState(0);
-                        flash_message({status:'error', message:'${_('Error automatically saving your content')}'});
-                    },
-                });
-            }
-            % if self.content['type'] == "draft":
-            if (typeof cb_frag_get_variable($("#${area_id}"), 'autoSaveDraftTimer') != "undefined")
-                clearInterval(cb_frag_get_variable($("#${area_id}"), 'autoSaveDraftTimer'));
-            cb_frag_set_variable($("#${area_id}"), 'autoSaveDraftTimer', setInterval('ajaxSave()', 60000));
-            % endif
-		</script>
+		<textarea class="editor edit_input auto_save" name="content" id="${area_id}">${self.content['content']}</textarea>
         <div class="separator"></div>
         ## Owner
         <%doc>
@@ -347,7 +295,7 @@
                 ${_("Add media to help build a better story!")}
             % endif
         </label>
-        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+        <legend class="edit_input toggle_section">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/media_trio.png" alt="Media" />
         </legend>
@@ -400,8 +348,8 @@
             <!-- Add media -->
             <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
-				<input id="file_upload" name="file_upload" type="file" />
-				<script type="text/javascript">
+				<input id="file_upload" class="file_upload_uploadify" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" name="file_upload" type="file" />
+				<!-- <script type="text/javascript">
 				$(document).ready(function() {
 						$('#file_upload').uploadify({
 							'uploader'   : '/flash/uploadify.swf',
@@ -425,7 +373,7 @@
 							}
 							});
 						});
-				</script>
+				</script> -->
             </li>
             
             <!-- Add media non javascript version - hidden if JS enabled -->
@@ -492,7 +440,7 @@
     
     <fieldset>
         <label>${_("Click here to set a deadline!")}</label>
-        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+        <legend class="edit_input toggle_section">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/calendar.png" alt="Deadline" />
         </legend>
@@ -542,93 +490,8 @@
         
         </div>
     </fieldset>
-    <div class="separator"></div>
     % endif
-    
-    <%doc>
-        AllanC - Old selection of content type
-
-        AllanC - orringinal a way of selecting the type for the content, this became the extra fields submitted for special content types
-                 currently only assignments have extra fields
-                 
-    <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("_%s Extras" % self.selected_type)}</legend>
-        <div class="hideable">
-
-
-        
-        <%
-            type          = self.type
-            selected_type = self.selected_type
-            
-            types = [
-                #("draft"     , _("description of draft content")   ),
-                ("article"   , _("description of _article")        ),
-                ("assignment", _("description of _assignment")     ),
-                ("syndicate" , _("description of syndicated stuff")),
-            ]
-        %>
-        
-        <%def name="type_option(type, description)">
-            <%
-                selected = ""
-                if selected_type == type:
-                    selected = h.literal('checked="checked"')
-            %>
-            <td id="type_${type}" onClick="highlightType('${type}');" class="section_selectable">
-              <input class="hideable" type="radio" name="target_type" value="${type}" ${selected}/>
-              <label for="type_${type}">${type}</label>
-              <p class="type_description">${description}</p>
-            </td>
-        </%def>
-        
-
-        % if type == "draft":
-            <table id="type_selection"><tr>
-            % for t in types:
-                ${type_option(t[0],t[1])}
-            % endfor
-            <tr></table>
-        % else:
-            ${type}
-        % endif
-        
-        --------------------------------------
-    
-        <script type="text/javascript">
-            // Reference: http://www.somacon.com/p143.php
-            // set the radio button with the given value as being checked
-            // do nothing if there are no radio buttons
-            // if the given value does not exist, all the radio buttons are reset to unchecked
-            function setCheckedValue(radioObj, newValue) {
-                if(!radioObj) return;
-                var radioLength = radioObj.length;
-                if(radioLength == undefined) {
-                    radioObj.checked = (radioObj.value == newValue.toString());
-                    return;
-                }
-                for(var i = 0; i < radioLength; i++) {
-                    radioObj[i].checked = false;
-                    if(radioObj[i].value == newValue.toString()) {
-                        radioObj[i].checked = true;
-                    }
-                }
-            }
-            
-            function highlightType(type) {
-                setCheckedValue(document.forms['content'].elements['target_type'], type); // Select radio button
-                
-                $('#type_selection .section_selectable').removeClass('section_selected');
-                $('#type_'+type                        ).addClass(   'section_selected');
-                
-                $('#content_type_additional_fields .additional_fields').hide();
-                $('#type_'+type+'_extras').show();
-            }
-            
-            highlightType('${selected_type}'); //Set the default highlighted item to be the content type
-        </script>
-    </%doc>
-    
+    <div class="separator"></div>
 </%def>
 
 
@@ -639,7 +502,7 @@
     <!-- Licence -->
     <fieldset>
         <label>${_("Add a location?")}</label>
-        <legend onclick="toggle_edit_section($(this));" class="edit_input">
+        <legend class="edit_input toggle_section">
             <span class="icon16 i_plus"></span>
             <img src="/images/misc/contenticons/map.png" alt="Location" />
         </legend>
@@ -662,7 +525,7 @@
     <% from civicboom.lib.database.get_cached import get_licenses %>
     <!-- Licence -->
     <fieldset>
-        <legend onclick="toggle_edit_section($(this));"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
+        <legend class="toggle_section"><span class="icon16 i_plus"></span>${_("Licence")}</legend>
         <div class="hideable">
 
             <span style="padding-top: 3px;">
@@ -709,7 +572,7 @@
 	<div class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
         <fieldset>
             <label>${_("Want to tell the world, or just a select few?")}</label>
-            <legend onclick="toggle_edit_section($(this));" class="edit_input">
+            <legend class="edit_input ${'toggle_section' if c.logged_in_persona.has_account_required('plus') else ''}">
                 <span class="icon16 i_plus"></span>
                 <img src="/images/misc/contenticons/privacy.png" alt="Content Privacy" />
                 % if not c.logged_in_persona.has_account_required('plus'):
@@ -767,50 +630,7 @@
                 name    = "submit_${name}"
                 class   = "submit_${name} button"
                 value   = "${title_text}"
-                onclick = "
-                    % if onclick_js:
-                        ${onclick_js}
-                    % else:
-                        ## AllanC - use the same disabling button technique with class's used in helpers.py:secrure_link to stop double clicking monkeys
-                        
-                        ## If button enabled
-                        if (!$(this).hasClass('disabled_filter')) {
-                            ## Disable this button
-                            $(this).addClass('disabled_filter');
-                            
-                            ## Fake that a static submit button has been pressed
-                            ##  - Standard HTML forms contain the name and value of the submit button pressed
-                            ##  - JS Form submissions do not - this add's a fake input to the final submission to mimic this submit press
-                            add_onclick_submit_field($(this));
-                            
-                            ## GrrrrregM: Damn this is annoying, we need to check if we're in a modal box & close if we are.
-                            var popup = $(this).parents('#simplemodal-data');
-                            if (popup.length > 0) {
-                                $.modal.close();
-                            }
-                            
-                            ## AllanC - I dont like the fact we start setting global var's here ... could we move to cb_frag.js:cb_frag_set_variable() ??
-                            % if show_content_frag_on_submit_complete:
-                                ## AllanC - Cleaner suggestion? - could this prompt aggregate be part of the python URL gen and not an appended string?
-                                submit_complete_${self.id}_url = '${url('content', id=self.id, format='frag')}${'?prompt_aggregate=True' if prompt_aggregate else ''}';
-                            % endif
-                            
-                            ## Re-enable button after 1 second
-                            setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));
-                            
-                            ## Reload parent on post if publishing
-                            ## AllanC - this was a nice idea - but the POST has not completed at this point and race hazzards occour
-                            ##            if this is going to be used it needs to be at the end of the onsubmit event
-                            ##% if name=='publish' and self.content.get('parent'):
-                            ##    cb_frag_reload('${url('content', id=self.content['parent']['id'])}', $(this));
-                            ##% endif
-                        }
-                        ## If button disabled - abort submit by returning false
-                        else {
-                            return false;
-                        }
-                    % endif
-                "
+
             />
     % if mo_text:
         </span>
@@ -825,28 +645,98 @@
 <%def name="submit_buttons()">
 
     <div style="font-size: 130%; text-align: center;" class="buttons">
-        
-        ${popup.popup_static('What happens now?', what_now_popup, '', html_class="what-now-pop")}
-        
+        ## GregM: I know having a def that writes these is kinda better, but it's so much easier to work out what the hell is going on this way...
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
-            ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
+            <span style="float: left; margin-left: 2em;">
+                <span class="mo-help">
+                    <div class="mo-help-r">
+                        <h2>${_('Save draft')}</h2>
+                        <p>${_("This _assignment will be saved to your profile for further editing prior to posting.")}</p>
+                    </div>
+                    <input class="button" type="submit" name="submit_draft" value="${_('Save draft')}" data-json-complete="[]" />
+                </span>
+            </span>
+            <span class="mo-help">
+                <div class="mo-help-r">
+                    <h2>${_("Preview draft")}</h2>
+                    <p>${_("See how it will look once it's been posted.")}</p>
+                </div>
+                <input class="button" type="submit" name="submit_preview" value="${_('Preview draft')}" data-json-complete="[['update', null, '${h.url('content', id=self.id, format='frag')}']]" />
+            </span>
+            ##${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
                 <%
                     tooltip = "Ask the world!"
                     if self.selected_type == "article":
                         tooltip = "Tell the world!"
                 %>
-                <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+                <span style="float: right; margin-right: 2em;">
+                    ##${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}
+                    <span class="mo-help">
+                        <div class="mo-help-l">
+                            <h2>${_("Post")}</h2>
+                            <p>${_(tooltip)}</p>
+                        </div>
+                        <%
+                            if self.selected_type == "assignment":
+                                confirm_title = _("Once you post this request, it will appear:")
+                                confirm_message = "<ol>" +\
+                                    "<li>" + _("On your _Widget for your community to respond to") +"</li>" +\
+                                    "<li>" + _("In all your _site_name followers' notification streams") +"</li>" +\
+                                    "<li>" + _("On the _site_name request stream") +"</li>" +\
+                                    "</ol>"
+                            elif self.selected_type == "article":
+                                if self.content.get("parent"):
+                                    confirm_title = _("Once you share this story, it will:")
+                                    confirm_message = "<ol>" +\
+                                        "<li>" + (_("Be sent directly to %s") % self.content['parent'].get('creator', dict()).get('name')) + "</li>" +\
+                                        "<li>" + _("Be listed as a response against the request") + "</li>" +\
+                                        "<li>" + _("Appear in your followers' notification streams") + "</li>" +\
+                                        "</ol>"
+                                else:
+                                    confirm_title = _("Once you post this story:")
+                                    confirm_message = "<ol>" +\
+                                        "<li>" + _("It will appear in your followers' notification streams.") + "</li>" +\
+                                        "<li>" + _("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.") + "</li>" +\
+                                        "</ol>"
+                        %>
+                        <input type="submit" name="submit_publish" value="Post" class="button"
+                            data-confirm="${confirm_message}"
+                            data-confirm-title="${confirm_title}"
+                            data-confirm-yes="${_('Yes. Post.')}"
+                            data-confirm-no="${_('No. Take me back.')}"
+                            data-confirm-avatar="true"
+##                                                  update, this frag, with this content's view frag (prompt to aggregate.                     update, all frags with this content, and your profile
+                            data-json-complete="[ ['update', null, '${h.url('content', id=self.id, format='frag', prompt_aggregate='True')}'], ['update',['${h.url('content', id=self.id)}', '/profile'], null, null] ]"
+                        />
+                    </span>
+                </span>
             % endif
             
         ## Update
         % else:
             % if 'update' in self.actions:
-            ${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
+            <input class="button" type="submit" name="submit_publish" value="${_('Update')}"
+##                                      update, this frag, with this content's view frag.                update, all frags with this content
+                data-json-complete="[ ['update', null, '${h.url('content', id=self.id, format='frag')}'], ['update','${h.url('content', id=self.id)}'] ]"
+            >
+            
+            
+            ##${submit_button('publish', _("Update") , show_content_frag_on_submit_complete=True )}
             % endif
-            <a class="button" href="${h.url('content', id=self.id)}" onclick="cb_frag_load($(this), '${url('content', id=self.id)}') return false;">${_("View Content")}</a>
+            <a class="button link_update_frag"
+                href="${h.url('content', id=self.id)}"
+                data-frag="${h.url('content', id=self.id, format='frag')}"
+                % if 'update' in self.actions:
+                    data-confirm="Are you sure you wish to discard changes?"
+                    data-confirm-title="${_('Discard changes and view')}"
+                    data-confirm-yes="Yes. Discard"
+                    data-confirm-no="No. Take me back"
+                % endif
+            >
+                ${_("View Content")}
+            </a>
         % endif
         
     </div>

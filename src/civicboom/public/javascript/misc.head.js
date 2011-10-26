@@ -48,10 +48,10 @@ function popup(title, url) {
 //   <input type="submit" name="submit_draft"   value="Save Draft" onclick="add_onclick_submit_field($(this));" />
 //   will add the field as <input type="hidden"/>
 function add_onclick_submit_field(current_element) {
-	$('.fake_submit').remove(); //remove all fake fields inserted by previous submits
-	var field_name  = current_element.attr('name');
-	var field_value = current_element.attr('value');
-	current_element.closest('form').append('<input type="hidden" name="'+field_name+'" value="'+field_value+'" class="fake_submit"/>');
+	// $('.fake_submit').remove(); //remove all fake fields inserted by previous submits
+	// var field_name  = current_element.attr('name');
+	// var field_value = current_element.attr('value');
+	// current_element.closest('form').append('<input type="hidden" name="'+field_name+'" value="'+field_value+'" class="fake_submit"/>');
 }
 
 

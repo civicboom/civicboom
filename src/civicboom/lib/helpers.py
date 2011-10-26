@@ -18,6 +18,8 @@ from cbutils.text import strip_html_tags, scan_for_embedable_view_and_autolink
 from cbutils.misc import args_to_tuple, make_username, now
 from civicboom.lib.web import current_url, url, current_protocol
 
+from civicboom.config.routing import action_single_map
+
 import webhelpers.html.tags as html
 
 #import recaptcha.client.captcha as librecaptcha
@@ -352,6 +354,16 @@ def form(*args, **kwargs):
     json_form_complete_actions = kwargs.pop('json_form_complete_actions', '')
     pre_onsubmit               = kwargs.pop('pre_onsubmit', '')
     
+    # GregM: Although secure_link does this we call form directly
+    # Actually, FIXME: Insert ajaxy stuff here, then both are covered by magic
+    data_dict                  = kwargs.pop('data', {})
+    for key, value in data_dict.items():
+        kwargs['data-%s' % key.replace('_','-')] = value
+        
+    if not kwargs.get('data-json-complete'):
+        kwargs['data-json-complete'] = "[ ['update'] ]"
+        pass
+    
     # Look for href as a tuple in the form (args,kwargs)
     if len(args)>0 and isinstance(args[0], tuple):
         href_tuple = args[0]
@@ -361,40 +373,8 @@ def form(*args, **kwargs):
     # if href=tuple then generate 2 URL's from tuple 1.) Standard  2.) JSON
     if href_tuple:
         href, href_json = url_pair(gen_format='json', *href_tuple[0], **href_tuple[1]) # generate standard and JSON URL's
-        
-        # generate standard URL
-        #href_args   = copy.copy(href_tuple[0])
-        #href_kwargs = copy.copy(href_tuple[1])
-        #href      = url(*href_args, **href_kwargs)
+        kwargs['data-json'] = href_json
 
-        # generate json URL and attach onsubmit event
-        #href_kwargs['format']      = 'json'
-        #href_json                  = url(*href_args, **href_kwargs)
-
-        # AllanC - bizzare workaround this one ... current_element=$(this) is needed here because if it is used inside function(data) it does not work ? dont know why.
-        kwargs['onsubmit'] = literal("""
-            %(pre_onsubmit)s
-            var current_element = $(this);
-            $.post(
-                '%(href_json)s',
-                $(this).serialize() ,
-                function(data, status, jqXhr) {
-                    flash_message(data);
-                    if (data.status == 'ok') {
-                        %(json_form_complete_actions)s
-                    }
-                },
-                'json'
-            )
-            .error(function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.status == 403) {
-                    current_element.attr('onsubmit','');
-                    current_element.submit();
-                }
-            });
-            return false;
-        """ % dict(href_json=href_json, json_form_complete_actions=json_form_complete_actions, pre_onsubmit=pre_onsubmit)
-        )
     kwargs['novalidate'] = 'novalidate'
 
     # put the href generated url back in the right place
@@ -411,7 +391,8 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='', title=None, rel=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None):
+def secure_link(href, value='Submit', value_formatted=None, title=None, method='POST', form_data=None, link_data=None, link_class='', parent_id=None, force_profile=False):
+#def secure_link(href, value='Submit', value_formatted=None, css_class='', title=None, rel=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None, data={}):
     """
     Create two things:
       - A visible HTML form which POSTs some data along with an auth token
@@ -424,160 +405,140 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
     """
     if not value_formatted:
         value_formatted = value
-
+    else:
+        value_formatted = literal(value_formatted)
+    if not form_data:
+        form_data = {}
+    if not link_data:
+        link_data = {}
+    
     # Setup Get string href ----
     # the href could be passed a a tuple of (args,kwargs) for form() to create a JSON version to submit to
     # we need a text compatable href reguardless
-    href_original = href
+    href_original = copy.deepcopy(href)
     if isinstance(href, tuple):
-        href = url(*href[0], **href[1])
+        args = href[0]
+        kwargs = href[1]
+        form_href = url(*args, **kwargs)
+        kwargs['format'] = 'json'
+        data_json = url(*args, **kwargs)
+        #form_data = dict([(key.replace('_', '-' if '_' in key else key, form_data[key])) for key in form_data.keys()])
+        
+        # GregM: Work out what to do is json_complete has not been defined manually, this could and will fail on odd cercumstances
+        if not form_data.get('json_complete'):
+            args = list(args)
+            args[0] = action_single_map.get(args[0], args[0])
+            if kwargs.get('format'):
+                del kwargs['format']
+            kwargs['action'] = 'show'
+            action1 = ['remove'] if method == 'DELETE' else ['update']
+            action2 = ['update', [url(*args, **kwargs)], None, None]
+            if parent_id:
+                kwargs['id'] = parent_id
+                action2[1].append(url(*args, **kwargs))
+            if args[0] == 'member' or force_profile:
+                action2[1].append('/profile')
+            form_data['json_complete'] = json.dumps([action1, action2]).replace('"',"'")
+    # Do magic to convert all form & link _data to kwargs
+    form_data = dict([ ('data-%s' % k.replace('_','-'), v) for (k,v) in form_data.items() ])
+    link_data = dict([ ('data-%s' % k.replace('_','-'), v) for k,v in link_data.items() ])
+            
+        
 
     # Keep track of number of secure links created so they can all have unique hash's
     #hhash = hashlib.md5(uniqueish_id(href, value, vals)).hexdigest()[0:6]
     # GregM: Semi-unique ids required for selenium, these will be unique to every action (multiple of same action can exist)
-    hhash = re.sub(funky_chars, '_', re.sub(link_matcher, '', href)) + '_' + method
+#    hhash = re.sub(funky_chars, '_', re.sub(link_matcher, '', href)) + '_' + method
 
     # Create Form --------
-    values = ''
-    for k, v in vals:
-        values = values + HTML.input(type="hidden", name=k, value=v)
-    hf = HTML.span(
-        form(href_original, id="form_"+hhash, method=method, json_form_complete_actions=json_form_complete_actions) +
-            values +
-            HTML.input(type="submit", value=value, name=value) + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :( NOTE: if the name="submit" jQuery wont submit! a known problem!?
-        end_form(),
-        id='span_'+hhash, class_='secure_hide') # GregM: secure_hide means js will hide element and remove class (to stop dup processing of same element)
+    #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :( NOTE: if the name="submit" jQuery wont submit! a known problem!?
+    hf = form(href_original, method=method, class_='hide_if_js', **form_data) + \
+            HTML.input(type="submit", value=value, name=value) + \
+        end_form() #,
 
-    # Confirm JS -------
-    ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
-    if confirm_text and not modal_params:
-        confirm_text = "confirm('%s')" % confirm_text
-    else:
-        confirm_text = "true"
-
-    # Styled submit link ------
-    # A standard <A> tag that submits the compatable form (typically used with format='redirect')
-    
-    link_onClick = "if (%(confirm_text)s && !$(this).hasClass('disabled_filter')) {$(this).addClass('disabled_filter'); var e = $(this).parents('.secure_link').find('form')[0]; if (e.hasAttribute('onsubmit')) {e.onsubmit();} else {e.submit();} setTimeout(function (elem){elem.removeClass('disabled_filter');}, 1000, $(this));} return false;" % dict(confirm_text=confirm_text, hhash=hhash)
-    
     hl = HTML.a(
         value_formatted ,
-        id      = "link_"+hhash,
-        # style   = "display: none;",
-        href    = href,
-        class_  = css_class + ' secure_show', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
+        href    = '#',
+        class_  = link_class + ' hide_if_nojs link_secure', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
         title   = title,
-        rel     = rel,
-        # AllanC - the beast onclick even below does the following:
-        #   - put yes/no proceed message up if specifyed
-        #   - check if link has NOT class='disabled'
-        #     - set class 'disablked'
-        #     - perform AJAX form post
-        #       - in preference call the 'onsubmit' function (this is not call is used jQuery is used to submit form)
-        #       - if not just serilze the form and submit
-        #     - set timer so that in 1 seconds time the link 'disabled class is removed'
-        #  - return false and ensure that the normal list is not followed
-        # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick if not rel else None
+        **link_data
     )
-    # $('#form_%(hhash)s').onsubmit();
     
-    # form vs link switcher (hide the compatable form)
-    # GregM: Hides secure_hide classed elements & removes class (stop dups); Shows secure_show classed elements & removes class (ditto)
-    hs = HTML.script(literal('$(".secure_hide").hide().removeClass("secure_hide"); $(".secure_show").show().removeClass("secure_show");'))
-    
-    popup = ''
-    if modal_params:
-        buttons = [
-            {
-                'title': modal_params.get('buttons', {}).get('yes', 'Yes'),
-                'href': href,
-                'onClick': link_onClick,
-            },
-            {
-                'title': modal_params.get('buttons', {}).get('no', 'No'),
-                'href': '#',
-                'onClick': "$.modal.close(); return false;",
-            },
-        ]
-        
-        modal_params['buttons'] = buttons
-        
-        popup = modal_dialog_confirm(**modal_params)
-    
-    return HTML.span(hf+hl+hs+popup, class_="secure_link") #+json_submit_script
+    return HTML.span(hf+hl, class_="secure_link") #+json_submit_script
 
 
 # This will create an html a link with our popup.
-def confirmed_link (title, icon='', **kwargs):
-    modal_params = kwargs.get('modal_params', {})
-    
-    buttons = [
-        {
-            'title': modal_params.get('buttons', {}).get('yes', 'Yes'),
-            'href': kwargs.get('href', ''),
-            'onClick': "$.modal.close();",
-        },
-        {
-            'title': modal_params.get('buttons', {}).get('no', 'No'),
-            'href': '#',
-            'onClick': "$.modal.close(); return false;",
-        },
-    ]
-    modal_params['buttons'] = buttons
-    
-    kwargs['onClick'] = '$(this).parents(\'.confirmed_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.confirmed_link\')}); return false'
-    
-    if icon:
-        icon = HTML.span(class_="icon16 i_"+icon)
-    
-    confirm = modal_dialog_confirm (**modal_params)
-    link = HTML.a(icon+title, **kwargs)
-    
-    return HTML.span(link+confirm, class_='confirmed_link')
+#def confirmed_link (title, icon='', **kwargs):
+#    modal_params = kwargs.get('modal_params', {})
+#    
+#    buttons = [
+#        {
+#            'title': modal_params.get('buttons', {}).get('yes', 'Yes'),
+#            'href': kwargs.get('href', ''),
+#            'onClick': "$.modal.close();",
+#        },
+#        {
+#            'title': modal_params.get('buttons', {}).get('no', 'No'),
+#            'href': '#',
+#            'onClick': "$.modal.close(); return false;",
+#        },
+#    ]
+#    modal_params['buttons'] = buttons
+#    
+#    kwargs['onClick'] = '$(this).parents(\'.confirmed_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.confirmed_link\')}); return false'
+#    
+#    if icon:
+#        icon = HTML.span(class_="icon16 i_"+icon)
+#    
+#    confirm = modal_dialog_confirm (**modal_params)
+#    link = HTML.a(icon+title, **kwargs)
+#    
+#    return HTML.span(link+confirm, class_='confirmed_link')
 
-
-def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = None, buttons = [{'href':'#', 'onClick':'', 'title':'Yes' }, {'href':'#', 'onClick':'$.modal.close(); return false;', 'title':'No'}] ):
-    content = ''
-    if icon:
-        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon")
-    elif icon_image:
-        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon")
-    content = content + HTML.div(title or '', class_="popup-title")
-    
-    if message:
-        content = content + HTML.div(message, class_="popup-message")
-    
-    popup_actions_content = None
-    for button in buttons:
-        if not button.get('class_'):
-            button['class_'] = ''
-        classes = button['class_'].split(' ')
-        classes.extend(['button', 'fl'])
-        button['class_'] = ' '.join(classes)
-        button_element = HTML.a(
-            button.get('title', ''),
-            **button
-        )
-        if not popup_actions_content:
-            popup_actions_content = button_element
-        else:
-            popup_actions_content += button_element
-    
-    content = content + HTML.div(popup_actions_content+HTML.div(class_="cb"), class_="popup-actions")
-    
-    content = HTML.div(content, class_="information")
-    
-    content = HTML.div(content, class_="popup_content")
-    
-    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'))
-    
-    return HTML.div(content, class_="popup_hidden")
+# GregM: At last! Gone!
+#def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = None, buttons = [{'href':'#', 'onClick':'', 'title':'Yes' }, {'href':'#', 'onClick':'$.modal.close(); return false;', 'title':'No'}] ):
+#    content = ''
+#    if icon:
+#        content = content + HTML.div(HTML.span('', class_="icon32 ic_" + icon), class_="popup-icon")
+#    elif icon_image:
+#        content = content + HTML.div(HTML.image(src=icon_image), class_="popup-icon")
+#    content = content + HTML.div(title or '', class_="popup-title")
+#    
+#    if message:
+#        content = content + HTML.div(message, class_="popup-message")
+#    
+#    popup_actions_content = None
+#    for button in buttons:
+#        if not button.get('class_'):
+#            button['class_'] = ''
+#        classes = button['class_'].split(' ')
+#        classes.extend(['button', 'fl'])
+#        button['class_'] = ' '.join(classes)
+#        button_element = HTML.a(
+#            button.get('title', ''),
+#            **button
+#        )
+#        if not popup_actions_content:
+#            popup_actions_content = button_element
+#        else:
+#            popup_actions_content += button_element
+#    
+#    content = content + HTML.div(popup_actions_content+HTML.div(class_="cb"), class_="popup-actions")
+#    
+#    content = HTML.div(content, class_="information")
+#    
+#    content = HTML.div(content, class_="popup_content")
+#    
+#    content = HTML.div(content + HTML.div(class_='cb'), class_="popup-modal", style="width: %s;" % (width or '35em'))
+#    
+#    return HTML.div(content, class_="popup_hidden")
 
 
 #-------------------------------------------------------------------------------
 # Frag DIV's and Links - for Static and AJAX compatability
 #-------------------------------------------------------------------------------
+
+# GregM: Lets start ripping unused stuff out, rework is underway; commented for now to check dependancies!
 
 # AllanC - These are currently not used on the site
 #          they were to enable the static and dynamic generation of a page
@@ -586,60 +547,104 @@ def modal_dialog_confirm (title, message, icon=None, icon_image=None, width = No
 #
 #          NOTE: setSingleCSSClass is depricated and not implemtned anymore, the method below will need to be fixed
 
-def frag_link__(id, frag_url, value, title='', css_class=''):
-    """
-    Populate an id destination with a fragments source using AJAX
-    If AJAX not avalable then provide a static URL that will populate the fragments
-    """
-    
-    # Re-create query sting dictionary with the new frag_url set
-    # This is used in static URL's to view the existing page with the new fragment
-    url_kwargs = {}
-    url_kwargs.update(request.GET)
-    url_kwargs[id]                  = frag_url
-    url_kwargs['selected_fragment_link'] = id
+#def parse_url_args_kwargs(url_args_kwargs):
+#    url_args = []
+#    url_kwargs = {}
+#    if isinstance(url_args_kwargs, dict):
+#        url_kwargs = url_args_kwargs
+#    elif isinstance(url_args_kwargs, list):
+#        url_args = url_args_kwargs
+#    elif isinstance(url_args_kwargs, tuple):
+#        url_args = url_args_kwargs[0]
+#        url_kwargs = url_args_kwargs[1]
+#    return (url_args, url_kwargs)
 
-    # Add selected class if this element is selected
-    if request.GET.get('selected_fragment_link')==id:
-        css_class += " selected_fragment_link"
-    
-    # As the link has an onClick event the link is never followed if javascript is enabled
-    # If javascript is disabled the link functionas as normal
-    static_link = HTML.a(
-        value ,
-        href    = url('current', **url_kwargs) ,
-        class_  = css_class ,
-        title   = title ,
-        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
-    )
-    
-    return static_link #HTML.span(static_link, class_="frag_link")
+#def link_secure(url_args_kwargs, value='Submit', value_formatted=None, vals=[], css_class='', title=None, rel=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None):
+#    url_args ,url_kwargs = parse_url_args_kwargs(url_args_kwargs)
+#    if not value_formatted:
+#        value_formatted = value
+#    href = url(*url_args, **url_kwargs)
+#    
+#    html = HTML.form(href_original, id="form_"+hhash, method=method, json_form_complete_actions=json_form_complete_actions)
+#    html = HTML.input(type='submit', value=value, name=value)
+#    html = HTML.form(html, )
+#    
+#    html = HTML.span()
+#    
+#    pass
 
+#def link_frag(url_args_kwargs, value, title='', css_class=''):
+#    """
+#    Creates a link with the new-style boom.frags.events class
+#    """
+#    url_args ,url_kwargs = parse_url_args_kwargs(url_args_kwargs)
+#        
+#    href = url(*url_args, **url_kwargs)
+#    url_args_kwargs['format'] = 'frag'
+#    if url_args_kwargs.get('title'):
+#        del url_args_kwargs['title']
+#    return HTML.a(
+#        literal(value),
+#        href = href,
+#        class_ = 'link_new_frag ' + css_class,
+#        title = title,
+#        **{'data-frag' : url(*url_args, **url_kwargs)}
+#        )
 
-def frag_div__(id, default_frag_url=None, class_=None):
-    """
-    Create an HTML div linked to a fragment
-    Look in request query sting to populate the div with a fragment (if viewed staticly)
-    optional the div's content can automatically be populated with a default fragment source - the default is always overridden with query sting version
-    NOTE: SSI must be setup on the server (im unsure if paster supports it? it seems to work though nginx on my currentl setup - AllanC)
-    """
-    frag_url      = default_frag_url
-    frag_contents = ""
-    if id in request.GET:
-        frag_url = request.GET[id]
-    if frag_url:
-        frag_contents = literal('<!--#include file="%s"-->' % frag_url)
-    return HTML.div(frag_contents, id=id, class_=class_)
+#def frag_link__(id, frag_url, value, title='', css_class=''):
+#    """
+#    Populate an id destination with a fragments source using AJAX
+#    If AJAX not avalable then provide a static URL that will populate the fragments
+#    """
+#    
+#    # Re-create query sting dictionary with the new frag_url set
+#    # This is used in static URL's to view the existing page with the new fragment
+#    url_kwargs = {}
+#    url_kwargs.update(request.GET)
+#    url_kwargs[id]                  = frag_url
+#    url_kwargs['selected_fragment_link'] = id
+#
+#    # Add selected class if this element is selected
+#    if request.GET.get('selected_fragment_link')==id:
+#        css_class += " selected_fragment_link"
+#    
+#    # As the link has an onClick event the link is never followed if javascript is enabled
+#    # If javascript is disabled the link functionas as normal
+#    static_link = HTML.a(
+#        value ,
+#        href    = url('current', **url_kwargs) ,
+#        class_  = css_class ,
+#        title   = title ,
+#        onClick = literal("setSingleCSSClass(this,'selected_fragment_link'); $('#%(id)s').html('<img src=\\\'/images/media_placeholder.gif\\\'>'); $('#%(id)s').load('%(url)s');  return false;" % {'id':id, 'url': frag_url}) ,
+#    )
+#    
+#    return static_link #HTML.span(static_link, class_="frag_link")
+#
+#
+#def frag_div__(id, default_frag_url=None, class_=None):
+#    """
+#    Create an HTML div linked to a fragment
+#    Look in request query sting to populate the div with a fragment (if viewed staticly)
+#    optional the div's content can automatically be populated with a default fragment source - the default is always overridden with query sting version
+#    NOTE: SSI must be setup on the server (im unsure if paster supports it? it seems to work though nginx on my currentl setup - AllanC)
+#    """
+#    frag_url      = default_frag_url
+#    frag_contents = ""
+#    if id in request.GET:
+#        frag_url = request.GET[id]
+#    if frag_url:
+#        frag_contents = literal('<!--#include file="%s"-->' % frag_url)
+#    return HTML.div(frag_contents, id=id, class_=class_)
 
 
 #-------------------------------------------------------------------------------
 # Civicboom Fragment Object HTML Block
 #-------------------------------------------------------------------------------
 
-def cb_frag_link(*args, **kwargs):
-    # AllanC - hang on double check needed, where is this used? ... surely href is the static link? surely we want to use url_pair under the hood to generate the json version?
-    kwargs['onclick'] = "cb_frag($(this), '%s'); return false;"  % kwargs['href']
-    return HTML.a(*args, **kwargs)
+#def cb_frag_link(*args, **kwargs):
+#    # AllanC - hang on double check needed, where is this used? ... surely href is the static link? surely we want to use url_pair under the hood to generate the json version?
+#    kwargs['onclick'] = "cb_frag($(this), '%s'); return false;"  % kwargs['href']
+#    return HTML.a(*args, **kwargs)
 
 
 

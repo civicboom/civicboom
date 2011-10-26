@@ -295,9 +295,10 @@
         ${h.secure_link(
             ##h.args_to_tuple('group', id=d['username'], format='redirect'),
             h.url('group', id=d['username']),
-            method = "DELETE",
+            method          = "DELETE",
             value           = _("Delete _group"),
             confirm_text    = _("Are your sure you want to delete this group? (All content published by this group will be deleted. All members will be notified)"),
+            form_data       = dict(json_complete = "[ ['update'], ['refresh', '%s'] ]" % h.url('member', id=d['username'])),
             ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
         )}
     % endif

@@ -124,7 +124,7 @@
                 ## Reload
                 % if config['development_mode']:
                     ##c.format=='frag' and 
-                    <a href='' class="icon16 i_reload" onclick='cb_frag_reload($(this)); return false;' title='Reload Fragment'><span>Reload Fragment</span></a>
+                    <a href='' class="icon16 i_reload link_update_frag" title='Reload Fragment'><span>Reload Fragment</span></a>
                     <span class="icon"></span>
                 % endif
                 <%doc>
@@ -142,9 +142,9 @@
                 % if self.attr.help_frag:
                     <%
                         help_url = '/help/' + self.attr.help_frag
-                        js_open_help = h.literal("cb_frag($(this), '%s', 'frag_col_1 frag_help');" % help_url) # GregM: Added frag_help class for help fragments
+                        # GregM: Note the new method does not add classes "frag_col_1 frag_help"!
                     %>
-                    <a href="${help_url}" class="icon16 i_help" onclick="${js_open_help} return false;" title="${_('Help')}"><span>${_('Help')}</span></a>
+                    <a href="${help_url}" data-frag="${help_url}" class="icon16 i_help link_new_frag" title="${_('Help')}"><span>${_('Help')}</span></a>
                     % if 'help' in kwargs:
                     <script type="text/javascript">${js_open_help}</script>
                     % endif
@@ -158,7 +158,7 @@
                 
                 ## Close
                 % if c.format=='frag':
-                    <a href='' class="icon16 i_close" onclick="cb_frag_remove($(this)); return false;" title='${_('Close')}'><span>${_('Close')}</span></a>
+                    <a href='' class="icon16 i_close link_remove_frag" title='${_('Close')}'><span>${_('Close')}</span></a>
                 % else:
                     <span class="icon16 i_blank"></span>
                 % endif
@@ -183,7 +183,10 @@
         </div>
         <div style="clear: both;"></div>
     </div>
-    <div class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}">
+    <div
+        class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}"
+        data-frag_url="${self.attr.frag_url}"
+    >
         <span style="clear: both; display: block;"></span>
         ##<div class="title">
             ## Title
@@ -221,5 +224,5 @@
         georss_url      = h.url(**georss_url)
         georss_url_frag = h.url(**georss_url_frag)
     %>
-    <a href="${georss_url}" title="${_('View on map')}" onclick="cb_frag($(this), '${georss_url_frag}'); return false;"><span class="icon16 i_map"></span>${_('Show these results on a map')}</a>
+    <a class="link_new_frag" href="${georss_url}" title="${_('View on map')}" data-frag="${georss_url_frag}"><span class="icon16 i_map"></span>${_('Show these results on a map')}</a>
 </%def>

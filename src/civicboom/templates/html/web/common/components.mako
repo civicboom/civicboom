@@ -6,7 +6,7 @@
 
 <%def name="tabs(tab_id, titles, tab_contents, *args, **kwargs)">
     ## JQuery ui tabs - http://jqueryui.com/demos/tabs/
-    <div id="${tab_id}">
+    <div class="event_load jqui_tabs" id="${tab_id}">
         <ul>
             % for (title, i) in zip( titles , [i+1 for i in range(len(titles))]):
             <li><a href="#${tab_id}-${i}">${title}</a></li>
@@ -18,15 +18,6 @@
         </div>
         % endfor
     </div>
-    <script>
-        $(function() {
-            $("#${tab_id}").tabs({
-                create: function(event, ui) {
-                    ##$.modal.update(); ## AllanC - failed attempt at trying to get the ***ing thing to resize
-                }
-            });
-        });
-	</script>
 </%def>
 
 ##------------------------------------------------------------------------------
