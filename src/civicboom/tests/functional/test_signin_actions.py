@@ -65,7 +65,7 @@ class TestSigninActions(TestController):
         # When logged in - follow without authentication token - should trigger cross site check
         response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'}, status=403)
         self.assertIn('want to <b>follow ', response.body)
-        self.assertIn('mobileinit'        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
+        self.assertIn('data-role='        , response.body) # Check for string ONLY in mobile_base - the mobileinit method
         
         self.log_out()
         
@@ -73,4 +73,4 @@ class TestSigninActions(TestController):
         # AllanC - TODO - This test fails .. this test tests for the CORRECT behaviour! we need the mobile signin page to be view here
         response = self.get('/members/unittest/follow', extra_environ={'HTTP_HOST': 'm.c.localhost'})
         self.assertIn('you will follow', response.body)
-        self.assertIn('mobileinit'     , response.body)
+        self.assertIn('data-role='     , response.body)

@@ -1,162 +1,148 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-## includes
-<%namespace name="components"      file="/html/mobile/common/components.mako" />
-<%namespace name="member_includes" file="/html/mobile/common/member.mako" />
-<%namespace name="list_includes"   file="/html/mobile/common/lists.mako" />
 
-<%def name="page_title()">
-    ${_(d['content']['title'])}
-</%def>
+<%namespace name="member_includes"       file="/html/mobile/common/member.mako"  />
+<%namespace name="content_list_includes" file="/html/mobile/contents/index.mako" />
+<%namespace name="content_edit_includes" file="/html/mobile/contents/edit.mako"  />
 
-##------------------------------------------------------------------------------
+<%def name="title()">${d['content']['title']}</%def>
 
-## page structure defs
+
 <%def name="body()">
     <%
-        self.content = d['content']
-        self.id = self.content['id']
-        self.title = self.content['title']
-        self.creator = self.content['creator']
-        self.media = self.content['attachments']
-        self.responses = d['responses']
-        self.actions   = d.get('actions', [])
+        content   = d['content']
+        id        = content['id']
+        title     = content['title']
+        creator   = content['creator']
+        media     = content['attachments']
+        responses = d['responses']
+        actions   = d.get('actions', [])
     %>
-    <div data-role="page" data-theme="b" id="content-main-${self.id}" class="content_page">
-        ${components.swipe_event('#content-main-%s' % self.id, '#content-info-%s' % self.id, 'left')}
-        ${components.header(next_link="#content-info-"+str(self.id))}
-        ${content_main()}
-    </div>
     
-    <div data-role="page" data-theme="b" id="content-info-${self.id}" class="content_page">
-        ${components.swipe_event('#content-info-%s' % self.id, '#content-main-%s' % self.id, 'right')}
-        ${components.header(back_link="#content-main-"+str(self.id))}
-        ${content_info()}
-    </div>
     
-    <div data-role="page" data-theme="b" id="content-media-${self.id}" class="content_page">
-        ${components.swipe_event('#content-media-%s' % self.id, '#content-main-%s' % self.id, 'right')}
-        ${components.header(back_link="#content-main-"+str(self.id))}
-        ${content_media()}
-    </div>
+    ## Content Text ------------------------------------------------------------
     
-    <div data-role="page" id="confirm_delete">
-        <div data-role="header">
-            <h1>Delete posting?</h1>
-        </div>
+    <div data-role="page" data-theme="b" id="content-main-${id}" class="content_page">
+        
+        ${self.swipe_event('#content-main-%s' % id, '#content-info-%s' % id, 'left')}
+        
+        ${self.header(link_next="#content-info-%s" % id)}
+        
         <div data-role="content">
-            ${parent.flash_message()}
-            <h3>${_("Are you sure you want to delete")} "${self.title}"${_("? The posting will be permanently deleted from _site_name.")}</h3>
-            ${h.secure_link(
-                h.args_to_tuple('content', id=self.id, format='redirect'),
-                method = "DELETE",
-                value           = _("Delete"),
-                value_formatted = h.literal("<button data-theme='a'>Yes, delete!</button>"),
-                json_form_complete_actions = "",
-            )}
-            <a href="#" data-rel="back" data-direction="reverse"><button>No, take me back!</button></a>
-        </div>
-    </div>
-</%def>
-
-##------------------------------------------------------------------------------
-
-<%def name="content_main()">
-    <div data-role="content">
-        <div class="content_title">
-            <h1>${self.title}</h1>
-        </div>
-        
-        ##----Media----
-        <div class="top_media media_list">
-            <%
-                count = len(self.media)
-                thumb = self.content['thumbnail_url'] if self.content.get('thumbnail_url') else None
-            %>
-            % if thumb and count > 1:
-                <a href="#content-media-${self.id}" alt="Content thumbnail">
-                    <img src="${thumb}" />
-                    <p>See all ${count} media items</p>
-                </a>
-            % elif thumb and count:
-                <a href="${self.media[0]['original_url']}" alt="Content thumbnail"><img src="${thumb}"/></a>
-            % endif
-        </div>
-        
-        ##----Content----
-        <div class="content_text">
-            ${h.literal(h.scan_for_embedable_view_and_autolink(self.content['content']))}
-        </div>
-        
-        ## content actions!
-        % if config['development_mode']:
-            % if "respond" in self.actions:
-                ${h.secure_link(
-                    h.args_to_tuple('new_content', parent_id=self.id),
-                    value     = h.literal("<button>respond</button>"),
-                    rel = "external"
-                )}
+            <div class="content_title">
+                <h1>${title}</h1>
+            </div>
+            
+            ## Media thumbnails ------------------------------------------------
+            <div class="top_media media_list">
+                <%
+                    count = len(media)
+                    thumb = content.get('thumbnail_url', None)
+                %>
+                % if thumb and count > 1:
+                    <a href="#content-media-${id}" alt="Content thumbnail">
+                        <img src="${thumb}" />
+                        <p>See all ${count} media items</p>
+                    </a>
+                % elif thumb and count:
+                    <a href="${media[0]['original_url']}" alt="Content thumbnail"><img src="${thumb}"/></a>
+                % endif
+            </div>
+            
+            ## Content ---------------------------------------------------------
+            <div class="content_text">
+                ${h.literal(h.scan_for_embedable_view_and_autolink(content['content']))}
+            </div>
+            
+            ## Actions ---------------------------------------------------------
+            % if "respond" in actions:
+                ## AllanC - TODO - require a way of detecting platform type and launching app if required - or at least prompting user to install or use generic
+                
+                ${h.secure_form(h.url('new_content', parent_id=id), data_ajax=False)}
+                <input type="submit" value="${_('Respond')}">
+                ${h.end_form()}
             % endif
             
-            % if "edit" in self.actions:
+            % if "edit" in actions:
+                ## AllanC - TODO - require a way of detecting platform type and launching app if required - or at least prompting user to install or use generic
+                <a data-role="button" href="${h.url('edit_content', id=id)}">${_('Edit')}</a>
             % endif
             
-            % if "delete" in self.actions:
-                <a href="#confirm_delete" data-rel="dialog" data-transition="fade"><button>delete</button></a>
+            % if "publish" in actions:
+                <a data-role="button" href="#confirm_publish" data-rel="dialog" data-transition="fade">${_('Publish')}</a>
             % endif
-        % endif
+            
+            % if "delete" in actions:
+                <a data-role="button" href="#confirm_delete" data-rel="dialog" data-transition="fade">${_('Delete')}</a>
+            % endif
+
+        </div>
+        
+        ${self.footer()}
     </div>
-</%def>
-
-##------------------------------------------------------------------------------
-
-<%def name="content_info()">
-    <div data-role="content">
-        <div class="content_details">
+    
+    
+    ## Details & responses -----------------------------------------------------
+    
+    <div data-role="page" data-theme="b" id="content-info-${id}" class="content_page">
+        
+        ${self.swipe_event('#content-info-%s' % id, '#content-main-%s' % id, 'right')}
+        
+        ${self.header(link_back="#content-main-%s" % id)}
+        
+        <div data-role="content">
+            <div class="content_details">
                 ## Creator info
                 <ul data-role="listview" data-inset="true">
                     <li data-role="list-divider" role="heading">Creator</li>
-                    ${member_includes.member_details_short(self.creator, li_only=1)}
+                    ${member_includes.member_details_short(creator, li_only=1)}
                 </ul>
                 
                 ## Parent
                 <ul data-role="listview" data-inset="true">
-                    ${list_includes.parent_content(self.content)}
+                    ${content_list_includes.parent_content(content)}
                 </ul>
                 
                 ## Content info
                 <ul data-role="listview" data-inset="true">
-                    <li data-role="list-divider" role="heading">${self.content['type'].capitalize()} information</li>
-                    % if self.content.get('publish_date'):
-                        <li><h3>Published:</h3> ${self.content.get('publish_date')}</li>
+                    <li data-role="list-divider" role="heading">${content['type'].capitalize()} information</li>
+                    % if content.get('publish_date'):
+                        <li><h3>Published:</h3> ${content.get('publish_date')}</li>
                     % endif
-                    % if self.content.get('tags'):
-                        <li><h3>Tags:</h3> ${", ".join(self.content['tags'])}</li>
+                    % if content.get('tags'):
+                        <li><h3>Tags:</h3> ${", ".join(content['tags'])}</li>
                     % endif
-                    % if self.content.get('views'):
-                        <li><h3>Views:</h3> ${self.content['views']}</li>
+                    % if content.get('views'):
+                        <li><h3>Views:</h3> ${content['views']}</li>
                     % endif
-                    % if self.content.get('boom_count'):
-                        <li><h3>Booms:</h3> ${self.content['boom_count']}</li>
+                    % if content.get('boom_count'):
+                        <li><h3>Booms:</h3> ${content['boom_count']}</li>
                     % endif
                 </ul>
                 
                 ## Responses
                 <ul data-role="listview" data-inset="true">
-                    ${list_includes.list_contents(self.responses, "Responses")}
+                    ${content_list_includes.list_contents(responses, "Responses")}
                 </ul>
-            </ul>
+            </div>
         </div>
+        
+        ${self.footer()}
     </div>
-</%def>
+    
 
-##------------------------------------------------------------------------------
+    ## Media -------------------------------------------------------------------
 
-<%def name="content_media()">
-    % if len(self.media):
+    % if len(media):
+    <div data-role="page" data-theme="b" id="content-media-${id}" class="content_page">
+        
+        ${self.swipe_event('#content-media-%s' % id, '#content-main-%s' % id, 'right')}
+
+        ${self.header(link_back="#content-main-%s" % id)}
+
         <div data-role="content">
             <div class="media_list">
-                % for item in self.media:
+                % for item in media:
                     <div class="media_item">
                         <a href="${item['original_url']}">
                             % if item['type'] == "audio":
@@ -178,5 +164,15 @@
                 % endfor
             </div>
         </div>
+        
+        ${self.footer()}
+    </div>
     % endif
+    
+
+    ${content_edit_includes.confirm_dialogs(content)}
+    
 </%def>
+
+
+
