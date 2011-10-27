@@ -152,6 +152,15 @@ css-compressed: $(THEMES)
 js:
 	$(MAKE) -C civicboom/public/javascript
 
+js-daemon-start:
+	start-stop-daemon --start --oknodo -b -d . -m --pidfile /tmp/cb-js-daemon.pid --exec `which $(MAKE)` -- js-daemon
+
+js-daemon-stop:
+	start-stop-daemon --stop --oknodo --pidfile /tmp/cb-js-daemon.pid
+
+js-daemon:
+	while inotifywait -e close_write civicboom/public/javascript/ ; do $(MAKE) js ; done
+
 
 ##############################################################################
 # testing
@@ -248,6 +257,13 @@ live-db:
 
 run: ini
 	paster serve --reload development.ini
+
+run-dev:
+	$(MAKE) js-daemon-start
+	$(MAKE) css-daemon-start
+	paster serve --reload development.ini
+	$(MAKE) css-daemon-stop
+	$(MAKE) js-daemon-stop
 
 run-demo: ini
 	paster serve --reload demo.ini
