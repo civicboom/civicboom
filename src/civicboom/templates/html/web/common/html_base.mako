@@ -42,21 +42,8 @@
 ##-------------------
 ## CSS Style Sheets
 ##-------------------
-<% from pylons import request %>
-## AllanC - IE must use the compacted CSS in development mode because it cant handle more than 31 css files, even using @import
-##          For css development in IE you need to manually run "make css" at this time.
-##          I created an alternative called css_inline that manually concatinates the files if needed - there were some layout issues with this method though
-## <%include file="/html/web/common/css_inline.mako"/>
-% if config['development_mode'] and 'MSIE' not in request.environ.get('HTTP_USER_AGENT', ''):
-    <style type="text/css" media="screen">
-        % for css in h.css_files('web'):
-        @import url("${h.wh_url("public", css)}");
-        % endfor
-    </style>
-% else:
 	<link rel="stylesheet" type="text/css" media="screen" href="${h.wh_url("public", "styles/web.css")}" />
-% endif
-    <link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
+	<link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
 ##-------------------
 ## Javascripts
 ##-------------------

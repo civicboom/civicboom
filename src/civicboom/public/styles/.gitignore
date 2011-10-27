@@ -1,10 +1,5 @@
-/mobile.css
-/web.css
-/widget.css
-/common/icons.png
-/common/icons.css
-/common/icons.scss
-/*.png
-/*.svg
 *.css
+/*.scss
+/icons.png
+/common/_icons.scss
 .sass-cache
