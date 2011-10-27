@@ -1,3 +1,5 @@
+boom_development = true;
+
 if (!('boom' in window))
   boom = {};
 
@@ -122,19 +124,22 @@ if (!('util' in boom)) {
       }
     },
     history: {
-      saveState: function (stateObject, url, replace) {
+      saveState: function (state_object, replace) {
+        var current_url = state_object.current_url;
+        console.log(state_object);
+        console.log(current_url);
         if(Modernizr.history) {
           // Note: this object is limited to 640k (which ought to be
           // enough for anyone) when saved in the browser history file
           if (replace) {
-            history.replaceState(stateObject, "Civicboom", url);
+            history.replaceState(state_object, "Civicboom", current_url);
           } else {
-            history.pushState(stateObject, "Civicboom", url);
+            history.pushState(state_object, "Civicboom", current_url);
           }
         } else {
           
         }
-      }
+      },
     }
   }
 }
@@ -272,8 +277,6 @@ if (!('frags' in boom)) {
     },
     // Frag counter (ensures frags are unique)
     counter: 0,
-    // frags_loading: [],
-    // frags_remove: [],
     /*
      * Events
      * The Fragment system fires events to allow code to run when things happen.
@@ -294,6 +297,8 @@ if (!('frags' in boom)) {
         'load': function () {
           var current_frag = $(this);
           console.log('frag_load', this);
+          // Our custom history goes here:
+          boom.util.history.saveState(boom.frags.getHistoryState(), false);
           // Push current frag's url to google tracker
           _gaq.push(['_trackPageview', current_frag.find('.'+boom.frags.classes.data).data('frag_url')]);
           boom.frags.events.frag.load_static.apply(this, arguments);
@@ -336,6 +341,9 @@ if (!('frags' in boom)) {
             });
           });
           // Uploadify end
+        },
+        'closed': function () {
+          
         }
       },
       live: {
@@ -567,6 +575,7 @@ if (!('frags' in boom)) {
       $(document).ajaxError(function(event, req, settings, exception){
         console.log('ajaxError', event, req, settings, exception);
         // Try and get json response
+        var jsob;
         try {
           jsob = $.parseJSON(req.responseText);
         } catch (e) {
@@ -731,7 +740,6 @@ if (!('frags' in boom)) {
       var url = new_url || $(element).attr('href');
       
       var current_frag = boom.frags.getFragment(element);
-      //_gaq.push(['_trackPageview', url]);
       var frag_loading = $('<div></div>')
           .attr('id', boom.frags.prefix + (boom.frags.counter++))
           .addClass(boom.frags.classes.container)
@@ -748,6 +756,7 @@ if (!('frags' in boom)) {
       $(window)._scrollable().scrollTo(frag_loading, {duration: boom.frags.vars.scroll_duration});
       boom.frags.update(frag_loading, url, undefined, function (success) {
         if (success) {
+          // frag_load event is triggered by update above! No need for it here...
           // TODO: Tweak animation!
           frag_loading.fadeTo(0, 0.01);
           frag_loading.animate({opacity: 1.0}, boom.frags.vars.scroll_duration, function () {
@@ -836,17 +845,20 @@ if (!('frags' in boom)) {
         if (callback) {
           // run callback after this and next frags are removed
           callback();
-        } else if (boom.frags.container.children().length == 0 && boom.frags.vars.default_frags) {
-          // If we have a callback then we're probably in the middle of multiple frags being removed
-          // Therefore if there is no callback and all frags have been removed, load default frags!
-          var default_frags = boom.frags.vars.default_frags.slice(0); // Create a copy of default frags array
-          var next_frag = function (success, loaded_frag) {
-            // Recursive function lshifts next frag from array, loads and recurs
-            if (success && default_frags.length) {
-              boom.frags.create(loaded_frag, default_frags.shift(), undefined, undefined, next_frag)
+        } else {
+          current_frag.trigger('frag_closed');
+          if (boom.frags.container.children().length == 0 && boom.frags.vars.default_frags) {
+            // If we have a callback then we're probably in the middle of multiple frags being removed
+            // Therefore if there is no callback and all frags have been removed, load default frags!
+            var default_frags = boom.frags.vars.default_frags.slice(0); // Create a copy of default frags array
+            var next_frag = function (success, loaded_frag) {
+              // Recursive function lshifts next frag from array, loads and recurs
+              if (success && default_frags.length) {
+                boom.frags.create(loaded_frag, default_frags.shift(), undefined, undefined, next_frag)
+              }
             }
+            next_frag(true, $('body')); // Begin the chain of default frag loading
           }
-          next_frag(true, $('body')); // Begin the chain of default frag loading
         }
       }
       // Remove current frag
@@ -886,326 +898,66 @@ if (!('frags' in boom)) {
     },
     close_modal: function () {
       $.modal.close();
+    },
+    getHistoryState: function () {
+      var frags = boom.frags.container.children();
+      var frags = frags.not(frags.children('.frag_ignore_history').parent());
+      
+      var frags = boom.frags.container.children().not(':has(.frag_ignore_history)');
+      
+      var fragStateArray = [];
+      frags.each(function () {
+        var frag_container = $(this);
+        var frag_data = frag_container.children('.frag_data');
+        fragStateArray.push({
+          html_url: frag_data.data('html_url'),
+          frag_url: frag_data.data('frag_url'),
+        });
+      });
+      var current_url = frags.not(':has(.frag_ignore_url)').last().children('.frag_data').data('html_url');
+      return {
+        frags: fragStateArray,
+        current_url: current_url,
+      }
+    },
+    restoreHistoryState: function (state_object) {
+      var frags = boom.frags.container.children();
+      var state_frags = state_object.frags.slice(0); // Take a copy of state_object.frags
+      var i = 0;
+      
+      var load_next = function (success, prev_frag) {
+        if (success && state_frags.length) {
+          var state_frag = state_frags.shift();
+          boom.frags.create(prev_frag, state_frag.frag_url, undefined, undefined, load_frag);
+        }
+      } 
+      while (state_frags.length > 0) {
+        var frag = frags.eq(i++);
+        var state_frag = state_frags.shift();
+        if (frag.length == 1) {
+          if (frag.children('.frag_data').data('frag_url') != state_frag.frag_url)
+            boom.frags.update(frag, state_frag.frag_url);
+        } else {
+          load_next(true, frags.last());
+          break;
+        }
+      }
+
     }
   }
   // Initialise boom.frags
   $(boom.frags.init);
-}
-
-
-
-//------------------------------------------------------------------------------
-// Civicboom Fragment AJAX Mangment
-//------------------------------------------------------------------------------
-
-// Example: <a href="http://localhost:5000/test/frag" onclick="cb_frag($(this), 'http://localhost:5000/test/frag'); return false;">Link of AJAX</a>
-/*
-var frag_id_name                      = 'frag_';
-var fragment_containers_id            = '#frag_containers';
-var fragment_container_class          = 'frag_container';  // container for a full JSON object 500px
-//var fragment_col_class                = 'frag_col_1';      // container for a bridge list 250px (half width)
-var fragment_source_class             = 'frag_source';
-var fragment_div_loading_placeholder  = ''+
-'    <div class="frag_bars">'+
-'        <div class="title_bar"></div>'+
-'        <div class="action_bar"></div>'+
-'        <div style="clear: both;"></div>'+
-'    </div>'+
-'    <div class="frag_data frag_content" style="overflow-y: hidden;">'+
-'		<table style="height: 100%; text-align: center; margin: auto;"><tbody><tr><td>'+
-'			Loading'+
-'			<br>&nbsp;<br><img src="/images/ajax-loader.gif">'+
-'		</td></tr></tbody></table>'+
-'	</div>';
-var fragment_help_class               = 'frag_help';
-var scroll_duration = 600;
-
-var frag_count      = 0;
-var frag_loading    = null;
-var frags_to_remove = null;
-
-//------------------------------------------------------------------------------
-//                               Create Frag
-//------------------------------------------------------------------------------
-
-// current_element = JQuery element object
-// url             = String
-function cb_frag(current_element, url, list_type, from_history, callback) {
-    // Take the url from the current <A> element (hence the name url_a)
-    var url_a = current_element.attr('href');
-    
-    if (url  ==undefined || url  ==null) {url = url_a;}
-    if (url  ==undefined || url  ==null) {return;}
-    
-    // Set the class for this new fragment (bridge list or full container)
-    var new_fragment_class = fragment_container_class;
-    if (typeof list_type == 'string') {new_fragment_class += ' '+list_type}
-    //if (list_type=='frag_col_1') {new_fragment_class += " "+fragment_col_class;}
-    //else                         {}
-    
-    // Register this page view with Google analytics.
-    // http://code.google.com/apis/analytics/docs/tracking/asyncMigrationExamples.html#VirtualPageviews
-    _gaq.push(['_trackPageview', url_a]);
-
-    // Get this parent fragment name
-    var frag_div    = current_element.parents('.'+fragment_container_class) // go up the chain looking for '.frag' class to id the master parent
-    var frag_div_id = frag_div.attr('id');
-    
-    // Generate new div name
-    var frag_div_id_next = frag_id_name + frag_count++; //frag_div_id+'1'; // AllanC - I know this only appends one to the end, but it works
-    
-    // Create new div with loading placeholder
-    frag_loading = $('<div id="'+frag_div_id_next+'" class="'+new_fragment_class+'">'+fragment_div_loading_placeholder+'</div>');
-    frag_div.after(frag_loading); // Append new '.frag' div populated with with load placeholder data //$(fragment_containers_id).append 
-    //frag_loading = $('#'+frag_div_id_next);
-    
-    // AllanC - Hack for IE7 Frag rendering
-    //  1.) Make frag float:left
-    //  2.) Calculate size of all divs in frag_container
-    //  3.) Manually force the size of frag_container to fit all child divs
-    // WHY did we bother! ... IE7 is TOTALLY broken ... we dont support it
-    //if ($('html').hasClass('ie7')) {
-    //    //frag_loading.attr('style', 'float:left;'); // A conditioal in CSS rule is now in place
-    //    total_width = 0;
-    //    $(fragment_containers_id).children().each(function(index, element) {
-    //        element_width = document.defaultView.getComputedStyle(element, null).width
-    //        element_width = parseInt(element_width.replace('px',''));
-    //       element_width+= 5; //TODO fake border size, needs to be replaced by actual border/margin size
-    //        total_width  += element_width;
-    //    });
-    //    $(fragment_containers_id).attr('style', 'width:'+total_width+'px;');
-    //}
-    
-    // Start scrolling to new element
-    // Scroll (smoothly)
-    //  - http://plugins.jquery.com/project/ScrollTo
-    //  - http://demos.flesler.com/jquery/scrollTo/
-    $(window)._scrollable().scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
-    //$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
-    //$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});
-    
-    function frag_update_history() {
-        if (! from_history) update_history(); // Call update history with fragment URL
+  $(window).bind('popstate', function (event) {
+    if (event.state) {
+      restoreHistoryState(event.state);
     }
-
-    // AJAX load html fragment
-    frag_loading.load(url,
-        function(response, status, request){ // When AJAX load complete
-          var frag_loading = $(this);
-            if (request.status != 200) {
-                frag_loading.remove();
-                if (typeof callback != 'undefined') callback(false);
-            }
-            if (frag_loading) {
-                frag_loading.fadeTo(0, 0.01); // Set opacity to 0.01 with a delay of 0, this could be replaced with a setOpacity call? I think this is creating animtion headaches
-                //frag_loading.width(0); // animating width buggers up scrolling
-                //frag_loading.animate({width: '500px', opacity: 1.0}, scroll_duration);
-                frag_loading.animate({opacity: 1.0}, scroll_duration, function() { $(this).removeAttr('style'); }); // Once the animation is complete remove the opacity element because IE disabled antialiasing when this is set
-                //frag_loading.fadeIn(scroll_duration);
-                //frag_loading.toggle(scroll_duration);
-                  
-                  if (! from_history) cb_frag_remove_sibblings(frag_loading, frag_update_history);
-                  
-                  frag_loading = null;
-                  html5ize(frag_loading);
-                  if (typeof callback != 'undefined') callback(true);
-                  // These are unneeded because the playholder is the correct width, so the scroll above will be scrolling to the correct place as the AJAX loads
-                  //$(window)._scrollable().scrollTo(frag_loading, {duration: scroll_duration});
-                  //$(window)._scrollable().scrollTo('100%',0, {duration: scroll_duration});
-                  //$.scrollTo(frag_loading, {duration: scroll_duration}); //(fragment_containers_id)
-                  //$(fragment_containers_id).scrollTo('100%', 0 , {duration: scroll_duration});    
-                  $(convertYesNoCheckbox);
-            }
-        }
-    );
-    return frag_loading;
+  });
+  
 }
 
-//------------------------------------------------------------------------------
-//                               Load Frag
-//------------------------------------------------------------------------------
-
-
-function cb_frag_load(jquery_element, url) {
-    // Register this page view with Google analytics. - see cb_frag() for more info
-    // AllanC - this is not ideal as it will have the.frag and not record the actual pageview ... but it's better than nothing for now
-    _gaq.push(['_trackPageview', url]);
-    
-  if (typeof cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer') != 'undefined')
-    clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
-    
-    var frag_container = jquery_element.parents('.'+fragment_container_class)
-    frag_container.load(url, function() {
-        html5ize(frag_container);
-    });
-}
-
-
-//------------------------------------------------------------------------------
-//                               Remove Frag
-//------------------------------------------------------------------------------
-
-function cb_frag_remove(jquery_element, callback, from_history) {
-    var parent = jquery_element.parents('.'+fragment_container_class); // find parent
-    if (typeof cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer') != 'undefined')
-        clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
-    parent.toggle(scroll_duration, function(){
-        parent.remove();
-        // If no fragments on screen redirect to default page
-        if ($('.'+fragment_container_class).length == 0) {
-            window.location.replace("/");
-        }
-        if (typeof callback != 'undefined') callback();
-        if (! from_history) update_history( $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href') );
-    });
-    cb_frag_remove_sibblings(parent);
-    
-    $.modal.close(); // Aditionaly, if this is in a popup then close the popup
-}
-
-function cb_frag_remove_sibblings(jquery_element, callback, ignorehelp) {
-    var parent_siblings;
-    if (ignorehelp) {
-        parent_siblings = jquery_element.nextAll('.'+fragment_container_class+':not(.'+fragment_help_class+')');
-    }
-    else {
-        parent_siblings = jquery_element.nextAll();
-    }
-    parent_siblings.toggle(scroll_duration, function() {
-        parent_siblings.remove();
-        if (typeof callback != 'undefined') callback();
-        callback = undefined;
-    });
-    if (parent_siblings.length == 0 && typeof callback != 'undefined') callback();
-}
-
-//------------------------------------------------------------------------------
-//                               Reload Frag
-//------------------------------------------------------------------------------
-
-function cb_frag_reload(param, exclude_frag) {
-    // Can be passed a JQuery object or a String
-    //  pamam can be:
-    //    JQuery - find frag_container parent - find hidden source link for that frag - reload
-    //    String - find hidden source link for all frags - dose source href contain param - reload
-    // Sometimes we want to exclude a fragment in the reload search, these can be passed with OPTIONAL exclude_frag as a jquery object
-    //
-    // AllanC - Suggeston - it would be nice if cb_frag_reload could take a combination of string and jQuery objects in param
-    
-    function display_reload_feedback(jquery_element) {
-        //jquery_element.find('.title_text').first() += ' <img src="/images/ajax-loader.gif" />';
-        var title = jquery_element.find('.action_bar').first();
-        title.html(title.html() + ' <img src="/images/ajax-loader.gif" />');
-    }
-    
-    // Remove auto-save timer if refreshing fragment! GM
-    function clear_autosave_timer(jquery_element) {
-        if (typeof cb_frag_get_variable(jquery_element, 'autosavedrafttimer') != 'undefined') {
-            clearInterval(cb_frag_get_variable(jquery_element, 'autoSaveDraftTimer'));
-        }
-    }
-    
-    function get_parent_container_element_source(jquery_element) {
-        var container_element;
-        if (jquery_element.hasClass(fragment_container_class)) {
-            container_element   = jquery_element;
-        } else {
-            container_element   = jquery_element.parents('.'+fragment_container_class);
-        }
-        var frag_source_element = container_element.find('.'+fragment_source_class);
-        var frag_source_href    = frag_source_element.attr('href');
-        return [container_element, frag_source_href];
-    }
-    
-    // Move up the chain from this element
-    //   grab the href of the A frag_source
-    //   and use that the .load the parent_frag container
-    function reload_element(jquery_element) {
-        var elem_source_pair = get_parent_container_element_source(jquery_element);
-        var frag_element = elem_source_pair[0];
-        var frag_source  = elem_source_pair[1];
-        clear_autosave_timer(jquery_element); 
-        display_reload_feedback(frag_element);
-        frag_element.load(frag_source, function (text, status, xhr) {
-            if (xhr.status == 404)
-                cb_frag_remove(jquery_element);
-        });
-    }
-    
-    function reload_frags_containing(array_of_urls, exclude_frag) {
-        // Look through all <A> tags in every frgament for the string
-        // if the link contains this string
-        // add the <A>'s parent frag to a refresh list (preventing duplicates)
-        // go through the frag list refreshing
-        var frags_to_refresh = {};
-        $(fragment_containers_id+' a').each(function(index) {
-            var link_element = $(this);
-            for (var url_part in array_of_urls) {
-                url_part = array_of_urls[url_part];
-                link_element_href = link_element.attr('href');
-                if (link_element_href!=undefined && link_element_href.indexOf(url_part) != -1) {
-                    var elem_source_pair = get_parent_container_element_source(link_element);
-                    var frag_element = elem_source_pair[0];
-                    var frag_source  = elem_source_pair[1];
-                    clear_autosave_timer(link_element); 
-                    frags_to_refresh[frag_source] = frag_element;
-                }
-            }
-        });
-        
-        // normalize exclude fragment if present
-        if (exclude_frag && !exclude_frag.hasClass(fragment_container_class)) {
-            exclude_frag = exclude_frag.parents('.'+fragment_container_class);
-        }
-        // Go though all frags found reloading them
-        for (var frag_source in frags_to_refresh) {
-            var frag_element = frags_to_refresh[frag_source]
-            if (exclude_frag==null || exclude_frag.attr('id')!=frag_element.attr('id')) {
-                display_reload_feedback(frag_element);
-                frag_element.load(frag_source, function (text, status, xhr) {
-                    if (xhr.status == 404)
-                        cb_frag_remove(jquery_element);
-                });
-            }
-        }
-    }
-    
-    if      (param === false) return;
-    
-    if      (                            typeof param    == 'string') {reload_frags_containing([param],exclude_frag);}
-    else if (typeOf(param) == 'array' && typeof param[0] == 'string') {reload_frags_containing( param ,exclude_frag);}
-    else                                                              {reload_element(          param              );}
-
-}
-
-function cb_frag_set_source(jquery_element, url) {
-    jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href', url);
-}
-
-// AllanC - Where is this used?
-//function cb_frag_get_source(jquery_element) {
-//  jquery_element.parents('.'+fragment_container_class).children('.'+fragment_source_class).attr('href');
-//}
-
-function cb_frag_set_variable(jquery_element, variable, value) {
-  var valueClean = (typeof value == 'undefined')?(''):(value);
-  jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('cb'+variable, valueClean);
-}
-
-function cb_frag_get_variable(jquery_element, variable) {
-  return jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('cb'+variable);
-}
-
-// AllanC - in what circumstance is this used?
-//function cb_frag_previous(jquery_element) {
-//    return jquery_element.parents('.'+fragment_container_class).prev().children('.'+fragment_source_class);
-//}
-*/
-//------------------------------------------------------------------------------
-//                            Browser URL updating
-//------------------------------------------------------------------------------
 
 function createStateObj() {
+  return;
   var stateObj = { 'blocks': []};
   $('.'+fragment_container_class).not('.'+fragment_help_class).each (function (index, element)
     {
@@ -1218,6 +970,7 @@ function createStateObj() {
 }
 
 function loadStateObj(stateObj) {
+  return;
   var frag_previous;
   if(stateObj !== null) {
     if (typeof stateObj.blocks == 'undefined') return;
@@ -1259,6 +1012,7 @@ function loadStateObj(stateObj) {
 }
 
 function update_history(url, replace) {
+  return;
   if (typeof url == 'undefined' || url == null)
     var url = $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href');
   if (typeof url == 'undefined' || url == null)
@@ -1287,6 +1041,7 @@ function update_history(url, replace) {
 }
 
 $(function () {
+  return;
   if(Modernizr.history) {
     // Browser supports HTML5 history states
     // FIXME: jQuery-ise this, rather than using the raw window.blah
