@@ -7,10 +7,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    <% self.attr.frags = new_article %>
+    <% self.attr.frags = new_content %>
 </%def>
 
-<%def name="new_article()">
-    ##<!--#include virtual="${h.url(controller='misc', action='new_article', format='frag')}"-->
-    <%include file="/frag/misc/new_article.mako"/>
+<%def name="new_content()">
+    ##<!--#include virtual="${h.url(controller='misc', action='new_content', format='frag')}"-->
+    <%include file="/frag/misc/new_content.mako"/>
 </%def>

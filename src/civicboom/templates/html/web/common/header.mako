@@ -19,7 +19,7 @@
 <nav id="actions">
 	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for stories"), link_class="button")}
 	##${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
-    <a href="${h.url(controller='misc', action='new_article')}" class="button">${_("Post a story")}</a>
+    <a href="${h.url(controller='misc', action='new_content')}" class="button">${_("Post a story")}</a>
 </nav>
 
 ##------------------------------------------------------------------------------

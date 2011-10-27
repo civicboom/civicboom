@@ -24,7 +24,10 @@ from sqlalchemy           import asc, desc
 
 # Other imports
 from cbutils.misc import substring_in
-from cbutils.text import strip_html_tags
+from cbutils.text import clean_html_markup, strip_html_tags
+
+import markdown
+
 import cbutils.worker as worker
 from time import time
 
@@ -69,8 +72,8 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     filter_extra_fields = False
     ignore_key_missing  = True
     type        = formencode.validators.OneOf(content_types.enums, not_empty=False)
-    title       = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, strip=True, max=250, min=2, html='strip_html_tags')
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator()
+    title       = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, strip=True, max=250, min=2)
+    #content     = civicboom.lib.form_validators.base.CleanHTMLValidator()
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
@@ -89,7 +92,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
 
 class ContentCommentSchema(ContentSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=True, empty=_('comments must have a valid parent'))
-    content     = civicboom.lib.form_validators.base.ContentUnicodeValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'], html='strip_html_tags')
+    #content     = civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(not_empty=True, empty=_('comments must have content'), max=config['setting.content.max_comment_length'])
 
 
 #-------------------------------------------------------------------------------
@@ -519,6 +522,8 @@ class ContentsController(BaseController):
         @type action
         @api contents 1.0 (WIP)
 
+        @param content_text_format the content fields can be in a varity of differnt formats. The dfault is 'html', this will clean the HTML down to allowed tags. 'markdown' can be used and will be converted to html
+
         @return 200   success
         @return 403   lacking permission to edit
         @return 404   no content to be edited
@@ -526,6 +531,7 @@ class ContentsController(BaseController):
         @comment Shish paramaters need filling out
         """
         # url('content', id=ID)
+        
         #print("--KWARGS--")
         #print(kwargs)
         #print("")
@@ -599,7 +605,6 @@ class ContentsController(BaseController):
             if kwargs.get('target_type'):
                 kwargs['type'] = kwargs['target_type']
         
-
         # -- Publish Permission-------------------------------------------------
         # some permissions like permissions['can_publish'] could be related to payment, we want to still save the data, but we might not want to go through with the whole publish procedure
         # The content will save and the error will be raised at the end.
@@ -635,6 +640,7 @@ class ContentsController(BaseController):
         # NOTE: This is the ONLY way comments can be made from a group.
         # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
         #   maybe bits need to be added to 'create' to avoid this issue
+        
         if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
            content.parent_id and \
            submit_type == 'publish' and \
@@ -663,6 +669,17 @@ class ContentsController(BaseController):
                                 setattr(content, key, value)
                         except:
                             log.debug('unable to convert %s=%s to actual field - need to convert it from a string' % (key, value))
+        
+        # Process Content body format
+        # AllanC - the content could be submitted in a varity of differnt text formats, by default it's html - that html requires cleaning - else convert input to html
+        content_text_format = kwargs.get('content_text_format', 'html') if kwargs.get('content') else None
+        if content_text_format:
+            if kwargs.get('type',content.__type__) == 'comment': #kwargs.get('type') == 'comment' or
+                content.content = strip_html_tags(kwargs['content'])  # Comments have all formatting stripped reguardless
+            elif content_text_format == 'html':
+                content.content = clean_html_markup(kwargs['content']) # HTML is default input, clean it down to allowed tags
+            elif content_text_format == 'markdown':
+                content.content = markdown.markdown(kwargs['content']) # Markdown needs to be processsed to html
         
         # Set content fields from validated kwargs input
         for field in schema.fields.keys():
@@ -820,9 +837,12 @@ class ContentsController(BaseController):
         @return 200   content deleted successfully
         @return 403   lacking permission
         @return 404   no content to delete
+        
+        @comment AllanC Note that calling format='redirect' from the content item itself WIL raise a content not found error as the operation has just removed the content. Redirect is still allowed as a format because you may be removeing an item from a list and want to be redirected back to the listing page
         """
         # url('content', id=ID)
-        content = get_content(id, is_editable=True)
+        content = get_content(id, is_editable=True, set_html_action_fallback=True)
+        c.html_action_fallback_url = url(controller='profile', action='index') # AllanC - if the content is fetuched successfuly then the fallback needs to be overriden as the profile, because on success the content will not exisit anymore
         user_log.info("Deleting content %d" % content.id)
         
         # AllanC - Short term hack
