@@ -1,4 +1,5 @@
 @import "../common/_palette.scss";
+@import "../common/_mixin.scss";
 
 #frag_containers .frag_container .frag_member {
 	/*-------------------------- Frag Member Cols---------------------------------*/
@@ -48,6 +49,12 @@
 				
 				.avatar {
 					padding-top: 1em;
+                    img {
+                        max-width: 100%;
+                        max-height: 600px;
+                        // @include border_radius(0.5em);
+                        border: 1px solid #ccc;
+                    }
 				}
 				
 				.button {
@@ -57,11 +64,6 @@
 				}
 				
 				.boombox_link {
-					font-size: 120%;
-					margin-top: 1em;
-				}
-				
-				.janrain_link {
 					font-size: 120%;
 					margin-top: 1em;
 				}

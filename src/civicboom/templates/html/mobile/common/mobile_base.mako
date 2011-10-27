@@ -152,9 +152,9 @@
     </div>
 </%def>
 
-<%def name="form_button(action_url, title, method='post')">
+<%def name="form_button(action_url, title, method='post', class_='')">
     ${h.secure_form(action_url, method=method, data_ajax=False)}
-    <input type="submit" value="${title}">
+    <input type="submit" value="${title}" class="${class_}">
     ${h.end_form()}
 </%def>
 
