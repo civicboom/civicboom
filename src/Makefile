@@ -107,15 +107,11 @@ i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAG
 
 
 ##############################################################################
-# static files
-
-js:
-	$(MAKE) -C civicboom/public/javascript
+# static files: CSS
 
 STYLES=civicboom/public/styles
+THEMES=$(STYLES)/web.scss $(STYLES)/widget.scss $(STYLES)/mobile.scss
 TIMESTAMP := $(shell date +%s)
-
-css: sass-once
 
 $(STYLES)/web.scss:    $(STYLES)/common/*.scss  $(STYLES)/common/_icons.scss  $(STYLES)/web/*.scss
 	cd $(STYLES) && ls -1 common/*.scss web/*.scss | sed 's/\(.*\)/@import "\1";/' > web.scss
@@ -131,19 +127,21 @@ $(STYLES)/common/_icons.scss: $(STYLES)/common/icons/*
 	cd $(STYLES) && pngcrush _icons.png icons.png
 	cd $(STYLES) && rm -f _icons.png
 
-sass-compressed: $(STYLES)/web.scss $(STYLES)/widget.scss $(STYLES)/mobile.scss
-	cd $(STYLES) && sass --style=compressed --update .:.
-
-sass-once: $(STYLES)/web.scss $(STYLES)/widget.scss $(STYLES)/mobile.scss
-	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --update .:.
-
-sass: $(STYLES)/web.scss $(STYLES)/widget.scss $(STYLES)/mobile.scss
+sass: $(THEMES)
 	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --watch .:. >/tmp/sass.log 2>&1 &
 
-# redirecting stdout means that the file is created even if the process fails.
-# the mv on the second line only happens if it succeeds
-%.ini: %.inidiff development.ini
-	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
+css: $(THEMES)
+	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --update .:.
+
+css-compressed: $(THEMES)
+	cd $(STYLES) && sass --style=compressed --update .:.
+
+
+##############################################################################
+# static files: JS
+
+js:
+	$(MAKE) -C civicboom/public/javascript
 
 
 ##############################################################################
@@ -252,7 +250,7 @@ run-worker:
 ##############################################################################
 # CDN
 
-cdnpush: js css ini
+cdnpush: js css-compressed ini
 	echo removing cache breaker from icons.css
 	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-rs.py \
@@ -264,6 +262,11 @@ cdnpush: js css ini
 
 ##############################################################################
 # other
+
+# redirecting stdout means that the file is created even if the process fails.
+# the mv on the second line only happens if it succeeds
+%.ini: %.inidiff development.ini
+	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
 
 clean: db-clean
 	git clean -d -f -x
