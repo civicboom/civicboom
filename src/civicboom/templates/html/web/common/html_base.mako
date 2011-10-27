@@ -143,37 +143,35 @@ else:
 	u = "anon"
 %>
 <body class="c-${c.controller} a-${c.action} u-${u}">    
-	${flash_message()}
-	##<nav><%include file="navigation.mako"/></nav>
-        <header>
-            % if hasattr(next, 'header'):
-                ${next.header()}
-            % else:
-                <%include file="header.mako"/>
-            % endif
-        </header>
-	<div id="app">${next.body()}</div>
-	<footer><%include file="footer.mako"/></footer>
+    ${flash_message()}
+    <header>
+        % if hasattr(next, 'header'):
+            ${next.header()}
+        % else:
+            <%include file="header.mako"/>
+        % endif
+    </header>
+    <div id="app">${next.body()}</div>
+    <footer><%include file="footer.mako"/></footer>
 
-<%def name="breadcrumbs()"></%def>
-<div class="hide_if_js">${self.breadcrumbs()}</div>
+    <%def name="breadcrumbs()"></%def>
+    <div class="hide_if_js">${self.breadcrumbs()}</div>
 
     ${popup_frame()}
-	##<%include file="scripts_end.mako"/>
-	${scripts_end.body()}
+    ${scripts_end.body()}
 
     <!--[if lt IE 8 ]>
     <script type="text/javascript">
-            if ($.cookie('allow_lt_ie8')!='True') {
-                window.location="${url(controller='misc', action='browser_unsupported')}";
-            }
+    if ($.cookie('allow_lt_ie8')!='True') {
+        window.location="${url(controller='misc', action='browser_unsupported')}";
+    }
     </script>
     <![endif]-->
 
-	<% from pylons import request %>
-	<!--
-	Version: ${request.environ['app_version'] or 'develop'}
-	Node:    ${request.environ['node_name']}
-	-->
+    <% from pylons import request %>
+    <!--
+    Version: ${request.environ['app_version'] or 'develop'}
+    Node:    ${request.environ['node_name']}
+    -->
 </body>
 </html>
