@@ -5,8 +5,11 @@
 
 <%def name="body()">
     <div data-role="page">
+        ${self.header()}
+        
         <div data-role="content" id="register">
-            ${self.title_logo()}
+            
+            ##${self.title_logo()}
             <h1>${_("Just a few more details and you'll be booming!")}</h1>
 
             <div id="reg_form">

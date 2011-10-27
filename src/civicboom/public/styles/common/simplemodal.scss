@@ -3,36 +3,29 @@
 
 /* http://www.ericmmartin.com/projects/simplemodal */
 #simplemodal-overlay   {
-  background-color:#000;
-  opacity: 0.6;
+	background-color:#000;
+	opacity: 0.6;
 }
 
 #simplemodal-container {
-  /* bad form - just copied this from frag.css to get the same style - unify? */
-  border: 1em solid $frag-background;
-  @include border_radius(1em);
-  
-  background-color: white;
-  
-  .title_bar {
-    color: black;
-    
-    .title {
-      .title_text {
-        
-      }
-    }
-    
-    .common_actions {
-      text-align: right;
-      
-      a {
-          color: #666;
-          text-decoration: none;
-          margin: 0.2em 0.2em 0 0;
-      }
-    }
-  }
+	/* bad form - just copied this from frag.css to get the same style - unify? */
+	border: 1em solid $frag-background;
+	@include border_radius(1em);
+	background-color: white;
+
+	.title_bar {
+		color: black;
+
+		.common_actions {
+			text-align: right;
+
+			a {
+				color: #666;
+				text-decoration: none;
+				margin: 0.2em 0.2em 0 0;
+			}
+		}
+	}
 }
 
 #simplemodal-container .popup_content {

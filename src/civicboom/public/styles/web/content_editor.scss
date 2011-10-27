@@ -1,0 +1,143 @@
+#frag_containers .frag_container .frag_content_edit {
+    div.comments table {
+        width: 100%;
+    }
+    label {
+        display: inline-block;
+        font-weight: bold;
+        padding-top: 6px;
+        padding-bottom: 3px;
+        width: 25%;
+        font-size: 110%;
+        color: #333;
+    }
+    textarea.editor {
+        width: 100%;
+        height: 250px;
+    }
+    span.padded {
+        display: inline-block;
+        width: 50pt;
+    }
+    input.detail {
+        width: 100pt;
+    }
+    div.padded {
+        padding-top: 3px;
+    }
+    .paddedbottom {
+        padding-bottom: 3px;
+    }
+    legend .smaller {
+        font-size: 80%
+    }
+    .bold td {
+        font-weight: bold;
+    }
+    .setting-disabled {
+        background-color: #DDD;
+    }
+    .upgrade {
+        position: relative;
+        display: inline-block;
+        width: 13em;
+        font-size: 90%;
+        font-weight: normal;
+    }
+    
+    .edit_input {
+        width: 70%;
+        float: right;
+    }
+    .editor, .mceEditor, .mceLayout {
+        width: 70%;
+        height: 150px;
+        float: right;
+    }
+    .separator {
+        clear: both;
+        padding: 0.5em;
+    }
+    .button {
+        padding: 0.5em;
+    }
+    .hideable {
+        clear: both;
+    }
+
+    fieldset legend {
+      font-size: 120%;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+      padding: 0.25em;
+    }
+
+    fieldset .hideable {
+        margin-bottom: 1em;
+    }
+
+    /*----------------------------------------------------------------------------*/
+    /* Media                                                                      */
+    /*----------------------------------------------------------------------------*/
+     
+    .media_files li {
+      padding: 0.5em;
+    }
+
+    .media_preview {
+      display: inline-block;
+      vertical-align: top;
+      width: 5em;
+      height: 4em;
+      box-shadow:         3px 3px 5px black;
+      -moz-box-shadow:    3px 3px 5px black;
+      -webkit-box-shadow: 3px 3px 5px black;
+      margin: 0.5em;
+      margin-right: 1em;
+      border: 1px solid #666;
+    }
+
+    .media_preview_none {
+      text-align: center;
+    }
+
+    .media_fields {
+      display: inline-block;
+      width: 350px;
+    }
+    .media_fields input {
+      width: 65%;
+      vertical-align: top;
+    }
+
+    .media_fields label {
+      display: inline-block;
+      width: 19%;
+      overflow: hidden;
+    }
+
+    .media_actions {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .media_fields .file_remove {
+      width: 16px;
+      height: 16px;
+      border: 0;
+      color: transparent;
+    }
+    .media_fields .form_file_upload {
+      width: auto;
+    }
+}
+
+
+/*----------------------------------------------------------------------------*/
+/* Selectable Section                                                         */
+/*----------------------------------------------------------------------------*/
+
+.section_selectable {border: 1px solid transparent;}
+.section_selected   {border: 1px solid black; background-color: #ccc;}
+/* .active {display: block !important;} */

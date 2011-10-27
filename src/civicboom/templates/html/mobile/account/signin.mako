@@ -18,14 +18,14 @@
         	   <h1>${_("Sign in to _site_name!")}</h1>
         	</div>
 	        ${signin()}
-            % if config['development_mode']:
-                <div class="signin_title">
-                   <h1>${_("Don't have an account? Sign up to _site_name now!")}</h1>
-                </div>
-                ${signup()}
-                <hr />
-                ${janrain()}
-            % endif
+
+            <div class="signin_title">
+               <h1>${_("Don't have an account? Sign up to _site_name now!")}</h1>
+            </div>
+            ${signup()}
+            
+            ##<hr />
+            ##${janrain()}
 	   </div>
 	</div>
 </%def>
