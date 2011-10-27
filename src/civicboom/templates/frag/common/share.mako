@@ -464,7 +464,7 @@ share_data = {
             message    = '%s|%s' % (options['timestamp'],options['primaryKey'])
             options['signature']  = base64.b64encode(hmac.new(apiKey, msg=message, digestmod=hashlib.sha256).digest()).decode()
     %>
-    ${json.dumps(options).replace('\\\"', "\\\'").replace('"', "'")}
+    ${json.dumps(options).replace('\\\"', "\\\'").replace('"', "'") | n}
 </%def>
 
 <%def name="janrain_social_call_content(content, share_type, share_object_type)">
@@ -482,7 +482,7 @@ share_data = {
         share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')}
     %>
     $(function() {
-        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
+        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'") | n};
         var url       = content.url;
         var variables = {
             share_display:                '${clean_string(_(share_data_tag))}',
@@ -494,7 +494,7 @@ share_data = {
             action:                        content.action,
             media:                        content.media,
         };
-        janrain_popup_share(url, ${janrain_options()}, variables);
+        janrain_popup_share(url, ${janrain_options() | n}, variables);
     });
 </%def>
 
@@ -518,7 +518,7 @@ share_data = {
         share_usergen_default = _(share_data_type) % {'name': cd['title']}
     %>
     $(function() {
-        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'")};
+        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'") | n};
         var url       = content.url;
         var variables = {
             share_display:              '${clean_string(_(share_data_tag))}',
