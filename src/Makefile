@@ -6,6 +6,7 @@ export PGPASSWORD := civicboom
 export PGOPTIONS  := --client-min-messages=warning
 
 GIT_TAG    := $(shell git describe)
+TIMESTAMP  := $(shell date +%s)
 
 help:
 	# Usage: make <target>, where target is
@@ -108,10 +109,18 @@ i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAG
 
 ##############################################################################
 # static files: CSS
-
+#
+# web/*      mobile/*     widget/*
+#    |           |            |
+# web.scss   mobile.scss  widget.scss
+#    |           |            |
+# web.css    mobile.css   widget.css
+#     \          |           /
+#      \         |          /
+#      [css / css-compressed]
+#
 STYLES=civicboom/public/styles
 THEMES=$(STYLES)/web.scss $(STYLES)/widget.scss $(STYLES)/mobile.scss
-TIMESTAMP := $(shell date +%s)
 
 $(STYLES)/web.scss:    $(STYLES)/common/*.scss  $(STYLES)/common/_icons.scss  $(STYLES)/web/*.scss
 	cd $(STYLES) && ls -1 common/*.scss web/*.scss | sed 's/\(.*\)/@import "\1";/' > web.scss
