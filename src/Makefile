@@ -237,14 +237,14 @@ live-db:
 ##############################################################################
 # run
 
-run:
+run: ini
 	paster serve --reload development.ini
 
-run-demo:
+run-demo: ini
 	paster serve --reload demo.ini
 
-run-worker:
-	./cb-worker
+run-worker: ini
+	./cb-worker --ini development.ini
 
 
 ##############################################################################
