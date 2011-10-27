@@ -43,7 +43,7 @@
 ## CSS Style Sheets
 ##-------------------
 	<link rel="stylesheet" type="text/css" media="screen" href="${h.wh_url("public", "styles/web.css")}" />
-    <link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
+	<link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
 ##-------------------
 ## Javascripts
 ##-------------------
