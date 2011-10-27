@@ -19,4 +19,4 @@ widget.css: common/yui-3.2.0-reset-fonts.scss  common/icons.scss  widget/*.scss 
 	ls -1 common/yui-3.2.0-reset-fonts.scss common/icons.scss widget/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed widget.css
 
 mobile.css: common/icons.scss  mobile/*.scss  Makefile
-	ls -1 mobile/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed mobile.css
+	ls -1 common/yui-3.2.0-reset-fonts.scss mobile/*.scss | sed 's/\(.*\)/@import "\1";/' | sass --stdin --scss --style compressed mobile.css

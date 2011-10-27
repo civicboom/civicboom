@@ -107,7 +107,11 @@ class ContentObjectValidator(validators.FancyValidator):
 
 
 
-class ContentUnicodeValidator(validators.UnicodeString):
+class CleanHTMLValidator(validators.UnicodeString):
+    """
+    A validator that returns purifyed HTML with only basic A P H? B I UL LI and OL tags (without attrs)
+    See cb_lib for more details
+    """
     not_empty = False
     strip     = True
 
@@ -119,8 +123,9 @@ class ContentUnicodeValidator(validators.UnicodeString):
         value = validators.UnicodeString._to_python(self, value, state)
         if self.html=='clean_html_markup':
             return clean_html_markup(value)
-        if self.html=='strip_html_tags':
-            return strip_html_tags(value)
+        # AllanC - this is depricated? use UnicodeStripHTML instead
+        #if self.html=='strip_html_tags':
+        #    return strip_html_tags(value)
         raise Exception('validator not setup correctly')
 
 

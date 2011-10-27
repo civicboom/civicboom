@@ -46,15 +46,18 @@ class TestMembersController(TestController):
         response = self.app.get(url('member', id='unittest', format='json'))
         response_json = json.loads(response.body)
         del response_json['data']['actions']
-        json_string_1 = json.dumps(response_json)
+        data_1 = response_json
+        #json_string_1 = json.dumps(response_json)
         
         self.log_in_as('kitten')
         response = self.app.get(url('member', id='unittest', format='json'))
         response_json = json.loads(response.body)
         del response_json['data']['actions']
-        json_string_2 = json.dumps(response_json)
+        data_2 = response_json
+        #json_string_2 = json.dumps(response_json)
         
-        self.assertEquals(json_string_1, json_string_2)
+        #self.assertEquals(json_string_1, json_string_2)
+        self.assertEquals(data_1, data_2)
 
 
 

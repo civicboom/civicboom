@@ -1,5 +1,4 @@
-
-from civicboom.model.meta import Base
+from civicboom.model.meta import Base, CacheChangeListener
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import String, Unicode, UnicodeText
@@ -13,6 +12,7 @@ import copy
 
 class Message(Base):
     __tablename__ = "message"
+    __mapper_args__ = {'extension': CacheChangeListener()}
     id          = Column(Integer(),     primary_key=True)
     source_id   = Column(String(32),    ForeignKey('member.id', onupdate="cascade"), nullable=True)
     target_id   = Column(String(32),    ForeignKey('member.id', onupdate="cascade"), nullable=True, index=True)
@@ -30,6 +30,7 @@ class Message(Base):
     __to_dict__.update({
         'default': {
             'id'           : None ,
+            #'type'         : lambda message: message.__type__(),  # AllanC - the message type is based on who is observing it, a message could be 'sent' or 'to' depending on the viewing user. This adds complications # Now added to messages index
             'source_id'    : None ,
             'target_id'    : None ,
             'timestamp'    : None ,
@@ -55,6 +56,30 @@ class Message(Base):
     def __link__(self):
         from civicboom.lib.web import url
         return url('message', id=self.id, sub_domain='www', qualified=True)
+
+    def invalidate_cache(self, remove=False):
+        from civicboom.lib.cache import invalidate_message
+        invalidate_message(self, remove=remove)
+
+    def __type__(self, member=None):
+        """
+         oh jesus, this is duplicated in the messages_index method as well as a post to_dict overlay
+        """
+        try:
+            member = member.id
+        except:
+            pass
+        if not member:
+            return None
+        if     self.source_id == member and     self.target_id          :
+            return 'sent'
+        if     self.source_id == member and not self.target_id          :
+            return 'public'
+        if     self.source_id           and     self.target_id == member:
+            return 'to'
+        if not self.source_id           and     self.target_id == member:
+            return 'notification'
+
 
     def delete(self):
         from civicboom.lib.database.actions import del_message

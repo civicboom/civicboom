@@ -29,7 +29,6 @@ HTML.js    .hide_if_js   {display: none;}
  * and body can be smaller with white borders?
  */
 HTML, BODY {
-  
 	/* background: #DDD; */
 }
 /*
@@ -380,10 +379,9 @@ DIV#app .button {
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top), color-stop(0.81, $button-bot)); /* for webkit browsers */
 	background: -moz-linear-gradient(top, $button-top, $button-bot 81%); /* for firefox 3.6+ */
 	color: $button-txt;
-	
-						-moz-box-shadow: 1px 1px 1px #666;
-						-webkit-box-shadow: 1px 1px 1px #666;
-						box-shadow: 1px 1px 1px #666;
+	-moz-box-shadow: 1px 1px 1px #666;
+	-webkit-box-shadow: 1px 1px 1px #666;
+	box-shadow: 1px 1px 1px #666;
 }
 .button:hover {
 	background: $button-top + #101010; /* for non-css3 browsers */
@@ -400,8 +398,8 @@ DIV#app .button {
 }
 
 .button_large {
-  padding: 4px 4px 4px 4px;
-  font-size: 125%;
+	padding: 4px 4px 4px 4px;
+	font-size: 125%;
 }
 
 .border {
@@ -414,14 +412,14 @@ DIV#app .button {
 }
 
 .border_box {
-  display: inline-block;
-  background: white;
+	display: inline-block;
+	background: white;
 
-  border-radius        : $button-radius;
-  -moz-border-radius   : $button-radius;
-  -webkit-border-radius: $button-radius;
-  
-  border: 1px solid #BBB;
+	border-radius        : $button-radius;
+	-moz-border-radius   : $button-radius;
+	-webkit-border-radius: $button-radius;
+
+	border: 1px solid #BBB;
 }
 /*----------------------------------------------------------------------------*/
 /* Filters                                                                    */
@@ -499,18 +497,18 @@ DIV#app .button {
 	}
 	
 	.mo-help-l {
-    right: 0em;
+		right: 0em;
 	}
 	
 	.mo-help-r {
-    left: 0em;
+		left: 0em;
 	}
 	
 	.mo-help-b {
-    bottom: auto;
-    heigth: auto;
-    top: 0em;
-    margin-top: 2em;
+		bottom: auto;
+		heigth: auto;
+		top: 0em;
+		margin-top: 2em;
 	}
 	
 	.mo-help-r:hover, .mo-help-l:hover {
@@ -519,9 +517,9 @@ DIV#app .button {
 }
 
 .mo-help:hover {
-  .mo-help-r, .mo-help-l {
-    display: block;
-  }
+	.mo-help-r, .mo-help-l {
+		display: block;
+	}
 }
 
 
@@ -530,11 +528,11 @@ DIV#app .button {
 /*----------------------------------------------------------------------------*/
 
 .fl {
-  float: left;
+	float: left;
 }
 .fr {
-  float: right;
+	float: right;
 }
 .cb {
-  clear: both;
+	clear: both;
 }

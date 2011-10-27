@@ -5,12 +5,9 @@
  * signin page, 3 forms for "log in", "forgotten password" and "register"
  */
 BODY.c-account.a-signin {
-
     .signin_action_description {
         display: inline-block;
-        
 		/* padding: 16px; */
-        
         margin-bottom: 1em;
         width: 940px;
     }
@@ -19,7 +16,6 @@ BODY.c-account.a-signin {
         margin-top: 1em;
 		margin-left: auto;
 		margin-right: auto;
-        
         text-align: center;
 	}
     
@@ -86,11 +82,9 @@ BODY.c-register.a-check_email {
 	}
     /*
 	TD.body {
-		
         background: white;
 		border-radius: 16px;
 		padding: 16px;
-      
 	}
     */
 }

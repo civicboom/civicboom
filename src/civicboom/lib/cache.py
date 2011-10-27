@@ -41,6 +41,22 @@ Concepts
     This object is pickeled and stored in the member or content bucket
     On a change to a member or content object the cached pickedled blob key is completly removed from the cache
     As the key it not present, it is refetched and placed in the cache next get
+    
+    
+  cacheable_lists
+    These dicts are used to identify the cache_key a list version number is stored under.
+    Example:
+      list identifyer
+        'responses'   : {'list':'responses'  , 'creator':None},
+      a call to contents index could be made with
+        'list':'responses', 'creator':'bob', 'limit'=9
+      this would enable this list to lookup the version number for
+        'responses' 'bob'
+        
+      commentary
+        'responses'         - is part of the name of the key the version number is stored in in redis
+        'list': 'responses' - is a paramiter that must be present for this list to be identifyed
+        'creator': None     - means that the creator name is part of the redis key
 """
 
 from pylons import app_globals, tmpl_context as c, config
@@ -56,6 +72,7 @@ log = logging.getLogger(__name__)
 cache_separator     = ':'
 key_var_separator   = '='
 list_item_separator = ','
+
 
 cacheable_lists = {
     'contents_index': {
@@ -80,12 +97,13 @@ cacheable_lists = {
         'members_of'  : {'members_of' : None},
         'boomed'      : {'boomed'     : None},
     },
-    'mesages_index': {
-        'all'         : {'list':'all'         },
-        'to'          : {'list':'to'          },
-        'sent'        : {'list':'sent'        },
-        'public'      : {'list':'public'      },
-        'notification': {'list':'notification'},
+    'messages_index': {
+        'all'              : {'list':'all'             , '_logged_in_persona': None},
+        'to'               : {'list':'to'              , '_logged_in_persona': None},
+        'sent'             : {'list':'sent'            , '_logged_in_persona': None},
+        'public'           : {'list':'public'          , '_logged_in_persona': None},
+        'notification'     : {'list':'notification'    , '_logged_in_persona': None},
+        'conversation_with': {'conversation_with': None, '_logged_in_persona': None},
     },
     'members_show' : {}, # Not used, just here as a reminder that these lists are tracked with version numbers
     'contents_show': {},
@@ -418,3 +436,24 @@ def invalidate_content(content, remove=False):
         # TODO
         # accepted lists
         # member index lists
+
+
+def invalidate_message(message, remove=False):
+    """
+    incomplete
+    """
+    #_invalidate_obj_cache('message', message)
+    #invalidate_list_version('message', message.id)
+
+    # invalidate all?
+    
+    #if notification
+    # invalidatate notifications
+    
+    #if public
+    # invalidate public messages
+    
+    #if member to member message
+    # to, sent,
+    #invalidate_list_version('messages_index', 'conversation_with', message.source_id, message.target_id)
+    pass

@@ -1,17 +1,13 @@
 <%inherit file="/html/mobile/common/mobile_base.mako"/>
 
-## includes
-<%namespace name="components"      file="/html/mobile/common/components.mako" />
 
-<%def name="page_title()">
-    ${_("Register")}
-</%def>
+<%def name="title()">${_("Register")}</%def>
 
 <%def name="body()">
     <div data-role="page">
         <div data-role="content" id="register">
-            ${components.title_logo()}
-            <h1>Just a few more details and you'll be booming!</h1>
+            ${self.title_logo()}
+            <h1>${_("Just a few more details and you'll be booming!")}</h1>
 
             <div id="reg_form">
                 <form action="" method="post" data-ajax="false">
@@ -117,8 +113,9 @@
     </div>
     </%doc>
     <div data-role="fieldcontain">
+        ${invalid('dob')}
         <label for="dob"><b>Date of birth</b> <small>(yyyy-mm-dd)</small></label>
-        <input id="dob" name="dob" type="text" />
+        <input id="dob" name="dob" type="text" value="${h.get_data_value('dob','register','')}" />
     </div>
 </%def>
 
@@ -185,6 +182,6 @@
                 </label>
             % endfor
         </fieldset>
-        <small>This will simply alter what guidance appears to you on the desktop website and will not affect any features!</small>
+        <small>${_("This will simply alter what guidance appears to you on the desktop website and will not affect any features!")}</small>
     </div>
 </%def>
