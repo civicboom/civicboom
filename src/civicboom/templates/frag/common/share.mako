@@ -10,7 +10,7 @@
     
     def clean_string(s):
         if isinstance(s, basestring):
-            return s.replace("'", "\\'")
+            return s.replace('"', '\\\"')
         return ''
     
     def __(s):
@@ -482,12 +482,12 @@ share_data = {
         share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')}
     %>
     $(function() {
-        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'") | n};
+        var content   = ${json.dumps(cd)| n};
         var url       = content.url;
         var variables = {
-            share_display:                '${clean_string(_(share_data_tag))}',
-            action_share_description:     '${clean_string(_(share_data_desc))}',
-            share_usergen_default:        '${clean_string(_(share_usergen_default)) | n}',
+            share_display:                "${clean_string(_(share_data_tag)) | n}",
+            action_share_description:     "${clean_string(_(share_data_desc)) | n}",
+            share_usergen_default:        "${clean_string(_(share_usergen_default)) | n}",
             action_page_title:           content.title,
             action_page_description:     content.user_generated_content,
             action_links:                 content.action_links,
@@ -515,15 +515,16 @@ share_data = {
                                                 'href': h.url('member', id=member['username'], qualified=True),
                                             }, ],
         }
+        print cd
         share_usergen_default = _(share_data_type) % {'name': cd['title']}
     %>
     $(function() {
-        var content   = ${json.dumps(cd).replace("'", "\\\'").replace('\\\"', "\\\'").replace('"', "'") | n};
+        var content   = ${json.dumps(cd) | n};
         var url       = content.url;
         var variables = {
-            share_display:              '${clean_string(_(share_data_tag))}',
-            action_share_description:   '${clean_string(_(share_data_desc))}',
-            share_usergen_default:      '${clean_string(_(share_usergen_default)) | n}',
+            share_display:              "${clean_string(_(share_data_tag)) | n}",
+            action_share_description:   "${clean_string(_(share_data_desc)) | n}",
+            share_usergen_default:      "${clean_string(_(share_usergen_default)) | n}",
             action_page_title:          content.title,
             action_page_description:    content.user_generated_content,
             action_links:               content.action_links,
