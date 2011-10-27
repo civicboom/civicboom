@@ -229,13 +229,12 @@
     ## Persona switch (page)
     ##--------------------------------------------------------------------------
 
-    <div data-role="page" data-theme="b" id="member-persona-{id}" class="member_persona">
+    <div data-role="page" data-theme="b" id="member-persona-${id}" class="member_persona">
         
         <div data-role="header" data-position="inline" data-id="page_header" data-theme="b">
             <h1>Switch persona</h1>
         </div>
-            
-            
+        
         <div data-role="content">
             <h2>Select the persona you want to switch to</h2>
             <ul data-role="listview" data-inset="true">
@@ -246,7 +245,7 @@
                     <li
                         % if current_persona:
                             class   = "current_persona"
-                            onclick = "window.location = '/profile';"
+                            ##onclick = "window.location = '/profile';"
                             data-theme  = "a"
                         % else:
                             onclick = "$(this).find('form').submit();"
@@ -259,13 +258,12 @@
                                 <p>${_(k.capitalize())}: ${_(str(v).capitalize())}</p>
                             % endif
                         % endfor
-                        <%doc>
+                        
                         % if not current_persona:
                             ${self.form_button(h.url(controller='account', action='set_persona', id=member.username, format='html'), _('Switch persona'), class_='hidden')}
                         % else:
                             <p>This is your current persona</p>
                         % endif
-                        </%doc>
                     </li>
                 </%def>
                 
