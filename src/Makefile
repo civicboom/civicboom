@@ -117,10 +117,10 @@ css:
 
 sass-once:
 	$(MAKE) -C civicboom/public/styles common/icons.scss
-	cd civicboom/public/styles && sass --line-numbers --update .:.
+	cd civicboom/public/styles && sass --line-numbers --line-comments --debug-info --update .:.
 
 sass:
-	cd civicboom/public/styles && sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
+	cd civicboom/public/styles && sass --line-numbers --line-comments --debug-info --watch .:. >/tmp/sass.log 2>&1 &
 
 # redirecting stdout means that the file is created even if the process fails.
 # the mv on the second line only happens if it succeeds

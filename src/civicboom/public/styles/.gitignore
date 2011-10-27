@@ -1,9 +1,7 @@
-/mobile.css
-/web.css
-/widget.css
+/*.css
+/*.scss
 /common/icons.png
-/common/icons.css
-/common/icons.scss
+/common/_icons.scss
 /*.png
 /*.svg
 *.css
