@@ -1,8 +1,5 @@
-/*.css
-/*.scss
-/common/icons.png
-/common/_icons.scss
-/*.png
-/*.svg
 *.css
+/*.scss
+/icons.png
+/common/_icons.scss
 .sass-cache
