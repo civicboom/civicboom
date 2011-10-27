@@ -1,250 +1,227 @@
 
-#frag_containers .frag_container {
-    table.content tr td { padding-right: 3px; }
-    table.content tr td.x { padding-left: 3px; }
-
-    .ui-button {
-        margin-right: 1em;
+#frag_containers .frag_container .frag_content {
+    div.details {
+        padding-top: 8px;
     }
 
-	.what-next, .why-respond {
-	    color: #666;
-	    margin: 1.5em auto 0 0.5em;
-	    font-size: 105%;
-	}
-	
-	.featured-mobile {
-		width: 100%;
-		font-size: 120%;
-		text-align: center;
-		font-weight: bold;
-		padding-top: 15px;
-	}
+    .media_container {
+        text-align: center;
+    }
 
-	.frag_content {
-        div.details {
-            padding-top: 8px;
+	.frag_top_row {
+		margin-bottom: 0;
+		
+        .hidden {
+            display: none;
         }
-
-        .media_container {
-            text-align: center;
-        }
-
-		.frag_top_row {
+		
+		.frag_col {
 			margin-bottom: 0;
-			
-            .hidden {
-                display: none;
-            }
-			
-			.frag_col {
-				margin-bottom: 0;
-			}
-			
-			.content_title_table {
-			    width: 100%;
+		}
+		
+		.content_title_table {
+		    width: 100%;
+		    
+			.content_title {
+			    padding: 0;
 			    
-				.content_title {
-				    padding: 0;
-				    
-				    h1, .actions {
-				        margin: 4px 0 4px 0;
-				        padding-bottom: 0.5em;
-				    }
-				    
-				    h1 {
-			            float: left;
-			            max-width: 85%;
-				    }
-				    
-				}
-				
-			    .actions {
-			        max-width: 40px;
-			        padding-top: 10px;
-			        
-			        .separator {
-			            padding: 2px;
-			        }
+			    h1, .actions {
+			        margin: 4px 0 4px 0;
+			        padding-bottom: 0.5em;
 			    }
-			}
-			.media_icon {
-				padding: 0;
-				width: 40px;
-				height: 40px;
-				float: right;
-				border: 1px solid #ddd;
-				
-				img {
-					width: inherit;
-					height: inherit;
-				}
+			    
+			    h1 {
+		            float: left;
+		            max-width: 85%;
+			    }
+			    
 			}
 			
-			.creator_avatar {
-				float: left;
-				margin-right: 5px;
-			}
-			
-			h1 {
-				//color: #333;
-				//font-size: 200%;
-			}
-			
-			.content_text {
-				color: #666;
-				font-size: 125%;
-				margin-bottom: 0.5em;
-			}
-            
-            .video_embed {
-                width: 100%;
-                height: 255px;
-            }
-			
-			.olMap {
-				margin-bottom: 1em;
-			}
-			
-			.acceptrequest {
-				font-size: 125%;
-				display: inline;
-				text-align: left;
-				
-				table {
-					width: 100%;
-					
-					.button {
-						width: 250px;
-						padding: 10px;
-					}
-					
-					.tip {
-						font-size: 85%;
-						color: #666;
-						width: 75px;
-					}
-				}
-			}
-			
-			.details {
-				color: #666;
-				display: inline;
-			
-				.separator {
-					padding-left: 1em;
-				}
-			}
+		    .actions {
+		        max-width: 40px;
+		        padding-top: 10px;
+		        
+		        .separator {
+		            padding: 2px;
+		        }
+		    }
 		}
-		
-		.frag_left_col {
-			width: 66%;
-			float: left;
-		}
-	
-		.frag_right_col {
-			width: 33%;
+		.media_icon {
+			padding: 0;
+			width: 40px;
+			height: 40px;
 			float: right;
+			border: 1px solid #ddd;
 			
-			.license {
-				text-align: right;
+			img {
+				width: inherit;
+				height: inherit;
 			}
 		}
 		
-		.content_box {
-			.media {
-				text-align: center;
-			}
+		.creator_avatar {
+			float: left;
+			margin-right: 5px;
+		}
+		
+		h1 {
+			//color: #333;
+			//font-size: 200%;
 		}
 		
 		.content_text {
-			word-wrap: break-word;
-		}
-		
-		/* --- guide --- */
-		TABLE.approve {
-
-		}
-		
-		TABLE.disassociate {
-
-        }
-        
-        .response_guide {
-            background-image: url('/images/misc/contenticons/guide_separator.png');
-            background-repeat: repeat-y;
-            background-position: center;
-            
-            .guidance_title:hover, .guidance_text:hover {
-                text-decoration: underline;
-            }
-        }
-	
-		/*----------------------------Content Comments--------------------------------*/
-	
-		.new-comment {
-			display: none;
-		}
-	
-		.comments-option {
 			color: #666;
-			padding-top: 1em;
+			font-size: 125%;
+			margin-bottom: 0.5em;
 		}
-	
-		.show-comments {
-			font-weight: bold;
-			text-decoration: underline;
-			cursor: pointer;
+        
+        .video_embed {
+            width: 100%;
+            height: 255px;
+        }
+		
+		.olMap {
+			margin-bottom: 1em;
 		}
-	
-		.comments {
+		
+		.acceptrequest {
+			font-size: 125%;
+			display: inline;
+			text-align: left;
+			
 			table {
 				width: 100%;
-			}
-			
-			h2 {
-				font-size: 150%;
-			}
-			
-			td {
-				vertical-align: top;
-				color: #444;
-				padding-bottom: 1em;
-			}
-			
-			textarea {
-				width: 100%;
-				min-height: 60px;
-			}
-			
-			input {
-				width: 100%;
-			}
-	
-			.comment_avatar {
-				width: 40px;
-			}
-	
-			.comment {
-				padding-left: 1em;
-	
-				.comment_by {
-					font-weight: bold;
-					margin-bottom: 0.25em;
+				
+				.button {
+					width: 250px;
+					padding: 10px;
 				}
 				
-				.comment_content {
-					font-size:  88%;
-					line-height: 1em;
-	
-					/* stop over-wide comments */
-					max-width: 228px;
-					word-wrap: break-word;
+				.tip {
+					font-size: 85%;
+					color: #666;
+					width: 75px;
 				}
-				//could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
-				//.comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
-				//.comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
 			}
+		}
+		
+		.details {
+			color: #666;
+			display: inline;
+		
+			.separator {
+				padding-left: 1em;
+			}
+		}
+	}
+	
+	.frag_left_col {
+		width: 66%;
+		float: left;
+	}
+
+	.frag_right_col {
+		width: 33%;
+		float: right;
+		
+		.license {
+			text-align: right;
+		}
+	}
+	
+	.content_box {
+		.media {
+			text-align: center;
+		}
+	}
+	
+	.content_text {
+		word-wrap: break-word;
+	}
+	
+	/* --- guide --- */
+	TABLE.approve {
+
+	}
+	
+	TABLE.disassociate {
+
+    }
+    
+    .response_guide {
+        background-image: url('/images/misc/contenticons/guide_separator.png');
+        background-repeat: repeat-y;
+        background-position: center;
+        
+        .guidance_title:hover, .guidance_text:hover {
+            text-decoration: underline;
+        }
+    }
+
+	/*----------------------------Content Comments--------------------------------*/
+
+	.new-comment {
+		display: none;
+	}
+
+	.comments-option {
+		color: #666;
+		padding-top: 1em;
+	}
+
+	.show-comments {
+		font-weight: bold;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.comments {
+		table {
+			width: 100%;
+		}
+		
+		h2 {
+			font-size: 150%;
+		}
+		
+		td {
+			vertical-align: top;
+			color: #444;
+			padding-bottom: 1em;
+		}
+		
+		textarea {
+			width: 100%;
+			min-height: 60px;
+		}
+		
+		input {
+			width: 100%;
+		}
+
+		.comment_avatar {
+			width: 40px;
+		}
+
+		.comment {
+			padding-left: 1em;
+
+			.comment_by {
+				font-weight: bold;
+				margin-bottom: 0.25em;
+			}
+			
+			.comment_content {
+				font-size:  88%;
+				line-height: 1em;
+
+				/* stop over-wide comments */
+				max-width: 228px;
+				word-wrap: break-word;
+			}
+			//could look into quotes properly - http://monc.se/kitchen/129/rendering-quotes-with-css
+			//.comment_content:before {font-size: 120%; font-weight: bold; content: open-quote;}
+			//.comment_content:after  {font-size: 120%; font-weight: bold; content: close-quote;}
 		}
 	}
 }

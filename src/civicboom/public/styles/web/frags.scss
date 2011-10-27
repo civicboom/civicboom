@@ -29,6 +29,27 @@
 		/*bottom: 0em;
 		position: relative;
 		*/
+
+        table.content tr td { padding-right: 3px; }
+        table.content tr td.x { padding-left: 3px; }
+
+        .ui-button {
+            margin-right: 1em;
+        }
+
+        .what-next, .why-respond {
+            color: #666;
+            margin: 1.5em auto 0 0.5em;
+            font-size: 105%;
+        }
+        
+        .featured-mobile {
+            width: 100%;
+            font-size: 120%;
+            text-align: center;
+            font-weight: bold;
+            padding-top: 15px;
+        }
 		
 		.content_box {
 			background: $frag-list-top; /* for non-css3 browsers */
