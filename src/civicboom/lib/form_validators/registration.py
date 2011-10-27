@@ -63,9 +63,10 @@ class UniqueEmailValidator(validators.Email):
     def __init__(self, *args, **kwargs):
         self.check_unverifyed_emails = kwargs.pop('check_unverifyed_emails', self.check_unverifyed_emails)
         kwargs['resolve_domain'] = False
-        from pylons import config
-        if config['online']:
-            kwargs['resolve_domain'] = True
+        # AllanC - bugfix - client had domain name without an A record in the DNS, this prevented the validation of the email address. For now we are disbaling domain checking
+        #from pylons import config
+        #if config['online']:
+        #    kwargs['resolve_domain'] = True
         validators.Email.__init__(self, *args, **kwargs)
 
     def _to_python(self, value, state):
