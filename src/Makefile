@@ -361,6 +361,9 @@ stopsys:
 ##############################################################################
 # human readable aliases
 
+sass:
+	$(MAKE) css-daemon 2>&1 >/dev/null &
+
 api-doc: civicboom/public/doc/index.html
 
 schemadiff: update.sql
