@@ -1,0 +1,98 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+#frag_containers .frag_container .frag_member {
+	/*-------------------------- Frag Member Cols---------------------------------*/
+	.frag_top_row {
+		/*padding: 0.5em 0.9em 0 0.9em;*/
+		color: #333;
+		
+		h1 {
+			margin-left: 0.5em;
+			margin-bottom: 0.5em;
+		}
+		
+		.frag_col {
+			margin-bottom: 0;
+		}
+			
+		.member_details {				
+			padding: 0.4em;
+			
+			.button {
+				font-size: 110%;
+			}
+			
+			.col_left {
+				float: left;
+				width: 74%;
+				
+				.name, .website, .description {
+					padding-left: 8px;
+					padding-bottom: 4px;
+					margin: 0px;
+					word-wrap: break-word;
+				}
+				.name {
+					padding-bottom: 0px;
+				}
+				.description {
+					max-height: 10em;
+					overflow-y: auto;
+				}
+			}
+			
+			.col_right {
+				float: right;
+				width: 25%;
+				text-align: center;
+				
+				.avatar {
+					padding-top: 1em;
+                    img {
+                        max-width: 100%;
+                        max-height: 600px;
+                        // @include border_radius(0.5em);
+                        border: 1px solid #ccc;
+                    }
+				}
+				
+				.button {
+					margin-top: 1em;
+					font-size: 110%;
+					width: 80%;
+				}
+				
+				.boombox_link {
+					font-size: 120%;
+					margin-top: 1em;
+				}
+			}
+		}
+	}
+
+	.frag_left_col {
+		width: 33%;
+		float: left;
+	}
+	.frag_right_col {
+		width: 66%;
+		float: right;
+	}
+
+	/*---------------------------Frag Member Avatar-------------------------------*/
+	.avatar {
+		text-align: center;
+	}
+
+	/*---------------------------Frag Member User Details-------------------------*/
+	.user-details {
+		margin-top: 10px;
+		margin-left: 5px;
+
+		.detail-title {
+			font-weight: bold;
+		}
+	}
+}
+

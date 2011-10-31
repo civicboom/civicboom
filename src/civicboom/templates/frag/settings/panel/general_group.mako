@@ -99,75 +99,24 @@
                     </div>
                     % if c.action == 'new':
                         <div class="group-block wide_label">
-                            <label for="create_push_assignment">${_("Add an automatic 'Send your stories' request to this _Group's _Widget and profile?")}</label>
+                            <label for="create_push_assignment">${_("Members can give us stories directly")}</label>
                             <input type="checkbox" name="create_push_assignment" id="create_push_assignment" />
+                            <p>${_('This adds an automatic "Send your stories" request when creating this _Group?')}</p>
                         </div>
                     % endif
                 </fieldset>
+                
                 <fieldset>
                     <span class="number fl">3.</span>
                     <div class="group-block">
                         <div onclick="toggle_edit_section($(this));" class="edit_input">
-                            <span class="label">${_('When others join your _Group what default role do you want them to have?')}</span>
-                            <span class="icon16 i_plus"></span>${show_error('default_role')}
-                        </div>
-                        <div class="hideable">
-                            <ul>
-                                <li>
-                                    <div class="fl">
-                                        <input type="radio" class="radio" name="default_role" ${'checked=checked' if get_param('default_role') == 'observer' else ''} value="observer" id="default_role_observer" />
-                                        <label for="default_role_observer">${_('Observer')}</label>
-                                    </div>
-                                    <div class="radio-right">
-                                        <span class="b">${_('Minimum access:')}</span>
-                                        ${_('they can view drafts and comment on them')}
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="fl">
-                                        <input type="radio" class="radio" name="default_role" ${'checked=checked' if get_param('default_role') == 'contributor' else ''} value="contributor" id="default_role_contributor" />
-                                        <label for="default_role_contributor">${_('Contributor')}</label>
-                                    </div>
-                                    <div class="radio-right">
-                                        <span class="b">${_('Basic access:')}</span>
-                                        ${_('the above plus ability to create and edit drafts.')}
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="fl">
-                                        <input type="radio" class="radio" name="default_role" ${'checked=checked' if get_param('default_role') == 'editor' else ''} value="editor" id="default_role_editor" />
-                                        <label for="default_role_editor">${_('Editor')}</label>
-                                    </div>
-                                    <div class="radio-right">
-                                        <span class="b">${_('Medium access:')}</span>
-                                        ${_('the above plus ability to post requests.')}
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="fl">
-                                        <input type="radio" class="radio" name="default_role" ${'checked="checked"' if get_param('default_role') == 'admin' else ''} value="admin" id="default_role_admin" />
-                                        <label for="default_role_admin">${_('Administrator')}</label>
-                                    </div>
-                                    <div class="radio-right">
-                                        <span class="b">${_('Maximum access:')}</span>
-                                        ${_('the above plus the ability to invite others to join Hub and set member roles.')}
-                                    </div>
-                                </li>
-                            </ul>
-                            ${_('Note: By creating this _Group you are automatically set as an Administrator.')}
-                        </div>
-                    </div>
-                </fieldset>
-                <fieldset>
-                    <span class="number fl">4.</span>
-                    <div class="group-block">
-                        <div onclick="toggle_edit_section($(this));" class="edit_input">
-                            <span class="label">${_('How do you want others to join this _Group?')}</span>
+                            <span class="label">${_('How do members join?')}</span>
                             <span class="icon16 i_plus"></span>
                             ${show_error('join_mode')}
                         </div>
                         <div class="hideable">
                             <ul>
+                                <%doc>
                                 <li>
                                     <div class="fl">
                                         <input type="radio" class="radio" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'public' else ''} value="public" id="join_mode_public" />
@@ -179,30 +128,91 @@
                                         <span class="error">${_('Do not create an open Hub if you are not prepared for general access. For tighter join modes please see Public and Private options.')}</span>
                                     </div>
                                 </li>
+                                </%doc>
                                 <li>
                                     <div class="fl">
                                         <input type="radio" class="radio" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite_and_request' else ''} value="invite_and_request" id="join_mode_invite_and_request" />
-                                        <label for="join_mode_invite_and_request">${_('Public')}</label>
+                                        <label for="join_mode_invite_and_request">${_('Request to join')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">${_('Medium control:')}</span>
-                                        ${_('Anyone can request to join this Hub, and you can invite others to join. You also have the ability to accept or decline requests to join.')}
+                                        ##<span class="b">${_('Medium control:')}</span>
+                                        ${_('Anyone can request to join. Administrators have to approve the request')}
                                     </div>
                                 </li>
                                 <li>
                                     <div class="fl">
                                         <input type="radio" class="radio" name="join_mode" ${'checked="checked"' if get_param('join_mode') == 'invite' else ''} value="invite" id="join_mode_invite" />
-                                        <label for="join_mode_invite">${_('Private')}</label>
+                                        <label for="join_mode_invite">${_('Invitation only')}</label>
                                     </div>
                                     <div class="radio-right">
-                                        <span class="b">${_('Maximum control:')}</span>
-                                        ${_('This gives you strictest control of who joins your Hub. It is invite only and as an administrator you decide who to invite.')}
+                                        ##<span class="b">${_('Maximum control:')}</span>
+                                        ${_('An administrator must invite members to join. The members can then accept the invitation')}
                                     </div>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </fieldset>
+                
+                <fieldset>
+                    <span class="number fl">4.</span>
+                    <div class="group-block">
+                        <div onclick="toggle_edit_section($(this));" class="edit_input">
+                            <span class="label">${_('Members will join as ...')}</span>
+                            ##When others join your _Group what default role do you want them to have?
+                            <span class="icon16 i_plus"></span>${show_error('default_role')}
+                        </div>
+                        <div class="hideable">
+                            <ul>
+                                <li>
+                                    <div class="fl">
+                                        <input type="radio" class="radio" name="default_role" ${'checked=checked' if get_param('default_role') == 'observer' else ''} value="observer" id="default_role_observer" />
+                                        <label for="default_role_observer">${_('Observer')}</label>
+                                    </div>
+                                    <div class="radio-right">
+                                        ##<span class="b">${_('Minimum access:')}</span>
+                                        ${_('they can view drafts and comment on them')}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fl">
+                                        <input type="radio" class="radio" name="default_role" ${'checked=checked' if get_param('default_role') == 'contributor' else ''} value="contributor" id="default_role_contributor" />
+                                        <label for="default_role_contributor">${_('Contributor')}</label>
+                                    </div>
+                                    <div class="radio-right">
+                                        ##<span class="b">${_('Basic access:')}</span>
+                                        ${_('ability to create and edit drafts.')}
+                                        ##the above plus 
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fl">
+                                        <input type="radio" class="radio" name="default_role" ${'checked=checked' if get_param('default_role') == 'editor' else ''} value="editor" id="default_role_editor" />
+                                        <label for="default_role_editor">${_('Editor')}</label>
+                                    </div>
+                                    <div class="radio-right">
+                                        ##<span class="b">${_('Medium access:')}</span>
+                                        ${_('ability to post requests.')}
+                                        ##the above plus 
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="fl">
+                                        <input type="radio" class="radio" name="default_role" ${'checked="checked"' if get_param('default_role') == 'admin' else ''} value="admin" id="default_role_admin" />
+                                        <label for="default_role_admin">${_('Administrator')}</label>
+                                    </div>
+                                    <div class="radio-right">
+                                        ##<span class="b">${_('Maximum access:')}</span>
+                                        ${_('the ability to invite others to join Hub and set member roles.')}
+                                        ##the above plus 
+                                    </div>
+                                </li>
+                            </ul>
+                            ${_('Note: By creating this _Group you are automatically set as an Administrator.')}
+                        </div>
+                    </div>
+                </fieldset>
+                
                 <fieldset>
                     <div class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
                         <span class="number fl">5.</span>

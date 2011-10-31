@@ -47,6 +47,11 @@ class TestListsController(TestController):
             config['search.default.limit.members'],
             config['search.default.limit.contents']
         ]
+        some_id = None
         for count in range(max(limits) + 1):
             create_member('list_member_%s' % count, count)
-            create_content('list_content_%s' % count)
+            some_id = create_content('list_content_%s' % count)
+
+        r = self.app.get(url('contents', format='json', id=some_id))
+        response_json = json.loads(r.body)
+        self.assertEquals(response_json['data']['list']['count'], 1)

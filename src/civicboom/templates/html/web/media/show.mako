@@ -50,6 +50,7 @@
         ${_("unrecognised media type: %s") % type}
     % endif
     ${media_details(media)}
+    <p><a href="${media['original_url']}" target="_blank">Download media source</a></p>
 </%def>
 
 ## ---
@@ -72,8 +73,10 @@
         % if credit:
             <p class="credit">Credited to <b>${credit}</b></p>
         % endif
-    </td><td class="media_type">
+    </td>
+    <td class="media_type">
         <img src="/images/misc/shareicons/carousel_${media['type']}_icon.png" class="type_icon" />
+    </td>
     </tr></table>
 </%def>
     

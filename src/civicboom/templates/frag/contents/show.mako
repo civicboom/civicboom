@@ -211,24 +211,29 @@
 
 <%def name="content_title()">
     ##----Title----
-    <table class="content_title_table"><tr>
-    
-    <td class="content_title">
-        <h1>${self.content['title']}</h1>
-    </td>
-
-    <td rowspan="2" class="actions">
-        ${content_title_actions()}
-    </td>
-    
-    </tr><tr>
-    
-    <td class="creator_avatar">
-        ${member_includes.avatar(self.content['creator'], class_="thumbnail_small")}
-        ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
-    </td>
-    
-    </tr></table>
+    <table class="content_title_table">
+        <tr>
+            <td class="content_title">
+                <h1>${self.content['title']}</h1>
+            </td>
+            <td rowspan="2" class="actions">
+                ${content_title_actions()}
+            </td>
+        </tr>
+        <tr>    
+            <td class="creator_avatar">
+                ${member_includes.avatar(self.content['creator'], class_="thumbnail_small")}
+                ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
+            </td>
+        </tr>
+        % if self.content.get('approval') == 'approved':
+        <tr>
+            <td>
+                <span class="icon32 i_approved"></span>${_("Approved by ")} ${member_includes.member_link(self.content['parent']['creator'])}
+            </td>
+        </tr>
+        % endif
+    </table>
 </%def>
 
 <%def name="content_title_actions()">
@@ -584,7 +589,7 @@
         ## Load the content carousel to display previews of all content media
         <span class="carousel">
             ${media_includes.media_carousel(content['attachments'], content['id'])}
-        </span>    
+        </span>
     </div>
 </%def>
 
@@ -611,6 +616,12 @@
         #controls=True
     )}
     </p>
+    <!--
+    <div id="map_key">
+        <img src="/images/map-icons/marker-red.png"> This Article
+        <img src="/images/map-icons/marker-gold.png"> Near-by articles
+    </div>
+    -->
     % endif
 </%def>
 
@@ -902,7 +913,7 @@
     </div>
 </%def>
 
-    
+
 <%def name="content_actions_common()">
     
     % if 'edit' in self.actions:
