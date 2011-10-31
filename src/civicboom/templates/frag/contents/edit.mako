@@ -691,7 +691,7 @@
     </fieldset>
     % endif
 </%doc>
-    <span class="smaller"><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">View the Creative Commons license</a></span>
+    <span class="smaller">This _content will be published under <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">Creative Commons Attributed License <img src="/images/licenses/CC-BY.png"/></a></span>
     ${what_now_link()}
     <div class="separator"></div>
 </%def>

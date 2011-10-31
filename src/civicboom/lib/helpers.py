@@ -699,28 +699,3 @@ def links_to_frag_links(content):
     content = re.sub(regex_member_links , replace_member_link , content)
 
     return content
-
-#-------------------------------------------------------------------------------
-# CSS Files
-#-------------------------------------------------------------------------------
-def css_files(sub_styles="web", include_common=True):
-    """
-    Return a listing of CSS based on sub styles required
-    """
-    # Includes and constants
-    from glob import glob
-    style_path = "civicboom/public/"
-    # Normalise input
-    if isinstance(sub_styles, basestring):
-        sub_styles = sub_styles.split(',')
-    if not isinstance(sub_styles, list):
-        sub_styles = []
-    if include_common:
-        sub_styles.insert(0, "common")
-    # Get CSS file list
-    css_files = []
-    for sub_style in sub_styles:
-        css_files += glob("%sstyles/%s/*.css" % (style_path, sub_style))
-    css_files    = [css.replace(style_path,"") for css in css_files] #[n[len(style_path):] for n in css_all]
-    css_files.sort()
-    return css_files

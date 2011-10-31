@@ -584,7 +584,7 @@
         ## Load the content carousel to display previews of all content media
         <span class="carousel">
             ${media_includes.media_carousel(content['attachments'], content['id'])}
-        </span>    
+        </span>
     </div>
 </%def>
 
@@ -902,7 +902,7 @@
     </div>
 </%def>
 
-    
+
 <%def name="content_actions_common()">
     
     % if 'edit' in self.actions:
