@@ -13,8 +13,7 @@ help:
 	# site          -- the below (this should be done after git clone)
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
-	#   sass-once   -- compile scss files into css ones
-	#   css         -- compress folders of css into single files
+	#   css         -- compress folders of scss into single files
 	#   ini         -- generate production / demo / test.ini files
 	# sass          -- run a daemon to turn scss into css automatically
 	# test          -- run all nosetests
@@ -344,4 +343,4 @@ ini: production.ini demo.ini test.ini
 
 i18n: i18n-en
 
-site: i18n js sass-once css api-doc ini
+site: i18n js css-compressed api-doc ini
