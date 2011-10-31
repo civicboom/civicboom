@@ -7,10 +7,12 @@ Facebook
 LinkedIn
 reCAPTCHA
 Javascript
+PayPal
 
 Lite
 GeoRSS
 RSS
+GPS
 
 barcode
 username
@@ -26,6 +28,7 @@ geo
 Unfollow
 Woah
 crowdsource
+webcam
 
 min
 max
