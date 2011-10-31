@@ -318,7 +318,9 @@ cdnpush: js css-compressed ini
 ##############################################################################
 # other
 
-clean: db-clean
+clean: db-clean files-clean
+
+files-clean:
 	git clean -d -f -x
 
 gource:
