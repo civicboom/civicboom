@@ -211,24 +211,29 @@
 
 <%def name="content_title()">
     ##----Title----
-    <table class="content_title_table"><tr>
-    
-    <td class="content_title">
-        <h1>${self.content['title']}</h1>
-    </td>
-
-    <td rowspan="2" class="actions">
-        ${content_title_actions()}
-    </td>
-    
-    </tr><tr>
-    
-    <td class="creator_avatar">
-        ${member_includes.avatar(self.content['creator'], class_="thumbnail_small")}
-        ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
-    </td>
-    
-    </tr></table>
+    <table class="content_title_table">
+        <tr>
+            <td class="content_title">
+                <h1>${self.content['title']}</h1>
+            </td>
+            <td rowspan="2" class="actions">
+                ${content_title_actions()}
+            </td>
+        </tr>
+        <tr>    
+            <td class="creator_avatar">
+                ${member_includes.avatar(self.content['creator'], class_="thumbnail_small")}
+                ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
+            </td>
+        </tr>
+        % if self.content.get('approval') == 'approved':
+        <tr>
+            <td>
+                <span class="icon32 i_approved"></span>${_("Approved by ")} ${member_includes.member_link(self.content['parent']['creator'])}
+            </td>
+        </tr>
+        % endif
+    </table>
 </%def>
 
 <%def name="content_title_actions()">
