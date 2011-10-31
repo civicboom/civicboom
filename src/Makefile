@@ -13,8 +13,7 @@ help:
 	# site          -- the below (this should be done after git clone)
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
-	#   sass-once   -- compile scss files into css ones
-	#   css         -- compress folders of css into single files
+	#   css         -- compress folders of scss into single files
 	#   ini         -- generate production / demo / test.ini files
 	# sass          -- run a daemon to turn scss into css automatically
 	# test          -- run all nosetests
@@ -110,6 +109,9 @@ i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAG
 ##############################################################################
 # static files: CSS
 #
+#             common
+#        /       |      \
+#     /          |         \
 # web/*      mobile/*     widget/*
 #    |           |            |
 # web.scss   mobile.scss  widget.scss
@@ -136,14 +138,21 @@ $(STYLES)/common/_icons.scss: $(STYLES)/common/icons/*
 	cd $(STYLES) && pngcrush _icons.png icons.png
 	cd $(STYLES) && rm -f _icons.png
 
-sass: $(THEMES)
-	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --watch .:. >/tmp/sass.log 2>&1 &
-
 css: $(THEMES)
 	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --update .:.
 
 css-compressed: $(THEMES)
 	cd $(STYLES) && sass --style=compressed --update .:.
+
+css-daemon-start:
+	start-stop-daemon --start --oknodo -b -d . -m --pidfile /tmp/cb-css-daemon.pid --exec `which $(MAKE)` -- css-daemon
+
+css-daemon-stop:
+	start-stop-daemon --stop --oknodo --pidfile /tmp/cb-css-daemon.pid
+
+css-daemon: $(THEMES)
+	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --watch .:.
+
 
 
 ##############################################################################
@@ -253,6 +262,25 @@ live-db:
 
 
 ##############################################################################
+# ini files
+
+ini: production.ini demo.ini test.ini
+
+# redirecting stdout means that the file is created even if the process fails.
+# the mv on the second line only happens if it succeeds
+%.ini: %.inidiff development.ini
+	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
+
+ini-daemon-start:
+	start-stop-daemon --start --oknodo -b -d . -m --pidfile /tmp/cb-ini-daemon.pid --exec `which $(MAKE)` -- ini-daemon
+
+ini-daemon-stop:
+	start-stop-daemon --stop --oknodo --pidfile /tmp/cb-ini-daemon.pid
+
+ini-daemon:
+	while inotifywait *.ini ; do $(MAKE) ini ; done
+
+##############################################################################
 # run
 
 run: ini
@@ -261,7 +289,9 @@ run: ini
 run-dev:
 	$(MAKE) js-daemon-start
 	$(MAKE) css-daemon-start
-	paster serve --reload development.ini
+	$(MAKE) ini-daemon-start
+	paster serve --reload development.ini || true
+	$(MAKE) ini-daemon-stop
 	$(MAKE) css-daemon-stop
 	$(MAKE) js-daemon-stop
 
@@ -287,11 +317,6 @@ cdnpush: js css-compressed ini
 
 ##############################################################################
 # other
-
-# redirecting stdout means that the file is created even if the process fails.
-# the mv on the second line only happens if it succeeds
-%.ini: %.inidiff development.ini
-	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
 
 clean: db-clean
 	git clean -d -f -x
@@ -340,8 +365,6 @@ api-doc: civicboom/public/doc/index.html
 
 schemadiff: update.sql
 
-ini: production.ini demo.ini test.ini
-
 i18n: i18n-en
 
-site: i18n js sass-once css api-doc ini
+site: i18n js css-compressed api-doc ini
