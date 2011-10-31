@@ -95,7 +95,7 @@ __all__ = [
     "LocationFilter",
     "TypeFilter",
     "DueDateFilter", "UpdateDateFilter",
-    "IDFilter", "ParentIDFilter",
+    "ParentIDFilter",
     "CreatorFilter",
     "BoomedByFilter",
     "TagFilter",
@@ -410,33 +410,6 @@ class UpdateDateFilter(Filter):
             return "content.update_date %s %s" % (self.comparitor, self.date)
         else:
             return "content.update_date %s '%s'" % (self.comparitor, self.date)
-
-
-class IDFilter(Filter):
-    def __init__(self, id):
-        assert type(id) in [int, bool], debug_type(id)
-        self.id = id
-
-    @staticmethod
-    def from_string(s):
-        if s.isdigit():
-            return IDFilter(int(s))
-
-        raise FilterException("Content not found: %s" % s)
-
-    def __unicode__(self):
-        return "Content.id = %d" % self.id
-
-    def __repr__(self):
-        return "IDFilter(%d)" % self.id
-
-    def __sql__(self):
-        if self.id == False:
-            return "content.id IS NULL"
-        elif self.id == True:
-            return "content.id IS NOT NULL"
-        else:
-            return "content.id = %d" % self.id
 
 
 class ParentIDFilter(Filter):

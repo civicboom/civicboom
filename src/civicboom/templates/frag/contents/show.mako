@@ -611,6 +611,10 @@
         #controls=True
     )}
     </p>
+    <div id="map_key">
+        <img src="/images/map-icons/marker-red.png"> This Article
+        <img src="/images/map-icons/marker-gold.png"> Near-by articles
+    </div>
     % endif
 </%def>
 
