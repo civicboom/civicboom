@@ -84,7 +84,7 @@ BODY>DIV#app {
     		}
         
         a {
-            color: $link-frag-colour;
+            //color: $link-frag-colour; // link-frag-colour is depricated
             text-decoration: none;
             		
             &:hover {
