@@ -11,10 +11,6 @@
         font-size: 110%;
         color: #333;
     }
-    textarea.editor {
-        width: 310px; // 100% overflows o_O
-        height: 150px;
-    }
     span.padded {
         display: inline-block;
         width: 50pt;
@@ -60,6 +56,7 @@
     }
     .button {
         padding: 0.5em;
+        width: 120px;
     }
     .hideable {
         clear: both;
