@@ -136,7 +136,7 @@
                                     </div>
                                     <div class="radio-right">
                                         ##<span class="b">${_('Medium control:')}</span>
-                                        ${_('Anyone can request to join. Admisistrators have to approve the request')}
+                                        ${_('Anyone can request to join. Administrators have to approve the request')}
                                     </div>
                                 </li>
                                 <li>
@@ -146,7 +146,7 @@
                                     </div>
                                     <div class="radio-right">
                                         ##<span class="b">${_('Maximum control:')}</span>
-                                        ${_('An admisistrator must invite members to join. The members can then accept the invitation')}
+                                        ${_('An administrator must invite members to join. The members can then accept the invitation')}
                                     </div>
                                 </li>
                             </ul>

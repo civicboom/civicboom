@@ -12,7 +12,7 @@
         
         title_dict = {
             'to'          : _("Message"),
-            'sent'        : _("Sent Mesage"),
+            'sent'        : _("Sent Message"),
             'notification': _("Notification"),
             'public'      : _("Public Message"),
         }
