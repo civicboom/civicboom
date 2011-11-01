@@ -62,8 +62,8 @@ jquery.ui.js:
 	cd jquery-ui && git checkout 1.8.14
 	cd jquery-ui/ui/ && cat \
 		jquery.ui.core.js \
-		jquery.ui.mouse.js \
 		jquery.ui.widget.js \
+		jquery.ui.mouse.js \
 		jquery.ui.position.js \
 		jquery.ui.autocomplete.js \
 		jquery.ui.datepicker.js \
