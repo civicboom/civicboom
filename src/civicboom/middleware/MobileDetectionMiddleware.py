@@ -16,7 +16,7 @@ class MobileDetectionMiddleware(object):
             user_agent = environ['HTTP_USER_AGENT']
 
             # Test common mobile values.
-            pattern = "(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|windows ce|pda|mobile|mini|palm|netfront)"
+            pattern = "(up.browser|up.link|mmp|symbian|smartphone|midp|wap|phone|windows ce|pda|mobile|mini|palm|netfront|webos)"
             prog    = re.compile(pattern, re.IGNORECASE)
             match   = prog.search(user_agent)
 
@@ -57,11 +57,10 @@ class MobileDetectionMiddleware(object):
                 test = user_agent[0:4].lower() #Takes first 4 characters from the user agent and converts to lower case
                 if test in user_agents_test:
                     is_mobile = True
-
+        
         if is_mobile:
             environ['is_mobile'] = str(is_mobile)
         else:
             environ['is_mobile'] = None
-            
-
+        
         return self.app(environ, start_response)

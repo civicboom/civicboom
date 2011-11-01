@@ -323,6 +323,7 @@ class ContentsController(BaseController):
                     parts.append(_filter)
     
                 filter_map = {
+                    'id'         : IDFilter        ,
                     'creator'    : CreatorFilter   ,
                     'due_date'   : DueDateFilter   ,
                     'update_date': UpdateDateFilter,

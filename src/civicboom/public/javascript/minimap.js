@@ -23,7 +23,7 @@ function minimap(div_name, options, feeds) {
 	OpenLayers.Rico = {Corner: {
 		round: function(a, b){},
 		reRound: function(a, b){},
-		changeColor: function(a, b){a.parentElement.style.background=b;},
+		changeColor: function(a, b){ a.parentNode.style.background=b; },
 		changeOpacity: function(a, b){}
 	}};
 
