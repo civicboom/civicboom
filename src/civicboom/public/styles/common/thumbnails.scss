@@ -4,7 +4,7 @@
 .thumbnail {
     display: inline-block;
     border: 0.04em solid $thumbnail-border;
-    @include border_radius(0.1em);
+    // @include border_radius(0.1em);
 
     /*
      * avatar image outer edge is clipped tighter than the border's
@@ -13,18 +13,29 @@
     background: $thumbnail-back;
 
     font-size: 40px;
-    widlth: 1em;
-    height: 1em;
     
-    min-width : 1em;
-    min-height: 1em;
-    max-width : 1em;
-    max-height: 1em;
+    height: 1em;
+    width: 1em;
+
     overflow: hidden;
 
-    vertical-align: top;
+    
+    img {
+        min-width: 100%;
+      	max-width: 100%;
 
-	position: relative;
+      	// min-height: 100%;
+      	//min-height: 100%;
+      
+      	/*
+      	 * an image inside a div can overflow the div's rounded corners;
+      	 * as a hack, give the image rounded corners too (works in chrome,
+      	 * at least; FF3.6 doesn't support images with rounded corners,
+      	 * FF4 does, not sure about other browsers)
+      	 */
+      	// @include border_radius(0.075em);
+
+	  }
 }
 
 .thumbnail_small {
@@ -35,25 +46,6 @@
 
 .thumbnail_large {
 	font-size: 80px;
-}
-
-.thumbnail .img {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-
-	width: 1em;
-	height: 1em;
-
-	/*
-	 * an image inside a div can overflow the div's rounded corners;
-	 * as a hack, give the image rounded corners too (works in chrome,
-	 * at least; FF3.6 doesn't support images with rounded corners,
-	 * FF4 does, not sure about other browsers)
-	 */
-	border-radius        : 0.075em;
-	-moz-border-radius   : 0.075em;
-	-webkit-border-radius: 0.075em;
 }
 
 .thumbnail .icons {
