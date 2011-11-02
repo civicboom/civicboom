@@ -6,14 +6,14 @@ export PGPASSWORD := civicboom
 export PGOPTIONS  := --client-min-messages=warning
 
 GIT_TAG    := $(shell git describe)
+TIMESTAMP  := $(shell date +%s)
 
 help:
 	# Usage: make <target>, where target is
 	# site          -- the below (this should be done after git clone)
 	#   i18n        -- compile the translations
 	#   js          -- compress javascript into _combined.head.js and foot.js
-	#   sass-once   -- compile scss files into css ones
-	#   css         -- compress folders of css into single files
+	#   css         -- compress folders of scss into single files
 	#   ini         -- generate production / demo / test.ini files
 	# sass          -- run a daemon to turn scss into css automatically
 	# test          -- run all nosetests
@@ -107,25 +107,68 @@ i18n-all: civicboom/i18n/en/LC_MESSAGES/civicboom.po civicboom/i18n/fr/LC_MESSAG
 
 
 ##############################################################################
-# static files
+# static files: CSS
+#
+#             common
+#        /       |      \
+#     /          |         \
+# web/*      mobile/*     widget/*
+#    |           |            |
+# web.scss   mobile.scss  widget.scss
+#    |           |            |
+# web.css    mobile.css   widget.css
+#     \          |           /
+#      \         |          /
+#      [css / css-compressed]
+#
+STYLES=civicboom/public/styles
+THEMES=$(STYLES)/web.scss $(STYLES)/widget.scss $(STYLES)/mobile.scss
+
+$(STYLES)/web.scss:    $(STYLES)/common/*.scss  $(STYLES)/common/_icons.scss  $(STYLES)/web/*.scss
+	cd $(STYLES) && ls -1 common/*.scss web/*.scss | sed 's/\(.*\)/@import "\1";/' > web.scss
+
+$(STYLES)/widget.scss: $(STYLES)/common/_yui-3.2.0-reset-fonts.scss  $(STYLES)/common/_icons.scss  $(STYLES)/widget/*.scss
+	cd $(STYLES) && ls -1 common/_yui-3.2.0-reset-fonts.scss common/_icons.scss widget/*.scss | sed 's/\(.*\)/@import "\1";/' > widget.scss
+
+$(STYLES)/mobile.scss: $(STYLES)/common/_yui-3.2.0-reset-fonts.scss  $(STYLES)/mobile/*.scss
+	cd $(STYLES) && ls -1 common/_yui-3.2.0-reset-fonts.scss mobile/*.scss | sed 's/\(.*\)/@import "\1";/' > mobile.scss
+
+$(STYLES)/common/_icons.scss: $(STYLES)/common/icons/*
+	cd $(STYLES) && iconmapper -q -c common/_icons.scss -p _icons.png -a icons.png?ut=${TIMESTAMP} common/icons/*
+	cd $(STYLES) && pngcrush _icons.png icons.png
+	cd $(STYLES) && rm -f _icons.png
+
+css: $(THEMES)
+	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --update .:.
+
+css-compressed: $(THEMES)
+	cd $(STYLES) && sass --style=compressed --update .:.
+
+css-daemon-start:
+	start-stop-daemon --start --oknodo -b -d . -m --pidfile /tmp/cb-css-daemon.pid --exec `which $(MAKE)` -- css-daemon
+
+css-daemon-stop:
+	start-stop-daemon --stop --oknodo --pidfile /tmp/cb-css-daemon.pid
+
+css-daemon: $(THEMES)
+	cd $(STYLES) && sass --line-numbers --line-comments --debug-info --watch .:.
+
+
+
+##############################################################################
+# static files: JS
 
 js:
 	$(MAKE) -C civicboom/public/javascript
 
-css:
-	$(MAKE) -C civicboom/public/styles
+js-daemon-start:
+	start-stop-daemon --start --oknodo -b -d . -m --pidfile /tmp/cb-js-daemon.pid --exec `which $(MAKE)` -- js-daemon
 
-sass-once:
-	$(MAKE) -C civicboom/public/styles common/icons.scss
-	cd civicboom/public/styles && sass --line-numbers --update .:.
+js-daemon-stop:
+	start-stop-daemon --stop --oknodo --pidfile /tmp/cb-js-daemon.pid
 
-sass:
-	cd civicboom/public/styles && sass --line-numbers --watch .:. >/tmp/sass.log 2>&1 &
-
-# redirecting stdout means that the file is created even if the process fails.
-# the mv on the second line only happens if it succeeds
-%.ini: %.inidiff development.ini
-	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
+js-daemon:
+	while inotifywait -e close_write civicboom/public/javascript/ ; do $(MAKE) js ; done
 
 
 ##############################################################################
@@ -219,22 +262,50 @@ live-db:
 
 
 ##############################################################################
+# ini files
+
+ini: production.ini demo.ini test.ini
+
+# redirecting stdout means that the file is created even if the process fails.
+# the mv on the second line only happens if it succeeds
+%.ini: %.inidiff development.ini
+	inipatch development.ini $< > $@.tmp && mv $@.tmp $@
+
+ini-daemon-start:
+	start-stop-daemon --start --oknodo -b -d . -m --pidfile /tmp/cb-ini-daemon.pid --exec `which $(MAKE)` -- ini-daemon
+
+ini-daemon-stop:
+	start-stop-daemon --stop --oknodo --pidfile /tmp/cb-ini-daemon.pid
+
+ini-daemon:
+	while inotifywait *.ini ; do $(MAKE) ini ; done
+
+##############################################################################
 # run
 
-run:
+run: ini
 	paster serve --reload development.ini
 
-run-demo:
+run-dev:
+	$(MAKE) js-daemon-start
+	$(MAKE) css-daemon-start
+	$(MAKE) ini-daemon-start
+	paster serve --reload development.ini || true
+	$(MAKE) ini-daemon-stop
+	$(MAKE) css-daemon-stop
+	$(MAKE) js-daemon-stop
+
+run-demo: ini
 	paster serve --reload demo.ini
 
-run-worker:
-	./cb-worker
+run-worker: ini
+	./cb-worker --ini development.ini
 
 
 ##############################################################################
 # CDN
 
-cdnpush: js css ini
+cdnpush: js css-compressed ini
 	echo removing cache breaker from icons.css
 	sed -i "s/icons.png?ut=[0-9]*/icons.png/g" civicboom/public/styles/*.css
 	../admin_scripts/upload-cdn-rs.py \
@@ -247,7 +318,9 @@ cdnpush: js css ini
 ##############################################################################
 # other
 
-clean: db-clean
+clean: db-clean files-clean
+
+files-clean:
 	git clean -d -f -x
 
 gource:
@@ -286,22 +359,17 @@ stopsys:
 	sudo initctl stop cb-website
 	sudo initctl stop cb-worker
 
-data/cbtv.db: data/cbtv.log
-	../lib/cbutils/cbtv.py -i ./data/cbtv.log -d ./data/cbtv.db
-
-tv: data/cbtv.db
-	../lib/cbutils/cbtv.py -d ./data/cbtv.db
-
 
 ##############################################################################
 # human readable aliases
+
+sass:
+	$(MAKE) css-daemon 2>&1 >/dev/null &
 
 api-doc: civicboom/public/doc/index.html
 
 schemadiff: update.sql
 
-ini: production.ini demo.ini test.ini
-
 i18n: i18n-en
 
-site: i18n js sass-once css api-doc ini
+site: i18n js css-compressed api-doc ini

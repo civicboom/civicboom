@@ -132,4 +132,11 @@ server {
 		allow 192.168.0.0/16;
 		deny all;
 	}
+
+	location ~* ^.+\.(woff|appcache)$ {
+		types {
+			application/x-font-woff  woff;
+		}
+		default_type  application/octet-stream;
+	}
 }

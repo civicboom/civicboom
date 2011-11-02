@@ -71,14 +71,8 @@ INPUT[type="password"],
 SELECT,
 TEXTAREA {
 	border: 1px solid $input-border;
-
-	border-radius        : $input-radius;
-	-moz-border-radius   : $input-radius;
-	-webkit-border-radius: $input-radius;
-
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
+    @include border_radius($input-radius);
+    @include box_sizing(border-box);
 }
 .mceEditor.defaultSkin table.mceLayout tr.mceFirst td {
 	border-top: none;
@@ -205,9 +199,7 @@ H1 {
 .tooltip span,
 .tooltip .tooltip_content {
 	display: none;
-	border-radius        : 5px 5px;
-	-moz-border-radius   : 5px;
-	-webkit-border-radius: 5px;
+    @include border_radius(5px);
 	box-shadow        : 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.1);
 	-webkit-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
 	-moz-box-shadow   : 0.2em 0.2em rgba(0, 0, 0, 0.1);
@@ -257,10 +249,7 @@ HTML.no-js #flash_message {
 
 .olMap {
 	border: 1px solid $input-border;
-
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
+    @include box_sizing(border-box);
 }
 .olControlAttribution {
 	bottom: 0em !important;
@@ -274,9 +263,7 @@ HTML.no-js #flash_message {
 }
 .olPopup {
 	border: 2px solid gray;
-	border-radius: 8px 8px;
-	-moz-border-radius: 8px;
-	-webkit-border-radius: 8px;
+    @include border_radius(8px);
 	padding: 4px;
 }
 
@@ -295,20 +282,14 @@ HTML.no-js #flash_message {
 /*----------------------------------------------------------------------------*/
 
 .button, .ui-button.ui-state-active {
+    @include border_radius($button-radius);
 	display: inline-block;
 	background: $button-top;
-
-	border-radius        : $button-radius;
-	-moz-border-radius   : $button-radius;
-	-webkit-border-radius: $button-radius;
-	
 	border: 1px solid $button-border;
-
 	color: $button-txt;
 	text-align: center;
 	text-decoration: none;
 	font-weight: bold;
-
 	cursor: pointer;
 }
 
@@ -317,39 +298,27 @@ HTML.no-js #flash_message {
 }
 
 .jqui-radios .ui-button {
-  display: inline-block;
-  background: white;
-
-  border-radius        : $button-radius;
-  -moz-border-radius   : $button-radius;
-  -webkit-border-radius: $button-radius;
-  
-  border: 1px solid $button-border;
-
-  color: $button-txt;
-  text-align: center;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 90%;
-
-  cursor: pointer;
+    @include border_radius($button-radius);
+    display: inline-block;
+    background: white;
+    border: 1px solid $button-border;
+    color: $button-txt;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 90%;
+    cursor: pointer;
 }
 
 .buttonesque_link {
-  display: inline-block;
-  color: #000;
-
-  border-radius        : $button-radius;
-  -moz-border-radius   : $button-radius;
-  -webkit-border-radius: $button-radius;
-
-  border: 1px solid transparent;
-
-  text-align: center;
-  text-decoration: underline !important;
-  font-size: 90%;
-
-  cursor: pointer;
+    display: inline-block;
+    color: #000;
+    @include border_radius($button-radius);
+    border: 1px solid transparent;
+    text-align: center;
+    text-decoration: underline !important;
+    font-size: 90%;
+    cursor: pointer;
 }
 
 .acceptrequest {
@@ -412,13 +381,9 @@ DIV#app .button {
 }
 
 .border_box {
+    @include border_radius($button-radius);
 	display: inline-block;
 	background: white;
-
-	border-radius        : $button-radius;
-	-moz-border-radius   : $button-radius;
-	-webkit-border-radius: $button-radius;
-
 	border: 1px solid #BBB;
 }
 /*----------------------------------------------------------------------------*/
@@ -456,9 +421,7 @@ DIV#app .button {
 	font-weight: bold;
 	color: #FFF;
 	background-color: #F00;
-	border-radius        : 0.5em;
-	-moz-border-radius   : 0.5em;
-	-webkit-border-radius: 0.5em;
+    @include border_radius(0.5em);
 }
 
 .content_short P {

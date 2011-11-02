@@ -437,7 +437,7 @@
         % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if content.get('approval') and content.get('approval') != 'none':
+        % if content.get('approval'):
             ${h.icon(content.get('approval'))}
         % endif
         % if content.get('auto_publish_trigger_datetime'):
@@ -460,7 +460,7 @@
         % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if content.get('approval') and content.get('approval') != 'none':
+        % if content.get('approval'):
             ${h.icon(content.get('approval'))}
         % endif
         % if content.get('auto_publish_trigger_datetime'):

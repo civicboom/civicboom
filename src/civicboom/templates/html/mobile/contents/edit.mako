@@ -232,7 +232,7 @@ import html2text
     </script>
     
     ##<input type="checkbox" name="auto_get_location" onclick="">
-    <label for="location">${_('GPS locaiton')}</label>
+    <label for="location">${_('GPS location')}</label>
     <input id="location" type="text" name="location" value="${self.content['location']}" checked="checked" readonly="readonly"/>
     <button onclick="get_location(); return false;">Update GPS Location</button>
 </div>
@@ -240,7 +240,7 @@ import html2text
 
 <%def name="privacy()">
 <div data-role="collapsible" data-theme="c" data-content-theme="c">
-    <h3>${_('Content Visability')}</h3>
+    <h3>${_('Content Visibility')}</h3>
     
 </div>
 </%def>
@@ -296,7 +296,7 @@ import html2text
     <div data-role="page" id="confirm_discard">
         <div data-role="header"><h1>${_('Discard changes?')}</h1></div>
         <div data-role="content">
-            <h3>${_('You will loose any unsaved changs to this _content')}</h3>
+            <h3>${_('You will loose any unsaved changes to this _content')}</h3>
             <a href="${h.url(controller='profile', action='index')}"><button>${_('Return to profile (discard changes)')}</button></a>
             <a href="#" data-rel="back" data-direction="reverse"><button>${_('No, take me back!')}</button></a>
         </div>
@@ -319,7 +319,7 @@ import html2text
         <div data-role="header"><h1>${_('Publish _content?')}</h1></div>
         <div data-role="content">
             <h3>${_('You are about to publish "%s" as "%s".') % (content.get('title'), content['creator']['name'])}</h3>
-            <p>${_('All your followers will be notifyed and it will be visible for other _site_name users to see')}</p>
+            <p>${_('All your followers will be notified and it will be visible for other _site_name users to see')}</p>
             ${h.secure_form(h.url('content', id=content['id'], format='redirect', submit_publish='publish'), data_ajax=False, method="put")}
             <input type="submit" value="${_('Publish')}">
             ${h.end_form()}

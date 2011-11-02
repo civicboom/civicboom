@@ -223,15 +223,15 @@
             </div>
             
             <div class="col_right">
-            <div class="avatar">${member_avatar(img_class='photo')}</div>
-            % if 'message' in self.actions:
-                ${popup.link(
-                h.args_to_tuple('new_message', target=self.id),
-                title = _('Send message'),
-                text  = h.literal("<div class='button'>%s</div>") % _('Send message'),
-                )}
-                ##<div style="clear: both;"></div>
-            % endif
+                <div class="avatar"><img src="${self.member['avatar_url']}" alt="${self.member['username']}"></div>
+                % if 'message' in self.actions:
+                    ${popup.link(
+                    h.args_to_tuple('new_message', target=self.id),
+                    title = _('Send message'),
+                    text  = h.literal("<div class='button'>%s</div>") % _('Send message'),
+                    )}
+                    ##<div style="clear: both;"></div>
+                % endif
             </div>
             
             <div class="separator"></div>

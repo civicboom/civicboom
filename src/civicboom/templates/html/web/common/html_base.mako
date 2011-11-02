@@ -42,21 +42,8 @@
 ##-------------------
 ## CSS Style Sheets
 ##-------------------
-<% from pylons import request %>
-## AllanC - IE must use the compacted CSS in development mode because it cant handle more than 31 css files, even using @import
-##          For css development in IE you need to manually run "make css" at this time.
-##          I created an alternative called css_inline that manually concatinates the files if needed - there were some layout issues with this method though
-## <%include file="/html/web/common/css_inline.mako"/>
-% if config['development_mode'] and 'MSIE' not in request.environ.get('HTTP_USER_AGENT', ''):
-    <style type="text/css" media="screen">
-        % for css in h.css_files('web'):
-        @import url("${h.wh_url("public", css)}");
-        % endfor
-    </style>
-% else:
 	<link rel="stylesheet" type="text/css" media="screen" href="${h.wh_url("public", "styles/web.css")}" />
-% endif
-    <link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
+	<link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
 ##-------------------
 ## Javascripts
 ##-------------------
@@ -142,38 +129,36 @@ if c.logged_in_persona:
 else:
 	u = "anon"
 %>
-<body class="c-${c.controller} a-${c.action} u-${u}" data-base_url="${h.url('/', qualified=True)}">    
-	${flash_message()}
-	##<nav><%include file="navigation.mako"/></nav>
-        <header>
-            % if hasattr(next, 'header'):
-                ${next.header()}
-            % else:
-                <%include file="header.mako"/>
-            % endif
-        </header>
-	<div id="app">${next.body()}</div>
-	<footer><%include file="footer.mako"/></footer>
+<body class="c-${c.controller} a-${c.action} u-${u}" data-base_url="${h.url('/', qualified=True)}">
+    ${flash_message()}
+    <header>
+        % if hasattr(next, 'header'):
+            ${next.header()}
+        % else:
+            <%include file="header.mako"/>
+        % endif
+    </header>
+    <div id="app">${next.body()}</div>
+    <footer><%include file="footer.mako"/></footer>
 
-<%def name="breadcrumbs()"></%def>
-<div class="hide_if_js">${self.breadcrumbs()}</div>
+    <%def name="breadcrumbs()"></%def>
+    <div class="hide_if_js">${self.breadcrumbs()}</div>
 
     ${popup_frame()}
-	##<%include file="scripts_end.mako"/>
-	${scripts_end.body()}
+    ${scripts_end.body()}
 
     <!--[if lt IE 8 ]>
     <script type="text/javascript">
-            if ($.cookie('allow_lt_ie8')!='True') {
-                window.location="${url(controller='misc', action='browser_unsupported')}";
-            }
+    if ($.cookie('allow_lt_ie8')!='True') {
+        window.location="${url(controller='misc', action='browser_unsupported')}";
+    }
     </script>
     <![endif]-->
 
-	<% from pylons import request %>
-	<!--
-	Version: ${request.environ['app_version'] or 'develop'}
-	Node:    ${request.environ['node_name']}
-	-->
+    <% from pylons import request %>
+    <!--
+    Version: ${request.environ['app_version'] or 'develop'}
+    Node:    ${request.environ['node_name']}
+    -->
 </body>
 </html>

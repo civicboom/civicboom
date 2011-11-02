@@ -39,7 +39,7 @@
 ##------------------------------------------------------------------------------
 ## Persona Switching
 ##------------------------------------------------------------------------------
-  ## AllanC - must check status=active otherwise registration page keeps displaying 'unauthroised error' repeatedly
+  ## AllanC - must check status=active otherwise registration page keeps displaying 'unauthorised error' repeatedly
 % if logged_in:
 <%
     from civicboom.model import Group
@@ -142,11 +142,13 @@
         ${persona_select(c.logged_in_user)}
         ## Show current persona (current group persona if applicable)
         % if c.logged_in_persona != c.logged_in_user:
-            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role)}
+            ## , members=num_members)}
         % endif
         ## Show currently logged in persona's groups:
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
-            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+            ${persona_select(membership.group, role=membership.role)}
+            ## , members=membership.group.num_members)}
         % endfor
         <tr class="extras">
             <td colspan="4">

@@ -158,7 +158,7 @@
         % if content['edit_lock']:
             ${h.icon('edit_lock')}
         % endif
-        % if 'approval' in content:
+        % if content.get('approval'):
             ${h.icon(content['approval'])}
         % endif
     </div>

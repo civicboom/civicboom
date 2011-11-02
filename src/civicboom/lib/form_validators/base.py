@@ -200,7 +200,7 @@ class PasswordValidator(validators.FancyValidator):
         'empty'        : x_('You must enter a password'),
         'too_few'      : x_('Your password must be longer than %(min)i characters'),
         'non_letter'   : x_('You must include at least %(non_letter)i non-letter in your password'),
-        'repeated_char': x_('Your password consits of a single character repeated. You may have copy and pasted your password'),
+        'repeated_char': x_('Your password consists of a single character repeated. You may have copy and pasted your password'),
     }
 
     def _to_python(self, value, state):

@@ -219,6 +219,13 @@ class IDFilter(Filter):
         assert all([type(n) == int for n in id_list])
         self.id_list = ", ".join(["%d" % d for d in id_list])
 
+    @staticmethod
+    def from_string(s):
+        if s.isdigit():
+            return IDFilter([int(s), ])
+
+        raise FilterException("Content not found: %s" % s)
+
     def __unicode__(self):
         return "Content.id in [%s]" % self.id_list
 
