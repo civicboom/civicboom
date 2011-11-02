@@ -126,8 +126,6 @@ if (!('util' in boom)) {
     history: {
       saveState: function (state_object, replace) {
         var current_url = state_object.current_url;
-        console.log(state_object);
-        console.log(current_url);
         if(Modernizr.history) {
           // Note: this object is limited to 640k (which ought to be
           // enough for anyone) when saved in the browser history file
@@ -140,9 +138,108 @@ if (!('util' in boom)) {
           
         }
       },
+    },
+    desktop_notification: {
+      has_support: function () {
+        return !!window.webkitNotifications;
+      },
+      has_permission: function () {
+        return window.webkitNotifications.checkPermission()==0
+      },
+      request_permission: function (callback) {
+        console.log('desktop_notification.request_permission');
+        window.webkitNotifications.requestPermission(function () {
+          console.log('desktop_notification.request_permission.callback');
+          var has_permission = window.webkitNotifications.checkPermission()==0;
+          if (has_permission) $('.desktop_notifications').hide();
+          if (callback) callback(has_permission);
+        });
+      },
+      notify: function (icon, body, title, timeout) {
+        console.log('notify');
+        if (window.webkitNotifications.checkPermission()==0) {
+          console.log('has permission');
+          var popup = window.webkitNotifications.createNotification(icon, body, title);
+          popup.show();
+          if (timeout)
+            setTimeout(function() {popup.cancel()}, timeout);
+          return true;
+        }
+        return false;
+      }
+    },
+    message_indicators: {
+      key_icon_map: {
+        num_unread_messages: '.msg_c_m',
+        num_unread_notifications: '.msg_c_n',
+        _total: '.msg_c_o'
+      },
+      last_check: {
+        last_message_timestamp: null,
+        last_notification_timestamp: null
+      },
+      messages: {
+        last_message_timestamp: 'New message',
+        last_notification_timestamp: 'New notification'
+      },
+      update: function () {
+        $.getJSON('/profile/messages.json', function (res) {
+          if ('data' in res) {
+            var message = $([]);
+            var _total = 0;
+            for (key in boom.util.message_indicators.key_icon_map) {
+              if (key in res.data) {
+                var jQe = $(boom.util.message_indicators.key_icon_map[key]);
+                var val = res.data[key];
+                jQe.html('&nbsp;' + val + '&nbsp;');
+                if (val == 0) {
+                  jQe.hide();
+                } else {
+                  jQe.show();
+                }
+                _total += (res.data[key] * 1);
+              }
+            }
+            if ('_total' in boom.util.message_indicators.key_icon_map) {
+              var jQe = $(boom.util.message_indicators.key_icon_map['_total']);
+              jQe.html('&nbsp;' + _total + '&nbsp;');
+              if (_total == 0) {
+                jQe.css('display', 'none');
+              } else {
+                jQe.css('display', 'inline');
+              }
+            }
+            if (!boom.util.desktop_notification.has_support()) return;
+            var body = '';
+            var body_content = false;
+            for (key in boom.util.message_indicators.last_check) {
+              if (key in res.data) {
+                var val = res.data[key];
+                if (boom.util.message_indicators.last_check[key] && boom.util.message_indicators.last_check[key] < val) {
+                  // Display things
+                  if (body_content) body += '<br />&amp;<br />';
+                  body += boom.util.message_indicators.messages[key]
+                  body_content = true;
+                }
+                boom.util.message_indicators.last_check[key] = val;
+              }
+            }
+            if (body_content)
+              boom.util.desktop_notification.notify('', 'Civicboom', body, 5000);
+          }
+        });
+      },
+      init: function () {
+        setInterval(boom.util.message_indicators.update, 120000);
+        $(function () {
+          if (boom.util.desktop_notification.has_support() && ! boom.util.desktop_notification.has_permission())
+            $('.desktop_notifications').show();
+        })
+      }
     }
   }
 }
+boom.util.message_indicators.init();
 /*
  * Civicboom Fragment System
  * Use the following for most of your fragment work, there are loads of events available to use!
@@ -283,7 +380,7 @@ if (!('frags' in boom)) {
      * Events are split into two categories:
      * "frag" events:
      *    load:         triggered when a frag loads dynamically.
-     *    load_static:  triggered when a frag loads dynamically or statically.
+     *    load_static:  triggered when a frag loads dynamically or statically (you can check if the dynamic argument is true)
      * "live" events:
      *    These trigger based on selector and event type. e.g.
      *  {'a': {
@@ -294,20 +391,28 @@ if (!('frags' in boom)) {
      */
     events: {
       frag: {
-        'load': function () {
+        'load': function (event, from_history) {
           var current_frag = $(this);
+          var current_frag_data = boom.frags.getFragmentData(current_frag); // current_frag.find('.'+boom.frags.classes.data).data();
           console.log('frag_load', this);
-          // Our custom history goes here:
-          boom.util.history.saveState(boom.frags.getHistoryState(), false);
-          // Push current frag's url to google tracker
-          _gaq.push(['_trackPageview', current_frag.find('.'+boom.frags.classes.data).data('frag_url')]);
-          boom.frags.events.frag.load_static.apply(this, arguments);
+          if (!from_history)
+            // Push current frag's url (preferably html_url, else frag_url) to google analytics
+            _gaq.push(['_trackPageview', current_frag_data.html_url || current_frag_data.frag_url ]);
+           
+          // Call static frag load event with current event arguments & context
+          boom.frags.events.frag.load_static.call(this, event, from_history, true);
         },
-        'load_static': function () {
+        'load_static': function (event, from_history, dynamic) {
           var current_frag = $(this);
           console.log('frag_load_static', this);
+          // Push history, only if not loaded from history & current frag is last loaded!
+          if (!from_history && current_frag.is(boom.frags.container.children().last())) {
+            var history_state = boom.frags.getHistoryState();
+            console.log('history.saveState', history_state, !dynamic)
+            boom.util.history.saveState(history_state, !dynamic); // replace current history if not dynamic!
+          }
           // Trigger any load events for event_load elements
-          current_frag.find('.event_load').trigger('load');
+          current_frag.find('.event_load').trigger('boom_load');
           // TinyMCE
           boom.util.tinymce.init(current_frag);
           // html5ize new fragment (datetime boxes etc.)
@@ -334,16 +439,23 @@ if (!('frags' in boom)) {
               'multi'      : true,
               'auto'       : true,
               'fileDataName':'file_data',
-              'removeCompleted' : false,
+              'removeCompleted' : true,
               'onComplete' : function(event, id, fileObj, response, data) {
-                //refreshProgress
+                console.log(event, id, fileObj, response, data);
+                var form = $(event.target).parents('form');
+                // Boom_load event triggers refresh or media listing
+                $(event.target).parents('ul.media_files').trigger('boom_load');
               }
             });
           });
           // Uploadify end
         },
-        'closed': function () {
-          
+        'closed': function (event, from_history) {
+          if (!from_history) {
+            var history_state = boom.frags.getHistoryState();
+            console.log('history.saveState', history_state);
+            boom.util.history.saveState(history_state);
+          }
         }
       },
       live: {
@@ -637,6 +749,10 @@ if (!('frags' in boom)) {
       // element = (element.jquery) ? element : $(element);
       return element.hasClass(boom.frags.classes.container) ? element : element.parents('.'+boom.frags.classes.container);
     },
+    getFragmentData: function (element) {
+      element = boom.frags.getFragment(element);
+      return element.children('.'+boom.frags.classes.data).data()
+    },
     setAutoSave: function (form) {
       // Setup auto save for form
       console.log('setAutoSave', form);
@@ -771,10 +887,10 @@ if (!('frags' in boom)) {
         }
         if (typeof callback != 'undefined')
           callback(success, frag_loading); // Callback with loaded frag to make chaining easier
-      });
+      }, from_history);
       return frag_loading; // Return frag_loading as we don't have a success here!
     },
-    update: function (element_hrefselector, url, exclude, callback) {
+    update: function (element_hrefselector, url, exclude, callback, from_history) {
       // Updates a frag or set of frags
       // Params:
       // element_hrefselector jQuery/Array/String jQuery object of element(s) to update, array of strings to search anchor hrefs for and update parent fragments, a string to search for as before.
@@ -812,7 +928,7 @@ if (!('frags' in boom)) {
           if (req.status == 200) {
             success = success && true;
             refreshed_elements.add(current_frag);
-            current_frag.trigger('frag_load');
+            current_frag.trigger('frag_load', [from_history]);
           } else {
             success = false;
           }
@@ -846,7 +962,7 @@ if (!('frags' in boom)) {
           // run callback after this and next frags are removed
           callback();
         } else {
-          current_frag.trigger('frag_closed');
+          current_frag.trigger('frag_closed', [from_history]);
           if (boom.frags.container.children().length == 0 && boom.frags.vars.default_frags) {
             // If we have a callback then we're probably in the middle of multiple frags being removed
             // Therefore if there is no callback and all frags have been removed, load default frags!
@@ -921,146 +1037,151 @@ if (!('frags' in boom)) {
       }
     },
     restoreHistoryState: function (state_object) {
+      console.log('restoreHistoryState', state_object);
       var frags = boom.frags.container.children();
       var state_frags = state_object.frags.slice(0); // Take a copy of state_object.frags
-      var i = 0;
       
       var load_next = function (success, prev_frag) {
         if (success && state_frags.length) {
           var state_frag = state_frags.shift();
-          boom.frags.create(prev_frag, state_frag.frag_url, undefined, undefined, load_frag);
+          boom.frags.create(prev_frag, state_frag.frag_url, undefined, true, load_next);
         }
-      } 
+      }
+      var i = 0;
+      var loading_after = false;
       while (state_frags.length > 0) {
         var frag = frags.eq(i++);
         var state_frag = state_frags.shift();
         if (frag.length == 1) {
           if (frag.children('.frag_data').data('frag_url') != state_frag.frag_url)
-            boom.frags.update(frag, state_frag.frag_url);
+            boom.frags.update(frag, state_frag.frag_url, undefined, undefined, true);
         } else {
+          state_frags.unshift(state_frag);
           load_next(true, frags.last());
+          loading_after = true;
           break;
         }
       }
-
+      if (!loading_after && frags.eq(i).length)
+        boom.frags.remove(frags.eq(i), undefined, true);
     }
   }
   // Initialise boom.frags
   $(boom.frags.init);
-  $(window).bind('popstate', function (event) {
+  window.onpopstate = function (event) {
     if (event.state) {
-      restoreHistoryState(event.state);
+      boom.frags.restoreHistoryState(event.state);
     }
-  });
+  }
   
 }
 
 
-function createStateObj() {
-  return;
-  var stateObj = { 'blocks': []};
-  $('.'+fragment_container_class).not('.'+fragment_help_class).each (function (index, element)
-    {
-      var s_url = $(element).find('.'+fragment_source_class).first().attr('href');
-      stateObj.blocks[index] = {'url'  : s_url,
-                                'classes': $(element).attr('class')
-                               };
-    });
-  return stateObj;
-}
-
-function loadStateObj(stateObj) {
-  return;
-  var frag_previous;
-  if(stateObj !== null) {
-    if (typeof stateObj.blocks == 'undefined') return;
-    
-    var i = 0;
-    
-    function load() {
-      if (i < stateObj.blocks.length) {
-        var frag_source = frag_previous.find('.'+fragment_source_class).first();
-        var stat_href = stateObj.blocks[i].url;
-        frag_previous = cb_frag(frag_source, stat_href, undefined, true, load); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
-        i ++;
-      } else {
-        cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
-        return;
-      }
-    }
-
-    for (i = 0; i < stateObj.blocks.length; i++) {
-      var frag_exists = typeof $('.'+fragment_container_class)[i] != 'undefined';
-      var frag_container = $($('.'+fragment_container_class)[i]);
-      var frag_source = frag_container.find('.'+fragment_source_class);
-      var frag_href = frag_source.attr('href');
-      var stat_href = stateObj.blocks[i].url;
-      if (!frag_exists) {
-        load ();
-        //frag_container = cb_frag(frag_previous.find('.'+fragment_source_class).first(), stat_href, undefined, true, waiter); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
-        break;
-      } else if (frag_href != stat_href) {
-        frag_container.removeClass().addClass(stateObj.blocks[i].classes);
-        frag_container.find('.'+fragment_source_class).first().attr('href', stat_href);
-        cb_frag_reload (frag_container);
-      }
-      frag_previous = frag_container;
-    }
-    if (i = (stateObj.blocks.length - 1))
-      cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
-  }
-}
-
-function update_history(url, replace) {
-  return;
-  if (typeof url == 'undefined' || url == null)
-    var url = $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href');
-  if (typeof url == 'undefined' || url == null)
-      return;
-  // update the URL bar to point at the latest block, and
-  // store previous blocks in the history state object
-  if(Modernizr.history) {
-    // Note: this object is limited to 640k (which ought to be
-    // enough for anyone) when saved in the browser history file
-    if (replace) {
-      history.replaceState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
-    } else {
-      history.pushState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
-    }
-  } else {
-    // if (replace) {
-      // if (location.hash.substr(1,3) != 'cbh') {
-        // location.replace('#cbh' + encode64($.JSON.encode(createStateObj())));
-      // } else {
-        // $(window).hashchange();
-      // }
-    // } else {
-      // location.hash = '#cbh' + encode64($.JSON.encode(createStateObj()));
-    // }
-  }
-}
-
-$(function () {
-  return;
-  if(Modernizr.history) {
-    // Browser supports HTML5 history states
-    // FIXME: jQuery-ise this, rather than using the raw window.blah
-    window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
-    } else if(Modernizr.hashchange) {
-    // Browser does not support HTML5 history states
-    // Use url hash instead
-    // GregM: Causing stability issues in IE, removed for now
-    // $(window).hashchange(function (e) {
-    //   var hash = location.hash;
-    //   if (hash != '' && typeof hash != 'undefined') {
-    //     if (hash.substr(1,3) == 'cbh') {
-    //       try {
-    //         var stateObj = $.parseJSON(decode64(hash.substr(4)));
-    //         loadStateObj(stateObj);
-    //       } catch (e) {} 
-    //     }
-    //   }
+// function createStateObj() {
+  // return;
+  // var stateObj = { 'blocks': []};
+  // $('.'+fragment_container_class).not('.'+fragment_help_class).each (function (index, element)
+    // {
+      // var s_url = $(element).find('.'+fragment_source_class).first().attr('href');
+      // stateObj.blocks[index] = {'url'  : s_url,
+                                // 'classes': $(element).attr('class')
+                               // };
     // });
-  }
-  update_history(location.href, true);
-})
+  // return stateObj;
+// }
+// 
+// function loadStateObj(stateObj) {
+  // return;
+  // var frag_previous;
+  // if(stateObj !== null) {
+    // if (typeof stateObj.blocks == 'undefined') return;
+//     
+    // var i = 0;
+//     
+    // function load() {
+      // if (i < stateObj.blocks.length) {
+        // var frag_source = frag_previous.find('.'+fragment_source_class).first();
+        // var stat_href = stateObj.blocks[i].url;
+        // frag_previous = cb_frag(frag_source, stat_href, undefined, true, load); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
+        // i ++;
+      // } else {
+        // cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
+        // return;
+      // }
+    // }
+// 
+    // for (i = 0; i < stateObj.blocks.length; i++) {
+      // var frag_exists = typeof $('.'+fragment_container_class)[i] != 'undefined';
+      // var frag_container = $($('.'+fragment_container_class)[i]);
+      // var frag_source = frag_container.find('.'+fragment_source_class);
+      // var frag_href = frag_source.attr('href');
+      // var stat_href = stateObj.blocks[i].url;
+      // if (!frag_exists) {
+        // load ();
+        // //frag_container = cb_frag(frag_previous.find('.'+fragment_source_class).first(), stat_href, undefined, true, waiter); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
+        // break;
+      // } else if (frag_href != stat_href) {
+        // frag_container.removeClass().addClass(stateObj.blocks[i].classes);
+        // frag_container.find('.'+fragment_source_class).first().attr('href', stat_href);
+        // cb_frag_reload (frag_container);
+      // }
+      // frag_previous = frag_container;
+    // }
+    // if (i = (stateObj.blocks.length - 1))
+      // cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
+  // }
+// }
+// 
+// function update_history(url, replace) {
+  // return;
+  // if (typeof url == 'undefined' || url == null)
+    // var url = $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href');
+  // if (typeof url == 'undefined' || url == null)
+      // return;
+  // // update the URL bar to point at the latest block, and
+  // // store previous blocks in the history state object
+  // if(Modernizr.history) {
+    // // Note: this object is limited to 640k (which ought to be
+    // // enough for anyone) when saved in the browser history file
+    // if (replace) {
+      // history.replaceState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
+    // } else {
+      // history.pushState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
+    // }
+  // } else {
+    // // if (replace) {
+      // // if (location.hash.substr(1,3) != 'cbh') {
+        // // location.replace('#cbh' + encode64($.JSON.encode(createStateObj())));
+      // // } else {
+        // // $(window).hashchange();
+      // // }
+    // // } else {
+      // // location.hash = '#cbh' + encode64($.JSON.encode(createStateObj()));
+    // // }
+  // }
+// }
+// 
+// $(function () {
+  // return;
+  // if(Modernizr.history) {
+    // // Browser supports HTML5 history states
+    // // FIXME: jQuery-ise this, rather than using the raw window.blah
+    // window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
+    // } else if(Modernizr.hashchange) {
+    // // Browser does not support HTML5 history states
+    // // Use url hash instead
+    // // GregM: Causing stability issues in IE, removed for now
+    // // $(window).hashchange(function (e) {
+    // //   var hash = location.hash;
+    // //   if (hash != '' && typeof hash != 'undefined') {
+    // //     if (hash.substr(1,3) == 'cbh') {
+    // //       try {
+    // //         var stateObj = $.parseJSON(decode64(hash.substr(4)));
+    // //         loadStateObj(stateObj);
+    // //       } catch (e) {} 
+    // //     }
+    // //   }
+    // // });
+  // }
+  // update_history(location.href, true);
+// })
