@@ -117,59 +117,18 @@
         
         <span class="separtor"></span>
         % if 'delete' in self.actions:
-        
-        ${h.secure_link(
-            h.args_to_tuple('content', id=self.id, format='redirect'),
-            method          = "DELETE",
-            value           = _('Delete'),
-            value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
-            link_data       = dict(
-                confirm = _("Are you sure you want to delete this posting?"),
-                confirm_yes = _("Yes. Delete"),
-                confirm_no = _("No. Take me back!"),
-            ),
-        )}
-<!--         <span class="secure_link">
-            <form class="hide_if_js"
-                action="${h.url('content', id=self.id, format='redirect')}"
-                method="post"
-                data-json="${h.url('content', id=self.id, format='json')}"
-                data-json-complete="[ ['remove'],['update', ['${h.url('content', id=self.id)}','${h.url('content', id=self.content['parent']['id']) if self.content.get('parent') else ''}']] ]"
-            >
-                <input type="hidden" name="_method" value="DELETE" />
-                <input type="hidden" name="_authentication_token" value="" />
-                <input type="submit" name="Delete" value="Delete" />
-            </form>
-            <a class="hide_if_nojs link_secure"
-                href="#"
-                data-confirm="Are you sure you want to delete this posting?"
-                data-confirm-yes="Yes. Delete"
-                data-confirm-no="No. Take me back!"
-            ><span class="icon16 i_delete"></span>Delete</a>
-        </span> -->
-        
-##        ${h.secure_link(
-##            h.args_to_tuple('content', id=self.id, format='redirect'),
-##            method="DELETE" ,
-##            value=_('Delete') ,
-##            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
-##            confirm_text=_("Are your sure you want to delete this content?") ,
-##            data         =
-##                dict(json_complete = "[ ['remove'], ['update', ['%s','%s'] ] ]" %
-##                (url('content', id=self.id),
-##                url('content', id=self.content['parent']['id']) if self.content.get('parent') else '') 
-##            ),
-##            modal_params = dict(
-##                title='Delete posting',
-##                message='Are you sure you want to delete this posting?',
-##                buttons=dict(
-##                    yes="Yes. Delete",
-##                    no="No. Take me back!",
-##                )
-##            ),
-##        )}
-        ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % url('content', id=self.id),
-        <span class="separtor"></span>
+            ${h.secure_link(
+                h.args_to_tuple('content', id=self.id, format='redirect'),
+                method          = "DELETE",
+                value           = _('Delete'),
+                value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
+                link_data       = dict(
+                    confirm = _("Are you sure you want to delete this posting?"),
+                    confirm_yes = _("Yes. Delete"),
+                    confirm_no = _("No. Take me back!"),
+                ),
+            )}
+            <span class="separtor"></span>
         % endif
         
     % endif
@@ -310,7 +269,7 @@
               --></a>
               <div class="media_fields">
                   <span id="media_status" style="display: none">(status)</span>
-                  <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" onclick="return removeMedia($(this))" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
+                  <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
                   <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text"                 value=""/></p>
                   <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
               </div>
@@ -318,26 +277,15 @@
             <!-- List existing media -->
             % for media in self.content['attachments']:
                 <% id = media['id'] %>
-                <li class="media_file" id="media_attachment_${id}">
+                <li class="media_file ${'event_load' if app_globals.memcache.get(str("media_processing_"+media['hash'])) else ''}" data-json_url="${h.url('medium', id=media['hash'], format='json')}" data-id="${id}" data-hash="${media['hash']}" id="media_attachment_${id}">
                     <div class="file_type_overlay icon16 i_${media['type']}"></div>
-                    <a href="${media['original_url']}"><!--
-                        --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
-                    --></a>
-					% if app_globals.memcache.get(str("media_processing_"+media['hash'])):
-						<!-- Media still undergoing proceccesing -->
-						## Clients without javascript could have the current status hard in the HTML text
-						## TODO
-						
-						## Clients with    javascript can have live updates from the media controller
-						<script type="text/javascript">
-							updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
-						</script>
-						<!-- End media still undergoing proceccesing -->
-					% endif
-                    <span id="media_status_${id}" style="display: none">(status)</span>
+                    <a href="${media['original_url']}">
+                        <img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
+                    </a>
+                    <span class="status" id="media_status_${id}" style="display: none">(status)</span>
                     
                     <div class="media_fields">
-                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove icon16 i_delete"/></p>
+                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove icon16 i_delete"/></p>
                         <p><label for="media_caption_${id}">${_("Caption")}    </label><input id="media_caption_${id}" name="media_caption_${id}" type="text"                 value="${media['caption']}"/></p>
                         <p><label for="media_credit_${id}" >${_("Credited to")}</label><input id="media_credit_${id}"  name="media_credit_${id}"  type="text"                 value="${media['credit']}" /></p>
                     </div>
@@ -349,31 +297,6 @@
             <!-- Add media javascript - visible to JS enabled borwsers -->
             <li class="hide_if_nojs">
 				<input id="file_upload" class="file_upload_uploadify" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" name="file_upload" type="file" />
-				<!-- <script type="text/javascript">
-				$(document).ready(function() {
-						$('#file_upload').uploadify({
-							'uploader'   : '/flash/uploadify.swf',
-							'script'     : '/media',
-							'scriptData' : {
-								'content_id': '${self.id}',
-								'member_id' : '${c.logged_in_persona.id}',
-								'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
-							},
-							'cancelImg'  : '/images/cancel.png',
-							'folder'     : '/uploads',
-							'multi'      : true,
-							'auto'       : true,
-							'fileDataName':'file_data',
-							'removeCompleted' : false,
-							'onComplete'  : function(event, ID, fileObj, response, data) {
-								//alert('There are ' + data.fileCount + ' files remaining in the queue.');
-								// refresh the file list
-								//Y.log("refresh the list now");
-								refreshProgress($('form#edit_${self.id}'));
-							}
-							});
-						});
-				</script> -->
             </li>
             
             <!-- Add media non javascript version - hidden if JS enabled -->
@@ -416,10 +339,11 @@
 				aWidth  = (args[1]*1)+14;
 				$('#media_recorder_${self.id}').css('width', aWidth).css('height', aHeight);
 			} else if (command == 'uploadcomplete') {
-				refreshProgress($('form#edit_$(self.id}'));
+				// refreshProgress($('form#edit_$(self.id}'));
+				// FIXME: BROKEN!!!!
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
+		swfobject.embedSWF("https://localhost.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
 	</script>
 	<div class="media_recorder" style="left:0px;width:360px;height:371px;" id="media_recorder_${self.id}">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
