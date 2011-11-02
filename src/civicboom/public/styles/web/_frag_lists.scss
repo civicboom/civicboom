@@ -164,7 +164,6 @@
 		.messages {
 			li {
 				margin-bottom: 0.5em;
-				/*border-bottom: 1px solid #ccc;*/
 			}
 			.unread      {background-color: #eee;}
 			.source      {float: left;}
@@ -201,7 +200,6 @@
 	}
 	
 	.pagination {
-	
 		padding: 0 1em 0.5em 1em;
 		font-weight: bold;
 	
@@ -216,6 +214,5 @@
 		.prev {
 			float: left;
 		}
-	
 	}
 }

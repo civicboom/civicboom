@@ -515,7 +515,6 @@ share_data = {
                                                 'href': h.url('member', id=member['username'], qualified=True),
                                             }, ],
         }
-        print cd
         share_usergen_default = _(share_data_type) % {'name': cd['title']}
     %>
     $(function() {

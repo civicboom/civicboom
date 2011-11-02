@@ -11,6 +11,12 @@
     -webkit-border-radius: $rad;
 }
 
+@mixin box_sizing($method) {
+    box-sizing        : $method;
+    -moz-box-sizing   : $method;
+    -webkit-box-sizing: $method;
+}
+
 @mixin drop_shadow($offset-x, $offset-y, $size, $color) {
     -moz-box-shadow:    $offset-x $offset-y $size $color;
     -webkit-box-shadow: $offset-x $offset-y $size $color;
