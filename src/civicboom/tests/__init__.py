@@ -185,6 +185,26 @@ class TestController(TestCase):
         self.assertEqual(response_json['status'], 'ok')
         self.logged_in_as = username_group
 
+    def setting(self, setting, panel, value=None):
+        if value:
+            response = self.app.post(
+                url('setting', id='me', panel=panel, format='json'),
+                params={
+                    '_method': 'PUT',
+                    '_authentication_token': self.auth_token,
+                    setting : value,
+                },
+                status=200
+            )
+
+        response      = self.app.get(url('setting',id="me", panel=panel, format='json'))
+        response_json = json.loads(response.body)
+        setting_value = response_json['data']['settings'][setting]
+        if value:
+            self.assertEquals(setting_value, "%s" % value)
+        return setting_value
+        
+
     def join(self, username_group):
         response = self.app.post(
             url('group_action', action='join', id=username_group, format='json') ,

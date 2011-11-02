@@ -122,6 +122,7 @@ add_setting('advert_hand_hub', _('Hide the info box encouraging the creation of 
 add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
 add_setting('push_assignment', _('Set a _assignment you would like followers to be able to push stories to'), group='advanced/follower_settings', weight=1002, type='id_assignment', info=_('Please speak to our team before you change this option!'))
+add_setting('hide_followers', _('Do not list your followers to any members other than yourself'), group='advanced/follower_settings', weight=1003, type='boolean', info=_('Protect your brands followers by hiding them from public view'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -288,12 +289,17 @@ class SettingsController(BaseController):
         raise action_error(_('operation not supported (yet)'), code=501)
 
     def show(self, id, **kwargs):
-        """GET /settings/id: Show a specific item."""
+        """
+        GET /settings/id: Show a specific item.
+        @comment AllanC doc required here - pannels
+        """
         return self.panel(id=id, **kwargs) #self.edit(id)
 
     @web
     @authorize
     def panel(self, id='me', panel='general', **kwargs):
+        """
+        """
 #        print url('settings',action='show',id="me", panel="generic")
         if panel=="general" and not c.action in ("panel", "show", "index", "edit"):
             panel=c.action
