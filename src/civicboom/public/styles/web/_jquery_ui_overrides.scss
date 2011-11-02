@@ -1,0 +1,26 @@
+#app .ui-accordion .ui-accordion-content {
+    padding: 0px 1em;
+    border: 1px solid #333;
+}
+#app .ui-accordion .ui-accordion-header:hover {
+    &.ui-state-default {
+        background: $button-top + #101010;
+        border-radius: 0.2em;
+    }
+}
+#app .ui-accordion .ui-accordion-header {
+    padding-left: 2em;
+    border: 1px solid #333;
+    margin-bottom: 0px !important;
+
+    &.ui-state-default {
+        color: white;
+        background: $cb-lighterblue;
+        border-radius: 0.2em;
+    }
+    &.ui-state-active {
+        color: white;
+        background: $cb-lightblue;
+        border-radius: 0.2em 0.2em 0em 0em;
+    }
+}
