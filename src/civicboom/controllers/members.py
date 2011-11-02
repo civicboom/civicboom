@@ -129,7 +129,6 @@ class MembersController(BaseController):
     @desc REST Controller styled on the Atom Publishing Protocol
     """
 
-
     @web
     @t_log(lambda f,a,k: "member search: "+str(k))
     def index(self, **kwargs):

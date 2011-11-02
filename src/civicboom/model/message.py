@@ -117,6 +117,24 @@ CREATE OR REPLACE FUNCTION update_num_unread() RETURNS TRIGGER AS $$
                 message.source_id IS NULL AND
                 NOT message.read
         ) WHERE member.id = tmp_target_id;
+        UPDATE member SET last_message_timestamp = (
+            SELECT timestamp
+            FROM message
+            WHERE
+                message.target_id=member.id AND
+                message.source_id IS NOT NULL
+            ORDER BY message.id DESC
+            LIMIT 1
+        ) WHERE member.id = tmp_target_id;
+        UPDATE member SET last_notification_timestamp = (
+            SELECT timestamp
+            FROM message
+            WHERE
+                message.target_id=member.id AND
+                message.source_id IS NULL
+            ORDER BY message.id DESC
+            LIMIT 1
+        ) WHERE member.id = tmp_target_id;
         RETURN NULL;
     END;
 $$ LANGUAGE plpgsql;

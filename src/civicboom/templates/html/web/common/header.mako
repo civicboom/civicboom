@@ -44,46 +44,6 @@
 <%
     from civicboom.model import Group
 %>
-<script type="text/javascript">
-    var icons;
-    function refreshMessages() {
-        $.getJSON('/profile/messages.json',function(data) {
-            if (typeof data['data'] != 'undefined') {
-                var _total = 0;
-                for (var key in icons) {
-                    if (typeof data.data[key] != 'undefined') {
-                        var jQe = $(icons[key]); 
-                        //alert (icons[key].html());
-                        jQe.html('&nbsp;' + data.data[key] + '&nbsp;');
-                        if (data.data[key] == 0) {
-                            jQe.css('display', 'none');
-                        } else {
-                            jQe.css('display', 'inline');
-                        }
-                        _total += (data.data[key] * 1);
-                    }
-                }
-                if (typeof icons['_total'] != 'undefined') {
-                    var jQe = $(icons['_total']);
-                    jQe.html('&nbsp;' + _total + '&nbsp;');
-                    if (_total == 0) {
-                        jQe.css('display', 'none');
-                    } else {
-                        jQe.css('display', 'inline');
-                    }
-                }
-            }
-        });
-    }
-    $(function() {
-        icons = {num_unread_messages: '.msg_c_m',
-                 num_unread_notifications: '.msg_c_n',
-                 _total: '.msg_c_o'
-                }
-        setInterval(refreshMessages, 180000);
-    });
-</script>
-
 <%def name="messageIcon(messages, id)">
         <div class="icon_overlay_red ${id}"
             % if messages == 0:
@@ -204,6 +164,11 @@
                         link_class="button"
                     )}
                 </span>
+            </td>
+        </tr>
+        <tr class="desktop_notifications" style="display:none;">
+            <td colspan="4">
+                <a href="#" onclick="boom.util.desktop_notification.request_permission(); return false;">Turn on notifications</a>
             </td>
         </tr>
     </table>

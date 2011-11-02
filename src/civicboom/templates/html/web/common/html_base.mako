@@ -142,7 +142,7 @@ if c.logged_in_persona:
 else:
 	u = "anon"
 %>
-<body class="c-${c.controller} a-${c.action} u-${u}">    
+<body class="c-${c.controller} a-${c.action} u-${u}" data-base_url="${h.url('/', qualified=True)}">    
 	${flash_message()}
 	##<nav><%include file="navigation.mako"/></nav>
         <header>
