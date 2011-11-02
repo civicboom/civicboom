@@ -171,8 +171,11 @@ class TestFollowController(TestController):
         # Count current followers (public)
         self.log_in_as('unittest')
         followers_private = get_follower_count('unittest')
+        self.assertGreater(followers_private, 0)
+        
         self.log_out()
         followers_public  = get_follower_count('unittest')
+        self.assertGreater(followers_public , 0)
         
         self.log_in_as('unittest')
         
