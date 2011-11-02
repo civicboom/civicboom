@@ -47,10 +47,11 @@
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <div class="group_settings">
         <h1>
-            % if c.controller == 'groups':
-                ${_('Great! You want to create a _Group...')}<br />
-                ${_('To do this fill out the following:')}
-            % endif
+        % if c.action != 'new' and c.controller != 'groups':
+            ${_("Edit _Group Settings")}
+        % else:
+            ${_("Create _Group")}
+        % endif
         </h1>
         <!-- <a href="${h.url(controller='misc', action='what_is_a_hub')}">${_('What is a _Group?')}</a> -->
 
