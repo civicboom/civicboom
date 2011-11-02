@@ -62,14 +62,15 @@ jquery.ui.js:
 	cd jquery-ui && git checkout 1.8.14
 	cd jquery-ui/ui/ && cat \
 		jquery.ui.core.js \
-		jquery.ui.mouse.js \
 		jquery.ui.widget.js \
+		jquery.ui.mouse.js \
 		jquery.ui.position.js \
 		jquery.ui.autocomplete.js \
 		jquery.ui.datepicker.js \
 		jquery.ui.button.js \
 		jquery.ui.tabs.js \
 		jquery.ui.slider.js \
+		jquery.ui.accordion.js \
 		> ../../jquery.ui.js
 	rm -rf jquery-ui
 
