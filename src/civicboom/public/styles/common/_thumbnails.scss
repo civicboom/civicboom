@@ -2,29 +2,36 @@
 @import "../common/_mixin.scss";
 
 .thumbnail {
+    text-align: center;
     display: inline-block;
-    border: 0.04em solid $thumbnail-border;
-    @include border_radius(0.1em);
-
-    /*
-     * avatar image outer edge is clipped tighter than the border's
-     * inner edge, so some background colour slips into the crack.
-     */
-    background: $thumbnail-back;
-
-    font-size: 40px;
-    widlth: 1em;
-    height: 1em;
-    
-    min-width : 1em;
+    min-width: 1em;
+    max-width: 1em;
     min-height: 1em;
-    max-width : 1em;
     max-height: 1em;
+    padding: 0;
     overflow: hidden;
+    font-size: 40px;
+    @include border_radius(0.1em);
+    
+    img {
+        min-width: 95%;
+      	max-width: 95%;
 
-    vertical-align: top;
+        background-color: #eee;
+        border: 1px solid #aaa;
+        @include border_radius(0.075em);
+      	// min-height: 100%;
+      	//min-height: 100%;
+      
+      	/*
+      	 * an image inside a div can overflow the div's rounded corners;
+      	 * as a hack, give the image rounded corners too (works in chrome,
+      	 * at least; FF3.6 doesn't support images with rounded corners,
+      	 * FF4 does, not sure about other browsers)
+      	 */
+      	// @include border_radius(0.075em);
 
-	position: relative;
+	  }
 }
 
 .thumbnail_small {
@@ -35,25 +42,6 @@
 
 .thumbnail_large {
 	font-size: 80px;
-}
-
-.thumbnail .img {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-
-	width: 1em;
-	height: 1em;
-
-	/*
-	 * an image inside a div can overflow the div's rounded corners;
-	 * as a hack, give the image rounded corners too (works in chrome,
-	 * at least; FF3.6 doesn't support images with rounded corners,
-	 * FF4 does, not sure about other browsers)
-	 */
-	border-radius        : 0.075em;
-	-moz-border-radius   : 0.075em;
-	-webkit-border-radius: 0.075em;
 }
 
 .thumbnail .icons {
