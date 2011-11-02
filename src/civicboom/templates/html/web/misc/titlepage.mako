@@ -33,6 +33,7 @@
     <div class="content_wrapper">
         ${title()}
         ${banner()}
+        ${bars()}
     </div>
 </%def>
 
@@ -68,14 +69,20 @@
 
 <%def name="bars()">
     <div class="bars">
-        <div class="bar">
-            Individual
+        <div class="signup_btn">
+            Sign up now!
         </div>
         <div class="bar">
-            Organisation
+            <h1>Individuals</h1>
+            <p>This is where some text will go! Maybe some pictures.</p>
         </div>
         <div class="bar">
-            Other
+            <h1>Organisations</h1>
+            <p>This is where some text will go! Maybe some pictures.</p>
+        </div>
+        <div class="bar">
+            <h1>Other</h1>
+            <p>This is where some text will go! Maybe some pictures.</p>
         </div>
     </div>
 </%def>

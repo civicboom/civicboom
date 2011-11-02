@@ -2,11 +2,12 @@
 @import "../common/_mixin.scss";
 
 $cb-orange: #FF6600;
+$cb-green: green;
 
 BODY.c-misc.a-titlepage {
     .content_wrapper {
         // background-color: #eee;
-        color: #999;
+        color: #666;
         width: 960px;
         min-height: 100px;
         margin: auto;
@@ -45,6 +46,8 @@ BODY.c-misc.a-titlepage {
     
     .banner {
         position: relative;
+        background-image: url('/images/misc/titlepage/banner_gradient.png');
+        background-repeat: no-repeat;
         background-color: $cb-lightblue;
         height: 400px;
         width: 100%;
@@ -56,8 +59,7 @@ BODY.c-misc.a-titlepage {
             right: 5%;
             max-width: 50%;
             text-align: center;
-            text-shadow: #000 0px 0px 2px;
-            font-weight: normal;
+            text-shadow: #000 0px 0px 3px;
             
             h1 {
                 color: $cb_orange;
@@ -73,6 +75,36 @@ BODY.c-misc.a-titlepage {
     }
     
     .bars {
-      
+        position: relative;
+        width: 100%;
+        
+        .signup_btn {
+            position: absolute;
+            height: 8em;
+            width: 20em;
+            @include border_radius(1em);
+            @include drop_shadow(0, 2px, 3px, #333);
+            @include horiz_gradient(lighten($cb-green, 20%), $cb-green);
+            background-color: green;
+            top: -4em;
+            right: 2em;
+        }
+        
+        .bar {
+            display: inline-block;
+            margin: 0;
+            width: 33%;
+            
+            h1 {
+                font-size: 150%;
+                padding-top: 0.5em;
+                padding-left: 0.5em;
+            }
+            
+            p {
+                font-size: 110%;
+                padding-left: 1em;
+            }
+        }
     }
 }
