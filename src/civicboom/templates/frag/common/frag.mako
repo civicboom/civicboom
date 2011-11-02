@@ -89,6 +89,9 @@
             kwargs['format'] = 'frag'
             self.attr.frag_url = h.url('current',**kwargs)
         
+        kwargs['format'] = 'json'
+        self.attr.json_url = h.url('current',**kwargs)
+        
         # Gen html URL
         if self.attr.html_url == True:
             if 'format' in kwargs:
@@ -101,6 +104,8 @@
             print 'html url', kwargs
             self.attr.html_url = h.url('current', sub_domain='www', **kwargs)
             print self.attr.html_url
+            
+        
         
         # Gen RSS URL
         if self.attr.rss_url == True:
@@ -189,6 +194,7 @@
         class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}"
         data-frag_url="${self.attr.frag_url}"
         data-html_url="${self.attr.html_url}"
+        data-json_url="${self.attr.json_url}"
     >
         <span style="clear: both; display: block;"></span>
         ##<div class="title">
