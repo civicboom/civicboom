@@ -12,15 +12,72 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    
-	<div class="wrapper">
-			${front_headline()}
-			${front_windows()}
-			${front_tagline()}
-			${start_button()}
-			${social_media()}
-	</div>
-	<br />
+    % if config['development_mode']:
+        ${new_frontpage()}
+    % else:
+    	<div class="wrapper">
+    			${front_headline()}
+    			${front_windows()}
+    			${front_tagline()}
+    			${start_button()}
+    			${social_media()}
+    	</div>
+    	<br />
+	% endif
+</%def>
+
+##------------------------------------------------------------------------------
+## New frontpage
+##------------------------------------------------------------------------------
+<%def name="new_frontpage()">
+    <div class="content_wrapper">
+        ${title()}
+        ${banner()}
+    </div>
+</%def>
+
+<%def name="title()">
+    <div class="header">
+        ## logo image
+        <a href='/'>
+            <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'/>
+        </a>
+        
+        ## header links
+        <span class="links">
+            <a>${_("About _site_name")}</a>
+            <a>${_("FAQ")}</a>
+            <a>${_("Blog")}</a>
+            <a>${_("Contact")}</a>
+            <a>${_("Log in")}</a>
+        </span>
+    </div>
+</%def>
+
+<%def name="banner()">
+    <div class="banner">
+        <div class="text">
+            <h1>Connecting people that need stories with people that have them</h1>
+            <h2>Not really sure what to write here</h2>
+            <h2>Not really sure what to write here</h2>
+            <h2>Not really sure what to write here</h2>
+            <h2>Not really sure what to write here</h2>
+        </div>
+    </div>
+</%def>
+
+<%def name="bars()">
+    <div class="bars">
+        <div class="bar">
+            Individual
+        </div>
+        <div class="bar">
+            Organisation
+        </div>
+        <div class="bar">
+            Other
+        </div>
+    </div>
 </%def>
 	
 ##------------------------------------------------------------------------------
