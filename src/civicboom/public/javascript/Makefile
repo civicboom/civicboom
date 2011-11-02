@@ -70,6 +70,7 @@ jquery.ui.js:
 		jquery.ui.button.js \
 		jquery.ui.tabs.js \
 		jquery.ui.slider.js \
+		jquery.ui.accordion.js \
 		> ../../jquery.ui.js
 	rm -rf jquery-ui
 
