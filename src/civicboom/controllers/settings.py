@@ -145,7 +145,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
                     'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
-                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment')
+                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment', not_empty=False)
 }
 
 settings_validators = {}
