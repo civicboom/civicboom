@@ -154,3 +154,40 @@ class TestFollowController(TestController):
         self.follower_distrust('follow_test') # Should negate previous state
         self.assertEquals(get_following_count(follow_type='trusted_invite'), 0)
         self.assertEquals(get_following_count(follow_type='trusted'       ), 0)
+
+    #---------------------------------------------------------------------------
+    # Test Feature - Hidden followers option
+    #---------------------------------------------------------------------------
+    def test_hidden_followers(self):
+        
+        def get_follower_count(username=None):
+            if not username:
+                username = self.logged_in_as
+            response      = self.app.get(url('member_action', action='followers', id=username, format='json'), status=200)
+            response_json = json.loads(response.body)
+            return response_json['data']['list']['count']
+        
+        # Count current followers (private)
+        # Count current followers (public)
+        self.log_in_as('unittest')
+        followers_private = get_follower_count('unittest')
+        self.log_out()
+        followers_public  = get_follower_count('unittest')
+        
+        self.log_in_as('unittest')
+        
+        # Set hide followers setting
+        self.setting('hide_followers', 'advanced', True)
+        
+        # Count again (private) - should be all there
+        self.assertEquals(followers_private, get_follower_count('unittest'))
+        
+        # Logged in as anyone else should reveal no followers
+        self.log_out()
+        self.assertEquals(get_follower_count('unittest'), 0)
+        self.log_in_as('unitfriend')
+        self.assertEquals(get_follower_count('unittest'), 0)
+        
+        # Set hide followers to false
+        self.log_in_as('unittest')
+        self.setting('hide_followers', 'advanced', False)
