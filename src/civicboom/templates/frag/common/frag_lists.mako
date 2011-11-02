@@ -344,7 +344,7 @@
             <div class="thumbnail">
                 <div style="position: relative;">
                     ${content_thumbnail_icons(content)}
-                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0;"/>
+                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0; left: 0;"/>
                 </div>
             </div>
             </a>

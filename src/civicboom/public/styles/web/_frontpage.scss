@@ -1,0 +1,78 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+$cb-orange: #FF6600;
+
+BODY.c-misc.a-titlepage {
+    .content_wrapper {
+        // background-color: #eee;
+        color: #999;
+        width: 960px;
+        min-height: 100px;
+        margin: auto;
+        padding: 0;
+    }
+    
+    .header {
+        position: relative;
+        height: 80px;
+        width: 100%;
+        
+        .logo_img {
+            position: absolute;
+            height: 80%;
+            bottom: 5%;
+            left: 1em;
+        }
+        
+        .links {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            padding-bottom: 0.5em;
+            font-size: 20px;
+            
+            a {
+                color: #999;
+                margin-left: 1.5em;
+                
+                &:hover {
+                    color: $cb-orange;
+                }
+            }
+        }
+    }
+    
+    .banner {
+        position: relative;
+        background-color: $cb-lightblue;
+        height: 400px;
+        width: 100%;
+        @include drop_shadow(0, 2px, 3px, #333);
+        
+        .text {
+            position: absolute;
+            top: 30%;
+            right: 5%;
+            max-width: 50%;
+            text-align: center;
+            text-shadow: #000 0px 0px 2px;
+            font-weight: normal;
+            
+            h1 {
+                color: $cb_orange;
+                font-size: 90%;
+                padding-bottom: 0.75em;
+            }
+            
+            h2 {
+                color: #fff;
+                font-size: 130%;
+            }
+        }
+    }
+    
+    .bars {
+      
+    }
+}
