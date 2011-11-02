@@ -67,14 +67,15 @@
                     <tr>
                         <td>
                             <label for="group_name">${_('Choose the _Group name:')}</label>
-                            <br><input class="group-edit" type="text" id="group_name" name="name" value="${get_param('name')}" />
+                            <br><input class="group-edit" type="text" id="group_name" name="name" value="${get_param('name')}"
+                                placeholder="A short title for your publication or organisation" />
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <label for="group_description">${_("Describe what it's about:")}</label>
                             <br><textarea class="group-edit" name="description" id="group_description"
-                                placeholder="${_('This will have text that will be a top line description of what this _Group could be for.')}">${get_param('description')}</textarea>
+                                placeholder="${_('Give a top line description of what this _Group will be for.')}">${get_param('description')}</textarea>
                             ${show_error('description')}
 
                         </td>
@@ -82,14 +83,15 @@
                     <tr>
                         <td>
                             <label for="website">${_('Website (Optional):')}</label>
-                            <br><input type="text" name="website" id="website" value="${get_param('website')}" />
+                            <br><input type="text" name="website" id="website" value="${get_param('website')}"
+                                placeholder="http://www.example.com/" />
                             ${show_error('website')}
 
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <label for="avatar">${_('Avatar (Optional):')}</label>
+                            <label for="avatar">${_('Logo (Optional):')}</label>
                             <br><input type="file" name="avatar" id="avatar" />
                             ${show_error('avatar')}
                         </td>
@@ -121,7 +123,7 @@
                         </td>
                         <td>
                             <label for="join_mode_invite_and_request">${_('Request to join')}</label>
-                            <br>${_('Anyone can request to join. Administrators have to approve the request')}
+                            <br>${_('Anyone can request to join. Administrators have to approve the request.')}
                         </td>
                     </tr>
                     <tr>
@@ -130,7 +132,7 @@
                         </td>
                         <td>
                             <label for="join_mode_invite">${_('Invitation only')}</label>
-                            <br>${_('An administrator must invite members to join. The members can then accept the invitation')}
+                            <br>${_('An administrator must invite members to join. The members can then accept the invitation.')}
                         </td>
                     </tr>
                 </table>
@@ -215,7 +217,7 @@
                         </td>
                         <td>
                             <label for="member_visibility_private">${_('Member list hidden')}</label>
-                            <br>${_("Only administrators will see who has joined the _group")}
+                            <br>${_("Only administrators will see who has joined the _group.")}
                         </td>
                     </tr>
                     <tr>
@@ -250,17 +252,20 @@
             </div>
             % endif
         </div>
-        <div class="fl" style="width: 17em; padding-top: 1em;">
-            ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' and c.controller != 'groups' else _('Create _Group')))} <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
-            ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
-            
-        </div>
-        <div class="fr" style="padding-top: 1em;">
-            % if c.action != 'new' and c.controller != 'groups':
-                <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
-            % else:
-                <input type="submit" name="submit" value="${_('Create _Group')}" class="button" />
-            % endif
+
+        <div style="padding-top: 1em">
+            <div style="float: right;">
+                % if c.action != 'new' and c.controller != 'groups':
+                    <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
+                % else:
+                    <input type="submit" name="submit" value="${_('Create _Group')}" class="button" />
+                % endif
+            </div>
+            <div style="font-size: 0.85em;">
+                ${_('By clicking "%s" you confirm that you have read and accepted the ' % (_('Save _Group') if c.action != 'new' and c.controller != 'groups' else _('Create _Group')))}
+                <a href="#" onclick="$(this).siblings('.terms_and_conds').modal(); return false;">${_('terms and conditions')}</a>.
+                ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
+            </div>
         </div>
 
         <script>
