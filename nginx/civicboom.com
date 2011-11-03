@@ -133,10 +133,11 @@ server {
 		deny all;
 	}
 
-	location ~* ^.+\.(woff|appcache)$ {
-		types {
-			application/x-font-woff  woff;
-		}
-		default_type  application/octet-stream;
-	}
+	# pylons handles static files for now
+#	location ~* ^.+\.(woff|appcache)$ {
+#		types {
+#			application/x-font-woff  woff;
+#		}
+#		default_type  application/octet-stream;
+#	}
 }

@@ -6,6 +6,9 @@ class TestMembersController(TestController):
     def test_member_page(self):
         response = self.app.get(url('members', format='json'))
 
+    def test_member_qrcode(self):
+        response = self.app.get(url('member_action', id='unittest', action='qrcode'))
+
     def test_member_list(self):
         # by name
         response = self.app.get(url('members', format="json", list="all", term="mr"))

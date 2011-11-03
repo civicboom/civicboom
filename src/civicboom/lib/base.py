@@ -25,7 +25,6 @@ from civicboom.lib.permissions         import account_type, role_required, age_r
 from civicboom.lib.accounts            import deny_pending_user
 from civicboom.lib.widget              import widget_defaults, setup_widget_env
 
-
 from cbutils.misc import now
 import cbutils.worker as worker
 
@@ -295,7 +294,7 @@ class BaseController(WSGIController):
         c.format                   = current_request.get("format") or "html"
         c.subformat                = get_subdomain_format()
         c.auto_format_top_call     = False # Used as a flag to the auto_formatter to only output the top level decorator
-
+        
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
