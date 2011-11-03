@@ -330,22 +330,8 @@
 ##------------------------------------------------------------------------------
 ## Flash Media Recorder
 ##------------------------------------------------------------------------------
-<%def name="media_recorder()">
-	<script type="text/javascript">
-		function cbFlashMedia${self.id}_DoFSCommand(command, args) {
-			var args = args.split(',');
-			if (command == 'flashresize') {
-				aHeight = (args[0]*1)+5; 
-				aWidth  = (args[1]*1)+14;
-				$('#media_recorder_${self.id}').css('width', aWidth).css('height', aHeight);
-			} else if (command == 'uploadcomplete') {
-				// refreshProgress($('form#edit_$(self.id}'));
-				// FIXME: BROKEN!!!!
-			}
-		}
-		swfobject.embedSWF("https://localhost.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
-	</script>
-	<div class="media_recorder" style="left:0px;width:360px;height:371px;" id="media_recorder_${self.id}">
+<%def name="media_recorder()">## data-swf_url="https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf"
+	<div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
 	</div>
 </%def>
@@ -509,15 +495,10 @@
                 % if c.logged_in_persona.has_account_required('plus'):
                   <div class="padded">${_("You can choose to make your content either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.")|n}</div>
                   <div class="padded">
-                      <div class="jqui-radios">
+                      <div class="jqui-radios event_load">
                           <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
                           <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                       </div>
-                      <script type="text/javascript">
-                        $(function() {
-                            $('.jqui-radios').buttonset().removeClass('.jqui-radios');
-                        })
-                      </script>
                   </div>
                 % endif
             </div>

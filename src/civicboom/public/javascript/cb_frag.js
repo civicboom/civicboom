@@ -236,6 +236,34 @@ if (!('util' in boom)) {
             $('.desktop_notifications').show();
         })
       }
+    },
+    register_flash_callback: function (name, func) {
+      var name_time;
+      do {
+        name_time = name + (new Date().getTime())
+      } while (name_time in window)
+      window[name_time] = func;
+      return name_time;
+    },
+    convertYesNoCheckboxes: function (element) {
+      element = boom.util.convert_jquery(element);
+      //return;
+      var selects = element.find('select.yesno').filter(':visible');
+      if (selects.length == 0) return;
+      selects.after('<input type="checkbox" class="yesnocheck unproc" />');
+      selects.hide();
+      var checks = element('input.yesnocheck').filter('.unproc');
+      checks.each(function(index) {
+          var value = $(this).prev('select.yesno').val();
+          $(this).attr('checked', !(value == '' || value == 'no'));
+      });
+      checks.unbind().change(function() {
+          var yesno = $(this).prev('select.yesno');
+          var yes = yesno.children('.yes').val();
+          var no  = yesno.children('.no' ).val();
+          yesno.val(this.checked ? yes:no);
+      });
+      checks.removeClass('unproc');
     }
   }
 }
@@ -312,6 +340,8 @@ if (!('frags' in boom)) {
        *  confirm:        html message to display
        *  confirm-yes:    text to display on yes link
        *  confirm-no:     text to dispkay on no link
+       *  confirm-secure-options: array of objects used to create yes links that change the secure link, instead of yes / no buttons.
+       *    e.g. [ {confirm: "Text of the secure link", json: "/new/json/url/for?secure=link"}, {confirm: "Repeat here, leave json out to use original json url"} ]
        */
       modal_confirm: function (settings, originalLink) {
         if (typeof settings == 'string')
@@ -352,20 +382,26 @@ if (!('frags' in boom)) {
             .append(
               // popup-actions
               $('<div />').addClass('popup-actions').append(
-                // buttons
-                $('<a />').addClass('button')
-                  .data('original', originalLink)
-                  .html(settings.confirmYes || 'Yes')
-                  .click(function () {
-                    var link = $(this);
-                    console.log('click', this, link);
-                    var original = link.data('original');
-                    original.data('confirmed', 'true');
-                    original.click();
-                    $.modal.close();
-                  }).after(
-                    $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
-                  )
+                (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? 
+                (
+                  // secure options
+                  
+                ) : (
+                  // buttons
+                  $('<a />').addClass('button')
+                    .data('original', originalLink)
+                    .html(settings.confirmYes || 'Yes')
+                    .click(function () {
+                      var link = $(this);
+                      console.log('click', this, link);
+                      var original = link.data('original');
+                      original.data('confirmed', 'true');
+                      original.click();
+                      $.modal.close();
+                    }).after(
+                      $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
+                    )
+                )
               )
             )
           )
@@ -418,7 +454,7 @@ if (!('frags' in boom)) {
           // html5ize new fragment (datetime boxes etc.)
           html5ize(current_frag);
           // convert yes/no dropdowns to checkboxes
-          $(convertYesNoCheckbox);
+          boom.util.convertYesNoCheckboxes(current_frag);
           // Set up auto save
           current_frag.find('form.auto_save').each(function() {
             boom.frags.setAutoSave(this);
@@ -664,6 +700,12 @@ if (!('frags' in boom)) {
             console.log('.jq_simplecolor');
             $(this).simpleColorPicker();
             return false;
+          }
+        },
+        '.jqui-radios': {
+          'boom_load': function () {
+            console.log('.jqui-radios')
+            $(this).buttonset().removeClass('.jqui-radios');
           }
         },
         '.get_widget': {

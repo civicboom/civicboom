@@ -474,6 +474,22 @@
         % if 'respond' in self.actions:
             % if self.content.get('parent'):
             
+                ${h.secure_link(
+                    h.args_to_tuple('new_content', parent_id=self.id) ,
+                    link_class  = 'button' ,
+                    value       = _("Respond with your story") ,
+                    form_data   = dict(
+                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                    ) ,
+                    link_data   = dict(
+                        confirm = "RARARA?",
+                        confirm_secure_options = [
+                            dict(content="That one", json=h.url('new_content', parent_id=self.content['root_parent']['id'])) ,
+                            dict(content="This one", json=h.url('new_content', parent_id=self.id))
+                        ]
+                    ) ,
+                )}
+            
                 <div class="hide_if_nojs">
                     <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your story")}</a>
                 </div>
@@ -938,9 +954,9 @@
 <%def name="content_actions_common()">
     
     % if 'edit' in self.actions:
-        <a href="${h.url('edit_content', id=self.id)}"
-           onclick="return boom.frags.update(this, '${h.url('edit_content', id=self.id, format='frag')}')"
-        ><span class="icon16 i_edit"></span>${_("Edit")}</a>
+        <a class="link_update_frag" href="${h.url('edit_content', id=self.id)}"
+               data-frag="${h.url('edit_content', id=self.id, format='frag')}"
+            ><span class="icon16 i_edit"></span>${_("Edit")}</a>
         <span class="separtor">&nbsp;</span>
     % endif
 

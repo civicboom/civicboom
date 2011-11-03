@@ -136,98 +136,48 @@ if (!('media_update' in boom)) {
   });
 }
 
-// var media_thumbnail_timers = {};
-// var media_jquery_objects = {};
-// 
-// 
-// 
-// function updateMedia(id, hash, jquery_element) {
-  // if (typeof media_jquery_objects[id] == 'undefined')
-  // {
-    // media_jquery_objects[id] = jquery_element;
-  // } else {
-    // jquery_element = media_jquery_objects[id];
-  // }
-  // if (typeof media_thumbnail_timers[id] == 'undefined')
-    // media_thumbnail_timers[id] = setInterval ('updateMedia('+id+',"'+hash+'")', 1000);
-  // function processingStatus(data) {
-    // _status = false;
-    // try {
-      // _status = data.data.media.processing_status;
-    // } catch (e) {}
-    // if(!_status) {
-      // _thumbnail = data.data.media.thumbnail_url;
-      // clearInterval(media_thumbnail_timers[id]);
-      // delete media_thumbnail_timers[id];
-      // jquery_element.find('img').attr('src', _thumbnail + "?" + (new Date().getTime()));
-      // jquery_element.find('span').text('').css('display', 'none'); 
-    // }
-    // else {
-      // jquery_element.find('span').css('display', 'inline').text(_status);
-    // }
-  // }
-  // $.getJSON(
-    // '/media/' + hash + '.json',
-    // processingStatus
-  // );
-// }
-// 
-// function appendAttr(element, name, append) {
-  // if (element.length == 0) return;
-  // if (element.attr(name)) element.attr(name, element.attr(name) + '_' + append);
-// }
-// 
-// function setAttrIf(element, name, val) {
-  // if (element.length == 0) return;
-  // if (element.attr(name)) element.attr(name, val);
-// }
-// 
-// function removeMedia(jquery_element) {
-  // var id = jquery_element.attr('name').split('_')[2];
-	// var url = "/media/"+id+".json";
-	// var post = [
-	      // {name: "id", value: id},
-				// {name: "_method", value: "DELETE"},
-				// {name: "_authentication_token", value: jquery_element.parents('form').find('#_authentication_token').val()}
-	   // ];
-	// $.post( url, post, function(data) {
-		// jquery_element.parents('li').remove();
-		// if (typeof media_thumbnail_timers[id] != 'undefined') {
-      // clearInterval(media_thumbnail_timers[id]);
-      // delete media_thumbnail_timers[id];
-    // }
-	// });
-	// return false;
-// }
-// 
-// function refreshProgress (jquery_element) {
-  // var url = jquery_element.parents('.'+fragment_container_class).find('.'+fragment_source_class).attr('href').replace(/\.frag$/, '.json');
-  // $.getJSON( url, function (data) {
-    // if (typeof data.data.content.attachments != 'undefined') {
-      // var attachments = data.data.content.attachments
-      // //Y.log (attachments.length);
-      // for (var i = 0; i < attachments.length; i ++) {
-        // var attachment = attachments[i];
-        // //Y.log ('#media_attachment_' + attachment.id + ' :' + $('#media_attachment_' + attachment.id).length);
-        // if ($('#media_attachment_' + attachment.id).length == 0) {
-          // //Y.log ('I found a new attachment!');
-          // var at_element = jquery_element.find('#mediatemplate').clone(true, true).attr('id', 'media_attachment_' + attachment.id).css('display','');
-          // jquery_element.find('ul.media_files').children('li.media_file').last().after(at_element);
-          // at_element.find('#media_file').attr('value', attachment.name);
-          // at_element.find('#media_caption').attr('value', attachment.caption);
-          // at_element.find('#media_credit').attr('value', attachment.credit);
-          // at_element.find('*').each(function (index, element) {
-            // element = $(element);
-            // appendAttr(element, 'id', attachment.id);
-            // appendAttr(element, 'for', attachment.id);
-            // appendAng ttr(element, 'name', attachment.id);
-          // });
-          // updateMedia(attachment.id, attachment.hash, at_element);
-        // }
-      // }
-    // }
-  // });
-// }
+if (!('media_recorder' in boom)) {
+  boom.media_recorder = {
+    init: function () {
+      $('div.media_recorder').live('boom_load', function () {
+        var div = $(this);
+        
+        var callback_resize = boom.util.register_flash_callback('cbflashmediaresize', function (height, width) {
+          console.log('callback_flash_resize', height, width);
+          aHeight = (height*1)+5; 
+          aWidth  = (width*1)+14;
+          div.css('width', aWidth).css('height', aHeight);
+        });
+        
+        var callback_uploadcomplete = boom.util.register_flash_callback('cbflashmediauploadcomplete', function () {
+          console.log('media_upload_flash');
+          // Trigger boom_load on ul.media_files within the same form (updates file previews)
+          div.parents('form').find('ul.media_files').trigger('boom_load');
+        });
+        
+        div.flash({
+          swf: div.data('swf_url') || 'https://localhost.civicboom.com:9443/api_flash_server/cbFlashMedia.swf',
+          flashvars: {
+            type: "v",
+            host: "bm1.civicboom.com",
+            user: div.data('member_id'),
+            id:   div.data('content_id'),
+            key:  div.data('key'),
+            callback_resize: callback_resize,
+            callback_uploadcomplete: callback_uploadcomplete
+          },
+          allowscriptaccess: 'always',
+          width: '100%',
+          height: '100%',
+        });
+        
+      });
+    }
+  }
+  $(function() {
+    boom.media_recorder.init();
+  })
+}
 
 function limitInputLength (event, textElement, maxLength) {
 	var textLength = $(textElement).val().length;
@@ -242,27 +192,27 @@ function countInputLength (event, textElement, maxLength, statusElement) {
 	if (typeof statusElement != 'undefined') statusElement.text(maxLength - (textLength));
 }
 
-function convertYesNoCheckbox() {
-  //return;
-	var selects = $('select.yesno').filter(':visible');
-	if (selects.length == 0) return;
-	selects.after('<input type="checkbox" class="yesnocheck unproc" />');
-	selects.hide();
-	var checks = $('input.yesnocheck').filter('.unproc');
-	checks.each(function(index) {
-	    var value = $(this).prev('select.yesno').val();
-	    $(this).attr('checked', !(value == '' || value == 'no'));
-	});
-	checks.unbind().change(function() {
-	    var yesno = $(this).prev('select.yesno');
-	    var yes = yesno.children('.yes').val();
-	    var no  = yesno.children('.no' ).val();
-	    yesno.val(this.checked ? yes:no);
-	});
-	checks.removeClass('unproc');
-}
+// function convertYesNoCheckbox() {
+  // //return;
+	// var selects = $('select.yesno').filter(':visible');
+	// if (selects.length == 0) return;
+	// selects.after('<input type="checkbox" class="yesnocheck unproc" />');
+	// selects.hide();
+	// var checks = $('input.yesnocheck').filter('.unproc');
+	// checks.each(function(index) {
+	    // var value = $(this).prev('select.yesno').val();
+	    // $(this).attr('checked', !(value == '' || value == 'no'));
+	// });
+	// checks.unbind().change(function() {
+	    // var yesno = $(this).prev('select.yesno');
+	    // var yes = yesno.children('.yes').val();
+	    // var no  = yesno.children('.no' ).val();
+	    // yesno.val(this.checked ? yes:no);
+	// });
+	// checks.removeClass('unproc');
+// }
 
-$(convertYesNoCheckbox);
+//$(convertYesNoCheckbox);
 
 function init_validation(element, validator) {
 	var check_timer = null;

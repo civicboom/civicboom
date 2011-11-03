@@ -26,6 +26,7 @@
 		<script src="/javascript/jquery.getUrlParam.js"></script>
 		<script src="/javascript/jquery.cookie.js"></script>
 		<script src="/javascript/jquery.jcarousel.js"></script>
+		<script src="/javascript/jquery.swfobject.1-1-1.js"></script>
 		<script src="/javascript/invite.js"></script>
 		<script src="/javascript/mobile.js"></script>
 		% if config['online']:

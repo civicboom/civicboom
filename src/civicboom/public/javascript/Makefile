@@ -22,6 +22,7 @@ FOOT=\
 	jquery.getUrlParam.js \
 	jquery.cookie.js \
 	jquery.jcarousel.js \
+	jquery.swfobject.1-1-1.js \
 	invite.js \
 	mobile.js \
 	rpx.js \
