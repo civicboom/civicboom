@@ -340,10 +340,14 @@
     %>
 
     <td>
-        <a class="thumbnail" href="${item_url}" ${js_link_to_frag}>
-            ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
-        </a>
+            <a href="${item_url}" ${js_link_to_frag}>
+            <div class="thumbnail">
+                <div style="position: relative;">
+                    ${content_thumbnail_icons(content)}
+                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0; left: 0;"/>
+                </div>
+            </div>
+            </a>
     </td>
     
     <td class="content_details">
