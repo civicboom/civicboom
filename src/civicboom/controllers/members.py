@@ -236,6 +236,8 @@ class MembersController(BaseController):
 
                 if member == c.logged_in_persona:
                     list_to_dict_transform = me_follower_of_to_dict_transform
+                elif member.config['hide_followers']:
+                    results = results.filter(Follow.member_id==null()) # AllanC - a hacky filter to ensure that the no results are returned by this query
                 else:
                     list_to_dict_transform = follower_of_to_dict_transform
             

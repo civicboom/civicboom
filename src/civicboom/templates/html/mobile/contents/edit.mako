@@ -77,8 +77,10 @@ import html2text
         ##pre_onsubmit = "tinyMCE.triggerSave(true,true);",
         ##json_form_complete_actions = "json_submit_complete_for_%(id)s();" % dict(id=self.id)
     )}
-        
-        ${edit_full.invalid_messages()}
+    
+    ${edit_full.invalid_messages()}
+    
+    <div data-role="collapsible-set" data-theme="a">
         ${base_content()}
         ${media()}
         ${content_extra_fields()}
@@ -87,7 +89,7 @@ import html2text
         % if not self.content.get('parent'):
             ${privacy()}
         % endif
-
+    </div>
         ${submit_buttons()}
 
         
@@ -207,7 +209,7 @@ import html2text
 ##------------------------------------------------------------------------------    
 
 <%def name="location()">
-<div data-role="collapsible" data-theme="c" data-content-theme="c">
+<div data-role="collapsible" data-content-theme="c">
     <h3>${_('Location')}</h3>
 
     <script type="text/javascript">
@@ -239,14 +241,14 @@ import html2text
 </%def>
 
 <%def name="privacy()">
-<div data-role="collapsible" data-theme="c" data-content-theme="c">
+<div data-role="collapsible" data-content-theme="c">
     <h3>${_('Content Visibility')}</h3>
     
 </div>
 </%def>
 
 <%def name="license()">
-<div data-role="collapsible" data-theme="c" data-content-theme="c">
+<div data-role="collapsible" data-content-theme="c">
     <h3>${_('License')}</h3>
     <p>${_('This content will be posted under the')} <a href="http://creativecommons.org/licenses/by/2.0/uk/" rel="external">Creative Commons Attributed Licence.</a> <img src="/images/licenses/CC-BY.png" />
 </div>

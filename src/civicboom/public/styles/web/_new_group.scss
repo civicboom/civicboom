@@ -1,159 +1,88 @@
+@import "../common/_palette.scss";
+
 BODY.c-groups.u-user, BODY.c-settings.u-user {
-  .group_settings {
-    .button {
-      width: 10em;
+    .group_settings {
+        .button {
+            width: 10em;
+        }
+
+        LABEL {
+            font-weight: bold;
+        }
+
+        TABLE {
+            width: 100%;
+
+            TD.radio {
+                vertical-align: middle;
+                text-align: center;
+                width: 2.5em;
+            }
+            TD {
+                padding-bottom: 1em;
+                padding-top: 0px;
+            }
+        }
+
+        .upgrade {
+            position: relative;
+            display: inline-block;
+            width: 13em;
+            font-size: 90%;
+            font-weight: normal;
+        }
+
+        .setting-disabled {
+            background-color: #DDD;
+            // color: #999 !important;
+        }
+
+        .b {
+            font-weight: bold;
+        }
     }
-  
-    fieldset {
-      width: auto !important;
+
+    TEXTAREA.group-edit {
+        resize: vertical;
+        height: 75px;
+        width: 100%;
     }
-  
-    .group-block {
-      padding: 0.5em 0;
-      padding-left: 2.5em;
-      width: 100%;
-      * {
-        top: 0;
+    INPUT[type='text'] {
+        width: 100%;
+    }
+
+    TR TD  {
         vertical-align: top;
-      }
     }
-    
-    .number {
-      padding: 0.5em;
-      padding-top: 0.5em;
+
+
+    TABLE.group-table {
+        width: 475px;
     }
-    
-    .upgrade {
-      position: relative;
-      display: inline-block;
-      width: 13em;
-      font-size: 90%;
-      font-weight: normal;
+
+    TABLE.quickgroup-table {
+        width: 210px;
     }
-    
-    .radio {
-      margin-right: 1em;
+
+    .quickbutton {
+        width: 100px;
+        height: 60px;
+        white-space: normal;
     }
-    
-    .setting-disabled {
-      background-color: #DDD;
 
-      // color: #999 !important;
+    .quickhilite {
+        color: #FF0;
     }
-    
-    .radio-right {
-      padding-left: 11em;
-      width: 18em;
+
+    TD.quickchangehilite {
+        background-color: #AAFFAA;
     }
-    
-    .b {
-      font-weight: bold;
+
+    TR.quickchangehilite TD {
+        background-color: #AAFFAA;
     }
-    
-    li {
-      padding: 0.25em 0;
+
+    .role_description {
+        color: #555;
     }
-    
-    ul {
-      padding-bottom: 0.5em;
-    }
-    
-    label, .number, div .label {
-      font-weight: bold;
-    }
-    
-    label {
-      display: inline-block;
-      width: 8em;
-    }
-    
-    .wide_label {
-      label {
-        width: 27em !important;
-      }
-      input {
-        width: 2em !important;
-      } 
-    }
-        
-    .label {
-    display: inline-block;
-    width: 15em;
-    }
-    
-    input, textarea {
-      display: inline-block;
-      width: 20em;
-    }
-    
-    .radio {
-      width: 2em;
-    }
-  }
-	.group-edit {
-		width: 300px;
-	}
-
-	TEXTAREA.group-edit {
-		resize: vertical;
-		height: 75px;
-	}
-
-	TR TD  {
-		vertical-align: top;
-	}
-
-	TR.padding TD  {
-		padding-bottom: 0.6em;
-	}
-
-	TR.doublepadding TD  {
-		padding-bottom: 1.8em;
-	}
-
-	TD.bold  {
-		font-weight: bold;
-	}
-
-	TD.bigger  {
-		font-size: 2em;
-	}
-
-	TD.center  {
-		text-align: center;
-	}
-
-	TD.bigger  {
-		font-size: 1.5em;
-	}
-
-	TABLE.group-table {
-		width: 475px;
-	}
-
-	TABLE.quickgroup-table {
-		width: 210px;
-	}
-
-	.quickbutton {
-		width: 100px;
-		height: 60px;
-		white-space: normal;
-	}
-
-	.quickhilite {
-		color: #FF0;
-	}
-
-	TD.quickchangehilite {
-		background-color: #AAFFAA;
-	}
-
-	TR.quickchangehilite TD {
-		background-color: #AAFFAA;
-	}
-
-	.role_description {
-		color: #555;
-	}
 }
