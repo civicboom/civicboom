@@ -677,7 +677,7 @@
 ## Submit buttons
 ##------------------------------------------------------------------------------
 <%def name="submit_buttons()">
-    <div style="font-size: 130%; text-align: center; padding-top: 1em;" class="buttons">
+    <div style="font-size: 130%; text-align: center; padding: 1em;" class="buttons">
         ${popup.popup_static('What happens now?', what_now_popup, '', html_class="what-now-pop")}
         
         ## Preview + Publish
