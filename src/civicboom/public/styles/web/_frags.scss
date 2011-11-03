@@ -5,30 +5,21 @@
 	/*overflow-x : scroll;*/
 	white-space: nowrap;
 	display: block;
-	top:0;
-	bottom:0;
-	/* white-space-collapse: discard; /* http://www.w3.org/TR/css3-text/#white-space-collapsing */
+    height: 100%;
+	// white-space-collapse: discard; // http://www.w3.org/TR/css3-text/#white-space-collapsing
 	margin-left: 0.5em;
 
 	.frag_container {
-		@include drop_shadow(1px, 1px, 1px, #333);
-		vertical-align: top;
-		display : inline-block !important;
+		//vertical-align: top;
+		display: inline-block !important;
 		overflow: auto !important; /* the important property is needed because JQuery sets the style="" element to block and overflow */
 		white-space: normal;
-
-		width      : 500px;
-
-		/* margin     : 0.25em;*/
+        height: 95%;
+		width: 500px;
 		margin: 0.5em 0.25em 0 0.25em;
-		/*margin-left: 0.2em;*/
-
 		border: 1px solid $frag-border;
 		@include border_radius($frag-radius);
-
-		/*bottom: 0em;
-		position: relative;
-		*/
+		@include drop_shadow(1px, 1px, 1px, #333);
 
         table.content tr td { padding-right: 3px; }
         table.content tr td.x { padding-left: 3px; }
@@ -92,6 +83,7 @@
 		.frag_data {
 		  overflow-y: scroll;
 		  overflow-x: hidden;
+          height: 100%;
 			
 		background-color: $frag-background;
 		  
