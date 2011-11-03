@@ -102,6 +102,7 @@
                 <h3>Advanced</h3>
                 <div>
                     <table>
+                    <tr><td></td></tr>
                     % if not self.content.get('parent'):
                         ${privacy()}
                     % endif
@@ -479,7 +480,7 @@
         % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
             <tr><td>
                 <label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label>
-                <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
+                <br><input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
             </td></tr>
         % endif
         
@@ -555,7 +556,9 @@
     % endif
 </%doc>
     <tr><td>
-        <span class="smaller">${_("This _content will be published under")} <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">Creative Commons Attributed License <img src="/images/licenses/CC-BY.png"/></a></span>
+        <label>License</label>
+        <br>${_("This _content will be published under:")}
+        <br><a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">Creative Commons Attributed License <img src="/images/licenses/CC-BY.png"/></a>
         ${what_now_link()}
     </td></tr>
 </%def>
@@ -597,7 +600,6 @@
 
 ## AllanC - note the class selectors are used by jQuery to simulate clicks
 <%def name="submit_button(name, title_text=None, show_content_frag_on_submit_complete=False, prompt_aggregate=False, mo_text=None, mo_class='mo-help-r', onclick_js='')">
-
     <%
         button_id = "submit_%s_%s" % (name, self.id)
         if not title_text:
@@ -678,7 +680,7 @@
         
         ## Preview + Publish
         % if self.content['type'] == "draft":
-            <span style="float: left; margin-left: 2em;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
+            <span style="float: left;">${submit_button('draft'  , _("Save draft"), mo_text=_("This _assignment will be saved to your profile for further editing prior to posting.") )}</span>
             ${submit_button('preview', _("Preview draft"), show_content_frag_on_submit_complete=True, mo_text=_("See how it will look once it's been posted.") )}
             % if 'publish' in self.actions:
                 <%
@@ -686,7 +688,7 @@
                     if self.selected_type == "article":
                         tooltip = "Tell the world!"
                 %>
-                <span style="float: right; margin-right: 2em;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
+                <span style="float: right;">${submit_button('publish', _("Post"), show_content_frag_on_submit_complete=True, prompt_aggregate=True, mo_text=_(tooltip), mo_class="mo-help-l", onclick_js="$(this).parents('.buttons').children('.what-now-pop').modal({appendTo: $(this).parents('form')}); return false;" )}</span>
             % endif
             
         ## Update
