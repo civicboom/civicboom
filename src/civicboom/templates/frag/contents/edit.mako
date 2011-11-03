@@ -101,11 +101,13 @@
                 <div>${location()}</div>
                 <h3>Advanced</h3>
                 <div>
+                    <table>
                     % if not self.content.get('parent'):
                         ${privacy()}
                     % endif
                     ${license()}
                     ${content_extra_fields()}
+                    </table>
                 </div>
             </div>
             ${submit_buttons()}
@@ -391,6 +393,7 @@
                         });
                     });
             </script>
+            <a href="#" onclick="$('#recorder-${self.id}').modal(); return false;">Record from Webcam</a>
         </li>
         
         <!-- Add media non javascript version - hidden if JS enabled -->
@@ -418,8 +421,10 @@
         </li>
         <!-- End Add media -->
 
-        <!--<a href="#" onclick="$('#${self.id}').modal(); return false;">Record from Webcam</a>-->
-        ${popup.popup_static('Webcam Recorder', media_recorder, '', html_class="what-now-pop")}
+        <div id="recorder-${self.id}" style="display: none;">
+        ${media_recorder()}
+        </div>
+##        ${popup.popup_static('Webcam Recorder', media_recorder, '', html_class="recorder-${self.id}")}
     </ul>
 </%def>
 
@@ -427,9 +432,7 @@
 ## Flash Media Recorder
 ##------------------------------------------------------------------------------
 <%def name="media_recorder()">
-    <!--
-    <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
-    -->
+    <p>${_('(Please note this is in beta, please use the feedback link at<br>the bottom of the page if you experience any problems.)')|n}</p>
 	<script type="text/javascript">
 		function cbFlashMedia${self.id}_DoFSCommand(command, args) {
 			var args = args.split(',');
@@ -441,7 +444,7 @@
 				refreshProgress($('form#edit_$(self.id}'));
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"});
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"}, {wmode: "window"});
 	</script>
 	<div class="media_recorder" style="width:360px; height:371px;" id="media_recorder_${self.id}">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
@@ -459,51 +462,46 @@
 
 
     % if self.selected_type == 'assignment':
-    
-    <fieldset>
-        <label>${_("Click here to set a deadline!")}</label>
-        <div id="content_type_additional_fields">
-            ## See CSS for "active" class
-            <div id="type_assignment_extras" class="hideable, additional_fields">
-                <%
-                    due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
-                    event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
-                    auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime')                                                          or '')[:16]
-                %>
-                <span class="padded"><label for="due_date">${_("Due Date")}</label></span>
-                <input class="detail" type="datetime" name="due_date"   value="${due_date}" />
-                
-                ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
-                ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
-                
-                ## http://trentrichardson.com/examples/timepicker/
-                % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
-                    <span class="padded"><label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label></span>
-                    <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
-                % endif
-                
-                <%doc>
-                <p>${_("Response License:")}
-                <table>
-                <% from civicboom.lib.database.get_cached import get_licenses %>
-                % for license in get_licenses():
-                    <tr>
-                    <%
-                        license_selected = ''
-                        if type == "assigment" and 'default_response_license' in self.content and license.id == self.content['default_response_license_id']:
-                            license_selected = h.literal('checked="checked"')
-                    %>
-                    <td><input id="licence_${license.id}" type="radio" name="default_response_license_id" value="${license.id" ${license_selected} /></td>
-                    <td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
-                    <td><label for="licence_${license.id}">${license.description}</label></td>
-                    </tr>
-                    ##${popup(_(license.description))}
-                % endfor
-                </table>
-                </%doc>
-            </div>
-        </div>
-    </fieldset>
+        <%
+            due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
+            event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
+            auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime')                                                          or '')[:16]
+        %>
+        <tr><td>
+        <label for="due_date">${_("Due Date")}</label>
+        <br><input class="detail" type="datetime" name="due_date"   value="${due_date}" />
+        </td></tr>
+        
+        ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
+        ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
+        
+        ## http://trentrichardson.com/examples/timepicker/
+        % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
+            <tr><td>
+                <label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label>
+                <input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
+            </td></tr>
+        % endif
+        
+        <%doc>
+        <p>${_("Response License:")}
+        <table>
+        <% from civicboom.lib.database.get_cached import get_licenses %>
+        % for license in get_licenses():
+            <tr>
+            <%
+                license_selected = ''
+                if type == "assigment" and 'default_response_license' in self.content and license.id == self.content['default_response_license_id']:
+                    license_selected = h.literal('checked="checked"')
+            %>
+            <td><input id="licence_${license.id}" type="radio" name="default_response_license_id" value="${license.id" ${license_selected} /></td>
+            <td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
+            <td><label for="licence_${license.id}">${license.description}</label></td>
+            </tr>
+            ##${popup(_(license.description))}
+        % endfor
+        </table>
+        </%doc>
     % endif
 </%def>
 
@@ -556,8 +554,10 @@
     </fieldset>
     % endif
 </%doc>
-    <span class="smaller">${_("This _content will be published under")} <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">Creative Commons Attributed License <img src="/images/licenses/CC-BY.png"/></a></span>
-    ${what_now_link()}
+    <tr><td>
+        <span class="smaller">${_("This _content will be published under")} <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution">Creative Commons Attributed License <img src="/images/licenses/CC-BY.png"/></a></span>
+        ${what_now_link()}
+    </td></tr>
 </%def>
 
 
@@ -571,27 +571,23 @@
 			${text}="${text}"
 		%endif
 	</%def>
-	<div class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
-        <table>
-            <tr><td>
-            </td></tr>
-            <tr><td>
-                <label>${_("Want to tell the world, or just a select few?")}</label>
-                <br>${_("You can choose to make your content either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.")|n}
-                <div class="padded">
-                    <div class="jqui-radios">
-                        <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
-                        <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
-                    </div>
-                    <script type="text/javascript">
-                    $(function() {
-                        $('.jqui-radios').buttonset().removeClass('.jqui-radios');
-                    })
-                    </script>
+	<tr class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
+        <td>
+            <label>${_("Want to tell the world, or just a select few?")}</label>
+            <br>${_("You can choose to make your content either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.")|n}
+            <div class="padded">
+                <div class="jqui-radios">
+                    <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
+                    <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                 </div>
-            </td></tr>
-        </table>
-    </div>
+                <script type="text/javascript">
+                $(function() {
+                    $('.jqui-radios').buttonset().removeClass('.jqui-radios');
+                })
+                </script>
+            </div>
+        </td>
+    </tr>
 </%def>
 
 
