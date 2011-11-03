@@ -80,13 +80,13 @@ HTML.frag_containers BODY {
 
 HTML.frag_containers BODY #app {
     position: absolute;
+    padding: 0.5em;
     top: 0px;
     bottom: 0px;
     left: 0px;
 }
 
 BODY>DIV#app {
-
     .button {
         color: $button-txt;
 		text-decoration: none;

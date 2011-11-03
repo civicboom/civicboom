@@ -7,17 +7,29 @@
 	display: block;
     height: 100%;
 	// white-space-collapse: discard; // http://www.w3.org/TR/css3-text/#white-space-collapsing
-	margin-left: 0.5em;
+	//padding: 0.5em;
+
+	.frag_col_1 {width: 250px;}
+	/* .frag_col_2 {width: 500px;} /* default is width 2 */
 
 	.frag_container {
+        .fill {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
 		//vertical-align: top;
 		display: inline-block !important;
 		overflow: auto !important; /* the important property is needed because JQuery sets the style="" element to block and overflow */
 		white-space: normal;
-        height: 95%;
+        position: relative;
 		width: 500px;
-		margin: 0.5em 0.25em 0 0.25em;
+        height: 100%;
 		border: 1px solid $frag-border;
+        margin-right: 0.5em;
+        background-color: $frag-background;
 		@include border_radius($frag-radius);
 		@include drop_shadow(1px, 1px, 1px, #333);
 
@@ -57,65 +69,31 @@
             padding: 0.5em;
         }
 
-	}
-
-	/* No support for IE7 NO!!! GOD NO!!
-	.ie7 .frag_container {
-		float: left;
-	}
-	*/
-
-	.frag_col_1 {width: 250px;}
-	/* .frag_col_2 {width: 500px;} /* default is width 2 */
-
-
-	/*-----------------------------Action bar -----------------------------------*/
-	.frag_container {
+        /*-----------------------------Action bar -----------------------------------*/
 		.icon {
 			padding-right: 2px;
 		}
-
-
 
 		/*----------------------------------------------------------------------------*/
 		/* Fragment Data
 		/*----------------------------------------------------------------------------*/
 		.frag_data {
-		  overflow-y: scroll;
-		  overflow-x: hidden;
-          height: 100%;
-			
-		background-color: $frag-background;
-		  
-		  /*
-		  background: -webkit-gradient(
-			linear,
-			left bottom,
-			left top,
-			color-stop(33 , rgb(240,240,240)),
-			color-stop(0.1, rgb(255,255,255))
-		  );
-		  background: -moz-linear-gradient(
-			center bottom,
-			rgb(255,255,255)  33%,
-			rgb(240,240,240) 100%
-		  );
-		  */
-		  
-		  /*
-			http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
-			http://gradients.glrzad.com/
-		  */
+            overflow-y: scroll;
+            overflow-x: hidden;
+            position: absolute;
+            top: 1.5em;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
 		}
 
-    .frag_whitewrap {
-      @include drop_shadow(1px, 1px, 1px, #333);
-      background-color: #fff;
-      @include border_radius(0.4em);
-      padding: 1em;
-      margin: 0.5em;
-    }
-
+        .frag_whitewrap {
+            @include drop_shadow(1px, 1px, 1px, #333);
+            background-color: #fff;
+            @include border_radius(0.4em);
+            padding: 1em;
+            margin: 0.5em;
+        }
 
 		.frag_data .frag_right_col .frag_col {
 			margin-left: 0em;
@@ -154,9 +132,6 @@
 /* Action/Title Bar                                                           */
 /*----------------------------------------------------------------------------*/
 .frag_bars {
-	background-color: $frag-background;
-
-	/* #frag_containers .frag_container - used in popups*/
 	.title_bar {
 		float: right;
 		display: inline;
