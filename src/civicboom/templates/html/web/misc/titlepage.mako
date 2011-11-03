@@ -29,12 +29,14 @@
 ##------------------------------------------------------------------------------
 ## New frontpage
 ##------------------------------------------------------------------------------
+
 <%def name="new_frontpage()">
     <div class="content_wrapper">
         ${title()}
         ${banner()}
         ${bars()}
     </div>
+    ${footer()}
 </%def>
 
 <%def name="title()">
@@ -57,12 +59,15 @@
 
 <%def name="banner()">
     <div class="banner">
+        <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
         <div class="text">
-            <h1>Connecting people that need stories with people that have them</h1>
-            <h2>Not really sure what to write here</h2>
-            <h2>Not really sure what to write here</h2>
-            <h2>Not really sure what to write here</h2>
-            <h2>Not really sure what to write here</h2>
+            <p class="headline">Connecting people that need stories with people that have them</p>
+            <p class="tagline">
+                This is the first line!<br />
+                Oh look it's another line<br />
+                There's so many lines!<br />
+                What is this I don't even<br />
+            </p>
         </div>
     </div>
 </%def>
@@ -70,19 +75,41 @@
 <%def name="bars()">
     <div class="bars">
         <div class="signup_btn">
-            Sign up now!
+            <div class="link_wrapper">
+                <a class="main">Sign up now!</a>
+                <a class="tag">What have you got to lose?</a>
+            </div>
         </div>
         <div class="bar">
             <h1>Individuals</h1>
-            <p>This is where some text will go! Maybe some pictures.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra. Proin commodo laoreet elit, in iaculis ante egestas in. Sed rhoncus vehicula nulla, et dictum velit viverra a. Aliquam molestie libero id justo bibendum id auctor erat feugiat. Nulla suscipit arcu non magna sagittis vehicula. Proin tempor nisi nec ligula ornare ac fringilla ligula porta. Duis vel dolor mi, in pharetra lorem. Cras condimentum neque et sapien lobortis vel elementum odio eleifend. Quisque iaculis convallis dapibus. Etiam viverra nunc vitae nulla dictum sit amet convallis leo imperdiet. Nulla imperdiet feugiat dapibus. Nunc et urna neque, in vestibulum nunc. Aenean eu fringilla magna.</p>
         </div>
         <div class="bar">
             <h1>Organisations</h1>
-            <p>This is where some text will go! Maybe some pictures.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra. Proin commodo laoreet elit, in iaculis ante egestas in. Sed rhoncus vehicula nulla, et dictum velit viverra a. Aliquam molestie libero id justo bibendum id auctor erat feugiat. Nulla suscipit arcu non magna sagittis vehicula. Proin tempor nisi nec ligula ornare ac fringilla ligula porta. Duis vel dolor mi, in pharetra lorem. Cras condimentum neque et sapien lobortis vel elementum odio eleifend. Quisque iaculis convallis dapibus. Etiam viverra nunc vitae nulla dictum sit amet convallis leo imperdiet. Nulla imperdiet feugiat dapibus. Nunc et urna neque, in vestibulum nunc. Aenean eu fringilla magna.</p>
         </div>
-        <div class="bar">
+        <div class="bar" style="position: absolute; top: 4em; right: 0;">
             <h1>Other</h1>
-            <p>This is where some text will go! Maybe some pictures.</p>
+            <p>Other things can go here, still needs discussion of what~</p>
+        </div>
+    </div>
+</%def>
+
+<%def name="footer()">
+    <div class="footer">
+        <div class="footer_wrapper">
+            <div class="bar">
+                <h2>Sign up</h2>
+                ${_('Not a member of _site_name? ')}<br /><a>${_('Sign up now for free')}</a>
+            </div>
+            <div class="bar">
+                <h2>Explore</h2>
+                Yay <a>links</a>
+            </div>
+            <div class="bar">
+                <h2>About us</h2>
+                Yay <a>links</a>
+            </div>
         </div>
     </div>
 </%def>

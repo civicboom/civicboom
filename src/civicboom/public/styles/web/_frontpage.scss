@@ -1,14 +1,23 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-$cb-orange: #FF6600;
-$cb-green: green;
+$cb-orange: #FF8814;
+$cb-green: #14851E;
+$cb-grey: #333;
+$page-width: 960px;
 
 BODY.c-misc.a-titlepage {
+    a {
+        color: #777;
+        
+        &:hover {
+            color: $cb-orange;
+        }
+    }
+    
     .content_wrapper {
-        // background-color: #eee;
-        color: #666;
-        width: 960px;
+        color: #999;
+        width: $page-width;
         min-height: 100px;
         margin: auto;
         padding: 0;
@@ -34,12 +43,7 @@ BODY.c-misc.a-titlepage {
             font-size: 20px;
             
             a {
-                color: #999;
                 margin-left: 1.5em;
-                
-                &:hover {
-                    color: $cb-orange;
-                }
             }
         }
     }
@@ -51,26 +55,34 @@ BODY.c-misc.a-titlepage {
         background-color: $cb-lightblue;
         height: 400px;
         width: 100%;
-        @include drop_shadow(0, 2px, 3px, #333);
+        // @include drop_shadow(0, 2px, 3px, #333);
         
         .text {
             position: absolute;
-            top: 30%;
+            top: 25%;
             right: 5%;
             max-width: 50%;
             text-align: center;
-            text-shadow: #000 0px 0px 3px;
+            // text-shadow: darken($cb-grey, 40%) 1px 1px 2px;
             
-            h1 {
+            .headline {
                 color: $cb_orange;
-                font-size: 90%;
-                padding-bottom: 0.75em;
+                font-size: 200%;
+                padding-bottom: 0.5em;
+                font-weight: normal !important;
             }
             
-            h2 {
-                color: #fff;
+            .tagline {
+                // color: #fff;
                 font-size: 130%;
+                line-height: 150%;
             }
+        }
+        
+        .graphic {
+            position: absolute;
+            height: 85%;
+            margin: 7.5% auto 7.5% 4em;
         }
     }
     
@@ -79,7 +91,9 @@ BODY.c-misc.a-titlepage {
         width: 100%;
         
         .signup_btn {
+            text-align: center;
             position: absolute;
+            display: table;
             height: 8em;
             width: 20em;
             @include border_radius(1em);
@@ -88,22 +102,95 @@ BODY.c-misc.a-titlepage {
             background-color: green;
             top: -4em;
             right: 2em;
+            border-top: 1px solid lighten($cb-green, 40%);
+            border-bottom: 1px solid darken($cb-green, 30%);
+            
+            &:hover {
+                @include horiz_gradient(lighten($cb-green, 25%), lighten($cb-green, 5%));
+                cursor: pointer;
+            }
+            
+            .link_wrapper{
+                display: table-cell;
+                vertical-align: middle;
+                
+                    a {
+                        color: #fff;
+                        text-shadow: darken($cb-green, 10%) 0px -1px 2px;
+                        display: block;
+                    }
+                
+                    .main {
+                        font-size: 200%;
+                    }
+                    
+                    .tag {
+                        font-size: 125%;
+                    }
+            }
         }
-        
+                    
         .bar {
+            width: 33%;
             display: inline-block;
             margin: 0;
-            width: 33%;
-            
+        
             h1 {
                 font-size: 150%;
-                padding-top: 0.5em;
-                padding-left: 0.5em;
+                padding-top: 1em;
             }
             
             p {
                 font-size: 110%;
-                padding-left: 1em;
+                padding-top: 0.5em;
+                padding-right: 2em;
+                line-height: 160%;
+            }
+        }
+        
+    }
+    
+    .footer {
+        width: 100%;
+        min-height: 5em;
+        background-color: $cb-grey;
+        margin-top: 2em;
+        text-align: center;
+        
+        .footer_wrapper{
+            width: $page-width;
+            padding: 1em 0 3em 0;
+            margin: auto;
+            text-align: left;
+            
+            .bar {
+                width: 10em;
+                min-height: 10em;
+                vertical-align: top;
+                color: #fff;
+                display: inline-block;
+                // background-color: lighten($cb-grey, 10%);
+                @include border_radius(0.5em);
+                margin: 1em 1em 0 0;
+                padding: 0.5em 1em 1em 1.5em;
+                text-shadow: darken($cb-grey, 40%) 1px 1px 1px;
+                
+                a {
+                    color: #bbb;
+                    
+                    &:hover {
+                        color: $cb-orange;
+                    }
+                }
+                
+                h2 {
+                    font-size: 120%;
+                    padding-bottom: 0.5em;
+                }
+                
+                p {
+                    
+                }
             }
         }
     }
