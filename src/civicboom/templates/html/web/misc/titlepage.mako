@@ -48,9 +48,9 @@
         
         ## header links
         <span class="links">
-            <a>${_("About _site_name")}</a>
-            <a>${_("FAQ")}</a>
-            <a>${_("Blog")}</a>
+            <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About _site_name")}</a>
+            <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
+            <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
             <a>${_("Contact")}</a>
             <a>${_("Log in")}</a>
         </span>
@@ -68,29 +68,29 @@
                 There's so many lines!<br />
                 What is this I don't even<br />
             </p>
+            <div class="signup_btn">
+                <div class="link_wrapper">
+                    <a class="main">Sign up now!</a>
+                    <a class="tag">What have you got to lose?</a>
+                </div>
+            </div>
         </div>
     </div>
 </%def>
 
 <%def name="bars()">
     <div class="bars">
-        <div class="signup_btn">
-            <div class="link_wrapper">
-                <a class="main">Sign up now!</a>
-                <a class="tag">What have you got to lose?</a>
-            </div>
-        </div>
         <div class="bar">
             <h1>Individuals</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra. Proin commodo laoreet elit, in iaculis ante egestas in. Sed rhoncus vehicula nulla, et dictum velit viverra a. Aliquam molestie libero id justo bibendum id auctor erat feugiat. Nulla suscipit arcu non magna sagittis vehicula. Proin tempor nisi nec ligula ornare ac fringilla ligula porta. Duis vel dolor mi, in pharetra lorem. Cras condimentum neque et sapien lobortis vel elementum odio eleifend. Quisque iaculis convallis dapibus. Etiam viverra nunc vitae nulla dictum sit amet convallis leo imperdiet. Nulla imperdiet feugiat dapibus. Nunc et urna neque, in vestibulum nunc. Aenean eu fringilla magna.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra.</p>
         </div>
         <div class="bar">
             <h1>Organisations</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra. Proin commodo laoreet elit, in iaculis ante egestas in. Sed rhoncus vehicula nulla, et dictum velit viverra a. Aliquam molestie libero id justo bibendum id auctor erat feugiat. Nulla suscipit arcu non magna sagittis vehicula. Proin tempor nisi nec ligula ornare ac fringilla ligula porta. Duis vel dolor mi, in pharetra lorem. Cras condimentum neque et sapien lobortis vel elementum odio eleifend. Quisque iaculis convallis dapibus. Etiam viverra nunc vitae nulla dictum sit amet convallis leo imperdiet. Nulla imperdiet feugiat dapibus. Nunc et urna neque, in vestibulum nunc. Aenean eu fringilla magna.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra.</p>
         </div>
-        <div class="bar" style="position: absolute; top: 4em; right: 0;">
-            <h1>Other</h1>
-            <p>Other things can go here, still needs discussion of what~</p>
+        <div class="bar">
+            <img src="images/misc/titlepage/mobile-col.png" />
+            <h1>${_('Get _site_name on your mobile')}</h1>
         </div>
     </div>
 </%def>
@@ -104,11 +104,23 @@
             </div>
             <div class="bar">
                 <h2>Explore</h2>
-                Yay <a>links</a>
+                <a href="${url(controller='misc', action='search_redirector', type=_("_Assignments"))}">Requests</a>
+                <a href="${url(controller='misc', action='search_redirector', type=_("_Articles"))}")}">Stories</a>
+                <a href="${url(controller='members', action='index')}">Users/Hubs</a>
             </div>
             <div class="bar">
                 <h2>About us</h2>
-                Yay <a>links</a>
+                <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About")}</a>
+                <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
+                <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
+                <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
+                <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
+            </div>
+            <div class="bar filler">
+                <h2>Follow us</h2>
+                <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
+                <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
+                <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
             </div>
         </div>
     </div>
