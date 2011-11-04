@@ -22,9 +22,7 @@
 ## Map Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-
-    <div class="frag_col">
-        
+    <div class="frag_col fill">
         <%
         try:
             location = [float(n) for n in request.params.get("location").split(",")]
@@ -44,7 +42,5 @@
             ],
             controls = True
         )}
-        
     </div>
-    
 </%def>

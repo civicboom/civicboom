@@ -24,6 +24,7 @@ HTML.blank_background {
 /*----------------------------------------------------------------------------*/
 
 $header_height: 42px;
+$footer_height: 18px;
 
 HEADER {
 	clear: both;
@@ -56,12 +57,36 @@ A {
 	color: $link-colour;
 }
 
-BODY>DIV#app {
-    position: relative; /* position needs to be relative, absolute, or fixed for z-index to work */
-    z-index: 0;
-    top: $header_height + 5px;
+/* all modes */
+HTML BODY {
+    position: absolute;
+    top: $header_height + 1px;
+    left: 0px;
     color: $text-colour;
-    
+    z-index: 0;
+}
+
+/* page mode (constant width, scroll down) */
+HTML BODY {
+    width: 100%;
+}
+
+/* frag mode (constant height, scroll right) */
+HTML.frag_containers BODY {
+    bottom: $footer_height + 1px;
+    width: auto;
+    right: 0px;
+}
+
+HTML.frag_containers BODY #app {
+    position: absolute;
+    padding: 0.5em;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+
+BODY>DIV#app {
     .button {
         color: $button-txt;
 		text-decoration: none;

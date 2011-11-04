@@ -47,12 +47,11 @@
             <div class="object_actions_common">
             </div>        
         </div>
-        <div style="clear: both;"></div>
     </div>
     
     <div class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}">
-        <div class="frag_whitewrap">
-            <div class="frag_col">
+        <div class="frag_whitewrap fill">
+            <div class="frag_col fill">
                 ##% if isinstance(frag_content, types.FunctionType):
                 % if hasattr(frag_content, '__call__'):
                     ${frag_content()}
@@ -188,7 +187,6 @@
                 ##% endif
             </div>
         </div>
-        <div style="clear: both;"></div>
     </div>
     <div
         class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}"

@@ -32,7 +32,7 @@
         </p>
         
                 </td>
-                <td>
+                <td style="padding-left: 2em;">
                     <img src="${h.url('content_action', id=d['id'], action='qrcode')}" alt="QRCode for content ${d['id']}"/>
                 </td>
             </tr>
