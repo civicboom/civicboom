@@ -372,7 +372,7 @@ class ContentsController(BaseController):
             
             # hacky benchmarking just to get some basic idea of how each feed performs
             time_end = time()
-            log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
+            #log.debug("Searching contents: %s [%f]" % (sql(feed), time_end - time_start))
     
             return results
         
