@@ -8,6 +8,7 @@
 	% endif
 
 	% if config['development_mode']:
+        <div id="this is just here to make reading the source tree easier in dev mode">
 		## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 		<!-- non-urgent bits -->
 		<script src="/javascript/jquery.ui.js"></script>
@@ -34,6 +35,7 @@
 		<script src="/javascript/geo.js"></script>
 		<script src="/javascript/OpenLayers.js"></script>
 		<script src="/javascript/minimap.js"></script>
+        </div>
 	% else:
 		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
 	% endif
