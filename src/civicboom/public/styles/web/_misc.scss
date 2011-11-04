@@ -96,6 +96,7 @@ BODY.c-misc {
                     display: block;
                     color: #bbb;
                     margin-bottom: 0.25em;
+                    vertical-align: middle;
                     
                     &:hover {
                         color: $cb-orange;
@@ -113,7 +114,13 @@ BODY.c-misc {
             }
             
             .filler {
+                min-height: 0;
                 width: auto;
+                vertical-align: top;
+              
+                h2 {
+                    display: inline-block;
+                }
             }
         }
     }

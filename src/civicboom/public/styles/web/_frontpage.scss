@@ -9,7 +9,7 @@ BODY.c-misc.a-titlepage {
         height: 6em;
         width: 18em;
         @include border_radius(0.5em);
-        @include drop_shadow(0, 2px, 3px, #666);
+        @include drop_shadow(0, 1px, 2px, #666);
         @include horiz_gradient(lighten($signup-color, 20%), $signup-color);
         background-color: green;
         border-top: 1px solid lighten($signup-color, 40%);
@@ -54,10 +54,10 @@ BODY.c-misc.a-titlepage {
         .logo_img {
             position: absolute;
             max-height: 80%;
-            bottom: 5%;
+            top: 15%;
             left: 0;
         }
-        
+
         .links {
             position: absolute;
             text-align: left;
@@ -80,12 +80,13 @@ BODY.c-misc.a-titlepage {
         //background-color: $cb-lightblue;
         height: 400px;
         width: 100%;
-        margin-bottom: 2em;
+        margin-top: 1em;
+        margin-bottom: 1em;
         // @include drop_shadow(0, 2px, 3px, #333);
         
         .text {
             position: absolute;
-            top: 14%;
+            top: 20%; //14%;
             right: 3%;
             height: 100%;
             max-width: 52%;
@@ -94,7 +95,7 @@ BODY.c-misc.a-titlepage {
             
             .headline {
                 color: $cb_orange;
-                font-size: 250%;
+                font-size: 240%;
                 padding-bottom: 0.5em;
                 font-weight: normal !important;
                 line-height: 120%;
@@ -128,7 +129,7 @@ BODY.c-misc.a-titlepage {
                 height: 100px;
                 margin: auto;
                 text-align: center;
-                border-bottom: 1px solid $cb-grey;
+                border-bottom: 1px solid #999;
               
                 img {
                     max-width: 100%;
@@ -142,7 +143,7 @@ BODY.c-misc.a-titlepage {
                 margin: 1em auto 0 auto;
                 height: 75px;
                 @include border_radius(0.5em);
-                @include drop_shadow(0, 2px, 3px, #666);
+                @include drop_shadow(0, 1px, 2px, #666);
                 @include horiz_gradient(#ddd, #ccc);
                 overflow: hidden;
                 
@@ -175,11 +176,16 @@ BODY.c-misc.a-titlepage {
                 padding-top: 0.5em;
             }
             
-            p {
+            ul {
                 font-size: 110%;
                 padding-top: 0.5em;
                 padding-right: 2em;
                 line-height: 160%;
+                
+                li {
+                    list-style: disc;
+                    margin-left: 2em;
+                }
             }
         }
         

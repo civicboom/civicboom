@@ -13,18 +13,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    % if config['development_mode']:
         ${new_frontpage()}
-    % else:
-    	<div class="wrapper">
-    			${front_headline()}
-    			${front_windows()}
-    			${front_tagline()}
-    			${start_button()}
-    			${social_media()}
-    	</div>
-    	<br />
-	% endif
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -43,7 +32,7 @@
     <div class="misc_header">
         ## logo image
         <a href='/'>
-            <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'/>
+            <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'>
         </a>
         
         ## header links
@@ -61,18 +50,15 @@
     <div class="banner">
         <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
         <div class="text">
-            <p class="headline">Connecting people that need stories with people that have them</p>
+            <p class="headline">Channel your content and make yourself heard</p>
             <p class="tagline">
-                This is the first line!<br />
-                Oh look it's another line<br />
-                There's so many lines!<br />
-                What is this I don't even<br />
+                Connecting the people who need stories,<br />
+                with the people that have them<br />
             </p>
             <a href="${url(controller='account', action='signin')}">
                 <div class="signup_btn">
                     <div class="link_wrapper">
                         <a href="${url(controller='account', action='signin')}" class="main">Sign up now!</a>
-                        <a href="${url(controller='account', action='signin')}" class="tag">What have you got to lose?</a>
                     </div>
                 </div>
             </a>
@@ -87,14 +73,22 @@
                 <img src="images/misc/titlepage/audience.png" />
             </div>
             <h1>Individuals</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra.</p>
+            <ul>
+                <li>Participate in what matters to you</li>
+                <li>Capture & send your content straight to organisations using our App</li>
+                <li>Get recognition for your content</li>
+            </ul>
         </div>
         <div class="col">
             <div class="col-img">
                 <img src="images/misc/titlepage/organisation.png" />
             </div>
             <h1>Organisations</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra.</p>
+            <ul>
+                <li>Engage your audience by requesting content directly</li>
+                <li>Innovative & secure workflow efficiency solutions</li>
+                <li>Customised Apps, Plugins & Content Management Tools built using our API</li>
+            </ul>
         </div>
         <div class="col">
             <div class="col-img">
@@ -104,7 +98,7 @@
             <a href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">
                 <div class="android_btn">
                     <img src="/images/about/mobile/android.png" alt="android">
-                    <h3>${_("Get the Android app now")}</h3>
+                    <h3>${_("Get the Android App now")}</h3>
                 </div>
             </a>
         </div>
