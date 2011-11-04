@@ -7,9 +7,11 @@
 
 #frag_containers .frag_container .frag_data {
 	.frag_list {
-    .action_pad {
-      margin-right: 1px;
-    }
+        padding: 1em;
+
+        .action_pad {
+            margin-right: 1px;
+        }
 		font-size: 88%;
 		@include drop_shadow(1px, 1px, 1px, #666);
 
@@ -162,7 +164,6 @@
 		.messages {
 			li {
 				margin-bottom: 0.5em;
-				/*border-bottom: 1px solid #ccc;*/
 			}
 			.unread      {background-color: #eee;}
 			.source      {float: left;}
@@ -199,7 +200,6 @@
 	}
 	
 	.pagination {
-	
 		padding: 0 1em 0.5em 1em;
 		font-weight: bold;
 	
@@ -214,6 +214,5 @@
 		.prev {
 			float: left;
 		}
-	
 	}
 }

@@ -3,11 +3,11 @@
 
 /* for browsers without JS hide sections of the page */
 HTML.no-js .hide_if_nojs {
-  display: none;
+    display: none;
 }
 
 HTML.js .hide_if_js {
-  display: none;
+    display: none;
 }
 
 #flash_message.status_ok      { color: $cb-lightblue; }

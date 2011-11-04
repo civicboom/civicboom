@@ -27,7 +27,7 @@ def aggregation_dict(content, safe_strings=True):
     
     content_preview = {}
     
-    content_url          = url('content', id=content['id'], sub_domain='www')
+    content_url          = url('content', id=content['id'], sub_domain='www', qualified=True)
     content_creator_name = content.get('creator', {}).get('name', '')
 
     def action(content):
@@ -43,9 +43,9 @@ def aggregation_dict(content, safe_strings=True):
 
     def action_links(content):
         action_links = []
-        action_links.append(    {'href':url('new_content'   ,                  parent_id=content['id'], sub_domain='www'), 'text':_('Write a response')  })
+        action_links.append(    {'href':url('new_content'   ,                  parent_id=content['id'], sub_domain='www', qualified=True), 'text':_('Write a response')  })
         if content.get('type') == "assignment":
-            action_links.append({'href':url('content_action', action='accept', id       =content['id'], sub_domain='www'), 'text':_('Accept _assignment')})
+            action_links.append({'href':url('content_action', action='accept', id       =content['id'], sub_domain='www', qualified=True), 'text':_('Accept _assignment')})
         return action_links
     
     def media(content):

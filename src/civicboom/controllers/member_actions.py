@@ -2,10 +2,14 @@ from civicboom.lib.base import *
 from civicboom.model.filters import *
 from civicboom.controllers.members  import MembersController
 from civicboom.controllers.contents import ContentsController
+from civicboom.controllers.messages import MessagesController
 from cbutils.misc import update_dict
+
+from civicboom.lib.qrcode import cb_qrcode
 
 content_search = ContentsController().index
 member_search  = MembersController().index
+messages_search  = MessagesController().index
 
 log      = logging.getLogger(__name__)
 
@@ -16,6 +20,21 @@ class MemberActionsController(BaseController):
     
     @comment AllanC the id value given to these lists could be str username or loaded db object
     """
+
+    #---------------------------------------------------------------------------
+    # Image - QR Code
+    #---------------------------------------------------------------------------
+    @web
+    @cacheable(time=60*60, anon_only=False)
+    def qrcode(self, id, **kwargs):
+        """
+        @param size   optional int, default 100 The size in pixels of the generated image
+        @parsm format optional string, default PNG accepts [png, jpeg, bmp, gif, tiff]
+        
+        @return 200 a PNG
+        """
+        return cb_qrcode(url('member', id=id, sub_domain='www', qualified=True), **kwargs)
+
 
     #-----------------------------------------------------------------------------
     # Action - Flag
@@ -367,6 +386,19 @@ class MemberActionsController(BaseController):
     #---------------------------------------------------------------------------
     # List shortcuts
     #---------------------------------------------------------------------------
+    
+    @web
+    @authorize
+    def conversation(self, id):
+        """
+        GET /members/{name}/conversation: list all messages between you and this member
+        
+        @type list
+        
+        @comment AllanC this is a shotcut to messages(converstion_with=member)
+        """
+        return messages_search(conversation_with=id)
+    
     @web
     def assignments_accepted(self, id, **kwargs):
         """

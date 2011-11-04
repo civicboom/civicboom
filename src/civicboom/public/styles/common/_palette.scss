@@ -9,7 +9,7 @@ $cb-light-inactive: #eee;
 $text-colour: #666;
 $link-colour: $cb-lightblue;
 $link-hover-colour: $cb-lightblue;
-$link-frag-colour: $text-colour;
+//$link-frag-colour: $text-colour; // this makes links hard to see and was only used in one place.
 
 
 /* --- Buttons --- */

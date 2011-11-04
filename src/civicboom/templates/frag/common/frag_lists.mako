@@ -340,10 +340,14 @@
     %>
 
     <td>
-        <a class="thumbnail" href="${item_url}" ${js_link_to_frag}>
-            ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
-        </a>
+            <a href="${item_url}" ${js_link_to_frag}>
+            <div class="thumbnail">
+                <div style="position: relative;">
+                    ${content_thumbnail_icons(content)}
+                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0; left: 0;"/>
+                </div>
+            </div>
+            </a>
     </td>
     
     <td class="content_details">
@@ -433,7 +437,7 @@
         % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if content.get('approval') and content.get('approval') != 'none':
+        % if content.get('approval'):
             ${h.icon(content.get('approval'))}
         % endif
         % if content.get('auto_publish_trigger_datetime'):
@@ -456,7 +460,7 @@
         % if content.get('edit_lock'):
             ${h.icon('edit_lock')}
         % endif
-        % if content.get('approval') and content.get('approval') != 'none':
+        % if content.get('approval'):
             ${h.icon(content.get('approval'))}
         % endif
         % if content.get('auto_publish_trigger_datetime'):

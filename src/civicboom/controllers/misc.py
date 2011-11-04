@@ -1,7 +1,7 @@
 from civicboom.lib.base import *
 from civicboom.model import User, Group, Media, Content
 from civicboom.model.meta import location_to_string
-from civicboom.lib.database.get_cached import get_member as _get_member
+from civicboom.lib.database.get_cached import get_member as _get_member, get_members
 
 from civicboom.lib.communication.email_lib import send_email
 from urllib import unquote_plus
@@ -77,21 +77,22 @@ class MiscController(BaseController):
             return redirect(url(controller="profile", action="index"))
         return action_ok()
 
+    @cacheable(time=60)
     @web
-    def new_article(self):
+    def new_content(self):
         if config['development_mode']:
-            organisations = ['unittest', 'unitfriend']
+            members = ['unittest', 'unitfriend']
         else:
-            organisations = ['kentonline', 'gradvine']
+            members = ['kentonline', 'gradvine']
         data = {'list':[],}
-        for org in organisations:
-            static_desc = static_org_descriptions.get(org)
-            org = _get_member(org)
-            push_assignment = org.config.get('push_assignment')
+        
+        for member in get_members(members):
+            static_desc = static_org_descriptions.get(member.id)
+            push_assignment = member.config.get('push_assignment')
             if push_assignment:
-                org_d = org.to_dict()
-                org_d.update({'push_assignment': push_assignment, 'description': static_desc or org.description}) 
-                data['list'].append(org_d)
+                member_d = member.to_dict()
+                member_d.update({'push_assignment': push_assignment, 'description': static_desc or member.description}) 
+                data['list'].append(member_d)
         return action_ok(data=data)
 
     def search_redirector(self):
@@ -170,7 +171,9 @@ class MiscController(BaseController):
     def robots(self):
         response.headers['Content-type'] = "text/plain"
         subdomain = request.environ.get("HTTP_HOST", "").split(".")[0]
-        if subdomain == "www":
+        if config['debug']:
+            return "User-agent: *\nDisallow: /invalid/-/allow/all\n"
+        elif subdomain == "www":
             return """
 User-agent: *
 Disallow: /misc/get_widget/

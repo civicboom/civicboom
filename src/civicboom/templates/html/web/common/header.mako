@@ -19,7 +19,7 @@
 <nav id="actions">
 	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for stories"), css_class="button")}
 	##${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
-    <a href="${h.url(controller='misc', action='new_article')}" class="button">${_("Post a story")}</a>
+    <a href="${h.url(controller='misc', action='new_content')}" class="button">${_("Post a story")}</a>
 </nav>
 
 ##------------------------------------------------------------------------------
@@ -39,7 +39,7 @@
 ##------------------------------------------------------------------------------
 ## Persona Switching
 ##------------------------------------------------------------------------------
-  ## AllanC - must check status=active otherwise registration page keeps displaying 'unauthroised error' repeatedly
+  ## AllanC - must check status=active otherwise registration page keeps displaying 'unauthorised error' repeatedly
 % if logged_in:
 <%
     from civicboom.model import Group
@@ -113,7 +113,15 @@
         <tr>
             <td colspan="4">
                 <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
-                <span style="float:right;"><a href="${h.url(controller='misc', action='what_is_a_hub')}" class="sub_option">${_("Create a _Group")}</a></span>
+                % if c.logged_in_persona_role == 'admin':
+                    <span style="float:right;">
+                    % if c.logged_in_persona.payment_account_id:
+                        <a href="${h.url('payments')}">${_('My payment account')}</a>
+                    % else:
+                        <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
+                    % endif
+                    </span>
+                % endif
             </td>
         </tr>
         <%def name="persona_select(member, **kwargs)">
@@ -182,28 +190,31 @@
         ${persona_select(c.logged_in_user)}
         ## Show current persona (current group persona if applicable)
         % if c.logged_in_persona != c.logged_in_user:
-            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role, members=num_members)}
+            ${persona_select(c.logged_in_persona, role=c.logged_in_persona_role)}
+            ## , members=num_members)}
         % endif
         ## Show currently logged in persona's groups:
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
-            ${persona_select(membership.group, role=membership.role, members=membership.group.num_members)}
+            ${persona_select(membership.group, role=membership.role)}
+            ## , members=membership.group.num_members)}
         % endfor
+        <tr class="extras selectable" onclick="window.location='/misc/what_is_a_hub';">
+            <td class="avatar">
+                <div style="position: relative;">
+                    <img src="/images/default/avatar_group.png" alt=""/>
+                    <a class="icon16 i_plus_bordered" style="position: absolute; bottom: 0px; right: 0px;"></a>
+                </div>
+            </td>
+            <td class="name" colspan="2">
+                <p class="name">${_("Create a _Group")}</p>
+            </td>
+        </tr>
         <tr class="extras">
-            <td colspan="4">
-                % if c.logged_in_persona_role == 'admin':
-                    % if c.logged_in_persona.payment_account_id:
-                        <a href="${h.url('payments')}">${_('My payment account')}</a>
-                    % else:
-                        <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
-                    % endif
-                % endif
-                <span style="float:right;">
-                    ${h.secure_link(
-                        h.url(controller='account', action='signout'),
-                        _('Sign out'),
-                        css_class="button"
-                    )}
-                </span>
+            <td colspan="3" style="text-align: right;">
+                ${h.secure_link(
+                    h.url(controller='account', action='signout'),
+                    _('Sign out')
+                )}
             </td>
         </tr>
     </table>

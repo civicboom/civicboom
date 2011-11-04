@@ -326,7 +326,7 @@ class Content(Base):
                 return thumbnail_url
 
         thumbnail_type = self.__type__
-        if thumbnail_type == 'article' and self.approval != None:
+        if thumbnail_type == 'article' and self.parent_id:
             thumbnail_type = 'response'
 
         from civicboom.lib.helpers import wh_url
@@ -466,7 +466,7 @@ class UserVisibleContent(Content):
             action_list.append('update')
             action_list.append('delete')
         if self.is_parent_owner(member) and has_role_required('editor', role): # and member.has_account_required('plus'): # AllanC - Although we return the actions here, the Template decides what message to display by checking has_account_required. I REALLY don't like this, it means the action list dose not represent the actions the user can perform
-            if self.approval == 'none':
+            if not self.approval:
                 action_list.append('approve')
                 action_list.append('seen')
                 action_list.append('dissasociate')
@@ -490,11 +490,11 @@ class UserVisibleContent(Content):
 class ArticleContent(UserVisibleContent):
     __tablename__   = "content_article"
     __mapper_args__ = {'polymorphic_identity': 'article'}
-    _approval  = Enum("none", "approved", "seen", "dissassociated", name="approval")
+    _approval  = Enum("approved", "seen", "dissassociated", name="approval")
     id         = Column(Integer(), ForeignKey('content_user_visible.id'), primary_key=True)
     rating     = Column(Float(), nullable=False, default=0, doc="Controlled by postgres trigger")
     ratings    = relationship("Rating", backref=backref('content'), cascade="all,delete-orphan")
-    approval   = Column(_approval, nullable=False, default="none")
+    approval   = Column(_approval, nullable=True)
 
     __table_args__ = (
         CheckConstraint("rating >= 0 AND rating <= 1"),

@@ -1,0 +1,88 @@
+@import "../common/_palette.scss";
+
+BODY.c-groups.u-user, BODY.c-settings.u-user {
+    .group_settings {
+        .button {
+            width: 10em;
+        }
+
+        LABEL {
+            font-weight: bold;
+        }
+
+        TABLE {
+            width: 100%;
+
+            TD.radio {
+                vertical-align: middle;
+                text-align: center;
+                width: 2.5em;
+            }
+            TD {
+                padding-bottom: 1em;
+                padding-top: 0px;
+            }
+        }
+
+        .upgrade {
+            position: relative;
+            display: inline-block;
+            width: 13em;
+            font-size: 90%;
+            font-weight: normal;
+        }
+
+        .setting-disabled {
+            background-color: #DDD;
+            // color: #999 !important;
+        }
+
+        .b {
+            font-weight: bold;
+        }
+    }
+
+    TEXTAREA.group-edit {
+        resize: vertical;
+        height: 75px;
+        width: 100%;
+    }
+    INPUT[type='text'] {
+        width: 100%;
+    }
+
+    TR TD  {
+        vertical-align: top;
+    }
+
+
+    TABLE.group-table {
+        width: 475px;
+    }
+
+    TABLE.quickgroup-table {
+        width: 210px;
+    }
+
+    .quickbutton {
+        width: 100px;
+        height: 60px;
+        white-space: normal;
+    }
+
+    .quickhilite {
+        color: #FF0;
+    }
+
+    TD.quickchangehilite {
+        background-color: #AAFFAA;
+    }
+
+    TR.quickchangehilite TD {
+        background-color: #AAFFAA;
+    }
+
+    .role_description {
+        color: #555;
+    }
+}

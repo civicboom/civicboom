@@ -31,8 +31,14 @@ FOOT=\
 	OpenLayers.js \
 	minimap.js \
 
+MOBILE=\
+	jquery-1.6.2.js \
+	jquery.mobile.cb_settings.js \
+	jquery.mobile-1.0rc2.js \
+	geo.js \
+	#jquery.ui.datepicker.mobile.js \
 
-all: _combined.head.js _combined.foot.js
+all: _combined.head.js _combined.foot.js _combined.mobile.js
 
 _combined.head.js: Makefile $(HEAD)
 	cat $(HEAD) | yui-compressor --type js -o _combined.head.js
@@ -40,8 +46,11 @@ _combined.head.js: Makefile $(HEAD)
 _combined.foot.js: Makefile $(FOOT)
 	cat $(FOOT) | yui-compressor --type js -o _combined.foot.js
 
+_combined.mobile.js: Makefile $(MOBILE)
+	cat $(MOBILE) | yui-compressor --type js -o _combined.mobile.js
+
 clean:
-	rm -f _combined.head.js _combined.foot.js
+	rm -f _combined.head.js _combined.foot.js _combined.mobile.js
 
 
 #
@@ -53,14 +62,15 @@ jquery.ui.js:
 	cd jquery-ui && git checkout 1.8.14
 	cd jquery-ui/ui/ && cat \
 		jquery.ui.core.js \
-		jquery.ui.mouse.js \
 		jquery.ui.widget.js \
+		jquery.ui.mouse.js \
 		jquery.ui.position.js \
 		jquery.ui.autocomplete.js \
 		jquery.ui.datepicker.js \
 		jquery.ui.button.js \
 		jquery.ui.tabs.js \
 		jquery.ui.slider.js \
+		jquery.ui.accordion.js \
 		> ../../jquery.ui.js
 	rm -rf jquery-ui
 

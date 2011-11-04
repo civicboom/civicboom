@@ -25,7 +25,6 @@ from civicboom.lib.permissions         import account_type, role_required, age_r
 from civicboom.lib.accounts            import deny_pending_user
 from civicboom.lib.widget              import widget_defaults, setup_widget_env
 
-
 from cbutils.misc import now
 import cbutils.worker as worker
 
@@ -220,6 +219,13 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
     content = _get_content(int(id))
     if not content:
         raise action_error(_("The _content you requested could not be found"), code=404)
+    if set_html_action_fallback:
+        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
+        # if we perform an action but dont have a page to display an error occurs
+        # we set a url fallback.
+        # This bool can be set to auto generate this as a convenience
+        # It is set here first because if there are any errors we need the fallback set before the problem occours
+        c.html_action_fallback_url = url('content', id=content.id)
     if content_type and content.__type__ != content_type:
         raise action_error(_("The _content you requested was not %s" % content_type), code=404)
     if is_viewable:
@@ -235,12 +241,6 @@ def get_content(id, is_editable=False, is_viewable=False, is_parent_owner=False,
         raise action_error(_("You do not have permission to edit this _content"), code=403)
     if is_parent_owner and not content.is_parent_owner(c.logged_in_persona):
         raise action_error(_("You are not the owner of the parent _content"), code=403)
-    if set_html_action_fallback:
-        # AllanC - Many times when we fetch content in an 'action' we dont have a template set.
-        # if we perform an action but dont have a page to display an error occurs
-        # we set a url fallback.
-        # This bool can be set to auto generate this as a convenience
-        c.html_action_fallback_url = url('content', id=content.id)
     return content
 
 
@@ -281,7 +281,7 @@ class BaseController(WSGIController):
         #print "COOKIES"
         #print request.cookies
         
-        # Setup globals c ------------------------------------------------------
+        # Setup globals variables ----------------------------------------------
         c.result = action_ok()  # Default return object
         
         # Request global - have the system able to easly view request details as globals
@@ -295,21 +295,6 @@ class BaseController(WSGIController):
         c.subformat                = get_subdomain_format()
         c.auto_format_top_call     = False # Used as a flag to the auto_formatter to only output the top level decorator
         
-        # For development we cant fake a subdomain call when acessing 127.0.0.1 :(
-        # In the same way as we toggle_cache we can toogle_force_mobile
-        if cookie_get("force_mobile") and not cookie_get('force_web'):
-            log.debug('force_mobile cookie present')
-            c.subformat = 'mobile'
-        # If we are not forcing mobile - attempt to redirect first time mobile viewers to the correct subdomain
-        # Redirect to mobile site if needed
-        if not cookie_get("force_mobile") and cookie_get('force_web') and c.subformat=='mobile': # If user is forcing m. then remove the force_web cookie
-            log.debug('removing force_web cookie')
-            cookie_delete('force_web')
-        if c.format=='html' and request.environ.get('is_mobile') and not cookie_get('force_web') and c.subformat=='web':
-            mobile_url = url('current', sub_domain='m')
-            log.debug('redirecting mobile user to %s' % mobile_url)
-            redirect(mobile_url)
-        
         c.authenticated_form       = None # if we want to call a controler action internaly from another action we get errors because the auth_token is delted, this can be set by the authenticated_form decorator so we allow subcall requests
         c.web_params_to_kwargs     = None
         c.html_action_fallback_url = None # Some actions like 'follow' and 'accept' do not have templates - a fallback can be set and @auto_format interperits this as a redirect fallback
@@ -319,7 +304,31 @@ class BaseController(WSGIController):
         request.environ['app_version'] = app_globals.version
         request.environ['node_name']   = platform.node()
 
-        # Widget default settings
+        
+        # Detect and redirect to mobile ----------------------------------------
+        #
+        # For development we cant fake a subdomain call when acessing 127.0.0.1 :(
+        # In the same way as we toggle_cache we can toogle_force_mobile
+        # or
+        # We detect that the host is an ip address and enable mobile subdomain if mobile
+        if request.environ.get('is_mobile') and request.environ.get("HTTP_HOST", "").replace(".","").isdigit():
+            log.debug('local mobile detected - auto mobile subdomain')
+            c.subformat = 'mobile'
+        elif cookie_get("force_mobile") and not cookie_get('force_web'):
+            log.debug('force_mobile cookie present')
+            c.subformat = 'mobile'
+        # If we are not forcing mobile - attempt to redirect first time mobile viewers to the correct subdomain
+        # Redirect to mobile site if needed
+        if not cookie_get("force_mobile") and cookie_get('force_web') and c.subformat=='mobile': # If user is forcing m. then remove the force_web cookie
+            log.debug('removing force_web cookie')
+            cookie_delete('force_web')
+        if c.format=='html' and c.subformat=='web' and request.environ.get('is_mobile') and not cookie_get('force_web') and request.environ['REQUEST_METHOD']=='GET':
+            mobile_url = url('current', sub_domain='m')
+            log.debug('redirecting mobile user to %s' % mobile_url)
+            redirect(mobile_url)
+        
+        
+        # Widget default settings ----------------------------------------------
         widget_theme = request.params.get(config['setting.widget.var_prefix']+'theme')
         if widget_theme not in widget_defaults:
             widget_theme = config['setting.widget.default_theme']
@@ -337,9 +346,9 @@ class BaseController(WSGIController):
             log.warning("logged_in_user is set, but logged_in is missing")
             session.invalidate()
 
+
         # Login ----------------------------------------------------------------
         # Fetch logged in user from session id (if present)
-        
         login_session_fields = ['logged_in_user', 'logged_in_persona', 'logged_in_persona_path', 'logged_in_persona_role']
         logged_in = {}
         for field in login_session_fields:
@@ -357,7 +366,7 @@ class BaseController(WSGIController):
                 if role:
                     c.logged_in_persona      = group_persona
                     c.logged_in_persona_role = role
-            
+        
         # Set Env - In the event of a server error these will be visable
         for field in login_session_fields:
             request.environ[field] = str(getattr(c, field))

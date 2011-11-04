@@ -7,6 +7,10 @@ import warnings
 
 class TestContentsController(TestController):
     
+    def test_content_qrcode(self):
+        response = self.app.get(url('content_action', id='1', action='qrcode'))
+        response = self.app.get(url('content_action', id='1', action='qrcode', format='jpeg', size=300))
+    
     def test_character_escaping(self):
         # AllanC - We should be able to send actual unicode in content ... we should be able to send '€' ... this may need additional investigation
         before = u'&euro;<moose><p class="TEST">&</p>' # humm .. I wanted to put an actuall euro in ... humm ...  is this an error with the request generator not accepting unicode? or our site? €
@@ -65,6 +69,65 @@ class TestContentsController(TestController):
         
         for content_id in contents:
             self.delete_content(content_id)
+
+
+    def test_markdown_content(self):
+        """
+        Test the markdown format is correct processed to HTML
+        """
+        markdown_content = """
+Markdown Title
+==============
+
+Title again
+-----------
+
+Now lets get marking down
+
+* Yeah
+* This
+* List
+
+Thats *all* folks
+
+"""
+        id = self.create_content(title='Markdown Test', content=markdown_content, content_text_format='markdown')
+        
+        content = self.get_content(id)['content']
+        
+        self.assertIn('<li>List'    , content['content'])
+        self.assertIn('<h1>'        , content['content'])
+        self.assertIn('<em>all</em>', content['content'])
+        
+        self.delete_content(id)
+
+    def test_html_cleaning(self):
+        """
+        Test the cleaning of HTML content
+        """
+        html_content = """
+<h1>HTML Cleaner</h1>
+<p style="BIG">OH FEAR MY HACKER POWERS <a href="url" onclick="js-h4ckzor">clean me</a></p>
+"""
+        
+        id = self.create_content(title='HTML Clean Test', content=html_content)
+        content = self.get_content(id)['content']
+
+        self.assertNotIn('style='               , content['content'])
+        self.assertNotIn('js-h4ckzor'           , content['content'])
+        self.assertIn   ('<h1>HTML Cleaner</h1>', content['content'])
+        ##self.assertIn   ('<a href="url">'       , content['content'])
+        
+        self.delete_content(id)
+
+    def test_delete_redirect(self):
+        """
+        When an item of content is deleted in standard redirect mode, it redirects to the item that has just been deleted, because the item is not there, it returns a content not found message
+        """
+        # POST delete format=redirect fake_http_referer as url(list fo content)
+        # POST delete format=html     fake_http_referer as url(this content)
+        # POST delete format=html     when no logged in ?
+        pass
         
     
     def test_all(self):

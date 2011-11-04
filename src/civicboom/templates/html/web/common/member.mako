@@ -67,7 +67,7 @@ ${key}="${value}"
 	% if as_link:
 		${member_link()}
 	% endif
-          <img src="${member['avatar_url']}" alt="${member['username']}" class="img ${img_class}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
+              <img src="${member['avatar_url']}" alt="${member['username']}" class="img ${img_class}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
 	% if as_link:
 		</a>
 	% endif
@@ -75,7 +75,7 @@ ${key}="${value}"
     % endif
 </%def>
 
-## Old Avatar render for refence
+## Old Avatar render for reference
 <%doc>
  <%def name="avatar(member, show_avatar=True, show_name=False, show_follow_button=False, show_join_button=False, show_invite_button=False, class_=None)">
     <div class="${class_} avatar">

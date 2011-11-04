@@ -12,28 +12,25 @@ class TestCrawlSite(TestController):
     """
     Controller to crawl the site and follow all links with hrefs starting from / 
     """
-    # Ignore the following:
-    # /members/civicboom as this does not exist unless we are looking at the live site!
-    # None for blank hrefs (we use href='' quite a bit?!)
-    # 'False' for invalid href (Why does this happen in /help/article, WTF?!)
-    crawled = ['/members/civicboom', '/doc/', None, 'False']
-    count = 0
+    crawled     = []
+    count       = 0
     error_count = 0
     
     def setUp(self):
         if not config['test.crawl_links']:
             raise SkipTest('Crawl not enabled in config - crawl test skipped')
-    
-    def test_crawl(self):
-        self.crawl('/', None)       # Crawl when not logged in
-        self.log_in_as('unittest')
-        self.count = 0              # Reset counter
-        self.crawl('/', None)       # Crawl when logged in
-        
-    def crawl(self, url, prev_url):
+        # Ignore the following:
+        # /members/civicboom as this does not exist unless we are looking at the live site!
+        # None for blank hrefs (we use href='' quite a bit?!)
+        # 'False' for invalid href (Why does this happen in /help/article, WTF?!)
+        crawled     = ['/members/civicboom', '/doc/', None, 'False']
+        count       = 0
+        error_count = 0
+
+    def crawl(self, url, prev_url, **kwargs):
         self.crawled.append(url)
         print url, 'from', prev_url
-        response = self.app.get(url, status='*')
+        response = self.app.get(url, status='*', **kwargs)
         if response.status not in [200, 301, 302]:
             print '\tGot response', response.status
             print '\tWhen calling', url, 'referred to by', prev_url
@@ -50,3 +47,20 @@ class TestCrawlSite(TestController):
             print 'Crawled', self.count
             if error_count:
                 assert False
+
+    #---------------------------------------------------------------------------
+    # Tests
+    #---------------------------------------------------------------------------
+    
+    def test_crawl_web(self):
+        self.crawl('/', None)       # Crawl when not logged in
+        self.log_in_as('unittest')
+        self.count = 0              # Reset counter
+        self.crawl('/', None)       # Crawl when logged in
+        
+    def test_crawl_mobile(self):
+        self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
+        self.log_in_as('unittest')
+        self.count = 0
+        self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
+    

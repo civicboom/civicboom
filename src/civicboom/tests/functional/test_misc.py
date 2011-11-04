@@ -29,8 +29,8 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='titlepage'))
         # FIXME: test that generated-but-static content has cache headers set
 
-    def test_new_article(self):
-        response = self.app.get(url(controller='misc', action='new_article'))
+    def test_new_content(self):
+        response = self.app.get(url(controller='misc', action='new_content'))
 
     def test_search_redirector(self):
         response = self.app.get(url(controller='misc', action='search_redirector', type='Members'), status=302)

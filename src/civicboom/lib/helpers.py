@@ -478,7 +478,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         #     - set timer so that in 1 seconds time the link 'disabled class is removed'
         #  - return false and ensure that the normal list is not followed
         # GregM: This now looks for jquery relative span > form instead of unique id
-        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick if not rel else None
+        onClick = '$(this).parents(\'.secure_link\').find(\'.popup-modal\').modal({appendTo: $(this).parents(\'.secure_link\')}); return false' if modal_params else link_onClick #if not rel else None
     )
     # $('#form_%(hhash)s').onsubmit();
     
@@ -699,28 +699,3 @@ def links_to_frag_links(content):
     content = re.sub(regex_member_links , replace_member_link , content)
 
     return content
-
-#-------------------------------------------------------------------------------
-# CSS Files
-#-------------------------------------------------------------------------------
-def css_files(sub_styles="web", include_common=True):
-    """
-    Return a listing of CSS based on sub styles required
-    """
-    # Includes and constants
-    from glob import glob
-    style_path = "civicboom/public/"
-    # Normalise input
-    if isinstance(sub_styles, basestring):
-        sub_styles = sub_styles.split(',')
-    if not isinstance(sub_styles, list):
-        sub_styles = []
-    if include_common:
-        sub_styles.insert(0, "common")
-    # Get CSS file list
-    css_files = []
-    for sub_style in sub_styles:
-        css_files += glob("%sstyles/%s/*.css" % (style_path, sub_style))
-    css_files    = [css.replace(style_path,"") for css in css_files] #[n[len(style_path):] for n in css_all]
-    css_files.sort()
-    return css_files

@@ -122,6 +122,7 @@ add_setting('advert_hand_hub', _('Hide the info box encouraging the creation of 
 add_setting('auto_follow_on_accept', _('Automatically follow the user or _group who created a request on accepting it'), group='advanced/follower_settings', weight=1000, type='boolean')
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
 add_setting('push_assignment', _('Set a _assignment you would like followers to be able to push stories to'), group='advanced/follower_settings', weight=1002, type='id_assignment', info=_('Please speak to our team before you change this option!'))
+add_setting('hide_followers', _('Do not list your followers to any members other than yourself'), group='advanced/follower_settings', weight=1003, type='boolean', info=_('Protect your brands followers by hiding them from public view'))
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -144,7 +145,7 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
                     'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
-                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment')
+                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment', not_empty=False)
 }
 
 settings_validators = {}
@@ -187,10 +188,10 @@ def build_meta(user, user_type, panel):
         if settings_meta[setting_name].get('who', user_type) == user_type:
             if setting_name == 'email' and user.email_unverified != None:
                 settings_hints['email'] = _( 'You have an unverified email address. This could be for two reasons:') + '<ol>' + \
-                                             '<li>' + _('You have signed up to Civicboom via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
+                                             '<li>' + _('You have signed up to _site_name via Twitter, Facebook, LinkedIn, etc.') + '</li>' + \
                                              '<li>' + _('You have changed your email address and not verified it.') + '</li>' + \
-                                             '</ol>' + _('To verify your email: please check your email account (%s) and follow instructions.') % user.email_unverified + '<br />' + \
-                                             _('OR enter new email address below and check your email.')
+                                             '</ol>' + _('To verify your email: please check your email account (%s) and follow the instructions.') % user.email_unverified + '<br />' + \
+                                             _('OR enter new email address above and check your email.')
                 #_('You have an unverified email address (%s), please check your email. If this address is incorrect please update and save, then check your email.') % user.email_unverified
             if setting_name == 'password_current' and 'password_current' in settings_meta and not 'password' in [login.type for login in user.login_details]:
                 del settings_meta[setting_name]
@@ -200,9 +201,9 @@ def build_meta(user, user_type, panel):
                     if not '_readonly' in settings_meta[setting_name]['type']:
                         settings_meta[setting_name]['type'] = settings_meta[setting_name]['type'] + '_readonly'
                     if not 'password' in [login.type for login in user.login_details]:
-                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see above). You will need to verify your address and create a password to use our mobile app.")
+                        settings_hints['password_new'] = _("If you want to change your Civicboom password, please verify your email address (see General settings). You will need to verify your address and create a password to use our mobile app.")
                     else:
-                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see above).")
+                        settings_hints['password_current'] = _("If you want to change your Civicboom password, please verify your email address (see General settings).")
     data = dict( settings_meta=settings_meta,
                  settings_hints=settings_hints,
                  panels=panels,
@@ -288,12 +289,17 @@ class SettingsController(BaseController):
         raise action_error(_('operation not supported (yet)'), code=501)
 
     def show(self, id, **kwargs):
-        """GET /settings/id: Show a specific item."""
+        """
+        GET /settings/id: Show a specific item.
+        @comment AllanC doc required here - pannels
+        """
         return self.panel(id=id, **kwargs) #self.edit(id)
 
     @web
     @authorize
     def panel(self, id='me', panel='general', **kwargs):
+        """
+        """
 #        print url('settings',action='show',id="me", panel="generic")
         if panel=="general" and not c.action in ("panel", "show", "index", "edit"):
             panel=c.action

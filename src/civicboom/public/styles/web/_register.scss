@@ -11,6 +11,15 @@ HTML.no-js {
     }
 }
 
+BODY.c-register.a-check_email {
+	.layout {
+		padding-top: 32px;
+	}
+	TABLE {
+		margin: auto;
+	}
+}
+
 BODY.c-register.a-new_user.u-user {
 
     .step {
@@ -129,18 +138,6 @@ BODY.c-register.a-new_user.u-user {
         
         p {
             margin: 0;
-        }
-    }
-    
-    .selected {
-        background-color: $cb-lighterblue;
-        background-image: url('registration_tick.png');
-        background-repeat: no-repeat;
-        background-position: center center;
-        border: 0.1em solid $cb-lightblue;
-        
-        &:hover {
-            background-color: lighten($cb-lighterblue, 3%);
         }
     }
     
