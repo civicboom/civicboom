@@ -342,8 +342,12 @@
 
     <td>
         <a class="link_new_frag thumbnail" href="${item_url}" data-frag="${data_frag}">
-            ${content_thumbnail_icons(content)}
-            <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" />
+            <div class="thumbnail">
+                <div style="position: relative;">
+                    ${content_thumbnail_icons(content)}
+                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0; left: 0;"/>
+                </div>
+            </div>
         </a>
     </td>
     

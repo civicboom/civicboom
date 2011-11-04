@@ -809,6 +809,16 @@ if (!('frags' in boom)) {
             return false;
           }
         },
+        'a.link_popup_next_element': {
+          'click': function () {
+            var link = $(this);
+            var popup_content = link.next('.popup_element').children().clone(true, true);
+            boom.util.modal_queue.add(
+              boom.frags.templates.modal_data('', popup_content)
+            );
+            return false;
+          }
+        },
         '.link_janrain': {
           'boom_load': function () {
             var link = $(this);
