@@ -1,19 +1,14 @@
 #frag_containers .frag_container .frag_content_edit {
-    div.comments table {
-        width: 100%;
+    TD {
+        padding-bottom: 1em;
+        padding-top: 0px;
     }
     label {
-        display: inline-block;
         font-weight: bold;
         padding-top: 6px;
         padding-bottom: 3px;
-        width: 25%;
         font-size: 110%;
         color: #333;
-    }
-    span.padded {
-        display: inline-block;
-        width: 50pt;
     }
     input.detail {
         width: 100pt;
@@ -24,42 +19,23 @@
     .paddedbottom {
         padding-bottom: 3px;
     }
-    legend .smaller {
-        font-size: 80%
-    }
-    .bold td {
-        font-weight: bold;
-    }
     .setting-disabled {
         background-color: #DDD;
     }
-    .upgrade {
-        position: relative;
-        display: inline-block;
-        width: 13em;
-        font-size: 90%;
-        font-weight: normal;
-    }
     
     .edit_input {
-        width: 70%;
-        float: right;
+        width: 100%;
     }
     .editor, .mceEditor, .mceLayout {
-        width: 70%;
-        height: 150px;
-        float: right;
-    }
-    .separator {
-        clear: both;
-        padding: 0.5em;
+        width: 100%;
+        height: 180px;
+        TD {
+            padding: 0px;
+        }
     }
     .button {
         padding: 0.5em;
         width: 120px;
-    }
-    .hideable {
-        clear: both;
     }
 
     fieldset legend {

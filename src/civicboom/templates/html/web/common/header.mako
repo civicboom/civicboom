@@ -113,7 +113,15 @@
         <tr>
             <td colspan="4">
                 <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
-                <span style="float:right;"><a href="${h.url(controller='misc', action='what_is_a_hub')}" class="sub_option">${_("Create a _Group")}</a></span>
+                % if c.logged_in_persona_role == 'admin':
+                    <span style="float:right;">
+                    % if c.logged_in_persona.payment_account_id:
+                        <a href="${h.url('payments')}">${_('My payment account')}</a>
+                    % else:
+                        <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
+                    % endif
+                    </span>
+                % endif
             </td>
         </tr>
         <%def name="persona_select(member, **kwargs)">
@@ -190,22 +198,23 @@
             ${persona_select(membership.group, role=membership.role)}
             ## , members=membership.group.num_members)}
         % endfor
+        <tr class="extras selectable" onclick="window.location='/misc/what_is_a_hub';">
+            <td class="avatar">
+                <div style="position: relative;">
+                    <img src="/images/default/avatar_group.png" alt=""/>
+                    <a class="icon16 i_plus_bordered" style="position: absolute; bottom: 0px; right: 0px;"></a>
+                </div>
+            </td>
+            <td class="name" colspan="2">
+                <p class="name">${_("Create a _Group")}</p>
+            </td>
+        </tr>
         <tr class="extras">
-            <td colspan="4">
-                % if c.logged_in_persona_role == 'admin':
-                    % if c.logged_in_persona.payment_account_id:
-                        <a href="${h.url('payments')}">${_('My payment account')}</a>
-                    % else:
-                        <a href="${h.url('new_payment')}">${_('Upgrade your account')}</a>
-                    % endif
-                % endif
-                <span style="float:right;">
-                    ${h.secure_link(
-                        h.url(controller='account', action='signout'),
-                        _('Sign out'),
-                        css_class="button"
-                    )}
-                </span>
+            <td colspan="3" style="text-align: right;">
+                ${h.secure_link(
+                    h.url(controller='account', action='signout'),
+                    _('Sign out')
+                )}
             </td>
         </tr>
     </table>

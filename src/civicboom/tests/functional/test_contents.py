@@ -7,6 +7,10 @@ import warnings
 
 class TestContentsController(TestController):
     
+    def test_content_qrcode(self):
+        response = self.app.get(url('content_action', id='1', action='qrcode'))
+        response = self.app.get(url('content_action', id='1', action='qrcode', format='jpeg', size=300))
+    
     def test_character_escaping(self):
         # AllanC - We should be able to send actual unicode in content ... we should be able to send '€' ... this may need additional investigation
         before = u'&euro;<moose><p class="TEST">&</p>' # humm .. I wanted to put an actuall euro in ... humm ...  is this an error with the request generator not accepting unicode? or our site? €
