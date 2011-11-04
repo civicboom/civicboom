@@ -455,7 +455,7 @@
 		function cbflash_refresh${self.id}() {
 	        refreshProgress($('form#edit_${self.id}'));
 		}
-		swfobject.embedSWF("https://localhost.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {statusDebug: "1", type:"v",host:"localhost.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}",callback_uploadcomplete:"cbflash_refresh${self.id}"}, {allowscriptaccess: 'always', wmode: "window"});
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}",callback_uploadcomplete:"cbflash_refresh${self.id}"}, {allowscriptaccess: 'always', wmode: "window"});
 	</script>
     <div style="position:relative; height: 400px; width: 370px;">
         <div class="media_recorder" style="position: absolute; left:0; top:0; width:360px; height:371px;" id="media_recorder_${self.id}">
