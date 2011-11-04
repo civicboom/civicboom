@@ -446,7 +446,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
             values +
             HTML.input(type="submit", value=value, name=value) + #AllanC: without the name attribute here the AJAX/JSON does not function, WTF! took me ages to track down :( NOTE: if the name="submit" jQuery wont submit! a known problem!?
         end_form(),
-        id='span_'+hhash, class_='secure_hide') # GregM: secure_hide means js will hide element and remove class (to stop dup processing of same element)
+        id='span_'+hhash, class_='secure_hide hide_if_js') # GregM: secure_hide means js will hide element and remove class (to stop dup processing of same element)
 
     # Confirm JS -------
     ## Some links could require a user confirmation before continueing, wrap the confirm text in the javascript confirm call
@@ -465,7 +465,7 @@ def secure_link(href, value='Submit', value_formatted=None, vals=[], css_class='
         id      = "link_"+hhash,
         # style   = "display: none;",
         href    = href,
-        class_  = css_class + ' secure_show', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
+        class_  = css_class + ' secure_show hide_if_nojs', # GregM: secure_show means js will show element and remove class (to stop dup processing of same element)
         title   = title,
         rel     = rel,
         # AllanC - the beast onclick even below does the following:
