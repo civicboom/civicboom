@@ -388,6 +388,7 @@
                     <td><label for="media_credit_${id}" >${_("Credit")}</label></td>
                     <td colspan="2"><input id="media_credit_${id}" name="media_credit_${id}" type="text" value="${media['credit']}" /></td>
                 </tr>
+                <tr><td colspan="4">&nbsp;</td></tr>
             </tbody>
         % endfor
         <!-- End list existing media -->
