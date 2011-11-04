@@ -327,20 +327,30 @@
 
 <%def name="media()">
     <table class="form" width="100%">
-        <%doc>
-        <li class="media_file" style="display: none;" id="mediatemplate">
-          <div class="file_type_overlay icon"></div>
-          <a href="#"><!--
-            --><img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
-          --></a>
-          <div class="media_fields">
-              <span id="media_status" style="display: none">(status)</span>
-              <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" onclick="return removeMedia($(this))" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
-              <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text"                 value=""/></p>
-              <p><label for="media_credit" >${_("Credit")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
-          </div>
-        </li>
-        </%doc>
+        <tbody id="mediatemplate" style="display: none;">
+            <tr>
+                <td><label for="media_file">${_("File")}</label></td>
+                <td><input id="media_file" name="media_file" type="text" disabled="true" value=""/></td>
+                <td><input type="submit" onclick="return removeMedia($(this))" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></td>
+
+                <td rowspan="3">
+                    <!--<div class="file_type_overlay icon"></div>-->
+                    <a href="#"><!--
+                        --><img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                    --></a>
+                    <span id="media_status" style="display: none">(status)</span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="media_caption">${_("Caption")}</label></td>
+                <td><input id="media_caption" name="media_caption" type="text" value=""/></td>
+            </tr>
+            <tr>
+                <td><label for="media_credit">${_("Credit")}</label></td>
+                <td><input id="media_credit" name="media_credit" type="text" value="" /></td>
+            </tr>
+            <tr><td colspan="4">&nbsp;</td></tr>
+        </tbody>
 
         <!-- List existing media -->
         % for media in self.content['attachments']:
