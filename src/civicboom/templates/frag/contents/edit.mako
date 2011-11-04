@@ -46,8 +46,8 @@
 ## Edit Content Fragment
 ##------------------------------------------------------------------------------
 <%def name="body()">
-    <div class="frag_col">
-        <div class="frag_list">
+    <div class="frag_col fill">
+        <div class="frag_list fill">
         ## Should be here but changes size of text editor
         ##<div class="frag_list_contents">
         <h1>
@@ -92,6 +92,9 @@
                 }
             </script>
             ${invalid_messages()}
+            ## accordion can be set to fill parent, but we don't want /filled/, we want a little
+            ## margin at top and bottom for title and buttons
+            <div style="position: absolute; top: 2.5em; bottom: 5.5em; left: 1em; right: 1em;">
             <div id="accordion-${self.id}">
                 <h3>Article Text</h3>
                 <div>${base_content()}</div>
@@ -111,11 +114,12 @@
                     </table>
                 </div>
             </div>
+            </div>
             ${submit_buttons()}
         ${h.end_form()}
         <script>
         $(function() {
-            $("#accordion-${self.id}").accordion();
+            $("#accordion-${self.id}").accordion({fillSpace: true, autoHeight: false});
         });
         </script>
         </div>
@@ -453,9 +457,12 @@
 		}
 		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}",callback_uploadcomplete:"cbflash_refresh${self.id}"}, {wmode: "window"});
 	</script>
-	<div class="media_recorder" style="width:360px; height:371px;" id="media_recorder_${self.id}">
-		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
-	</div>
+    <div style="position:relative; height: 400px; width: 370px;">
+        <div class="media_recorder" style="position: absolute; left:0; top:0; width:360px; height:371px;" id="media_recorder_${self.id}">
+            <div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
+        </div>
+        <div class="cb"></div>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -681,7 +688,7 @@
 ## Submit buttons
 ##------------------------------------------------------------------------------
 <%def name="submit_buttons()">
-    <div style="font-size: 130%; text-align: center; padding: 1em;" class="buttons">
+    <div style="font-size: 130%; text-align: center; padding: 1em; position: absolute; bottom: 0px; left: 0px; right: 0px;" class="buttons">
         ${popup.popup_static('What happens now?', what_now_popup, '', html_class="what-now-pop")}
         
         ## Preview + Publish

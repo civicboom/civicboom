@@ -30,6 +30,7 @@ class MemberActionsController(BaseController):
         """
         @param size   optional int, default 100 The size in pixels of the generated image
         @parsm format optional string, default PNG accepts [png, jpeg, bmp, gif, tiff]
+        @param level  optional int, default 1 Error correction level 0 to 3
         
         @return 200 a PNG
         """
