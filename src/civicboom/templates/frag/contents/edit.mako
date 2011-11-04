@@ -94,7 +94,7 @@
             ${invalid_messages()}
             ## accordion can be set to fill parent, but we don't want /filled/, we want a little
             ## margin at top and bottom for title and buttons
-            <div style="position: absolute; top: 2.5em; bottom: 5.5em; left: 1em; right: 1em;">
+            <div style="position: absolute; top: 3em; bottom: 5.5em; left: 1em; right: 1em;">
             <div id="accordion-${self.id}">
                 <h3>Article Text</h3>
                 <div>${base_content()}</div>
