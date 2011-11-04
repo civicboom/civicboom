@@ -3,6 +3,9 @@ from civicboom.controllers.contents import ContentsController
 from civicboom.lib.communication    import messages
 from cbutils.misc import update_dict
 
+from civicboom.lib.qrcode import cb_qrcode
+
+
 content_search = ContentsController().index
 
 log      = logging.getLogger(__name__)
@@ -12,6 +15,21 @@ class ContentActionsController(BaseController):
     """
     Content Actions and lists relating to an item of content
     """
+    
+    #---------------------------------------------------------------------------
+    # Image - QR Code
+    #---------------------------------------------------------------------------
+    @web
+    @cacheable(time=60*60, anon_only=False)
+    def qrcode(self, id, **kwargs):
+        """
+        @param size   optional int, default 100 The size in pixels of the generated image
+        @parsm format optional string, default PNG accepts [png, jpeg, bmp, gif, tiff]
+        @param level  optional int, default 1 Error correction level 0 to 3
+        
+        @return 200 a PNG
+        """
+        return cb_qrcode(url('content', id=id, sub_domain='www', qualified=True), **kwargs)
 
     #---------------------------------------------------------------------------
     # Action - Rate: Article

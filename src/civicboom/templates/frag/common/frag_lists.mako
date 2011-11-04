@@ -241,9 +241,7 @@
             )}
         </span>
         
-        <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">
-        ${member.get('name')}
-        </a>
+        <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">${member.get('name')}</a>
 		<br/><small>
 			<!-- Following ${member['num_following']}; -->
 			% if member['type'] == 'group' and member['num_members']:

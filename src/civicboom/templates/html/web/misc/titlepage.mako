@@ -2,6 +2,7 @@
 
 ##<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+<%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 
@@ -12,81 +13,98 @@
 ##------------------------------------------------------------------------------
 
 <%def name="body()">
-    % if config['development_mode']:
         ${new_frontpage()}
-    % else:
-    	<div class="wrapper">
-    			${front_headline()}
-    			${front_windows()}
-    			${front_tagline()}
-    			${start_button()}
-    			${social_media()}
-    	</div>
-    	<br />
-	% endif
 </%def>
 
 ##------------------------------------------------------------------------------
 ## New frontpage
 ##------------------------------------------------------------------------------
+
 <%def name="new_frontpage()">
     <div class="content_wrapper">
-        ${title()}
         ${banner()}
-        ${bars()}
+        ${cols()}
     </div>
+    ${components.misc_footer()}
 </%def>
 
-<%def name="title()">
-    <div class="header">
+<%def name="header()">
+    <div class="misc_header">
         ## logo image
         <a href='/'>
-            <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'/>
+            <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'>
         </a>
         
         ## header links
         <span class="links">
-            <a>${_("About _site_name")}</a>
-            <a>${_("FAQ")}</a>
-            <a>${_("Blog")}</a>
-            <a>${_("Contact")}</a>
-            <a>${_("Log in")}</a>
+            <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About _site_name")}</a>
+            <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
+            <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
+            <a href="mailto:contact@civicboom.com">${_("Contact")}</a>
+            <a href="${url(controller='account', action='signin')}">${_("Log in")}</a>
         </span>
     </div>
 </%def>
 
 <%def name="banner()">
     <div class="banner">
+        <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
         <div class="text">
-            <h1>Connecting people that need stories with people that have them</h1>
-            <h2>Not really sure what to write here</h2>
-            <h2>Not really sure what to write here</h2>
-            <h2>Not really sure what to write here</h2>
-            <h2>Not really sure what to write here</h2>
+            <p class="headline">Channel your content and make yourself heard</p>
+            <p class="tagline">
+                Connecting the people who need stories,<br />
+                with the people that have them<br />
+            </p>
+            <a href="${url(controller='account', action='signin')}">
+                <div class="signup_btn">
+                    <div class="link_wrapper">
+                        <a href="${url(controller='account', action='signin')}" class="main">Sign up now!</a>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </%def>
 
-<%def name="bars()">
-    <div class="bars">
-        <div class="signup_btn">
-            Sign up now!
-        </div>
-        <div class="bar">
+<%def name="cols()">
+    <div class="cols">
+        <div class="col">
+            <div class="col-img">
+                <img src="images/misc/titlepage/audience.png" />
+            </div>
             <h1>Individuals</h1>
-            <p>This is where some text will go! Maybe some pictures.</p>
+            <ul>
+                <li>Participate in what matters to you</li>
+                <li>Capture & send your content straight to organisations using our App</li>
+                <li>Get recognition for your content</li>
+            </ul>
         </div>
-        <div class="bar">
+        <div class="col">
+            <div class="col-img">
+                <img src="images/misc/titlepage/organisation.png" />
+            </div>
             <h1>Organisations</h1>
-            <p>This is where some text will go! Maybe some pictures.</p>
+            <ul>
+                <li>Engage your audience by requesting content directly</li>
+                <li>Innovative & secure workflow efficiency solutions</li>
+                <li>Customised Apps, Plugins & Content Management Tools built using our API</li>
+            </ul>
         </div>
-        <div class="bar">
-            <h1>Other</h1>
-            <p>This is where some text will go! Maybe some pictures.</p>
+        <div class="col">
+            <div class="col-img">
+                <img src="images/misc/titlepage/mobile-col.png" />
+            </div>
+            <h1>${_('Get _site_name on your mobile')}</h1>
+            <a href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">
+                <div class="android_btn">
+                    <img src="/images/about/mobile/android.png" alt="android">
+                    <h3>${_("Get the Android App now")}</h3>
+                </div>
+            </a>
         </div>
     </div>
 </%def>
-	
+
 ##------------------------------------------------------------------------------
 ## Start button
 ##------------------------------------------------------------------------------
