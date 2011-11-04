@@ -156,7 +156,7 @@ if (!('media_recorder' in boom)) {
         });
         
         div.flash({
-          swf: div.data('swf_url') || 'https://localhost.civicboom.com:9443/api_flash_server/cbFlashMedia.swf',
+          swf: div.data('swf_url') || 'https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf',
           flashvars: {
             type: "v",
             host: "bm1.civicboom.com",
