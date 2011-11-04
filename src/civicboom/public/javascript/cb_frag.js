@@ -744,6 +744,19 @@ if (!('frags' in boom)) {
           }
         },
         // We can initialise jQuery UI elements here too on load
+        '.jqui_accordion': {
+          'boom_load': function () {
+            var element = $(this);
+            var data = element.data('jqui_accordion');
+            if (typeof data == 'string') data = JSON.parse(data);
+            element.accordion(data);
+            return false;
+          },
+          'boom_resize': function () {
+            var element = $(this);
+            element.accordion('resize');
+          }
+        },
         '.jqui_tabs': {
           'boom_load': function () {
             console.log('.jqui_tabs load');
@@ -910,6 +923,11 @@ if (!('frags' in boom)) {
           $(selector).live(eventType, boom.frags.events.live[selector][eventType]);
         }
       }
+      // Initialise any static events
+      $(window).resize(function () {
+        console.log('window resized');
+        $('.event_resize').trigger('boom_resize');
+      });
       // Trigger manual frag_load_static for each fragment.
       $('.'+boom.frags.classes.container).trigger('frag_load_static');
     },

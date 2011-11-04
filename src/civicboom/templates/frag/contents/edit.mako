@@ -79,7 +79,7 @@
             ## accordion can be set to fill parent, but we don't want /filled/, we want a little
             ## margin at top and bottom for title and buttons
             <div style="position: absolute; top: 2.5em; bottom: 5.5em; left: 1em; right: 1em;">
-            <div id="accordion-${self.id}">
+            <div class="jqui_accordion event_load event_resize" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
                 <h3>Article Text</h3>
                 <div>${base_content()}</div>
                 <h3>Attach Media</h3>
@@ -101,11 +101,6 @@
             </div>
             ${submit_buttons()}
         ${h.end_form()}
-        <script>
-        $(function() {
-            $("#accordion-${self.id}").accordion({fillSpace: true, autoHeight: false});
-        });
-        </script>
         </div>
     </div>
 </%def>
@@ -300,8 +295,10 @@
 ##------------------------------------------------------------------------------
 
 <%def name="media_recorder()">
-    <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
-	<div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;">
+    <div>
+        <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
+    	<div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;">
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -438,15 +435,10 @@
             % endif
             
             <div class="padded">
-                <div class="jqui-radios">
+                <div class="jqui-radios event_load">
                     <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
                     <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                 </div>
-                <script type="text/javascript">
-                $(function() {
-                    $('.jqui-radios').buttonset().removeClass('.jqui-radios');
-                })
-                </script>
             </div>
         </td>
     </tr>

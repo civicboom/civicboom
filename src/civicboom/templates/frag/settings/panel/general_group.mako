@@ -55,7 +55,7 @@
         </h1>
         <!-- <a href="${h.url(controller='misc', action='what_is_a_hub')}">${_('What is a _Group?')}</a> -->
 
-        <div id="accordion">
+        <div class="jqui_accordion event_load" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
             <h4>1. ${_("Describe the _Group")}</h4>
             <div>
                 <table>
@@ -268,12 +268,6 @@
                 ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
             </div>
         </div>
-
-        <script>
-        $(function() {
-            $("#accordion").accordion();
-        });
-        </script>
         <div class="cb"></div>
     </div>
     
