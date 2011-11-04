@@ -1,15 +1,12 @@
 <%namespace name="share" file="/frag/common/share.mako"     />
 
 <%def name="body()">
-	${refresh_fragment_height()}
-
 	% if config['online']:
 		${google_analytics_end()}
 		${share.init_janrain_social()}
 		##${share.share_this_js()}
 	% endif
 
-	## Maps (should be loaded on-demand, but frags confuse that
 	% if config['development_mode']:
 		## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 		<!-- non-urgent bits -->
@@ -75,24 +72,4 @@
           })();
         </script>
     % endif
-</%def>
-
-
-##----------------------------------------------------------------------------
-## Dynamic Fragment Height
-##----------------------------------------------------------------------------
-<%def name="refresh_fragment_height()">
-## this only works properly if it is the first of the footer scripts and
-## included in the HTML -- if it is in the header bundle or footer bundle,
-## or if it is in the footer but after the external scripts, then there
-## is a flash of wrong-heighted content
-<script>
-function refresh_fragment_height() {
-	var height = $('footer').offset().top - $('#app').offset().top;
-	//Y.log(height);
-	createCSS(".frag_data", "height: "+(height-40)+"px !important;");
-}
-refresh_fragment_height();
-$(window).resize(refresh_fragment_height);
-</script>
 </%def>
