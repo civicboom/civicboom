@@ -20,6 +20,9 @@
 		@include border_radius($frag_radius);
 		
 		margin-bottom: inherit;
+        &.fill {
+            margin-bottom: 0px;
+        }
 		padding: 0.6em;
 
 		color: $frag-list-title-txt;
