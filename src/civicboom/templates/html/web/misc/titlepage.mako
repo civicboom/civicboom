@@ -2,6 +2,7 @@
 
 ##<%namespace name="get_widget" file="/frag/misc/get_widget.mako"/>
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
+<%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 
@@ -32,15 +33,14 @@
 
 <%def name="new_frontpage()">
     <div class="content_wrapper">
-        ${title()}
         ${banner()}
-        ${bars()}
+        ${cols()}
     </div>
-    ${footer()}
+    ${components.misc_footer()}
 </%def>
 
-<%def name="title()">
-    <div class="header">
+<%def name="header()">
+    <div class="misc_header">
         ## logo image
         <a href='/'>
             <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'/>
@@ -51,8 +51,8 @@
             <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About _site_name")}</a>
             <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
             <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
-            <a>${_("Contact")}</a>
-            <a>${_("Log in")}</a>
+            <a href="mailto:contact@civicboom.com">${_("Contact")}</a>
+            <a href="${url(controller='account', action='signin')}">${_("Log in")}</a>
         </span>
     </div>
 </%def>
@@ -68,64 +68,49 @@
                 There's so many lines!<br />
                 What is this I don't even<br />
             </p>
-            <div class="signup_btn">
-                <div class="link_wrapper">
-                    <a class="main">Sign up now!</a>
-                    <a class="tag">What have you got to lose?</a>
+            <a href="${url(controller='account', action='signin')}">
+                <div class="signup_btn">
+                    <div class="link_wrapper">
+                        <a href="${url(controller='account', action='signin')}" class="main">Sign up now!</a>
+                        <a href="${url(controller='account', action='signin')}" class="tag">What have you got to lose?</a>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </%def>
 
-<%def name="bars()">
-    <div class="bars">
-        <div class="bar">
+<%def name="cols()">
+    <div class="cols">
+        <div class="col">
+            <div class="col-img">
+                <img src="images/misc/titlepage/audience.png" />
+            </div>
             <h1>Individuals</h1>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra.</p>
         </div>
-        <div class="bar">
+        <div class="col">
+            <div class="col-img">
+                <img src="images/misc/titlepage/organisation.png" />
+            </div>
             <h1>Organisations</h1>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed dui velit, et placerat purus. Nam rhoncus metus et risus dignissim vel malesuada lectus viverra.</p>
         </div>
-        <div class="bar">
-            <img src="images/misc/titlepage/mobile-col.png" />
+        <div class="col">
+            <div class="col-img">
+                <img src="images/misc/titlepage/mobile-col.png" />
+            </div>
             <h1>${_('Get _site_name on your mobile')}</h1>
+            <a href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">
+                <div class="android_btn">
+                    <img src="/images/about/mobile/android.png" alt="android">
+                    <h3>${_("Get the Android app now")}</h3>
+                </div>
+            </a>
         </div>
     </div>
 </%def>
 
-<%def name="footer()">
-    <div class="footer">
-        <div class="footer_wrapper">
-            <div class="bar">
-                <h2>Sign up</h2>
-                ${_('Not a member of _site_name? ')}<br /><a>${_('Sign up now for free')}</a>
-            </div>
-            <div class="bar">
-                <h2>Explore</h2>
-                <a href="${url(controller='misc', action='search_redirector', type=_("_Assignments"))}">Requests</a>
-                <a href="${url(controller='misc', action='search_redirector', type=_("_Articles"))}")}">Stories</a>
-                <a href="${url(controller='members', action='index')}">Users/Hubs</a>
-            </div>
-            <div class="bar">
-                <h2>About us</h2>
-                <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About")}</a>
-                <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
-                <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
-                <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
-                <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
-            </div>
-            <div class="bar filler">
-                <h2>Follow us</h2>
-                <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
-                <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
-                <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
-            </div>
-        </div>
-    </div>
-</%def>
-	
 ##------------------------------------------------------------------------------
 ## Start button
 ##------------------------------------------------------------------------------

@@ -1,40 +1,23 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-$cb-orange: #FF8814;
-$cb-green: $advert-back-bot;
-$cb-grey: #333;
-$page-width: 960px;
-$page-link: #666;
-$page-font: #999;
-
 BODY.c-misc.a-titlepage {
-    color: $page-font;
   
-    a {
-        color: $page-link;
-        text-decoration: none;
-        
-        &:hover {
-            color: $cb-orange;
-        }
-    }
-    
     .signup_btn {
         text-align: center;
         display: table;
         height: 6em;
         width: 18em;
-        @include border_radius(1em);
+        @include border_radius(0.5em);
         @include drop_shadow(0, 2px, 3px, #666);
-        @include horiz_gradient(lighten($cb-green, 20%), $cb-green);
+        @include horiz_gradient(lighten($signup-color, 20%), $signup-color);
         background-color: green;
-        border-top: 1px solid lighten($cb-green, 40%);
-        border-bottom: 1px solid darken($cb-green, 10%);
+        border-top: 1px solid lighten($signup-color, 40%);
+        border-bottom: 1px solid darken($signup-color, 10%);
         margin-top: 2em;
         
         &:hover {
-            @include horiz_gradient(lighten($cb-green, 25%), lighten($cb-green, 5%));
+            @include horiz_gradient(lighten($signup-color, 25%), lighten($signup-color, 5%));
             cursor: pointer;
         }
         
@@ -44,7 +27,7 @@ BODY.c-misc.a-titlepage {
             
             a {
                 color: #fff;
-                text-shadow: darken($cb-green, 10%) 0px -1px 2px;
+                text-shadow: darken($signup-color, 10%) 0px -1px 2px;
                 display: block;
             }
         
@@ -58,17 +41,15 @@ BODY.c-misc.a-titlepage {
         }
     }
     
-    .content_wrapper {
-        width: $page-width;
-        min-height: 100px;
-        margin: auto;
-        padding: 0;
+    header {
+        height: 80px;
     }
     
-    .header {
+    .misc_header {
         position: relative;
         height: 80px;
-        width: 100%;
+        width: $misc-page-width;
+        margin: auto;
         
         .logo_img {
             position: absolute;
@@ -99,6 +80,7 @@ BODY.c-misc.a-titlepage {
         //background-color: $cb-lightblue;
         height: 400px;
         width: 100%;
+        margin-bottom: 2em;
         // @include drop_shadow(0, 2px, 3px, #333);
         
         .text {
@@ -108,18 +90,19 @@ BODY.c-misc.a-titlepage {
             height: 100%;
             max-width: 52%;
             text-align: left;
+            text-shadow: rgba(0, 0, 0, .25) 0 -1px 1px;
             
             .headline {
                 color: $cb_orange;
                 font-size: 250%;
                 padding-bottom: 0.5em;
                 font-weight: normal !important;
+                line-height: 120%;
             }
             
             .tagline {
-                // color: #fff;
                 font-size: 130%;
-                line-height: 150%;
+                line-height: 140%;
             }
         }
         
@@ -130,25 +113,66 @@ BODY.c-misc.a-titlepage {
         }
     }
     
-    .bars {
+    .cols {
         position: relative;
         width: 100%;
         
-        .bar {
+        .col {
             vertical-align: top;
             width: 33%;
             display: inline-block;
             margin: 0;
             
-            img {
-                max-width: 100%;
-                max-height: 150px;
+            .col-img {
+                width: 100%;
+                height: 100px;
                 margin: auto;
+                text-align: center;
+                border-bottom: 1px solid $cb-grey;
+              
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+            }
+            
+            .android_btn {
+                position: relative;
+                width: 90%;
+                margin: 1em auto 0 auto;
+                height: 75px;
+                @include border_radius(0.5em);
+                @include drop_shadow(0, 2px, 3px, #666);
+                @include horiz_gradient(#ddd, #ccc);
+                overflow: hidden;
+                
+                &:hover {
+                    @include horiz_gradient(#eee, #ddd);
+                    
+                    img {
+                        @include transparency(90);
+                    }
+                }
+                
+                img {
+                    @include transparency(70);
+                    position: absolute;
+                    left: 5%;
+                    top: 10%;
+                    height: 135%;
+                }
+                
+                h3 {
+                    position: absolute;
+                    top: 40%;
+                    width: 60%;
+                    right: 0;
+                }
             }
         
             h1 {
                 font-size: 150%;
-                padding-top: 1em;
+                padding-top: 0.5em;
             }
             
             p {
@@ -159,64 +183,5 @@ BODY.c-misc.a-titlepage {
             }
         }
         
-    }
-    
-    .footer {
-        width: 100%;
-        min-height: 5em;
-        background-color: $cb-grey;
-        background-image: url('/images/misc/titlepage/footer_shadow.png');
-        background-repeat: repeat-x;
-        background-position: top;
-        margin-top: 4em;
-        text-align: center;
-        position: relative;
-        
-        .footer_wrapper{
-            width: $page-width;
-            margin: auto;
-            text-align: left;
-            background-color: transparent;
-            
-            .bar {
-                width: 10em;
-                min-height: 10em;
-                vertical-align: top;
-                color: #fff;
-                display: inline-block;
-                background-color: lighten($cb-grey, 10%);
-                @include border_radius(0.5em);
-                margin: 2em 1em 2em 0;
-                padding: 0.5em 1em 1em 1.5em;
-                text-shadow: darken($cb-grey, 40%) 1px 1px 1px;
-                
-                .icon16 {
-                    display: inline-block;
-                }
-                
-                a {
-                    display: block;
-                    color: #bbb;
-                    margin-bottom: 0.25em;
-                    
-                    &:hover {
-                        color: $cb-orange;
-                    }
-                }
-                
-                h2 {
-                    font-size: 120%;
-                    padding-bottom: 0.5em;
-                }
-                
-                p {
-                    
-                }
-            }
-            
-            .filler {
-                width: auto;
-            }
-        }
     }
 }

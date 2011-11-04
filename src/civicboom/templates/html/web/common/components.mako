@@ -103,3 +103,37 @@
 	</form>
     </div>
 </%def>
+
+##------------------------------------------------------------------------------
+## Misc pages footer
+##------------------------------------------------------------------------------
+<%def name="misc_footer()">
+    <div class="footer">
+        <div class="footer_wrapper">
+            <div class="col">
+                <h2>Sign up</h2>
+                ${_('Not a member of _site_name? ')}<br /><a href="${url(controller='account', action='signin')}">${_('Sign up now for free')}</a>
+            </div>
+            <div class="col">
+                <h2>Explore</h2>
+                <a href="${url(controller='misc', action='search_redirector', type=_("_Assignments"))}">Requests</a>
+                <a href="${url(controller='misc', action='search_redirector', type=_("_Articles"))}")}">Stories</a>
+                <a href="${url(controller='members', action='index')}">Users/Hubs</a>
+            </div>
+            <div class="col">
+                <h2>About us</h2>
+                <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About")}</a>
+                <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
+                <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
+                <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
+                <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
+            </div>
+            <div class="col filler">
+                <h2>Follow us</h2>
+                <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
+                <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
+                <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
+            </div>
+        </div>
+    </div>
+</%def>
