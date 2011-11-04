@@ -104,7 +104,7 @@
                 <div>${location()}</div>
                 <h3>Advanced</h3>
                 <div>
-                    <table>
+                    <table class="form2">
                     <tr><td></td></tr>
                     % if not self.content.get('parent'):
                         ${privacy()}
@@ -212,7 +212,7 @@
 ## Base Form Text Content
 ##------------------------------------------------------------------------------
 <%def name="base_content()">
-    <table>
+    <table class="form2">
         <tr><td>
         </td></tr>
         <tr><td>
@@ -326,7 +326,8 @@
 ##------------------------------------------------------------------------------
 
 <%def name="media()">
-    <ul class="media_files">
+    <table class="form" width="100%">
+        <%doc>
         <li class="media_file" style="display: none;" id="mediatemplate">
           <div class="file_type_overlay icon"></div>
           <a href="#"><!--
@@ -336,101 +337,113 @@
               <span id="media_status" style="display: none">(status)</span>
               <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" onclick="return removeMedia($(this))" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
               <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text"                 value=""/></p>
-              <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
+              <p><label for="media_credit" >${_("Credit")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
           </div>
         </li>
+        </%doc>
+
         <!-- List existing media -->
         % for media in self.content['attachments']:
-            <% id = media['id'] %>
-            <li class="media_file" id="media_attachment_${id}">
-                <div class="file_type_overlay icon16 i_${media['type']}"></div>
-                <a href="${media['original_url']}"><!--
-                    --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
-                --></a>
-                % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
-                    <!-- Media still undergoing proceccesing -->
-                    ## Clients without javascript could have the current status hard in the HTML text
-                    ## TODO
-                    
-                    ## Clients with    javascript can have live updates from the media controller
-                    <script type="text/javascript">
-                        updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
-                    </script>
-                    <!-- End media still undergoing proceccesing -->
-                % endif
-                <span id="media_status_${id}" style="display: none">(status)</span>
-                
-                <div class="media_fields">
-                    <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove icon16 i_delete"/></p>
-                    <p><label for="media_caption_${id}">${_("Caption")}    </label><input id="media_caption_${id}" name="media_caption_${id}" type="text"                 value="${media['caption']}"/></p>
-                    <p><label for="media_credit_${id}" >${_("Credited to")}</label><input id="media_credit_${id}"  name="media_credit_${id}"  type="text"                 value="${media['credit']}" /></p>
-                </div>
-            </li>
+            <tbody>
+                <% id = media['id'] %>
+                <tr class="media_file" id="media_attachment_${id}">
+                    <td><label for="media_file_${id}">${_("File")}</label></td>
+                    <td><input id="media_file_${id}" name="media_file_${id}" type="text" disabled="true" value="${media['name']}"/></td>
+                    <td><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove"/></td>
+
+                    <td rowspan="3">
+                        <!--<div class="file_type_overlay icon16 i_${media['type']}"></div>-->
+                        <a href="${media['original_url']}"><!--
+                            --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                        --></a>
+                        % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
+                            <!-- Media still undergoing proceccesing -->
+                            ## Clients without javascript could have the current status hard in the HTML text
+                            ## TODO
+                            
+                            ## Clients with    javascript can have live updates from the media controller
+                            <script type="text/javascript">
+                                updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
+                            </script>
+                            <!-- End media still undergoing proceccesing -->
+                        % endif
+                        <span id="media_status_${id}" style="display: none">(status)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="media_caption_${id}">${_("Caption")}</label></td>
+                    <td colspan="2"><input id="media_caption_${id}" name="media_caption_${id}" type="text" value="${media['caption']}"/></td>
+                </tr>
+                <tr>
+                    <td><label for="media_credit_${id}" >${_("Credit")}</label></td>
+                    <td colspan="2"><input id="media_credit_${id}" name="media_credit_${id}" type="text" value="${media['credit']}" /></td>
+                </tr>
+            </tbody>
         % endfor
         <!-- End list existing media -->
         
         <!-- Add media -->
         <!-- Add media javascript - visible to JS enabled borwsers -->
-        <li class="hide_if_nojs">
-            <input id="file_upload" name="file_upload" type="file" />
-            <script type="text/javascript">
-            $(document).ready(function() {
-                    $('#file_upload').uploadify({
-                        'uploader'   : '/flash/uploadify.swf',
-                        'script'     : '/media',
-                        'scriptData' : {
-                            'content_id': '${self.id}',
-                            'member_id' : '${c.logged_in_persona.id}',
-                            'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
-                        },
-                        'cancelImg'  : '/images/cancel.png',
-                        'folder'     : '/uploads',
-                        'multi'      : true,
-                        'auto'       : true,
-                        'fileDataName':'file_data',
-                        'removeCompleted' : false,
-                        'onComplete'  : function(event, ID, fileObj, response, data) {
-                            //alert('There are ' + data.fileCount + ' files remaining in the queue.');
-                            // refresh the file list
-                            //Y.log("refresh the list now");
-                            refreshProgress($('form#edit_${self.id}'));
-                        }
-                        });
+        <tbody>
+            <tr class="hide_if_nojs">
+                <td colspan="4" style="text-align: center;">
+                    <input id="file_upload" name="file_upload" type="file" />
+                    <a href="#" onclick="$('#recorder-${self.id}').modal(); return false;">Record from Webcam</a>
+                    <script type="text/javascript">
+                    $(document).ready(function() {
+                            $('#file_upload').uploadify({
+                                'uploader'   : '/flash/uploadify.swf',
+                                'script'     : '/media',
+                                'scriptData' : {
+                                    'content_id': '${self.id}',
+                                    'member_id' : '${c.logged_in_persona.id}',
+                                    'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
+                                },
+                                'cancelImg'  : '/images/cancel.png',
+                                'folder'     : '/uploads',
+                                'multi'      : true,
+                                'auto'       : true,
+                                'fileDataName':'file_data',
+                                'removeCompleted' : false,
+                                'onComplete'  : function(event, ID, fileObj, response, data) {
+                                    //alert('There are ' + data.fileCount + ' files remaining in the queue.');
+                                    // refresh the file list
+                                    //Y.log("refresh the list now");
+                                    refreshProgress($('form#edit_${self.id}'));
+                                }
+                            });
                     });
-            </script>
-            <a href="#" onclick="$('#recorder-${self.id}').modal(); return false;">Record from Webcam</a>
-        </li>
+                    </script>
+                </td>
+            </tr>
+        </tbody>
         
         <!-- Add media non javascript version - hidden if JS enabled -->
-        <li class="hide_if_js">
-            <div class="media_preview">
-                <div class="media_preview_none">${_("Select a file to upload")}</div>
-            </div>
-            <div class="media_fields">
-                <p>
-                    <label for="media_file"   >${_("File")}       </label>
-                    <input id="media_file"    name="media_file"    type="file" class="field_file"/>
-                    <input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/>
-                </p>
-                <p>
-                    <label for="media_caption">${_("Caption")}    </label>
-                    <input id="media_caption" name="media_caption" type="text" />
-                    ${tooltip(_("extra_info"))}
-                </p>
-                <p>
-                    <label for="media_credit" >${_("Credited to")}</label>
-                    <input id="media_credit"  name="media_credit"  type="text" />
-                    ${tooltip(_("extra_info"))}
-                </p>
-            </div>              
-        </li>
-        <!-- End Add media -->
+        <tbody class="hide_if_js">
+            <tr>
+                <tr>
+                    <td><label for="media_file">${_("File")}</label></td>
+                    <td><input id="media_file" name="media_file" type="file" class="field_file" style="width: 200px;"/></td>
+                    <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></td>
 
-        <div id="recorder-${self.id}" style="display: none;">
+                    <td rowspan="3" class="media_preview_none">${_("Select a file to upload")}</td>
+                </tr>
+                <tr>
+                    <td><label for="media_caption">${_("Caption")}</label></td>
+                    <td colspan="2"><input id="media_caption" name="media_caption" type="text" /></td>
+                </tr>
+                <tr>
+                    <td><label for="media_credit" >${_("Credit")}</label></td>
+                    <td colspan="2"><input id="media_credit"  name="media_credit"  type="text" /></td>
+                </tr>
+            </tr>
+        </tbody>
+        <!-- End Add media -->
+    </table>
+
+    <div id="recorder-${self.id}" style="display: none;">
         ${media_recorder()}
-        </div>
-##        ${popup.popup_static('Webcam Recorder', media_recorder, '', html_class="recorder-${self.id}")}
-    </ul>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
