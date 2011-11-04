@@ -448,7 +448,10 @@
 				refreshProgress($('form#edit_$(self.id}'));
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"}, {wmode: "window"});
+		function cbflash_refresh${self.id}() {
+		    refreshProgress($('form#edit_$(self.id}'));
+		}
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}",callback_uploadcomplete:"cbflash_refresh${self.id}"}, {wmode: "window"});
 	</script>
 	<div class="media_recorder" style="width:360px; height:371px;" id="media_recorder_${self.id}">
 		<div id="cbFlashMedia${self.id}">${_('If you see this text your browser is incompatible with our media recorder, please upload a video or audio file below')}</div>
