@@ -1,3 +1,29 @@
+// JQUERY PLUGIN: I append each jQuery object (in an array of
+// jQuery objects) to the currently selected collection.
+jQuery.fn.appendEach = function( arrayOfWrappers ){
+   
+  // Map the array of jQuery objects to an array of
+  // raw DOM nodes.
+  var rawArray = jQuery.map(
+  arrayOfWrappers,
+  function( value, index ){
+     
+    // Return the unwrapped version. This will return
+    // the underlying DOM nodes contained within each
+    // jQuery value.
+    return( value.get() );
+     
+  }
+  );
+   
+  // Add the raw DOM array to the current collection.
+  this.append( rawArray );
+   
+  // Return this reference to maintain method chaining.
+  return( this );
+ 
+};
+
 boom_development = true;
 
 if (!('boom' in window))
@@ -321,7 +347,7 @@ if (!('frags' in boom)) {
           $('<div />').addClass(confirm_type || 'information')
           .append(
             $('<div />').addClass('popup-title')
-            .append(title)
+            .append(title).append($('<a />').addClass('fr simplemodalClose').append('&nbsp;x&nbsp;'))
           )
           .append(
             $('<div />').addClass('popup-message')
@@ -346,6 +372,9 @@ if (!('frags' in boom)) {
       modal_confirm: function (settings, originalLink) {
         if (typeof settings == 'string')
           settings = JSON.parse(settings.replace(/\'/g, '\"'));
+        console.log(settings.confirmSecureOptions);
+        if (typeof settings.confirmSecureOptions == 'string')
+          settings.confirmSecureOptions = JSON.parse(settings.confirmSecureOptions.replace(/\'/g, '\"'));
         // Return modal content as jQuery object
         // Popup jQuery, begin with outer layer, work in. popup-modal:
         return $('<div />').addClass('popup-modal').append(
@@ -373,6 +402,7 @@ if (!('frags' in boom)) {
                 )
                 // If confirm-title set it as the title, otherwise use the original link's text
                 .append(settings.confirmTitle || originalLink.text() || '')
+                .append($('<a />').addClass('fr simplemodalClose').append('&nbsp;x&nbsp;'))
             )
             .append(
               // popup-message
@@ -382,10 +412,35 @@ if (!('frags' in boom)) {
             .append(
               // popup-actions
               $('<div />').addClass('popup-actions').append(
-                (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? 
-                (
+                (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? (
                   // secure options
-                  
+                  $('<ul />').appendEach(
+                    $.map(settings.confirmSecureOptions, function(value) {
+                      return $('<li />')
+                        .append(value.title?$('<h3 />').append(value.title):'')
+                        .append(value.content)
+                        .append(
+                          $('<a />').addClass('button')
+                            .append(originalLink.text())
+                            .data('original', originalLink)
+                            .data('json', value.json)
+                            .click(function () {
+                              var link = $(this);
+                              var original = link.data('original');
+                              console.log(link, link.data());
+                              console.log(original, original.data());
+                              original.data('confirmed', 'true');
+                              console.log(1, original.siblings('form').data('json'));
+                              original.siblings('form').data('json', link.data('json'));
+                              //original.data('json', link.data('json'));
+                              console.log(2, original.siblings('form').data('json'));
+                              console.log(original, original.data());
+                              original.click();
+                              $.modal.close();
+                            })
+                        );
+                    })
+                  )
                 ) : (
                   // buttons
                   $('<a />').addClass('button')
@@ -399,6 +454,7 @@ if (!('frags' in boom)) {
                       original.click();
                       $.modal.close();
                     }).after(
+                      originalLink.hasClass('link_dummy')? '':
                       $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
                     )
                 )
@@ -706,12 +762,75 @@ if (!('frags' in boom)) {
           'boom_load': function () {
             console.log('.jqui-radios')
             $(this).buttonset().removeClass('.jqui-radios');
+            return false;
           }
         },
         '.get_widget': {
           'boom_load': function () {
             // Not completed yet...
             return false;
+          }
+        },
+        '.limit_length': {
+          'boom_load': function () {
+            var textarea = $(this);
+            var countarea = textarea.siblings('.limit_length_remaining');
+            textarea.limit(countarea.text(), countarea);
+            return false;
+          }
+        },
+        '.show-new-comments': {
+          'click': function () {
+            var link=$(this);
+            var frag=boom.frags.getFragment(link);
+            frag.find('.new-comment').first().toggle(function () {
+              $(this).filter(':visible').find('.comment-ta').focus();
+            });
+            return false;
+          }
+        },
+        '.content_rating': {
+          'boom_load': function () {
+            var rating_form = $(this);
+            rating_form.children().not('select').hide();
+            rating_form.stars({
+              inputType: "select",
+              callback: function (ui, type, value) {
+                $.ajax({
+                    url: rating_form.data('json'),
+                    type: "POST",
+                    data: rating_form.serialize(),
+                    dataType: "json",
+                    success: function(data) {boom.util.flash_message(data);},
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {boom.util.flash_message(textStatus);}
+                });
+              }
+            });
+            return false;
+          }
+        },
+        '.link_janrain': {
+          'boom_load': function () {
+            var link = $(this);
+            var data = link.data();
+            janrain_popup_share(data.janrainUrl, data.janrainOptions, data.janrainVariables);
+            return false;
+          },
+          'click': function () {
+            var link = $(this);
+            var data = link.data();
+            janrain_popup_share(data.janrainUrl, data.janrainOptions, data.janrainVariables);
+            return false;
+          }
+        },
+        'img.placeholder_media': {
+          'error': function () {
+            alert('!');
+          }
+        },
+        'img.placeholder_member': {
+          'error': function () {
+            alert('!');
           }
         }
       }

@@ -194,9 +194,7 @@
 <%def name="body()">
     ## AllanC!?! (c.logged_in_persona.username or c.logged_in_user.username) this is a meaninless statement because or returns one or the other? logged_in_persona always not null if logged_in_user
     % if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
-    <script>
-    ${share.janrain_social_call_member(self.member, 'new', self.member['type']) | n }
-    </script>
+        <div class="link_janrain event_load" ${share.janrain_social_data_member(self.member, 'new', self.member['type'])}></div>
     % endif
     
     ## Top row (avatar/about me)
@@ -252,7 +250,7 @@
                 </a>
             </span>
 
-            <a style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
+            <a class="link_janrain" style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" ${share.janrain_social_data_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type'])}><p class="janrain_link">${_("Get others involved!")}</p></a>
 
             <div class="separator"></div>
         </div>    

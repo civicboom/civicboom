@@ -24,7 +24,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="custom_share()">
-    <a href="#" onclick="${share.janrain_social_call_content(self.content, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] else 'other' , self.content['type'] if not self.content['parent'] else 'response') | n }; return false;" class="icon16 i_share"><span>Janrain</span></a> 
+    <a href="#" ${share.janrain_social_call_content(self.content, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] else 'other' , self.content['type'] if not self.content['parent'] else 'response')} class="icon16 i_share link_janrain"><span>Janrain</span></a> 
 </%def>
 
 <%def name="init_vars()">
@@ -103,9 +103,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     % if c.logged_in_persona and c.logged_in_persona.username == self.content['creator']['username'] and request.params.get('prompt_aggregate')=='True':
-    <script>
-        ${share.janrain_social_call_content(self.content, 'new', self.content['type'] if not self.content['parent'] else 'response') | n }
-    </script>
+        <div class="link_janrain event_load" ${share.janrain_social_data_content(self.content, 'new', self.content['type'] if not self.content['parent'] else 'response')}></div>
     % endif
     ## --- redesign --- ##
     <div class="frag_top_row">
@@ -473,7 +471,6 @@
         ## --- Respond -----------------------------------------------------------
         % if 'respond' in self.actions:
             % if self.content.get('parent'):
-            
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
                     link_class  = 'button' ,
@@ -482,21 +479,27 @@
                         json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ) ,
                     link_data   = dict(
-                        confirm = "RARARA?",
+                        confirm = _("Would you like to respond to:"),
+                        confirm_title = _("Great you want to share your story..."),
                         confirm_secure_options = [
-                            dict(content="That one", json=h.url('new_content', parent_id=self.content['root_parent']['id'])) ,
-                            dict(content="This one", json=h.url('new_content', parent_id=self.id))
+                            dict(
+                                title=_('The original request'),
+                                content='<p><b>%s</b></p><p><div class="creator_avatar fl"><div class="thumbnail"><img src="%s" alt="%s" class="img" onerror="this.onerror=null;this.src=\'/images/default/avatar_user.png\'" /></div></div><div class="content_creator">%s: %s</div></p>' % (self.content['root_parent']['title'], self.content['root_parent']['creator']['avatar_url'], self.content['root_parent']['creator']['username'], _('By'), self.content['root_parent']['creator']['name']),
+                                json=h.url('new_content', parent_id=self.content['root_parent']['id'], format='json')
+                            ) ,
+                            dict(
+                                title=_('This story'),
+                                content='<p><b>%s</b></p><p><div class="creator_avatar fl"><div class="thumbnail"><img src="%s" alt="%s" class="img" onerror="this.onerror=null;this.src=\'/images/default/avatar_user.png\'" /></div></div><div class="content_creator">%s: %s</div></p>' % (self.content['title'], self.content['creator']['avatar_url'], self.content['creator']['username'], _('By'), self.content['creator']['name']),
+                                json=h.url('new_content', parent_id=self.id, format='json'))
                         ]
                     ) ,
                 )}
-            
-                <div class="hide_if_nojs">
-                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your story")}</a>
-                </div>
-                <div class="hide_if_js">
-                    ${popup.popup_static(_('Respond with your story'), respond_has_parent, 'popup_share')}
-                </div>
-                
+##                <div class="hide_if_nojs">
+##                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your story")}</a>
+##                </div>
+##                <div class="hide_if_js">
+##                    ${popup.popup_static(_('Respond with your story'), respond_has_parent, 'popup_share')}
+##                </div>
             % else:
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
@@ -536,16 +539,22 @@
         
         </td>
         <td class="tip"><div>
-            <%
-            %>
-            <a href="" class="${self.popup_link_class}">${_("Why should you get involved?")}</a>
-            <script>
-            $(".${self.popup_link_class}").click(function() {
-                $("#${self.popup_class}").modal({ onShow: function (dialog) {}});
-                return false;
-            });
-            </script>
-            ${popup.popup_static(_('Why get involved?'), get_involved, self.popup_class)}
+##            <a href="" class="${self.popup_link_class}">${_("Why should you get involved?")}</a>
+##            <script>
+##            $(".${self.popup_link_class}").click(function() {
+##                $("#${self.popup_class}").modal({ onShow: function (dialog) {}});
+##                return false;
+##            });
+##            </script>
+##            ${popup.popup_static(_('Why get involved?'), get_involved, self.popup_class)}
+            <a
+                href="#"
+                class="link_dummy"
+                data-confirm-title="${_('Why get involved?')}"
+                data-confirm="${_("By sharing your story with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}<ol><li>${_("Get published")}</li><li>${_("Get recognition")}</li><li>${_("Make the news!")}</li></ol>" data-confirm-title="Why should you get involved?"
+                data-confirm-yes="OK, let's go!"
+            >Why should you get involved?</a>
+
         </div></td>
         </tr>
     </table>
@@ -655,25 +664,16 @@
         </tr>
     <tr>
         <td colspan="3">
-        <div class="comments-option comments-option-${self.id}">
+        <div class="comments-option">
             % if c.logged_in_user:
-                ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments show-comments-${self.id}">${_("Ask here...")}</span>
+                ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}<span class="show-comments show-new-comments">${_("Ask here...")}</span>
             % else:
                 ${_("To comment on this content, please")} <a href="${url(controller='account', action='signin')}">${_("sign up or log in!")}</a>
             % endif
         </div>
         </td>
-        <script>
-        $(function() {
-            $('.new-comment-${self.id}').hide();
-            $('.show-comments-${self.id}').click(function() {
-                $('.new-comment-${self.id}').toggle();
-                $('.comment-${self.id}').focus();
-            });
-        });
-        </script>
     </tr>
-        <tr class="new-comment new-comment-${self.id}">
+        <tr class="new-comment hide_if_js">
             <td class="comment_avatar">
                 % if c.logged_in_user:
                 ${member_includes.avatar(c.logged_in_user.to_dict())}
@@ -689,8 +689,8 @@
                     ##<input type="hidden" name="parent_id" value="${d['content']['id']}">
                     <input type="hidden" name="title" value="Re: ${d['content']['title']}">
                     ##<input type="hidden" name="type" value="comment">
-                    <textarea name="content" class="comment-${self.id}"></textarea><br />
-                    <span class="commentcount-${self.id}" style="text-align: right; font-size: 120%;">${config['setting.content.max_comment_length']}</span><br />
+                    <textarea name="content" class="comment-ta limit_length event_load"></textarea><br />
+                    <span class="limit_length_remaining" style="text-align: right; font-size: 120%;">${config['setting.content.max_comment_length']}</span><br />
                     ${_('Ask <b>%(name)s</b> for more information about this %(type)s. Note: your question and/or answers will be publicly visible.') % dict(name=content['creator']['name'], type=_(('_'+self.content['type'] if not self.content['parent'] else 'response'))) | n}
                     
                     ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}
@@ -698,11 +698,6 @@
                     ${_('If you want to respond with your story please use the "Respond with your story" button above.')}<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
-                    <script type="text/javascript">
-                        $(function () {
-                            $('.comment-${self.id}').limit(${config['setting.content.max_comment_length']}, '.commentcount-${self.id}');
-                        });
-                    </script>
                 ${h.end_form()}
                 % else:
                 <p>${_('Please login to comment')}
@@ -1062,7 +1057,7 @@ def selif(r, n):
         return ""
 r = (d['content']['rating'] * 5)
 %>
-        <form id="rating" action="${url('content_action', action='rate', id=d['content']['id'], format='redirect')}" method="POST">
+        <form class="content_rating event_load" action="${url('content_action', action='rate', id=d['content']['id'], format='redirect')}" method="POST" data-json="${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}">
             <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
             <select name="rating" style="width: 120px">
                 <option value="0">Unrated</option>
@@ -1074,28 +1069,6 @@ r = (d['content']['rating'] * 5)
             </select>
             <input type="submit" value="Rate!">
         </form>
-        <script>
-        $(function() {
-            $("#rating").children().not("select").hide();
-            $("#rating").stars({
-                inputType: "select",
-                callback: function(ui, type, value) {
-                    ## $("#rating").submit();
-                    $.ajax({
-                        url: "${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}",
-                        type: "POST",
-                        data: {
-                            "_authentication_token": "${h.authentication_token()}",
-                            "rating": value
-                        },
-                        dataType: "json",
-                        success: function(data) {flash_message(data);},
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {flash_message(textStatus);}
-                    });
-                }
-            });
-        });
-        </script>
         </li>
     % endif
 

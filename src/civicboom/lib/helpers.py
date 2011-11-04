@@ -440,8 +440,8 @@ def secure_link(href, value='Submit', value_formatted=None, title=None, method='
                 action2[1].append('/profile')
             form_data['json_complete'] = json.dumps([action1, action2]).replace('"',"'")
     # Do magic to convert all form & link _data to kwargs
-    form_data = dict([ ('data-%s' % k.replace('_','-'), v) for (k,v) in form_data.items() ])
-    link_data = dict([ ('data-%s' % k.replace('_','-'), v) for k,v in link_data.items() ])
+    form_data = dict([ ('data-%s' % k.replace('_','-'), v if isinstance(v, basestring) else json.dumps(v)) for (k,v) in form_data.items() ])
+    link_data = dict([ ('data-%s' % k.replace('_','-'), v if isinstance(v, basestring) else json.dumps(v)) for (k,v) in link_data.items() ])
             
         
 
