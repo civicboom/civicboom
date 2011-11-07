@@ -108,21 +108,26 @@
 ## Misc pages footer
 ##------------------------------------------------------------------------------
 <%def name="misc_footer()">
-    <div class="footer">
+    <div class="misc_footer">
+        <style type="text/css">
+            footer {
+                display: none;
+            }
+        </style>
         <div class="footer_wrapper">
             <div class="col">
-                <h2>Sign up</h2>
+                <h2>${_('Sign up')}</h2>
                 ${_('Not a member of _site_name? ')}<br /><a href="${url(controller='account', action='signin')}">${_('Sign up now for free')}</a>
             </div>
             <div class="col">
-                <h2>Explore</h2>
-                <a href="${url(controller='contents', action='index', list='assignments_active')}">Requests</a>
-                <a href="${url(controller='contents', action='index', list='responses')}">Responses</a>
-                <a href="${url(controller='contents', action='index', list='articles')}">Stories</a>
-                <a href="${url(controller='members', action='index')}">Users/Hubs</a>
+                <h2>${_('Explore')}</h2>
+                <a href="${url(controller='contents', action='index', list='assignments_active')}">${_('_Assignments')}</a>
+                <a href="${url(controller='contents', action='index', list='responses')}">${_('_Responses')}</a>
+                <a href="${url(controller='contents', action='index', list='articles')}">${_('_Articles')}</a>
+                <a href="${url(controller='members', action='index')}">${_('_Users/_Groups')}</a>
             </div>
             <div class="col">
-                <h2>About us</h2>
+                <h2>${_('About us')}</h2>
                 <a href="${h.url(controller='misc', action='about', id='civicboom')}">${_("About")}</a>
                 <a href="${h.url(controller='misc', action='about', id='faq'  )}">${_("FAQ")}</a>
                 <a href="http://civicboom.wordpress.com/" target="_blank">${_("Blog")}</a>
@@ -130,7 +135,7 @@
                 <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
             </div>
             <div class="col filler">
-                <h2>Follow us on</h2>
+                <h2>${_('Follow us on')}</h2>
                 <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
                 <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
                 <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>

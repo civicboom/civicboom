@@ -1,5 +1,8 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+<%namespace name="components" file="/html/web/common/components.mako" />
+
+<%def name="html_class_additions()">blank_background</%def>
 ##------------------------------------------------------------------------------
 ## Title - Override
 ##------------------------------------------------------------------------------
@@ -81,7 +84,9 @@
             });
         });
     </script>
+    
 </div>
+${components.misc_footer()}
 
 </%def>
 

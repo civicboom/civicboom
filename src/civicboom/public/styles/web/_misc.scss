@@ -1,6 +1,73 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+/* big grey stylish footer THIS IS NOT IN THE RIGHT PLACE >_<*/
+.misc_footer {
+    width: 100%;
+    min-height: 5em;
+    background-color: $cb-grey;
+    background-image: url('/images/misc/titlepage/footer_shadow.png');
+    background-repeat: repeat-x;
+    background-position: top;
+    margin-top: 4em;
+    text-align: center;
+    position: relative;
+    
+    .footer_wrapper{
+        width: $misc-page-width;
+        margin: auto;
+        text-align: left;
+        background-color: transparent;
+        
+        .col {
+            width: 10em;
+            min-height: 10em;
+            vertical-align: top;
+            color: #fff;
+            display: inline-block;
+            background-color: lighten($cb-grey, 10%);
+            @include border_radius(0.5em);
+            margin: 2em 1em 2em 0;
+            padding: 0.5em 1em 1em 1.5em;
+            text-shadow: darken($cb-grey, 40%) 1px 1px 1px;
+            
+            .icon16 {
+                display: inline-block;
+            }
+            
+            a {
+                display: block;
+                color: #bbb;
+                margin-bottom: 0.25em;
+                vertical-align: middle;
+                
+                &:hover {
+                    color: $cb-orange;
+                }
+            }
+            
+            h2 {
+                font-size: 120%;
+                padding-bottom: 0.5em;
+            }
+            
+            p {
+                
+            }
+        }
+        
+        .filler {
+            min-height: 0;
+            width: auto;
+            vertical-align: top;
+          
+            h2 {
+                display: inline-block;
+            }
+        }
+    }
+}
+
 BODY.c-misc {
     color: $misc-page-font;
     background-color: #fff;
@@ -58,72 +125,6 @@ BODY.c-misc {
         }
     }
 
-    /* big grey stylish footer */
-    .footer {
-        width: 100%;
-        min-height: 5em;
-        background-color: $cb-grey;
-        background-image: url('/images/misc/titlepage/footer_shadow.png');
-        background-repeat: repeat-x;
-        background-position: top;
-        margin-top: 4em;
-        text-align: center;
-        position: relative;
-        
-        .footer_wrapper{
-            width: $misc-page-width;
-            margin: auto;
-            text-align: left;
-            background-color: transparent;
-            
-            .col {
-                width: 10em;
-                min-height: 10em;
-                vertical-align: top;
-                color: #fff;
-                display: inline-block;
-                background-color: lighten($cb-grey, 10%);
-                @include border_radius(0.5em);
-                margin: 2em 1em 2em 0;
-                padding: 0.5em 1em 1em 1.5em;
-                text-shadow: darken($cb-grey, 40%) 1px 1px 1px;
-                
-                .icon16 {
-                    display: inline-block;
-                }
-                
-                a {
-                    display: block;
-                    color: #bbb;
-                    margin-bottom: 0.25em;
-                    vertical-align: middle;
-                    
-                    &:hover {
-                        color: $cb-orange;
-                    }
-                }
-                
-                h2 {
-                    font-size: 120%;
-                    padding-bottom: 0.5em;
-                }
-                
-                p {
-                    
-                }
-            }
-            
-            .filler {
-                min-height: 0;
-                width: auto;
-                vertical-align: top;
-              
-                h2 {
-                    display: inline-block;
-                }
-            }
-        }
-    }
 }
 
 /* --- Get Widget ---- */
