@@ -2,42 +2,111 @@
 
 <%def name="title()">${_("Sign in")}</%def>
 
-
 <%def name="body()">
-    
-    
-    <div class="layout">
-        
+    ${signin_page()}
+    ${type_page()}
+    ${ind_page()}
+    ${org_page()}
+</%def>
+
+<%def name="signin_page()">
+    <div class="layout body page_border" id="signin-page">
         ${signin_actions()}
-        
-        <table><tr><td class="body page_border">
             <table class="signin">
                 <tr>
-                    <td width="45%">
+                    <td width="400" colspan="2">
                         ${signin()}
+                        ${forgot()}
                     </td>
-                    <td width="10%" rowspan="3">
-                        <b style="font-size: 3em;">&nbsp;or&nbsp;&rarr;</b>
+                    <td rowspan="2" style="text-align: center;">
+                        <b style="font-size: 3em;">&larr;&nbsp;or&nbsp;&rarr;</b>
                     </td>
-                    <td width="45%" rowspan="3">
+                    <td rowspan="2">
                         ${janrain()}
                     </td>
                 </tr>
                 <tr>
-                    <td class="block">
-                        ${forgot()}
+                    <td class="block" width="200" style="text-align: center;">
+                        <a class="button" style="width: 75%;" href="#" onclick="
+                            $('#signin-page').fadeOut(250, function() {$('#type-page').fadeIn(250);});
+                        ">${_("Create an account")}</a>
                     </td>
+                    <td class="block" width="200" style="text-align: center;">
+                        <a class="button hide_if_nojs" style="width: 75%;" href="#" id="iforgot-button" onclick="
+                            $('#username_forgotten').val($('#username').val());
+                            $('#iforgot-button').fadeOut(250, function() {$('#signin-button').fadeIn(250);});
+                            $('#signin-box').fadeOut(250, function() {$('#iforgot-box').fadeIn(250);});
+                        ">${_("Reset password")}</a>
+                        <a class="button hide_if_nojs" style="width: 75%;" href="#" id="signin-button"  onclick="
+                            $('#signin-button').fadeOut(250, function() {$('#iforgot-button').fadeIn(250);});
+                            $('#iforgot-box').fadeOut(250, function() {$('#signin-box').fadeIn(250);});
+                        ">${_("Sign in")}</a>
+                    </td>
+                    <script>
+                    $(function() {
+                        $('#signin-button').hide();
+                    });
+                    </script>
                 </tr>
                 <tr>
-                    <td class="block">
-                        ${signup()}
+                    <td class="block" colspan="2">
                     </td>
                 </tr>
             </table>
-        </td></tr></table>
     </div>
 </%def>
 
+<%def name="type_page()">
+    <div class="layout hide_if_js body page_border" id="type-page">
+            <table class="signin">
+                <tr>
+                    <td colspan="2">
+                        <h1>Individual or Organisation?</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%">
+                        <div style="width: 100%; text-align: center;">
+                            <img src="/images/misc/titlepage/organisation.png">
+                            <a class="button" style="width: 315px;" href="#"  onclick="
+                                $('#type-page').fadeOut(250, function() {$('#ind-page').fadeIn(250);});
+                            ">${_("I am signing up for myself")}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width: 100%; text-align: center;">
+                            <img src="/images/misc/titlepage/audience.png">
+                            <a class="button" style="width: 315px;" href="#"  onclick="
+                                $('#type-page').fadeOut(250, function() {$('#org-page').fadeIn(250);});
+                            ">${_("I am signing up for my organisation")}</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+    </div>
+</%def>
+
+<%def name="ind_page()">
+    <div class="layout hide_if_js body page_border" id="ind-page">
+        <div style="width: 400px; margin: auto;">${signup()}</div>
+    </div>
+</%def>
+
+<%def name="org_page()">
+    <div class="layout hide_if_js body page_border" id="org-page">
+        <div style="width: 400px; margin: auto; text-align: left;">
+        <h1>Create a personal account first</h1>
+        <p>First you will need to create an account for yourself. Once you have
+        an account, you can create a Hub for your organisation that other
+        people can be added to.
+        <p>&nbsp;
+        <p>If you already have a personal account, <a href="/account/signin">sign in</a>
+        and use the Hub selector (top right of the page) to create a new Hub.
+        <p>&nbsp;
+        ${signup()}
+        </div>
+    </div>
+</%def>
 
 <%def name="janrain()">
 % if 'api_key.janrain' in config:
@@ -52,7 +121,7 @@
 </%def>
 
 <%def name="signin()">
-<section>
+<section id="signin-box">
 	<h1>${_("Sign in")}</h1>
 	<form action="${h.url('current', format='redirect')}" method="POST">
 		<table class="form">
@@ -75,7 +144,7 @@
 
 <%def name="signup()">
 <section>
-	<h1>${_("Sign up (It's free!)")}</h1>
+	<h1>${_("Sign up")}</h1>
 	<form action="${h.url(controller='register', action='email', format='redirect')}" method="post">
 		<table class="form">
 			<tr>
@@ -143,11 +212,8 @@ $(function() {
 </%def>
 
 <%def name="forgot()">
-<section>
-	<a class="button" style="float: right; margin: 16px;" href="#" id="iforgot" onclick="$('#iforgot').hide(); $('#reminder').show();">${_("Forgotten your password?")}</a>
-	
-	<div id="reminder" class="hideable">
-	<p>&nbsp;
+<section id="iforgot-box" class="hide_if_js">
+	<h1>${_("Reset password")}</h1>
 	<form action="${h.url(controller='account', action='forgot_password', format='redirect')}" method="post" style="clear:both">
 		<table class="form">
 			<tr>
@@ -155,10 +221,7 @@ $(function() {
 				<td><input type="text"  id="username_forgotten" name="username" placeholder="e.g. dave43"/></td>
 			</tr>
 			<tr>
-				<td colspan="2"><label>or</label></td>
-			</tr>
-			<tr>
-				<td><label for="email_forgotten">${_("Email")}</label></td>
+				<td><label for="email_forgotten"><b>or</b> ${_("Email")}</label></td>
 				<td><input type="email" id="email_forgotten" name="email" placeholder="e.g. dave@coolnews.net"/></td>
 			</tr>
 			<tr>
@@ -167,11 +230,8 @@ $(function() {
 			</tr>
 		</table>
 	</form>
-	<p>&nbsp;
-	</div>
 </section>
 </%def>
-
 
 <%def name="signin_actions()">
     ## AllanC:
@@ -227,5 +287,4 @@ $(function() {
         ##${c.action_objects['action_object']}
         </div>
     % endif
-    
 </%def>
