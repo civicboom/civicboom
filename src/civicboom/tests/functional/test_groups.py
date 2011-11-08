@@ -223,7 +223,7 @@ class TestGroupsController(TestController):
     ## invite ############################################################
     
     def subtest_invite_join(self):
-        pass
+        raise SkipTest("Not implemented")
         # AllanC - TODO
         #warnings.warn("test not implemented")
         # must check notifications as well
