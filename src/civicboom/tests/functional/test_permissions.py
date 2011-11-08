@@ -1,18 +1,19 @@
 from civicboom.tests import *
 
+from nose.plugins.skip import SkipTest
+
 
 class TestPermissionsController(TestController):
     
     def test_action_permissions(self):
+        raise SkipTest("Not implemented")
         """
-        TODO
         test actions
          - follow
          - unfollow
          - accept
          - withdraw
         """
-        pass
     
     
     def test_persona_permissions(self):
@@ -302,8 +303,5 @@ class TestPermissionsController(TestController):
     # Plus Services Permissions
     #---------------------------------------------------------------------------
     
-    def test_aprove_disasociate_permissions(self):
-        """
-        TODO
-        """
-        pass
+    def test_approve_disasociate_permissions(self):
+        raise SkipTest("Not implemented")

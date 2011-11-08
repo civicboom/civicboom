@@ -52,6 +52,7 @@ class TestListsController(TestController):
             create_member('list_member_%s' % count, count)
             some_id = create_content('list_content_%s' % count)
 
+        # quick extra test
         r = self.app.get(url('contents', format='json', id=some_id))
         response_json = json.loads(r.body)
         self.assertEquals(response_json['data']['list']['count'], 1)
