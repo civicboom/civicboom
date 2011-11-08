@@ -19,7 +19,7 @@
                         ${forgot()}
                     </td>
                     <td rowspan="2" style="text-align: center;">
-                        <b style="font-size: 3em;">&larr;&nbsp;or&nbsp;&rarr;</b>
+                        <b style="font-size: 3em;">&nbsp;&nbsp;&nbsp;&larr;&nbsp;or&nbsp;&rarr;</b>
                     </td>
                     <td rowspan="2">
                         ${janrain()}
