@@ -10,6 +10,7 @@
     ${type_page()}
     ${ind_page()}
     ${org_page()}
+    ${components.misc_footer()}
 </%def>
 
 <%def name="signin_page()">
@@ -57,7 +58,6 @@
                 </tr>
             </table>
     </div>
-    ${components.misc_footer()}
 </%def>
 
 <%def name="type_page()">

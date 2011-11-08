@@ -68,6 +68,112 @@
     }
 }
 
+/*
+$header-height: 40px;
+
+header {
+    height: $header-height;
+}
+
+.misc_header {
+    position: relative;
+    height: $header-height;
+    width: 100%; //$misc-page-width;
+    margin: auto;
+    
+    .logo_img {
+        position: absolute;
+        max-height: 80%;
+        top: 10%;
+        left: 1em;
+    }
+
+    .links {
+        position: absolute;
+        right: 1em;
+        bottom: 0;
+        padding-bottom: 0.5em;
+        font-size: 14px;
+        
+        a {
+            margin-left: 1em;
+        }
+    }
+    
+    $persona-width: 15em;
+    
+    #persona_switch {
+        right: 0;
+        position: absolute;
+      
+        .drop_down {
+            // display: none;
+        }
+      
+        .persona_selector {
+            height: $header-height;
+            background-color: #fff;
+            display: block;
+            
+            .messages {
+                height: $header-height;
+                display: inline-block;
+                
+                &:hover {
+                    background-color: #eee;
+                }
+
+                * {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+                
+                .image_icon {
+                    padding-right: 8px;
+                    padding-left: 8px;
+                    margin-top: 8px;
+                }
+            }
+            
+            .persona {
+                height: $header-height;
+                // width: $persona-width;
+                padding-right: 1em;
+                cursor: pointer;
+                display: inline-block;
+                
+                &:hover {
+                    background-color: #eee;
+                }
+                
+                * {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+                
+                .avatar {
+                    margin-top: 8px;
+                    padding-left: 8px;
+                    border-left: 1px solid #666;
+                    height: ($header-height - 15px);
+                }
+                
+                .persona_title {
+                    margin-top: 11px;
+                    padding-left: 3px;
+                    padding-right: 3px;
+                }
+                
+                .drop_icon {
+                    margin-top: 11px;
+                }
+            }
+        }
+    }
+}
+*/
+/* END >_< ABLASLAHTPONWATPOMTWA */
+
 BODY.c-misc {
     color: $misc-page-font;
     background-color: #fff;
