@@ -440,7 +440,7 @@
     ## AllanC - A horrible temp close button
     <a href='' title='${_('Close pop-up')}' class="simplemodalClose icon16 i_delete" style="float:right;"><span>Close</span></a>
     
-    <p>${_('(Please note this is in beta, please use the feedback link at<br>the bottom of the page if you experience any problems.)')|n}</p>
+    <p>${_('(Please note this is in beta, please use the feedback link at <br>the bottom of the page if you experience any problems.)')|n}</p>
 	<script type="text/javascript">
 		function cbFlashMedia${self.id}_DoFSCommand(command, args) {
 			var args = args.split(',');
