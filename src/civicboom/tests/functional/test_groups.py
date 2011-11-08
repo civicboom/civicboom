@@ -1,4 +1,5 @@
 from civicboom.tests import *
+from nose.plugins.skip import SkipTest
 
 import warnings
 

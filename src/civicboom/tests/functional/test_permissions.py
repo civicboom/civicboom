@@ -1,5 +1,7 @@
 from civicboom.tests import *
 
+from nose.plugins.skip import SkipTest
+
 
 class TestPermissionsController(TestController):
     
