@@ -32,7 +32,7 @@
 		<tr>
 			<td style="width: 33em; padding-right: 2em;">
 			    <h1>Great! You're nearly done!</h1>
-			    <h2>An email has been sent to the email address you provided.</h2>
+			    <h2>An email has been sent to the email address you provided, it should arrive in the next few minutes.</h2>
 			    <p>Just click on the link <b>in the email</b>, follow the instructions to complete the
 				sign up and enjoy full access to Civicboom!</p>
 				<p>Please note that all future notifications will be sent to your registered

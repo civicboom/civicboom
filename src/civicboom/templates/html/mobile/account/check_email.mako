@@ -8,7 +8,7 @@
         <div data-role="content">
             ${self.title_logo()}
             <h1>${_("Great! You're nearly done!")}</h1>
-            <h2>${_("An email has been sent to the email address you provided.")}</h2>
+            <h2>${_("An email has been sent to the email address you provided, it should arrive in the next few minutes.")}</h2>
             <p>${_("Just click on the link in the email, follow the instructions to complete the sign up and enjoy full access to Civicboom!")}</p>
             <p>${_("Please note that all future notifications will be sent to your registered email. If you wish to update it, click on the Settings link in your profile once you've completed the sign up.")}</p>
             <p>${_("Happy booming!")}</p>
