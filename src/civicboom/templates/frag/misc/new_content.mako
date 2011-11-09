@@ -26,7 +26,7 @@
             <div class="frag_whitewrap na-other">
                 <div class="h1 fl">2.</div>
                 <div class="na-padleft">
-                    <h1 class="fl">${_('Respond to a request:')}</h1>
+                    <h1 class="fl">${_('Respond to a _request:')}</h1>
                     <div class="fr"><a href="${h.url(controller='contents', target_type='assignment', action='index')}" class="button" onclick="cb_frag($(this), '${h.url(controller='contents', target_type='assignment', action='index', format='frag')}'); return false;">${_('See full list')}</a></div>
                     <div class="cb"></div>
                 </div>
