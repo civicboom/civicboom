@@ -103,7 +103,9 @@ class MiscController(BaseController):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
         elif request.GET.get("type") == _("_Articles"):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
-        return action_ok(data={'term': request.GET.get("term")})
+        else:
+            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
+            #return action_ok(data={'term': request.GET.get("term")})
 
     # don't cache this, it does UA-specific things
     @auto_format_output
