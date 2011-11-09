@@ -148,12 +148,12 @@
                 'secure_href'   : h.url('new_content', target_type='assignment'),
             },
             "article":{
-                'title'         : _('Post stories!'),
+                'title'         : _('Post _articles!'),
                 'href'          : h.url(controller='misc', action='new_content'),
             },
             "response":{
                 'title'         : _('Get involved!'),
-                'content_text'  : _("Post your story directly to a news organisation, on _site_name or respond to a _assignment!"),
+                'content_text'  : _("Post your _content directly to a news organisation, on _site_name or respond to a _assignment!"),
                 'href'          : h.url(controller='misc', action='new_content'),
             },
             "widget":{
@@ -240,7 +240,7 @@
             ${share.AddThisLine(**self.attr.share_kwargs)}
         % endif
             <span style="float: right; font-size: 1.25em; padding-right: 1.1em;" class="mo-help">
-                <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their content and respond to requests for stories")}</div>
+                <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their _content and respond to requests for _content")}</div>
                 <a href="#">
                 <p class="boombox_link">
                     ${popup.link(
@@ -710,9 +710,9 @@
     % if 'push_assignment' in self.actions and self.member.get('push_assignment'):
         ${h.secure_link(
             h.url('new_content', target_type='article', parent_id=self.member['push_assignment']),
-            value           = _("Send us your stories") ,
+            value           = _("Send us your _stories") ,
             css_class       = "button" ,
-            title           = _("Got a story? Send us a story directly") ,
+            title           = _("Got _content? Send us _content directly") ,
         )}
     % endif
 </%def>

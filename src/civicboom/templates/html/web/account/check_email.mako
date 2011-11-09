@@ -1,5 +1,8 @@
 <%inherit file="/html/web/common/html_base.mako"/>
 
+<%namespace name="components" file="/html/web/common/components.mako" />
+
+<%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Please check your email")}</%def>
 
 <%def name="show_error(name)">
@@ -45,7 +48,7 @@
 						See what's being asked...
 					</li>
 					<li>
-						<h2><a href="${h.url('contents', list='articles')}">Requests and stories HERE</a></h2>
+						<h2><a href="${h.url('contents', list='articles')}">${_('_Requests and _articles HERE')}</a></h2>
 						View the latest crowd-sourced news...
 					</li>
 					<%doc><li>
@@ -62,3 +65,4 @@
 	</table>
 	</td></tr></table>
 </div>
+${components.misc_footer()}

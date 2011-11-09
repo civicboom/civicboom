@@ -10,16 +10,16 @@
 		<img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-128x28.png")}'    alt='${_("_site_name")}' width="128" height="28"/>
 		<span class='logo_text'>${_("_site_name")}</span>
 	</a>
-    <span class='beta_overlay'>beta</span>
+    <span class='beta_overlay'>beta</span> 
 </h1>
 
 ##------------------------------------------------------------------------------
 ## Content creation actions
 ##------------------------------------------------------------------------------
 <nav id="actions">
-	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for stories"), css_class="button")}
-	##${h.secure_link(h.url('new_content', target_type='article'   ), _("Post a story") , css_class="button")}
-    <a href="${h.url(controller='misc', action='new_content')}" class="button">${_("Post a story")}</a>
+	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for _articles"), css_class="button")}
+	##${h.secure_link(h.url('new_content', target_type='article'   ), _("Post _content") , css_class="button")}
+    <a href="${h.url(controller='misc', action='new_content')}" class="button">${_("Post _content")}</a>
 </nav>
 
 ##------------------------------------------------------------------------------

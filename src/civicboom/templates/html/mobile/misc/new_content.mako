@@ -30,5 +30,5 @@
             </div>
             <div class="fr">
                 % if org.get('push_assignment'):
-                    ${h.secure_link(h.url('new_content', target_type='article', parent_id=org.get('push_assignment')  ), _("Post a story") , css_class="button")}
+                    ${h.secure_link(h.url('new_content', target_type='article', parent_id=org.get('push_assignment')  ), _("Post _content") , css_class="button")}
 </%doc>
