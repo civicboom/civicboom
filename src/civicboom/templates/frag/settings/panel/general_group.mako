@@ -100,9 +100,9 @@
                     <tr>
                         <td>
                             % if c.action == 'new':
-                                <label for="create_push_assignment">${_("Receive stories directly (Optional):")}</label>
+                                <label for="create_push_assignment">${_("Receive _content directly (Optional):")}</label>
                                 <br><input type="checkbox" name="create_push_assignment" id="create_push_assignment" />
-                                ${_('Create an automatic "Send us your stories" _assignment')}
+                                ${_('Create an automatic "Send us your _articles" _assignment')}
                             % endif
                         </td>
                     </tr>

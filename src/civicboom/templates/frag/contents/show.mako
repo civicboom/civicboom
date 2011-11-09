@@ -437,19 +437,19 @@
             ${h.secure_link(
                 h.args_to_tuple('new_content', parent_id=content_dict['id']) ,
                 css_class = 'button',
-                value     = _("Respond with your story") ,
+                value     = _("Respond with your _content") ,
                 json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); $.modal.close(); """),
             )}
             </div>
         </li>
     </%def>
     <div style="">
-        <h2 class="hide_if_js">${_("Respond with your story")}</h2>
-        <h1 class="hide_if_nojs">${_("Great you want to share your story...")}</h1>
+        <h2 class="hide_if_js">${_("Respond with your _content")}</h2>
+        <h1 class="hide_if_nojs">${_("Great you want to share your _content...")}</h1>
         <p style="padding-bottom: 1em;">${_("Would you like to respond to:")}</p>
         <ul>
             ${li_story(_('The original request'), self.content.get('root_parent'))}
-            ${li_story(_('This story'), self.content)}
+            ${li_story(_('This _article'), self.content)}
         </ul>
     </div>
     <div class="cb"></div>
@@ -482,17 +482,17 @@
             % if self.content.get('parent'):
             
                 <div class="hide_if_nojs">
-                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your story")}</a>
+                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your _content")}</a>
                 </div>
                 <div class="hide_if_js">
-                    ${popup.popup_static(_('Respond with your story'), respond_has_parent, 'popup_share')}
+                    ${popup.popup_static(_('Respond with your _content'), respond_has_parent, 'popup_share')}
                 </div>
                 
             % else:
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
                     css_class = 'button',
-                    value     = _("Respond with your story") ,
+                    value     = _("Respond with your _content") ,
                     json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """),
                 )}
             ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
@@ -684,7 +684,7 @@
                     
                     ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}
                     
-                    ${_('If you want to respond with your story please use the "Respond with your story" button above.')}<br />
+                    ${_('If you want to respond with your _content please use the "Respond with your _content" button above.')}<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
                     <script type="text/javascript">
@@ -835,7 +835,7 @@
             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
             modal_params = dict(
                 title   = _('_Lock and approve this'),
-                message = HTML.p(_("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
+                message = HTML.p(_("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original _article by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
                 buttons = dict(
                     yes = _('Yes. _Lock and approve'),
                     no  = _('No. Take me back'),
@@ -973,7 +973,7 @@
                 ${_("Why should you get involved?")}
             </div>
             <div class="popup-message">
-                ${_("By sharing your story with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}
+                ${_("By sharing your _content with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}
                 <ol>
                     <li>${_("Get published")}</li>
                     <li>${_("Get recognition")}</li>
@@ -1098,7 +1098,7 @@ r = (d['content']['rating'] * 5)
                             json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
                             modal_params = dict(
                                 title   = _('_Lock and approve this'),
-                                message = HTML.p(_("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
+                                message = HTML.p(_("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original _article by the creator. You can still contact them for more information.") + HTML.p("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.")),
                                 buttons = dict(
                                     yes = _('Yes. _Lock and approve'),
                                     no  = _('No. Take me back'),

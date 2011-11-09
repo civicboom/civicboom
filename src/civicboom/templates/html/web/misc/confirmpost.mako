@@ -4,6 +4,8 @@
     from civicboom.lib.constants import get_action_objects_for_url
 %>
 
+<%namespace name="components" file="/html/web/common/components.mako" />
+
 <%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Confirm action")}</%def>
 
@@ -42,4 +44,5 @@ ${confirm_message()}
         <br /><p>Or to go to your profile click <a class="button" href="/profile">${_("profile")}</a>
     ${h.end_form()}
     ## <p style="font-style: italic;">${_("(We are double checking because you could have been tricked into performing an action that you did not want to do)")}</p>
+    ${components.misc_footer()}
 </%def>
