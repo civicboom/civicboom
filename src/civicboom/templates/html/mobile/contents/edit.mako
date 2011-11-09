@@ -52,9 +52,9 @@ import html2text
         % if self.content.get('parent'):
             ${_("You are responding to: %s") % self.content['parent']['title']}
         % elif self.selected_type == 'assignment':
-            ${_("Ask for stories")}
+            ${_("Ask for _articles")}
         % elif self.selected_type == 'article':
-            ${_("Post a story")}
+            ${_("Post _content")}
         % endif
     </h1>
 
@@ -104,7 +104,7 @@ import html2text
     <h3>Content</h3>
     <fieldset data-role="fieldcontain">
         <label   for="title_${self.id}">${_('Title')}</label>
-        <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter a story title')}"/>
+        <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter _article title')}"/>
         <label   for="content_${self.id}">${_('Content')}</label>
         <textarea id="content_${self.id}" name="content" class="editor edit_input">${html2text.html2text(self.content['content'])}</textarea>
         ${edit_full.tags(self.content)}

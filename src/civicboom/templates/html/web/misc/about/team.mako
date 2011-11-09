@@ -63,6 +63,16 @@
       <p><a href="http://uk.linkedin.com/in/gregmiell"  target="_blank"><img src="/images/about/linkedin.png"></a></p>
     </td>
   </tr>
+  <tr>
+    <td><img class="photo" src="/images/about/shiny.png"></td>
+    <td>
+      <h2>Greg Mackelden: Front End/Mobile Developer</h2>
+      <b>Styles Civicboom.</b> Handles the design and development for  
+      Civicboom's front end and mobile application.
+      
+      <p><a href="http://uk.linkedin.com/pub/gregory-mackelden/36/258/5aa"  target="_blank"><img src="/images/about/linkedin.png"></a></p>
+    </td>
+  </tr>
 </table>
 
 

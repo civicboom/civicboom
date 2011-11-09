@@ -48,7 +48,7 @@
                 </p>
             </div>
             <h2 class="post">
-                <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post a story</a>
+                <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">Post _content</a>
             </h2>
             <div class="twitter">
                 <a href="http://twitter.com/civicboom">

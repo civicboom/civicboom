@@ -5,30 +5,33 @@
 	/*overflow-x : scroll;*/
 	white-space: nowrap;
 	display: block;
-	top:0;
-	bottom:0;
-	/* white-space-collapse: discard; /* http://www.w3.org/TR/css3-text/#white-space-collapsing */
-	margin-left: 0.5em;
+    height: 100%;
+	// white-space-collapse: discard; // http://www.w3.org/TR/css3-text/#white-space-collapsing
+	//padding: 0.5em;
+
+	.frag_col_1 {width: 250px;}
+	/* .frag_col_2 {width: 500px;} /* default is width 2 */
 
 	.frag_container {
-		@include drop_shadow(1px, 1px, 1px, #333);
-		vertical-align: top;
-		display : inline-block !important;
+        .fill {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
+		//vertical-align: top;
+		display: inline-block !important;
 		overflow: auto !important; /* the important property is needed because JQuery sets the style="" element to block and overflow */
 		white-space: normal;
-
-		width      : 500px;
-
-		/* margin     : 0.25em;*/
-		margin: 0.5em 0.25em 0 0.25em;
-		/*margin-left: 0.2em;*/
-
+        position: relative;
+		width: 500px;
+        height: 100%;
 		border: 1px solid $frag-border;
+        margin-right: 0.5em;
+        background-color: $frag-background;
 		@include border_radius($frag-radius);
-
-		/*bottom: 0em;
-		position: relative;
-		*/
+		@include drop_shadow(1px, 1px, 1px, #333);
 
         table.content tr td { padding-right: 3px; }
         table.content tr td.x { padding-left: 3px; }
@@ -66,64 +69,31 @@
             padding: 0.5em;
         }
 
-	}
-
-	/* No support for IE7 NO!!! GOD NO!!
-	.ie7 .frag_container {
-		float: left;
-	}
-	*/
-
-	.frag_col_1 {width: 250px;}
-	/* .frag_col_2 {width: 500px;} /* default is width 2 */
-
-
-	/*-----------------------------Action bar -----------------------------------*/
-	.frag_container {
+        /*-----------------------------Action bar -----------------------------------*/
 		.icon {
 			padding-right: 2px;
 		}
-
-
 
 		/*----------------------------------------------------------------------------*/
 		/* Fragment Data
 		/*----------------------------------------------------------------------------*/
 		.frag_data {
-		  overflow-y: scroll;
-		  overflow-x: hidden;
-			
-		background-color: $frag-background;
-		  
-		  /*
-		  background: -webkit-gradient(
-			linear,
-			left bottom,
-			left top,
-			color-stop(33 , rgb(240,240,240)),
-			color-stop(0.1, rgb(255,255,255))
-		  );
-		  background: -moz-linear-gradient(
-			center bottom,
-			rgb(255,255,255)  33%,
-			rgb(240,240,240) 100%
-		  );
-		  */
-		  
-		  /*
-			http://www.webdesignerwall.com/tutorials/cross-browser-css-gradient/
-			http://gradients.glrzad.com/
-		  */
+            overflow-y: scroll;
+            overflow-x: hidden;
+            position: absolute;
+            top: 22px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
 		}
 
-    .frag_whitewrap {
-      @include drop_shadow(1px, 1px, 1px, #333);
-      background-color: #fff;
-      @include border_radius(0.4em);
-      padding: 1em;
-      margin: 0.5em;
-    }
-
+        .frag_whitewrap {
+            @include drop_shadow(1px, 1px, 1px, #333);
+            background-color: #fff;
+            @include border_radius(0.4em);
+            padding: 1em;
+            margin: 0.5em;
+        }
 
 		.frag_data .frag_right_col .frag_col {
 			margin-left: 0em;
@@ -132,21 +102,10 @@
 		/* Because the CSS box model is a pain with width, I read a killer tip. If you are ever setting the width/height of an item, NEVER set the margin or padding, always use an internal or external element. Yeah it's a bit of extra markup, but you have total control without having to be frustrated with the box model */
 
 		.frag_data .frag_col {
-		  margin: 1em;
+		  margin: 0 1em 1em 1em;
 		  //font-size: 88%;
 		}
 
-		.frag_data.frag_map {
-			height: 100%;
-		}
-		.frag_data.frag_map .frag_col {
-			height: 100%;
-			margin: 0px;
-		}
-		.frag_data.frag_map .frag_col .olMap {
-			border: 0px;
-		}
-		
 		.title {
 			padding: 1em 0 0 1em;
 			font-size: 120%;
@@ -162,9 +121,6 @@
 /* Action/Title Bar                                                           */
 /*----------------------------------------------------------------------------*/
 .frag_bars {
-	background-color: $frag-background;
-
-	/* #frag_containers .frag_container - used in popups*/
 	.title_bar {
 		float: right;
 		display: inline;
