@@ -102,7 +102,7 @@
 				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages" rel="external">${_('%s Messages') % num_messages}</a></li>
                 <li><a data-icon="home"   href="${h.url(controller='profile', action="index")         }" rel="external">${_('Profile')}</a></li>
                 % else:
-                <li><a data-icon="search" href="${h.url(controller='account', action='signin')        }" rel="external">${_('Signin')}</a></li>
+                <li><a data-icon="search" href="${h.url(controller='account', action='signin')        }" rel="external">${_('Sign in')}</a></li>
                 % endif
                 ##class="ui-btn-active ui-state-persist"
 			</ul>

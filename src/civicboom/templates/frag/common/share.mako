@@ -20,17 +20,17 @@ share_data = {
         'user' : {
            'new': {
                'type': {
-                    'assignment': "I just posted a request for a story: %(title)s on _site_name. Respond now!",
-                    'response'  : "I just responded to a request for a story by %(owner)s on _site_name. Get involved & add your story too!",
+                    'assignment': "I just posted a request for _content: %(title)s on _site_name. Respond now!",
+                    'response'  : "I just responded to a request for _content by %(owner)s on _site_name. Get involved & add your story too!",
                     'group'     : "I just created the %(name)s Hub on _site_name. Follow it now and get involved!",
-                    'user'      : "I just signed up to _site_name to get my stories published - you can too!",
+                    'user'      : "I just signed up to _site_name to get my _content published - you can too!",
                     'article'   : "I just created the content %(title)s on _site_name, check it out here!",
                 },
                 'tag': {
                     'assignment': "Share _assignment with your friends and followers:",
-                    'response'  : "Share your story with your friends and followers:",
+                    'response'  : "Share your _content with your friends and followers:",
                     'group'     : "Share _group with your friends and followers:",
-                    'user'      : "Share your news story with your friends and followers:",
+                    'user'      : "Share your news _content with your friends and followers:",
                     'article'   : "Share _article with your friends and followers:",
                 },
                 'desc': {
@@ -43,10 +43,10 @@ share_data = {
             },
             'existing': {
                'type': {
-                    'assignment': "Check out my request for a story: %(title)s on _site_name. Share your story now!",
-                    'response'  : "Check out my story - %(owner)s on _site_name. Get involved & add your story!",
+                    'assignment': "Check out my request for _content: %(title)s on _site_name. Share your _content now!",
+                    'response'  : "Check out my _content - %(owner)s on _site_name. Get involved & add your _content!",
                     'group'     : "Check out my %(name)s Hub on _site_name. Follow it now and get involved!",
-                    'user'      : "Check out my profile on _site_name. You can sign up too and get your stories published!",
+                    'user'      : "Check out my profile on _site_name. You can sign up too and get your _articles published!",
                     'article'   : "Check out my content %(title)s on _site_name!",
                 },
                 'tag': {
@@ -66,8 +66,8 @@ share_data = {
             },
             'other': {
                'type': {
-                    'assignment': "Check out %(title)s on _site_name and share your story now!",
-                    'response'  : "Check out this response to a request for a story by %(owner)s on _site_name. Get involved & add your story!",
+                    'assignment': "Check out %(title)s on _site_name and share your _content now!",
+                    'response'  : "Check out this response to a request for a _content by %(owner)s on _site_name. Get involved & add your story!",
                     'group'     : "Check out %(name)s Hub on _site_name. Follow it now and get involved!",
                     'user'      : "Check out %(name)s on _site_name. They're getting their news published - and you can too!",
                     'article'   : "Check out %(title)s on _site_name!",
@@ -91,10 +91,10 @@ share_data = {
         'group' : {
            'new': {
                'type': {
-                    'assignment': "We want your story! Check out %(title)s on _site_name. Respond now for your chance to get published!",
-                    'response'  : "We just shared our story in response to %(owner)s on _site_name. Get involved & add your story!",
-                    'group'     : "We just created the %(name)s Hub on _site_name. Follow it now to share your stories!",
-                    'user'      : "We just signed up to _site_name to get stories from source - and you can too!",
+                    'assignment': "We want your _content! Check out %(title)s on _site_name. Respond now for your chance to get published!",
+                    'response'  : "We just shared our _content in response to %(owner)s on _site_name. Get involved & add your _content!",
+                    'group'     : "We just created the %(name)s Hub on _site_name. Follow it now to share your _articles!",
+                    'user'      : "We just signed up to _site_name to get _content from source - and you can too!",
                     'article'   : "We just created the content %(title)s on _site_name, check it out here!",
                 },
                 'tag': {
@@ -114,9 +114,9 @@ share_data = {
             },
             'existing': {
                'type': {
-                    'assignment': "Check out our request %(title)s on _site_name and share your story!",
-                    'response'  : "Check out our response to a request by %(owner)s on _site_name. Get involved & add your story!",
-                    'group'     : "Check out our %(name)s Hub on _site_name. Follow it now to share your stories!",
+                    'assignment': "Check out our request %(title)s on _site_name and share your _content!",
+                    'response'  : "Check out our response to a request by %(owner)s on _site_name. Get involved & add your _content!",
+                    'group'     : "Check out our %(name)s Hub on _site_name. Follow it now to share your _articles!",
                     'user'      : "Check out our profile on _site_name, join to get your news published!",
                     'article'   : "Check out our content %(title)s on _site_name!",
                 },
@@ -137,8 +137,8 @@ share_data = {
             },
             'other': {
                'type': {
-                    'assignment': "Check out this story request %(title)s on _site_name. Take a look and respond now!",
-                    'response'  : "Check out this response to a request by %(owner)s on _site_name. Get involved & add your story!",
+                    'assignment': "Check out this _content request %(title)s on _site_name. Take a look and respond now!",
+                    'response'  : "Check out this response to a request by %(owner)s on _site_name. Get involved & add your _content!",
                     'group'     : "Check out %(name)s Hub on _site_name. Get involved and follow it now!",
                     'user'      : "Check out %(name)s on _site_name. You too can sign up and get your news published!",
                     'article'   : "Check out %(title)s on _site_name!",

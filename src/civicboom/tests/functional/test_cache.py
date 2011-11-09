@@ -129,6 +129,4 @@ class TestCache(TestController):
         Delete an item using the admin pannel and check that the list version numbers are updated
         This should work as the the admin pannel uses the SQLAlchemy model and invlidation events are tied to the model
         """
-        # TODO
-        pass
-        
+        raise SkipTest("Not implemented")

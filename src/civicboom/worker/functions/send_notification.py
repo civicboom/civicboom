@@ -64,8 +64,9 @@ def send_notification(members, message): #members, rendered_message
         for route in message_tech_options:
             
             # -- Comufy --------------------------------------------------------
-            if route == 'c':
-                pass
+            # very unused, untested, commented out for coverage
+            #if route == 'c':
+            #    pass
             
             # -- Email ---------------------------------------------------------
             if route == 'e':

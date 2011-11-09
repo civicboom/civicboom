@@ -54,6 +54,33 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     # AllanC - in time the memcache could be used to update the user with percentage information about the status of the processing
     #          This is returned to the user with a call to the media controller
 
+    # Attempt to get video/image rotation from exif
+    rotation = None
+    try:
+        # Video meta data libs and resorces required
+        #   https://launchpad.net/~shiki/+archive/mediainfo
+        #   sudo add-apt-repository ppa:shiki/mediainfo
+        #   sudo easy_install pymediainfo
+        #   http://paltman.github.com/pymediainfo/
+        from pymediainfo import MediaInfo
+        media_info = MediaInfo.parse(tmp_file)
+        for track in media_info.tracks:
+            if track.rotation is not None:
+                rotation = track.rotation
+        rotation = int(float(rotation))
+    except:
+        pass
+    
+    def ffmpeg_rotation_args(rotation):
+        ffmpeg_args = []
+        if   rotation ==  90:
+            ffmpeg_args += ['-vf', 'transpose=1']
+        elif rotation == -90:
+            ffmpeg_args += ['-vf', 'transpose=2']
+        elif rotation == 180 or transpose == -180 :
+            ffmpeg_args += ['-vf', 'hflip', '-vf', 'vflip']
+        return ffmpeg_args
+
     m.setex(status_key, "encoding media", status_expire)
     if file_type == "image":
         try:
@@ -65,6 +92,8 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.media.width"]), int(config["media.media.height"]))
         im = Image.open(tmp_file)
+        if rotation:
+            im = im.rotate(rotation)
         if im.mode != "RGB":
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
@@ -80,23 +109,35 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed.close()
     elif file_type == "video":
         log.debug("encoding video to flv")
-        processed = tempfile.NamedTemporaryFile(suffix=".flv")
+        
+        processed_file = tempfile.NamedTemporaryFile(suffix=".flv")
+        
+        # Setup FFMpeg args
+        ffmpeg_args  = []
+        ffmpeg_args += ['-y']           # Overwite exisiting file
+        ffmpeg_args += ["-i", tmp_file] # Input file
+        ffmpeg_args += ["-ar", "22050"] # Force audio samplerate
         size = (int(config["media.media.width"]), int(config["media.media.height"]))
-        _ffmpeg([
-            "-y", "-i", tmp_file, "-ar", "22050",
-            "-s", "%dx%d" % (size[0], size[1]),
-            #"-b", "%s" % (int(config["media.video.bitrate"]) * 1024), # AllanC - had to rem this out because the flash player dies with other bitrates. Investigate later properly
-            processed.name
-        ])
+        ffmpeg_args += ["-s", "%dx%d" % (size[0], size[1])] # Force size of video
+        ffmpeg_args += [] #"-b", "%s" % (int(config["media.video.bitrate"]) * 1024), # AllanC - had to rem this out because the flash player dies with other bitrates. Investigate later properly
+        # Process video rotation
+        ffmpeg_args += ffmpeg_rotation_args(rotation)
+        ffmpeg_args += [processed_file.name] # Output filename
+        
+        print ffmpeg_args
+        
+        # Execute FFMpeg
+        _ffmpeg(ffmpeg_args)
+        
         m.setex(status_key, "copying video", status_expire)
         #log.debug("START copying processed video to warehouse %s:%s (%dKB)" % (file_name, processed.name, os.path.getsize(processed.name)/1024))
-        wh.copy_to_warehouse(processed.name, "media", file_hash, _reformed(file_name, "flv"))
+        wh.copy_to_warehouse(processed_file.name, "media", file_hash, _reformed(file_name, "flv"))
         #log.debug("END   copying processed video to warehouse %s:%s" % (file_name, processed.name))
         # TODO:
         # for RSS 2.0 'enclosure' we need to know the length of the processed file in bytes
         # We should include here a call to database to update the length field
-        db_object.filesize = os.path.getsize(processed.name)
-        processed.close()
+        db_object.filesize = os.path.getsize(processed_file.name)
+        processed_file.close()
 
     # Get the thumbnail processed and uploaded ASAP
     m.setex(status_key, "thumbnail", status_expire)
@@ -104,6 +145,8 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
         im = Image.open(tmp_file)
+        if rotation:
+            im = im.rotate(rotation)
         if im.mode != "RGB":
             im = im.convert("RGB")
         im.thumbnail(size, Image.ANTIALIAS)
@@ -117,12 +160,13 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
     elif file_type == "video":
         processed = tempfile.NamedTemporaryFile(suffix=".jpg")
         size = (int(config["media.thumb.width"]), int(config["media.thumb.height"]))
-        _ffmpeg([
+        ffmpeg_args = ffmpeg_rotation_args(rotation) + [
             "-y", "-i", tmp_file,
             "-an", "-vframes", "1", "-r", "1",
             "-s", "%dx%d" % (size[0], size[1]),
             "-f", "image2", processed.name
-        ])
+        ]
+        _ffmpeg(ffmpeg_args)
         wh.copy_to_warehouse(processed.name, "media-thumbnail", file_hash, "thumb.jpg")
         processed.close()
 

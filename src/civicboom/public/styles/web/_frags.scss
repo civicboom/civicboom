@@ -81,7 +81,7 @@
             overflow-y: scroll;
             overflow-x: hidden;
             position: absolute;
-            top: 1.5em;
+            top: 22px;
             left: 0px;
             right: 0px;
             bottom: 0px;
@@ -102,21 +102,10 @@
 		/* Because the CSS box model is a pain with width, I read a killer tip. If you are ever setting the width/height of an item, NEVER set the margin or padding, always use an internal or external element. Yeah it's a bit of extra markup, but you have total control without having to be frustrated with the box model */
 
 		.frag_data .frag_col {
-		  margin: 1em;
+		  margin: 0 1em 1em 1em;
 		  //font-size: 88%;
 		}
 
-		.frag_data.frag_map {
-			height: 100%;
-		}
-		.frag_data.frag_map .frag_col {
-			height: 100%;
-			margin: 0px;
-		}
-		.frag_data.frag_map .frag_col .olMap {
-			border: 0px;
-		}
-		
 		.title {
 			padding: 1em 0 0 1em;
 			font-size: 120%;
