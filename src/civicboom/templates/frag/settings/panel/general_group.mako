@@ -55,7 +55,7 @@
         </h1>
         <!-- <a href="${h.url(controller='misc', action='what_is_a_hub')}">${_('What is a _Group?')}</a> -->
 
-        <div class="jqui_accordion event_load" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
+        <div class="jqui_accordion event_load event_resize" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
             <h4>1. ${_("Describe the _Group")}</h4>
             <div>
                 <table>

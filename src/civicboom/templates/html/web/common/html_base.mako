@@ -102,12 +102,13 @@ ${self.head_links()}
 ## Some form functions will need to return a status to inform users the operation completed
 
 <%def name="flash_message()">
-	<div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+    <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+	<div id="flash_message" class="hidden_by_default status_${c.result['status']}${' event_load' if c.result['message'] != '' else ''}" data-message-json="${json_message}">${c.result['message']}</div>
 	% if c.result['message'] != "":
 	<!-- if we have a flash message in the session, activate it -->
 	<script type="text/javascript">
-		<% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
-		$(function() {flash_message(${json_message|n});});
+		
+		//$(function() {flash_message(${json_message|n});});
 	</script>
 	% endif
 </%def>

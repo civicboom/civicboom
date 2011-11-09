@@ -179,41 +179,6 @@ if (!('media_recorder' in boom)) {
   })
 }
 
-function limitInputLength (event, textElement, maxLength) {
-	var textLength = $(textElement).val().length;
-	if (event.keyCode < 1)
-		if ( ($(textElement).val().length >= maxLength) || ($(textElement).text().length >= maxLength) )
-			return false;
-	return true;
-}
-
-function countInputLength (event, textElement, maxLength, statusElement) {
-	var textLength = $(textElement).val().length;
-	if (typeof statusElement != 'undefined') statusElement.text(maxLength - (textLength));
-}
-
-// function convertYesNoCheckbox() {
-  // //return;
-	// var selects = $('select.yesno').filter(':visible');
-	// if (selects.length == 0) return;
-	// selects.after('<input type="checkbox" class="yesnocheck unproc" />');
-	// selects.hide();
-	// var checks = $('input.yesnocheck').filter('.unproc');
-	// checks.each(function(index) {
-	    // var value = $(this).prev('select.yesno').val();
-	    // $(this).attr('checked', !(value == '' || value == 'no'));
-	// });
-	// checks.unbind().change(function() {
-	    // var yesno = $(this).prev('select.yesno');
-	    // var yes = yesno.children('.yes').val();
-	    // var no  = yesno.children('.no' ).val();
-	    // yesno.val(this.checked ? yes:no);
-	// });
-	// checks.removeClass('unproc');
-// }
-
-//$(convertYesNoCheckbox);
-
 function init_validation(element, validator) {
 	var check_timer = null;
 	element.keyup(function() {

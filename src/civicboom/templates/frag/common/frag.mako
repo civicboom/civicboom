@@ -194,6 +194,10 @@
         data-html_url="${self.attr.html_url}"
         data-json_url="${self.attr.json_url}"
     >
+    % if c.format=="frag" and c.result.get('message', '') != '':
+        <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+        <div class="flash_message_data event_load" style="display:none;" data-message-json="${json_message}"></div>
+    % endif
         <span style="clear: both; display: block;"></span>
         ##<div class="title">
             ## Title

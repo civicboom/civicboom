@@ -139,7 +139,6 @@
             href_kwargs['format'] = 'frag'
             href_frag = h.url(*href_args, **href_kwargs)
             data_frag = href_frag
-            #js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_2'); return false;" """ % href_frag)
     %>
     % if hide_if_empty and not count:
       % if empty_message:
@@ -507,7 +506,6 @@
             form_data=dict(
                 json_complete = "[ ['update'] ]"
             ),
-            #json_form_complete_actions = "cb_frag_reload(current_element);" ,
         )}
     % endif
     </div>

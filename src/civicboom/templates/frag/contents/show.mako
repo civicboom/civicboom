@@ -514,6 +514,8 @@
             % endif
         % endif
 <%doc>
+
+## GregM: These need updating to new frag links!!!
         ## --- Accept ------------------------------------------------------------
         % if 'accept' in self.actions:
             ${h.secure_link(
@@ -681,7 +683,7 @@
             </td>
             <td class="comment">
                 % if c.logged_in_persona:
-                ${h.form(h.args_to_tuple('contents', type='comment', parent_id=content['id'], format='redirect'), json_form_complete_actions="cb_frag_reload(current_element);" )}
+                ${h.form(h.args_to_tuple('contents', type='comment', parent_id=content['id'], format='redirect'), form_data = dict( json_complete = "[['update']]" ) )}
                     ##% url("content",id=d['content']['id'])
                     ## AllanC: RAAAAAAAAAAAAR!!! cb_frag_reload($(this)); does not work, because $(this) for forms is not a jQuery object?! so we cant use .parents() etc .. WTF!!!
                     ##         so to get round this I just submit a string to the reload ... not happy!
@@ -766,7 +768,7 @@
             method = "PUT" ,
             value           = _('Publish') ,
             value_formatted = h.literal("<span class='icon16 i_publish'></span>&nbsp;%s") % _('Publish') ,
-            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" , BROKEN, needs new style frag link
         )}
         <span class="separtor">&nbsp;</span>
     % endif
@@ -779,7 +781,7 @@
             h.args_to_tuple('new_content', parent_id=self.id) ,
             value           = _("Respond") ,
             value_formatted = h.literal("<span class='icon16 i_respond'></span>&nbsp;%s") % _('Respond') ,
-            json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , 
+            json_form_complete_actions = h.literal(""" cb_frag(current_element, '/contents/'+data.data.id+'/edit.frag'); """)  , BROKEN, needs new style frag link
         )}
         ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
         ##        it has to be done in javascript as a string as this is handled by the client side when the request complete successfully.
@@ -793,7 +795,7 @@
             h.args_to_tuple('content_action', action='accept'  , format='redirect', id=self.id) ,
             value           = _('_Respond later') ,
             value_formatted = h.literal("<span class='icon16 i_accept'></span>&nbsp;%s") % _('Accept') ,
-            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" ,
+            json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" , BROKEN, needs new style frag link
         )}
         ##${h.secure_link(h.args_to_tuple('content_action', action='accept'  , format='redirect', id=id), value=_('Accept'),  css_class="icon16 i_accept")}
         <span class="separtor">&nbsp;</span>
@@ -874,7 +876,7 @@
             value           = _('Viewed') ,
             value_formatted = h.literal("<span class='icon16 i_seen'></span>&nbsp;%s") % _('Mark viewed'),
             title           = _("Mark this content as viewed") ,
-            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id ,
+            json_form_complete_actions = "cb_frag_reload('contents/%s');" % self.id , BROKEN, needs new style frag link
             modal_params = dict(
                 title   = 'Mark this as viewed',
                 message = HTML.p('Use this to tell the contributor that you have viewed this content, but are not going to Lock and Approve it.'),

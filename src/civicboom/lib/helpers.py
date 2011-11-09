@@ -338,9 +338,10 @@ def frag_link(value, title='', class_='', href_tuple=([], {})): #*args, **kwargs
     return HTML.a(
         value ,
         href    = href ,
-        class_  = class_ ,
+        class_  = 'link_new_frag ' + class_ ,
         title   = title if title else value,
-        onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
+        ##onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
+        **{'data-frag' : href_frag}
     )
 
 
