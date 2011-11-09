@@ -46,7 +46,7 @@
         <div class="text">
             <p class="headline">${_('Channel your _content')}, <br />${_('make yourself heard')}</p>
             <p class="tagline">
-                ${_('Connecting people that have _content,')}<br />
+                ${_('Connecting people who want _content,')}<br />
                 ${_('with the people that need it')}<br />
             </p>
             <a href="${url(controller='account', action='signin')}">
@@ -72,8 +72,8 @@
             </div>
             <h1>${_('Individuals')}</h1>
             <ul>
-                <li>${_('Participate in what matters to you')}</li>
-                <li>${_('Capture & send your _content straight to organisations using our App')}</li>
+                <li>${_('Participate in debate')}</li>
+                <li>${_('Capture & send _content straight to organisations')}</li>
                 <li>${_('Get recognition for your _content')}</li>
             </ul>
         </div>
@@ -87,7 +87,7 @@
             <ul>
                 <li>${_('Engage your audience by requesting _content directly')}</li>
                 <li>${_('Innovative & secure workflow efficiency solutions')}</li>
-                <li>${_('Customised Apps, Plugins & Content Management Tools built using our API')}</li>
+                <li>${_('Build customised apps, plugins & management tools using our API')}</li>
             </ul>
         </div>
         
