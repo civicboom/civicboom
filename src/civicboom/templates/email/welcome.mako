@@ -5,18 +5,18 @@
     <br />
     <p>We're glad you're here!</p>
     <br />
-    <p>By using ${_('_site_name')}, you are able to ask for stories and respond to them directly in an organised, manageable way.</p>
+    <p>By using ${_('_site_name')}, you are able to ask for ${_('_content')} and respond to them directly in an organised, manageable way.</p>
     <br />
     
     <p><b>So let's get you started:</b></p>
     <br />
     <p><b>1. Create your profile:</b> if you've not done this already, sign in to your account and tell people what you're all about.</p>
     <br />
-    <p><b>2. Get involved:</b> respond to requests for stories news OR create a requests for story and news.</p>
+    <p><b>2. Get involved:</b> respond to requests for ${_('_content')} news OR create a requests for _content.</p>
     <br />
-    <p><b>3. Share:</b> as the saying goes, you have to be in it to win it - which is why we've made it easy share your requests on Twitter, Facebook and LinkedIn etc. The more you share, the more chances you have of getting that story picked up, or sent in.</p>
+    <p><b>3. Share:</b> as the saying goes, you have to be in it to win it - which is why we've made it easy share your requests on Twitter, Facebook and LinkedIn etc. The more you share, the more chances you have of getting that _content picked up, or sent in.</p>
     <br />
-    <p><b>4. Grab the mobile app:</b>  you can set "lite" requests, respond directly to requests as they come in and upload your stories out in the field.</p>
+    <p><b>4. Grab the mobile app:</b>  you can set "lite" requests, respond directly to requests as they come in and upload your ${_('_content')} out in the field.</p>
     <br />
     <br />
     

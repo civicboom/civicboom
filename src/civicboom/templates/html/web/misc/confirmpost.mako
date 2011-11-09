@@ -44,5 +44,5 @@ ${confirm_message()}
         <br /><p>Or to go to your profile click <a class="button" href="/profile">${_("profile")}</a>
     ${h.end_form()}
     ## <p style="font-style: italic;">${_("(We are double checking because you could have been tricked into performing an action that you did not want to do)")}</p>
-    ${components.misc_header()}
+    ${components.misc_footer()}
 </%def>

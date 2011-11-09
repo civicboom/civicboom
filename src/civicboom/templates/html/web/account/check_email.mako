@@ -48,7 +48,7 @@
 						See what's being asked...
 					</li>
 					<li>
-						<h2><a href="${h.url('contents', list='articles')}">Requests and stories HERE</a></h2>
+						<h2><a href="${h.url('contents', list='articles')}">${_('_Requests and _articles HERE')}</a></h2>
 						View the latest crowd-sourced news...
 					</li>
 					<%doc><li>

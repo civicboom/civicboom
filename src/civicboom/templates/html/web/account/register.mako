@@ -203,11 +203,11 @@ ${components.misc_footer()}
                 <h2 class="newformtitle">${_('Want to share your _articles?')}</h2>
                 <b>${_('Are you the eyes and ears of your community?')}</b>
                 <ul>
-                    <li>${_('Everyone has stories - _site_name makes it easy to share them with the world')}</li>
+                    <li>${_('Everyone has _articles - _site_name makes it easy to share them with the world')}</li>
                     <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
                 </ul>
 
-                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="Help me share my stories">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="Help me share my _articles">
             </div>
             <div class="or"></div>
             <div class="user_type_option">
@@ -218,7 +218,7 @@ ${components.misc_footer()}
                     <li>${_('Your greatest resource is your audience because news starts with people')}</li>
                     <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
                 </ul>
-                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="Help me find stories">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="Help me find _content">
             </div>
             
             <div class="hide_if_js">

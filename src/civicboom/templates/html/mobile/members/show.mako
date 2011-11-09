@@ -182,7 +182,7 @@
                     (_("Active _assignments"  ), 'assignments_active'),
                     (_("Previous _assignments"), 'assignments_active'),
                     (_("Responses"            ), 'responses'         ),
-                    (_("Stories"              ), 'articles'          ),
+                    (_("_Articles"              ), 'articles'          ),
                 ] %>
                 % for title, list_name in content_lists:
                     ${content_list_includes.list_contents(d[list_name], title=title)}
