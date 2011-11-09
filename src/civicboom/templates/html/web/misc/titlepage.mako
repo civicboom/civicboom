@@ -52,7 +52,7 @@
             <a href="${url(controller='account', action='signin')}">
                 <div class="signup_btn">
                     <div class="link_wrapper">
-                        <a href="${url(controller='account', action='signin')}" class="main">${_('Sign up now!')}</a>
+                        <span class="main"><b>${_('Sign up now!')}</b></a>
                     </div>
                 </div>
             </a>

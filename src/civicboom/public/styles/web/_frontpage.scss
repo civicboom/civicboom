@@ -6,33 +6,33 @@ BODY.c-misc.a-titlepage {
     .signup_btn {
         text-align: center;
         display: table;
-        height: 6em;
-        width: 18em;
-        @include border_radius(0.5em);
-        @include drop_shadow(0, 1px, 2px, #666);
-        @include horiz_gradient(lighten($signup-color, 20%), $signup-color);
-        background-color: green;
-        border-top: 1px solid lighten($signup-color, 40%);
-        border-bottom: 1px solid darken($signup-color, 10%);
+        // @include border_radius(0.5em);
+        // @include drop_shadow(0, 1px, 2px, #666);
+        // @include horiz_gradient(lighten($signup-color, 20%), $signup-color);
+        background-color: $signup-color;
+        border: 1px solid darken($signup-color, 25%);
         margin-top: 2em;
         
         &:hover {
-            @include horiz_gradient(lighten($signup-color, 25%), lighten($signup-color, 5%));
+            // @include horiz_gradient(lighten($signup-color, 25%), lighten($signup-color, 5%));
             cursor: pointer;
         }
         
         .link_wrapper{
             display: table-cell;
             vertical-align: middle;
+            border-top: 1px solid lighten($signup-color, 25%);
+            border-bottom: 1px solid darken($signup-color, 25%);
+            padding: 0.75em 2.25em;
             
             a {
                 color: #fff;
-                text-shadow: darken($signup-color, 10%) 0px -1px 2px;
+                text-shadow: darken($signup-color, 10%) 0px -1px 0px;
                 display: block;
             }
         
             .main {
-                font-size: 200%;
+                font-size: 175%;
             }
             
             .tag {
