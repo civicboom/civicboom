@@ -11,7 +11,7 @@
             <div class="frag_whitewrap">
                 <h1>
                     ${_('Great! You want to post _content...')}<br />
-                    ${_('You now have three choices:')}
+                    ${_('You now have two choices:')}
                 </h1>
             </div>
             
