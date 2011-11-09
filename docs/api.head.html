@@ -38,6 +38,15 @@ H1, H2, H3, H4, H5, H6 {
 P {
     margin: 0.5em;
 }
+EM {
+    font-style: italic;
+}
+EM:before {
+    content: open-quote;
+}
+EM:after {
+    content: close-quote;
+}
 LI {margin-left: 2em;}
 UL LI    {list-style: disc; }
 UL LI LI {list-style: circle; }

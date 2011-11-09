@@ -523,7 +523,40 @@ class ContentsController(BaseController):
         @type action
         @api contents 1.0 (WIP)
 
+        @param title
+        @param content
         @param content_text_format the content fields can be in a varity of differnt formats. The dfault is 'html', this will clean the HTML down to allowed tags. 'markdown' can be used and will be converted to html
+        @param tags_string
+        @param type
+            article
+            assignment
+            draft
+            comment
+        @param parent_id
+        @param location
+        @param submit_type
+            publish
+        @param media_caption_{media_id}
+        @param media_credit_{media_id}
+        @param file_remove_{media_id}
+        @param media_file
+        @param private
+            True
+            False
+        @param license_id
+            'CC-BY'
+            'CC-BY-ND'
+            'CC-BY-SA'
+            'CC-BY-NC'
+            'CC-BY-NC-ND'
+            'CC-BY-NC-SA'
+            'CC-PD'
+        @param closed WIP
+            True
+            False
+        @param auto_publish_trigger_datetime
+        @param event_date
+        @param due_date
 
         @return 200   success
         @return 403   lacking permission to edit
@@ -732,7 +765,7 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        permitted_extra_fields = ['due_date', 'event_date'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        permitted_extra_fields = ['due_date', 'event_date',] # AllanC - this could be customised depending on content.__type__ if needed at a later date
         for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
             if kwargs[extra_field] == None: # if due_date=None, we don't want to store due_date="None"
                 if extra_field in content.extra_fields:

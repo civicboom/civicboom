@@ -77,7 +77,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
             ffmpeg_args += ['-vf', 'transpose=1']
         elif rotation == -90:
             ffmpeg_args += ['-vf', 'transpose=2']
-        elif rotation == 180 or transpose == -180 :
+        elif rotation == 180 or rotation == -180 :
             ffmpeg_args += ['-vf', 'hflip', '-vf', 'vflip']
         return ffmpeg_args
 
