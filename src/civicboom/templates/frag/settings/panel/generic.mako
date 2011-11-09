@@ -137,7 +137,7 @@
 <%def name="password_footer()">
     <div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Accessing your account via the mobile app:')}</div>
     <div class="setting_pad" style="font-style: italic;">
-        ${_('You can set requests, post responses and stories directly from you Android mobile.')} <a href="${h.url(controller='misc', action='about', id='mobile')}">${_('Click here to get it.')}</a>
+        ${_('You can set requests, post responses and _articles directly from you Android mobile.')} <a href="${h.url(controller='misc', action='about', id='mobile')}">${_('Click here to get it.')}</a>
     </div>
     <div class="setting_pad">
         ${_('If you have signed up to Civicboom via Facebook, Twitter, LinkedIn etc, you will need to set up a password (as above) and use these to log into the mobile app. Your username remains the same.')}
@@ -147,7 +147,7 @@
 <%def name="location_header()">
     ##<div class="setting_group_name setting_pad" style="padding-top: 12px">${_('Optional')}</div>
     <div class="setting_pad">
-        ${_('_site_name will be adding new features in the coming months. Part of this development is the ability to geo-locate content in your area and get alerted to local story requests based on where you are.')}
+        ${_('_site_name will be adding new features in the coming months. Part of this development is the ability to geo-locate content in your area and get alerted to local _content requests based on where you are.')}
     </div>
     <div class="setting_pad">
         ${_('You can add your location now but this will not be used until the features are rolled out.')}

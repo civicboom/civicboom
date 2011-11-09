@@ -43,8 +43,8 @@ def trans(text, locations):
     words = [
         ("contents",   "content"),
         ("content",    "content"),
-        ("articles",   "stories"),
-        ("article",    "story"),
+        ("articles",   "content"),
+        ("article",    "content"),
         ("draft",      "draft"),
         ("assignment", "request"),
         #("request",    "request"), # AllanC - Should not be needed, we reffer to them as assignments for consistancy

@@ -42,33 +42,31 @@ BODY.c-misc.a-titlepage {
     }
     
     header {
-        height: 80px;
+        height: 50px;
     }
     
     .misc_header {
         position: relative;
-        height: 80px;
-        width: $misc-page-width;
+        height: 50px;
+        width: 100%; //$misc-page-width;
         margin: auto;
         
         .logo_img {
             position: absolute;
             max-height: 80%;
-            top: 15%;
-            left: 0;
+            top: 10%;
+            left: 1em;
         }
 
         .links {
             position: absolute;
-            text-align: left;
-            right: 3%;
+            right: 1em;
             bottom: 0;
-            width: 52%;
             padding-bottom: 0.5em;
-            font-size: 20px;
+            font-size: 14px;
             
             a {
-                padding-right: 1em;
+                margin-left: 1em;
             }
         }
     }
@@ -80,7 +78,7 @@ BODY.c-misc.a-titlepage {
         //background-color: $cb-lightblue;
         height: 400px;
         width: 100%;
-        margin-top: 1em;
+        margin-top: 0.5em;
         margin-bottom: 1em;
         // @include drop_shadow(0, 2px, 3px, #333);
         
@@ -90,6 +88,7 @@ BODY.c-misc.a-titlepage {
             right: 3%;
             height: 100%;
             max-width: 52%;
+            width: 52%;
             text-align: left;
             text-shadow: rgba(0, 0, 0, .25) 0 -1px 1px;
             
@@ -181,10 +180,14 @@ BODY.c-misc.a-titlepage {
                 padding-top: 0.5em;
                 padding-right: 2em;
                 line-height: 160%;
+                list-style-type: none;
                 
                 li {
-                    list-style: disc;
-                    margin-left: 2em;
+                    margin-left: 0.5em;
+                    background-image: url('/images/li-point-blue.png');
+                    background-repeat: no-repeat;
+                    background-position: 0px 5px; 
+                    padding-left: 14px; 
                 }
             }
         }

@@ -113,7 +113,7 @@
         <div class="padding">
 
             % if owner and owner.get('push_assignment'):
-            <p><a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'], sub_domain="www")}" style="background-color:#${c.widget['color_action_bar']};" class="push_assignment_button">${_("Send us your stories")}</a></p>
+            <p><a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'], sub_domain="www")}" style="background-color:#${c.widget['color_action_bar']};" class="push_assignment_button">${_("Send us your _articles")}</a></p>
             % endif
             
             <div style="float:right;">

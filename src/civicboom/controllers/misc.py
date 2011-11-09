@@ -95,6 +95,7 @@ class MiscController(BaseController):
                 data['list'].append(member_d)
         return action_ok(data=data)
 
+    @auto_format_output
     def search_redirector(self):
         if request.GET.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
             return redirect(url(controller="members", action="index", term=request.GET.get("term"), sort="-join_date"))
@@ -104,6 +105,7 @@ class MiscController(BaseController):
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
         else:
             return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
+            #return action_ok(data={'term': request.GET.get("term")})
 
     # don't cache this, it does UA-specific things
     @auto_format_output
