@@ -134,11 +134,33 @@
                 <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
                 <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
             </div>
-            <div class="col filler">
+            <div class="col">
                 <h2>${_('Follow us on')}</h2>
                 <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
-                <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
-                <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
+                <br><a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
+                <br><a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
+            </div>
+            <div class="col">
+                <h2>${_('System Status')}</h2>
+                <style>
+                .status LI {
+                    display: list-item;
+                    margin-left: 1.5em;
+                    list-style: disc;
+                }
+                .status LI SPAN {
+                    color: white;
+                }
+                </style>
+                <ul class="status">
+                    <li style="color: #0F0;"><span>Web Cluster</span>
+                    <li style="color: #0F0;"><span>API Cluster</span>
+                    <li style="color: #0F0;"><span>Data Cluster</span>
+                    <li style="color: #0F0;"><span>Backups</span>
+                    <% from pylons import request %>
+                    <li style="color: #0AF;"><span>Code: ${request.environ['app_version'] or 'develop'}</span>
+                    <li style="color: #0AF;"><span>Node: ${request.environ['node_name']}</span>
+                </ul>
             </div>
         </div>
         <div class="copyright">
