@@ -35,6 +35,17 @@ def send_payment_admin_email(subject, content_text):
 
 def normalize_datetime(datetime):
     return datetime.replace(minute=0, second=0, microsecond=0)
+
+def process_db_chunk(query, process_item, limit=None):
+    if not limit:
+        limit = config['timedtask.batch_chunk_size']
+    count = query.count()
+    for offset in [i*limit for i in range(0, count/limit)]:
+        results = query.offset(offset).limit(limit).all()
+        for result in results:
+            process_item(result)
+
+    
     
 
 class TaskController(BaseController):
@@ -427,6 +438,8 @@ class TaskController(BaseController):
                 send_payment_admin_email('Unmatched Transaction %s' % txn.id, "We've searched as hard as we can, but the Civicboom hamsters and I can't find the invoice to match transaction %s to. Maybe your human eyes are better after all!" % txn.id)
         Session.commit()
         return response_completed_ok
+    
+    
     #---------------------------------------------------------------------------
     # Publish Sceduled Assignments
     #---------------------------------------------------------------------------
@@ -455,6 +468,35 @@ class TaskController(BaseController):
             content_publish(content, submit_publish=True)
         
         return response_completed_ok
+
+    #---------------------------------------------------------------------------
+    # Summary notification emails
+    #---------------------------------------------------------------------------
+    @web_params_to_kwargs
+    def summary_notification_email(self, frequency_of_timed_task="hours=1"):
+        """
+        users that have flag themselfs as requesting summary emails can have 24 hours of notifications summerised
+        
+        TODO: In future this could take into account utc offset
+        """
+        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        datetime_now            = normalize_datetime(now())
+        
+        def summary_notification_email_user(user):
+            if ((datetime_now - user.summary_email_start).total_seconds() % user.summary_email_interval.total_seconds()) == 0:
+                messages = Session.query(Message).filter(Message.target_id==user.id).filter(Message.timestamp >= (datetime_now-user.summary_email_interval)).all()
+                user.send_email(
+                    subject      = _('_site_name: Summary'),
+                    content_html = render('/email/notifications/summary.mako', extra_vars={'messages':messages})
+                )
+        
+        process_db_chunk(
+            Session.query(User).filter(and_(User.summary_email_start, User.summary_email_interval)),
+            summary_notification_email_user
+        )
+        
+        return response_completed_ok
+
 
     #---------------------------------------------------------------------------
     # Warehouse Managment
