@@ -2,6 +2,95 @@
 </article>
 
 <article>
+<h2><a name="platform_overview">Platform Overview</a></h2>
+
+<section>
+<h3>System Overview</h3>
+<div>
+	<p>Civicboom is platform that facilitates the generation and exploration of member to member content. At its core it allows members to request content and respond with rich media in a structured way.</p>
+	<p>The core of Civicboom is based around 2 major object types:</p>
+	<ul>
+		<li>Content - <a href="https://www.civicboom.com/contents/3.json">https://www.civicboom.com/contents/3.json</a></li>
+		<li>Member - <a href="https://www.civicboom.com/members/civicboom.json">https://www.civicboom.com/members/civicboom.json</a></li>
+	</ul>
+	
+	<p>Any item of <em>content</em> can:</p>
+	<ul>
+		<li>have a range of attached media (video, audio or text)
+		<li>have a geolocation
+		<li>have a licence type for distribution
+		<li>be created as a Draft to be worked on incrementally until it is read for publishing
+		<li>be public or private (visible only by trusted followers)
+		<li>be split into the following types:
+			<ul>
+				<li>Article (a standalone item of content)
+				<li>Assignment (a question/request for content)
+				<li>Comment (a small text response)
+				<li>Draft (content that is not publicly visible yet)
+			</ul>
+		<li>be in response to another item of content
+		<li>An <em>article</em> that is made in response to an <em>assignment</em> is termed a <em>response</em>
+		<li>be flagged by members as offensive or spam
+	</ul>
+	<p><em>Members</em> can</p>
+	<ul>
+		<li>be sent messages
+		<li>follow other members to receive notifications
+		<li>have a home geolocation (optional)
+		<li>members have a profile listing all content they have created or <em>boom</em>ed
+	</ul>
+
+	<p>On top of the core object types <em>Members</em> can form <em>Groups</em>. Groups facilitate collaboration by allowing multiple members to <em>take the persona</em> of the group. Members can be given a variety of roles such as Editors that can publish content or Contributors that can only create and edit private drafts.</p>
+	<p>Members can <em>boom</em> other members content. This showcases other members content from your profile. This is useful for pushing relevant related assignments or content that other users have worked on.</p>
+	<p>Followers can be flagged as <em>trusted</em>. This entitles trusted followers to view <em>private content</em>.</p>
+	<p>Messages/notification to a group propagate to all of the groups members</p>
+	<p><em>responses</em> to an <em>assignment</em> can be approved/disassociated by the creator of the <em>assignment</em> (paid for service)</p>
+
+</div>
+</section>
+
+<section>
+	<h3>Internal use of the API</h3>
+	<div>
+	<p>Our website, mobile app and boombox are all created using this documented API.</p>
+	</div>
+</section>
+
+<section>
+	<h3>API Useage suggestions</h3>
+	<div>
+	<p>The API can be used to drive new applications. Some suggestions include:<p>
+	<ul>
+		<li><h5>Native desktop interface</h5>
+			<p>When dealing with a magnitude of around 20 responses the web interface is sufficient. If a user was to manage 100s or 1000s of responses they could require the power of a native desktop interface. A local mirror of content could be setup downloading content and attached videos. Users of the native interface could watch the full attached videos from a local server and approve/disassociate content quickly.</p>
+		</li>
+		<li><h5>Display foyer screen</h5>
+			<p>A large plasma display or projector could show a map of the local county and visualise geolocated content as it is uploaded. Visual effects like fading and scrolling could be used to create an engaging media filled news feed.</p>
+		</li>
+		<li><h5>Custom mobile app</h5>
+			<p>A custom mobile app could be produced to collected responses for a selected group or request.</p>
+		</li>
+		<li><h5>Website backend</h5>
+			<p>A website could be created completely populated by our API and white labeled/branded/styled to fit a particular branding requirement.</p>
+		</li>
+		<li><h5>Data mining and visualiseation</h5>
+			<p>The data could be collected from the API and used for statistical analysis. The statistics could be visualised as graphs or in other interesting visual ways.</p>
+		</li>
+	</ul>
+	</div>
+</section>
+	
+<section>
+	<h3>Paid for features</h3>
+	<div>
+	<p>Some operations are restricted to paid members. These features have been selected as <em>additional features for organisations</em>. The API and majority of the site functionality will always remain free for general use.</p>
+	</div>
+</section>
+
+
+</article>
+
+<article>
 <h2><a name="notes">Notes about this document:</a></h2>
 
 <section>
@@ -12,8 +101,9 @@
 </section>
 
 
+
 <section>
-<h3>Implementation Indicators</h3>
+<h3><a name="implmentation_indicators">Implementation Indicators</a></h3>
 <div>
     <ul>
     <li>"WIP" = "Work in Progress; first attempt to get something that works at all, change is likely, removal is possible"
@@ -25,10 +115,10 @@
 </section>
 
 <section>
-<h3>Terminology Note</h3>
+<h3><a name="terminology">Terminology Note</a></h3>
 <div>
     <p>The API is abstracted from the presentation of the Civicboom website.
-       There may be some discrepancies e.g. 'groups' in the API are referred to as 'Hubs' on the website.
+       There may be some discrepancies e.g. <em>groups</em> in the API are referred to as <em>Hubs</em> on the website.
        The API terminology is fixed. The website front-end terminology is subject to change.</p>
     <h4>API/Website Terminology Glossary</h4>
     <table class="api-table">

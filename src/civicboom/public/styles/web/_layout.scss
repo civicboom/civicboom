@@ -63,12 +63,16 @@ HTML BODY {
     top: $header_height + 1px;
     left: 0px;
     color: $text-colour;
-    z-index: 0;
 }
 
 /* page mode (constant width, scroll down) */
 HTML BODY {
     width: 100%;
+}
+
+HTML BODY #app {
+    position: relative;
+    z-index: 0;
 }
 
 /* frag mode (constant height, scroll right) */
@@ -80,6 +84,7 @@ HTML.frag_containers BODY {
 
 HTML.frag_containers BODY #app {
     position: absolute;
+    z-index: 0;
     padding: 0.5em;
     top: 0px;
     bottom: 0px;
@@ -131,6 +136,7 @@ FOOTER {
 	left: 0px;
 	right: 0px;
 	font-size: 10px;
+    z-index: 1;
 	padding       : 0.50em;
     padding-top   : 0.25em;
     padding-bottom: 0.00em;

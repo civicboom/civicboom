@@ -38,6 +38,15 @@ H1, H2, H3, H4, H5, H6 {
 P {
     margin: 0.5em;
 }
+EM {
+    font-style: italic;
+}
+EM:before {
+    content: open-quote;
+}
+EM:after {
+    content: close-quote;
+}
 LI {margin-left: 2em;}
 UL LI    {list-style: disc; }
 UL LI LI {list-style: circle; }
@@ -137,11 +146,12 @@ TABLE {
 <h2>Table of Contents</h2>
 
 <ul style="padding: 16px;">
+<li><a href="#platform_overview">Platform Overview</a>
 <li><a href="#notes">Notes about this document</a>
 <ul>
     <li>Contacts
-	<li>Implementation
-	<li>Terminology
+    <li><a href="#implmentation_indicators">Implementation</a>
+    <li><a href="#terminology"             >Terminology</a>
 </ul>
 <li><a href="#common">Things common to all requests</a>
 <ul>

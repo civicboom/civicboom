@@ -14,11 +14,19 @@
     position: relative;
     font-size: 13px;
     
+    .copyright {
+        position: absolute;
+        bottom: 0.5em;
+        right: 0.5em;
+        font-size: 85%;
+    }
+        
     .footer_wrapper{
         width: $misc-page-width;
         margin: auto;
         text-align: left;
         background-color: transparent;
+        position: relative;
         
         .col {
             width: 10em;
