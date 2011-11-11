@@ -42,20 +42,18 @@
 ##------------------------------------------------------------------------------
 <%def name="banner()">
     <div class="banner">
-        <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
-        <div class="text">
-            <p class="headline">${_('Channel your _content')}, <br />${_('make yourself heard')}</p>
-            <p class="tagline">
-                ${_('Connecting people who want _content,')}<br />
-                ${_('with the people that need it')}<br />
-            </p>
-            <a href="${url(controller='account', action='signin')}">
-                <div class="signup_btn">
-                    <div class="link_wrapper">
-                        <span class="main"><b>${_('Sign up now!')}</b></span>
-                    </div>
-                </div>
-            </a>
+        <div class="col-left">
+            <h1>${_('Channel your _content')}<br />${_('make yourself heard')}</h1>
+            <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
+            <div class="signup">
+                <a href="${url(controller='account', action='signin')}">Sign up </a>
+            </div>
+        </div>
+        <div class="col-right">
+            <div class="info-box" id="organisations">
+            </div>
+            <div class="info-box" id="individuals">
+            </div>
         </div>
     </div>
 </%def>
@@ -64,6 +62,8 @@
 ## Cols
 ##------------------------------------------------------------------------------
 <%def name="cols()">
+
+    <%doc>
     <div class="cols">
         ## Left col - individuals
         <div class="col">
@@ -107,4 +107,5 @@
             </a>
         </div>
     </div>
+    </%doc>
 </%def>
