@@ -49,13 +49,13 @@
                 ${_('Connecting people who want _content,')}<br />
                 ${_('with the people that need it')}<br />
             </p>
-                <div class="signup_btn">
             <a href="${url(controller='account', action='signin')}">
+                <div class="signup_btn">
                     <div class="link_wrapper">
-                        <span class="main"><b>${_('Sign up now!')}</b></a>
+                        <span class="main"><b>${_('Sign up now!')}</b></span>
                     </div>
-            </a>
                 </div>
+            </a>
         </div>
     </div>
 </%def>
