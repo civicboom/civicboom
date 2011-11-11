@@ -79,7 +79,7 @@ $advert-link: $link-colour;
 
 /* -- Misc -- */
 $cb-orange: #FF8814;
-$signup-color: $advert-back-bot;
+$signup-color: lighten($advert-back-bot, 10%);
 $cb-grey: #333;
 $misc-page-width: 960px;
 $misc-page-link: #555;
