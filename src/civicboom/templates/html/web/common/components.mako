@@ -141,5 +141,21 @@
                 <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
             </div>
         </div>
+        <div class="copyright">
+            ##<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
+            ${popup.link(
+                h.args_to_tuple(controller='misc', action='feedback'),
+                title = _('Feedback'),
+                text  = h.literal("<strong>%s</strong>" % _("Feedback")),
+            )}
+        
+            ${_(u"Website © Indiconews Ltd, articles © their respective authors")}
+            - ${_("Version:")}
+            % if config['development_mode']:
+                <b>Dev</b>
+            % else:
+                ${request.environ['app_version']}
+            % endif
+        </div>
     </div>
 </%def>
