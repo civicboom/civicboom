@@ -14,3 +14,6 @@ setting.username_to_auto_follow_on_signup = unittest, unitfriend
 warehouse.type = local
 warehouse.url = /warehouse
 
+beaker.cache.enabled            = False
+cache.etags.enabled             = False
+cache.static_decorators.enabled = False
