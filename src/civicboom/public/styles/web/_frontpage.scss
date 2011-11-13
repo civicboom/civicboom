@@ -54,11 +54,20 @@ BODY.c-misc.a-titlepage {
         
         .logo_img {
             position: absolute;
-            max-height: 80%;
-            top: 10%;
-            left: 1em;
+            left:  5px;
+            height: 70%;
+            top: 15%;
         }
-
+        
+        .beta_overlay {
+            position: absolute;
+            left: 10.2%;
+            top: 70%;
+            color: black;
+            font-size: 12px;
+            font-weight: strong;
+        }
+        
         .links {
             position: absolute;
             right: 1em;
@@ -107,9 +116,11 @@ BODY.c-misc.a-titlepage {
         }
         
         .col-right {
-            width: 64%;
+            width: 62%;
+            vertical-align: top;
             
             .info-box {
+                margin-left: 2%;
                 display: block;
                 width: 100%;
                 
@@ -119,11 +130,9 @@ BODY.c-misc.a-titlepage {
             }
             
             #organisations {
-                
             }
             
             #individuals {
-                
             }
         }
     }
