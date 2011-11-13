@@ -25,6 +25,8 @@
         <a href='/'>
             <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'>
         </a>
+        ## AllanC - hacked in the beta - sorry greg ... tidy this up
+        <span style="position: absolute; left: 200px; top:24px; font-weight: bold;">beta</span> 
         
         ## header links
         <span class="links">
