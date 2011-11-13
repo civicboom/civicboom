@@ -323,7 +323,7 @@ class BaseController(WSGIController):
             log.debug('removing force_web cookie')
             cookie_delete('force_web')
         if c.format=='html' and c.subformat=='web' and request.environ.get('is_mobile') and not cookie_get('force_web') and request.environ['REQUEST_METHOD']=='GET':
-            mobile_url = url('current', sub_domain='m')
+            mobile_url = url('current', sub_domain='m', **request.GET)
             log.debug('redirecting mobile user to %s' % mobile_url)
             redirect(mobile_url)
         

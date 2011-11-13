@@ -10,7 +10,7 @@ from civicboom.lib.helpers import wh_url
 from cbutils.misc import now
 
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary
+from sqlalchemy import Unicode, UnicodeText, String, LargeBinary as Binary, Interval
 from sqlalchemy import Enum, Integer, DateTime, Date, Boolean, Interval
 from sqlalchemy import and_, null, func
 from geoalchemy import GeometryColumn as Golumn, Point, GeometryDDL
@@ -625,6 +625,9 @@ class User(Member):
     #dob              = Column(DateTime(), nullable=True) # Needs to be stored in user settings but not nesiserally in the main db record
     email            = Column(Unicode(250), nullable=True)
     email_unverified = Column(Unicode(250), nullable=True)
+
+    #summary_email_start    = Column(DateTime(), nullable=True, doc="users can opt into to haveing summary summary emails rather than an email on each notification")
+    #summary_email_interval = Column(Interval(), nullable=True)
 
     login_details    = relationship("UserLogin"    , backref=('user')                 , cascade="all,delete-orphan")
     flaged           = relationship("FlaggedEntity", backref=backref('raising_member'), cascade="all,delete-orphan", primaryjoin="Member.id==FlaggedEntity.raising_member_id")

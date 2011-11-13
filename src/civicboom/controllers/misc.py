@@ -95,17 +95,23 @@ class MiscController(BaseController):
                 data['list'].append(member_d)
         return action_ok(data=data)
 
-    @auto_format_output
-    def search_redirector(self):
-        if request.GET.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
-            return redirect(url(controller="members", action="index", term=request.GET.get("term"), sort="-join_date"))
-        elif request.GET.get("type") == _("_Assignments"):
-            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="assignments_active"))
-        elif request.GET.get("type") == _("_Articles"):
-            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="articles"))
+    #@auto_format_output
+    @web
+    def search_redirector(self, **kwargs):
+        if   kwargs.get("type") == _("_Users / _Groups"): # these need to match the submit buttons
+            return redirect(url(controller="members" , action="index", term=kwargs.get("term")    , sort="-join_date"        ))
+        elif kwargs.get("type") == _("_Assignments")    :
+            return redirect(url(controller="contents", action="index", term=kwargs.get("term"), list="assignments_active"))
+        elif kwargs.get("type") == _("_Articles")       :
+            return redirect(url(controller="contents", action="index", term=kwargs.get("term"), list="articles"          ))
         else:
-            return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
+            #return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
             #return action_ok(data={'term': request.GET.get("term")})
+            data = {}
+            data['members']     = member_search (term=kwargs.get("term"), sort="-join_date"        )['data']['list']
+            data['assignments'] = content_search(term=kwargs.get("term"), list="assignments_active")['data']['list']
+            data['articles']    = content_search(term=kwargs.get("term"), list="articles"          )['data']['list']
+            return action_ok(data=data)
 
     # don't cache this, it does UA-specific things
     @auto_format_output
