@@ -33,10 +33,11 @@ class TestMiscController(TestController):
         response = self.app.get(url(controller='misc', action='new_content'))
 
     def test_search_redirector(self):
-        response = self.app.get(url(controller='misc', action='search_redirector', type='Members'), status=302)
-        response = self.app.get(url(controller='misc', action='search_redirector', type='Requests'), status=302)
-        response = self.app.get(url(controller='misc', action='search_redirector', type='Stories'), status=302)
-        response = self.app.get(url(controller='misc', action='search_redirector'                ), status=200) # AllanC - this now renders a page with 3 results from each index action - don't know if this is sensible long term, should it redirect to a static page? I don't think so for now. We need some AJAX magic for this in future
+        from pylons.i18n.translation  import _, ungettext, set_lang
+        response = self.app.get(url(controller='misc', action='search_redirector', type=_("_Users / _Groups") ), status=302)
+        response = self.app.get(url(controller='misc', action='search_redirector', type=_("_Assignments")     ), status=302)
+        response = self.app.get(url(controller='misc', action='search_redirector', type=_("_Articles")        ), status=302)
+        response = self.app.get(url(controller='misc', action='search_redirector'                             ), status=200) # AllanC - this now renders a page with 3 results from each index action - don't know if this is sensible long term, should it redirect to a static page? I don't think so for now. We need some AJAX magic for this in future
 
     def test_upgrade_popup(self):
         response = self.app.get(url(controller='misc', action='upgrade_popup', format='frag'))
