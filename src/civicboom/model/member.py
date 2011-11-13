@@ -626,8 +626,8 @@ class User(Member):
     email            = Column(Unicode(250), nullable=True)
     email_unverified = Column(Unicode(250), nullable=True)
 
-    summary_email_start    = Column(DateTime(), nullable=True, doc="users can opt into to haveing summary summary emails rather than an email on each notification")
-    summary_email_interval = Column(Interval(), nullable=True)
+    #summary_email_start    = Column(DateTime(), nullable=True, doc="users can opt into to haveing summary summary emails rather than an email on each notification")
+    #summary_email_interval = Column(Interval(), nullable=True)
 
     login_details    = relationship("UserLogin"    , backref=('user')                 , cascade="all,delete-orphan")
     flaged           = relationship("FlaggedEntity", backref=backref('raising_member'), cascade="all,delete-orphan", primaryjoin="Member.id==FlaggedEntity.raising_member_id")
