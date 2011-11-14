@@ -25,9 +25,7 @@
         <a href='/'>
             <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'>
         </a>
-
-        ## AllanC - hacked in the beta - sorry greg ... tidy this up
-        <span class="beta_overlay">beta</span> 
+        <span class='beta_overlay'>beta</span> 
         
         ## header links
         <span class="links">
@@ -45,20 +43,51 @@
 ##------------------------------------------------------------------------------
 <%def name="banner()">
     <div class="banner">
-        <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
-        <div class="text">
-            <p class="headline">${_('Channel your _content')}, <br />${_('make yourself heard')}</p>
-            <p class="tagline">
-                ${_('Connecting people who want _content,')}<br />
-                ${_('with the people that need it')}<br />
-            </p>
+        <%doc>
+        <div class="col-top">
+            <h1>${_('Channel your _content ')}${_('make yourself heard')}</h1>
+        </div>
+        </%doc>
+        <div class="col-left">
+            <h1>${_('Channel your _content ')}${_('make yourself heard')}</h1>
+            <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
             <a href="${url(controller='account', action='signin')}">
                 <div class="signup_btn">
                     <div class="link_wrapper">
-                        <span class="main"><b>${_('Sign up now!')}</b></span>
+                        <span class="main"><b>${_('Sign up!')}</b></span>
                     </div>
                 </div>
             </a>
+        </div>
+        <div class="col-right">
+            <div class="info-box" id="individuals">
+                <h1>${_('What you can do')}</h1>
+                <img src="/images/misc/titlepage/individual_graphic.png" />
+                <p>
+                    <ul>
+                        <li>${_('Request for information that caters to your needs and interests.')}</li>
+                        <li>${_('Capture and contribute your unique _content and ideas.')}</li>
+                        <li>${_('Communicate directly with organisations and the masses.')}</li>
+                        ## <li>${_('Receive recognition and feedback for _content.')}</li>
+                        ## <li>${_('Progress as a contributor and improve your _content.')}</li>
+                        <li>${_('Engage in discussion and feedback whilst developing your ideas.')}</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="info-box" id="organisations">
+                <h1>${_('_site_name for Organisations')}</h1>
+                <img src="/images/misc/titlepage/organisation_graphic.png" />
+                <p>
+                    <ul>
+                        <li>${_('Request and access _content and turn information into valuable knowledge.')}</li>
+                        <li>${_('Benefit your business by directly engaging with your audiences.')}</li>
+                        <li>${_('Customise _site_name for your organisation with our innovative and flexible API.')}</li>
+                        <li>${_('Develop custom apps, plugins and management tools for your needs.')}</li>
+                        ## <li>${_("Explore and utilise our dynamic platform's communication opportunities.")}</li>
+                        ## <li>${_('Improve business rapport by recognising and rewarding audiences.')}</li>
+                    </ul>    
+                </p>
+            </div>
         </div>
     </div>
 </%def>
@@ -67,6 +96,8 @@
 ## Cols
 ##------------------------------------------------------------------------------
 <%def name="cols()">
+
+    <%doc>
     <div class="cols">
         ## Left col - individuals
         <div class="col">
@@ -110,4 +141,5 @@
             </a>
         </div>
     </div>
+    </%doc>
 </%def>
