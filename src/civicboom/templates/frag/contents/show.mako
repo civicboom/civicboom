@@ -226,7 +226,7 @@
                 ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
             </td>
         </tr>
-        % if self.content.get('approval') == 'approved':
+        % if self.content.get('approval') == 'approved' and self.content.get('parent'):
         <tr>
             <td>
                 <span class="icon32 i_approved"></span>${_("Approved by ")} ${member_includes.member_link(self.content['parent']['creator'])}

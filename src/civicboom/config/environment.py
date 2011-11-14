@@ -100,6 +100,7 @@ def load_environment(global_conf, app_conf):
                         'setting.content.max_comment_length',
                         'setting.age.min_signup',
                         'setting.age.accept',
+                        'timedtask.batch_chunk_size',
                         #'media.media.width', # AllanC - the media processing imports the config in a differnt way. I dont know if this cast to int is needed
                         #'media.media.height',
                         ]

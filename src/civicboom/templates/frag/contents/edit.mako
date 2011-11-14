@@ -285,9 +285,10 @@
             elif isinstance(self.content['tags'], basestring):
                 tags = self.content['tags'].split(separator)
                 
-            tags_string = u""
-            for tag in tags:
-                tags_string += tag + separator
+            #tags_string = u""
+            #for tag in tags:
+            #    tags_string += tag + separator
+            tags_string = separator.join(tags)
             %>
             <input class="edit_input" name="tags_string" type="text" value="${tags_string}" id="tags_${self.content['id']}"/>
         </td></tr>

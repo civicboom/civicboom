@@ -69,3 +69,5 @@ class TestFormats(TestController):
         test_all_sub_domains() # Logged in user
         self.log_out()
         test_all_sub_domains() # Anon user
+        
+        # AllanC - humm ... I added a test to test_contents to trigger the mobile edit.mako template, was that the correct place? or should all mobile templates be delt with here? what if we have more formats in future?
