@@ -197,6 +197,13 @@ import html2text
     </div>
     <div class="media_fields">
         <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file" onchange="$('.media_fields input:submit').button('enable');"/><input type="submit" name="submit_draft" value="${_("Upload selected file")}" class="file_upload" disabled='disabled'/></p>
+        <script type="text/javascript">
+            $(document).bind('pageshow', function() {
+                if (isiPhone()) {
+                    $('#media_file').parent().append('<p class="warning">iPhone/iPad does not support file uploading</p>');
+                }
+            });
+        </script>
         <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" /></p>
         <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" /></p>
     </div>
