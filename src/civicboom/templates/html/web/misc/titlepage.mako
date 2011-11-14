@@ -49,7 +49,7 @@
         </div>
         </%doc>
         <div class="col-left">
-                    <h1>${_('Channel your _content ')}${_('make yourself heard')}</h1>
+            <h1>${_('Channel your _content ')}${_('make yourself heard')}</h1>
             <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
             <div class="signup">
                 <a href="${url(controller='account', action='signin')}">Sign Up</a>

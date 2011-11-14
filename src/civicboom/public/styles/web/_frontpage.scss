@@ -65,7 +65,7 @@ BODY.c-misc.a-titlepage {
             top: 70%;
             color: black;
             font-size: 12px;
-            font-weight: strong;
+            font-weight: bold;
         }
         
         .links {
@@ -199,40 +199,6 @@ BODY.c-misc.a-titlepage {
                 }
             }
             
-            .android_btn {
-                position: relative;
-                width: 90%;
-                margin: 1em auto 0 auto;
-                height: 75px;
-                @include border_radius(0.5em);
-                @include drop_shadow(0, 1px, 2px, #666);
-                @include horiz_gradient(#ddd, #ccc);
-                overflow: hidden;
-                
-                &:hover {
-                    @include horiz_gradient(#eee, #ddd);
-                    
-                    img {
-                        @include transparency(90);
-                    }
-                }
-                
-                img {
-                    @include transparency(70);
-                    position: absolute;
-                    left: 5%;
-                    top: 10%;
-                    height: 135%;
-                }
-                
-                h3 {
-                    position: absolute;
-                    top: 40%;
-                    width: 60%;
-                    right: 0;
-                }
-            }
-        
             h1 {
                 font-size: 150%;
                 padding-top: 0.5em;
