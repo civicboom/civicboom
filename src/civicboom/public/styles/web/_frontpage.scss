@@ -61,7 +61,7 @@ BODY.c-misc.a-titlepage {
         
         .beta_overlay {
             position: absolute;
-            left: 10.2%;
+            left: 11.45em;
             top: 70%;
             color: black;
             font-size: 12px;
@@ -84,6 +84,21 @@ BODY.c-misc.a-titlepage {
     .banner {
         width: 100%;
 
+        .col-top {
+            position: relative;
+            display: block;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            
+            h1 {
+                color: $cb-orange;
+                text-align: center;
+                padding-bottom: 0.5em;
+                font-size: 240% !important;
+            }
+        }
+
         .col-left, .col-right {
             position: relative;
             display: inline-block;
@@ -92,15 +107,18 @@ BODY.c-misc.a-titlepage {
         }
 
         .col-left {
+            padding-top: 15px;
             width: 35%;
             
             h1 {
-                color: $cb-orange;
+                margin-top: 0 !important;
+                color: $cb-lightblue;
                 text-align: center;
                 padding-bottom: 0.5em;
                 font-size: 240% !important;
+                text-shadow: darken($cb-lightblue, 15%) 0 -1px 0;
             }
-          
+            
             img {
                 width: 100%;
             }
@@ -108,7 +126,7 @@ BODY.c-misc.a-titlepage {
            .signup {
                 font-size: 200%;
                 position: absolute;
-                top: 11em;
+                top: 10em;
                 left: 4.5em;
                 text-align: center;
                 color: $cb-lightblue;
@@ -118,14 +136,35 @@ BODY.c-misc.a-titlepage {
         .col-right {
             width: 62%;
             vertical-align: top;
+            padding-top: 15px;
             
             .info-box {
-                margin-left: 2%;
+                margin: 0 0 2em 2%;
                 display: block;
                 width: 100%;
                 
+                h1 {
+                    padding-left: 14%;
+                    color: $cb-orange;
+                }
+                
                 img {
-                  
+                    display: block;
+                }
+                
+                p {
+                    display: block;
+                    padding-left: 14%;
+                }
+                
+                ul {
+                    padding-top: 0.25em;
+                    padding-left: 16%;
+                    line-height: 160%;
+                    
+                    li {
+                        list-style: disc;
+                    }
                 }
             }
             

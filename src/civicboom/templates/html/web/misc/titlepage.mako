@@ -43,18 +43,46 @@
 ##------------------------------------------------------------------------------
 <%def name="banner()">
     <div class="banner">
+        <%doc>
+        <div class="col-top">
+            <h1>${_('Channel your _content ')}${_('make yourself heard')}</h1>
+        </div>
+        </%doc>
         <div class="col-left">
-            <h1>${_('Channel your _content')}<br />${_('make yourself heard')}</h1>
+                    <h1>${_('Channel your _content ')}${_('make yourself heard')}</h1>
             <img src="images/misc/titlepage/banner_graphic.png" class="graphic"/>
             <div class="signup">
-                <a href="${url(controller='account', action='signin')}">Sign up </a>
+                <a href="${url(controller='account', action='signin')}">Sign Up</a>
             </div>
         </div>
         <div class="col-right">
-            <div class="info-box" id="organisations">
-            </div>
             <div class="info-box" id="individuals">
+                <h1>${_('What you can do')}</h1>
                 <img src="/images/misc/titlepage/individual_graphic.png" />
+                <p>
+                    <ul>
+                        <li>${_('Request for information that caters to your needs and interests.')}</li>
+                        <li>${_('Capture and contribute your unique _content and ideas.')}</li>
+                        <li>${_('Communicate directly with organisations and the masses.')}</li>
+                        ## <li>${_('Receive recognition and feedback for _content.')}</li>
+                        ## <li>${_('Progress as a contributor and improve your _content.')}</li>
+                        <li>${_('Engage in discussion and feedback whilst developing your ideas.')}</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="info-box" id="organisations">
+                <h1>${_('_site_name for Organisations')}</h1>
+                <img src="/images/misc/titlepage/organisation_graphic.png" />
+                <p>
+                    <ul>
+                        <li>${_('Request and access _content and turn information into valuable knowledge.')}</li>
+                        <li>${_('Benefit your business by directly engaging with your audiences.')}</li>
+                        <li>${_('Customise _site_name for your organisation with our innovative and flexible API.')}</li>
+                        <li>${_('Develop custom apps, plugins and management tools for your needs.')}</li>
+                        ## <li>${_("Explore and utilise our dynamic platform's communication opportunities.")}</li>
+                        ## <li>${_('Improve business rapport by recognising and rewarding audiences.')}</li>
+                    </ul>    
+                </p>
             </div>
         </div>
     </div>
