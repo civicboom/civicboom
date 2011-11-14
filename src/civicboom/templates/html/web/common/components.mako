@@ -144,14 +144,14 @@
                 </a>
             </div>
             <div class="col">
-                <h2>${_('As seen on')}</h2>
-                <a href="http://thenextweb.com/media/2011/11/12/civicboom-this-open-platform-lets-organizations-request-content-from-their-audience/" target="_blank">
-                    <div class="company_logo" id="nextweb"></div>
-                </a>
-                <h3 style="display: inline-block">${_('Follow us')}</h3>
+                <h3>${_('Follow us')}</h3>
                 <a class="icon16 i_twitter"  href="http://twitter.com/civicboom" title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
                 <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
                 <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
+                <br /><h3>${_('As seen on')}</h3>
+                <a href="http://thenextweb.com/media/2011/11/12/civicboom-this-open-platform-lets-organizations-request-content-from-their-audience/" target="_blank">
+                    <div class="company_logo" id="nextweb"></div>
+                </a>
             </div>
             
             <%doc> ## proto - although cool, not sure this is relevent for production

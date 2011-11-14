@@ -67,14 +67,14 @@
             
             .company_logo {
                 width: 100%;
-                min-height: 70px;
+                min-height: 55px;
                 cursor: pointer;
+                background-repeat: no-repeat;
+                background-position: center top;
             }
             
             #nextweb {
                 background-image: url('/images/misc/titlepage/logos/thenextweb-grey.png');
-                background-repeat: no-repeat;
-                background-position: center top;
                 
                 &:hover {
                     background-image: url('/images/misc/titlepage/logos/thenextweb-color.png');
@@ -84,8 +84,8 @@
             .android_btn {
                 position: relative;
                 width: 100%;
-                margin: 1em auto 0 auto;
-                height: 65px;
+                margin: 0;
+                height: 75px;
                 @include border_radius(0.5em);
                 @include drop_shadow(0, 1px, 2px, #666);
                 @include horiz_gradient(#ddd, #ccc);
@@ -111,7 +111,7 @@
                 
                 h3 {
                     position: absolute;
-                    top: 10%;
+                    top: 15%;
                     bottom: 0;
                     width: 50%;
                     right: 0;
