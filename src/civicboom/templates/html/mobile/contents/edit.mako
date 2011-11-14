@@ -298,7 +298,7 @@ import html2text
     <div data-role="page" id="confirm_discard">
         <div data-role="header"><h1>${_('Discard changes?')}</h1></div>
         <div data-role="content">
-            <h3>${_('You will loose any unsaved changes to this _content')}</h3>
+            <h3>${_('You will lose any unsaved changes to this _content')}</h3>
             <a href="${h.url(controller='profile', action='index')}"><button>${_('Return to profile (discard changes)')}</button></a>
             <a href="#" data-rel="back" data-direction="reverse"><button>${_('No, take me back!')}</button></a>
         </div>
