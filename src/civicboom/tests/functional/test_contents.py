@@ -491,6 +491,7 @@ Thats *all* folks
 
     def part_edit(self):
         response = self.app.get(url('edit_content', id=self.my_article_id))
+        response = self.app.get(url('edit_content', id=self.my_article_id), extra_environ={'HTTP_HOST': 'm.civicboom_test.com'}) # AllanC - added test for triggering edit template render for mobile as well
 
     def part_edit_as_xml(self):
         response = self.app.get(url('edit_content', id=self.my_article_id, format='xml'))

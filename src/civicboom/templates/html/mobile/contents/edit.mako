@@ -105,10 +105,27 @@ import html2text
     <fieldset data-role="fieldcontain">
         <label   for="title_${self.id}">${_('Title')}</label>
         <input    id="title_${self.id}"   name="title"   class="edit_input"        value="${self.content['title']}" type="text" placeholder="${_('Enter _article title')}"/>
+        
         <label   for="content_${self.id}">${_('Content')}</label>
         <textarea id="content_${self.id}" name="content" class="editor edit_input">${html2text.html2text(self.content['content'])}</textarea>
-        ${edit_full.tags(self.content)}
         <input id="content_text_format_${self.id}" type="hidden" name="content_text_format" value="markdown" />
+        
+        <label for="tags_${self.id}">${_("Tags")}</label>
+        <span>(${_('separated by commas')})</span>
+        <%
+        tags = []
+        separator = config['setting.content.tag_string_separator']
+        if   isinstance(self.content['tags'], list):
+            tags = self.content['tags']
+        elif isinstance(self.content['tags'], basestring):
+            tags = self.content['tags'].split(separator)
+            
+        #tags_string = u""
+        #for tag in tags:
+        #    tags_string += tag + separator
+        tags_string = separator.join(tags)
+        %>
+        <input class="edit_input" name="tags_string" type="text" value="${tags_string}" id="tags_${self.id}"/>
     </fieldset>
 </div>
 
@@ -298,7 +315,7 @@ import html2text
     <div data-role="page" id="confirm_discard">
         <div data-role="header"><h1>${_('Discard changes?')}</h1></div>
         <div data-role="content">
-            <h3>${_('You will loose any unsaved changes to this _content')}</h3>
+            <h3>${_('You will lose any unsaved changes to this _content')}</h3>
             <a href="${h.url(controller='profile', action='index')}"><button>${_('Return to profile (discard changes)')}</button></a>
             <a href="#" data-rel="back" data-direction="reverse"><button>${_('No, take me back!')}</button></a>
         </div>

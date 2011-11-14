@@ -9,6 +9,8 @@ from civicboom.lib.database.get_cached import get_member, get_content
 
 import datetime
 
+from nose.plugins.skip import SkipTest
+
 
 class TestTimedTasksController(TestController):
 
@@ -296,3 +298,6 @@ class TestTimedTasksController(TestController):
         self.log_in_as('unittest')
         self.delete_content(content_id_1)
         self.delete_content(content_id_2)
+
+    def test_summary_emails(self):
+        raise SkipTest('Test not implemented yet')
