@@ -196,10 +196,30 @@ import html2text
         <div class="media_preview_none">${_("Select a file to upload")}</div>
     </div>
     <div class="media_fields">
-        <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file"/><input type="submit" name="submit_draft" value="${_("Attach media")}" class="file_upload"/></p>
+        <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="file" class="field_file" onchange="$('.media_fields input:submit').button('enable');"/><input type="submit" name="submit_draft" value="${_("Upload selected file")}" class="file_upload" disabled='disabled'/></p>
         <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" /></p>
         <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" /></p>
     </div>
+
+    <%doc>
+    <script type="text/javascript">    
+        $(document).ready(
+            function(){
+                $('input:file').change(
+                    function(){
+                        if ($(this).val()) {
+                            $('input:submit').attr('disabled',false);
+                            // or, as has been pointed out elsewhere:
+                            // $('input:submit').removeAttr('disabled'); 
+                        } 
+                    }
+                    );
+            }
+        );
+    </script>
+    </%doc>
+
+    
 </div>
 </%def>
 
