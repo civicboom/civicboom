@@ -111,7 +111,6 @@ import html2text
         <input id="content_text_format_${self.id}" type="hidden" name="content_text_format" value="markdown" />
         
         <label for="tags_${self.id}">${_("Tags")}</label>
-        <span>(${_('separated by commas')})</span>
         <%
         tags = []
         separator = config['setting.content.tag_string_separator']
@@ -126,6 +125,7 @@ import html2text
         tags_string = separator.join(tags)
         %>
         <input class="edit_input" name="tags_string" type="text" value="${tags_string}" id="tags_${self.id}"/>
+        <p>(${_('separated by commas')})</p>
     </fieldset>
 </div>
 
