@@ -19,10 +19,14 @@ jQuery.fn.appendEach = function(arrayOfWrappers) {
   return (this );
 
 };
-boom_development = true;
 
 if(!('boom' in window))
   boom = {};
+
+if(!('boom_development' in window) || !('console' in window) || !console.log)
+  console = {
+    log: function () {}
+  }
 
 boom.init_foot = [];
 
@@ -940,9 +944,6 @@ if(!('frags' in boom)) {
     init : function() {
       // Initialise frags plugin for Civicboom
       // If boom_development not set, override console.log
-      if(!('boom_development' in window) && console)
-        console.log = function() {
-        };
       console.log('boom.frag.init');
       // boom.frags.container should be set to the element that will contain the frags
       if(boom.frags.container == null) {
