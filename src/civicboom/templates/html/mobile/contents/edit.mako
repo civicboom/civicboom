@@ -200,32 +200,13 @@ import html2text
         <script type="text/javascript">
             $(document).bind('pageshow', function() {
                 if (isiPhone()) {
-                    $('#media_file').parent().append('<p class="warning">iPhone/iPad does not support file uploading</p>');
+                    $('#media_file').parent().append('<p class="warning">Apple does not support file uploading on the iPhone/iPad platform</p>');
                 }
             });
         </script>
         <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text" /></p>
         <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text" /></p>
     </div>
-
-    <%doc>
-    <script type="text/javascript">    
-        $(document).ready(
-            function(){
-                $('input:file').change(
-                    function(){
-                        if ($(this).val()) {
-                            $('input:submit').attr('disabled',false);
-                            // or, as has been pointed out elsewhere:
-                            // $('input:submit').removeAttr('disabled'); 
-                        } 
-                    }
-                    );
-            }
-        );
-    </script>
-    </%doc>
-
     
 </div>
 </%def>
