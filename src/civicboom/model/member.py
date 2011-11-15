@@ -261,6 +261,8 @@ class Member(Base):
     num_followers            = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_messages      = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
     num_unread_notifications = Column(Integer(), nullable=False, default=0, doc="Controlled by postgres trigger")
+    last_message_timestamp      = Column(DateTime(), nullable=True, doc="Controlled by postgres trigger")
+    last_notification_timestamp = Column(DateTime(), nullable=True, doc="Controlled by postgres trigger")
     # AllanC - TODO - derived field trigger needed
     account_type             = Column(account_types, nullable=False, default='free', doc="Controlled by Python MapperExtension event on PaymentAccount")
 

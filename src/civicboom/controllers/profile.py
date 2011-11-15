@@ -63,7 +63,9 @@ class ProfileController(BaseController):
         """
         return action_ok(
             data = {
-                'num_unread_messages'     :c.logged_in_persona.num_unread_messages,
-                'num_unread_notifications':c.logged_in_persona.num_unread_notifications,
+                'num_unread_messages'           :c.logged_in_persona.num_unread_messages,
+                'num_unread_notifications'      :c.logged_in_persona.num_unread_notifications,
+                'last_message_timestamp'        :c.logged_in_persona.last_message_timestamp.strftime('%s.%f') if c.logged_in_persona.last_message_timestamp else None,
+                'last_notification_timestamp'   :c.logged_in_persona.last_notification_timestamp.strftime('%s.%f') if c.logged_in_persona.last_notification_timestamp else None,
             }
         )

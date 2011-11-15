@@ -17,7 +17,7 @@
 ## Content creation actions
 ##------------------------------------------------------------------------------
 <nav id="actions">
-	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for _articles"), css_class="button")}
+	${h.secure_link(h.url('new_content', target_type='assignment'), _("Ask for _articles"), link_class="button")}
 	##${h.secure_link(h.url('new_content', target_type='article'   ), _("Post _content") , css_class="button")}
     <a href="${h.url(controller='misc', action='new_content')}" class="button">${_("Post _content")}</a>
 </nav>
@@ -44,46 +44,6 @@
 <%
     from civicboom.model import Group
 %>
-<script type="text/javascript">
-    var icons;
-    function refreshMessages() {
-        $.getJSON('/profile/messages.json',function(data) {
-            if (typeof data['data'] != 'undefined') {
-                var _total = 0;
-                for (var key in icons) {
-                    if (typeof data.data[key] != 'undefined') {
-                        var jQe = $(icons[key]); 
-                        //alert (icons[key].html());
-                        jQe.html('&nbsp;' + data.data[key] + '&nbsp;');
-                        if (data.data[key] == 0) {
-                            jQe.css('display', 'none');
-                        } else {
-                            jQe.css('display', 'inline');
-                        }
-                        _total += (data.data[key] * 1);
-                    }
-                }
-                if (typeof icons['_total'] != 'undefined') {
-                    var jQe = $(icons['_total']);
-                    jQe.html('&nbsp;' + _total + '&nbsp;');
-                    if (_total == 0) {
-                        jQe.css('display', 'none');
-                    } else {
-                        jQe.css('display', 'inline');
-                    }
-                }
-            }
-        });
-    }
-    $(function() {
-        icons = {num_unread_messages: '.msg_c_m',
-                 num_unread_notifications: '.msg_c_n',
-                 _total: '.msg_c_o'
-                }
-        setInterval(refreshMessages, 180000);
-    });
-</script>
-
 <%def name="messageIcon(messages, id)">
         <div class="icon_overlay_red ${id}"
             % if messages == 0:
@@ -100,10 +60,10 @@
         ${c.logged_in_persona.name}
       </div>
       <div id="message_holder">
-        <a class   = "icon16 i_message"
+        <a class   = "icon16 i_message link_new_frag"
            href    = "${h.url('messages',list='to')}"
            title   = "${_('Messages')}"
-           onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+           data-frag = "${h.url('messages', list='to'          , format='frag')}"
         ><span>${_('Messages')}</span>
         </a>
         ${messageIcon(c.logged_in_persona.num_unread_messages + c.logged_in_persona.num_unread_notifications, "msg_c_o")}
@@ -150,17 +110,17 @@
                     % endfor
                 </td>
                 <td class="messages">
-                  <a class   = "icon16 i_message"
+                  <a class   = "icon16 i_message link_new_frag"
                      href    = "${h.url('messages',list='to')}"
                      title   = "${_('Messages')}"
-                     onclick = "cb_frag($(this), '${h.url('messages', list='to'          , format='frag')}', 'frag_col_1'); return false;"
+                     data-frag="${h.url('messages', list='to'          , format='frag')}"
                   ><span>${_('Messages')}</span>
                   </a>
                   ${messageIcon(member.num_unread_messages, "msg_%s_m" % ('c' if current_persona else member.id))}<br />
-                  <a class   = "icon16 i_notification"
+                  <a class   = "icon16 i_notification link_new_frag"
                      href    = "${h.url('messages',list='notification')}"
                      title   = "${_('Notifications')}"
-                     onclick = "cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_1'); return false;"
+                     data-frag = "${h.url('messages', list='notification', format='frag')}"
                   ><span>${_('Notifications')}</span>
                   </a>
                   ${messageIcon(member.num_unread_notifications, "msg_%s_n" % ('c' if current_persona else member.id))}
@@ -171,7 +131,7 @@
                         h.url(controller='account', action='set_persona', id=member.username, format='html') ,
                         ##args_to_tuple(
                         'switch user',
-                        css_class="persona_link",
+                        link_class="persona_link",
                         ##json_form_complete_actions = 'window.location.replace(\'%s\');' % url(controller='profile', action='index', host=app_globals.site_host) ,
                         ## AllanC TODO: non javascript users need to be forwarded to there profile page
                     )}
@@ -215,6 +175,11 @@
                     h.url(controller='account', action='signout'),
                     _('Sign out')
                 )}
+            </td>
+        </tr>
+        <tr class="desktop_notifications" style="display:none;">
+            <td colspan="4">
+                <a href="#" onclick="boom.util.desktop_notification.request_permission(); return false;">Turn on notifications</a>
             </td>
         </tr>
     </table>

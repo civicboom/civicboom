@@ -12,6 +12,7 @@
     <%
         self.advert_list = [] # List of advert/info box to display (empty by default, populated below)
         self.attr.title = _('Featured Content')
+        self.attr.frag_data_css_class = 'frag_ignore_url'
     %>
 </%def>
 
