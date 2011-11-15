@@ -43,11 +43,18 @@
 ## CSS Style Sheets
 ##-------------------
 	<link rel="stylesheet" type="text/css" media="screen" href="${h.wh_url("public", "styles/web.css")}" />
+<!--[if !(IE)]>
 	<link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
+<![endif]-->
 ##-------------------
 ## Javascripts
 ##-------------------
 % if config['development_mode']:
+    <script>
+        boom_development = true;
+        if (!window.console || ! window.console.log)
+            console = {log: function (){}}
+    </script>
     ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 	<!-- Browser bug fixes -->
 	<script src="/javascript/modernizr-1.7.js"></script>
@@ -60,6 +67,7 @@
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
 	<script src="/javascript/ajaxError.js"></script>
+	
 % else:
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
