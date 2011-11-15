@@ -8,7 +8,7 @@
         
         <div data-role="content">            
             ${self.form_button(h.url('new_content', target_type='assignment'), _("Ask for _articles"))}
-            ${self.form_button(h.url('new_content', target_type='article'   ), _("Post a _article")  )}
+            ${self.form_button(h.url('new_content', target_type='article'   ), _("Post _content")  )}
             <a href="${h.url(controller='contents', target_type='assignment', action='index')}"><button>${_('See latest _assignments')}</button></a>
         </div>
         
@@ -30,5 +30,5 @@
             </div>
             <div class="fr">
                 % if org.get('push_assignment'):
-                    ${h.secure_link(h.url('new_content', target_type='article', parent_id=org.get('push_assignment')  ), _("Post a story") , css_class="button")}
+                    ${h.secure_link(h.url('new_content', target_type='article', parent_id=org.get('push_assignment')  ), _("Post _content") , css_class="button")}
 </%doc>

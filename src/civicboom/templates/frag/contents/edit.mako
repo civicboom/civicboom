@@ -54,9 +54,9 @@
             % if self.content.get('parent'):
                 ${_("You are responding to: %s") % self.content['parent']['title']}
             % elif self.selected_type == 'assignment':
-                ${_("Ask for stories")}
+                ${_("Ask for _content")}
             % elif self.selected_type == 'article':
-                ${_("Post a story")}
+                ${_("Post _content")}
             % endif
         </h1>
         
@@ -216,8 +216,8 @@
         <tr><td>
         </td></tr>
         <tr><td>
-            <label for="title_${self.id}">${_('Add your story title')}</label>
-            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter a story title')}"/>
+            <label for="title_${self.id}">${_('Add your _article title')}</label>
+            <input id="title_${self.id}" name="title" type="text" class="edit_input" value="${self.content['title']}" placeholder="${_('Enter _article title')}"/>
         </td></tr>
         <tr><td>
 		<%
@@ -285,9 +285,10 @@
             elif isinstance(self.content['tags'], basestring):
                 tags = self.content['tags'].split(separator)
                 
-            tags_string = u""
-            for tag in tags:
-                tags_string += tag + separator
+            #tags_string = u""
+            #for tag in tags:
+            #    tags_string += tag + separator
+            tags_string = separator.join(tags)
             %>
             <input class="edit_input" name="tags_string" type="text" value="${tags_string}" id="tags_${self.content['id']}"/>
         </td></tr>
@@ -464,7 +465,7 @@
     ## AllanC - A horrible temp close button
     <a href='' title='${_('Close pop-up')}' class="simplemodalClose icon16 i_delete" style="float:right;"><span>Close</span></a>
     
-    <p>${_('(Please note this is in beta, please use the feedback link at<br>the bottom of the page if you experience any problems.)')|n}</p>
+    <p>${_('(Please note this is in beta, please use the feedback link at <br>the bottom of the page if you experience any problems.)')|n}</p>
 	<script type="text/javascript">
 		function cbFlashMedia${self.id}_DoFSCommand(command, args) {
 			var args = args.split(',');
@@ -473,10 +474,13 @@
 				aWidth  = (args[1]*1)+14;
 				$('#media_recorder_${self.id}').css('width', aWidth).css('height', aHeight);
 			} else if (command == 'uploadcomplete') {
-				refreshProgress($('form#edit_$(self.id}'));
+				refreshProgress($('form#edit_${self.id}'));
 			}
 		}
-		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"}, {wmode: "window"});
+		function cbflash_refresh${self.id}() {
+	        refreshProgress($('form#edit_${self.id}'));
+		}
+		swfobject.embedSWF("https://bm1.civicboom.com:9443/api_flash_server/cbFlashMedia.swf", "cbFlashMedia${self.id}", "100%", "100%", "9.0.0", "", {type:"v",host:"bm1.civicboom.com",user:"${c.logged_in_persona.id}",id:"${self.id}",key:"${c.logged_in_persona.get_action_key("attach to %d" % self.id)}",callback_uploadcomplete:"cbflash_refresh${self.id}"}, {allowscriptaccess: 'always', wmode: "window"});
 	</script>
     <div style="position:relative; height: 400px; width: 370px;">
         <div class="media_recorder" style="position: absolute; left:0; top:0; width:360px; height:371px;" id="media_recorder_${self.id}">
@@ -760,7 +764,7 @@
         % elif self.selected_type == "article":
             % if self.content.get('parent'):
                 <div class="popup-title">
-                    ${_("Once you share this story, it will:")}
+                    ${_("Once you share this _article, it will:")}
                 </div>"
                 <div class="popup-message">
                     <ol>
@@ -771,7 +775,7 @@
                 </div>
             % else:
                 <div class="popup-title">
-                    ${_("Once you post this story:")}
+                    ${_("Once you post this _article:")}
                 </div>
                 <div class="popup-message">
                     <ol>

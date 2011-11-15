@@ -22,3 +22,8 @@
     -webkit-box-shadow: $offset-x $offset-y $size $color;
     box-shadow:         $offset-x $offset-y $size $color;
 }
+
+@mixin transparency($total) {
+    opacity: $total/100;
+    filter:alpha(opacity=$total); /* For IE8 and earlier */
+}

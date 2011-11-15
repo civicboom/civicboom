@@ -5,13 +5,6 @@ $cb-lighterblue: lighten($cb-lightblue, 30%);
 $cb-light-inactive: #eee;
 
 
-/* --- Misc --- */
-$text-colour: #666;
-$link-colour: $cb-lightblue;
-$link-hover-colour: $cb-lightblue;
-//$link-frag-colour: $text-colour; // this makes links hard to see and was only used in one place.
-
-
 /* --- Buttons --- */
 $button-top: #4974b8; // lighten($cb-lightblue, 10%);// #eee; /*$cb-lightblue;*/
 $button-bot: #3e68af; // lighten($cb-darkblue, 20%); //#ddd; /*$cb-darkblue;*/
@@ -69,9 +62,25 @@ $profile-description-title  :   #666;
 $profile-description-txt    :   #333;
 
 
+/* --- Misc --- */
+$text-colour: #666;
+$link-colour: $cb-lightblue;
+$link-hover-colour: $cb-lightblue;
+//$link-frag-colour: $text-colour; // this makes links hard to see and was only used in one place.
+
+
 /* --- Adverts --- */
 $advert-back: #ff8300;
 $advert-back-top: lighten($advert-back, 5%);
 $advert-back-bot: darken($advert-back, 5%);
 $advert-text: $text-colour;
 $advert-link: $link-colour;
+
+
+/* -- Misc -- */
+$cb-orange: #FF8814;
+$signup-color: lighten($advert-back-bot, 10%);
+$cb-grey: #333;
+$misc-page-width: 940px;
+$misc-page-link: #555;
+$misc-page-font: #777;

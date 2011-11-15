@@ -141,7 +141,7 @@
 <div class="widget_creator"><div class="padding">
     <h1>${_("What is a _widget?")}</h1>
     <p>
-        ${_('The _Widget is a little "widget" that lives on your website within which all requests for stories set by you will automatically appear.')}
+        ${_('The _Widget is a little "widget" that lives on your website within which all requests for _content set by you will automatically appear.')}
         ${_('People can respond to requests for news and submit their news through your _Widget, as video, images or audio directly to you for you to edit and publish.')}
     </p>
     
@@ -167,7 +167,7 @@
             <ul>
                 <li>${_("Requests appear on a carousel")}</li>
                 <li>${_("Larger font for clear reading")}</li>
-                ##<li>${_("Direct "Share your story" button")}</li>
+                ##<li>${_("Direct "Share your _content" button")}</li>
             </ul>
         </td>
         <td>

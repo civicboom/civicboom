@@ -100,6 +100,7 @@ def load_environment(global_conf, app_conf):
                         'setting.content.max_comment_length',
                         'setting.age.min_signup',
                         'setting.age.accept',
+                        'timedtask.batch_chunk_size',
                         #'media.media.width', # AllanC - the media processing imports the config in a differnt way. I dont know if this cast to int is needed
                         #'media.media.height',
                         ]
@@ -139,7 +140,7 @@ def load_environment(global_conf, app_conf):
 
     # set up cbtv
     import cbutils.cbtv as t
-    if config.get('telemetry'):
+    if config.get('telemetry'):  # pragma: no cover -- telemetry is disabled during coverage test
         t.set_log(config['telemetry'])
 
     init_model_extra() # This will trigger a set of additional initalizers

@@ -8,5 +8,5 @@ Pre-Depends: python, python-cbmisc(>=0.3.18-75), debconf(>=0.2.17),
  python-nose, python-coverage, python-dns, python-decorator, python-dateutil,
  python-lxml, python-pybabel, python-mako(>=0.3.6), python-redis, python-beautifulsoup,
  python-markdown, python-html2text, python-qrencode,
- ffmpeg(>=4:0.6)
+ ffmpeg(>=4:0.6), mediainfo(>=0.7.50)
 Description: The code for the main civicboom website rewrite

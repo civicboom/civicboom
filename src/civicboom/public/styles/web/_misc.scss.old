@@ -1,0 +1,590 @@
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+/* Special Button
+/* --- START --- */
+.special_button {
+    font-size: 225%;
+    text-align: center;
+    
+    .button {
+      	@include horiz_gradient(lighten($cb-lightblue, 10%), darken($cb-lightblue, 10%));
+      	
+      	-moz-box-shadow:    1px 1px 5px #333, inset 0px 25px 0px rgba(255, 255, 255, .2);
+      	-webkit-box-shadow: 1px 1px 5px #333, inset 0px 25px 0px rgba(255, 255, 255, .2);
+      	box-shadow:         1px 1px 5px #333, inset 0px 25px 0px rgba(255, 255, 255, .2);
+      	
+      	&:hover {
+      	    @include horiz_gradient(lighten($cb-lightblue, 20%), darken($cb-lightblue, 0%));
+      	}
+    }
+}
+
+/*----------------------------------------------------------------------------*/
+/*                                 Titlepage                                  */
+/*----------------------------------------------------------------------------*/
+
+BODY.c-misc.a-titlepage {
+    .wrapper {
+        // height: 100%;
+        // margin: 0em 5em 2em 5em;
+        margin: 2em;
+        position: relative;
+        
+        
+	    // .content {
+		// height: 100%;
+		// width: 100%;
+		padding: 2em;
+		background: lighten($cb-lightblue, 20%);
+		@include horiz_gradient(lighten($cb-lightblue, 10%), lighten($cb-lightblue, 30%));
+		@include drop_shadow(5px, 5px, 10px, #333);
+		border: 1px solid #333;
+		@include border_radius(0.5em);
+	    // }
+	}
+
+	/* --- Title-box --- */
+	.title-box {
+		text-align: center;
+		padding: 0;
+		margin: 0 auto 0 auto;
+		width: 65em;
+		max-width: 80%;
+		color: white;
+
+		.headline {
+			padding: 0;
+			margin: 0 auto 0 auto;
+			font-size: 1000%;
+			text-shadow: 1px 1px 5px #333;
+			letter-spacing: -0.04em;
+		}
+
+		.tagline {
+			padding: 0;
+			margin: 0 auto 0 auto;
+			font-size: 300%;
+			font-weight: normal;
+			text-shadow: 1px 1px 5px #333;
+			letter-spacing: -0.04em;
+			word-spacing: 0.1em;
+		}
+	}
+	
+	.image_wrapper {
+	  position: relative;
+	  height: 400px;
+	  width: 600px;
+	  
+	  img {
+	    position: absolute;
+	    // Transparency
+        filter: alpha(opacity=60);
+        opacity: 0.6;
+	  }
+	  
+	  div {
+	    font-size: 200%;
+	    position: absolute;
+	    padding-bottom: 1px;
+	    bottom:0em;
+	  }
+	}
+	.image_footer {
+	 size: 120%;
+	 padding: 0;
+	 border: 0;
+	 padding-bottom:1em;
+	}
+
+	/* --- Windows --- */
+	.windows {
+	    font-size: 75px;
+	    margin: auto;
+	    text-align: center;
+	    padding: 0;
+		margin-top: 16px;
+
+	    .window {
+    		padding: 0;
+
+            // Transparency
+            filter: alpha(opacity=80);
+            opacity: 0.8;
+            
+            &:hover {
+                filter: alpha(opacity=100);
+                opacity: 1;
+            }
+    		
+    		img {
+                width: 300px;
+				max-width: 20%;
+                @include drop_shadow(1px, 1px, 5px, #333);
+    		}
+	    }
+
+	    .symbol {
+    		color: white;
+    		text-shadow: 1px 1px 5px #333;
+	    }
+	}
+
+	.about {
+		clear: both;
+		margin: 33em auto 0 auto;
+		text-align: left;
+		width: 65em;
+	}
+
+	.about a {
+		color: #666;
+		// text-decoration: underline;
+		font-size: 90%;
+	}
+
+	/* --- Downloads --- */
+
+	.downloads {
+		float: right;
+		width: 10em;
+		margin-top: 1em;
+		text-align: center;
+	}
+
+	.downloads h2 {
+		text-align: left;
+	}
+
+	.downloads .downloads-android {
+		width: inherit;
+		margin: 0;
+		position: absolute;
+		float: left;
+	}
+
+	/* --- Partners --- */
+
+	.using-us {
+		text-align: left;
+		float: left;
+		width: 50em;
+	}
+
+	.using-us .partners {
+		padding: 0.5em;
+		height: 5em;
+	}
+
+	.using-us .partners .partner {
+		float: left;
+	}
+}
+
+@media (max-width: 900px) {
+	BODY.c-misc.a-titlepage .title-box IMG {
+		display: none;
+	}
+}
+
+/* --- Get Widget ---- */
+
+.get_widget ul li {
+    list-style: disc;
+    margin-left: 2em;
+}
+label.norm {
+    font-weight: normal;
+}
+
+
+
+table.upgrade_plans {
+
+  $thin-border: 1px solid gray;
+  $hilt-border: 2px solid $button-top;
+  $cell-width:  5em;
+  $head-font:   120%;
+  
+  tbody tr:nth-child(odd) {
+    background: lighten($cb-lightblue, 40%);
+  }
+  
+  .larger {
+    font-size: 120%;
+  }
+  
+  td {
+    padding-left: 1.5em;
+    padding-right: 1em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+  }
+  
+  thead {
+    td {
+      border-top: $thin-border;
+      border-bottom: $thin-border;
+      font-weight: bold;
+      font-size: $head-font;
+      padding-top: 0.4em;
+      padding-bottom: 0.4em;
+    }
+      .hilight {
+          border: $hilt-border;
+      }
+  }
+  
+  tbody {
+    border: $thin-border;
+    td.title {
+      border-right: $thin-border;
+    }
+    td.item {
+        width: $cell-width;
+    }
+    .hilight {
+      border-left: $hilt-border;
+      border-right: $hilt-border;
+    }
+  }
+  
+  tfoot {
+    .foot{
+      td {
+        border-top: $thin-border;
+        border-bottom: $thin-border;
+        font-weight: bold;
+        padding-top: 0.25em;
+        padding-bottom: 0.25em;
+      }
+      .hilight {
+        border: $hilt-border;
+      }
+    }
+    .upgrade{
+      td {
+        padding : 0.2em;
+        text-align: center;
+        .button {
+          //width: $cell-width * $head-font;
+        }
+      }
+    }
+  }
+}
+
+/*
+ * about page, lots of text with a couple of custom bits
+ */
+BODY.c-misc.a-about {
+	.layout {
+		margin-left: auto;
+		margin-right: auto;
+		padding-top: 32px;
+		padding-bottom: 48px;
+		max-width: $page-border-width; /*940px;*/
+	}
+	TD.body,
+	TD.nav {
+		vertical-align: top;
+		padding: 16px;
+		padding-bottom: 16px;
+	}
+    /*
+	TD.body {
+		background: white;
+		border-radius: 16px;
+	}
+    */
+	TD H1 {
+		margin: 0px;
+	}
+
+	P {
+		margin: 1em 0px;
+	}
+	ARTICLE {
+		margin: 32px;
+		padding-top: 32px;
+		padding-bottom: 32px;
+	}
+	ARTICLE TIME {
+		border-bottom: 1px solid black;
+		margin-bottom: 0.5em;
+	}
+
+	OL.legal {
+		font-size: 0.75em;
+	}
+
+	.form.upgrade {
+		margin: auto;
+		width: 350px;
+	}
+	.form.upgrade LABEL {
+		width: 100%;
+		text-align: right;
+		padding-right: 0.3em;
+	}
+	.form.upgrade TD:first-child {
+		width: 5em;
+		vertical-align: middle;
+	}
+
+	.toc {
+		margin-top: 32px;
+		margin-bottom: 32px;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 8px;
+		padding: 2px;
+		LI A {
+			display: block;
+			width: 128px;
+			margin: 4px;
+		}
+	}
+
+	TD.body ul {
+	    padding-left: 10px;
+	
+	    li {
+		    list-style: disc;
+		    margin-left: 2em;
+	    }
+	}
+}
+
+.error {
+  color: #F00;
+  font-weight: bold;
+}
+
+.settinghint {
+  color: #F00;
+  font-weight: bold;
+}
+
+/*
+  GregM: Need to move this upgrade stuff to new file
+*/
+
+.centre {
+  text-align: center;
+}
+.ital {
+  font-style: italic;
+}
+.buttonpad {
+  height: 1em;
+}
+.buttongreen {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  border-radius        : 0.2em;
+  -moz-border-radius   : 0.2em;
+  -webkit-border-radius: 0.2em;
+  border: 1px solid #2a3a87;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+  background: #3B0; /* for non-css3 browsers */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3B0', endColorstr='#2A0'); /* for IE */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #3B0), color-stop(0.81, #2A0)); /* for webkit browsers */
+  background: -moz-linear-gradient(top, #3B0, #2A0 81%); /* for firefox 3.6+ */
+  color: white;
+}
+.payplanwrapper {
+  position: relative;
+  width: 40em;
+  height: 30em;
+}
+.payplanholder {
+  position: absolute;
+  width: 40em;
+  text-align: left;
+}
+.payplan {
+  border-radius        : 0.4em;
+  -moz-border-radius   : 0.4em;
+  -webkit-border-radius: 0.4em;
+  margin-top: 4em;
+  float: left;
+  width: 10em;
+  border: 3px solid #4A73B8;
+  margin-left: 1em;
+  margin-bottom: 1em;
+  height: 20em;
+}
+.payplan .plantitle {
+  text-align: center;
+  padding: 0.5em 0.25em 0.5em 0.25em;
+  font-size: 130%;
+  border-bottom: 3px solid #4A73B8;
+  font-weight: bold;
+}
+.payplan.active .plantitle {
+  font-size: 160%;
+}
+.payplan .plantitle .subtitle {
+  display: block;
+  font-size: 60%;
+  font-weight: normal;
+  top: -0.5em;
+}
+.payplan.active {
+  margin-top: 1em;
+  width: 14em;
+  height: 26em;
+  background-color: #EEE;
+}
+.payplan .planpoints ul.points li {
+  padding: 0.5em 1em 0.5em 1em;
+  border-bottom: 0.1em solid gray;
+  text-align: center;
+  font-weight: bold;
+  font-size: 100%;
+}
+.payplan.active .planpoints ul.points li {
+  font-size: 120%;
+  color: #500;
+}
+.payplan .planpoints {
+  text-align: center;
+}
+.payplan .planpoints .buttons {
+  display: inline-block;
+  position: absolute;
+  width: 10em;
+  height: 3.5em;
+  text-align: center;
+  bottom: 5em;
+  vertical-align: bottom;
+}
+.payplan.active .planpoints .buttons {
+  bottom: 4em;
+  width: 14em;
+}
+
+.payplan .ideal .idealpop {
+  display: none;
+  position: absolute;
+  top: -14.5em;
+  height: 14.5em;
+  width: 100%;
+}
+
+.payplan .ideal .idealpop .pop {
+  background-color: #FFF;
+  width: 95%;
+  margin: auto;
+  height: 90%;
+  @include border_radius(0.4em);
+  border: 2px solid #4A73B8;
+  text-align: left;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+}
+.payplan .ideal .idealpop .pop ul li {
+  list-style: square inside;
+}
+
+.payplan .ideal:hover .idealpop {
+  display: block; 
+}
+
+BODY.c-misc.a-new_article.u-user {
+  div.new-article {
+    .button {
+      width: 6em;
+    }
+    div.na-padleft {
+      padding-left: 2em;
+    }
+    .na-orgs {
+      .mo-help-l {
+        float: left;
+        bottom: -0em;
+        left: -19em;
+        filter: none;
+        opacity: 1;
+        width: 20em;
+      }
+      li {
+        padding: 0.5em 0;
+        display: table;
+        width: 30.45em;
+      }
+      .fr {
+        padding-bottom: 0.75em;
+      }
+      .na-org-text {
+        display: inline-block;
+        display: table-cell;
+        vertical-align: middle;
+        width: 18em;
+      }
+    }
+    .na-other {
+      .fr {
+        padding-top: 0.25em;
+      }
+    }
+    .pr {
+      position: relative;
+    }
+    .cb {
+      clear: both;
+    }
+  }
+}
+
+BODY.c-misc.a-what_is_a_hub {
+    .frag_whitewrap {
+	background: white;
+	border-radius: 16px;
+	padding: 16px;
+	margin: 1em;
+	width: 800px;
+	margin: auto;
+	color: $text-colour;
+	
+	.create_hub {
+	    width: 10em;
+	    border: 1px solid #999;
+	    padding: 1em 3em 1em 3em;
+	    margin: 1em auto 0 auto;
+	    @include border_radius(0.5em);
+	    font-size: 130%;
+	    text-align: center;
+	}
+	
+	img {
+	    max-width: 300px;
+	}
+    }
+}
+
+BODY.c-misc.a-how_to {
+    .layout {
+        background: white;
+        border-radius: 16px;
+        padding: 16px;
+        margin: 1em;
+        width: 1000px;
+        margin: auto;
+    }
+
+    .getting_started {
+        margin: 2em 0 2em 0;
+        text-align: center;
+    }
+    
+    .step {
+        font-size: 300%;
+        text-align: center;
+    }
+}
