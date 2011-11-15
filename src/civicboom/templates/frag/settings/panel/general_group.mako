@@ -55,6 +55,9 @@
         </h1>
         <!-- <a href="${h.url(controller='misc', action='what_is_a_hub')}">${_('What is a _Group?')}</a> -->
 
+        ## accordion can be set to fill parent, but we don't want /filled/, we want a little
+        ## margin at top and bottom for title and buttons
+        <div style="position: absolute; top: 2.5em; bottom: 4em; left: 1em; right: 1em;">
         <div class="jqui_accordion event_load event_resize" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
             <h4>1. ${_("Describe the _Group")}</h4>
             <div>
@@ -253,8 +256,9 @@
             </div>
             % endif
         </div>
+        </div>
 
-        <div style="padding-top: 1em">
+        <div style="text-align: center; padding: 1em; position: absolute; bottom: 0px; left: 0px; right: 0px;" class="buttons">
             <div style="float: right;">
                 % if c.action != 'new' and c.controller != 'groups':
                     <input type="submit" name="submit" value="${_('Save _Group')}" class="button" />
