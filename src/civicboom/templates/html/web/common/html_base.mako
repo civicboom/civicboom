@@ -66,8 +66,6 @@
 	<script src="/javascript/misc.head.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
-	<script src="/javascript/ajaxError.js"></script>
-	
 % else:
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
