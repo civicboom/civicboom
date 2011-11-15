@@ -9,7 +9,7 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
-from cbutils.misc import timedelta_str, set_now
+from cbutils.misc import timedelta_from_str, set_now
 
 from sqlalchemy import and_, or_, null
 
@@ -33,19 +33,25 @@ def send_payment_admin_email(subject, content_text):
         content_text=content_text,
     )
 
-def normalize_datetime(datetime):
-    return datetime.replace(minute=0, second=0, microsecond=0)
+def normalize_datetime(datetime, accuracy='hour'):
+    """
+    Normalizez datetime down to hour or day
+    Dates are immutable (thank god)
+    """
+    if   accuracy=='hour':
+        return datetime.replace(minute=0, second=0, microsecond=0)
+    elif accuracy=='day' :
+        return datetime.replace(minute=0, second=0, microsecond=0, hour=0)
+    return datetime
 
 def process_db_chunk(query, process_item, limit=None):
     if not limit:
         limit = config['timedtask.batch_chunk_size']
     count = query.count()
-    for offset in [i*limit for i in range(0, count/limit)]:
+    for offset in [i*limit for i in range(0, (count/limit)+1)]:
         results = query.offset(offset).limit(limit).all()
         for result in results:
             process_item(result)
-
-    
     
 
 class TaskController(BaseController):
@@ -92,8 +98,8 @@ class TaskController(BaseController):
         from civicboom.model.member import User
         from civicboom.lib.accounts import validation_url
         
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
-        remind_after            = timedelta_str(remind_after           )
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
+        remind_after            = timedelta_from_str(remind_after           )
         
         reminder_start = normalize_datetime(now()          - remind_after           )
         reminder_end   = normalize_datetime(reminder_start + frequency_of_timed_task)
@@ -119,7 +125,7 @@ class TaskController(BaseController):
         """
         from civicboom.model.member import User
         
-        ghost_expire = normalize_datetime(now() - timedelta_str(delete_older_than))
+        ghost_expire = normalize_datetime(now() - timedelta_from_str(delete_older_than))
         
         for user in Session.query(User).filter(User.status=='pending').filter(User.join_date <= ghost_expire).all(): # .filter(~User.login_details.any()).
             Session.delete(user)
@@ -150,7 +156,7 @@ class TaskController(BaseController):
         def get_responded(assignment):
             return [response.creator_id for response in assignment.responses]
         
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         
         date_7days_time = normalize_datetime(now() + datetime.timedelta(days=7))
         date_1days_time = normalize_datetime(now() + datetime.timedelta(days=1))
@@ -188,7 +194,7 @@ class TaskController(BaseController):
         """
         query for all users in last <timedelta> and email 
         """
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         
         from civicboom.model import Member
         members = Session.query(Member) \
@@ -448,7 +454,7 @@ class TaskController(BaseController):
         """
         query for all users in last <timedelta> and email 
         """
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         datetime_now            = normalize_datetime(now())
         
         from civicboom.model.content        import DraftContent
@@ -479,19 +485,37 @@ class TaskController(BaseController):
         
         TODO: In future this could take into account utc offset
         """
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        from civicboom.model import User, Message
+        from sqlalchemy      import null
+        
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         datetime_now            = normalize_datetime(now())
         
         def summary_notification_email_user(user):
-            if ((datetime_now - user.summary_email_start).total_seconds() % user.summary_email_interval.total_seconds()) == 0:
+            """
+            All users passed to this methdod have been selected using a query to ensure they have the field 'summary_email_interval'
+            """
+            # Normalize the interval and ancor to the previous hour to assess if we are on a interval boundary
+            if user.summary_email_start:
+                interval_ancor = datetime_now - user.summary_email_start
+            else:
+                interval_ancor = datetime_now - normalize_datetime(datetime_now, accuracy='day')
+            interval_ancor = interval_ancor.total_seconds()
+            interval       = user.summary_email_interval.total_seconds()
+            
+            # If on interval boundary
+            if (interval_ancor % interval) == 0:
+                # Select all messages from since the previous interval
                 messages = Session.query(Message).filter(Message.target_id==user.id).filter(Message.timestamp >= (datetime_now-user.summary_email_interval)).all()
-                user.send_email(
-                    subject      = _('_site_name: Summary'),
-                    content_html = render('/email/notifications/summary.mako', extra_vars={'messages':messages})
-                )
+                # No need to send email summary if no messages have been generated in the last interval
+                if messages: 
+                    user.send_email(
+                        subject      = _('_site_name: Summary'),
+                        content_html = render('/email/notifications/summary.mako', extra_vars={'messages':messages})
+                    )
         
         process_db_chunk(
-            Session.query(User).filter(and_(User.summary_email_start, User.summary_email_interval)),
+            Session.query(User).filter(User.summary_email_interval!=null()), #and_(User.summary_email_start, 
             summary_notification_email_user
         )
         

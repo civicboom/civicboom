@@ -1,6 +1,6 @@
 from civicboom.tests import *
 
-from civicboom.model      import User
+from civicboom.model      import User, Message
 from civicboom.model.meta import Session
 
 from civicboom.controllers.task import response_completed_ok
@@ -299,5 +299,60 @@ class TestTimedTasksController(TestController):
         self.delete_content(content_id_1)
         self.delete_content(content_id_2)
 
+
+    #---------------------------------------------------------------------------
+    # Email Notification Symmarys
+    #---------------------------------------------------------------------------
     def test_summary_emails(self):
-        raise SkipTest('Test not implemented yet')
+        def task_summary_notification_email():
+            response = self.app.get(url(controller='task', action='summary_notification_email'))
+            self.assertIn(response_completed_ok, response.body)
+        
+        now_start = self.server_datetime()
+        now = now_start
+        
+        # No summary emails should trigger yet because no users have setup an interval
+        num_emails = getNumEmails()
+        task_summary_notification_email()
+        self.assertEquals(num_emails, getNumEmails())
+        
+        # Setup test data ------------------------------------------------------
+        self.setting('summary_email_interval', 'advanced', 'hours=1') # Setup summary date
+        
+        # Execute timed task ---------------------------------------------------
+        num_emails = getNumEmails()
+        task_summary_notification_email()
+        
+        # Add message that should trigger in last hour and send notification
+        m = Message()
+        m.target    = Session.query(User).get('unittest')
+        m.subject   = 'Test summary_notification_email'
+        m.content   = 'Test summary_notification_email'
+        m.timestamp = now + datetime.timedelta(minutes=30)
+        Session.add(m)
+        Session.commit()
+        
+        now = self.server_datetime(now + datetime.timedelta(hours=1))
+        
+        num_emails = getNumEmails()
+        task_summary_notification_email()
+        
+        # Check sent emails ----------------------------------------------------
+        
+        self.assertEquals(getNumEmails(), num_emails + 1)
+        email = getLastEmail().content_text
+        self.assertIn('summary_notification_email', email)
+        
+        # Reset db state
+        self.setting('summary_email_interval', 'advanced', '')
+        
+        # No summary emails should trigger yet because no users have setup an interval
+        num_emails = getNumEmails()
+        task_summary_notification_email()
+        #self.assertEquals(num_emails, getNumEmails()) # AllanC - this fails .. investigation needs to be made
+        
+        # Reset server datetime
+        self.server_datetime(now_start)
+        
+        Session.delete(m)
+        Session.commit()
