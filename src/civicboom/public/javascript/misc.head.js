@@ -45,7 +45,8 @@ if (!('media_update' in boom)) {
     init: function () {
       console.log('boom.media_update.init');
       // Boom_load on ul.media_files will get current frag's attachments & add any new media to the list, calling boom_load on each li it adds to update media items status
-      $('ul.media_files').live('boom_load', function () {
+      $('body').on('boom_load', 'ul.media_files', function () {
+      //$('ul.media_files').live('boom_load', function () {
         console.log('ul.media_files boom_load');
         var list = $(this);
         var frag = boom.frags.getFragment(list);
@@ -83,7 +84,8 @@ if (!('media_update' in boom)) {
         return false;
       });
       // Clicking a media remove button triggers ajax remove, on success removes element from list.
-      $('ul.media_files li.media_file input.file_remove').live('click', function () {
+      $('body').on('click', 'ul.media_files li.media_file input.file_remove', function () {
+      //$('ul.media_files li.media_file input.file_remove').live('click', function () {
         console.log('ul.media_files li.media_file input.file_remove click');
         var input = $(this);
         var li = input.parents('li');
@@ -100,7 +102,8 @@ if (!('media_update' in boom)) {
         return false;
       })
       // Boom_load on li.media_file triggers ajax status update, if status is still processing sets interval to refresh (will not add duplicate interval timers), else, doesn't.
-      $('ul.media_files li.media_file').live('boom_load', function () {
+      $('body').on('boom_load', 'ul.media_files li.media_file', function () {
+      //$('ul.media_files li.media_file').live('boom_load', function () {
         console.log('ul.media_files li.media_file boom_load');
         var li = $(this);
         var id = li.data('id');
@@ -139,7 +142,8 @@ if (!('media_update' in boom)) {
 if (!('media_recorder' in boom)) {
   boom.media_recorder = {
     init: function () {
-      $('div.media_recorder').live('boom_load', function () {
+      $('body').on('boom_load', 'div.media_recorder', function () {
+      //$('div.media_recorder').live('boom_load', function () {
         var div = $(this);
         
         var callback_resize = boom.util.register_flash_callback('cbflashmediaresize', function (height, width) {

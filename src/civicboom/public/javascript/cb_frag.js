@@ -169,7 +169,8 @@ if(!('util' in boom)) {
         }
       },
       init : function() {
-        $('#flash_message, .flash_message_data').live('boom_load', function() {
+        $('body').on('boom_load', '#flash_message, .flash_message_data', function () {
+        //$('#flash_message, .flash_message_data').live('boom_load', function() {
           var element = $(this);
           var json = element.data('message-json');
           if (json) {
@@ -332,7 +333,8 @@ if(!('util' in boom)) {
       init : function() {
         for(selector in boom.util.validators.validators) {
           console.log('Initialising validator .validate_field' + selector)
-          $('.validate_field' + selector).live('keyup', function() {
+          $('body').on('keyup', '.validate_field' + selector, function () {
+          //$('.validate_field' + selector).live('keyup', function() {
             var element = $(this);
             element.removeClass('invalid').removeClass('valid');
             clearTimeout(element.data('validator_timeout'));
@@ -993,13 +995,15 @@ if(!('frags' in boom)) {
       // Initialise fragment events
       for(var eventType in boom.frags.events.frag) {
         console.log('registering frag event:', eventType);
-        $('.' + boom.frags.classes.container).live('frag_' + eventType, boom.frags.events.frag[eventType]);
+        $('body').on('frag_' + eventType, '.' +boom.frags.classes.container, boom.frags.events.frag[eventType]);
+        //$('.' + boom.frags.classes.container).live('frag_' + eventType, boom.frags.events.frag[eventType]);
       }
       // Initialise live events
       for(var selector in boom.frags.events.live) {
         for(var eventType in boom.frags.events.live[selector]) {
           console.log('registering event:', selector, eventType);
-          $(selector).live(eventType, boom.frags.events.live[selector][eventType]);
+          $('body').on(eventType, selector, boom.frags.events.live[selector][eventType]);
+          //$(selector).live(eventType, boom.frags.events.live[selector][eventType]);
         }
       }
       // Initialise any static events
