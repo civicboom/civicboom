@@ -4,14 +4,11 @@
 BODY.c-misc.a-titlepage {
   
     .signup_btn {
-        position: absolute;
         text-align: center;
         display: table;
-        background-color: $cb-orange;
-        border: 1px solid darken($cb-orange, 20%);
-        @include border_radius(2em);
-        top: 20em;
-        left: 10.5em;
+        background-color: $signup-color;
+        margin-top: 2em;
+        border: 1px solid darken($signup-color, 20%);
         
         &:hover {
             cursor: pointer;
@@ -19,7 +16,7 @@ BODY.c-misc.a-titlepage {
         
         * {
             color: #fff !important;
-            text-shadow: darken($cb-orange, 10%) 0px -1px 2px;
+            text-shadow: darken($signup-color, 10%) 0px -1px 2px;
             
             &:hover {
                 color: #fff !important;
@@ -30,12 +27,15 @@ BODY.c-misc.a-titlepage {
             padding: 0.5em 1em;
             display: table-cell;
             vertical-align: middle;
-            border-top: 1px solid lighten($cb-orange, 25%);
-            border-bottom: 1px solid darken($cb-orange, 25%);
-            @include border_radius(2em);
-            
+            border-top: 1px solid lighten($signup-color, 25%);
+            border-bottom: 1px solid darken($signup-color, 25%);
+        
             .main {
-                font-size: 150%;
+                font-size: 200%;
+            }
+            
+            .tag {
+                font-size: 125%;
             }
         }
     }
@@ -43,7 +43,7 @@ BODY.c-misc.a-titlepage {
     header {
         height: 50px;
     }
-     
+    
     .misc_header {
         position: relative;
         height: 50px;
@@ -52,20 +52,11 @@ BODY.c-misc.a-titlepage {
         
         .logo_img {
             position: absolute;
-            left:  5px;
-            height: 70%;
-            top: 15%;
+            max-height: 80%;
+            top: 10%;
+            left: 1em;
         }
-        
-        .beta_overlay {
-            position: absolute;
-            left: 11.45em;
-            top: 70%;
-            color: black;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
+
         .links {
             position: absolute;
             right: 1em;
@@ -80,99 +71,44 @@ BODY.c-misc.a-titlepage {
     }
     
     .banner {
+        position: relative;
+        //background-image: url('/images/misc/titlepage/banner_gradient.png');
+        background-repeat: no-repeat;
+        //background-color: $cb-lightblue;
+        height: 400px;
         width: 100%;
-
-        .col-top {
-            position: relative;
-            display: block;
-            margin: 0;
-            padding: 0;
-            width: 100%;
+        margin-top: 0.5em;
+        margin-bottom: 1em;
+        // @include drop_shadow(0, 2px, 3px, #333);
+        
+        .text {
+            position: absolute;
+            top: 20%; //14%;
+            right: 3%;
+            height: 100%;
+            max-width: 52%;
+            width: 52%;
+            text-align: left;
+            text-shadow: rgba(0, 0, 0, .25) 0 -1px 1px;
             
-            h1 {
-                color: $cb-orange;
-                text-align: center;
+            .headline {
+                color: $cb_orange;
+                font-size: 240%;
                 padding-bottom: 0.5em;
-                font-size: 240% !important;
-            }
-        }
-
-        .col-left, .col-right {
-            position: relative;
-            display: inline-block;
-            margin: 0;
-            padding: 0;
-            padding-left: 25px;
-        }
-
-        .col-left {
-            padding-top: 15px;
-            width: 35%;
-            
-            h1 {
-                width: 100%;
-                margin-top: 0 !important;
-                color: $cb-lightblue;
-                text-align: center;
-                padding-bottom: 0.5em;
-                font-size: 240% !important;
-                text-shadow: darken($cb-lightblue, 15%) 0 -1px 0;
+                font-weight: normal !important;
+                line-height: 120%;
             }
             
-            img {
-                width: 100%;
-            }
-            
-           .signup {
-                font-size: 200%;
-                position: absolute;
-                top: 10em;
-                left: 4.5em;
-                text-align: center;
-                color: $cb-lightblue;
+            .tagline {
+                font-size: 130%;
+                line-height: 140%;
             }
         }
         
-        .col-right {
-            width: 55%;
-            vertical-align: top;
-            padding-top: 15px;
-            
-            .info-box {
-                margin: 0 0 2em 2%;
-                display: block;
-                width: 100%;
-                
-                h1 {
-                    padding-left: 20px;
-                    color: $cb-orange;
-                }
-                
-                img {
-                    display: block;
-                }
-                
-                p {
-                    display: block;
-                    padding-left: 20px;
-                }
-                
-                ul {
-                    padding-top: 0.25em;
-                    padding-left: 40px;
-                    line-height: 160%;
-                    
-                    li {
-                        list-style: disc;
-                    }
-                }
-            }
-            
-            #organisations {
-            }
-            
-            #individuals {
-            }
+        .graphic {
+            position: absolute;
+            height: 85%;
+            margin: 7.5% auto 7.5% 3%;
         }
     }
     
@@ -199,6 +135,40 @@ BODY.c-misc.a-titlepage {
                 }
             }
             
+            .android_btn {
+                position: relative;
+                width: 90%;
+                margin: 1em auto 0 auto;
+                height: 75px;
+                @include border_radius(0.5em);
+                @include drop_shadow(0, 1px, 2px, #666);
+                @include horiz_gradient(#ddd, #ccc);
+                overflow: hidden;
+                
+                &:hover {
+                    @include horiz_gradient(#eee, #ddd);
+                    
+                    img {
+                        @include transparency(90);
+                    }
+                }
+                
+                img {
+                    @include transparency(70);
+                    position: absolute;
+                    left: 5%;
+                    top: 10%;
+                    height: 135%;
+                }
+                
+                h3 {
+                    position: absolute;
+                    top: 40%;
+                    width: 60%;
+                    right: 0;
+                }
+            }
+        
             h1 {
                 font-size: 150%;
                 padding-top: 0.5em;
