@@ -11,7 +11,7 @@ BODY.c-misc.a-titlepage {
         border: 1px solid darken($cb-orange, 20%);
         @include border_radius(2em);
         top: 20em;
-        left: 8.5em;
+        left: 10.5em;
         
         &:hover {
             cursor: pointer;
@@ -102,6 +102,7 @@ BODY.c-misc.a-titlepage {
             display: inline-block;
             margin: 0;
             padding: 0;
+            padding-left: 25px;
         }
 
         .col-left {
@@ -109,6 +110,7 @@ BODY.c-misc.a-titlepage {
             width: 35%;
             
             h1 {
+                width: 100%;
                 margin-top: 0 !important;
                 color: $cb-lightblue;
                 text-align: center;
@@ -132,7 +134,7 @@ BODY.c-misc.a-titlepage {
         }
         
         .col-right {
-            width: 62%;
+            width: 55%;
             vertical-align: top;
             padding-top: 15px;
             
@@ -142,7 +144,7 @@ BODY.c-misc.a-titlepage {
                 width: 100%;
                 
                 h1 {
-                    padding-left: 14%;
+                    padding-left: 20px;
                     color: $cb-orange;
                 }
                 
@@ -152,12 +154,12 @@ BODY.c-misc.a-titlepage {
                 
                 p {
                     display: block;
-                    padding-left: 14%;
+                    padding-left: 20px;
                 }
                 
                 ul {
                     padding-top: 0.25em;
-                    padding-left: 16%;
+                    padding-left: 40px;
                     line-height: 160%;
                     
                     li {
