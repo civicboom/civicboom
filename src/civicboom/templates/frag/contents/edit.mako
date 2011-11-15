@@ -339,7 +339,7 @@
                     <a href="#"><!--
                         --><img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
                     --></a>
-                    <span id="media_status" style="display: none">(status)</span>
+                    <br><span id="media_status" style="display: none">(status)</span>
                 </td>
             </tr>
             <tr>
@@ -378,7 +378,7 @@
                             </script>
                             <!-- End media still undergoing proceccesing -->
                         % endif
-                        <span id="media_status_${id}" style="display: none">(status)</span>
+                        <br><span id="media_status_${id}" style="display: none">(status)</span>
                     </td>
                 </tr>
                 <tr>
