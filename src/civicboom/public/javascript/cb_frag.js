@@ -569,6 +569,7 @@ if(!('frags' in boom)) {
 
           // Call static frag load event with current event arguments & context
           boom.frags.events.frag.load_static.call(this, event, from_history, true);
+          return false;
         },
         'load_static' : function(event, from_history, dynamic) {
           var current_frag = $(this);
@@ -618,6 +619,7 @@ if(!('frags' in boom)) {
             });
           });
           // Uploadify end
+          return false;
         },
         'closed' : function(event, from_history) {
           if(!from_history) {
@@ -625,6 +627,7 @@ if(!('frags' in boom)) {
             console.log('history.saveState', history_state);
             boom.util.history.saveState(history_state);
           }
+          return false;
         }
       },
       live : {
@@ -826,6 +829,7 @@ if(!('frags' in boom)) {
           'boom_resize' : function() {
             var element = $(this);
             element.accordion('resize');
+            return false;
           }
         },
         '.jqui_tabs' : {
@@ -922,11 +926,13 @@ if(!('frags' in boom)) {
         'img.placeholder_media' : {
           'error' : function() {
             alert('!');
+            return false;
           }
         },
         'img.placeholder_member' : {
           'error' : function() {
             alert('!');
+            return false;
           }
         }
       }
@@ -998,6 +1004,7 @@ if(!('frags' in boom)) {
       $(window).resize(function() {
         console.log('window resized');
         $('.event_resize').trigger('boom_resize');
+        return false;
       });
       // Trigger manual boom_load event for non frag elements
       $(function () {
