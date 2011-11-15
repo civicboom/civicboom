@@ -68,7 +68,7 @@ def process_media(tmp_file, file_hash, file_type, file_name, delete_tmp):
             if track.rotation is not None:
                 rotation = track.rotation
         rotation = int(float(rotation))
-    except:
+    except Exception:
         pass
     
     def ffmpeg_rotation_args(rotation):
