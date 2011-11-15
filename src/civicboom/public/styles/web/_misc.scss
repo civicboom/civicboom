@@ -22,9 +22,8 @@
     }
         
     .footer_wrapper{
-        width: $misc-page-width;
         margin: auto;
-        text-align: left;
+        // text-align: left;
         background-color: transparent;
         position: relative;
         
@@ -39,6 +38,7 @@
             margin: 2em 1em 2em 0;
             padding: 0.5em 1em 1em 1.5em;
             text-shadow: darken($cb-grey, 40%) 1px 1px 1px;
+            text-align: left;
             
             .icon16 {
                 display: inline-block;
