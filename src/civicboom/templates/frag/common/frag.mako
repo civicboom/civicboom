@@ -31,7 +31,7 @@
 
 ## What a hack ... I quickly needed a way of putting content in the title frag div's
 ## This could be refactored and integrated into body below so we dont have the duplication of this
-<%def name="frag_basic(title='', icon='', frag_content=None)">
+<%def name="frag_basic(title='', icon='', frag_content=None, include_white_background=True)">
     <div class="frag_bars">
         <%doc><div class="title_bar">
             <div class="title">
@@ -50,7 +50,9 @@
     </div>
     
     <div class="frag_data c-${c.controller} a-${c.action} u-${'user' if c.logged_in_persona else 'anon'} ${self.attr.frag_data_css_class}">
+        % if include_white_background:
         <div class="frag_whitewrap fill">
+        % endif
             <div class="frag_col fill">
                 ##% if isinstance(frag_content, types.FunctionType):
                 % if hasattr(frag_content, '__call__'):
@@ -59,7 +61,9 @@
                     ${frag_content}
                 % endif
             </div>
+        % if include_white_background:
         </div>
+        %endif
     </div>
 </%def>
 

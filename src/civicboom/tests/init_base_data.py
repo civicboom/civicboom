@@ -318,7 +318,7 @@ def init_base_data():
         c21 = _content("assignment", "Wanted: videos from your streets", "We have a camera crew at the center of the riots, but how is the rest of the city holding up?", picus_tv, parent=c2)
         c111 = _content("assignment", "Have you seen Zeke Sanders?", "[...]", picus_tv, parent=c11, media=["m-zeke"])
         _content("assignment", "Have you ever suffered from road rage? Stories wanted", "[...]", bob_page)
-        c3 = _content("assignment", "Flooding on East Street", "Reports are coming in that the river is breeching causing fast moving floods around East Street. Are you there? Send us your videos", picus_tv, parent=c2)
+        c3 = _content("assignment", "Flooding on East Street", "Reports are coming in that the river is breeching causing fast moving floods around East Street. Are you there? Send us your videos", picus_tv)
         c31 = _content("article", "Video of the floods", "Things are all go round here! Here's an interview with someone at the scene", unittest, media=["flood"])
 
         d1 = _content("draft", "Report from regional team meeting", "[...]", unittest)

@@ -13,7 +13,7 @@
     <h1>${_('_site_name plans')}</h1>
     <p>
         ${_('_site_name is free to use')} - 
-        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their stories directly to news organisations.")}
+        ${_("we offer a limited version that's perfect for non-professionals who want to respond to requests and share their _articles directly to news organisations.")}
     </p>
     <p>
         ${_('We also offer enhanced versions - the Pro Lite and the Pro Premium')}<br />

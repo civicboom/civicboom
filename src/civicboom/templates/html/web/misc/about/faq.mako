@@ -12,7 +12,7 @@
 
 <p>
 <b>${_("Q: What is _site_name and how does it work?")}</b>
-<br />${_("A: _site_name connects the people that need news stories with the the people that have them")}
+<br />${_("A: _site_name connects the people that need news _articles with the the people that have them")}
 
 <br />${_("How Civicboom can help you depends on what you want to do")}
     <ol>
@@ -39,7 +39,7 @@
 
 <p>
 <b>${_("Q: What is the _widget?")}</b>
-<br />${_("A: The _widget is a simple audience engagement \"widget\", a window that can be embedded into your website or blog. It allows your audience to directly post their stories and respond to news requests.")}
+<br />${_("A: The _widget is a simple audience engagement \"widget\", a window that can be embedded into your website or blog. It allows your audience to directly post their _articles and respond to news requests.")}
 </p>
 
 <p>
@@ -64,12 +64,12 @@
 
 <p>
 <b>${_("Q: What is private content?")}</b>
-<br />${_("A: Private content is a premium feature that allows users to hide their requests for stories and associated content from the general public.")}
+<br />${_("A: Private content is a premium feature that allows users to hide their requests for _articles from the general public.")}
 </p>
 
 <p>
 <b>${_("Q: What is a trusted follower?")}</b>
-<br />${_("A: A trusted follower can see your private requests for stories and content.")}
+<br />${_("A: A trusted follower can see your private requests for _articles.")}
 </p>
 
 <p>
@@ -139,7 +139,7 @@
 </p>
 
 <p>
-<b>${_("Q: I don't like a response that someone has posted to my story request (for example, it could be \"off brand\") but it isn't inappropriate/offensive. What can I do?")}</b>
+<b>${_("Q: I don't like a response that someone has posted to my _content request (for example, it could be \"off brand\") but it isn't inappropriate/offensive. What can I do?")}</b>
 <br />${_("A: You can disconnect your request from that piece of content by clicking on the \"Disassociate\". The content still exists but it is shown in the reply list.")}
 </p>
 
@@ -149,7 +149,7 @@
 </p>
 
 </p>
-<b>${_("Q: Will the stories I read or post on _site_name appear on my Facebook wall?")}</b>
+<b>${_("Q: Will the _articles I read or post on _site_name appear on my Facebook wall?")}</b>
 <br />${_("A: Not unless you specifically share that content.")}
 </p>
 
@@ -180,7 +180,7 @@
 
 
 <p>
-<b>${_("Q: Can I use HTML formatting in my stories?")}</b>
+<b>${_("Q: Can I use HTML formatting in my _articles?")}</b>
 <br />${_("A: No. There are specific buttons for common formatting such as Bold, Italics, Scoring etc.")}
 </p>
 
@@ -201,8 +201,8 @@
 </p>
 
 <p>
-<b>${_("Q: Can I print stories or news requests?")}</b>
-<br />${_("A: Yes. Click on the \"social sharing\" box on any story or news request, then select print. Note, this will only print that specific piece of content rather the whole page.")}
+<b>${_("Q: Can I print _articles or news requests?")}</b>
+<br />${_("A: Yes. Click on the \"social sharing\" box on any _content or news request, then select print. Note, this will only print that specific piece of content rather the whole page.")}
 </p>
 
 <p>
@@ -231,7 +231,7 @@
 
 <p>
 <b>${_("Q: What is the _site_name's account Policy?")}</b>
-<br />${_("A: _site_name's aim is to help you contribute and source stories in an easy and engaging way. To this end, we have the following guidelines to make sure. If you want to get your news published, you will need to respect these rules as well as your fellow users.")} 
+<br />${_("A: _site_name's aim is to help you contribute and source _articles in an easy and engaging way. To this end, we have the following guidelines to make sure. If you want to get your news published, you will need to respect these rules as well as your fellow users.")} 
 <ol>
         <li>${_("All content, whether posted or transmitted publicly or privately, is the sole responsibility of the person who originated such content. The Service cannot take responsibility for such content. Any use or reliance on any content or materials posted via The Service or obtained by you through The Services is at your own risk.")} </li>
         <li>${_("You must be 13 years or older to use The Service. Visitors can browse and explore some elements of The Service without creating an Account.")} </li>

@@ -17,7 +17,7 @@
         <% owner = c.widget['owner'] %>
         % if owner and owner.get('push_assignment'):
         <div class="action">
-            <a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'], sub_domain="www")}">${_("Send us your stories")}</a>
+            <a href="${h.url('new_content', target_type='article', parent_id=owner['push_assignment'], sub_domain="www")}">${_("Send us your _articles")}</a>
         </div>
         % endif
         

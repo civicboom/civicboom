@@ -224,7 +224,7 @@
                 ${_("By: ")} ${member_includes.member_link(self.content['creator'], rel='author')}
             </td>
         </tr>
-        % if self.content.get('approval') == 'approved':
+        % if self.content.get('approval') == 'approved' and self.content.get('parent'):
         <tr>
             <td>
                 <span class="icon32 i_approved"></span>${_("Approved by ")} ${member_includes.member_link(self.content['parent']['creator'])}
@@ -426,7 +426,7 @@
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=content_dict['id']) ,
                     link_class = 'button',
-                    value     = _("Respond with your story") ,
+                    value     = _("Respond with your _content") ,
                     form_data = dict(
                         json_complete = "[['update', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
                     ),
@@ -436,12 +436,12 @@
         </li>
     </%def>
     <div style="">
-        <h2 class="hide_if_js">${_("Respond with your story")}</h2>
-        <h1 class="hide_if_nojs">${_("Great you want to share your story...")}</h1>
+        <h2 class="hide_if_js">${_("Respond with your _content")}</h2>
+        <h1 class="hide_if_nojs">${_("Great you want to share your _content...")}</h1>
         <p style="padding-bottom: 1em;">${_("Would you like to respond to:")}</p>
         <ul>
             ${li_story(_('The original request'), self.content.get('root_parent'))}
-            ${li_story(_('This story'), self.content)}
+            ${li_story(_('This _article'), self.content)}
         </ul>
     </div>
     <div class="cb"></div>
@@ -474,13 +474,13 @@
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
                     link_class  = 'button' ,
-                    value       = _("Respond with your story") ,
+                    value       = _("Respond with your _content") ,
                     form_data   = dict(
                         json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ) ,
                     link_data   = dict(
                         confirm = _("Would you like to respond to:"),
-                        confirm_title = _("Great you want to share your story..."),
+                        confirm_title = _("Great you want to share your _content..."),
                         confirm_secure_options = [
                             dict(
                                 title=_('The original request'),
@@ -488,23 +488,23 @@
                                 json=h.url('new_content', parent_id=self.content['root_parent']['id'], format='json')
                             ) ,
                             dict(
-                                title=_('This story'),
+                                title=_('This _content'),
                                 content='<p><b>%s</b></p><p><div class="creator_avatar fl"><div class="thumbnail"><img src="%s" alt="%s" class="img" onerror="this.onerror=null;this.src=\'/images/default/avatar_user.png\'" /></div></div><div class="content_creator">%s: %s</div></p>' % (self.content['title'], self.content['creator']['avatar_url'], self.content['creator']['username'], _('By'), self.content['creator']['name']),
                                 json=h.url('new_content', parent_id=self.id, format='json'))
                         ]
                     ) ,
                 )}
 ##                <div class="hide_if_nojs">
-##                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your story")}</a>
+##                    <a href="" onclick="$(this).parents('.hide_if_nojs').siblings('.hide_if_js').find('#popup_share').modal({appendTo: $(this).parents('table')}); return false;" class="button">${_("Respond with your _content")}</a>
 ##                </div>
 ##                <div class="hide_if_js">
-##                    ${popup.popup_static(_('Respond with your story'), respond_has_parent, 'popup_share')}
+##                    ${popup.popup_static(_('Respond with your _content'), respond_has_parent, 'popup_share')}
 ##                </div>
             % else:
                 ${h.secure_link(
                     h.args_to_tuple('new_content', parent_id=self.id) ,
                     link_class = 'button',
-                    value     = _("Respond with your story") ,
+                    value     = _("Respond with your _content") ,
                     form_data = dict(
                         json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ),
@@ -553,7 +553,7 @@
                 href="#"
                 class="link_dummy"
                 data-confirm-title="${_('Why get involved?')}"
-                data-confirm="${_("By sharing your story with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}<ol><li>${_("Get published")}</li><li>${_("Get recognition")}</li><li>${_("Make the news!")}</li></ol>" data-confirm-title="Why should you get involved?"
+                data-confirm="${_("By sharing your _content with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}<ol><li>${_("Get published")}</li><li>${_("Get recognition")}</li><li>${_("Make the news!")}</li></ol>" data-confirm-title="Why should you get involved?"
                 data-confirm-yes="OK, let's go!"
             >Why should you get involved?</a>
 
@@ -697,7 +697,7 @@
                     
                     ${_("Need more info on this %s? ") % _(('_'+self.content['type'] if not self.content['parent'] else 'response'))}
                     
-                    ${_('If you want to respond with your story please use the "Respond with your story" button above.')}<br />
+                    ${_('If you want to respond with your _content please use the "Respond with your _content" button above.')}<br />
                     <!--<br><input type="submit" name="submit_preview" value="Preview">-->
                     <br /><input type="submit" class="button" name="submit_response" value="${_('Ask')}">
                 ${h.end_form()}
@@ -840,7 +840,7 @@
             value_formatted = "<span class='icon16 i_approved'></span>&nbsp;%s" % _('Approve & _Lock'),
             link_data = dict(
                 confirm = "<p>" +\
-                    _("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") +\
+                    _("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original _article by the creator. You can still contact them for more information.") +\
                     "</p><p>" +\
                     _("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.") +\
                     "</p>",
@@ -998,7 +998,7 @@
                 ${_("Why should you get involved?")}
             </div>
             <div class="popup-message">
-                ${_("By sharing your story with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}
+                ${_("By sharing your _content with <b>%s</b> as video, images or audio, you can:") % self.content['creator']['name'] | n}
                 <ol>
                     <li>${_("Get published")}</li>
                     <li>${_("Get recognition")}</li>
@@ -1098,7 +1098,7 @@ r = (d['content']['rating'] * 5)
                             value_formatted = h.literal("<table class=\"approve\"><tr><td class=\"int\">1.</td><td><p class=\"guidance_title\">"+_("_Lock it!")+"</p><p class=\"guidance_text\">"+_("Want to publish or use this content? Click here!")+"</p></td></tr></table>"),
                             link_data = dict(
                                 confirm = '<p>' +\
-                                    _("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original story by the creator. You can still contact them for more information.") +\
+                                    _("When something is _locked and approved it means that you can use this for your needs (including commercial). It could be for your website, a newspaper, your blog so long as you credit the creator. Once you've _locked and approved it, no further changes can be made to the original _article by the creator. You can still contact them for more information.") +\
                                     '</p><p>' +\
                                     _('You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.') +\
                                     '</p>',

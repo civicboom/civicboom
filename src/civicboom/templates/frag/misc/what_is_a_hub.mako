@@ -46,7 +46,7 @@
                     <h3>${_('Create a name for the _Group. E.g: "The Daily Post", "Brentwood elections" or "Student protests".')}</h3>
                     <br />
                     <p>
-                        ${_('Explain what the _Group is for. E.g: "Join us in making the news: Tell us your stories - send in videos, pictures and audio and help us report real news as it happens."')}
+                        ${_('Explain what the _Group is for. E.g: "Join us in making the news: Send in videos, pictures and audio and help us report real news as it happens."')}
                     </p>
                     <br />
                     <p>

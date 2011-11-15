@@ -54,9 +54,9 @@
             % if self.content.get('parent'):
                 ${_("You are responding to: %s") % self.content['parent']['title']}
             % elif self.selected_type == 'assignment':
-                ${_("Ask for stories")}
+                ${_("Ask for _content")}
             % elif self.selected_type == 'article':
-                ${_("Post a story")}
+                ${_("Post _content")}
             % endif
         </h1>
 
@@ -181,8 +181,8 @@
         <tr><td>
         </td></tr>
         <tr><td>
-            <label for="title_${self.id}">${_('Add your story title')}</label>
-            <input id="title_${self.id}" name="title" type="text" class="edit_input auto_save" value="${self.content['title']}" placeholder="${_('Enter a story title')}"/>
+            <label for="title_${self.id}">${_('Add your _article title')}</label>
+            <input id="title_${self.id}" name="title" type="text" class="edit_input auto_save" value="${self.content['title']}" placeholder="${_('Enter _article title')}"/>
         </td></tr>
         <tr><td>
 		<%
@@ -202,9 +202,10 @@
             elif isinstance(self.content['tags'], basestring):
                 tags = self.content['tags'].split(separator)
                 
-            tags_string = u""
-            for tag in tags:
-                tags_string += tag + separator
+            #tags_string = u""
+            #for tag in tags:
+            #    tags_string += tag + separator
+            tags_string = separator.join(tags)
             %>
             <input class="edit_input" name="tags_string" type="text" value="${tags_string}" id="tags_${self.content['id']}"/>
         </td></tr>
@@ -602,7 +603,7 @@
         % elif self.selected_type == "article":
             % if self.content.get('parent'):
                 <div class="popup-title">
-                    ${_("Once you share this story, it will:")}
+                    ${_("Once you share this _article, it will:")}
                 </div>"
                 <div class="popup-message">
                     <ol>
@@ -613,7 +614,7 @@
                 </div>
             % else:
                 <div class="popup-title">
-                    ${_("Once you post this story:")}
+                    ${_("Once you post this _article:")}
                 </div>
                 <div class="popup-message">
                     <ol>

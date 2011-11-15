@@ -10,3 +10,10 @@ $(document).bind("mobileinit", function(){
 //$(document).bind("pagecreate", function() {
 //    $('form').attr('data-ajax', 'false'); // Little hacky, tell any forms created not to ajax submit
 //});
+
+function isiPhone(){
+    return (
+        (navigator.platform.indexOf("iPhone") != -1) ||
+        (navigator.platform.indexOf("iPod"  ) != -1)
+    );
+}
