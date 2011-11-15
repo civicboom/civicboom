@@ -186,10 +186,14 @@ if(!('util' in boom)) {
         if(Modernizr.history) {
           // Note: this object is limited to 640k (which ought to be
           // enough for anyone) when saved in the browser history file
-          if(replace) {
-            history.replaceState(state_object, "Civicboom", current_url);
-          } else {
-            history.pushState(state_object, "Civicboom", current_url);
+          try {
+            if(replace) {
+              history.replaceState(state_object, "Civicboom", current_url);
+            } else {
+              history.pushState(state_object, "Civicboom", current_url);
+            }
+          } catch (e) {
+            console.log('history state save error', state_object, replace, e);
           }
         } else {
 
@@ -927,18 +931,6 @@ if(!('frags' in boom)) {
             var link = $(this);
             var data = link.data();
             janrain_popup_share(data.janrainUrl, data.janrainOptions, data.janrainVariables);
-            return false;
-          }
-        },
-        'img.placeholder_media' : {
-          'error' : function() {
-            alert('!');
-            return false;
-          }
-        },
-        'img.placeholder_member' : {
-          'error' : function() {
-            alert('!');
             return false;
           }
         }
