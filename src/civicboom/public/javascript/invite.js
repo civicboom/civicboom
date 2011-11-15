@@ -4,7 +4,8 @@ if (!('invite' in window.boom)) {
   boom.invite = {
     init: function () {
       var container = '.frag_data.c-invite ';
-      $(container+'.invite_click').live('click', function () {
+      $('body').on('click', container+'.invite_click', function () {
+      //$(container+'.invite_click').live('click', function () {
         var button = $(this);
         var form = button.parents('form');
         var exclude_members = form.find('.exclude-members').val().split(',');
@@ -65,7 +66,8 @@ if (!('invite' in window.boom)) {
         boom.invite.list_paginate(ul, offset, limit, form.find('input[name="invitee-prev"]'), form.find('input[name="invitee-next"]'));
         return false;
       });
-      $(container+'.invite_post').live('click', function () {
+      $('body').on('click', container+'.invite_post', function () {
+      //$(container+'.invite_post').live('click', function () {
         var element = $(this);
         var form = element.parents('form');
         var frag = form.parents('.frag_container');

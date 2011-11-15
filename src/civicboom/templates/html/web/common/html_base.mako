@@ -60,7 +60,7 @@
 	<script src="/javascript/modernizr-1.7.js"></script>
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
-	<script src="/javascript/jquery-1.6.4.js"></script>
+	<script src="/javascript/jquery-1.7.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/prototypes.js"></script>
 	<script src="/javascript/misc.head.js"></script>
