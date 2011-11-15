@@ -43,23 +43,29 @@
 ## CSS Style Sheets
 ##-------------------
 	<link rel="stylesheet" type="text/css" media="screen" href="${h.wh_url("public", "styles/web.css")}" />
+<!--[if !(IE)]>
 	<link rel="stylesheet" type="text/css" href="/fonts/fam-pro.css" />
+<![endif]-->
 ##-------------------
 ## Javascripts
 ##-------------------
 % if config['development_mode']:
+    <script>
+        boom_development = true;
+        if (!window.console || ! window.console.log)
+            console = {log: function (){}}
+    </script>
     ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
 	<!-- Browser bug fixes -->
 	<script src="/javascript/modernizr-1.7.js"></script>
 	<script src="/javascript/swfobject.js"></script>
 	<!-- jQuery -->
-	<script src="/javascript/jquery-1.6.2.js"></script>
+	<script src="/javascript/jquery-1.7.js"></script>
 	<!-- Civicboom -->
 	<script src="/javascript/prototypes.js"></script>
 	<script src="/javascript/misc.head.js"></script>
 	<script src="/javascript/url_encode.js"></script>
 	<script src="/javascript/cb_frag.js"></script>
-	<script src="/javascript/ajaxError.js"></script>
 % else:
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif
@@ -102,12 +108,13 @@ ${self.head_links()}
 ## Some form functions will need to return a status to inform users the operation completed
 
 <%def name="flash_message()">
-	<div id="flash_message" class="hidden_by_default status_${c.result['status']}">${c.result['message']}</div>
+    <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
+	<div id="flash_message" class="hidden_by_default status_${c.result['status']}${' event_load' if c.result['message'] != '' else ''}" data-message-json="${json_message}">${c.result['message']}</div>
 	% if c.result['message'] != "":
 	<!-- if we have a flash message in the session, activate it -->
 	<script type="text/javascript">
-		<% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
-		$(function() {flash_message(${json_message|n});});
+		
+		//$(function() {flash_message(${json_message|n});});
 	</script>
 	% endif
 </%def>
@@ -129,7 +136,7 @@ if c.logged_in_persona:
 else:
 	u = "anon"
 %>
-<body class="c-${c.controller} a-${c.action} u-${u}">    
+<body class="c-${c.controller} a-${c.action} u-${u}" data-base_url="${h.url('/', qualified=True)}">
     ${flash_message()}
     <header>
         % if hasattr(next, 'header'):

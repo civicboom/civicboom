@@ -55,10 +55,12 @@
         url_frag = None
         if isinstance(url, tuple):
             url, url_frag = h.url_pair(gen_format='frag', *url[0], **url[1])
+            class_=class_ + ' link_new_popup'
     %>
     <a href="${url}" class="${class_}" title="${title}"
        % if url_frag:
-       onclick="popup('${title}','${url_frag}'); return false;"
+       data-frag="${url_frag}"
+       ##onclick="popup('${title}','${url_frag}'); return false;"
        % endif
     >
         ${text}

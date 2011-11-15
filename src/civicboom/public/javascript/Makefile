@@ -1,12 +1,11 @@
 HEAD=\
 	modernizr-1.7.js \
 	swfobject.js \
-	jquery-1.6.2.js \
+	jquery-1.7.js \
 	prototypes.js \
 	misc.head.js \
 	url_encode.js \
 	cb_frag.js \
-	ajaxError.js \
 
 FOOT=\
 	jquery.ui.js \
@@ -22,6 +21,7 @@ FOOT=\
 	jquery.getUrlParam.js \
 	jquery.cookie.js \
 	jquery.jcarousel.js \
+	jquery.swfobject.1-1-1.js \
 	invite.js \
 	mobile.js \
 	rpx.js \
@@ -57,22 +57,22 @@ clean:
 # things to be called manually to update when necessary
 #
 
-jquery.ui.js:
-	git clone git://github.com/jquery/jquery-ui.git
-	cd jquery-ui && git checkout 1.8.14
-	cd jquery-ui/ui/ && cat \
-		jquery.ui.core.js \
-		jquery.ui.widget.js \
-		jquery.ui.mouse.js \
-		jquery.ui.position.js \
-		jquery.ui.autocomplete.js \
-		jquery.ui.datepicker.js \
-		jquery.ui.button.js \
-		jquery.ui.tabs.js \
-		jquery.ui.slider.js \
-		jquery.ui.accordion.js \
-		> ../../jquery.ui.js
-	rm -rf jquery-ui
+#jquery.ui.js:
+#	git clone git://github.com/jquery/jquery-ui.git
+#	cd jquery-ui && git checkout 1.8.14
+#	cd jquery-ui/ui/ && cat \
+#		jquery.ui.core.js \
+#		jquery.ui.widget.js \
+#		jquery.ui.mouse.js \
+#		jquery.ui.position.js \
+#		jquery.ui.autocomplete.js \
+##		jquery.ui.datepicker.js \
+#		jquery.ui.button.js \
+#		jquery.ui.tabs.js \
+#		jquery.ui.slider.js \
+#		jquery.ui.accordion.js \
+#		> ../../jquery.ui.js
+#	rm -rf jquery-ui
 
 OpenLayers.js:
 	svn checkout http://svn.openlayers.org/tags/openlayers/release-2.10/ openlayers
