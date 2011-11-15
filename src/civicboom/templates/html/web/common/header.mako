@@ -170,16 +170,14 @@
             </td>
         </tr>
         <tr class="extras">
-            <td colspan="3" style="text-align: right;">
+            <td colspan="2">
+                <a href="#" onclick="boom.util.desktop_notification.request_permission(); return false;">Turn on notifications</a>
+            </td>
+            <td colspan="2" style="text-align: right;">
                 ${h.secure_link(
                     h.url(controller='account', action='signout'),
                     _('Sign out')
                 )}
-            </td>
-        </tr>
-        <tr class="desktop_notifications" style="display:none;">
-            <td colspan="4">
-                <a href="#" onclick="boom.util.desktop_notification.request_permission(); return false;">Turn on notifications</a>
             </td>
         </tr>
     </table>
