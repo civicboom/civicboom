@@ -823,6 +823,7 @@ if(!('frags' in boom)) {
         // We can initialise jQuery UI elements here too on load
         '.jqui_accordion' : {
           'boom_load' : function() {
+            console.log('.jqui_accordion boom_load');
             var element = $(this);
             var data = element.data('jqui_accordion');
             if( typeof data == 'string')
