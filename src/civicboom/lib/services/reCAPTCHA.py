@@ -46,14 +46,15 @@ def reCAPTCHA(method, **kwargs):
         lazy_private_key = config['api_key.reCAPTCHA.private']
     kwargs['privatekey'] = lazy_private_key
     
-    try:
-        http_response        = urllib2.urlopen(service_url+method, urllib.urlencode(kwargs), timeout=10)
-        reCAPTCHA_response   = http_response.read().splitlines()
-        http_response.close()
-    except:
-        log.error(self.message('reCAPTCHA network_failure', state))
-        return None
-    return reCAPTCHA_response
+    for i in range(2):
+        try:
+            http_response        = urllib2.urlopen(service_url+method, urllib.urlencode(kwargs), timeout=10)
+            reCAPTCHA_response   = http_response.read().splitlines()
+            http_response.close()
+            return reCAPTCHA_response
+        except Exception as e:
+            log.error('reCAPTCHA network_failure: %s' % e)
+    return None
 
 
 def reCAPTCHA_verify(**kwargs):
