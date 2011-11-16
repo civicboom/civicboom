@@ -1,6 +1,6 @@
 <% args, kwargs = c.web_params_to_kwargs %>
 
-${h.form(h.args_to_tuple('messages', format='redirect'), json_form_complete_actions="cb_frag_remove(current_element);")}
+${h.form(h.args_to_tuple('messages', format='redirect'), data=dict(json_complete="[['modal_close']]"))}
 	<table class="message_composer">
         
         % if kwargs.get("target"):

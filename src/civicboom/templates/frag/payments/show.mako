@@ -94,7 +94,8 @@
                             h.args_to_tuple('payment_action', action='billing_account_deactivate', format='redirect', id=self.id, billing_account_id=billing_account['id']) ,
                             value           = _('Deactivate') ,
                             value_formatted = h.literal("<span class='icon16 i_delete'><span>%s</span></span>" %_('Deactivate')) ,
-                            json_form_complete_actions = "cb_frag_reload(current_element);" ,
+                            form_data       = dict(json_complete = "[ ['update'] ]"),
+                            #json_form_complete_actions = "cb_frag_reload(current_element);" ,
                         )}
                     </div>
                 </li>
@@ -107,7 +108,9 @@
         <ul>
             % for invoice in d['invoices']:
                 <li>
-                    <a href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}" onclick="cb_frag($(this), '${h.url('payment_action', format='frag', action='invoice', id=d['id'], invoice_id=invoice['id'])}'); return false;">
+                    <a class="link_new_frag"
+                        href="${h.url('payment_action', action='invoice', id=d['id'], invoice_id=invoice['id'])}"
+                        data-frag="${h.url('payment_action', format='frag', action='invoice', id=d['id'], invoice_id=invoice['id'])}">
                         ${invoice['id']} - ${h.api_datestr_to_datetime(invoice['timestamp']).strftime('%a, %d %b %Y')} - ${invoice['status']}
                     </a>
                 </li>
@@ -120,7 +123,9 @@
         <ul>
             % for member in d['members']:
                 <li>
-                    <a href="${h.url('member', id=member.get('username'))}" onclick="cb_frag($(this), '${h.url('member', format='frag', id=member.get('username'))}'); return false;">
+                    <a class="link_new_frag"
+                        href="${h.url('member', id=member.get('username'))}"
+                        data-frag="${h.url('member', format='frag', id=member.get('username'))}">
                         ${member.get('name')}
                     </a>
                     <div class="fr">
@@ -128,7 +133,8 @@
                             h.args_to_tuple('payment_action', action='member_remove', id=d['id'], username=member.get('username'), format='redirect') ,
                             value           = _('Remove') ,
                             title           = _("Remove %s") % member.get('name', '') ,
-                            json_form_complete_actions = "cb_frag_reload(current_element); " #% url('payment', id=self.id),
+                            form_data       = dict(json_complete = "[ ['update'] ]"),
+                            #json_form_complete_actions = "cb_frag_reload(current_element); " #% url('payment', id=self.id),
                         )}
                     </div>
                     

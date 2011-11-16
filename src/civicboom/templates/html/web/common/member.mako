@@ -23,16 +23,14 @@ ${key}="${value}"
 <%def name="member_link(member, js_link_to_frag=True, new_window=False, class_='', **kwargs)">
 <%
     if js_link_to_frag:
-        js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('member', id=member['username'], format='frag'))
-    else:
-        js_link_to_frag = ''
+        class_ = class_ + ' link_new_frag'
         
     if new_window:
         new_window = 'target="_blank"'
     else:
         new_window = ''
 %>
-<a href="${h.url('member', id=member['username'])}" title="${member['name']}" class="${class_}" ${js_link_to_frag} ${new_window} ${kwargs_attrs(**kwargs)}>${member['name']}</a>
+<a href="${h.url('member', id=member['username'])}" data-frag="${h.url('member', id=member['username'], format='frag')}" title="${member['name']}" class="${class_}" ${new_window} ${kwargs_attrs(**kwargs)}>${member['name']}</a>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -59,7 +57,8 @@ ${key}="${value}"
             new_window = ''
 
     %>\
-    <%def name="member_link()"><a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}></%def>
+    <%def name="member_link()"><a class="link_new_frag" href="${h.url('member', id=member['username'])}" title="${member['name']}" data-frag="${h.url('member', id=member['username'], format='frag')}"></%def>
+    ##<a href="${h.url('member', id=member['username'])}" title="${member['name']}" ${js_link_to_frag} ${new_window}></%def>
     ##% if include_name == 'prefix':
     ##  nothing
     ##% endif
