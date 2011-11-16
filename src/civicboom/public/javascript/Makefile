@@ -1,6 +1,5 @@
-HEAD  := $(shell find head -name "*.js" | sort)
-FOOT  := $(shell find foot -name "*.js" | sort)
-
+HEAD    := $(shell find head   -name "*.js" | sort)
+FOOT    := $(shell find foot   -name "*.js" | sort)
 MOBILE  := $(shell find mobile -name "*.js" | sort)
 
 all: _combined.head.js _combined.foot.js _combined.mobile.js
@@ -15,7 +14,7 @@ _combined.mobile.js: Makefile $(MOBILE)
 	cat $(MOBILE) | yui-compressor --type js -o _combined.mobile.js
 
 clean:
-	rm -f _combined.head.js _combined.foot.js _combined.mobile.js
+	rm -f _combined.*.js
 
 
 #
