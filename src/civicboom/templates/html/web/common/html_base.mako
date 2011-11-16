@@ -55,17 +55,15 @@
         if (!window.console || ! window.console.log)
             console = {log: function (){}}
     </script>
-    ## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
-	<!-- Browser bug fixes -->
-	<script src="/javascript/modernizr-1.7.js"></script>
-	<script src="/javascript/swfobject.js"></script>
-	<!-- jQuery -->
-	<script src="/javascript/jquery-1.7.js"></script>
-	<!-- Civicboom -->
-	<script src="/javascript/prototypes.js"></script>
-	<script src="/javascript/misc.head.js"></script>
-	<script src="/javascript/url_encode.js"></script>
-	<script src="/javascript/cb_frag.js"></script>
+    <%
+    from glob import glob
+    scripts_head = glob("civicboom/public/javascript/head/*.js")
+    scripts_head = [n[len("civicboom/public/"):] for n in scripts_head]
+    scripts_head.sort()
+    %>
+    % for script in scripts_head:
+        <script src="/${script}"></script>
+    % endfor
 % else:
 	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % endif

@@ -1,42 +1,7 @@
-HEAD=\
-	modernizr-1.7.js \
-	swfobject.js \
-	jquery-1.7.js \
-	prototypes.js \
-	misc.head.js \
-	url_encode.js \
-	cb_frag.js \
+HEAD  := $(shell find head -name "*.js" | sort)
+FOOT  := $(shell find foot -name "*.js" | sort)
 
-FOOT=\
-	jquery.ui.js \
-	jquery.ui.stars-3.0.1.js \
-	jquery.ui.timepicker-addon.js \
-	jquery.html5-0.0.1.js \
-	jquery.scrollTo.js \
-	jquery.simplemodal-1.4.1.js \
-	jquery.uploadify.v2.1.4.js \
-	jquery.simple-color-picker.js \
-	jquery.ba-hashchange.min.js \
-	jquery.limit-1.2.js \
-	jquery.getUrlParam.js \
-	jquery.cookie.js \
-	jquery.jcarousel.js \
-	jquery.swfobject.1-1-1.js \
-	invite.js \
-	mobile.js \
-	rpx.js \
-	misc.foot.js \
-	gears_init.js \
-	geo.js \
-	OpenLayers.js \
-	minimap.js \
-
-MOBILE=\
-	jquery-1.6.2.js \
-	jquery.mobile.cb_settings.js \
-	jquery.mobile-1.0rc2.js \
-	geo.js \
-	#jquery.ui.datepicker.mobile.js \
+MOBILE  := $(shell find mobile -name "*.js" | sort)
 
 all: _combined.head.js _combined.foot.js _combined.mobile.js
 
