@@ -104,9 +104,7 @@
                 #log.debug('old subdomain = %s' % kwargs['sub_domain'])
                 # AllanC - annoyingly this should never happen ... but somhow the subdomain is leaking out of the URL generator - probably because somewhere there is a still a call to pylons.url rather than web.url
                 del kwargs['sub_domain']
-            print 'html url', kwargs
             self.attr.html_url = h.url('current', sub_domain='www', **kwargs)
-            print self.attr.html_url
             
         
         
