@@ -7,6 +7,10 @@ refer to the routes manual at http://routes.groovie.org/docs/
 from routes import Mapper
 import re
 
+# GregM: Best solution I could find for magic secure link generation
+
+action_single_map = {}
+
 
 def cb_resource(mapper, single, plural, **kwargs):
     # nothing uses this yet, so it is untested
@@ -32,6 +36,8 @@ def cb_resource(mapper, single, plural, **kwargs):
     mapper.connect('edit_'+single,   '/'+plural+'/{id}/edit{.format}',         controller=plural, action='edit',   conditions=dict(method=['GET']))
     mapper.connect(single+'_action', '/'+plural+'/{id}/{action}{.format}',     controller=single+'_actions',       conditions=dict(method=['GET', 'POST', 'PUT', 'DELETE']))
 
+    # action -> singular map for secure_link magic
+    action_single_map[single+'_action'] = single
 
 def _subdomain_check(kargs, mapper, environ):
     """Screen the kargs for a subdomain and alter it appropriately depending

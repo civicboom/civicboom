@@ -30,12 +30,33 @@
         }
 
         .popup-title {
-            font-size: 250%
+          
+          .popup-persona {
+              // vertical-align: center;
+              height: 32px;
+              cursor: pointer;
+              vertical-align: middle;
+              padding-bottom: 6px;
+          
+              img {
+                width: 32px;
+                height: 32px;
+                padding-bottom: 7px;
+                vertical-align: middle;
+                display: inline-block;
+              }
+            }
+            font-size: 200%
         }
         
         .popup-message {
-            font-size: 150%;
+            font-size: 140%;
             margin: 1em 0 1em 0;
+            ul, li {
+              padding-left: 0em;
+              margin-left: 2em;
+              margin-right: 1em;
+            }
         }
         
         .popup-tag-line {

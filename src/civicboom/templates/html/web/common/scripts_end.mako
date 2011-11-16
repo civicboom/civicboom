@@ -9,32 +9,15 @@
 
 	% if config['development_mode']:
         <div id="this is just here to make reading the source tree easier in dev mode">
-		## AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
-		<!-- non-urgent bits -->
-		<script src="/javascript/jquery.ui.js"></script>
-		<script src="/javascript/jquery.ui.stars-3.0.1.js"></script>
-		<script src="/javascript/jquery.ui.timepicker-addon.js"></script>
-		<script src="/javascript/jquery.html5-0.0.1.js"></script>
-		<script src="/javascript/jquery.scrollTo.js"></script>
-		<script src="/javascript/jquery.simplemodal-1.4.1.js"></script> <!-- http://www.ericmmartin.com/projects/simplemodal/ -->
-		<script src="/javascript/jquery.uploadify.v2.1.4.js"></script>
-		<script src="/javascript/jquery.simple-color-picker.js"></script>
-		<script src="/javascript/jquery.ba-hashchange.min.js"></script>
-		<script src="/javascript/jquery.limit-1.2.js"></script>
-		<script src="/javascript/jquery.getUrlParam.js"></script>
-		<script src="/javascript/jquery.cookie.js"></script>
-		<script src="/javascript/jquery.jcarousel.js"></script>
-		<script src="/javascript/invite.js"></script>
-		<script src="/javascript/mobile.js"></script>
-		% if config['online']:
-		<script src="/javascript/rpx.js"></script>
-		% endif
-		<script src="/javascript/misc.foot.js"></script>
-		<!-- maps -->
-		<script src="/javascript/gears_init.js"></script>
-		<script src="/javascript/geo.js"></script>
-		<script src="/javascript/OpenLayers.js"></script>
-		<script src="/javascript/minimap.js"></script>
+            <%
+            from glob import glob
+            scripts_head = glob("civicboom/public/javascript/foot/*.js")
+            scripts_head = [n[len("civicboom/public/"):] for n in scripts_head if config['online'] or 'rpx' not in n]
+            scripts_head.sort()
+            %>
+            % for script in scripts_head:
+                <script src="/${script}"></script>
+            % endfor
         </div>
 	% else:
 		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
@@ -42,6 +25,7 @@
 
 	## tinymce, should also be loaded on demand
 	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
+	<script src="/javascript/tiny_mce/jquery.tinymce.js"></script>
 </%def>
 
 

@@ -29,8 +29,8 @@
 	<% args, kwargs = c.web_params_to_kwargs %>
     <div class="frag_col">
 	    <div class="frag_list">
-		<form class="form" id="form_search" action="${url('contents')}" method="GET"
-              onsubmit="unplacehold('#form_search'); cb_frag($(this), '/contents.frag?' + $('#form_search').serialize(), 'frag_col_2'); return false;">
+		<form class="form search" id="form_search" action="${url('contents')}" method="GET"
+		      data-frag="${h.url('contents', format='frag')}">
             <fieldset>
 				<p><label>${_("Search for")}</label><br>
                 <input type="search" name="term" placeholder="${_("Enter key words")}" value="${kwargs.get('term')}"/>

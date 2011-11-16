@@ -34,7 +34,7 @@ TABLE.feedback SELECT {
 	width: 100%;
 }
 </style>
-    ${h.form(h.args_to_tuple(controller='misc', action='feedback', format='redirect'), method='POST', json_form_complete_actions="cb_frag_remove(current_element);")}
+    ${h.form(h.args_to_tuple(controller='misc', action='feedback', format='redirect'), method='POST', data=dict(json_complete="[['modal_close']]"))}
         % if current_referer():
         <input type="hidden" name="referer" value="${quote_plus(current_referer())}"/>
         % endif
