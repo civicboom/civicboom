@@ -49,11 +49,11 @@ def timedelta_to_str(t):
     """
     Convert a timedelta object to a string representation
     
-    >>> timedelta_to_str(datetime.timedelta(         hours=10))
+    >>> timedelta_to_str(datetime.timedelta(        hours=10))
     'hours=10'
-    >>> timedelta_to_str(datetime.timedelta(days=10, hours=10)) in ['days=10,hours=10', 'hours=10,days=10']
+    >>> timedelta_to_str(datetime.timedelta(days=5, hours=10)) in ['days=5,hours=10', 'hours=10,days=5']
     True
-    >>> timedelta_to_str(datetime.timedelta(minutes=1        ))
+    >>> timedelta_to_str(datetime.timedelta(minutes=1       ))
     'minutes=1'
     """
     t = t.total_seconds()
