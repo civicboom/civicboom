@@ -1,0 +1,1 @@
+../jquery.simple-color-picker.js
