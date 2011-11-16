@@ -324,15 +324,30 @@ class TestTimedTasksController(TestController):
         task_summary_notification_email()
         
         # Add message that should trigger in last hour and send notification
-        m = Message()
-        m.target    = Session.query(User).get('unittest')
-        m.subject   = 'Test summary_notification_email'
-        m.content   = 'Test summary_notification_email'
-        m.timestamp = now + datetime.timedelta(minutes=30)
-        Session.add(m)
+        m1 = Message()
+        m1.target    = Session.query(User).get('unittest')
+        m1.subject   = 'Test summary_notification_email notification'
+        m1.content   = 'Test summary_notification_email notification'
+        m1.timestamp = now + datetime.timedelta(minutes=30, hours=1)
+        Session.add(m1)
+        m2 = Message()
+        m2.source    = Session.query(User).get('kitten')
+        m2.target    = Session.query(User).get('unittest')
+        m2.subject   = 'Test summary_notification_email message'
+        m2.content   = 'Test summary_notification_email message'
+        m2.timestamp = now + datetime.timedelta(minutes=15, hours=1)
+        Session.add(m2)
+        m3 = Message()
+        m3.source    = Session.query(User).get('unittest')
+        m3.target    = Session.query(User).get('kitten')
+        m3.subject   = 'To Amy kitten'
+        m3.content   = 'To Amy kitten'
+        m3.timestamp = now + datetime.timedelta(minutes=20, hours=1)
+        Session.add(m2)
+
         Session.commit()
         
-        now = self.server_datetime(now + datetime.timedelta(hours=1))
+        now = self.server_datetime(now + datetime.timedelta(hours=2))
         
         num_emails = getNumEmails()
         task_summary_notification_email()
@@ -341,7 +356,11 @@ class TestTimedTasksController(TestController):
         
         self.assertEquals(getNumEmails(), num_emails + 1)
         email = getLastEmail().content_text
-        self.assertIn('summary_notification_email', email)
+        self.assertIn   ('summary_notification_email notification', email)
+        self.assertIn   ('summary_notification_email message'     , email) 
+        self.assertIn   ('To Amy'                                 , email) # Check sent message appears in summary
+        self.assertIn   ('Amy M'                                  , email) # Check the avatar and names of targets are aquired from DB
+        self.assertNotIn('unitfriend'                             , email) # Loose check to try to catch if any other notifications bleed over into this summary email
         
         # Reset db state
         self.setting('summary_email_interval', 'advanced', '')
@@ -354,5 +373,7 @@ class TestTimedTasksController(TestController):
         # Reset server datetime
         self.server_datetime(now_start)
         
-        Session.delete(m)
+        Session.delete(m1)
+        Session.delete(m2)
+        Session.delete(m3)
         Session.commit()
