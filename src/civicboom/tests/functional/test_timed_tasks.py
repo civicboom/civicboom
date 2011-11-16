@@ -363,12 +363,12 @@ class TestTimedTasksController(TestController):
         self.assertNotIn('unitfriend'                             , email) # Loose check to try to catch if any other notifications bleed over into this summary email
         
         # Reset db state
-        self.setting('summary_email_interval', 'advanced', '')
+        self.setting('summary_email_interval', 'advanced', 'hours=0', assert_set_value=False) # hours=0 turns into None and this breaks the auto assertion at the end of set value
         
         # No summary emails should trigger yet because no users have setup an interval
         num_emails = getNumEmails()
         task_summary_notification_email()
-        #self.assertEquals(num_emails, getNumEmails()) # AllanC - this fails .. investigation needs to be made
+        self.assertEquals(num_emails, getNumEmails()) # AllanC - this fails .. investigation needs to be made
         
         # Reset server datetime
         self.server_datetime(now_start)
