@@ -391,9 +391,12 @@ class BaseController(WSGIController):
         else:
             _lang = config['lang'] # Default lang in config file
 
-        c.lang = _lang
-        set_lang(_lang)
-        formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+        try:
+            set_lang(_lang)
+            formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+            c.lang = _lang # only do this if the above succeeded
+        except Exception:  # LanguageError
+            pass
     
         
         # User pending regisration? --------------------------------------------
