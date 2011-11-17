@@ -400,6 +400,9 @@ if(!('util' in boom)) {
           }
         }
       return formArray;
+    },
+    mouseCursor: function(style) {
+      $('body').css('cursor', style);
     }
   }
 }
@@ -1153,10 +1156,6 @@ if(!('frags' in boom)) {
         $(this).css('width', $(this).css('width'));
       })
 
-      // FIXME: Scrolling
-      $(window)._scrollable().scrollTo(frag_loading, {
-        duration : boom.frags.vars.scroll_duration
-      });
       boom.frags.update(frag_loading, url, undefined, function(success) {
         if(success) {
           // frag_load event is triggered by update above! No need for it here...
@@ -1172,12 +1171,24 @@ if(!('frags' in boom)) {
           });
           //frag_loading.fadeTo(0, 0.01);
           // Animate fragment to full width & opacity
+          var frag_left = frag_loading.position().left;
+          var scrollable = $(window)._scrollable();
           frag_loading.animate({
             'opacity' : '1',
             'width' : '500px'
-          }, boom.frags.vars.scroll_duration, function() {
-            frag_loading.removeAttr('style');
+          }, {
+            'duration': boom.frags.vars.scroll_duration,
+            'complete': function() {
+              frag_loading.removeAttr('style');
+              scrollable.scrollTo(frag_loading);
+            },
+            'step': function (now, fx) {
+              if (fx.prop == 'width') {
+                scrollable.scrollTo(frag_left + now);
+              }
+            }
           });
+          
           if(!from_history)
             boom.frags.remove(frag_loading.next());
             // boom.frags.remove_after(frag_loading, function() {
