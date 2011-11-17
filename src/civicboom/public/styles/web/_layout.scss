@@ -588,6 +588,10 @@ FOOTER {
 		z-index: 501; /* above the create/explore/manage */
 	}
 
+    HTML.frag_containers BODY {
+        top: 124px;
+        bottom: 32px;
+    }
 	BODY>DIV#app {
 		margin-top: 16px;
 		top: 137px;

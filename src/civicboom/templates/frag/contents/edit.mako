@@ -220,6 +220,7 @@
 <%def name="media()">
     <table class="form" width="100%">
         <tbody id="mediatemplate" style="display: none;">
+            <tr><td colspan="4">&nbsp;</td></tr>
             <tr>
                 <td><label for="media_file">${_("File")}</label></td>
                 <td><input id="media_file" name="media_file" type="text" disabled="true" value=""/></td>
@@ -241,50 +242,8 @@
                 <td><label for="media_credit">${_("Credit")}</label></td>
                 <td><input id="media_credit" name="media_credit" type="text" value="" /></td>
             </tr>
-            <tr><td colspan="4">&nbsp;</td></tr>
         </tbody>
 
-        <!-- List existing media -->
-        % for media in self.content['attachments']:
-            <tbody>
-                <% id = media['id'] %>
-                <tr class="media_file" id="media_attachment_${id}">
-                    <td><label for="media_file_${id}">${_("File")}</label></td>
-                    <td><input id="media_file_${id}" name="media_file_${id}" type="text" disabled="true" value="${media['name']}"/></td>
-                    <td><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove"/></td>
-
-                    <td rowspan="3">
-                        <!--<div class="file_type_overlay icon16 i_${media['type']}"></div>-->
-                        <a href="${media['original_url']}"><!--
-                            --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
-                        --></a>
-                        % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
-                            <!-- Media still undergoing proceccesing -->
-                            ## Clients without javascript could have the current status hard in the HTML text
-                            ## TODO
-                            
-                            ## Clients with    javascript can have live updates from the media controller
-                            <script type="text/javascript">
-                                updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
-                            </script>
-                            <!-- End media still undergoing proceccesing -->
-                        % endif
-                        <br><span id="media_status_${id}" style="display: none">(status)</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="media_caption_${id}">${_("Caption")}</label></td>
-                    <td colspan="2"><input id="media_caption_${id}" name="media_caption_${id}" type="text" value="${media['caption']}"/></td>
-                </tr>
-                <tr>
-                    <td><label for="media_credit_${id}" >${_("Credit")}</label></td>
-                    <td colspan="2"><input id="media_credit_${id}" name="media_credit_${id}" type="text" value="${media['credit']}" /></td>
-                </tr>
-                <tr><td colspan="4">&nbsp;</td></tr>
-            </tbody>
-        % endfor
-        <!-- End list existing media -->
-        
         <!-- Add media -->
         <!-- Add media javascript - visible to JS enabled borwsers -->
         <tbody>
@@ -342,6 +301,47 @@
             </tr>
         </tbody>
         <!-- End Add media -->
+
+        <!-- List existing media -->
+        % for media in self.content['attachments']:
+            <tbody>
+                <tr><td colspan="4">&nbsp;</td></tr>
+                <% id = media['id'] %>
+                <tr class="media_file" id="media_attachment_${id}">
+                    <td><label for="media_file_${id}">${_("File")}</label></td>
+                    <td><input id="media_file_${id}" name="media_file_${id}" type="text" disabled="true" value="${media['name']}"/></td>
+                    <td><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove"/></td>
+
+                    <td rowspan="3">
+                        <!--<div class="file_type_overlay icon16 i_${media['type']}"></div>-->
+                        <a href="${media['original_url']}"><!--
+                            --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                        --></a>
+                        % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
+                            <!-- Media still undergoing proceccesing -->
+                            ## Clients without javascript could have the current status hard in the HTML text
+                            ## TODO
+                            
+                            ## Clients with    javascript can have live updates from the media controller
+                            <script type="text/javascript">
+                                updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
+                            </script>
+                            <!-- End media still undergoing proceccesing -->
+                        % endif
+                        <br><span id="media_status_${id}" style="display: none">(status)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="media_caption_${id}">${_("Caption")}</label></td>
+                    <td colspan="2"><input id="media_caption_${id}" name="media_caption_${id}" type="text" value="${media['caption']}"/></td>
+                </tr>
+                <tr>
+                    <td><label for="media_credit_${id}" >${_("Credit")}</label></td>
+                    <td colspan="2"><input id="media_credit_${id}" name="media_credit_${id}" type="text" value="${media['credit']}" /></td>
+                </tr>
+            </tbody>
+        % endfor
+        <!-- End list existing media -->
     </table>
 
     <div id="recorder-${self.id}" style="display: none;">
