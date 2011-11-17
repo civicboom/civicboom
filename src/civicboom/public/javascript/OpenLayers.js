@@ -19113,7 +19113,7 @@ OpenLayers.Layer.GeoRSS = OpenLayers.Class(OpenLayers.Layer.Markers, {
                 var contentHTML = '<div class="olLayerGeoRSSClose">[x]</div>'; 
                 contentHTML += '<div class="olLayerGeoRSSTitle">';
                 if (link) {
-                    contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'.frag\'); return false;">';
+                    contentHTML += '<a class="link_new_frag link" href="'+link+'" onclick="var elem = $(this); boom.frags.create(elem, elem.data(\'frag\')); return false;" data-frag="'+link+'.frag">';
                 }
                 contentHTML += title;
                 if (link) {
@@ -19156,7 +19156,7 @@ OpenLayers.Layer.GeoRSS = OpenLayers.Class(OpenLayers.Layer.Markers, {
                     }
                 }, this)
             );
-            this.layer.map.addPopup(popup); 
+            this.layer.map.addPopup(popup);
         }
         OpenLayers.Event.stop(evt);
     },
