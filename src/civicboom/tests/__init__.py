@@ -185,7 +185,7 @@ class TestController(TestCase):
         self.assertEqual(response_json['status'], 'ok')
         self.logged_in_as = username_group
 
-    def setting(self, setting, panel, value=None):
+    def setting(self, setting, panel, value=None, assert_set_value=True):
         if value:
             response = self.app.post(
                 url('setting', id='me', panel=panel, format='json'),
@@ -200,7 +200,7 @@ class TestController(TestCase):
         response      = self.app.get(url('setting',id="me", panel=panel, format='json'))
         response_json = json.loads(response.body)
         setting_value = response_json['data']['settings'][setting]
-        if value:
+        if value and assert_set_value:
             self.assertEquals(setting_value, "%s" % value)
         return setting_value
         

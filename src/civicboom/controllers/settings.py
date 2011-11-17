@@ -125,7 +125,7 @@ add_setting('auto_follow_on_accept', _('Automatically follow the user or _group 
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
 add_setting('push_assignment', _('Set a _assignment you would like followers to be able to push stories to'), group='advanced/follower_settings', weight=1002, type='id_assignment', info=_('Please speak to our team before you change this option!'))
 add_setting('hide_followers', _('Do not list your followers to any members other than yourself'), group='advanced/follower_settings', weight=1003, type='boolean', info=_('Protect your brands followers by hiding them from public view'))
-add_setting('summary_email_interval', _('Notification summary email interval'), group='advanced/follower_settings', weight=1004, type='interval', info=_('todo'), who='user')
+add_setting('summary_email_interval', _('Notification summary email interval'), group='advanced/follower_settings', weight=1004, type='interval', info=_('hours=3 or days=7'), who='user')
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)

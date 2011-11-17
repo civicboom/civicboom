@@ -33,16 +33,18 @@ def send_payment_admin_email(subject, content_text):
         content_text=content_text,
     )
 
-def normalize_datetime(datetime, accuracy='hour'):
+def normalize_datetime(d, accuracy='hour'):
     """
     Normalizez datetime down to hour or day
     Dates are immutable (thank god)
     """
     if   accuracy=='hour':
-        return datetime.replace(minute=0, second=0, microsecond=0)
+        return d.replace(minute=0, second=0, microsecond=0)
     elif accuracy=='day' :
-        return datetime.replace(minute=0, second=0, microsecond=0, hour=0)
-    return datetime
+        return d.replace(minute=0, second=0, microsecond=0, hour=0)
+    elif accuracy=='week':
+        return d.replace(minute=0, second=0, microsecond=0, hour=0) - datetime.timedelta(days=d.weekday())
+    return d
 
 def process_db_chunk(query, process_item, limit=None):
     if not limit:
@@ -484,6 +486,7 @@ class TaskController(BaseController):
         users that have flag themselfs as requesting summary emails can have 24 hours of notifications summerised
         
         TODO: In future this could take into account utc offset
+        TODO: don't change the frequencey from 1 hour as this break interval_anchor
         """
         from civicboom.model import User, Message
         from sqlalchemy      import null
@@ -497,22 +500,29 @@ class TaskController(BaseController):
             """
             # Normalize the interval and ancor to the previous hour to assess if we are on a interval boundary
             if user.summary_email_start:
-                interval_ancor = datetime_now - user.summary_email_start
+                interval_ancor = datetime_now - normalize_datetime(user.summary_email_start, accuracy='hour') # todo ... this really should be linked the frequncy of timed task
             else:
-                interval_ancor = datetime_now - normalize_datetime(datetime_now, accuracy='day')
+                interval_ancor = datetime_now - normalize_datetime(datetime_now            , accuracy='week')
             interval_ancor = interval_ancor.total_seconds()
             interval       = user.summary_email_interval.total_seconds()
             
             # If on interval boundary
             if (interval_ancor % interval) == 0:
                 # Select all messages from since the previous interval
-                messages = Session.query(Message).filter(Message.target_id==user.id).filter(Message.timestamp >= (datetime_now-user.summary_email_interval)).all()
+                messages = Session.query(Message).filter(or_(Message.target_id==user.id,Message.source_id==user.id)).filter(Message.timestamp >= (datetime_now-user.summary_email_interval)).order_by(Message.timestamp).all()
                 # No need to send email summary if no messages have been generated in the last interval
-                if messages: 
+                if messages:
+                    content_html = render('/email/notifications/summary.mako', extra_vars={'messages':messages, 'user':user})
                     user.send_email(
                         subject      = _('_site_name: Summary'),
-                        content_html = render('/email/notifications/summary.mako', extra_vars={'messages':messages})
+                        content_html = content_html,
                     )
+                    
+                    # Test output - used to debug email layout
+                    #import os
+                    #file = open(os.path.expanduser("~/Temp/out.html"), 'w')
+                    #file.write(content_html)
+                    #file.close()
         
         process_db_chunk(
             Session.query(User).filter(User.summary_email_interval!=null()), #and_(User.summary_email_start, 
