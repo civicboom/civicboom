@@ -55,11 +55,11 @@
     <div class="pagination">
         % if offset > 0:
             <% kwargs['offset'] = offset - limit %>
-            <a href="${h.url('current', format='html', **kwargs)}" class="prev" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">${_("Previous")}</a>
+            <a href="${h.url('current', format='html', **kwargs)}" data-frag="${h.url('current', format='frag', **kwargs)}" class="link_update_frag prev">${_("Previous")}</a>
         % endif
         % if offset + items < count:
             <% kwargs['offset'] = offset + limit %>
-            <a href="${h.url('current', format='html', **kwargs)}" class="next" onclick="cb_frag_load($(this), '${h.url('current', format='frag', **kwargs)}'); return false;">${_("Next")}</a>
+            <a href="${h.url('current', format='html', **kwargs)}" data-frag="${h.url('current', format='frag', **kwargs)}" class="link_update_frag next">${_("Next")}</a>
         % endif
         <div style="clear: both;"></div>
     </div>
@@ -123,6 +123,7 @@
         js_link_to_frag_list = ''
         href_args   = []
         href_kwargs = {}
+        data_frag = ''
         if isinstance(href, tuple):
             href_args   = href[0]
             href_kwargs = href[1]
@@ -137,7 +138,7 @@
             href      = h.url(*href_args, **href_kwargs)
             href_kwargs['format'] = 'frag'
             href_frag = h.url(*href_args, **href_kwargs)
-            js_link_to_frag_list = h.literal("""onclick="cb_frag($(this), '%s', 'frag_col_2'); return false;" """ % href_frag)
+            data_frag = href_frag
     %>
     % if hide_if_empty and not count:
       % if empty_message:
@@ -151,7 +152,10 @@
                 ##<span class="icon16 i_${icon}"><span>${icon}</span></span>
                 ##% endif
                 % if href:
-                <a href="${href}" ${js_link_to_frag_list}>${title}</a>
+                    <a class="link_new_frag" href="${href}" data-frag="${data_frag}">
+                    ##<a href="${href}" ${js_link_to_frag_list}>
+                        ${title}
+                    </a>
                 % else:
                 ${title}
                 % endif
@@ -187,7 +191,8 @@
                 % endif
             </${type_[0]}>
             % if href and show_heading and len(items) < count:
-            <a href="${href}" ${js_link_to_frag_list} class="link_more">
+            <a class="link_new_frag" href="${href}" data-frag="${data_frag}">
+            ##<a href="${href}" ${js_link_to_frag_list} class="link_more">
                 % if show_count:
                     ${_("%d more") % (count-len(items))}
                 % else:
@@ -235,13 +240,15 @@
             ${h.secure_link(
                 h.args_to_tuple('member_action', action='follow'    , id=member['username'], format='redirect') ,
                 value           = _('Follow') ,
-                value_formatted = h.literal("<span class='icon16 i_follow'></span>") % show_type, #_('Follow'),
+                value_formatted = "<span class='icon16 i_follow'></span>",
                 title           = _("Follow") + " " + (member['name'] or member['username']),
-                json_form_complete_actions = "cb_frag_reload('members/%s');" % member['username'] ,
+
             )}
         </span>
         
-        <a href="${h.url('member', id=member['username'])}" onclick="cb_frag($(this), '${h.url('member', id=member['username'], format='frag')}'); return false;">${member.get('name')}</a>
+        <a class="link_new_frag" href="${h.url('member', id=member['username'])}" data-frag="${h.url('member', id=member['username'], format='frag')}">
+        ${member.get('name')}
+        </a>
 		<br/><small>
 			<!-- Following ${member['num_following']}; -->
 			% if member['type'] == 'group' and member['num_members']:
@@ -282,7 +289,7 @@
     ## Remove
     <%def name="remove_member(member)">
         % if c.logged_in_persona and ((c.logged_in_persona.username == member['username'] and permission_remove_self) or (c.logged_in_persona.username != member['username'] and permission_remove)):
-            ${h.form(h.args_to_tuple('group_action', id=id, action='remove_member', format='redirect'), method='post', json_form_complete_actions="cb_frag_reload(current_element); cb_frag_reload('members/%s');" % id)}
+            ${h.form(h.args_to_tuple('group_action', id=id, action='remove_member', format='redirect'), method='post', data=dict(json_complete="[ ['update'],['update', ['/profile', '%s']]]" % h.url('members', id=id)))}
                 <input type="hidden" name="member" value="${member['username']}"/>
                 <input type="submit" name="submit" value="${_('Remove')}"/>
             ${h.end_form()}
@@ -329,28 +336,23 @@
         id = content['id']
     
         item_url = h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))
-    
-        js_link_to_frag = True
-        if js_link_to_frag:
-            js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('content', id=id, format='frag'))
-        else:
-            js_link_to_frag = ''
+        data_frag = h.url(controller='contents', action='show', id=id, format='frag')
     %>
 
     <td>
-            <a href="${item_url}" ${js_link_to_frag}>
+        <a class="link_new_frag thumbnail" href="${item_url}" data-frag="${data_frag}">
             <div class="thumbnail">
                 <div style="position: relative;">
                     ${content_thumbnail_icons(content)}
                     <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0; left: 0;"/>
                 </div>
             </div>
-            </a>
+        </a>
     </td>
     
     <td class="content_details">
         <div class="content_details">
-            <a href="${item_url}" ${js_link_to_frag}>
+            <a class="link_new_frag" href="${item_url}" data-frag="${data_frag}">
                 <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
             </a>
             <p class="timestamp">
@@ -360,7 +362,7 @@
                         (parent_url_static, parent_url_frag) = h.url_pair('content', id=content.get('parent_id') or content['parent']['id'], gen_format='frag')
                     %>
                     ${_('in response to')}
-                    <a href="${parent_url_static}" onclick="cb_frag($(this), '${parent_url_frag}'); return false;">
+                    <a class="link_new_frag" href="${parent_url_static}" data-frag="${parent_url_frag}">
                         % if content.get('parent'):
                             ${h.truncate(content['parent']['title'], length=30, indicator='...', whole_word=True)}
                         % else:
@@ -381,7 +383,7 @@
                     <%
                         (response_url_static, response_url_frag) = h.url_pair('contents', response_to=id, include_fields='creator,parent', gen_format='frag')
                     %>
-                    <p class="extra"><a href="${response_url_static}" onclick="cb_frag($(this), '${response_url_frag}', 'frag_col_1'); return false;">${_('Responses')}: ${content['num_responses']}</a></p>
+                    <p class="extra"><a class="link_new_frag" href="${response_url_static}" data-frag="${response_url_frag}">${_('Responses')}: ${content['num_responses']}</a></p>
                 % endif
             % endif
             
@@ -393,7 +395,7 @@
                     member_url_static, member_url_frag = h.url_pair('member', id=content['creator']['username'], gen_format="frag")
                 %>
                 % if extra_info:
-                <a href="${member_url_static}" onclick="cb_frag($(this), '${member_url_frag}'); return false;" style="float: right;">
+                <a class="link_new_frag" href="${member_url_static}" data-frag="${member_url_frag}" style="float: right;">
                     ${content['creator']['name']}
                 </a>
                 % endif
@@ -406,7 +408,10 @@
             ##% endif
 
             ## ${content_icons(content)}
-            <a href="${item_url}" ${js_link_to_frag} class="prompt"><img src="/images/settings/arrow.png" /></a>
+            <a class="link_new_frag prompt" href="${item_url}" data-frag="${data_frag}">
+            ##<a href="${item_url}" ${js_link_to_frag} class="prompt">
+                <img src="/images/settings/arrow.png" />
+            </a>
             
             <div style="clear: both;"></div>
         </div>
@@ -485,8 +490,8 @@
     <div style="float:right;">
       % if list=="to":
       <a href    = "${url('message', id=message['id'])}"
-         onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_2'); return false;"
-         class   = "icon16 i_message" title="Open / Reply"
+         data-frag="${url('message', id=message['id'], format='frag')}"
+         class   = "icon16 i_message link_new_frag" title="Open / Reply"
       >
       </a>
       % endif
@@ -497,8 +502,10 @@
             method="DELETE",
             value="",
             title=_("Delete"),
-            css_class="icon16 i_delete",
-            json_form_complete_actions = "cb_frag_reload(current_element);" ,
+            link_class="icon16 i_delete",
+            form_data=dict(
+                json_complete = "[ ['update'] ]"
+            ),
         )}
     % endif
     </div>
@@ -515,8 +522,8 @@
       % if 'content' in message:
   
 		  <a href    = "${url('message', id=message['id'])}"
-             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_2'); return false;"
-          >
+		     data-frag="${url('message', id=message['id'], format='frag')}"
+		     class="link_new_frag">
               <p class="subject" style="height:16px;">${message['subject']}</p>
           </a>
           % if list=='notification':
@@ -529,8 +536,8 @@
       % else:
           
           <a href    = "${url('message', id=message['id'])}"
-             onclick = "cb_frag($(this), '${url('message', id=message['id'], format='frag')}', 'frag_col_2'); return false;"
-          >
+             data-frag= "${url('message', id=message['id'], format='frag')}"
+             class="link_new_frag">
               <p class="subject" style="height:16px;">${message['subject']}</p>
           </a>
       % endif
@@ -555,16 +562,12 @@
 <tr style="width: 100%;">
     <%
         id = content['id']
-    
-        js_link_to_frag = True
-        if js_link_to_frag:
-            js_link_to_frag = h.literal(""" onclick="cb_frag($(this), '%s'); return false;" """ % h.url('content', id=id, format='frag'))
-        else:
-            js_link_to_frag = ''
     %>
 
     <div class="content_title">
-        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}" ${js_link_to_frag}>
+        <a href="${h.url(controller='contents', action='show', id=id, title=h.make_username(content['title']))}"
+            data-frag="${h.url('content', id=id, format='frag')}"
+            class="link_new_frag">
             <p>${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
         </a>
         <%doc><div class="content_avatar">

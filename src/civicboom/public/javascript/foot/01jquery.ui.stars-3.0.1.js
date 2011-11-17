@@ -1,0 +1,1 @@
+../jquery.ui.stars-3.0.1.js

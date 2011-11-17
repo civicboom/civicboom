@@ -6,10 +6,13 @@ Base Formencode Validators
 import formencode
 from formencode import validators
 
+
+
 from pylons.i18n.translation import _
 
 
 from cbutils.text import clean_html_markup, strip_html_tags
+from cbutils.misc import timedelta_from_str
 
 # Misc Imports
 from dateutil.parser import parse as parse_date
@@ -26,6 +29,21 @@ class DefaultSchema(formencode.Schema):
     allow_extra_fields  = True
     filter_extra_fields = True
 
+class IntervalValidator(validators.UnicodeString):
+    """
+    Validate a timedelta inteval form a string
+    """
+    messages = {
+        'empty'         : x_('You must specify an interval'),
+        'invalid_format': x_('invalid format: interval should be in json or hour=3,seconds=4 etc'),
+    }
+    def _to_python(self, value, state):
+        timedelta_kwargs = validators.UnicodeString._to_python(self, value, state)
+        try:
+            value = timedelta_from_str(timedelta_kwargs)
+        except Exception as e:
+            raise formencode.Invalid(self.message("invalid_format", state), value, state)
+        return value
 
 class UnicodeStripHTMLValidator(validators.UnicodeString):
     def _to_python(self, value, state):
