@@ -1154,7 +1154,8 @@ if(!('frags' in boom)) {
       
       frag_loading.children('.frag_data').each(function () {
         $(this).css('width', $(this).css('width'));
-      })
+      });
+      var frag_width = frag_loading.css('width');
 
       boom.frags.update(frag_loading, url, undefined, function(success) {
         if(success) {
@@ -1167,15 +1168,22 @@ if(!('frags' in boom)) {
           frag_loading.css({
             'position': 'relative',
             'width': '0',
-            'opacity': '0'
+            'opacity': '0',
+            'overflow': 'hidden'
           });
           //frag_loading.fadeTo(0, 0.01);
           // Animate fragment to full width & opacity
-          var frag_left = frag_loading.position().left;
-          var scrollable = $(window)._scrollable();
+          var frag_left = frag_loading.position().left; // Get left for scrolling calculation
+          var scrollable = $(window)._scrollable(); // Get scrollable element (select once, use many)
+          var frag_scroll = true; // Default scroll
+          if (frag_loading.next().length) {
+            frag_scroll = false; // If there is a frag after this one scroll to that frag & stay static
+            scrollable.scrollTo(frag_loading.next());
+          }
+          // Animate
           frag_loading.animate({
             'opacity' : '1',
-            'width' : '500px'
+            'width' : frag_width
           }, {
             'duration': boom.frags.vars.scroll_duration,
             'complete': function() {
@@ -1183,7 +1191,7 @@ if(!('frags' in boom)) {
               scrollable.scrollTo(frag_loading);
             },
             'step': function (now, fx) {
-              if (fx.prop == 'width') {
+              if (frag_scroll && fx.prop == 'width') {
                 scrollable.scrollTo(frag_left + now);
               }
             }
