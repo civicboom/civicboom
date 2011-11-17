@@ -427,7 +427,7 @@ if(!('frags' in boom)) {
     },
     vars : {
       auto_save_time : 60000,
-      scroll_duration : 600,
+      scroll_duration : 1000,
       default_frags : ['/profile.frag', '/misc/featured.frag'],
     },
     /*
@@ -632,7 +632,9 @@ if(!('frags' in boom)) {
           return false;
         },
         'closed' : function(event, from_history) {
+          console.log('frag_closed');
           if(!from_history) {
+            $(this).remove(); // We need to remove the element here, before the history state save!!!
             var history_state = boom.frags.getHistoryState();
             console.log('history.saveState', history_state);
             boom.util.history.saveState(history_state);
@@ -1132,11 +1134,24 @@ if(!('frags' in boom)) {
       var current_frag = boom.frags.getFragment(element);
       var frag_loading = $('<div></div>').attr('id', boom.frags.prefix + (boom.frags.counter++)).addClass(boom.frags.classes.container).addClass(list_type || '').append(boom.frags.templates.loading_holder());
 
+      // We use a custom "animation" to show the new frag after it's loaded
+      //   This starts with an invisible fragment behind current frags (so we can take measurements)
+      frag_loading.css({
+        'position': 'absolute',
+        'z-index' : '-1',
+        'overflow-x':'hidden',
+        'opacity' : '0'
+      });
+
       if(current_frag.length > 0) {
         current_frag.after(frag_loading);
       } else {
         boom.frags.container.prepend(frag_loading)
       }
+      
+      frag_loading.children('.frag_data').each(function () {
+        $(this).css('width', $(this).css('width'));
+      })
 
       // FIXME: Scrolling
       $(window)._scrollable().scrollTo(frag_loading, {
@@ -1145,18 +1160,30 @@ if(!('frags' in boom)) {
       boom.frags.update(frag_loading, url, undefined, function(success) {
         if(success) {
           // frag_load event is triggered by update above! No need for it here...
-          // TODO: Tweak animation!
-          frag_loading.fadeTo(0, 0.01);
+          // Once fragment has loaded force frag_data's width to it's measured width.
+          frag_loading.children('.frag_data').each(function (){
+            $(this).css('width', $(this).css('width'));
+          });
+          // Set fragment relative, opacity and width 0
+          frag_loading.css({
+            'position': 'relative',
+            'width': '0',
+            'opacity': '0'
+          });
+          //frag_loading.fadeTo(0, 0.01);
+          // Animate fragment to full width & opacity
           frag_loading.animate({
-            opacity : 1.0
+            'opacity' : '1',
+            'width' : '500px'
           }, boom.frags.vars.scroll_duration, function() {
             frag_loading.removeAttr('style');
           });
           if(!from_history)
-            boom.frags.remove_after(frag_loading, function() {
-              // FIXME: rewrite history
-              //if (!from_history) boom.frags.update_history();
-            });
+            boom.frags.remove(frag_loading.next());
+            // boom.frags.remove_after(frag_loading, function() {
+              // // FIXME: rewrite history
+              // //if (!from_history) boom.frags.update_history();
+            // });
         } else {
           frag_loading.remove();
         }
@@ -1230,56 +1257,45 @@ if(!('frags' in boom)) {
       // ignore_after Boolean do not run remove_after on frag (used by remove_after!)
       //element = $(element);
       var current_frag = boom.frags.getFragment(element);
-      var callback_done = false;
-      var function_done = false;
-      var callback_return = true;
       boom.frags.clearTimers(current_frag);
       // if (current_frag.data('auto_save_timer') != 'undefined') {
       // clearInterval(current_frag.data('auto_save_timer'));
       // current_frag.removeData('auto_save_timer');
       // }
-
-      var callback_after = function(success) {
-        if(callback) {
-          // run callback after this and next frags are removed
-          callback();
-        } else {
-          current_frag.trigger('frag_closed', [from_history]);
-          if(boom.frags.container.children().length == 0 && boom.frags.vars.default_frags) {
-            // If we have a callback then we're probably in the middle of multiple frags being removed
-            // Therefore if there is no callback and all frags have been removed, load default frags!
-            var default_frags = boom.frags.vars.default_frags.slice(0);
-            // Create a copy of default frags array
-            var next_frag = function(success, loaded_frag) {
-              // Recursive function lshifts next frag from array, loads and recurs
-              if(success && default_frags.length) {
-                boom.frags.create(loaded_frag, default_frags.shift(), undefined, undefined, next_frag)
-              }
-            }
-            next_frag(true, $('body'));
-            // Begin the chain of default frag loading
-          }
-        }
-      }
-      // Remove current frag
-      current_frag.hide(boom.frags.vars.scroll_duration, function() {
-        current_frag.remove();
-        if(callback_done && !function_done)
-          callback_after(true);
-        function_done = true;
-        // FIXME: rewrite history
-        //if (!from_history) boom.frags.update_history();
-      });
-      // Remove next frag
-      if(!ignore_after)
-        boom.frags.remove_after(current_frag, function() {
-          if(function_done && !callback_done)
-            callback_after(true);
-          callback_done = true;
-        });
-      // Close any modal windows
+      
+      // Close any modal windows before we start closing frags
       $.modal.close();
-      return false;
+      // Remove current frag
+      if(!ignore_after) current_frag = current_frag.add(current_frag.nextAll());
+      var length = current_frag.length;
+      var i = 0;
+      // Set frag_data's width to be it's own calculated width (so does not get squashed!)
+      current_frag.children('.frag_data').each(function () {
+        $(this).css('width', $(this).css('width'));
+      });
+      
+      current_frag.css({'overflow-x':'hidden'}).animate({'width':'0','opacity':'0'}, boom.frags.vars.scroll_duration, function() {
+      //current_frag.hide(boom.frags.vars.scroll_duration, function() {
+        var element = $(this);
+        element.trigger('frag_closed');
+        element.remove();
+        if (length < ++i) return; // ++i increments i by 1 and returns the incremented number!
+        if (callback) callback(true);
+        if(boom.frags.container.children().length == 0 && boom.frags.vars.default_frags) {
+          // If we have a callback then we're probably in the middle of multiple frags being removed
+          // Therefore if there is no callback and all frags have been removed, load default frags!
+          var default_frags = boom.frags.vars.default_frags.slice(0);
+          // Create a copy of default frags array
+          var next_frag = function(success, loaded_frag) {
+            // Recursive function lshifts next frag from array, loads and recurs
+            if(success && default_frags.length) {
+              boom.frags.create(loaded_frag, default_frags.shift(), undefined, undefined, next_frag)
+            }
+          }
+          next_frag(true, $('body'));
+          // Begin the chain of default frag loading
+        }
+      });
     },
     remove_after : function(element, callback) {
       // Removes all fragments after element's fragment
