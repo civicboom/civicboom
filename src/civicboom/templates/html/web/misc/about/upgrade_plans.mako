@@ -143,7 +143,7 @@
                                 ${h.secure_link(
                                     h.url('payment_action', id='me', action='regrade', new_type=plan),
                                     _('Upgrade'),
-                                    css_class="button"
+                                    link_class="button"
                                 )}
                             % endif
                         </td>
