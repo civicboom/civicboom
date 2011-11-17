@@ -86,7 +86,7 @@
 				href=url('content', id=content['id'], format="redirect"),
                 method="DELETE",
 				value=_("Delete"),
-				css_class="button_small button_small_style_2",
+				link_class="button_small button_small_style_2",
 				confirm_text=_("Are your sure you want to delete this content?")
               )}
             %endif

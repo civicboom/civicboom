@@ -42,7 +42,11 @@ def timedelta_from_str(string_args):
     True
     """
     if isinstance(string_args, basestring):
-        return datetime.timedelta(**dict([(kwarg.split('=')[0].strip(), int(kwarg.split('=')[1].strip())) for kwarg in string_args.split(',')]))
+        d = datetime.timedelta(**dict([(kwarg.split('=')[0].strip(), int(kwarg.split('=')[1].strip())) for kwarg in string_args.split(',')]))
+        if isinstance(d, datetime.timedelta) and d.total_seconds()>0:
+            return d
+        else:
+            return None
     return string_args
 
 def timedelta_to_str(t):

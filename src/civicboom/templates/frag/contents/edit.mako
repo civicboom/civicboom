@@ -78,7 +78,7 @@
             ${invalid_messages()}
             ## accordion can be set to fill parent, but we don't want /filled/, we want a little
             ## margin at top and bottom for title and buttons
-            <div style="position: absolute; top: 2.5em; bottom: 5.5em; left: 1em; right: 1em;">
+            <div style="position: absolute; top: 3em; bottom: 5.5em; left: 1em; right: 1em;">
             <div class="jqui_accordion event_load event_resize" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
                 <h3>Article Text</h3>
                 <div>${base_content()}</div>
@@ -88,7 +88,7 @@
                 <div>${location()}</div>
                 <h3>Advanced</h3>
                 <div>
-                    <table>
+                    <table class="form2">
                     <tr><td></td></tr>
                     % if not self.content.get('parent'):
                         ${privacy()}
@@ -177,7 +177,7 @@
 ## Base Form Text Content
 ##------------------------------------------------------------------------------
 <%def name="base_content()">
-    <table>
+    <table class="form2">
         <tr><td>
         </td></tr>
         <tr><td>
@@ -218,75 +218,138 @@
 ##------------------------------------------------------------------------------
 
 <%def name="media()">
-        <ul class="media_files">
-            <li class="media_file" style="display: none;" id="mediatemplate">
-              <div class="file_type_overlay icon"></div>
-              <a href="#"><!--
-                --><img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
-              --></a>
-              <div class="media_fields">
-                  <span id="media_status" style="display: none">(status)</span>
-                  <p><label for="media_file"   >${_("File")}       </label><input id="media_file"    name="media_file"    type="text" disabled="true" value=""   /><input type="submit" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></p>
-                  <p><label for="media_caption">${_("Caption")}    </label><input id="media_caption" name="media_caption" type="text"                 value=""/></p>
-                  <p><label for="media_credit" >${_("Credited to")}</label><input id="media_credit"  name="media_credit"  type="text"                 value="" /></p>
-              </div>
-            </li>
-            <!-- List existing media -->
-            % for media in self.content['attachments']:
-                <% id = media['id'] %>
-                <li class="media_file ${'event_load' if app_globals.memcache.get(str("media_processing_"+media['hash'])) else ''}" data-json_url="${h.url('medium', id=media['hash'], format='json')}" data-id="${id}" data-hash="${media['hash']}" id="media_attachment_${id}">
-                    <div class="file_type_overlay icon16 i_${media['type']}"></div>
-                    <a href="${media['original_url']}">
-                        <img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/>
-                    </a>
-                    <span class="status" id="media_status_${id}" style="display: none">(status)</span>
-                    
-                    <div class="media_fields">
-                        <p><label for="media_file_${id}"   >${_("File")}       </label><input id="media_file_${id}"    name="media_file_${id}"    type="text" disabled="true" value="${media['name']}"   /><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove icon16 i_delete"/></p>
-                        <p><label for="media_caption_${id}">${_("Caption")}    </label><input id="media_caption_${id}" name="media_caption_${id}" type="text"                 value="${media['caption']}"/></p>
-                        <p><label for="media_credit_${id}" >${_("Credited to")}</label><input id="media_credit_${id}"  name="media_credit_${id}"  type="text"                 value="${media['credit']}" /></p>
-                    </div>
-                </li>
-            % endfor
-            <!-- End list existing media -->
-            
-            <!-- Add media -->
-            <!-- Add media javascript - visible to JS enabled borwsers -->
-            <li class="hide_if_nojs">
-				<input id="file_upload" class="file_upload_uploadify" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" name="file_upload" type="file" />
-            </li>
-            
-            <!-- Add media non javascript version - hidden if JS enabled -->
-            <li class="hide_if_js">
-                <div class="media_preview">
-                    <div class="media_preview_none">${_("Select a file to upload")}</div>
-                </div>
-            <div class="media_fields">
-                <p>
-                    <label for="media_file"   >${_("File")}       </label>
-                    <input id="media_file"    name="media_file"    type="file" class="field_file"/>
-                    <input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/>
-                </p>
-                <p>
-                    <label for="media_caption">${_("Caption")}    </label>
-                    <input id="media_caption" name="media_caption" type="text" />
-                    ${tooltip(_("extra_info"))}
-                </p>
-                <p>
-                    <label for="media_credit" >${_("Credited to")}</label>
-                    <input id="media_credit"  name="media_credit"  type="text" />
-                    ${tooltip(_("extra_info"))}
-                </p>
-            </div>              
-        </li>
+    <table class="form" width="100%">
+        <tbody id="mediatemplate" style="display: none;">
+            <tr><td colspan="4">&nbsp;</td></tr>
+            <tr>
+                <td><label for="media_file">${_("File")}</label></td>
+                <td><input id="media_file" name="media_file" type="text" disabled="true" value=""/></td>
+                <td><input type="submit" onclick="return removeMedia($(this))" name="file_remove" value="Remove" class="file_remove icon16 i_delete"/></td>
+
+                <td rowspan="3">
+                    <!--<div class="file_type_overlay icon"></div>-->
+                    <a href="#"><!--
+                        --><img id="media_thumbnail" class="media_preview" src="/images/media_placeholder.gif" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                    --></a>
+                    <br><span id="media_status" style="display: none">(status)</span>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="media_caption">${_("Caption")}</label></td>
+                <td><input id="media_caption" name="media_caption" type="text" value=""/></td>
+            </tr>
+            <tr>
+                <td><label for="media_credit">${_("Credit")}</label></td>
+                <td><input id="media_credit" name="media_credit" type="text" value="" /></td>
+            </tr>
+        </tbody>
+
+        <!-- Add media -->
+        <!-- Add media javascript - visible to JS enabled borwsers -->
+        <tbody>
+            <tr class="hide_if_nojs">
+                <td colspan="4" style="text-align: center;">
+                    <input id="file_upload" name="file_upload" type="file" />
+                    <a href="#" onclick="$('#recorder-${self.id}').modal(); return false;">Record from Webcam</a>
+                    <script type="text/javascript">
+                    $(document).ready(function() {
+                            $('#file_upload').uploadify({
+                                'uploader'   : '/flash/uploadify.swf',
+                                'script'     : '/media',
+                                'scriptData' : {
+                                    'content_id': '${self.id}',
+                                    'member_id' : '${c.logged_in_persona.id}',
+                                    'key'       : '${c.logged_in_persona.get_action_key("attach to %d" % self.id)}'
+                                },
+                                'cancelImg'  : '/images/cancel.png',
+                                'folder'     : '/uploads',
+                                'multi'      : true,
+                                'auto'       : true,
+                                'fileDataName':'file_data',
+                                'removeCompleted' : false,
+                                'onComplete'  : function(event, ID, fileObj, response, data) {
+                                    //alert('There are ' + data.fileCount + ' files remaining in the queue.');
+                                    // refresh the file list
+                                    //Y.log("refresh the list now");
+                                    refreshProgress($('form#edit_${self.id}'));
+                                }
+                            });
+                    });
+                    </script>
+                </td>
+            </tr>
+        </tbody>
+        
+        <!-- Add media non javascript version - hidden if JS enabled -->
+        <tbody class="hide_if_js">
+            <tr>
+                <tr>
+                    <td><label for="media_file">${_("File")}</label></td>
+                    <td><input id="media_file" name="media_file" type="file" class="field_file" style="width: 200px;"/></td>
+                    <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></td>
+
+                    <td rowspan="3" class="media_preview_none">${_("Select a file to upload")}</td>
+                </tr>
+                <tr>
+                    <td><label for="media_caption">${_("Caption")}</label></td>
+                    <td colspan="2"><input id="media_caption" name="media_caption" type="text" /></td>
+                </tr>
+                <tr>
+                    <td><label for="media_credit" >${_("Credit")}</label></td>
+                    <td colspan="2"><input id="media_credit"  name="media_credit"  type="text" /></td>
+                </tr>
+            </tr>
+        </tbody>
         <!-- End Add media -->
 
+        <!-- List existing media -->
+        % for media in self.content['attachments']:
+            <tbody>
+                <tr><td colspan="4">&nbsp;</td></tr>
+                <% id = media['id'] %>
+                <tr class="media_file" id="media_attachment_${id}">
+                    <td><label for="media_file_${id}">${_("File")}</label></td>
+                    <td><input id="media_file_${id}" name="media_file_${id}" type="text" disabled="true" value="${media['name']}"/></td>
+                    <td><input type="submit" onclick="return removeMedia($(this))" name="file_remove_${id}" value="Remove" class="file_remove"/></td>
+
+                    <td rowspan="3">
+                        <!--<div class="file_type_overlay icon16 i_${media['type']}"></div>-->
+                        <a href="${media['original_url']}"><!--
+                            --><img id="media_thumbnail_${id}" class="media_preview" src="${media['thumbnail_url']}?0" alt="${media['caption']}" onerror='this.onerror=null;this.src="/images/media_placeholder.gif"'/><!--
+                        --></a>
+                        % if app_globals.memcache.get(str("media_processing_"+media['hash'])):
+                            <!-- Media still undergoing proceccesing -->
+                            ## Clients without javascript could have the current status hard in the HTML text
+                            ## TODO
+                            
+                            ## Clients with    javascript can have live updates from the media controller
+                            <script type="text/javascript">
+                                updateMedia(${id}, '${media['hash']}', $('#media_attachment_${id}'));
+                            </script>
+                            <!-- End media still undergoing proceccesing -->
+                        % endif
+                        <br><span id="media_status_${id}" style="display: none">(status)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="media_caption_${id}">${_("Caption")}</label></td>
+                    <td colspan="2"><input id="media_caption_${id}" name="media_caption_${id}" type="text" value="${media['caption']}"/></td>
+                </tr>
+                <tr>
+                    <td><label for="media_credit_${id}" >${_("Credit")}</label></td>
+                    <td colspan="2"><input id="media_credit_${id}" name="media_credit_${id}" type="text" value="${media['credit']}" /></td>
+                </tr>
+            </tbody>
+        % endfor
+        <!-- End list existing media -->
+    </table>
+
+    <div id="recorder-${self.id}" style="display: none;">
         <a href="#" class="link_popup_next_element">Click here to record using your webcam / microphone</a>
         <div class="popup_element" style="display: none;">
-        ${media_recorder()}
+            ${media_recorder()}
         </div>
-##        ${popup.popup_static('Webcam Recorder', media_recorder, '', html_class="recorder-${self.id}")}
-    </ul>
+    </div>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -296,7 +359,7 @@
 <%def name="media_recorder()">
     <div>
         <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
-    	<div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;">
+    	<div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;"></div>
     </div>
 </%def>
 
