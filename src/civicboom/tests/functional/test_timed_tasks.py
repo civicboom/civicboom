@@ -304,6 +304,7 @@ class TestTimedTasksController(TestController):
     # Email Notification Symmarys
     #---------------------------------------------------------------------------
     def test_summary_emails(self):
+        
         def task_summary_notification_email():
             response = self.app.get(url(controller='task', action='summary_notification_email'))
             self.assertIn(response_completed_ok, response.body)
@@ -362,6 +363,14 @@ class TestTimedTasksController(TestController):
         self.assertIn   ('Amy M'                                  , email) # Check the avatar and names of targets are aquired from DB
         self.assertNotIn('unitfriend'                             , email) # Loose check to try to catch if any other notifications bleed over into this summary email
         
+        # Check no emails sent if outside interval -----------------------------
+        now = self.server_datetime(now + datetime.timedelta(hours=20))
+        num_emails = getNumEmails()
+        task_summary_notification_email()
+        self.assertEquals(num_emails, getNumEmails())
+        
+        # Cleanup --------------------------------------------------------------
+        
         # Reset db state
         self.setting('summary_email_interval', 'advanced', 'hours=0', assert_set_value=False) # hours=0 turns into None and this breaks the auto assertion at the end of set value
         
@@ -373,6 +382,7 @@ class TestTimedTasksController(TestController):
         # Reset server datetime
         self.server_datetime(now_start)
         
+        # Delete test messages
         Session.delete(m1)
         Session.delete(m2)
         Session.delete(m3)
