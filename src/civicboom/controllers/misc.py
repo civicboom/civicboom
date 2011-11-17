@@ -108,9 +108,9 @@ class MiscController(BaseController):
             #return redirect(url(controller="contents", action="index", term=request.GET.get("term"), list="all"))
             #return action_ok(data={'term': request.GET.get("term")})
             data = {}
-            data['members']     = member_search (term=kwargs.get("term"), sort="-join_date"        )['data']['list']
-            data['assignments'] = content_search(term=kwargs.get("term"), list="assignments_active")['data']['list']
-            data['articles']    = content_search(term=kwargs.get("term"), list="articles"          )['data']['list']
+            data['members']     = member_search (term=kwargs.get("term"), sort="-join_date"        , limit=3)['data']['list']
+            data['assignments'] = content_search(term=kwargs.get("term"), list="assignments_active", limit=3)['data']['list']
+            data['articles']    = content_search(term=kwargs.get("term"), list="articles"          , limit=3)['data']['list']
             return action_ok(data=data)
 
     # don't cache this, it does UA-specific things
