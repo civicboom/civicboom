@@ -149,7 +149,7 @@ else:
     <%def name="breadcrumbs()"></%def>
     <div class="hide_if_js">${self.breadcrumbs()}</div>
 
-    ${popup_frame()}
+##    ${popup_frame()}
     ${scripts_end.body()}
 
     <!--[if lt IE 8 ]>
