@@ -297,6 +297,9 @@ if(!('util' in boom)) {
         });
       },
       init : function() {
+        console.log('message_indicators.init');
+        if (! $('body').hasClass('u-user')) return;
+        console.log('user logged in');
         setInterval(boom.util.message_indicators.update, 120000);
         $(function() {
           if(boom.util.desktop_notification.has_support() && !boom.util.desktop_notification.has_permission())
@@ -408,7 +411,7 @@ if(!('util' in boom)) {
 }
 boom.init_foot.push(boom.util.modal_queue.init);
 boom.util.flash_message.init();
-boom.util.message_indicators.init();
+$(boom.util.message_indicators.init);
 boom.util.validators.init();
 /*
  * Civicboom Fragment System
