@@ -69,7 +69,8 @@ if (!('media_update' in boom)) {
                   .css('display', '')
                   .data('id', attachment.id)
                   .data('hash', attachment.hash)
-                  .data('json_url', '/media/'+attachment.hash+'.json');
+                  .data('json_url', '/media/'+attachment.hash+'.json')
+                  .attr('data-id', attachment.id);
                 console.log('new_element', new_media);
                 console.log('append after', table.children('tbody.file').last());
                 table.children('tbody.file').last().after(new_media);
