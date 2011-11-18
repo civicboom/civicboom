@@ -45,29 +45,37 @@ if (!('media_update' in boom)) {
     init: function () {
       console.log('boom.media_update.init');
       // Boom_load on ul.media_files will get current frag's attachments & add any new media to the list, calling boom_load on each li it adds to update media items status
-      $('body').on('boom_load', 'ul.media_files', function () {
+      $('body').on('boom_load', 'table.media_files', function () {
       //$('ul.media_files').live('boom_load', function () {
-        console.log('ul.media_files boom_load');
-        var list = $(this);
-        var frag = boom.frags.getFragment(list);
+        console.log('table.media_files boom_load');
+        var table = $(this);
+        var frag = boom.frags.getFragment(table);
         // Set media_update interval, false = no duplicates allowed
-        console.log(boom.frags.getFragmentData(list)['json_url']);
-        $.getJSON(boom.frags.getFragmentData(list)['json_url'], function (res) {
+        console.log(boom.frags.getFragmentData(table)['json_url']);
+        $.getJSON(boom.frags.getFragmentData(table)['json_url'], function (res) {
           var attachments;
           try {
             attachments = res.data.content.attachments;
           } catch (e) {}
-          console.log(attachments);
+          console.log('got attachments', attachments, attachments.length);
           if (attachments && attachments.length)
-            for (var i = 0; i < attachments.kength; i++) {
+            for (var i = 0; i < attachments.length; i++) {
               var attachment = attachments[i];
-              if (list.children('li[data-id="' + attachment.id + '"]').length == 0) {
-                var new_media = list.children('#mediatemplate').clone(true, true).attr('id', 'media_attachment_' + attachment.id).css('display', '');
-                new_media.data('id', attachment.id).data('hash', attachment.hash).data('json_url', '/media/'+attachment.hash+'.json');
-                list.children('li.media_file').last().after(new_media);
-                new_media.find('#media_file').attr('value', attachment.name);
-                new_media.find('#media_caption').attr('value', attachment.caption);
-                new_media.find('#media_credit').attr('value', attachment.credit);
+              console.log('attachment', i, attachment);
+              if (table.children('tbody.file[data-id="' + attachment.id + '"]').length == 0) {
+                var new_media = table.children('tbody.file.template').clone(true, true)
+                  .removeClass('template')
+                  //.attr('id', 'media_attachment_' + attachment.id)
+                  .css('display', '')
+                  .data('id', attachment.id)
+                  .data('hash', attachment.hash)
+                  .data('json_url', '/media/'+attachment.hash+'.json');
+                console.log('new_element', new_media);
+                console.log('append after', table.children('tbody.file').last());
+                table.children('tbody.file').last().after(new_media);
+                new_media.find('#media_file').val(attachment.name);
+                new_media.find('#media_caption').val(attachment.caption);
+                new_media.find('#media_credit').val(attachment.credit);
                 new_media.find('*').each(function (index, element) {
                   element = $(element);
                   if (element.attr('id'))
@@ -84,39 +92,40 @@ if (!('media_update' in boom)) {
         return false;
       });
       // Clicking a media remove button triggers ajax remove, on success removes element from list.
-      $('body').on('click', 'ul.media_files li.media_file input.file_remove', function () {
+      $('body').on('click', 'table.media_files tbody.file input.file_remove', function () {
       //$('ul.media_files li.media_file input.file_remove').live('click', function () {
-        console.log('ul.media_files li.media_file input.file_remove click');
+        console.log('table.media_files tbody.file input.file_remove click');
         var input = $(this);
-        var li = input.parents('li');
-        var id = li.data('id');
-        var json_url = li.data('json_url');
+        var container = input.parents('tbody');
+        var id = container.data('id');
+        var json_url = container.data('json_url');
         $.post(
           json_url,
-          [{name:'id', value:id}, {name:'_method', value:'DELETE'}, {name:'_authentication_token', value:li.parents('form').find('#_authentication_token').val()}],
+          [{name:'id', value:id}, {name:'_method', value:'DELETE'}, {name:'_authentication_token', value:container.parents('form').find('#_authentication_token').val()}],
           function (res) {
-            boom.frags.deleteTimer(li, 't_media_update_'+id, true);
-            li.remove();
+            boom.frags.deleteTimer(container, 't_media_update_'+id, true);
+            container.remove();
           }
         );
         return false;
       })
       // Boom_load on li.media_file triggers ajax status update, if status is still processing sets interval to refresh (will not add duplicate interval timers), else, doesn't.
-      $('body').on('boom_load', 'ul.media_files li.media_file', function () {
+      $('body').on('boom_load', 'table.media_files tbody.file', function () {
       //$('ul.media_files li.media_file').live('boom_load', function () {
-        console.log('ul.media_files li.media_file boom_load');
-        var li = $(this);
-        var id = li.data('id');
-        $.getJSON(li.data('json_url'), function(res) {
+        console.log('table.media_files tbody.file boom_load');
+        var tbody = $(this);
+        var id = tbody.data('id');
+        $.getJSON(tbody.data('json_url'), function(res) {
+          console.log(res);
           var status;
           try {
             status = res.data.media.processing_status;
           } catch (e) {}
           if (status) {
-            li.children('.status').text(status).css('display', 'inline');
+            tbody.find('.status').text(status).css('display', 'inline');
             // the third param=false stops duplicate intervals being created!
-            boom.frags.setInterval(li, 'media_update_'+id, false, function () {
-              li.trigger('boom_load');
+            boom.frags.setInterval(tbody, 'media_update_'+id, false, function () {
+              tbody.trigger('boom_load');
             }, 10000);
           } else {
             var thumbnail;
@@ -124,9 +133,9 @@ if (!('media_update' in boom)) {
               thumbnail = res.data.media.thumbnail_url;
             } catch (e) {}
             if (thumbnail) {
-              boom.frags.deleteTimer(li, 't_media_update'+id, true);
-              li.find('img').attr('src', thumbnail+'?'+(new Date().getTime()));
-              li.children('.status').text('').css('display', 'none');
+              boom.frags.deleteTimer(tbody, 't_media_update'+id, true);
+              tbody.find('img.media_preview').attr('src', thumbnail+'?'+(new Date().getTime()));
+              tbody.children('.status').text('').css('display', 'none');
             }
           }
         });

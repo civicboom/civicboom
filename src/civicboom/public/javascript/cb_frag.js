@@ -624,10 +624,9 @@ if(!('frags' in boom)) {
               'fileDataName' : 'file_data',
               'removeCompleted' : true,
               'onComplete' : function(event, id, fileObj, response, data) {
-                console.log(event, id, fileObj, response, data);
                 var form = $(event.target).parents('form');
                 // Boom_load event triggers refresh or media listing
-                $(event.target).parents('ul.media_files').trigger('boom_load');
+                $(event.target).parents('table.media_files').trigger('boom_load');
               }
             });
           });
