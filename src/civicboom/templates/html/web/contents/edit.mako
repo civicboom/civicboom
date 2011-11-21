@@ -4,27 +4,28 @@
 
 
 <%def name="body()">
-	<%
-		if d['content'].get('parent'):
-			self.attr.frags          = [content_edit, parent]  # If the content being edited has a parent, place the parent beside it for reference
-			self.attr.frag_col_sizes = [2,2,1]
-			self.attr.frag_classes   = [None, None]
-		else:
-			self.attr.frags          = [content_edit]
-			self.attr.frag_col_sizes = [2,1]
-			self.attr.frag_classes   = [None]
-	%>
+    <%
+        if d['content'].get('parent'):
+            self.attr.frags          = [parent, content_edit]  # If the content being edited has a parent, place the parent beside it for reference
+            self.attr.frag_col_sizes = [2,2]
+            self.attr.frag_classes   = [None, None]
+        else:
+            self.attr.frags          = [content_edit]
+            self.attr.frag_col_sizes = [2]
+            self.attr.frag_classes   = [None]
+    %>
 </%def>
 
 
 <%def name="content_edit()">
-	<%include file="/frag/contents/edit.mako"/>
+    <%include file="/frag/contents/edit.mako"/>
 </%def>
 
 <%def name="parent()">
-	<!--#include virtual="${url('content', id=d['content']['parent']['id'], format='frag', exclude_actions='all' )}"-->
+    <!--#include virtual="${url('content', id=d['content']['parent']['id'], format='frag', exclude_actions='all' )}"-->
 </%def>
 
+<%doc>
 <%def name="help()">
     % if   d['content']['type'] == 'assignment' or d['content'].get('target_type') == 'assignment':
 	<!--#include virtual="/help/create_assignment"-->
@@ -34,3 +35,4 @@
     <!--#include virtual="/help/create_article"-->
     % endif
 </%def>
+</%doc>

@@ -6,6 +6,8 @@ import os
 
 from cbutils.redis_ import redis_from_url
 
+import time
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -24,7 +26,8 @@ class Globals(object):
         if os.path.exists(".version"):
             self.version   = file(".version").read().strip()
         else:  # pragma: no cover - all released versions have a version
-            self.version   = None
+            #self.version   = None
+            self.version = 'dev%s' % int(time.time())
 
         self.memcache = redis_from_url(config['worker.queue.url'])
 
