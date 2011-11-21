@@ -23,3 +23,25 @@ Array.prototype.contains = function (subject) {
 	}
 	return false;
 }
+
+// JQUERY PLUGIN: I append each jQuery object (in an array of
+// jQuery objects) to the currently selected collection.
+jQuery.fn.appendEach = function(arrayOfWrappers) {
+
+  // Map the array of jQuery objects to an array of
+  // raw DOM nodes.
+  var rawArray = jQuery.map(arrayOfWrappers, function(value, index) {
+
+    // Return the unwrapped version. This will return
+    // the underlying DOM nodes contained within each
+    // jQuery value.
+    return (value.get() );
+
+  });
+  // Add the raw DOM array to the current collection.
+  this.append(rawArray);
+
+  // Return this reference to maintain method chaining.
+  return (this );
+
+};

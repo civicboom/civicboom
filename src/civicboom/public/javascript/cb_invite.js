@@ -1,5 +1,3 @@
-if (!('boom' in window))
-  boom = {}
 if (!('invite' in window.boom)) {
   boom.invite = {
     init: function () {
