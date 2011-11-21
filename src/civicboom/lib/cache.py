@@ -339,7 +339,7 @@ def get_cache_key(bucket, kwargs, normalize_kwargs=False):
             keys_sorted.sort()
             
             # Append all kwarg values and list version number into one string tag to idnetify this cacheable item
-            cache_values  = [app_globals.version, bucket, "%s%s%s" % (cacheable_list_name, key_var_separator, list_version)]
+            cache_values  = [app_globals.version or 'dev%s'%app_globals.version_dev, bucket, "%s%s%s" % (cacheable_list_name, key_var_separator, list_version)]
             cache_values += ["%s%s%s" % (key, key_var_separator, kwargs[key]) for key in keys_sorted]
             cache_key = cache_separator.join(cache_values)
             
