@@ -56,10 +56,9 @@ if(!('frags' in boom)) {
               $('<div />')
               .addClass('popup-title')
               .append(title)
-              .append(
-                $('<a />')
-                .addClass('fr simplemodalClose')
-                .append('&nbsp;x&nbsp;')
+              // Close button
+              .before(
+                $('<a />').attr('href', '#').addClass('fr simplemodalClose icon16 i_delete')
               )
             )
             .append(
@@ -108,7 +107,7 @@ if(!('frags' in boom)) {
                 .append(settings.confirmTitle || originalLink.text() || '')
                 // Close button
                 .before(
-                  $('<a />').attr('href', '#').css({'text-decoration': 'none !important', 'font-size': '150%'}).addClass('fr simplemodalClose').append('&nbsp;x&nbsp;')
+                  $('<a />').attr('href', '#').addClass('fr simplemodalClose icon16 i_delete')
                 )
             )
             .append(
