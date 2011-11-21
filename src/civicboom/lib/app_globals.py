@@ -28,7 +28,7 @@ class Globals(object):
         else:  # pragma: no cover - all released versions have a version
             self.version   = None
 
-        version_dev = int(time.time()) # DRAT! a hack for adding a timestamp for dev cache eTag versions ... whatever you do .. DONT set seld.version to anything if your in develop :( .. just dont
+        self.version_dev = int(time.time()) # DRAT! a hack for adding a timestamp for dev cache eTag versions ... whatever you do .. DONT set seld.version to anything if your in develop :( .. just dont
 
         self.memcache = redis_from_url(config['worker.queue.url'])
 
