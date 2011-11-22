@@ -2,7 +2,7 @@
 
 ## Include caousel javascripts in header
 <%def name="scripts_head()">
-    <script type='text/javascript' src='/javascript/jquery-1.6.2.js'        ></script>
+    <script type='text/javascript' src='/javascript/jquery.js'        ></script>
     <script type='text/javascript' src='/javascript/jquery.jcarousel.js'></script>
 </%def>
 
