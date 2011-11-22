@@ -25,6 +25,8 @@
         <a href='/'>
             <img  class='logo_img'     src='${h.wh_url("public", "images/logo-v3-411x90.png")}'    alt='${_("_site_name")}'>
         </a>
+        ## AllanC - hacked in the beta - sorry greg ... tidy this up
+        <span style="position: absolute; left: 200px; top:24px; font-weight: bold;">beta</span> 
         
         ## header links
         <span class="links">
@@ -52,7 +54,7 @@
             <a href="${url(controller='account', action='signin')}">
                 <div class="signup_btn">
                     <div class="link_wrapper">
-                        <a href="${url(controller='account', action='signin')}" class="main">${_('Sign up now!')}</a>
+                        <span class="main"><b>${_('Sign up now!')}</b></span>
                     </div>
                 </div>
             </a>

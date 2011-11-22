@@ -1,11 +1,14 @@
 
-all: magic.py pexif.py twitter formalchemy geoalchemy repoze
+all: magic.py pexif.py pymediainfo.py twitter formalchemy geoalchemy repoze
 
 magic.py:
 	wget --no-check-certificate https://github.com/ahupp/python-magic/raw/a75cf0a4a7790eb106155c947af9612f15693b6e/magic.py
 
 pexif.py:
 	wget http://pexif.googlecode.com/svn/trunk/pexif.py
+
+pymediainfo.py:
+	wget --no-check-certificate https://raw.github.com/paltman/pymediainfo/v1.3.4/pymediainfo/__init__.py -O pymediainfo.py
 
 twitter:
 	wget http://pypi.python.org/packages/source/t/twitter/twitter-1.6.1.tar.gz

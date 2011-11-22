@@ -6,7 +6,7 @@
 
 <%def name="tabs(tab_id, titles, tab_contents, *args, **kwargs)">
     ## JQuery ui tabs - http://jqueryui.com/demos/tabs/
-    <div id="${tab_id}">
+    <div class="event_load jqui_tabs" id="${tab_id}">
         <ul>
             % for (title, i) in zip( titles , [i+1 for i in range(len(titles))]):
             <li><a href="#${tab_id}-${i}">${title}</a></li>
@@ -18,15 +18,6 @@
         </div>
         % endfor
     </div>
-    <script>
-        $(function() {
-            $("#${tab_id}").tabs({
-                create: function(event, ui) {
-                    ##$.modal.update(); ## AllanC - failed attempt at trying to get the ***ing thing to resize
-                }
-            });
-        });
-	</script>
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -134,12 +125,67 @@
                 <a href="${h.url(controller='misc', action='about', id='privacy')}">${_("Privacy")}</a>
                 <a href="${h.url(controller='misc', action='about', id='developers')}">${_("Developers")}</a>
             </div>
-            <div class="col filler">
-                <h2>${_('Follow us on')}</h2>
-                <a class="icon16 i_twitter"  href="http://twitter.com/civicboom"                                       title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
+            <div class="col">
+                <h2>${_('Get _site_name on your mobile')}</h2>
+                <a href="http://market.android.com/details?id=com.civicboom.mobile2" target="blank">
+                    <div class="android_btn">
+                        <img src="/images/about/mobile/android.png" alt="android">
+                        <h3>${_("Get the Android App now")}</h3>
+                    </div>
+                </a>
+            </div>
+            <div class="col">
+                <h3>${_('Follow us')}</h3>
+                <a class="icon16 i_twitter"  href="http://twitter.com/civicboom" title="${_('Follow us on Twitter')         }"    target="_blank"><span>Twitter</span></a>
                 <a class="icon16 i_facebook" href="http://www.facebook.com/pages/Civicboom/170296206384428" title="${_('Join us on Facebook')          }"    target="_blank"><span>Facebook</span></a>
                 <a class="icon16 i_linkedin" href="http://www.linkedin.com/company/civicboom"                          title="${_('Follow us on LinkedIn')}"  target="_blank"><span>Linkedin</span></a>
+                <br /><h3>${_('As seen on')}</h3>
+                <a href="http://thenextweb.com/media/2011/11/12/civicboom-this-open-platform-lets-organizations-request-content-from-their-audience/" target="_blank">
+                    <div class="company_logo" id="nextweb"></div>
+                </a>
             </div>
+            
+            <%doc> ## proto - although cool, not sure this is relevent for production
+            <div class="col">
+                <h2>${_('System Status')}</h2>
+                <style>
+                .status LI {
+                    display: list-item;
+                    margin-left: 1.5em;
+                    list-style: disc;
+                }
+                .status LI SPAN {
+                    color: white;
+                }
+                </style>
+                <ul class="status">
+                    <li style="color: #0F0;"><span>Web Cluster</span>
+                    <li style="color: #0F0;"><span>API Cluster</span>
+                    <li style="color: #0F0;"><span>Data Cluster</span>
+                    <li style="color: #0F0;"><span>Backups</span>
+                    <% from pylons import request %>
+                    <li style="color: #0AF;"><span>Code: ${request.environ['app_version'] or 'develop'}</span>
+                    <li style="color: #0AF;"><span>Node: ${request.environ['node_name']}</span>
+                </ul>
+            </div>
+            </%doc>
+            
+        </div>
+        <div class="copyright">
+            ##<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
+            ${popup.link(
+                h.args_to_tuple(controller='misc', action='feedback'),
+                title = _('Feedback'),
+                text  = h.literal("<strong>%s</strong>" % _("Feedback")),
+            )}
+        
+            ${_(u"Website © Indiconews Ltd, articles © their respective authors")}
+            - ${_("Version:")}
+            % if config['development_mode']:
+                <b>Dev</b>
+            % else:
+                ${request.environ['app_version']}
+            % endif
         </div>
     </div>
 </%def>

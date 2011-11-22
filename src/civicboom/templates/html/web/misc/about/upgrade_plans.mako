@@ -143,7 +143,7 @@
                                 ${h.secure_link(
                                     h.url('payment_action', id='me', action='regrade', new_type=plan),
                                     _('Upgrade'),
-                                    css_class="button"
+                                    link_class="button"
                                 )}
                             % endif
                         </td>
@@ -164,7 +164,7 @@
 
 <%def name="upgrade_popup()">
     <p>If you want to upgrade or learn more, simply fill in the form below and one of our team will be in touch asap!</p>
-    ${h.form(h.args_to_tuple(controller='misc', action='upgrade_request', format='redirect'), method='post', json_form_complete_actions="cb_frag_remove(current_element);")}
+    ${h.form(h.args_to_tuple(controller='misc', action='upgrade_request', format='redirect'), method='post', data=dict(json_complete="[['modal_close']]"))}
         <%
         upgrade_form_meta = (
             ('name'    , _('Name')    , ''),

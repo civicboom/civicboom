@@ -40,6 +40,7 @@ help2:
 	# run-demo      -- run in standalone demo mode - no internet needed
 	# stopsys       -- stop the system cb-website and cb-worker
 	# tv            -- compile telemetry DB
+	# release       -- build a relase for master - will be prompted for version number
 
 
 ##############################################################################

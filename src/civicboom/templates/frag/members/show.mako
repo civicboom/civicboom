@@ -194,9 +194,7 @@
 <%def name="body()">
     ## AllanC!?! (c.logged_in_persona.username or c.logged_in_user.username) this is a meaninless statement because or returns one or the other? logged_in_persona always not null if logged_in_user
     % if c.logged_in_persona and c.logged_in_persona.username == self.member['username'] and request.params.get('prompt_aggregate')=='True':
-    <script>
-    ${share.janrain_social_call_member(self.member, 'new', self.member['type']) | n }
-    </script>
+        <div class="link_janrain event_load" ${share.janrain_social_data_member(self.member, 'new', self.member['type'])}></div>
     % endif
     
     ## Top row (avatar/about me)
@@ -252,7 +250,7 @@
                 </a>
             </span>
 
-            <a style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" onclick="${share.janrain_social_call_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type']) | n }; return false;"><p class="janrain_link">${_("Get others involved!")}</p></a>
+            <a class="link_janrain" style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" ${share.janrain_social_data_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type'])}><p class="janrain_link">${_("Get others involved!")}</p></a>
 
             <div class="separator"></div>
         </div>    
@@ -326,9 +324,9 @@
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
                     value           = _('Follow') ,
-                    css_class = 'button button_large',
+                    link_class = 'button button_large',
                     title           = _("Follow %s" % self.name) ,
-                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+##                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
             % endif
@@ -337,9 +335,9 @@
                 ${h.secure_link(
                     h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
                     value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
-                    css_class = 'button button_large',
+                    link_class = 'button button_large',
                     title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+##                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
                 )}
                 <span class="separtor"></span>
             % endif
@@ -552,7 +550,9 @@
             <div class="content">
                 <ul>
                     <li>
-                        <a onclick="cb_frag($(this), '${h.url('messages', list='to',           format='frag')}', 'frag_col_2'); return false;" href="${h.url('messages', list='to')}">
+                        <a class="link_new_frag"
+                            data-frag="${h.url('messages', list='to', format='frag')}"
+                            href="${h.url('messages', list='to')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_message"     ></span>
                                 <div class="icon_overlay_red"
@@ -564,14 +564,18 @@
                         </a>
                     </li>
                     <li>
-                        <a onclick="cb_frag($(this), '${h.url('messages', list='sent',         format='frag')}', 'frag_col_2'); return false;" href="${h.url('messages', list='sent')}">
+                        <a class="link_new_frag"
+                            data-frag="${h.url('messages', list='sent', format='frag')}"
+                            href="${h.url('messages', list='sent')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_message_sent"></span>
                             </div>${_('Sent')}
                         </a>
                     </li>
                     <li>
-                        <a onclick="cb_frag($(this), '${h.url('messages', list='notification', format='frag')}', 'frag_col_2'); return false;" href="${h.url('messages', list='notification')}">
+                        <a class="link_new_frag"
+                            data-frag="${h.url('messages', list='notification', format='frag')}"
+                            href="${h.url('messages', list='notification')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_notification"></span>
                                 <div class="icon_overlay_red"
@@ -586,18 +590,6 @@
             </div>
         </div>
     </div>
-    
-    <%doc><div class="frag_list">
-        <h2>${_('Messages')}</h2>
-        <div class="frag_list_contents">
-            <div class="content" style="text-align: center;">
-                    <a style="float: left;" href="${h.url('messages', list='to')          }"><div style="float:left; width: 4em;"><span class="icon16 i_message"     ></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_messages}&nbsp;     </div></div>${_('Inbox')        }</a>
-                    <a href="${h.url('messages', list='sent')        }"><div style="float:left; width: 4em;"><span class="icon16 i_message_sent"></span>                                                                                 </div>${_('Sent')         }</a>
-                    <a style="float: right;" href="${h.url('messages', list='notification')}"><div style="float:left; width: 4em;"><span class="icon16 i_notification"></span> <div class="icon_overlay_red">&nbsp;${self.num_unread_notifications}&nbsp;</div></div>${_('Notifications')}</a>
-            </div>
-        </div>
-    <div class="separator"></div>
-    </div></%doc>
     </%def>
 
 ##------------------------------------------------------------------------------
@@ -616,10 +608,10 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
             value           = _('Follow') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button '>%s</span>") % _('Follow'),
             title           = _("Follow %s" % self.name) ,
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -629,9 +621,9 @@
             h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
             value           = _('Stop Following') if 'follow' not in self.actions else _('Ignore invite') ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Stop Following'),
-            css_class       = "button" ,
+            link_class       = "button" ,
             title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -640,9 +632,9 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Join _group') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Join _Group'),
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -652,9 +644,9 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='join'       , id=self.id, member=c.logged_in_persona.username, format='redirect') ,
             value           = _('Request to join _group') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Request to join _group'),
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -664,10 +656,10 @@
         ${h.secure_link(
             h.args_to_tuple('group_action', action='invite'     , id=c.logged_in_persona.username, member=self.id, format='redirect') ,
             value           = _('Invite to _Group') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite') ,
             title           = invite_text , 
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -677,10 +669,10 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_invite_trusted'  , id=self.id, format='redirect') ,
             value           = _('Invite trusted') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Invite trusted'),
             title           = _("Invite %s as a trusted follower" % self.name) ,
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -689,20 +681,20 @@
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_trust'  , id=self.id, format='redirect') ,
             value           = _('Trust') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Trust'),
             title           = _("Trust follower %s" % self.name) ,
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % elif 'follower_distrust' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('member_action', action='follower_distrust'  , id=self.id, format='redirect') ,
             value           = _('Distrust') ,
-            css_class       = "button" ,
+            link_class       = "button" ,
             #value_formatted = h.literal("<span class='button'>%s</span>") % _('Distrust'),
             title           = _("Distrust follower %s" % self.name) ,
-            json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
+            #json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
         )}
         <span class="separtor"></span>
     % endif
@@ -711,7 +703,7 @@
         ${h.secure_link(
             h.url('new_content', target_type='article', parent_id=self.member['push_assignment']),
             value           = _("Send us your _stories") ,
-            css_class       = "button" ,
+            link_class      = "button" ,
             title           = _("Got _content? Send us _content directly") ,
         )}
     % endif
@@ -719,32 +711,6 @@
 
 
 <%def name="actions_common()">
-
-    <%doc>
-    % if 'settings_group' in self.actions:
-        <a href="${h.url('edit_group', id=self.id)}" title="${_('_group Settings').capitalize()}"><span class="icon16 i_group"></span>${_('_group Settings').capitalize()}</a>
-        <span class="separtor"></span>
-    % endif
-    
-    % if 'settings' in self.actions and self.member['type'] != 'group':
-        <a href="${h.url('settings')}" title="${_('Settings')}"><span class="icon16 i_settings"></span>${_('Settings')}</a>
-        <span class="separtor"></span>
-    % endif
-    </%doc>
-    <%doc>
-    ## AllanC - now in settings group settings ... general_group.mako
-    % if 'delete' in self.actions and self.member['type'] == 'group':
-        ${h.secure_link(
-            h.args_to_tuple('group', id=self.id, format='redirect'),
-            method = "DELETE",
-            value           = _("Delete _group"),
-            value_formatted = h.literal("<span class='icon16 i_delete'></span>%s") % _('Delete'),
-            confirm_text    = _("Are your sure you want to delete this group?"),
-            json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
-        )}
-        <span class="separtor"></span>
-    % endif
-    </%doc>
     
     % if self.member.get('location_current') or self.member.get('location_home'):
         ##${parent.georss_link()}

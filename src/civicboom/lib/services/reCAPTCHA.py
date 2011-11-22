@@ -9,7 +9,8 @@ import urllib
 import urllib2
 
 import logging
-log = logging.getLogger(__name__)
+#log = logging.getLogger(__name__)
+user_log = logging.getLogger("user")
 
 service_url = 'https://www.google.com/recaptcha/api/'
 
@@ -46,26 +47,28 @@ def reCAPTCHA(method, **kwargs):
         lazy_private_key = config['api_key.reCAPTCHA.private']
     kwargs['privatekey'] = lazy_private_key
     
-    try:
-        http_response        = urllib2.urlopen(service_url+method, urllib.urlencode(kwargs), timeout=10)
-        reCAPTCHA_response   = http_response.read().splitlines()
-        http_response.close()
-    except:
-        log.error(self.message('reCAPTCHA network_failure', state))
-        return None
-    return reCAPTCHA_response
+    for i in range(2):
+        try:
+            http_response        = urllib2.urlopen(service_url+method, urllib.urlencode(kwargs), timeout=10)
+            reCAPTCHA_response   = http_response.read().splitlines()
+            http_response.close()
+            return reCAPTCHA_response
+        except Exception as e:
+            user_log.error('reCAPTCHA network_failure: %s' % e)
+    return None
 
 
 def reCAPTCHA_verify(**kwargs):
     reCAPTCHA_response = reCAPTCHA('verify', **kwargs)
     
     if not reCAPTCHA_response:
-        return 'recaptcha-not-reachable'
+        #return 'recaptcha-not-reachable'
+        return True # AllanC - this was included because we dont want users being rejected if we cant contact Google. This should be reinstated later
     
     if reCAPTCHA_response[0] == 'true':
         return True
     
     error = reCAPTCHA_response[1]
     if error not in ['incorrect-captcha-sol']:
-        log.error(error) # Log real errors
+        user_log.error(error) # Log real errors
     return error

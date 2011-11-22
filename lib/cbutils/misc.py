@@ -30,21 +30,51 @@ def set_now(new_now_override=None):
     if isinstance(new_now_override, datetime.datetime):
         now_override = new_now_override
 
-def timedelta_str(string_args):
+def timedelta_from_str(string_args):
     """
     Convert a string containing comma separted timedelta kwargs into a timedeta object
     
-    >>> timedelta_str(           "hours=10"  ) == datetime.timedelta(         hours=10)
+    >>> timedelta_from_str(           "hours=10"        ) == datetime.timedelta(         hours=10)
     True
-    >>> timedelta_str("days = 10, hours = 10") == datetime.timedelta(days=10, hours=10)
+    >>> timedelta_from_str("days = 10, hours = 10"      ) == datetime.timedelta(days=10, hours=10)
     True
-    >>> timedelta_str(datetime.timedelta(minutes=1)) == datetime.timedelta(minutes=1)
+    >>> timedelta_from_str(datetime.timedelta(minutes=1)) == datetime.timedelta(minutes=1        )
     True
     """
     if isinstance(string_args, basestring):
-        return datetime.timedelta(**dict([(kwarg.split('=')[0].strip(), int(kwarg.split('=')[1].strip())) for kwarg in string_args.split(',')]))
+        d = datetime.timedelta(**dict([(kwarg.split('=')[0].strip(), int(kwarg.split('=')[1].strip())) for kwarg in string_args.split(',')]))
+        if isinstance(d, datetime.timedelta) and d.total_seconds()>0:
+            return d
+        else:
+            return None
     return string_args
 
+def timedelta_to_str(t):
+    """
+    Convert a timedelta object to a string representation
+    
+    >>> timedelta_to_str(datetime.timedelta(        hours=10))
+    'hours=10'
+    >>> timedelta_to_str(datetime.timedelta(days=5, hours=10)) in ['days=5,hours=10', 'hours=10,days=5']
+    True
+    >>> timedelta_to_str(datetime.timedelta(minutes=1       ))
+    'minutes=1'
+    """
+    t = t.total_seconds()
+    d = dict()
+    for key, div in [('milliseconds',1),('seconds',60),('minutes',60),('hours',24),('days',7),('weeks',None)]:
+        if div:
+            val = t % div
+        else:
+            val = t
+        if val:
+            d[key] = val
+        if div:
+            t = int((t-val)/div)
+        else:
+            t = 0
+    return ",".join('='.join((key, str(value))) for key, value in d.iteritems())
+    
 
 def random_string(length=8):
     """

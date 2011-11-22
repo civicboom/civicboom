@@ -1,31 +1,17 @@
-/*
-----------------------------------------------------------------------------
- JQuery SimpleModel Setup
-----------------------------------------------------------------------------
- http://www.ericmmartin.com/projects/simplemodal/
-*/
-$.modal.defaults.closeClass = "simplemodalClose";
-$.modal.defaults.autoResize = true;
-$.modal.defaults.zIndex = 2000; /* OSM bits are 1000-1100 */
-$.modal.defaults.onOpen = function (dialog) {
-	dialog.overlay.fadeIn('slow');
-	dialog.container.fadeIn('slow');
-	dialog.data.fadeIn('slow');
-};
-$.modal.defaults.onClose = function (dialog) {
-	dialog.overlay.fadeOut('slow');
-	dialog.container.fadeOut('slow');
-	dialog.data.fadeOut('slow', function () {$.modal.close();});
-};
-
-
 // janrain_app_id is set at the top of the footer scripts, then
 // misc.foot.js is loaded in the middle of the footer
 // RPXNOW is not loaded in offline (demo) mode, initialising it breaks all javascript
 if (typeof RPXNOW !== 'undefined') {
   RPXNOW.init({appId: janrain_app_id, xdReceiver: '/rpx_xdcomm.html'});
-} else {
+}
+if (typeof addthis == 'undefined' || typeof (addthis || {}).toolbox == 'undefined') {
   addthis = {toolbox:function(){}};
+  if (RPXNOW) delete RPXNOW;
+}
+
+// Run any boom.init_foot functions
+for (var i in boom.init_foot) {
+  boom.init_foot[i]();
 }
 
 // Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video

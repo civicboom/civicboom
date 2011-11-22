@@ -35,12 +35,18 @@
 ##------------------------------------------------------------------------------
 
 <%def name="widget_preview(member)">
-<div class="get_widget">
+<%
+    member = normalize_member_username(member);
+    widget_url_base = h.url('member', id=member, sub_domain='widget', protocol='http')
+    widget_url_base = widget_url_base.split('?')[0] # Failsafe - we don't want ANY additonal params
+%>
+<div class="get_widget event_load"
+    data-widget-url-base="${widget_url_base}"
+    data-widget-var-prefix="${var_prefix}"
+>
     ## style="height: 400px; padding-right: 2em;"
     ## AllanC - style hack above - to get the ***ing popup to pad and size properly in the popup ... $.modal.update() dose not work, the tabs mess with stuff
-    <%
-        member = normalize_member_username(member);
-    %>
+
     
     ${components.tabs(
         tab_id       ='get_widget_tabs',
@@ -49,10 +55,6 @@
         member = member
     )}
     
-    <%
-        widget_url_base = h.url('member', id=member, sub_domain='widget', protocol='http')
-        widget_url_base = widget_url_base.split('?')[0] # Failsafe - we don't want ANY additonal params
-    %>
     <script type="text/javascript">
         var widget_var_prefix = '${var_prefix}';
         function preview_widget(element) {
@@ -254,16 +256,10 @@
                         ]
                     %>
                     % for color_name, color_field in colors:
-                    <label>${color_name}</label><input type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" /><br/>
+                    <label>${color_name}</label><input class="event_load jq_simplecolor" type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" /><br/>
                     % endfor
                     </div>
-                    <script type="text/javascript">
-                        $(document).ready(function() {
-                            % for color_name, color_field in colors:
-                            $('#${color_field}').simpleColorPicker();
-                            % endfor
-                        });
-                    </script>
+                    
                 </fieldset>
             
             </form>

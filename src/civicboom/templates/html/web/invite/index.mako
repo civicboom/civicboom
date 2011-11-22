@@ -23,7 +23,6 @@
 			self.attr.frag_url = h.url('member', action='show', id=d['id'], invite=d['invite'], format='frag')
 		elif invite_type == 'payment_add_user':
 		    self.attr.frag_url = h.url('payment', action='show', id=d['id'], invite=d['invite'], format='frag')
-		    print self.attr.frag_url
 		endif
 		
 	%>

@@ -18,17 +18,26 @@
         ##----------------------------------------------------------------------
         % if config['development_mode']:
             <%
-                # AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
-                js_all =[
-                    'javascript/jquery-1.6.2.js',
-                    'javascript/jquery.mobile.cb_settings.js',
-                    'javascript/jquery.mobile-1.0rc2.js',
-                    'javascript/geo.js',
-                ]
+            from glob import glob
+            scripts_head = glob("civicboom/public/javascript/mobile/*.js")
+            scripts_head = [n[len("civicboom/public/"):] for n in scripts_head]
+            scripts_head.sort()
             %>
-            % for js in js_all:
-            <script type="text/javascript" src="${h.wh_url("public", js)}"></script>
+            % for script in scripts_head:
+                <script src="/${script}"></script>
             % endfor
+##            <%
+##                # AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
+##                js_all =[
+##                    'javascript/jquery-1.6.2.js',
+##                    'javascript/jquery.mobile.cb_settings.js',
+##                    'javascript/jquery.mobile-1.0rc2.js',
+##                    'javascript/geo.js',
+##                ]
+##            %>
+##            % for js in js_all:
+##            <script type="text/javascript" src="${h.wh_url("public", js)}"></script>
+##            % endfor
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.js")}"></script>
         % endif

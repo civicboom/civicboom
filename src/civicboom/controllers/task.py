@@ -9,7 +9,7 @@ setup a cron job to run these tasks
 
 from civicboom.lib.base import *
 
-from cbutils.misc import timedelta_str, set_now
+from cbutils.misc import timedelta_from_str, set_now
 
 from sqlalchemy import and_, or_, null
 
@@ -33,8 +33,27 @@ def send_payment_admin_email(subject, content_text):
         content_text=content_text,
     )
 
-def normalize_datetime(datetime):
-    return datetime.replace(minute=0, second=0, microsecond=0)
+def normalize_datetime(d, accuracy='hour'):
+    """
+    Normalizez datetime down to hour or day
+    Dates are immutable (thank god)
+    """
+    if   accuracy=='hour':
+        return d.replace(minute=0, second=0, microsecond=0)
+    elif accuracy=='day' :
+        return d.replace(minute=0, second=0, microsecond=0, hour=0)
+    elif accuracy=='week':
+        return d.replace(minute=0, second=0, microsecond=0, hour=0) - datetime.timedelta(days=d.weekday())
+    return d
+
+def process_db_chunk(query, process_item, limit=None):
+    if not limit:
+        limit = config['timedtask.batch_chunk_size']
+    count = query.count()
+    for offset in [i*limit for i in range(0, (count/limit)+1)]:
+        results = query.offset(offset).limit(limit).all()
+        for result in results:
+            process_item(result)
     
 
 class TaskController(BaseController):
@@ -81,8 +100,8 @@ class TaskController(BaseController):
         from civicboom.model.member import User
         from civicboom.lib.accounts import validation_url
         
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
-        remind_after            = timedelta_str(remind_after           )
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
+        remind_after            = timedelta_from_str(remind_after           )
         
         reminder_start = normalize_datetime(now()          - remind_after           )
         reminder_end   = normalize_datetime(reminder_start + frequency_of_timed_task)
@@ -108,7 +127,7 @@ class TaskController(BaseController):
         """
         from civicboom.model.member import User
         
-        ghost_expire = normalize_datetime(now() - timedelta_str(delete_older_than))
+        ghost_expire = normalize_datetime(now() - timedelta_from_str(delete_older_than))
         
         for user in Session.query(User).filter(User.status=='pending').filter(User.join_date <= ghost_expire).all(): # .filter(~User.login_details.any()).
             Session.delete(user)
@@ -139,7 +158,7 @@ class TaskController(BaseController):
         def get_responded(assignment):
             return [response.creator_id for response in assignment.responses]
         
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         
         date_7days_time = normalize_datetime(now() + datetime.timedelta(days=7))
         date_1days_time = normalize_datetime(now() + datetime.timedelta(days=1))
@@ -177,7 +196,7 @@ class TaskController(BaseController):
         """
         query for all users in last <timedelta> and email 
         """
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         
         from civicboom.model import Member
         members = Session.query(Member) \
@@ -427,6 +446,8 @@ class TaskController(BaseController):
                 send_payment_admin_email('Unmatched Transaction %s' % txn.id, "We've searched as hard as we can, but the Civicboom hamsters and I can't find the invoice to match transaction %s to. Maybe your human eyes are better after all!" % txn.id)
         Session.commit()
         return response_completed_ok
+    
+    
     #---------------------------------------------------------------------------
     # Publish Sceduled Assignments
     #---------------------------------------------------------------------------
@@ -435,7 +456,7 @@ class TaskController(BaseController):
         """
         query for all users in last <timedelta> and email 
         """
-        frequency_of_timed_task = timedelta_str(frequency_of_timed_task)
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
         datetime_now            = normalize_datetime(now())
         
         from civicboom.model.content        import DraftContent
@@ -455,6 +476,61 @@ class TaskController(BaseController):
             content_publish(content, submit_publish=True)
         
         return response_completed_ok
+
+    #---------------------------------------------------------------------------
+    # Summary notification emails
+    #---------------------------------------------------------------------------
+    @web_params_to_kwargs
+    def summary_notification_email(self, frequency_of_timed_task="hours=1"):
+        """
+        users that have flag themselfs as requesting summary emails can have 24 hours of notifications summerised
+        
+        TODO: In future this could take into account utc offset
+        TODO: don't change the frequencey from 1 hour as this break interval_anchor
+        """
+        from civicboom.model import User, Message
+        from sqlalchemy      import null
+        
+        frequency_of_timed_task = timedelta_from_str(frequency_of_timed_task)
+        datetime_now            = normalize_datetime(now())
+        
+        def summary_notification_email_user(user):
+            """
+            All users passed to this methdod have been selected using a query to ensure they have the field 'summary_email_interval'
+            """
+            # Normalize the interval and ancor to the previous hour to assess if we are on a interval boundary
+            if user.summary_email_start:
+                interval_ancor = datetime_now - normalize_datetime(user.summary_email_start, accuracy='hour') # todo ... this really should be linked the frequncy of timed task
+            else:
+                interval_ancor = datetime_now - normalize_datetime(datetime_now            , accuracy='week')
+            interval_ancor = interval_ancor.total_seconds()
+            interval       = user.summary_email_interval.total_seconds()
+            
+            # If on interval boundary
+            if (interval_ancor % interval) == 0:
+                # Select all messages from since the previous interval
+                messages = Session.query(Message).filter(or_(Message.target_id==user.id,Message.source_id==user.id)).filter(Message.timestamp >= (datetime_now-user.summary_email_interval)).order_by(Message.timestamp).all()
+                # No need to send email summary if no messages have been generated in the last interval
+                if messages:
+                    content_html = render('/email/notifications/summary.mako', extra_vars={'messages':messages, 'user':user})
+                    user.send_email(
+                        subject      = _('_site_name: Summary'),
+                        content_html = content_html,
+                    )
+                    
+                    # Test output - used to debug email layout
+                    #import os
+                    #file = open(os.path.expanduser("~/Temp/out.html"), 'w')
+                    #file.write(content_html)
+                    #file.close()
+        
+        process_db_chunk(
+            Session.query(User).filter(User.summary_email_interval!=null()), #and_(User.summary_email_start, 
+            summary_notification_email_user
+        )
+        
+        return response_completed_ok
+
 
     #---------------------------------------------------------------------------
     # Warehouse Managment

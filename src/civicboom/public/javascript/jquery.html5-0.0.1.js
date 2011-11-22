@@ -81,7 +81,7 @@ $(function () { html5ize() });
 
 // Define a cross-browser window.console.log method.
 // For IE and FF without Firebug, fallback to using an alert.
-if (!window.console) {
-	var log = window.opera ? window.opera.postError : alert;
-	window.console = { log: function(str) { log(str) } };
-}
+// if (!window.console) {
+	// var log = window.opera ? window.opera.postError : alert;
+	// window.console = { log: function(str) { log(str) } };
+// }

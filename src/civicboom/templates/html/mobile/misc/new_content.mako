@@ -8,7 +8,7 @@
         
         <div data-role="content">            
             ${self.form_button(h.url('new_content', target_type='assignment'), _("Ask for _articles"))}
-            ${self.form_button(h.url('new_content', target_type='article'   ), _("Post a _article")  )}
+            ${self.form_button(h.url('new_content', target_type='article'   ), _("Post _content")  )}
             <a href="${h.url(controller='contents', target_type='assignment', action='index')}"><button>${_('See latest _assignments')}</button></a>
         </div>
         

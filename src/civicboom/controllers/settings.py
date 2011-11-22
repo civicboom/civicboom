@@ -35,8 +35,10 @@ from civicboom.model.meta import location_to_string
 from civicboom.lib.web import _find_template_basic
 
 from civicboom.controllers.account import AccountController
-
 account_controller = AccountController()
+
+from cbutils.misc import timedelta_to_str
+import datetime
 
 log = logging.getLogger(__name__)
 
@@ -123,6 +125,7 @@ add_setting('auto_follow_on_accept', _('Automatically follow the user or _group 
 add_setting('allow_registration_follows', _('Allow this user or _group to automatically follow users when they register'), group='advanced/follower_settings', weight=1001, type='boolean', info=_('Please speak to our team before you change this option!'))
 add_setting('push_assignment', _('Set a _assignment you would like followers to be able to push stories to'), group='advanced/follower_settings', weight=1002, type='id_assignment', info=_('Please speak to our team before you change this option!'))
 add_setting('hide_followers', _('Do not list your followers to any members other than yourself'), group='advanced/follower_settings', weight=1003, type='boolean', info=_('Protect your brands followers by hiding them from public view'))
+add_setting('summary_email_interval', _('Notification summary email interval'), group='advanced/follower_settings', weight=1004, type='interval', info=_('hours=3 or days=7'), who='user')
 
 #---------------------------------------------------------------------------
 # Setting Validators (for dynamic scema construction)
@@ -145,7 +148,8 @@ type_validators = { 'string':           formencode.validators.UnicodeString(),
                     'location':         civicboom.lib.form_validators.base.LocationValidator(),
                     'string_location':  formencode.validators.UnicodeString(),
                     'boolean':          formencode.validators.UnicodeString(max=10, strip=True),
-                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment', not_empty=False)
+                    'id_assignment':       civicboom.lib.form_validators.base.ContentObjectValidator(persona_owner=True, content_type='assignment', not_empty=False),
+                    'interval':         civicboom.lib.form_validators.base.IntervalValidator(),
 }
 
 settings_validators = {}
@@ -242,7 +246,9 @@ def copy_user_settings(settings_meta, user, user_type):
                 v = user.email_unverified
             if isinstance(v, basestring) or isinstance(v, int): # ugly hack
                 settings[setting_name_repl] = v
-            else:
+            elif isinstance(v, datetime.timedelta):
+                settings[setting_name_repl] = timedelta_to_str(v)
+            else: # AllanC - could we specifically look for the geopoint type here?
                 settings[setting_name_repl] = location_to_string(v)
     return settings
 
@@ -612,6 +618,8 @@ class SettingsController(BaseController):
         if c.format == 'html':
             set_flash_message(action_ok(_('Settings updated')))
             return redirect(url(panel_redirect))
+        
+        data['settings'] = copy_user_settings(data['settings_meta'], user, user.__type__) # AllanC - a hack to convert the settings dictionary to a string dict because they had object types in it that could not be converted to JSON
         
         return action_ok(
             message = _('Settings updated') ,

@@ -323,7 +323,7 @@ class BaseController(WSGIController):
             log.debug('removing force_web cookie')
             cookie_delete('force_web')
         if c.format=='html' and c.subformat=='web' and request.environ.get('is_mobile') and not cookie_get('force_web') and request.environ['REQUEST_METHOD']=='GET':
-            mobile_url = url('current', sub_domain='m')
+            mobile_url = url('current', sub_domain='m', **request.GET)
             log.debug('redirecting mobile user to %s' % mobile_url)
             redirect(mobile_url)
         
@@ -391,9 +391,12 @@ class BaseController(WSGIController):
         else:
             _lang = config['lang'] # Default lang in config file
 
-        c.lang = _lang
-        set_lang(_lang)
-        formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+        try:
+            set_lang(_lang)
+            formencode.api.set_stdtranslation(domain="civicboom", languages=[_lang])
+            c.lang = _lang # only do this if the above succeeded
+        except Exception:  # LanguageError
+            pass
     
         
         # User pending regisration? --------------------------------------------
