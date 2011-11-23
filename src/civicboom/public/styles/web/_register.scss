@@ -22,7 +22,6 @@ BODY.c-register.a-check_email {
 
 BODY.c-account.a-signin,
 BODY.c-register.a-new_user.u-user {
-
     .step {
       font-size: 300%;
       text-align: center;
@@ -42,10 +41,6 @@ BODY.c-register.a-new_user.u-user {
         margin: auto;
         text-align: left;
         width: 850px;
-        
-        .button {
-            
-        }
     }
 
 	.newform tr td {
@@ -111,10 +106,6 @@ BODY.c-register.a-new_user.u-user {
             display: none;
         }
         
-        //&:hover {
-        //    background-color: lighten($cb-light-inactive, 3%);
-        //}
-        
         .newformtitle {
             font-size: 120%;
         }
@@ -127,18 +118,6 @@ BODY.c-register.a-new_user.u-user {
                 padding: 5px 0 5px 0;
                 list-style: disc outside;
             }
-        }
-    }
-    
-    .or {
-        display: inline-block;
-        position: relative;
-        width: 11.4%;
-        font-size: 300%;
-        text-align: center;
-        
-        p {
-            margin: 0;
         }
     }
     
