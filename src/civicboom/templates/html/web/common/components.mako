@@ -100,11 +100,6 @@
 ##------------------------------------------------------------------------------
 <%def name="misc_footer()">
     <div class="misc_footer">
-        <style type="text/css">
-            footer {
-                display: none;
-            }
-        </style>
         <div class="footer_wrapper">
             <div class="col">
                 <h2>${_('Sign up')}</h2>
@@ -144,33 +139,8 @@
                     <div class="company_logo" id="nextweb"></div>
                 </a>
             </div>
-            
-            <%doc> ## proto - although cool, not sure this is relevent for production
-            <div class="col">
-                <h2>${_('System Status')}</h2>
-                <style>
-                .status LI {
-                    display: list-item;
-                    margin-left: 1.5em;
-                    list-style: disc;
-                }
-                .status LI SPAN {
-                    color: white;
-                }
-                </style>
-                <ul class="status">
-                    <li style="color: #0F0;"><span>Web Cluster</span>
-                    <li style="color: #0F0;"><span>API Cluster</span>
-                    <li style="color: #0F0;"><span>Data Cluster</span>
-                    <li style="color: #0F0;"><span>Backups</span>
-                    <% from pylons import request %>
-                    <li style="color: #0AF;"><span>Code: ${request.environ['app_version'] or 'develop'}</span>
-                    <li style="color: #0AF;"><span>Node: ${request.environ['node_name']}</span>
-                </ul>
-            </div>
-            </%doc>
-            
         </div>
+
         <div class="copyright">
             ##<a href="mailto:feedback@civicboom.com">${_("Please send us your Feedback")}</a>
             ${popup.link(

@@ -15,10 +15,10 @@
     font-size: 13px;
     
     .copyright {
-        position: absolute;
-        bottom: 0.5em;
-        right: 0.5em;
+        width: 100%;
+        text-align: center;
         font-size: 85%;
+        padding: 1em;
     }
         
     .footer_wrapper{
@@ -35,7 +35,7 @@
             display: inline-block;
             background-color: lighten($cb-grey, 10%);
             @include border_radius(0.5em);
-            margin: 2em 1em 2em 0;
+            margin: 2em 1em 0 0;
             padding: 0.5em 1em 1em 1.5em;
             text-shadow: darken($cb-grey, 40%) 1px 1px 1px;
             text-align: left;

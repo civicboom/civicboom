@@ -1,9 +1,9 @@
 <%inherit file="/html/web/common/html_base.mako"/>
-
 <%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Please check your email")}</%def>
+<%def name="footer()">${components.misc_footer()}</%def>
 
 <%def name="show_error(name)">
     ##% if 'group' in d and name in d['group'] and 'error' in d['group'][name]:
@@ -65,4 +65,3 @@
 	</table>
 	</td></tr></table>
 </div>
-${components.misc_footer()}
