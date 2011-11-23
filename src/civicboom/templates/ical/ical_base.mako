@@ -1,11 +1,43 @@
-<%! import icalendar %>
+<%!
+    import icalendar
+    
+    status = {
+        'accepted' : 'ACCEPTED',
+        'withdrawn': 'DECLINED',
+    }
+    types = {
+        'user' : 'INDIVIDUAL',
+        'group': 'GROUP',
+    }
+    
+    def ical_member(member):
+        return 'CUTYPE=%s:CN="%s":%s' % (types.get(member['type']), member['name'], member['url'])
+    
+    def ical_langauge(content):
+        return 'LANGUAGE=%s' % content.get('langauge','en-US')
+    
+    def ical_content(content, ical_obj):
+        ical_obj.add('SUMMARY'    , '%s:%s' % (ical_langauge(content), content['title'])
+        ical_obj.add('DESCRIPTION', comment.get('content_short') or h.truncate(comment.get('content'), length=150, whole_word=True, indicator='...')
+        ical_obj.add('CATEGORIES' , content['tags'])
+        ical_obj.add("CLASS"      , 'PRIVATE' if content['private'] else 'PUBLIC')
+        ical_obj.add("URL"        , content['url'])
+        ical_obj.add('ORGANIZER'  , ical_member(content['creator']))
+        ical_obj.add('DTSTAMP'    , h.api_datestr_to_datetime(content.get('update_date'))
+        
+        for media in content['attachments']:
+            event.add('ATTACH' , media['original_url'])
+            #event.add('ATTACH' ,'FMTTYPE=%s/%s:%s' % (media['type'], media['subtype'], media['original_url'])) # AllanC - didnt want to attach the full items
+
+%>
 
 <%def name="body()"><%
-    self.cal = Calendar()
+    self.cal = icalendar.Calendar()
     cal = self.cal
     cal.add('prodid', '-//Civicboom//civicboom.com//')
     cal.add('version', '2.0')
 %>\
+${next.body()}\
 ${cal.as_string()}
 </%def>
 
@@ -13,15 +45,48 @@ ${cal.as_string()}
 </%def>
 
 <%def name="ical_content_item(content)"><%
-    event = Event()
-    event.add('summary', 'Python meeting about calendaring')
-    event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=UTC))
-    event.add('dtend'  , datetime(2005,4,4,10,0,0,tzinfo=UTC))
-    event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=UTC))
-    event['uid'] = '20050115T101010/27346262376@mxm.dk'
-    event.add('priority', 5)
+    if content.get('type') == 'assignment':
+        if content.get('event_date'):
+            event_date = h.api_datestr_to_datetime(content.get('event_date')
+            
+            event = Event()
+            
+            ical_content(content, event)
+            
+            event.add('dtstart', event_date) # Need to take into accout hour ... if hour is 00:00 then take whole day?
+            event.add('dtend'  , )
+            
+            event['uid'] = content.get('id') + 'event'
+            
+            location = content.get('location').split()
+            location.reverse()
+            if len(location)==2:
+                event.add('GEO', ";".join(location))
+            event.add('LOCATION', content.get('location_text'))
+            
+            #for atendee in d['accepted_status']['items'] if status.get(atendee['status']):
+            #    event.add('ATTENDEE', 'ROLE=OPT-PARTICIPANT;PARTSTAT=%s;%s' % (status.get(atendee['status']), ical_member(atendee) ))
+            #for comment in d['comments']['items']:
+            #    event.add('COMMENT', "%s: %s" % (comment['creator']['name'], comment['content']) )
+            
+            self.cal.add_component(event)
+            
+        if content.get('due_date'):
+            todo = icalendar.Todo()
+            ical_content(content, todo)
+            
+            todo.add('DUE', h.api_datestr_to_datetime(content.get('due_date'))
+            todo['uid'] = content.get('id') + 'due'
+            
+            todo.add('STATUS', 'NEEDS-ACTION') # 'COMPLETED'
 
-    self.cal.add_component(event)
+            #DTSTART:20070514T110000Z
+            #DUE:20070709T130000Z
+            #COMPLETED:20070707T100000Z
+    
+    if content.get('type') == 'draft':
+        #.add('STATUS', 'DRAFT')
+        
 %></%def>
 
 <%doc>
