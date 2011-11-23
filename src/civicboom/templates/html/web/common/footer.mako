@@ -29,5 +29,4 @@
     % else:
         ${request.environ['app_version']}
     % endif
-    
 </div>
