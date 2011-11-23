@@ -44,11 +44,11 @@
 				<h2 class="nopad">Want to explore?</h2>
 				<ul>
 					<li>
-						<h2><a href="${h.url('contents', list='assignments_active')}">Requests HERE</a></h2>
+						<h2><a href="${h.url('contents', list='assignments_active')}">${_("_Assignments HERE")}</a></h2>
 						See what's being asked...
 					</li>
 					<li>
-						<h2><a href="${h.url('contents', list='articles')}">${_('_Requests and _articles HERE')}</a></h2>
+						<h2><a href="${h.url('contents', list='articles')}">${_('_Assignments and _articles HERE')}</a></h2>
 						View the latest crowd-sourced news...
 					</li>
 					<%doc><li>
