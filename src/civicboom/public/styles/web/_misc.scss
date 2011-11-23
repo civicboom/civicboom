@@ -237,6 +237,12 @@ header {
 */
 /* END >_< ABLASLAHTPONWATPOMTWA */
 
+HTML.blank_background {
+    DIV#app P {
+        line-height: 200%;
+    }
+}
+    
 BODY.c-misc {
     color: $misc-page-font;
     /*background-color: #fff;
@@ -244,10 +250,6 @@ BODY.c-misc {
     footer {
         display: none;
     }*/
-    
-    p {
-        line-height: 200%;
-    }
     
     .misc_header, .content_wrapper, .footer {
         a {
