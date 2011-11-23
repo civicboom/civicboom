@@ -237,12 +237,6 @@ header {
 */
 /* END >_< ABLASLAHTPONWATPOMTWA */
 
-HTML.blank_background {
-    DIV#app P {
-        line-height: 200%;
-    }
-}
-    
 BODY.c-misc {
     color: $misc-page-font;
     /*background-color: #fff;
@@ -250,6 +244,16 @@ BODY.c-misc {
     footer {
         display: none;
     }*/
+
+    // This fucks with everything, everywhere.
+    // If some specific text needs double-spacing, have a class for that
+    // specific text - the P tag gets used in all sorts of places
+    /*
+    P {
+        line-height: 200%;
+    }
+    */
+    
     
     .misc_header, .content_wrapper, .footer {
         a {
