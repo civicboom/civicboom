@@ -12,7 +12,7 @@
             <%
             from glob import glob
             scripts_head = glob("civicboom/public/javascript/foot/*.js")
-            scripts_head = [n[len("civicboom/public/"):] for n in scripts_head if config['online'] or 'rpx' not in n]
+            scripts_head = [n[len("civicboom/public/"):] for n in scripts_head]
             scripts_head.sort()
             %>
             % for script in scripts_head:

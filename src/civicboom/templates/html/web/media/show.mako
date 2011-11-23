@@ -195,7 +195,7 @@
             <div class="title_bar">
                 <div class="common_actions">
                     ## <a href='' title='${_('Close pop-up')}' class="icon16 i_close simplemodalClose"><span>${_("Close")}</span></a>
-                    <a href='' title='${_('Close pop-up')}' class="simplemodalClose">Close</a>
+                    <a href='' title='${_('Close pop-up')}' onclick="$.modal.close();return false;" class="simplemodalClose">Close</a>
                 </div>
             </div>
             <div class="media_popup_content">
