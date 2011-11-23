@@ -43,17 +43,8 @@
         .what-next, .why-respond {
             color: #666;
             margin: 1.5em auto 0 0.5em;
-            font-size: 105%;
         }
         
-        .featured-mobile {
-            width: 100%;
-            font-size: 120%;
-            text-align: center;
-            font-weight: bold;
-            padding-top: 15px;
-        }
-		
 		.content_box {
 			background: $frag-list-top; /* for non-css3 browsers */
 
@@ -103,7 +94,6 @@
 
 		.frag_data .frag_col {
 		  margin: 0 1em 1em 1em;
-		  //font-size: 88%;
 		}
 
 		.title {
