@@ -302,17 +302,6 @@ HTML.no-js #flash_message {
     cursor: pointer;
 }
 
-.buttonesque_link {
-    display: inline-block;
-    color: #000;
-    @include border_radius($button-radius);
-    border: 1px solid transparent;
-    text-align: center;
-    text-decoration: underline !important;
-    font-size: 90%;
-    cursor: pointer;
-}
-
 .acceptrequest {
 	width: 100%;
 	text-align: center;
