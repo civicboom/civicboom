@@ -116,8 +116,8 @@ def has_account_required(required, current):
 
 class GroupMembership(Base):
     __tablename__ = "map_user_to_group"
-    group_id      = Column(String(32), ForeignKey('member_group.id'), primary_key=True)
-    member_id     = Column(String(32), ForeignKey('member.id', onupdate="cascade")      , primary_key=True)
+    group_id      = Column(String(32), ForeignKey('member_group.id', onupdate="cascade"), primary_key=True)
+    member_id     = Column(String(32), ForeignKey('member.id'      , onupdate="cascade"), primary_key=True)
     role          = Column(group_member_roles , nullable=False, default="contributor")
     status        = Column(group_member_status, nullable=False, default="active")
 
