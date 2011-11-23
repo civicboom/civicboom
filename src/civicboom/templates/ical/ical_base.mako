@@ -9,7 +9,10 @@
 ${cal.as_string()}
 </%def>
 
-<%def name="assignment(content)"><%
+<%def name="ical_member_item(member)">
+</%def>
+
+<%def name="ical_content_item(content)"><%
     event = Event()
     event.add('summary', 'Python meeting about calendaring')
     event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=UTC))
