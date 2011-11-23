@@ -76,12 +76,12 @@ BODY.c-register.a-new_user.u-user {
 	}
     
     .user_type_option {
-        display: inline-block;
-        position: relative;
-        width: 39%;
+        width: 350px;
         min-height: 165px;
 	      font-size: 120%;
-	      //cursor: pointer;
+          text-align: left;
+          display: block;
+          margin: 0px 30px;
 	      
 	      @include drop_shadow(1px, 1px, 3px, #333);
         
