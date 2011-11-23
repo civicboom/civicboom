@@ -207,7 +207,7 @@ ${components.misc_footer()}
                     <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
                 </ul>
 
-                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="Help me share my _articles">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="${_("Help me share my _articles")}">
             </div>
         </td>
         <td>
@@ -219,7 +219,7 @@ ${components.misc_footer()}
                     <li>${_('Your greatest resource is your audience because news starts with people')}</li>
                     <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
                 </ul>
-                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="Help me find _content">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="${_("Help me find _content")}">
             </div>
         </td>
     </tr>
