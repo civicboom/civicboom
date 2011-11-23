@@ -244,10 +244,16 @@ BODY.c-misc {
     footer {
         display: none;
     }*/
-    
-    p {
+
+    // This fucks with everything, everywhere.
+    // If some specific text needs double-spacing, have a class for that
+    // specific text - the P tag gets used in all sorts of places
+    /*
+    P {
         line-height: 200%;
     }
+    */
+    
     
     .misc_header, .content_wrapper, .footer {
         a {
@@ -528,9 +534,6 @@ BODY.c-misc.a-new_article.u-user {
   div.new-article {
     .button {
       width: 6em;
-    }
-    div.na-padleft {
-      padding-left: 2em;
     }
     .na-orgs {
       .mo-help-l {
