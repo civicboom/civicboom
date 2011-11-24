@@ -58,7 +58,7 @@ if(!('frags' in boom)) {
               .append(title)
               // Close button
               .before(
-                $('<a />').attr('href', '#').addClass('fr simplemodalClose icon16 i_delete')
+                $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
               )
             )
             .append(
@@ -107,7 +107,7 @@ if(!('frags' in boom)) {
                 .append(settings.confirmTitle || originalLink.text() || '')
                 // Close button
                 .before(
-                  $('<a />').attr('href', '#').addClass('fr simplemodalClose icon16 i_delete')
+                  $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
                 )
             )
             .append(
