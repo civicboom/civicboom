@@ -218,7 +218,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="media()">
-    <table class="media_files" width="100%">
+    <table class="media_files form" width="100%">
         <!-- Add media -->
         <!-- Add media javascript - visible to JS enabled borwsers -->
         <tbody>
@@ -272,11 +272,11 @@
             </tr>
             <tr>
                 <td><label for="media_caption">${_("Caption")}</label></td>
-                <td><input id="media_caption" name="media_caption" type="text" value=""/></td>
+                <td colspan="2"><input id="media_caption" name="media_caption" type="text" value=""/></td>
             </tr>
             <tr>
                 <td><label for="media_credit">${_("Credit")}</label></td>
-                <td><input id="media_credit" name="media_credit" type="text" value="" /></td>
+                <td colspan="2"><input id="media_credit" name="media_credit" type="text" value="" /></td>
             </tr>
         </tbody>
         <!-- End Media template -->
