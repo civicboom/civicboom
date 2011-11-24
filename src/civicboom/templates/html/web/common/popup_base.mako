@@ -62,7 +62,5 @@
        data-frag="${url_frag}"
        ##onclick="popup('${title}','${url_frag}'); return false;"
        % endif
-    >
-        ${text}
-    </a>
+    >${text}</a>
 </%def>

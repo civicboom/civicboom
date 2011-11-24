@@ -1,16 +1,15 @@
 <%inherit file="/html/web/common/html_base.mako"/>
-
 <%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Sign in")}</%def>
+<%def name="footer()">${components.misc_footer()}</%def>
 
 <%def name="body()">
     ${signin_page()}
     ${type_page()}
     ${ind_page()}
     ${org_page()}
-    ${components.misc_footer()}
 </%def>
 
 <%def name="signin_page()">

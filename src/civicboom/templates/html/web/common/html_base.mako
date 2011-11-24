@@ -143,8 +143,16 @@ else:
             <%include file="header.mako"/>
         % endif
     </header>
-    <div id="app">${next.body()}</div>
-    <footer><%include file="footer.mako"/></footer>
+    <div id="app">
+        ${next.body()}
+    </div>
+        % if hasattr(next, 'footer'):
+            ${next.footer()}
+        % else:
+    <footer>
+            <%include file="footer.mako"/>
+    </footer>
+        % endif
 
     <%def name="breadcrumbs()"></%def>
     <div class="hide_if_js">${self.breadcrumbs()}</div>

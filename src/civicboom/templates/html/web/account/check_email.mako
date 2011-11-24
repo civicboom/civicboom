@@ -1,9 +1,9 @@
 <%inherit file="/html/web/common/html_base.mako"/>
-
 <%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 <%def name="title()">${_("Please check your email")}</%def>
+<%def name="footer()">${components.misc_footer()}</%def>
 
 <%def name="show_error(name)">
     ##% if 'group' in d and name in d['group'] and 'error' in d['group'][name]:
@@ -44,11 +44,11 @@
 				<h2 class="nopad">Want to explore?</h2>
 				<ul>
 					<li>
-						<h2><a href="${h.url('contents', list='assignments_active')}">Requests HERE</a></h2>
+						<h2><a href="${h.url('contents', list='assignments_active')}">${_("_Assignments HERE")}</a></h2>
 						See what's being asked...
 					</li>
 					<li>
-						<h2><a href="${h.url('contents', list='articles')}">${_('_Requests and _articles HERE')}</a></h2>
+						<h2><a href="${h.url('contents', list='articles')}">${_('_Assignments and _articles HERE')}</a></h2>
 						View the latest crowd-sourced news...
 					</li>
 					<%doc><li>
@@ -65,4 +65,3 @@
 	</table>
 	</td></tr></table>
 </div>
-${components.misc_footer()}
