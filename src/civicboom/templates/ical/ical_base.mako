@@ -10,13 +10,17 @@
         'group': 'GROUP',
     }
     
-    def ical_member(member):
-        return 'CUTYPE=%s:CN="%s":%s' % (types.get(member['type']), member['name'], member['url'])
-    
-    def ical_langauge(content):
-        return 'LANGUAGE=%s' % content.get('langauge','en-US')
-    
-    def ical_content(content, ical_obj):
+    def new_ical_component(ical_component_type, content, uid_addition=''):
+        ical_obj = None
+        if   ical_component_type == 'event':
+            ical_obj = icalendar.Event()
+        elif ical_component_type == 'todo':
+            ical_obj = icalendar.Todo()
+        elif ical_component_type == 'journal':
+            ical_obj = icalendar.Journal()
+        assert ical_obj
+        
+        ical_obj['uid'] = content.get('id') + uid_addition
         ical_obj.add('SUMMARY'    , '%s:%s' % (ical_langauge(content), content['title'])
         ical_obj.add('DESCRIPTION', comment.get('content_short') or h.truncate(comment.get('content'), length=150, whole_word=True, indicator='...')
         ical_obj.add('CATEGORIES' , content['tags'])
@@ -28,6 +32,16 @@
         for media in content['attachments']:
             event.add('ATTACH' , media['original_url'])
             #event.add('ATTACH' ,'FMTTYPE=%s/%s:%s' % (media['type'], media['subtype'], media['original_url'])) # AllanC - didnt want to attach the full items
+            
+        return ical_obj
+    
+    def ical_member(member):
+        return 'CUTYPE=%s:CN="%s":%s' % (types.get(member['type']), member['name'], member['url'])
+    
+    def ical_langauge(content):
+        return 'LANGUAGE=%s' % content.get('langauge','en-US')
+    
+
 
 %>
 
@@ -45,18 +59,17 @@ ${cal.as_string()}
 </%def>
 
 <%def name="ical_content_item(content)"><%
+
     if content.get('type') == 'assignment':
+        # Assignments may need 2 items raised.
+        #   Event date and Due date are separate events
         if content.get('event_date'):
+            event = new_ical_component('event', content, uid_addition='event')
+            
             event_date = h.api_datestr_to_datetime(content.get('event_date')
-            
-            event = Event()
-            
-            ical_content(content, event)
             
             event.add('dtstart', event_date) # Need to take into accout hour ... if hour is 00:00 then take whole day?
             event.add('dtend'  , )
-            
-            event['uid'] = content.get('id') + 'event'
             
             location = content.get('location').split()
             location.reverse()
@@ -70,23 +83,28 @@ ${cal.as_string()}
             #    event.add('COMMENT', "%s: %s" % (comment['creator']['name'], comment['content']) )
             
             self.cal.add_component(event)
-            
-        if content.get('due_date'):
-            todo = icalendar.Todo()
-            ical_content(content, todo)
-            
-            todo.add('DUE', h.api_datestr_to_datetime(content.get('due_date'))
-            todo['uid'] = content.get('id') + 'due'
-            
-            todo.add('STATUS', 'NEEDS-ACTION') # 'COMPLETED'
-
-            #DTSTART:20070514T110000Z
-            #DUE:20070709T130000Z
-            #COMPLETED:20070707T100000Z
-    
-    if content.get('type') == 'draft':
-        #.add('STATUS', 'DRAFT')
         
+        if content.get('due_date'):
+            todo = new_ical_component('todo', content, uid_addition='due')
+            todo.add('DUE', h.api_datestr_to_datetime(content.get('due_date'))
+            todo.add('STATUS', 'NEEDS-ACTION') # 'COMPLETED'
+            #'CANCELLED' - what if this request is deleted? - we want it to come up as cancled, but we just remove it from the DB. Currently it is not possible to do this
+            # Could we see if this user has responded to this
+            #COMPLETED:20070707T100000Z
+            self.cal.add_component(todo)
+    
+    # Draft journals can appear
+    if content.get('type') == 'draft' and content.get('target_type') == 'article':
+        journal = new_ical_component('journal', content)
+        journal.add('STATUS', 'DRAFT')
+        self.cal.add_component(journal)
+        
+    if content.get('type') == 'article':
+        journal = new_ical_component('journal', content)
+        if content.get('edit_lock'):
+            journal.add('STATUS', 'FINAL')
+        self.cal.add_component(journal)
+    
 %></%def>
 
 <%doc>
