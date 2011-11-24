@@ -387,8 +387,8 @@
 ## Location
 ##------------------------------------------------------------------------------
 <%def name="location()">
-    <div style="padding-top: 1em; padding-bottom: 1em">
-        ${loc.location_picker(field_name='location', always_show_map=True, width="100%", height="300px")}
+    <div style="padding-top: 1em; padding-bottom: 1em; height: 90%;">
+        ${loc.location_picker(field_name='location', always_show_map=True, width="100%", height="fill")}
     </div>
 </%def>
 
