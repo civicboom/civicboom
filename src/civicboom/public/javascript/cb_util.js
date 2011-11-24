@@ -266,7 +266,8 @@ if(!('util' in boom)) {
       },
       init : function() {
         console.log('message_indicators.init');
-        if (! $('body').hasClass('u-user')) return;
+        var body = $('body');
+        if (! body.hasClass('u-user') || body.hasClass('c-register') ) return;
         console.log('user logged in');
         setInterval(boom.util.message_indicators.update, 120000);
         $(function() {
