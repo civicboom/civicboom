@@ -50,9 +50,9 @@
         <div class="frag_list fill">
         ## Should be here but changes size of text editor
         ##<div class="frag_list_contents">
-        <h1>
+        <h1 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             % if self.content.get('parent'):
-                ${_("You are responding to: %s") % self.content['parent']['title']}
+                ${_("Responding to: %s") % self.content['parent']['title']}
             % elif self.selected_type == 'assignment':
                 ${_("Ask for _content")}
             % elif self.selected_type == 'article':
