@@ -47,6 +47,11 @@ if(!('frags' in boom)) {
        * Returns modal popup content with added title, message, and confirm_type class
        */
       modal_data : function(title, message, confirm_type) {
+        return {
+          title: title,
+          body: message
+        }
+        
         return $('<div />')
           .addClass('popup-modal')
           .append(
@@ -82,94 +87,152 @@ if(!('frags' in boom)) {
        *  confirm-secure-options: array of objects used to create yes links that change the secure link, instead of yes / no buttons.
        *    e.g. [ {confirm: "Text of the secure link", json: "/new/json/url/for?secure=link"}, {confirm: "Repeat here, leave json out to use original json url"} ]
        */
-      modal_confirm : function(settings, originalLink) {
+      new_modal_confirm: function(settings, originalLink){
         if( typeof settings == 'string')
           settings = JSON.parse(settings.replace(/\'/g, '\"'));
         console.log(settings.confirmSecureOptions);
         if( typeof settings.confirmSecureOptions == 'string')
           settings.confirmSecureOptions = JSON.parse(settings.confirmSecureOptions.replace(/\'/g, '\"'));
-        // Return modal content as jQuery object
-        // Popup jQuery, begin with outer layer, work in. popup-modal:
-        return $('<div />').addClass('popup-modal').append(
-          // popup_content
-          $('<div />').addClass('popup_content').append(
-            // information/alert/etc.
-            $('<div />').addClass(settings.confirmType || 'information').append(
-              // popup-title
-              $('<div />').addClass('popup-title')
-                // If confirm-avatar copy avatar from top right of site & re-style
-                .append(settings.confirmAvatar ? $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone()).append($('#persona_details').clone().text())
-                //                    $('#persona_holder').clone().attr('id','').addClass('popup-persona')
-                : '')
-                // If icon set icon else take icon name from link clicked
-                .append(settings.icon ? $('<span />').addClass('icon32').addClass('i_' + settings.icon) : originalLink.children('.icon32, .icon16').first().clone(false).removeClass('icon16').addClass('icon32'))
-                // If confirm-title set it as the title, otherwise use the original link's text
-                .append(settings.confirmTitle || originalLink.text() || '')
-                // Close button
-                .before(
-                  $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
-                )
-            )
-            .append(
-              // popup-message
-              $('<div />').addClass('popup-message').append(settings.confirm || '')
-            )
-            .append(
-              // popup-actions
-              $('<div />').addClass('popup-actions').append(
-                (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? (
-                  // secure options
-                  $('<ul />').appendEach(
-                    $.map(settings.confirmSecureOptions, function(value) {
-                      return $('<li />')
-                        .append(value.title ? $('<h3 />').append(value.title) : '')
-                        .append(value.content)
-                        .append(
-                          $('<a />')
-                          .addClass('button')
-                          .append(originalLink.text())
-                          .data('original', originalLink)
-                          .data('json', value.json)
-                          .click(function() {
-                            var link = $(this);
-                            var original = link.data('original');
-                            console.log(link, link.data());
-                            console.log(original, original.data());
-                            original.data('confirmed', 'true');
-                            console.log(1, original.siblings('form').data('json'));
-                            original.siblings('form').data('json', link.data('json'));
-                            //original.data('json', link.data('json'));
-                            console.log(2, original.siblings('form').data('json'));
-                            console.log(original, original.data());
-                            original.click();
-                            $.modal.close();
-                          })
-                        );
-                    })
-                  )
-                ) : (
-                  // buttons
+        obj = {
+          body: $('<div />').addClass('popup-message').append(settings.confirm || ''),
+          title: $('<div />').append($('<div />').append(settings.confirmTitle || originalLink.text() || '')),
+          buttons: {}
+        }
+        if (settings.confirmAvatar)
+          obj.title.prepend(
+            $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone().css('width', '16px')).append($('#persona_details').clone().text())
+          );
+        if (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) {
+          // secure options
+          $('<ul />').appendEach(
+            $.map(settings.confirmSecureOptions, function(value) {
+              return $('<li />')
+                .append(value.title ? $('<h3 />').append(value.title) : '')
+                .append(value.content)
+                .append(
                   $('<a />')
-                    .addClass('button')
-                    .data('original', originalLink)
-                    .html(settings.confirmYes || 'Yes')
-                    .click(function() {
-                      var link = $(this);
-                      console.log('click', this, link);
-                      var original = link.data('original');
-                      original.data('confirmed', 'true');
-                      original.click();
-                      $.modal.close();
-                    })
-                    .after(
-                      originalLink.hasClass('link_dummy') ? '' : $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
-                    )
+                  .addClass('button')
+                  .append(originalLink.text())
+                  .data('original', originalLink)
+                  .data('json', value.json)
+                  .click(function() {
+                    var link = $(this);
+                    var original = link.data('original');
+                    original.data('confirmed', 'true');
+                    original.siblings('form').data('json', link.data('json'));
+                    //original.data('json', link.data('json'));
+                    original.click();
+                    $(this).dialog('close');
+                  })
                 )
-              )
-            )
-          )
-        );
-      }
+                .append(
+                  $('<div />').addClass('cb')
+                );
+            })
+          ).appendTo(obj.body)
+        } else {
+          // No secure options == BUTTONS!
+          obj.buttons[settings.confirmYes || 'Yes'] = function () {
+            originalLink.data('confirmed', 'true');
+            console.log('old', originalLink.data('confirmed'));
+            originalLink.click();
+            $(this).dialog('close');
+          }
+          if (!originalLink.hasClass('link_dummy'))
+            obj.buttons[settings.confirmNo || 'No'] = function () {
+              $(this).dialog('close');
+            }
+        }
+        return obj;
+      },
+      // modal_confirm : function(settings, originalLink) {
+        // if( typeof settings == 'string')
+          // settings = JSON.parse(settings.replace(/\'/g, '\"'));
+        // console.log(settings.confirmSecureOptions);
+        // if( typeof settings.confirmSecureOptions == 'string')
+          // settings.confirmSecureOptions = JSON.parse(settings.confirmSecureOptions.replace(/\'/g, '\"'));
+        // // Return modal content as jQuery object
+        // // Popup jQuery, begin with outer layer, work in. popup-modal:
+        // return $('<div />').addClass('popup-modal').append(
+          // // popup_content
+          // $('<div />').addClass('popup_content').append(
+            // // information/alert/etc.
+            // $('<div />').addClass(settings.confirmType || 'information').append(
+              // // popup-title
+              // $('<div />').addClass('popup-title')
+                // // If confirm-avatar copy avatar from top right of site & re-style
+                // .append(settings.confirmAvatar ? $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone()).append($('#persona_details').clone().text())
+                // //                    $('#persona_holder').clone().attr('id','').addClass('popup-persona')
+                // : '')
+                // // If icon set icon else take icon name from link clicked
+                // .append(settings.icon ? $('<span />').addClass('icon32').addClass('i_' + settings.icon) : originalLink.children('.icon32, .icon16').first().clone(false).removeClass('icon16').addClass('icon32'))
+                // // If confirm-title set it as the title, otherwise use the original link's text
+                // .append(settings.confirmTitle || originalLink.text() || '')
+                // // Close button
+                // .before(
+                  // $('<a />').attr('href', '#').addClass('fr simplemodalClose icon16 i_delete')
+                // )
+            // )
+            // .append(
+              // // popup-message
+              // $('<div />').addClass('popup-message').append(settings.confirm || '')
+            // )
+            // .append(
+              // // popup-actions
+              // $('<div />').addClass('popup-actions').append(
+                // (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? (
+                  // // secure options
+                  // $('<ul />').appendEach(
+                    // $.map(settings.confirmSecureOptions, function(value) {
+                      // return $('<li />')
+                        // .append(value.title ? $('<h3 />').append(value.title) : '')
+                        // .append(value.content)
+                        // .append(
+                          // $('<a />')
+                          // .addClass('button')
+                          // .append(originalLink.text())
+                          // .data('original', originalLink)
+                          // .data('json', value.json)
+                          // .click(function() {
+                            // var link = $(this);
+                            // var original = link.data('original');
+                            // console.log(link, link.data());
+                            // console.log(original, original.data());
+                            // original.data('confirmed', 'true');
+                            // console.log(1, original.siblings('form').data('json'));
+                            // original.siblings('form').data('json', link.data('json'));
+                            // //original.data('json', link.data('json'));
+                            // console.log(2, original.siblings('form').data('json'));
+                            // console.log(original, original.data());
+                            // original.click();
+                            // $.modal.close();
+                          // })
+                        // );
+                    // })
+                  // )
+                // ) : (
+                  // // buttons
+                  // $('<a />')
+                    // .addClass('button')
+                    // .data('original', originalLink)
+                    // .html(settings.confirmYes || 'Yes')
+                    // .click(function() {
+                      // var link = $(this);
+                      // console.log('click', this, link);
+                      // var original = link.data('original');
+                      // original.data('confirmed', 'true');
+                      // original.click();
+                      // $.modal.close();
+                    // })
+                    // .after(
+                      // originalLink.hasClass('link_dummy') ? '' : $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
+                    // )
+                // )
+              // )
+            // )
+          // )
+        // );
+      // }
     },
     // Frag counter (ensures frags are unique)
     counter : 0,
@@ -285,7 +348,8 @@ if(!('frags' in boom)) {
               // Continue
             }
             // Add modal_confirm to queue
-            boom.util.modal_queue.add(boom.frags.templates.modal_confirm(link.data(), link));
+            boom.util.modal_queue.add(boom.frags.templates.new_modal_confirm(link.data(), link), boom.frags.getFragment(link));
+            //boom.util.modal_queue.add(boom.frags.templates.modal_confirm(link.data(), link), boom.frags.getFragment(link));
             event.stopImmediatePropagation();
             return false;
           }
@@ -331,15 +395,15 @@ if(!('frags' in boom)) {
           }
         },
         'input[type="submit"][name]' : {
-          'click' : function() {
+          'click' : function(event) {
             console.log('input[type="submit"][name] submit')
             var submit_button = $(this);
-            $(this).parents('form').data('json-submit-field', submit_button);
-            return true;
+            $(this).parents('form').data('json-submit-field', submit_button).submit();
+            return false;
           }
         },
         'form.search[method="get"]' : {
-          'submit' : function() {
+          'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
             var frag_href = form.data('frag');

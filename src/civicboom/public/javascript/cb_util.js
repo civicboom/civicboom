@@ -88,29 +88,95 @@ if(!('util' in boom)) {
       /*
        * Add content to the modal queue, ready to display at the next available opportunity
        */
-      add : function(content, onClose) {
+      add : function(content, parent, onClose) {
+        var content_body, content_title, content_buttons;
+        if (typeof content == 'object') {
+          content_body = content.body;
+          content_title = content.title;
+          content_buttons = content.buttons;
+        } else {
+          content_body = content;
+        }
+        
+        content_body = $('<div />').addClass('resizeThis').append(boom.util.convert_jquery(content_body));
+        
+        
         $('body').delay(0)// Needed to trigger the queue
         .queue(function(next) {
           // Queue the modal, onClose trigger next queue item
           var body = $(this);
-          $.modal(content, {
-            onClose : function() {
-              if(onClose)
-                onClose();
-              $.modal.close();
-              next();
-            },
-            onShow : function() {
-              $.modal.update();
-              // this.d.data.find('.event_load').each(function() {
-              // var evented = $(this);
-              // console.log(evented, evented.length);
-              // evented.trigger('boom_load');
-              // })
-              this.d.data.find('.event_load').trigger('boom_load');
-            }
-          })
-        }).delay(100);
+          //parent = parent
+          var dialog = boom.util.convert_jquery(content_body)
+            .dialog({
+              //autoOpen: false,
+              title: content_title,
+              buttons: content_buttons,
+              modal: true,
+              position: {
+                of: parent,
+                at: 'center top',
+                my: 'center top',
+                collision: 'none'
+              },
+              draggable: false,
+              resizable: false,
+              show: {
+                effect: 'slide',
+                direction: 'up'
+              },
+              hide: {
+                effect: 'slide',
+                direction: 'up'
+              },
+              width: 'auto',
+              minWidth: '300 px',
+              height: 'auto',
+              open: function (event, ui) {
+                //if (parent) $(this).parent().appendTo(parent);
+                $(this).find('.event_load').trigger('boom_load');
+                console.log('open', ui);
+                console.log('open', $(this).dialog('option', 'position'));
+              },
+              beforeClose: function () {
+                // For some reason close does not trigger on x clicked / esc pressed
+                console.log('dialog.beforeClose');
+                if (onClose) onClose();
+                next();
+                return true; // Must return true otherwise close never triggered
+              },
+              close: function (event, ui) {
+                console.log('dialog.close');
+                $(this).dialog('destroy');
+                return false;
+              },
+              resize: function (event, ui) {
+                console.log('resize', $(this).dialog('option', 'position'));
+              },
+              resizeStop: function (event, ui) {
+                console.log('resizeStop', $(this).dialog('option', 'position'));
+                var position = $(this).dialog('option', 'position');
+                $(this).dialog('option', 'position');
+              }
+            });
+            //dialog.dialog('open');
+          // $.modal(content, {
+            // onClose : function() {
+              // if(onClose)
+                // onClose();
+              // $.modal.close();
+              // next();
+            // },
+            // onShow : function() {
+              // $.modal.update();
+              // // this.d.data.find('.event_load').each(function() {
+              // // var evented = $(this);
+              // // console.log(evented, evented.length);
+              // // evented.trigger('boom_load');
+              // // })
+              // this.d.data.find('.event_load').trigger('boom_load');
+            // }
+          // })
+        }).delay(150);
         // Next queue item always 100ms delay between popups
       },
       /*

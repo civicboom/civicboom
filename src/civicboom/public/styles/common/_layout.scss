@@ -273,7 +273,7 @@ HTML.no-js #flash_message {
 /* Common widgets                                                             */
 /*----------------------------------------------------------------------------*/
 
-.button, .ui-button.ui-state-active {
+.button, .ui-button.ui-state-active, .ui-button.ui-state-default {
     @include border_radius($button-radius);
 	display: inline-block;
 	background: $button-top;
@@ -285,7 +285,7 @@ HTML.no-js #flash_message {
 	cursor: pointer;
 }
 
-.ui-button.ui-state-active span.ui-button-text {
+.ui-button.ui-state-active span.ui-button-text, .ui-button.ui-state-default span.ui-button-text {
   color: white !important;
 }
 
