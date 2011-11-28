@@ -6,216 +6,98 @@
 /*----------------------------------------------------------------------------*/
 
 #frag_containers .frag_container .frag_data {
-	.frag_list {
+    padding-top: 1em;
+    
+    .frag_list {
+        background-color: $frag-list-top;
+        color: $frag-list-title-txt;
+        font-size: 90%;
+        margin: 0 0 1em 0;
         padding: 1em;
+        @include border_radius(0.5em);
+        @include drop_shadow(darken($frag-list-top, 40%), 1px, 1px, 3px);
 
-        .action_pad {
-            margin-right: 1px;
+        .frag_list_contents {
+
+            .content {
+                width: 100%;
+                
+                li {
+                    margin-bottom: 5px;
+                }
+                
+                .content_item {
+                    position: relative;
+                    margin-bottom: 10px;
+                    
+                    .content_thumbnail {
+                        display: inline-block;
+                        margin: 0.1em;
+                        vertical-align: top;
+                        border: 1px solid lighten($cb-lightblue, 30%);
+                    }
+                    
+                    .content_details {
+                        display: inline-block;
+                        min-height: 50px;
+                        max-width: 78%;
+                        padding-top: 3px;
+                        
+                        .content_title {
+                            font-size: 130%;
+                            padding-right: 25px;
+                        }
+                        
+                        .content_short {
+                            padding-right: 25px;
+                            word-wrap: break-word
+                        }
+                        
+                        .timestamp, .extra {
+                            color: #888;
+                        }
+                        
+                        .thumbnail {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                        }
+                        
+                        .prompt {
+                            position: absolute;
+                            bottom: 0;
+                            right: 0;
+                        }
+                    }
+                }
+            }
         }
-		font-size: 88%;
-		@include drop_shadow(1px, 1px, 1px, #666);
-
-		background: $frag-list-top; /* for non-css3 browsers */
-
-		@include border_radius($frag_radius);
-		
-		margin-bottom: 13px;
-        &.fill {
-            margin-bottom: 0px;
+        
+        .link_more {
+            text-align: right;
         }
-		padding: 0.6em;
-
-		color: $frag-list-title-txt;
-
-		/* --------------------------
-		   Frag list Headings (for lists in content and member frags)
-		   -------------------------- */
-		h2 {
-			font-size: 130%;
-			margin: 0em;
-			background-color: #fff; /* $frag-list-title; */
-			padding: 0.5em 0.5em 0.25em 0.5em;
-			
-			/* Proto - Have to put this here too to round entire list for some reason */
-			@include border-radius($frag-radius);
-		}
-		
-		h2 .count {
-			color: $frag-list-count;
-			float: right;
-		}
-
-		.list_actions {
-			float: right;
-		}
-	}
-	
-	.frag_top_row {
-		.social_sharing {
-			padding-left: 1em;
-			float: left;
-			
-			.thumbnail {
-				border: none;
-			}
-		}
-		
-		.license {
-			float: right;
-			padding-right: 1em;
-		}
-	}
-
-
-	/* --------------------------
-	   Frag list contents
-	   -------------------------- */
-	.frag_list_contents {
-		background-color: white;
-	
-		padding       : 0.5em;
-		padding-bottom: 0em; /* see rule below for each element adding there own bottom padding */
-
-		.thumbnail       {font-size: 45px;} /* AllanC - humm ... horrible hack to just notch up the size of the thumbnail in content lists to match the text. This not a long term solution */
-		.thumbnail_small {font-size: 20px;} /* dont override small size ... jesus this is a HACK */
-
-		@include border_radius($frag-radius);
-
-    td {
-        padding-bottom: 0.5em;
+        
+        .member {
+            li {
+                display: inline-block;
+                margin-bottom: 3px;
+            }
+        }
+        
+        .social_sharing{
+            max-width: 130px;
+            display: inline-block;
+        }
+        
+        h2 {
+            position: relative;
+            font-size: 130%;
+            padding-bottom: 0.25em;
+            
+            .count {
+                position: absolute;
+                right: 0;
+            }
+        }
     }
-
-		li, ul {
-			padding-bottom: 1em;
-		}
-
-		td {
-			vertical-align: top;
-		}
-
-		.link_more {
-			float: right;
-			background-color: $frag-list-border; 
-			
-			padding: 0.2em;
-			
-			position: relative;
-			top: -0.30em;
-			
-			@include border_radius(0.2em);
-		}
-
-		/* .frag_list li .avatar {font-size: 20px;} */
-
-
-		/*------------------------------ Content -------------------------------------*/
-		.content_details {
-			width: 100%;
-			position: relative;
-			min-height: 45px;
-			
-			p {
-			    padding-top : 0.1em;
-			    padding-left: 0.4em;
-			}
-			
-			.content_title {
-			    width: 85%;
-			    font-size: 120%;
-			    // color: lighten($frag-list-txt, 20%);
-			}
-			
-			.timestamp {
-			font-size: 105%;
-			    color: lighten($frag-list-txt, 30%);
-			}
-			
-			.extra {
-			    color: lighten($frag-list-txt, 40%);
-			    width: 80%;
-			    float: left;
-			}
-
-			.thumbnail {
-				position: absolute;
-				top: 0;
-				right: 0;
-			}
-			
-			.prompt {
-				position: absolute;
-				bottom: 0;
-				right: 0.25em;
-			}
-			
-			.content_icons {
-				position: absolute;
-				top: 0;
-				right: 0.25em;
-				
-				padding: 0.2em;
-				margin: 0;
-				
-				.icon16 {
-					float: right;
-					margin-left: 0.2em;
-				}
-			}
-		}
-
-		/*----------------------------- Messages -------------------------------------*/
-		.messages {
-			li {
-				margin-bottom: 0.5em;
-			}
-			.unread      {background-color: #eee;}
-			.source      {float: left;}
-			.target      {float: left;}
-			.content a   {font-weight: bold;}
-			.icon_delete {float: right;}
-			
-			.message_subject {
-			   font-size: 110%;
-			}
-			
-			.message_content {
-			   word-break: break-word;
-			}
-		}
-	}
-	
-	/*------------------------------ Members -------------------------------------*/
-	.member {
-		padding-bottom: 0;
-		width: 100%;
-		
-		li {
-			display: inline;
-			
-			.thumbnail {
-				margin-bottom: 0.2em;
-			}
-		}
-	}
-	
-	.list_item_creator_avatar {
-		float: right;
-	}
-	
-	.pagination {
-		padding: 0 1em 0.5em 1em;
-		font-weight: bold;
-	
-		a {
-			font-size: 125%;
-		}
-	
-		.next {
-			float: right;
-		}
-		
-		.prev {
-			float: left;
-		}
-	}
 }
