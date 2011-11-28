@@ -531,6 +531,8 @@ def setup_format_processors():
     
     def format_ical(result):
         abort(501)
+        response.headers['Content-type'] = "text/calendar; charset=utf-8"
+        return render_template(result, 'rss')
         
     def format_pdf(result):
         import subprocess

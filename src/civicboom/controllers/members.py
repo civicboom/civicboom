@@ -53,14 +53,17 @@ def _init_search_filters():
             if word:
                 parts.append(word)
         
-        # AllanC - TODO This behaviour is incorrect ... I perform a serach for name='unit' and I expect it to find both 'unittest' and 'unitfriend', it finds neither
-        
         if parts:
             text = " | ".join(parts)
-            return query.filter("""
-                to_tsvector('english', id || ' ' || name || ' ' || description) @@
-                to_tsquery(:text)
-            """).params(text=text)
+            return query.filter(
+                or_("""
+                        to_tsvector('english', id || ' ' || name || ' ' || description) @@
+                        to_tsquery(:text)
+                    """,
+                    Member.name.ilike('%%%s%%' % text),
+                    Member.id.ilike('%%%s%%' % text),
+                )
+            ).params(text=text)
         else:
             return query
 

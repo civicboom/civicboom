@@ -99,14 +99,6 @@ H1 {
 }
 
 
-// Fake h1 style.
-.h1 {
-    font-weight: bold !important;
-    margin: 0.25em 0em !important;
-    font-size: 150% !important;
-}
-
-
 /*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
 /*----------------------------------------------------------------------------*/
@@ -306,17 +298,6 @@ HTML.no-js #flash_message {
     text-align: center;
     text-decoration: none;
     font-weight: bold;
-    font-size: 90%;
-    cursor: pointer;
-}
-
-.buttonesque_link {
-    display: inline-block;
-    color: #000;
-    @include border_radius($button-radius);
-    border: 1px solid transparent;
-    text-align: center;
-    text-decoration: underline !important;
     font-size: 90%;
     cursor: pointer;
 }

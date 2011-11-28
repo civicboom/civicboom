@@ -1,6 +1,6 @@
 19116c19116
 <                     contentHTML += '<a class="link" href="'+link+'" target="_blank">';
 ---
->                     contentHTML += '<a class="link" href="'+link+'" onclick="cb_frag($(this), \''+link+'.frag\'); return false;">';
+>                     contentHTML += '<a class="link_new_frag link" href="'+link+'" onclick="var elem = $(this); boom.frags.create(elem, elem.data(\'frag\')); return false;" data-frag="'+link+'.frag">';
 19150a19151
 >                       popup.panMapIfOutOfView = true;
