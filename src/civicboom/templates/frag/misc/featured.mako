@@ -70,18 +70,23 @@
             </%def>
             
             ${featured_list('recent'            )}
+        </div>
             
+            <div class="frag_col frag_left_col">
+                ${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'), show_count=False)}
+            </div>
             
-            <div style="clear:both; margin-top   : 1.4em;"></div>
-            <div style="float:left;  width:48%;">${frag_list.member_list(d['members']['new_members'], list_names.get('new_members'), show_count=False)}</div>
-            <div style="float:right; width:48%;">${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ), show_count=False)}</div>
-            <div style="clear:both; margin-bottom: 0em;"></div>
+            <div class="frag_col frag_right_col">
+                ${frag_list.member_list(d['members']['new_groups' ], list_names.get('new_groups' ), show_count=False)}
+            </div>
+
+        <div class="frag_col">
+            <div style="clear:both;"></div>
             
             ${featured_list('recent_assignments')}
-            ${featured_list('most_responses'    )}
             
+            ${featured_list('most_responses'    )}
         </div>
-        <div style="padding: 0.15em"></div>
     </div>
 
 </%def>
