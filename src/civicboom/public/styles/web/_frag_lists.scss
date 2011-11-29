@@ -120,14 +120,17 @@
             display: inline-block;
         }
         
+        .list_actions {
+            float: right;
+        }
+        
         h2 {
             position: relative;
             font-size: 130%;
             padding-bottom: 0.25em;
             
             .count {
-                position: absolute;
-                right: 0;
+                float: right;
             }
         }
     }
