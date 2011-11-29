@@ -23,6 +23,7 @@
                 width: 100%;
                 
                 li {
+                    display: block;
                     margin-bottom: 5px;
                 }
                 
@@ -71,12 +72,42 @@
                     }
                 }
             }
+            
+            .member {
+                width: 100%;
+                
+                li {
+                    display: block;
+                    margin-bottom: 5px;
+                }
+                
+                
+                .member_item {
+                    position: relative;
+                    
+                    .thumbnail {
+                        display: inline-block;
+                        vertical-align: top;
+                        margin-top: 4px;
+                    }
+                    
+                    .member_details {
+                        display: inline-block;
+                    }
+                    
+                    .follow {
+                        position: absolute;
+                        right: 0;
+                    }
+                }
+            }
         }
         
         .link_more {
             text-align: right;
         }
         
+        // Proto - do not get why this is called member :o
         .member {
             li {
                 display: inline-block;

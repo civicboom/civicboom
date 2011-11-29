@@ -77,7 +77,7 @@
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member       , type_=('table','tr'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member       , type_=('ul', 'li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
@@ -232,13 +232,27 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_member(member)">
-<tr>
-    <td style="padding-top: 3px;">
+    <li class="member_item">
         ${member_includes.avatar(member, class_="thumbnail_small")}
-    </td>
-    <td style="padding-left: 3px">  
-        <% show_type = "[H]" if member.get('type') == "group" else "" %>
-        <span style='float:right;'>
+        
+        <div class="member_details">  
+            <% show_type = "[H]" if member.get('type') == "group" else "" %>
+            
+            <a class="link_new_frag" href="${h.url('member', id=member['username'])}" data-frag="${h.url('member', id=member['username'], format='frag')}">
+                ${member.get('name')}
+            </a>
+    		<br/>
+    		<small>
+    			<!-- Following ${member['num_following']}; -->
+    			% if member['type'] == 'group' and member['num_members']:
+    				${member['num_followers']} followers; ${member['num_members']} members
+    			% else:
+    				${member['num_followers']} followers
+    			% endif
+    		</small>
+        </div>
+        
+        <span class="follow">
             ${show_type}
             ## AllanC - short term botch to add follow option to member list
             ${h.secure_link(
@@ -249,20 +263,7 @@
 
             )}
         </span>
-        
-        <a class="link_new_frag" href="${h.url('member', id=member['username'])}" data-frag="${h.url('member', id=member['username'], format='frag')}">
-        ${member.get('name')}
-        </a>
-		<br/><small>
-			<!-- Following ${member['num_following']}; -->
-			% if member['type'] == 'group' and member['num_members']:
-				${member['num_followers']} followers; ${member['num_members']} members
-			% else:
-				${member['num_followers']} followers
-			% endif
-		</small>
-    </td>
-</tr>
+    </li>
 </%def>
 
 
@@ -335,7 +336,6 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_content(content, extra_info=False, creator=False)">
-<tr>
     <%
         id = content['id']
     
