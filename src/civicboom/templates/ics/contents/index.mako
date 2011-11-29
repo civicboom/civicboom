@@ -1,7 +1,7 @@
-<%inherit file="/ical/ical_base.mako"/>
+<%inherit file="/ics/ics_base.mako"/>
 
 <%def name="body()">
     % for content in d['list']['items']:
-        ${self.ical_content_item(content)}
+        ${self.ics_content_item(content)}
     % endfor
 </%def>

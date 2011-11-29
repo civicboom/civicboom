@@ -529,10 +529,10 @@ def setup_format_processors():
         frag = render_template(result, 'frag')
         return render_mako('print/wrapper.mako', extra_vars={"inner_html": frag})
     
-    def format_ical(result):
-        abort(501)
-        response.headers['Content-type'] = "text/calendar; charset=utf-8"
-        return render_template(result, 'rss')
+    def format_ics(result):
+        #response.headers['Content-type'] = "text/calendar; charset=utf-8"
+        response.headers['Content-type'] = "text/plain; charset=utf-8"
+        return render_template(result, 'ics')
         
     def format_pdf(result):
         import subprocess
@@ -565,7 +565,7 @@ def setup_format_processors():
         'frag'     : format_frag,
         'redirect' : format_redirect,
         'print'    : format_print,
-        'ical'     : format_ical,
+        'ics'      : format_ics,
         'pdf'      : format_pdf,
     }
 
