@@ -532,7 +532,7 @@ def setup_format_processors():
     def format_ics(result):
         #response.headers['Content-type'] = "text/calendar; charset=utf-8"
         response.headers['Content-type'] = "text/plain; charset=utf-8"
-        return render_template(result, 'ics')
+        return render_template(result, 'ics').replace('\n','\r\n')
         
     def format_pdf(result):
         import subprocess

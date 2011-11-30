@@ -167,7 +167,7 @@ LANGUAGE=${content_or_member.get('langauge') if content_or_member.get('langauge'
             text = content.get('content')
         else:
             text = content.get('content_short') or h.truncate(strip_html_tags(content.get('content')), length=150, whole_word=True, indicator='...')
-    text = re.sub(r'[\t\n\r\f\v]', '\\\\r\\\\n', text)
+    text = re.sub(r'[\t\n\r\f\v]', '\\\\n', text)
 %>\
 ${text}\
 </%def>
