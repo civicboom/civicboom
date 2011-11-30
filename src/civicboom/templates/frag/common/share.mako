@@ -299,7 +299,7 @@ share_data = {
     ## <div class="frag_list_contents">
         <div class="social_sharing content note addthis_toolbox" style="padding-bottom: 0px;">
         ## Boombox link generation moved to show.mako (using custom_share directly)
-        <ul class="member">
+        <ul class="share_this">
             % for name in ['email', 'facebook', 'twitter', 'linkedin', 'compact']:
             ${sharebutton(name, **kwargs)}
             % endfor

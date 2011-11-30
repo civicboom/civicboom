@@ -22,12 +22,9 @@
             .content {
                 width: 100%;
                 
-                li {
+                .content_item {
                     display: block;
                     margin-bottom: 5px;
-                }
-                
-                .content_item {
                     position: relative;
                     margin-bottom: 10px;
                     
@@ -108,7 +105,7 @@
         }
         
         // Proto - do not get why this is called member :o
-        .member {
+        .share_this {
             li {
                 display: inline-block;
                 margin-bottom: 3px;
