@@ -556,6 +556,16 @@ if(!('frags' in boom)) {
             janrain_popup_share(data.janrainUrl, data.janrainOptions, data.janrainVariables);
             return false;
           }
+        },
+        '.thumbnail' : {
+          'boom_load' : function() {
+              var div = $(this);
+              var img = div.children('img').one('load', function() {
+                img.trigger('boom_load');
+              });
+              if (img.width() > img.height())
+                div.addClass('thumbnail_landscape');
+          }
         }
       }
     },
