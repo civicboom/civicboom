@@ -1,3 +1,7 @@
+<%
+  from pylons import request
+%>
+
 <!DOCTYPE html>
 <%def name="html_class_additions()"></%def>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
@@ -49,7 +53,7 @@
 ##-------------------
 ## Javascripts
 ##-------------------
-% if config['development_mode']:
+% if config['development_mode'] and 'MSIE' not in request.environ.get('HTTP_USER_AGENT', ''):
     <script>
         boom_development = true;
         if (!window.console || ! window.console.log)
@@ -64,8 +68,10 @@
     % for script in scripts_head:
         <script src="/${script}"></script>
     % endfor
+% elif config['development_mode']:
+  <script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
 % else:
-	<script src="${h.wh_url("public", "javascript/_combined.head.js")}"></script>
+	<script src="${h.wh_url("public", "javascript/_combined.head.min.js")}"></script>
 % endif
 
 <%namespace name="share" file="/frag/common/share.mako" />

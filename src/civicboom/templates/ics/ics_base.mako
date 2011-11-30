@@ -107,7 +107,7 @@ LOCATION:${content.get('location_text')}
     % if d['content']['id'] == content['id']:
         % for atendee in d['accepted_status']['items']:
         ##if status.get(atendee['status'])
-ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])};${ics_member(atendee)}
+ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])}${ics_member(atendee)}
         % endfor
     % endif
 % except Exception as e:
@@ -151,7 +151,11 @@ END:VJOURNAL
 ## Utils
 ##------------------------------------------------------------------------------
 <%def name="ics_member(member)">\
-CUTYPE=${types.get(member['type'])};CN="${member['name']}":${member['url']}\
+% if isinstance(member, basestring):
+:${h.url('member', id=member, qualified=True)}\
+% else:
+;CUTYPE=${types.get(member['type'])};CN="${member['name']}":${member['url']}\
+% endif
 </%def>
 
 <%def name="ics_langauge(content_or_member)">\
@@ -184,6 +188,7 @@ ${text}\
         parent_id = content.get('id')
         uid_kwargs_additions['child_id'] = kwargs['child_id']
         del kwargs['child_id']
+    creator = content.get('creator') or content.get('creator_id')
 %>\
 UID:${h.url('content', id=content.get('id'), qualified=True, **uid_kwargs_additions)}
 DTSTAMP:${api_datestr_to_icsdatestr(content.get('update_date'))}
@@ -194,9 +199,7 @@ CATEGORIES:${','.join(content['tags'])}
 % endif
 CLASS:${'PRIVATE' if content['private'] else 'PUBLIC'}
 URL:${content['url']}
-% if content.get('creator'):
-ORGANIZER;${ics_member(content['creator'])}
-% endif
+ORGANIZER${ics_member(creator)}
 % if parent_id:
 RELATED-TO;RELTYPE=CHILD:${h.url('content', id=parent_id, qualified=True)}
 % endif

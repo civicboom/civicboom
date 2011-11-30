@@ -76,7 +76,8 @@ def clean_html_markup(text):
     u'<h1>Test</h1><p>clean</p><br/><a href="#">me</a>'
 
     """
-    text = re.sub(r'<style(.*?)style>', " ", text) #Strip STYLE (under no circumstances do we want this)
+    text = re.sub(r'<style(.*?)style>'  , " ", text, re.IGNORECASE + re.DOTALL) #Strip STYLE  (under no circumstances do we want this)
+    text = re.sub(r'<script(.*?)script>', " ", text, re.IGNORECASE + re.DOTALL) #Strip SCRIPT (under no circumstances do we want this)
     text = re.sub("&nbsp;"," ",text)               #Replace escaped spaces
     #text = re.sub("&amp;","&",text)
     text = re.sub("&lt;","-lt-",text) #convert legitmate lt gt's so that they can be untouched and reinserted later
