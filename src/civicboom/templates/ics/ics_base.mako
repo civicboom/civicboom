@@ -107,7 +107,7 @@ LOCATION:${content.get('location_text')}
     % if d['content']['id'] == content['id']:
         % for atendee in d['accepted_status']['items']:
         ##if status.get(atendee['status'])
-ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])};${ics_member(atendee)}
+ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])}${ics_member(atendee)}
         % endfor
     % endif
 % except Exception as e:
@@ -154,7 +154,7 @@ END:VJOURNAL
 % if isinstance(member, basestring):
 :${h.url('member', id=member, qualified=True)}\
 % else:
-CUTYPE=${types.get(member['type'])};CN="${member['name']}":${member['url']}\
+;CUTYPE=${types.get(member['type'])};CN="${member['name']}":${member['url']}\
 % endif
 </%def>
 
@@ -199,7 +199,7 @@ CATEGORIES:${','.join(content['tags'])}
 % endif
 CLASS:${'PRIVATE' if content['private'] else 'PUBLIC'}
 URL:${content['url']}
-ORGANIZER;${ics_member(creator)}
+ORGANIZER${ics_member(creator)}
 % if parent_id:
 RELATED-TO;RELTYPE=CHILD:${h.url('content', id=parent_id, qualified=True)}
 % endif
