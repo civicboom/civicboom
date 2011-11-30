@@ -2,8 +2,10 @@
 ## http://www.ietf.org/rfc/rfc5545.txt
 <%!
     import re
+    import datetime
     from cbutils.text import strip_html_tags
-
+    from civicboom.lib.helpers import api_datestr_to_datetime
+    
     # Dicts to convert between Civicboom terms and iCal terms
     status = {
         'accepted' : 'ACCEPTED',
@@ -14,9 +16,11 @@
         'group': 'GROUP',
     }
     
-    from civicboom.lib.helpers import api_datestr_to_datetime
-    def api_datestr_to_icsdatestr(datetime):
-        return api_datestr_to_datetime(datetime).strftime('%Y%m%dT%H%M%S')
+    def api_datestr_to_icsdatestr(datetime, include_hour=True):
+        if include_hour:
+            return api_datestr_to_datetime(datetime).strftime('%Y%m%dT%H%M%S')
+        else:
+            return api_datestr_to_datetime(datetime).strftime('%Y%m%d')
 %>
 
 <%def name="body()">\
@@ -80,22 +84,28 @@ ${journal(content, **journal_kwargs)}\
 % if content.get('event_date'):
 <%
     event_date = h.api_datestr_to_datetime(content.get('event_date'))
-    location = content.get('location').split()
-    location.reverse()
+    location = None
+    if content.get('location'):
+        location = content.get('location').split()
+        location.reverse()
 %>
 BEGIN:VEVENT
 ${ics_content_base(content)}\
+% if event_date.hour > 0:
 DTSTART:${api_datestr_to_icsdatestr(event_date)}
-## Need to take into accout hour ... if hour is 00:00 then take whole day?
-##DTEND ?
-% if len(location)==2:
+DTEND:${api_datestr_to_icsdatestr(event_date+datetime.timedelta(hours=1))}
+% else:
+DTSTART;VALUE=DATE:${api_datestr_to_icsdatestr(event_date, include_hour=FALSE)}
+% endif
+TRANSP:TRANSPARENT
+% if location and len(location)==2:
 GEO:${";".join(location)}
 LOCATION:${content.get('location_text')}
 % endif
 ## If we are displaying a singl item of content then include extra fields
 % try:
     % if d['content']['id'] == content['id']:
-        % for atendee in d['accepted_status']['items'] :
+        % for atendee in d['accepted_status']['items']:
         ##if status.get(atendee['status'])
 ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])};${ics_member(atendee)}
         % endfor
@@ -141,7 +151,7 @@ END:VJOURNAL
 ## Utils
 ##------------------------------------------------------------------------------
 <%def name="ics_member(member)">\
-CUTYPE=${types.get(member['type'])}:CN="${member['name']}":${member['url']}\
+CUTYPE=${types.get(member['type'])};CN="${member['name']}":${member['url']}\
 </%def>
 
 <%def name="ics_langauge(content_or_member)">\
@@ -157,7 +167,7 @@ LANGUAGE=${content_or_member.get('langauge') if content_or_member.get('langauge'
             text = content.get('content')
         else:
             text = content.get('content_short') or h.truncate(strip_html_tags(content.get('content')), length=150, whole_word=True, indicator='...')
-    text = re.sub(r'[\t\n\r\f\v]', '\\\\n', text)
+    text = re.sub(r'[\t\n\r\f\v]', '\\\\r\\\\n', text)
 %>\
 ${text}\
 </%def>
@@ -175,21 +185,20 @@ ${text}\
         uid_kwargs_additions['child_id'] = kwargs['child_id']
         del kwargs['child_id']
 %>\
-UID:"${h.url('content', id=content.get('id'), qualified=True, **uid_kwargs_additions)}"
+UID:${h.url('content', id=content.get('id'), qualified=True, **uid_kwargs_additions)}
 DTSTAMP:${api_datestr_to_icsdatestr(content.get('update_date'))}
-SUMMARY;${ics_langauge(content)}:"${content['title']}"
-DESCRIPTION;${ics_langauge(content)}:"${ics_content_text(content)}"
+SUMMARY;${ics_langauge(content)}:${content['title']}
+DESCRIPTION;${ics_langauge(content)}:${ics_content_text(content)}
 % if content['tags']:
 CATEGORIES:${','.join(content['tags'])}
 % endif
 CLASS:${'PRIVATE' if content['private'] else 'PUBLIC'}
 URL:${content['url']}
 % if content.get('creator'):
-ORGANIZER:${ics_member(content['creator'])}
+ORGANIZER;${ics_member(content['creator'])}
 % endif
-##TRANSP:TRANSPARENT
 % if parent_id:
-RELATED-TO;RELTYPE=CHILD:"${h.url('content', id=parent_id, qualified=True)}"
+RELATED-TO;RELTYPE=CHILD:${h.url('content', id=parent_id, qualified=True)}
 % endif
 % for media in content.get('attachments',[]):
 ATTACH:${media['original_url']}
@@ -201,10 +210,10 @@ ${key}:${value}
 % try:
     % if d['content']['id'] == content['id']:
         % for comment in d['comments']['items']:
-COMMENT;${ics_langauge(comment['creator'])}:"${comment['creator']['name']} - ${ics_content_text(comment)}"
+COMMENT;${ics_langauge(comment['creator'])}:${comment['creator']['name']} - ${ics_content_text(comment)}
         % endfor
         % for response in d['responses']['items']:
-COMMENT;${ics_langauge(response)}:"${response['title']} - ${ics_content_text(response)} - ${response['creator']['name']} - ${response['url']}"
+COMMENT;${ics_langauge(response)}:${response['title']} - ${ics_content_text(response)} - ${response['creator']['name']} - ${response['url']}
         % endfor
     % endif
 % except Exception as e:

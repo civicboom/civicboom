@@ -153,6 +153,8 @@ def strip_html_tags(text):
     >>> strip_html_tags(u'<h1>Test</h1>\\n<p style="no">clean</p>\\n\\n<br/><a href="#">me</a>')
     u'Test \\n clean \\n\\n me'
     """
+    if not text:
+        return
     #import webhelpers.markdown.HtmlBlockPreprocessor - using proper modules to do this would be good, couldnt work out how to use this HTML processor
     #text = webhelpers.html.converters.markdown(text)
     ##return re.sub(r'&lt;(.*?)&gt;', " ", saxutils.escape(text))
