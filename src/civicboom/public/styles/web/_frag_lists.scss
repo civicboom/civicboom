@@ -22,9 +22,12 @@
             .content {
                 width: 100%;
                 
+                li {
+                    margin-bottom: 5px;
+                }
+                
                 .content_item {
                     display: block;
-                    margin-bottom: 5px;
                     position: relative;
                     margin-bottom: 10px;
                     
