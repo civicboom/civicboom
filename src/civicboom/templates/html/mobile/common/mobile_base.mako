@@ -39,7 +39,7 @@
 ##            <script type="text/javascript" src="${h.wh_url("public", js)}"></script>
 ##            % endfor
         % else:
-            <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.js")}"></script>
+            <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.min.js")}"></script>
         % endif
     </head>
   
