@@ -530,8 +530,7 @@ def setup_format_processors():
         return render_mako('print/wrapper.mako', extra_vars={"inner_html": frag})
     
     def format_ics(result):
-        #response.headers['Content-type'] = "text/calendar; charset=utf-8"
-        response.headers['Content-type'] = "text/plain; charset=utf-8"
+        response.headers['Content-type'] = "text/calendar; charset=utf-8"
         return render_template(result, 'ics').replace('\n','\r\n')
         
     def format_pdf(result):
