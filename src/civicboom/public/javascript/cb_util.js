@@ -116,7 +116,13 @@ if(!('util' in boom)) {
                 of: parent,
                 at: 'center top',
                 my: 'center top',
-                collision: 'none'
+                collision: 'none',
+                using: function (position) {
+                  var elem = $(this);
+                  elem.siblings('.ui-widget-overlay').css('top', - $('#app').offset().top) ;
+                  elem.css('width', elem.css('width')); // Force element width!
+                  elem.css('left', position.left);//.css('top', position.top); Leave unset for top of frag containers
+                }
               },
               draggable: false,
               resizable: false,
@@ -129,13 +135,11 @@ if(!('util' in boom)) {
                 direction: 'up'
               },
               width: 'auto',
-              minWidth: '300 px',
+              minWidth: '300px',
               height: 'auto',
               open: function (event, ui) {
                 //if (parent) $(this).parent().appendTo(parent);
                 $(this).find('.event_load').trigger('boom_load');
-                console.log('open', ui);
-                console.log('open', $(this).dialog('option', 'position'));
               },
               beforeClose: function () {
                 // For some reason close does not trigger on x clicked / esc pressed
@@ -146,7 +150,8 @@ if(!('util' in boom)) {
               },
               close: function (event, ui) {
                 console.log('dialog.close');
-                $(this).dialog('destroy');
+                var i = $(this).dialog('destroy');
+                i.remove();
                 return false;
               },
               resize: function (event, ui) {
