@@ -108,6 +108,10 @@
     .media_fields .form_file_upload {
       width: auto;
     }
+
+    .media_files .status {
+        display: none; // temporary
+    }
 }
 
 

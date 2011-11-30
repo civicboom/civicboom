@@ -1,4 +1,3 @@
-<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>\
 <!DOCTYPE html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ --> 
 <!--[if lt IE 7 ]> <html lang="en" class="no-js ie ie6"> <![endif]-->
@@ -17,12 +16,14 @@
     ##----------------------------------------------------------------------
     ## Scripts
     ##----------------------------------------------------------------------
+    ## AllanC - by default the basic widget has no JS scripts - for the carousel we needed the ability to use jQuery. Sub templates can override this method to insert there own scripts
     <%def name="scripts_head()"></%def>
     ${self.scripts_head()}
 
     ##----------------------------------------------------------------------
     ## Google Analitics (async setup, see scripts_end for more)
     ##----------------------------------------------------------------------
+    <%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
     ${scripts_end.google_analytics_head()}
     
     <style type="text/css">

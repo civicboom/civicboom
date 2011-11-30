@@ -2,16 +2,25 @@ HEAD    := $(shell find head   -name "*.js" | sort)
 FOOT    := $(shell find foot   -name "*.js" | sort)
 MOBILE  := $(shell find mobile -name "*.js" | sort)
 
-all: _combined.head.js _combined.foot.js _combined.mobile.js
+all: _combined.head.min.js _combined.foot.min.js _combined.mobile.min.js
+
+_combined.head.min.js: _combined.head.js
+	yui-compressor --type js -o _combined.head.min.js _combined.head.js
+
+_combined.foot.min.js: _combined.foot.js
+	yui-compressor --type js -o _combined.foot.min.js _combined.foot.js
+
+_combined.mobile.min.js: _combined.mobile.js
+	yui-compressor --type js -o _combined.mobile.min.js _combined.mobile.js
 
 _combined.head.js: Makefile $(HEAD)
-	cat $(HEAD) | yui-compressor --type js -o _combined.head.js
+	cat $(HEAD) > _combined.head.js
 
 _combined.foot.js: Makefile $(FOOT)
-	cat $(FOOT) | yui-compressor --type js -o _combined.foot.js
+	cat $(FOOT) > _combined.foot.js
 
 _combined.mobile.js: Makefile $(MOBILE)
-	cat $(MOBILE) | yui-compressor --type js -o _combined.mobile.js
+	cat $(MOBILE) > _combined.mobile.js
 
 clean:
 	rm -f _combined.*.js

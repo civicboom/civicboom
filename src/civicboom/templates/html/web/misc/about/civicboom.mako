@@ -2,35 +2,41 @@
 <%def name="title()">${_("About _site_name & FAQ")}</%def>
 
 <style type="text/css">
-    h1, h2 {
+    #about-civicboom h1, #about-civicboom h2 {
         padding-top: 1em;
     }
     
-    ol li {
+    #about-civicboom p {
+        line-height: 200%;
+    }
+    
+    #about-civicboom ol li {
         margin-left: 2em;
         line-height: 200%;
     }
     
-    ul li {
+    #about-civicboom ul li {
         list-style: disc;
         margin-left: 2em;
         line-height: 200%;
     }
     
-    .content a {
+    #about-civicboom .content a {
         color: #4974b8 !important;
     }
     
-    .content a:hover {
+    #about-civicboom .content a:hover {
         color: #FF8814 !important;
     }
     
-    .graphic {
+    #about-civicboom .graphic {
         max-width: 300px;
         margin-top: 2em;
         margin-bottom: 1em;
     }
 </style>
+
+<div id="about-civicboom">
 
 <img src="/images/logo-v3-411x90.png" class="logo" />
 <h1>${_('_site_name is a platform that empowers organisations and their audience to collaborate in generating rich media content')}</h1>
@@ -125,3 +131,5 @@
 <h2>${_('Find us at:')}</h2>
 <p><a href="http://www.programmableweb.com/api/civicboom">${_('Programmable Web')}</a></p>
 <p><a href="http://civic.mit.edu/projects/community/civicboom">${_('MIT Centre For Civic Media')}</a></p>
+
+</div>
