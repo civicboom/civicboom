@@ -26,26 +26,21 @@
             % for script in scripts_head:
                 <script src="/${script}"></script>
             % endfor
-##            <%
-##                # AllanC - Please note the order of these JS files should match the order in /public/javascript/Makefile to reduce potential errors with loading dependencys between the live and development sites
-##                js_all =[
-##                    'javascript/jquery-1.6.2.js',
-##                    'javascript/jquery.mobile.cb_settings.js',
-##                    'javascript/jquery.mobile-1.0rc2.js',
-##                    'javascript/geo.js',
-##                ]
-##            %>
-##            % for js in js_all:
-##            <script type="text/javascript" src="${h.wh_url("public", js)}"></script>
-##            % endfor
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.min.js")}"></script>
         % endif
+	
+	##----------------------------------------------------------------------
+	## Google Analitics (async setup, see scripts_end for more)
+	##----------------------------------------------------------------------
+	<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
+	${scripts_end.google_analytics_head()}
     </head>
   
     <body class="c-${c.controller} a-${c.action}">
         ##${self.flash_message()}
         ${next.body()}
+	${scripts_end.google_analytics_end()}
     </body>
 </html>
 

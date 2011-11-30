@@ -169,7 +169,7 @@ class Content(Base):
     })
     __to_dict__['full'].update({
             'content'     : None ,
-            'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
+            'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else {} ,
             'creator'     : lambda content: content.creator.to_dict() if content.creator else None ,
             'attachments' : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
             #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,

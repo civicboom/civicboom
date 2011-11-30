@@ -28,11 +28,13 @@
         self.attr.icon_type = icon
     %>
 </%def>
+
 <%def name="body()">
     <div class="frag_col">
     ${next.body()}
     </div>
 </%def>
+
 <%def name="actions_common()">
     ${self.georss_link()}
 </%def>
@@ -71,15 +73,15 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul','li'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul', 'li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member       , type_=('table','tr'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member       , type_=('ul', 'li'), list_class='member'        , *args, **kwargs)}
 </%def>
 
 <%def name="content_list(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_content      , type_=('table','tr'), list_class='content'       , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_content      , type_=('ul', 'li'), list_class='content'       , *args, **kwargs)}
 </%def>
 
 <%def name="group_members_list(*args, **kwargs)">
@@ -190,20 +192,22 @@
                   <tr><td>${empty_message}</td></tr>
                 % endif
             </${type_[0]}>
+            </div>
             % if href and show_heading and len(items) < count:
-            <a class="link_new_frag" href="${href}" data-frag="${data_frag}">
-            ##<a href="${href}" ${js_link_to_frag_list} class="link_more">
-                % if show_count:
-                    ${_("%d more") % (count-len(items))}
-                % else:
-                    ${_("more")}
-                % endif
-            </a>
+            <div class="link_more">
+                <a class="link_new_frag" href="${href}" data-frag="${data_frag}">
+                ##<a href="${href}" ${js_link_to_frag_list} class="link_more">
+                    % if show_count:
+                        ${_("%d more") % (count-len(items))}
+                    % else:
+                        ${_("more")}
+                    % endif
+                </a>
+            </div>
             % endif
             % if paginate:
                 ${pagination()}
             % endif
-            </div>
             ##<div style="clear: both;"></div>
         % if show_heading:
         </div>
@@ -228,13 +232,27 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_member(member)">
-<tr>
-    <td style="padding-top: 3px;">
+    <li class="member_item">
         ${member_includes.avatar(member, class_="thumbnail_small")}
-    </td>
-    <td style="padding-left: 3px">  
-        <% show_type = "[H]" if member.get('type') == "group" else "" %>
-        <span style='float:right;'>
+        
+        <div class="member_details">  
+            <% show_type = "[H]" if member.get('type') == "group" else "" %>
+            
+            <a class="link_new_frag" href="${h.url('member', id=member['username'])}" data-frag="${h.url('member', id=member['username'], format='frag')}">
+                ${member.get('name')}
+            </a>
+    		<br/>
+    		<small>
+    			<!-- Following ${member['num_following']}; -->
+    			% if member['type'] == 'group' and member['num_members']:
+    				${member['num_followers']} followers; ${member['num_members']} members
+    			% else:
+    				${member['num_followers']} followers
+    			% endif
+    		</small>
+        </div>
+        
+        <span class="follow">
             ${show_type}
             ## AllanC - short term botch to add follow option to member list
             ${h.secure_link(
@@ -245,20 +263,7 @@
 
             )}
         </span>
-        
-        <a class="link_new_frag" href="${h.url('member', id=member['username'])}" data-frag="${h.url('member', id=member['username'], format='frag')}">
-        ${member.get('name')}
-        </a>
-		<br/><small>
-			<!-- Following ${member['num_following']}; -->
-			% if member['type'] == 'group' and member['num_members']:
-				${member['num_followers']} followers; ${member['num_members']} members
-			% else:
-				${member['num_followers']} followers
-			% endif
-		</small>
-    </td>
-</tr>
+    </li>
 </%def>
 
 
@@ -331,7 +336,6 @@
 ##------------------------------------------------------------------------------
 
 <%def name="render_item_content(content, extra_info=False, creator=False)">
-<tr>
     <%
         id = content['id']
     
@@ -339,22 +343,21 @@
         data_frag = h.url(controller='contents', action='show', id=id, format='frag')
     %>
 
-    <td>
-        <a class="link_new_frag thumbnail" href="${item_url}" data-frag="${data_frag}">
-            <div class="thumbnail">
-                <div style="position: relative;">
-                    ${content_thumbnail_icons(content)}
-                    <img src="${content['thumbnail_url']}" alt="${content['title']}" class="img" style="position: absolute; top: 0; left: 0;"/>
-                </div>
+    <li class="content_item">
+        <a class="link_new_frag" href="${item_url}" data-frag="${data_frag}">
+            <div class="thumbnail content_thumbnail event_load">
+                ${content_thumbnail_icons(content)}
+                <img src="${content['thumbnail_url']}" alt="${content['title']}" />
             </div>
         </a>
-    </td>
-    
-    <td class="content_details">
+        
         <div class="content_details">
             <a class="link_new_frag" href="${item_url}" data-frag="${data_frag}">
                 <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
             </a>
+            <p class="content_short">
+                ${content['content_short']}
+            </p>
             <p class="timestamp">
                 ${timestamp(content)}
                 % if content['type']=='article' and (content.get('parent_id') or content.get('parent')):
@@ -406,29 +409,28 @@
             ##% if content.get('parent') and content['parent'].get('creator'):
             ##    ${member_includes.avatar(content['parent']['creator'], class_="thumbnail_small")}
             ##% endif
-
+    
             ## ${content_icons(content)}
             <a class="link_new_frag prompt" href="${item_url}" data-frag="${data_frag}">
             ##<a href="${item_url}" ${js_link_to_frag} class="prompt">
                 <img src="/images/settings/arrow.png" />
             </a>
-            
-            <div style="clear: both;"></div>
         </div>
-    </td>
-
+    </li>
+    
     <%doc>
         % if creator and 'creator' in content:
           <p><small class="content_by">${_("By: %s") % content['creator']['name']}</small>
         % endif
     </%doc>
-</tr>
-% if request.GET.get('term', '') and 'content_short' in content:
-<tr><td colspan="5">
-	## content_short is stripped of html tags, so any that are in here are search highlights
-	<small class="content_short">${content['content_short']|n}</small>
-</td></tr>
-% endif
+    <%doc>
+        % if request.GET.get('term', '') and 'content_short' in content:
+        <tr><td colspan="5">
+        	## content_short is stripped of html tags, so any that are in here are search highlights
+        	<small class="content_short">${content['content_short']|n}</small>
+        </td></tr>
+        % endif
+    </%doc>
 </%def>
 
 <%def name="content_icons(content)">
