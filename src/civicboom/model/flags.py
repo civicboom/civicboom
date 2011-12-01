@@ -20,6 +20,9 @@ class FlaggedEntity(Base):
     offending_member_id  = Column(String(32), ForeignKey('member.id', onupdate="cascade"), nullable=True )
     offending_message_id = Column(Integer() , ForeignKey('message.id')                   , nullable=True )
 
+    # AllanC - Shish disabled this because the SQLA was having difficulty dertermining which member relationship to use
+    #          We need to specify the relationship mapping manually ... I can get to this at some point
+    #          Raised issue #829
     # member:flag is already defined
     #raising_member       = relationship("Member", primaryjoin="FlaggedEntity.raising_member_id==Member.id", backref=backref('flags_raised', cascade="all, delete-orphan"))
 
