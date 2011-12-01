@@ -355,9 +355,11 @@
             <a class="link_new_frag" href="${item_url}" data-frag="${data_frag}">
                 <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
             </a>
+            % if request.GET.get('term', '') and 'content_short' in content:
             <p class="content_short">
-                ${content['content_short']}
+                ${content['content_short']|n}
             </p>
+            % endif
             <p class="timestamp">
                 ${timestamp(content)}
                 % if content['type']=='article' and (content.get('parent_id') or content.get('parent')):
