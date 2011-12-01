@@ -38,7 +38,7 @@
         if 'list' in kwargs:
             list_title = kwargs['list'].capitalize()
     %>
-    ## <div class="frag_list">
+    <div class="frag_list">
         ${parent.member_list(d['list'], list_title, show_heading=False, paginate=True, icon=kwargs.get('list'))}
-    ## </div>
+    </div>
 </%def>
