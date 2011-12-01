@@ -27,5 +27,7 @@
         if 'list' in kwargs:
             list += kwargs.get('list')
     %>
-    ${parent.message_list(d['list'], list, list=kwargs.get('list'), show_heading=False)}
+    <div class="frag_list">
+        ${parent.message_list(d['list'], list, list=kwargs.get('list'), show_heading=False)}
+    </div>
 </%def>
