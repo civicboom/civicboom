@@ -1,12 +1,9 @@
 <%inherit file="/html/web/common/html_base.mako"/>
-
 <%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
-##------------------------------------------------------------------------------
-## Title - Override
-##------------------------------------------------------------------------------
 <%def name="title()">${_("Register")}</%def>
+<%def name="footer()">${components.misc_footer()}</%def>
 
 ##------------------------------------------------------------------------------
 ## Body
@@ -86,8 +83,6 @@
     </script>
     
 </div>
-${components.misc_footer()}
-
 </%def>
 
 ##------------------------------------------------------------------------------
@@ -207,9 +202,10 @@ ${components.misc_footer()}
                     <li>${_('Got pictures, videos, audio clips or text? Journalists, bloggers, publishers and news organisations want them!')}</li>
                 </ul>
 
-                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="Help me share my _articles">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('ind')" value="${_("Help me share my _articles")}">
             </div>
-            <div class="or"></div>
+        </td>
+        <td>
             <div class="user_type_option">
                 <img src="/images/default/thumbnail_assignment.png" alt="request"/>
                 <h2 class="newformtitle">${_('Need _articles?')}</h2>
@@ -218,32 +214,33 @@ ${components.misc_footer()}
                     <li>${_('Your greatest resource is your audience because news starts with people')}</li>
                     <li>${_('So use _site_name to get content - from pictures and videos to audio clips and text - directly from source!')}</li>
                 </ul>
-                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="Help me find _content">
+                <input class="button" style="width: 100%" type="button" onclick="pick_help('org')" value="${_("Help me find _content")}">
             </div>
-            
-            <div class="hide_if_js">
+        </td>
+    </tr>
+    <tr class="hide_if_js">
+        <td colspan="2">
+            <%
+                radio_choices = {
+                    'ind':[_('Individual'   ), False],
+                    'org':[_('Organisation' ), False],
+                    'ind':[_('Just browsing'), False],
+                }
+            %>
+            % for radio_key, (display_text, checked) in radio_choices.iteritems():
                 <%
-                    radio_choices = {
-                        'ind':[_('Individual'   ), False],
-                        'org':[_('Organisation' ), False],
-                        'ind':[_('Just browsing'), False],
-                    }
+                    if checked:
+                        checked = 'checked'
                 %>
-                % for radio_key, (display_text, checked) in radio_choices.iteritems():
-                    <%
-                        if checked:
-                            checked = 'checked'
-                    %>
-                    <input id="help_type_${radio_key}" type="radio" name="help_type" value='${radio_key}' ${checked} />${display_text}<br/>
-                % endfor
-            </div>
+                <input id="help_type_${radio_key}" type="radio" name="help_type" value='${radio_key}' ${checked} />${display_text}<br/>
+            % endfor
             ${invalid('help_value')}
         </td>
     </tr>
     <tr>
-        <td style="text-align: center;">
-            These options only affect which guides you will see, and won't affect which features
-            <br>are available - if you just want to explore, <a href="#" onclick="pick_help('ind')">click here to continue</a>
+        <td style="text-align: center;" colspan="2">
+            These options only affect which guides you will see, and won't affect which<br>
+            features are available - if you just want to explore, <a href="#" onclick="pick_help('ind')">click here to continue</a>
         </td>
     </tr>
 </table>

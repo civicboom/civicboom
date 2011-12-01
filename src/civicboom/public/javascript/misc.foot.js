@@ -6,7 +6,6 @@ if (typeof RPXNOW !== 'undefined') {
 }
 if (typeof addthis == 'undefined' || typeof (addthis || {}).toolbox == 'undefined') {
   addthis = {toolbox:function(){}};
-  if (RPXNOW) delete RPXNOW;
 }
 
 // Run any boom.init_foot functions

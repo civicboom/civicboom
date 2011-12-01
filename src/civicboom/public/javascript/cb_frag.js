@@ -1,415 +1,3 @@
-// JQUERY PLUGIN: I append each jQuery object (in an array of
-// jQuery objects) to the currently selected collection.
-jQuery.fn.appendEach = function(arrayOfWrappers) {
-
-  // Map the array of jQuery objects to an array of
-  // raw DOM nodes.
-  var rawArray = jQuery.map(arrayOfWrappers, function(value, index) {
-
-    // Return the unwrapped version. This will return
-    // the underlying DOM nodes contained within each
-    // jQuery value.
-    return (value.get() );
-
-  });
-  // Add the raw DOM array to the current collection.
-  this.append(rawArray);
-
-  // Return this reference to maintain method chaining.
-  return (this );
-
-};
-
-if(!('boom' in window))
-  boom = {};
-
-if(!('boom_development' in window) || !('console' in window) || !console.log)
-  console = {
-    log: function () {}
-  }
-
-boom.init_foot = [];
-
-/* Civicboom Utilities
- * These are mostly used internally by the Civicboom Frags system.
- * boom.util.*
- */
-if(!('util' in boom)) {
-  boom.util = {
-    /*
-     * If given object is jquery, return it, else convert it to jquery.
-     */
-    convert_jquery : function(element) {
-      return (element.jquery) ? element : $(element);
-    },
-    /*
-     * Toggles the visibility of the next element.
-     */
-    toggle_section : function(element) {
-      element = boom.util.convert_jquery(element);
-      element.next().slideToggle();
-      var icon = element.find('.icon');
-      var icon_more = 'icon_plus';
-      var icon_less = 'icon_down';
-
-      if(icon.hasClass(icon_more)) {
-        icon.removeClass(icon_more);
-        icon.addClass(icon_less);
-      } else if(icon.hasClass(icon_less)) {
-        icon.removeClass(icon_less);
-        icon.addClass(icon_more);
-      }
-    },
-    /*
-     * TinyMCE utilities
-     * boom.util.tinymce.*
-     */
-    tinymce : {
-      /*
-       * Initialise all tinymce (.editor) components within element
-       */
-      init : function(element) {
-        element = boom.util.convert_jquery(element);
-        element.find('.editor').tinymce({
-          script_url : '/javascript/tiny_mce/tiny_mce.js',
-          theme : 'advanced',
-          mode : 'exact',
-          theme_advanced_buttons1 : 'bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,link,unlink',
-          theme_advanced_buttons2 : '',
-          theme_advanced_buttons3 : '',
-          theme_advanced_toolbar_location : 'top',
-          theme_advanced_toolbar_align : 'left',
-        });
-      },
-      /*
-       * Save all tinymce (.editor) components within element
-       */
-      save : function(element) {
-        element = boom.util.convert_jquery(element);
-        var tmce = element.find('.editor').tinymce();
-        if(tmce && tmce.save)
-          return tmce.save();
-      }
-    },
-    /*
-     * Modal Queue Utility
-     * boom.util.modal_queue.*
-     */
-    modal_queue : {
-      /*
-       * Initialise jQuery Modal
-       */
-      init : function() {
-        $.modal.defaults.closeClass = "simplemodalClose";
-        $.modal.defaults.autoResize = true;
-        $.modal.defaults.zIndex = 2000;
-        /* OSM bits are 1000-1100 */
-        $.modal.defaults.onOpen = function(dialog) {
-          dialog.overlay.fadeIn('slow');
-          dialog.container.fadeIn('slow');
-          dialog.data.fadeIn('slow');
-        };
-        $.modal.defaults.onClose = function(dialog) {
-          dialog.overlay.fadeOut('slow');
-          dialog.container.fadeOut('slow');
-          dialog.data.fadeOut('slow', function() {
-            $.modal.close();
-          });
-        };
-      },
-      /*
-       * Add content to the modal queue, ready to display at the next available opportunity
-       */
-      add : function(content, onClose) {
-        $('body').delay(0)// Needed to trigger the queue
-        .queue(function(next) {
-          // Queue the modal, onClose trigger next queue item
-          var body = $(this);
-          $.modal(content, {
-            onClose : function() {
-              if(onClose)
-                onClose();
-              $.modal.close();
-              next();
-            },
-            onShow : function() {
-              $.modal.update();
-              // this.d.data.find('.event_load').each(function() {
-              // var evented = $(this);
-              // console.log(evented, evented.length);
-              // evented.trigger('boom_load');
-              // })
-              this.d.data.find('.event_load').trigger('boom_load');
-            }
-          })
-        }).delay(100);
-        // Next queue item always 100ms delay between popups
-      },
-      /*
-       * Clear the modal queue
-       */
-      clear : function() {
-        $('body').clearQueue('modal');
-      }
-    },
-    /*
-     * Display a Civicboom flash message, takes either a string message or an object returned from the api
-     */
-    flash_message : {
-      show : function(json_message) {
-        if( typeof json_message == "string")
-          json_message = {
-            status : 'ok',
-            message : json_message
-          };
-        if(json_message && typeof json_message.message == 'string' && json_message) {
-          $('#flash_message').removeClass('status_error status_ok').addClass('status_' + json_message.status).text(json_message.message).fadeIn('slow').delay(5000).fadeOut('slow').mouseover(function() {
-            $(this).stop(true).fadeOut('fast');
-          });
-        }
-      },
-      init : function() {
-        $('body').on('boom_load', '#flash_message, .flash_message_data', function () {
-        //$('#flash_message, .flash_message_data').live('boom_load', function() {
-          var element = $(this);
-          var json = element.data('message-json');
-          if (json) {
-            console.log(json);
-            boom.util.flash_message.show(json);
-          }
-        });
-      }
-    },
-    history : {
-      saveState : function(state_object, replace) {
-        var current_url = state_object.current_url;
-        if(Modernizr.history) {
-          // Note: this object is limited to 640k (which ought to be
-          // enough for anyone) when saved in the browser history file
-          try {
-            if(replace) {
-              history.replaceState(state_object, "Civicboom", current_url);
-            } else {
-              history.pushState(state_object, "Civicboom", current_url);
-            }
-          } catch (e) {
-            console.log('history state save error', state_object, replace, e);
-          }
-        } else {
-
-        }
-      },
-    },
-    desktop_notification : {
-      has_support : function() {
-        return !!window.webkitNotifications;
-      },
-      has_permission : function() {
-        return window.webkitNotifications.checkPermission() == 0
-      },
-      request_permission : function(callback) {
-        console.log('desktop_notification.request_permission');
-        window.webkitNotifications.requestPermission(function() {
-          console.log('desktop_notification.request_permission.callback');
-          var has_permission = window.webkitNotifications.checkPermission() == 0;
-          if(has_permission)
-            $('.desktop_notifications').hide();
-          if(callback)
-            callback(has_permission);
-        });
-      },
-      notify : function(icon, body, title, timeout) {
-        console.log('notify');
-        if(window.webkitNotifications.checkPermission() == 0) {
-          console.log('has permission');
-          var popup = window.webkitNotifications.createNotification(icon, body, title);
-          popup.show();
-          if(timeout)
-            setTimeout(function() {
-              popup.cancel()
-            }, timeout);
-          return true;
-        }
-        return false;
-      }
-    },
-    message_indicators : {
-      key_icon_map : {
-        num_unread_messages : '.msg_c_m',
-        num_unread_notifications : '.msg_c_n',
-        _total : '.msg_c_o'
-      },
-      last_check : {
-        last_message_timestamp : null,
-        last_notification_timestamp : null
-      },
-      messages : {
-        last_message_timestamp : 'New message',
-        last_notification_timestamp : 'New notification'
-      },
-      update : function() {
-        $.getJSON('/profile/messages.json', function(res) {
-          if('data' in res) {
-            var message = $([]);
-            var _total = 0;
-            for(key in boom.util.message_indicators.key_icon_map) {
-              if( key in res.data) {
-                var jQe = $(boom.util.message_indicators.key_icon_map[key]);
-                var val = res.data[key];
-                jQe.html('&nbsp;' + val + '&nbsp;');
-                if(val == 0) {
-                  jQe.hide();
-                } else {
-                  jQe.show();
-                }
-                _total += (res.data[key] * 1);
-              }
-            }
-            if('_total' in boom.util.message_indicators.key_icon_map) {
-              var jQe = $(boom.util.message_indicators.key_icon_map['_total']);
-              jQe.html('&nbsp;' + _total + '&nbsp;');
-              if(_total == 0) {
-                jQe.css('display', 'none');
-              } else {
-                jQe.css('display', 'inline');
-              }
-            }
-            if(!boom.util.desktop_notification.has_support())
-              return;
-            var body = '';
-            var body_content = false;
-            for(key in boom.util.message_indicators.last_check) {
-              if( key in res.data) {
-                var val = res.data[key];
-                if(boom.util.message_indicators.last_check[key] && boom.util.message_indicators.last_check[key] < val) {
-                  // Display things
-                  if(body_content)
-                    body += '<br />&amp;<br />';
-                  body += boom.util.message_indicators.messages[key]
-                  body_content = true;
-                }
-                boom.util.message_indicators.last_check[key] = val;
-              }
-            }
-            if(body_content)
-              boom.util.desktop_notification.notify('', 'Civicboom', body, 5000);
-          }
-        });
-      },
-      init : function() {
-        setInterval(boom.util.message_indicators.update, 120000);
-        $(function() {
-          if(boom.util.desktop_notification.has_support() && !boom.util.desktop_notification.has_permission())
-            $('.desktop_notifications').show();
-        })
-      }
-    },
-    register_flash_callback : function(name, func) {
-      var name_time;
-      do {
-        name_time = name + (new Date().getTime())
-      } while (name_time in window)
-      window[name_time] = func;
-      return name_time;
-    },
-    convertYesNoCheckboxes : function(element) {
-      element = boom.util.convert_jquery(element);
-      //return;
-      var selects = element.find('select.yesno').filter(':visible');
-      if(selects.length == 0)
-        return;
-      selects.after('<input type="checkbox" class="yesnocheck unproc" />');
-      selects.hide();
-      var checks = element('input.yesnocheck').filter('.unproc');
-      checks.each(function(index) {
-        var value = $(this).prev('select.yesno').val();
-        $(this).attr('checked', !(value == '' || value == 'no'));
-      });
-      checks.unbind().change(function() {
-        var yesno = $(this).prev('select.yesno');
-        var yes = yesno.children('.yes').val();
-        var no = yesno.children('.no').val();
-        yesno.val(this.checked ? yes : no);
-      });
-      checks.removeClass('unproc');
-    },
-    validators : {
-      init : function() {
-        for(selector in boom.util.validators.validators) {
-          console.log('Initialising validator .validate_field' + selector)
-          $('body').on('keyup', '.validate_field' + selector, function () {
-          //$('.validate_field' + selector).live('keyup', function() {
-            var element = $(this);
-            element.removeClass('invalid').removeClass('valid');
-            clearTimeout(element.data('validator_timeout'));
-            element.data('validator_timeout', setTimeout(function() {
-              boom.util.validators.validators[selector](element);
-            }, 500));
-            return false;
-          });
-        }
-      },
-      validators : {
-        '.username_register' : function(element) {
-          console.log('username_register validator triggered');
-          var status = element.parents('form').find('.validation-result').css("display", "table-row").find('.urldemo');
-          var val = element.val();
-          if(val.length < 4) {
-            status.html("Username must be at least 4 characters");
-            element.addClass("invalid");
-          } else {
-            var username = val.toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/^-+|-+$/g, '');
-            $.ajax("/members.json?username=" + username, {
-              "success" : function(result) {
-                if(result.data.list.count == 0) {
-                  status.html("Your profile page will be https://www.civicboom.com/members/" + username);
-                  element.addClass("valid");
-                } else {
-                  status.html("The username " + val + " is already taken")
-                  element.addClass("invalid");
-                }
-              }
-            });
-          }
-        },
-        '.email_register' : function(element) {
-          console.log('email_register validator triggered');
-          var val = element.val();
-          if(val.match(/.+@.+\..+/)) {
-            element.addClass("valid");
-          } else {
-            element.addClass("invalid");
-          }
-        }
-      }
-    },
-    formArrayNoPlaceholders : function(form) {
-      var formArray = form.serializeArray();
-      var placeheld = form.find('input[placeholder]');
-      if(placeheld.length > 0)
-        for(var i = 0; i < placeheld.length; i++) {
-          var elemjq = $(placeheld[i]);
-          if( typeof elemjq.attr('placeholder') != 'undefined') {
-            for(var j = 0; j < formArray.length; j++) {
-              if(formArray[j].name == elemjq.attr('name')) {
-                if(formArray[j].value == elemjq.attr('placeholder'))
-                  formArray[j].value = '';
-                break;
-              }
-            }
-          }
-        }
-      return formArray;
-    },
-    mouseCursor: function(style) {
-      $('body').css('cursor', style);
-    }
-  }
-}
-boom.init_foot.push(boom.util.modal_queue.init);
-boom.util.flash_message.init();
-boom.util.message_indicators.init();
-boom.util.validators.init();
 /*
  * Civicboom Fragment System
  * Use the following for most of your fragment work, there are loads of events available to use!
@@ -468,10 +56,9 @@ if(!('frags' in boom)) {
               $('<div />')
               .addClass('popup-title')
               .append(title)
-              .append(
-                $('<a />')
-                .addClass('fr simplemodalClose')
-                .append('&nbsp;x&nbsp;')
+              // Close button
+              .before(
+                $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
               )
             )
             .append(
@@ -504,52 +91,84 @@ if(!('frags' in boom)) {
         // Return modal content as jQuery object
         // Popup jQuery, begin with outer layer, work in. popup-modal:
         return $('<div />').addClass('popup-modal').append(
-        // popup_content
-        $('<div />').addClass('popup_content').append(
-        // information/alert/etc.
-        $('<div />').addClass(settings.confirmType || 'information').append(
-        // popup-title
-        $('<div />').addClass('popup-title')
-        // If confirm-avatar copy avatar from top right of site & re-style
-        .append(settings.confirmAvatar ? $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone()).append($('#persona_details').clone().text())
-        //                    $('#persona_holder').clone().attr('id','').addClass('popup-persona')
-        : '')
-        // If icon set icon else take icon name from link clicked
-        .append(settings.icon ? $('<span />').addClass('icon32').addClass('i_' + settings.icon) : originalLink.children('.icon32, .icon16').first().clone(false).removeClass('icon16').addClass('icon32'))
-        // If confirm-title set it as the title, otherwise use the original link's text
-        .append(settings.confirmTitle || originalLink.text() || '').append($('<a />').addClass('fr simplemodalClose').append('&nbsp;x&nbsp;'))).append(
-        // popup-message
-        $('<div />').addClass('popup-message').append(settings.confirm || '')).append(
-        // popup-actions
-        $('<div />').addClass('popup-actions').append((settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? (
-          // secure options
-          $('<ul />').appendEach($.map(settings.confirmSecureOptions, function(value) {
-            return $('<li />').append(value.title ? $('<h3 />').append(value.title) : '').append(value.content).append($('<a />').addClass('button').append(originalLink.text()).data('original', originalLink).data('json', value.json).click(function() {
-              var link = $(this);
-              var original = link.data('original');
-              console.log(link, link.data());
-              console.log(original, original.data());
-              original.data('confirmed', 'true');
-              console.log(1, original.siblings('form').data('json'));
-              original.siblings('form').data('json', link.data('json'));
-              //original.data('json', link.data('json'));
-              console.log(2, original.siblings('form').data('json'));
-              console.log(original, original.data());
-              original.click();
-              $.modal.close();
-            }));
-          }))
-        ) : (
-          // buttons
-          $('<a />').addClass('button').data('original', originalLink).html(settings.confirmYes || 'Yes').click(function() {
-            var link = $(this);
-            console.log('click', this, link);
-            var original = link.data('original');
-            original.data('confirmed', 'true');
-            original.click();
-            $.modal.close();
-          }).after(originalLink.hasClass('link_dummy') ? '' : $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close))
-        )))));
+          // popup_content
+          $('<div />').addClass('popup_content').append(
+            // information/alert/etc.
+            $('<div />').addClass(settings.confirmType || 'information').append(
+              // popup-title
+              $('<div />').addClass('popup-title')
+                // If confirm-avatar copy avatar from top right of site & re-style
+                .append(settings.confirmAvatar ? $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone()).append($('#persona_details').clone().text())
+                //                    $('#persona_holder').clone().attr('id','').addClass('popup-persona')
+                : '')
+                // If icon set icon else take icon name from link clicked
+                .append(settings.icon ? $('<span />').addClass('icon32').addClass('i_' + settings.icon) : originalLink.children('.icon32, .icon16').first().clone(false).removeClass('icon16').addClass('icon32'))
+                // If confirm-title set it as the title, otherwise use the original link's text
+                .append(settings.confirmTitle || originalLink.text() || '')
+                // Close button
+                .before(
+                  $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
+                )
+            )
+            .append(
+              // popup-message
+              $('<div />').addClass('popup-message').append(settings.confirm || '')
+            )
+            .append(
+              // popup-actions
+              $('<div />').addClass('popup-actions').append(
+                (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? (
+                  // secure options
+                  $('<ul />').appendEach(
+                    $.map(settings.confirmSecureOptions, function(value) {
+                      return $('<li />')
+                        .append(value.title ? $('<h3 />').append(value.title) : '')
+                        .append(value.content)
+                        .append(
+                          $('<a />')
+                          .addClass('button')
+                          .append(originalLink.text())
+                          .data('original', originalLink)
+                          .data('json', value.json)
+                          .click(function() {
+                            var link = $(this);
+                            var original = link.data('original');
+                            console.log(link, link.data());
+                            console.log(original, original.data());
+                            original.data('confirmed', 'true');
+                            console.log(1, original.siblings('form').data('json'));
+                            original.siblings('form').data('json', link.data('json'));
+                            //original.data('json', link.data('json'));
+                            console.log(2, original.siblings('form').data('json'));
+                            console.log(original, original.data());
+                            original.click();
+                            $.modal.close();
+                          })
+                        );
+                    })
+                  )
+                ) : (
+                  // buttons
+                  $('<a />')
+                    .addClass('button')
+                    .data('original', originalLink)
+                    .html(settings.confirmYes || 'Yes')
+                    .click(function() {
+                      var link = $(this);
+                      console.log('click', this, link);
+                      var original = link.data('original');
+                      original.data('confirmed', 'true');
+                      original.click();
+                      $.modal.close();
+                    })
+                    .after(
+                      originalLink.hasClass('link_dummy') ? '' : $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
+                    )
+                )
+              )
+            )
+          )
+        );
       }
     },
     // Frag counter (ensures frags are unique)
@@ -624,10 +243,9 @@ if(!('frags' in boom)) {
               'fileDataName' : 'file_data',
               'removeCompleted' : true,
               'onComplete' : function(event, id, fileObj, response, data) {
-                console.log(event, id, fileObj, response, data);
                 var form = $(event.target).parents('form');
                 // Boom_load event triggers refresh or media listing
-                $(event.target).parents('ul.media_files').trigger('boom_load');
+                $(event.target).parents('table.media_files').trigger('boom_load');
               }
             });
           });
@@ -938,6 +556,16 @@ if(!('frags' in boom)) {
             janrain_popup_share(data.janrainUrl, data.janrainOptions, data.janrainVariables);
             return false;
           }
+        },
+        '.thumbnail' : {
+          'boom_load' : function() {
+              var div = $(this);
+              var img = div.children('img').one('load', function() {
+                img.trigger('boom_load');
+              });
+              if (img.width() > img.height())
+                div.addClass('thumbnail_landscape');
+          }
         }
       }
     },
@@ -1154,7 +782,8 @@ if(!('frags' in boom)) {
       
       frag_loading.children('.frag_data').each(function () {
         $(this).css('width', $(this).css('width'));
-      })
+      });
+      var frag_width = frag_loading.css('width');
 
       boom.frags.update(frag_loading, url, undefined, function(success) {
         if(success) {
@@ -1167,15 +796,22 @@ if(!('frags' in boom)) {
           frag_loading.css({
             'position': 'relative',
             'width': '0',
-            'opacity': '0'
+            'opacity': '0',
+            'overflow': 'hidden'
           });
           //frag_loading.fadeTo(0, 0.01);
           // Animate fragment to full width & opacity
-          var frag_left = frag_loading.position().left;
-          var scrollable = $(window)._scrollable();
+          var frag_left = frag_loading.position().left; // Get left for scrolling calculation
+          var scrollable = $(window)._scrollable(); // Get scrollable element (select once, use many)
+          var frag_scroll = true; // Default scroll
+          if (frag_loading.next().length) {
+            frag_scroll = false; // If there is a frag after this one scroll to that frag & stay static
+            scrollable.scrollTo(frag_loading.next());
+          }
+          // Animate
           frag_loading.animate({
             'opacity' : '1',
-            'width' : '500px'
+            'width' : frag_width
           }, {
             'duration': boom.frags.vars.scroll_duration,
             'complete': function() {
@@ -1183,7 +819,7 @@ if(!('frags' in boom)) {
               scrollable.scrollTo(frag_loading);
             },
             'step': function (now, fx) {
-              if (fx.prop == 'width') {
+              if (frag_scroll && fx.prop == 'width') {
                 scrollable.scrollTo(frag_left + now);
               }
             }
@@ -1389,112 +1025,3 @@ if(!('frags' in boom)) {
     }
   }
 }
-
-// function createStateObj() {
-// return;
-// var stateObj = { 'blocks': []};
-// $('.'+fragment_container_class).not('.'+fragment_help_class).each (function (index, element)
-// {
-// var s_url = $(element).find('.'+fragment_source_class).first().attr('href');
-// stateObj.blocks[index] = {'url'  : s_url,
-// 'classes': $(element).attr('class')
-// };
-// });
-// return stateObj;
-// }
-//
-// function loadStateObj(stateObj) {
-// return;
-// var frag_previous;
-// if(stateObj !== null) {
-// if (typeof stateObj.blocks == 'undefined') return;
-//
-// var i = 0;
-//
-// function load() {
-// if (i < stateObj.blocks.length) {
-// var frag_source = frag_previous.find('.'+fragment_source_class).first();
-// var stat_href = stateObj.blocks[i].url;
-// frag_previous = cb_frag(frag_source, stat_href, undefined, true, load); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
-// i ++;
-// } else {
-// cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
-// return;
-// }
-// }
-//
-// for (i = 0; i < stateObj.blocks.length; i++) {
-// var frag_exists = typeof $('.'+fragment_container_class)[i] != 'undefined';
-// var frag_container = $($('.'+fragment_container_class)[i]);
-// var frag_source = frag_container.find('.'+fragment_source_class);
-// var frag_href = frag_source.attr('href');
-// var stat_href = stateObj.blocks[i].url;
-// if (!frag_exists) {
-// load ();
-// //frag_container = cb_frag(frag_previous.find('.'+fragment_source_class).first(), stat_href, undefined, true, waiter); //$($('.'+fragment_container_class)[i-1]).find('.'+fragment_source_class)
-// break;
-// } else if (frag_href != stat_href) {
-// frag_container.removeClass().addClass(stateObj.blocks[i].classes);
-// frag_container.find('.'+fragment_source_class).first().attr('href', stat_href);
-// cb_frag_reload (frag_container);
-// }
-// frag_previous = frag_container;
-// }
-// if (i = (stateObj.blocks.length - 1))
-// cb_frag_remove_sibblings($($('.'+fragment_container_class)[stateObj.blocks.length-1]), undefined, true);
-// }
-// }
-//
-// function update_history(url, replace) {
-// return;
-// if (typeof url == 'undefined' || url == null)
-// var url = $('.'+fragment_container_class).not('.'+fragment_help_class).last().find('.'+fragment_source_class).first().attr('href');
-// if (typeof url == 'undefined' || url == null)
-// return;
-// // update the URL bar to point at the latest block, and
-// // store previous blocks in the history state object
-// if(Modernizr.history) {
-// // Note: this object is limited to 640k (which ought to be
-// // enough for anyone) when saved in the browser history file
-// if (replace) {
-// history.replaceState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
-// } else {
-// history.pushState(createStateObj(), "Civicboom", url.replace("?format=frag", "").replace(".frag", ""));
-// }
-// } else {
-// // if (replace) {
-// // if (location.hash.substr(1,3) != 'cbh') {
-// // location.replace('#cbh' + encode64($.JSON.encode(createStateObj())));
-// // } else {
-// // $(window).hashchange();
-// // }
-// // } else {
-// // location.hash = '#cbh' + encode64($.JSON.encode(createStateObj()));
-// // }
-// }
-// }
-//
-// $(function () {
-// return;
-// if(Modernizr.history) {
-// // Browser supports HTML5 history states
-// // FIXME: jQuery-ise this, rather than using the raw window.blah
-// window.onpopstate = function(popstate) { loadStateObj(popstate.state); }
-// } else if(Modernizr.hashchange) {
-// // Browser does not support HTML5 history states
-// // Use url hash instead
-// // GregM: Causing stability issues in IE, removed for now
-// // $(window).hashchange(function (e) {
-// //   var hash = location.hash;
-// //   if (hash != '' && typeof hash != 'undefined') {
-// //     if (hash.substr(1,3) == 'cbh') {
-// //       try {
-// //         var stateObj = $.parseJSON(decode64(hash.substr(4)));
-// //         loadStateObj(stateObj);
-// //       } catch (e) {}
-// //     }
-// //   }
-// // });
-// }
-// update_history(location.href, true);
-// })

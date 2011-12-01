@@ -199,79 +199,78 @@
     
     ## Top row (avatar/about me)
     <div class="frag_top_row">
-    <div class="frag_col">
-        ## About Me
-        <div class="frag_list">
-        <div class="member_details">
-            <div class="col_left">
-                <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
-                % if self.member.get('website'):
-                    <p class="website"><a href="${self.member['website']}" target="_blank">${h.nicen_url(self.member['website'])}</a></p>
-                % endif
-                % if self.member.get('description'):
-                    <p class="description">${self.member['description']}</p>
-                % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
-                    <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
-                % else:
-                    <p class="description">This user has not added a description about themselves yet</p>
-                % endif
+        <div class="frag_col">
+            ## About Me
+            <div class="frag_list">
+            <div class="member_details">
+                <div class="col_left">
+                    <h2 class="name">${h.guess_hcard_name(self.member['name'])}</h2>
+                    % if self.member.get('website'):
+                        <p class="website"><a href="${self.member['website']}" target="_blank">${h.nicen_url(self.member['website'])}</a></p>
+                    % endif
+                    % if self.member.get('description'):
+                        <p class="description">${self.member['description']}</p>
+                    % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
+                        <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
+                    % else:
+                        <p class="description">This user has not added a description about themselves yet</p>
+                    % endif
+                    
+                    <div class="separator"></div>
+                    ${actions_buttons()}
+                </div>
+                
+                <div class="col_right">
+                    <div class="avatar"><img src="${self.member['avatar_url']}" alt="${self.member['username']}"></div>
+                    % if 'message' in self.actions:
+                        ${popup.link(
+                        h.args_to_tuple('new_message', target=self.id),
+                        title = _('Send message'),
+                        text  = h.literal("<div class='button'>%s</div>") % _('Send message'),
+                        )}
+                        ##<div style="clear: both;"></div>
+                    % endif
+                </div>
                 
                 <div class="separator"></div>
-                ${actions_buttons()}
             </div>
+            % if self.attr.share_kwargs:
+                ${share.AddThisLine(**self.attr.share_kwargs)}
+            % endif
+                <span style="float: right; font-size: 1.25em; padding-right: 1.1em;" class="mo-help">
+                    <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their _content and respond to requests for _content")}</div>
+                    <a href="#">
+                    <p class="boombox_link">
+                        ${popup.link(
+                            h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
+                            title = _('Get _widget'),
+                            text  = h.literal("%s") % _("Get _widget"),
+                        )}
+                    </p>
+                    </a>
+                </span>
+    
+                <a class="link_janrain" style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" ${share.janrain_social_data_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type'])}><p class="janrain_link">${_("Get others involved!")}</p></a>
+    
+                <div class="separator"></div>
+            </div>    
             
-            <div class="col_right">
-                <div class="avatar"><img src="${self.member['avatar_url']}" alt="${self.member['username']}"></div>
-                % if 'message' in self.actions:
-                    ${popup.link(
-                    h.args_to_tuple('new_message', target=self.id),
-                    title = _('Send message'),
-                    text  = h.literal("<div class='button'>%s</div>") % _('Send message'),
-                    )}
-                    ##<div style="clear: both;"></div>
-                % endif
-            </div>
+            ## My requests
+            % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
+            ${frag_list.content_list(
+                d[list] ,
+                description ,
+                h.args_to_tuple('contents', creator=self.id, list=list),
+                icon = icon ,
+                extra_info = True ,
+            )}
+            % endfor
             
-            <div class="separator"></div>
         </div>
-        % if self.attr.share_kwargs:
-            ${share.AddThisLine(**self.attr.share_kwargs)}
-        % endif
-            <span style="float: right; font-size: 1.25em; padding-right: 1.1em;" class="mo-help">
-                <div class="mo-help-l">${_("The Boombox is a widget that lets your audience post their _content and respond to requests for _content")}</div>
-                <a href="#">
-                <p class="boombox_link">
-                    ${popup.link(
-                        h.args_to_tuple(controller='misc', action='get_widget', id=self.id),
-                        title = _('Get _widget'),
-                        text  = h.literal("%s") % _("Get _widget"),
-                    )}
-                </p>
-                </a>
-            </span>
-
-            <a class="link_janrain" style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" ${share.janrain_social_data_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type'])}><p class="janrain_link">${_("Get others involved!")}</p></a>
-
-            <div class="separator"></div>
-        </div>    
-        
-        ## My requests
-        % for list, icon, description in [n for n in self.trans_strings if n[0]  in ["assignments_active"]]:
-        ${frag_list.content_list(
-            d[list] ,
-            description ,
-            h.args_to_tuple('contents', creator=self.id, list=list),
-            icon = icon ,
-            extra_info = True ,
-        )}
-        % endfor
-        
-    </div>
     </div>
     
     ## Left col
-    <div class="frag_left_col">
-    <div class="frag_col">
+    <div class="frag_col frag_left_col">
         ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ## this class attributes in this section are rather important; rather
         ## than being used for CSS, they are part of the hCard standard, they
@@ -279,157 +278,145 @@
         ## current page as being a person or organisation's profile
         ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         <div class="frag_col hideable hide_if_nojs vcard">
-        <div class="user-details">
-            
-            <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
-            <span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
-            % if self.member.get('website'):
-                <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
-            % endif
-            % if self.member.get('google_profile'):
-                <span class="detail-title">${_('Google Profile')}:</span> <a href="${self.member['google_profile']}" rel="me" target="_blank">${self.member['name']}</a><br />
-            % endif
-            <span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
-            % if self.current_user:
-                <span class="detail-title">${_('Type')}:</span> ${_('_' + self.member['account_type']).capitalize()}
-            % endif
-            
-            <br />
-            <%
-                groups = d['groups']['items']
-                if len(groups) == 0:
-                    _type = "_"+d['member']['type'].capitalize()
-                    role = _(_type)
-                    org  = "Civicboom"
-                elif len(groups) == 1:
-                    role = groups[0]['role'].capitalize()
-                    org = groups[0]['name'] or groups[0]['username']
-                else:
-                    role = "Contributor"
-                    org = _("%s groups") % len(groups)
-            %>
-            
-            <span class="org"><span class="value-title" title="${org}"></span></span>
-            <span class="role"><span class="value-title" title="${role}"></span></span>
-            
-            % if self.member['type'] == "group" and self.member['location_home']:
-                <% lon, lat = self.member['location_home'].split() %>
-                <span class="geo">
-                    <span class="latitude"><span class="value-title" title="${lat}"></span></span>
-                    <span class="longitude"><span class="value-title" title="${lon}"></span></span>
-                </span>
-            % endif
-            
-            % if 'follow' in self.actions:
-                ${h.secure_link(
-                    h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
-                    value           = _('Follow') ,
-                    link_class = 'button button_large',
-                    title           = _("Follow %s" % self.name) ,
-##                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
-                )}
-                <span class="separtor"></span>
-            % endif
-            
-            % if 'unfollow' in self.actions:
-                ${h.secure_link(
-                    h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
-                    value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
-                    link_class = 'button button_large',
-                    title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
-##                    json_form_complete_actions = "cb_frag_reload('members/%s');" % self.id ,
-                )}
-                <span class="separtor"></span>
-            % endif
+            <div class="user-details">
+                
+                <span class="name fn" style="display: none;">${h.guess_hcard_name(self.member['name'])}</span>
+                <span class="detail-title">${_('Username')}:</span> <span class="uid nickname">${self.member['username']}</span><br />
+                % if self.member.get('website'):
+                    <span class="detail-title">${_('Website')}:</span> <a href="${self.member['website']}" class="url" target="_blank">${h.nicen_url(self.member['website'])}</a><br />
+                % endif
+                % if self.member.get('google_profile'):
+                    <span class="detail-title">${_('Google Profile')}:</span> <a href="${self.member['google_profile']}" rel="me" target="_blank">${self.member['name']}</a><br />
+                % endif
+                <span class="detail-title">Joined:</span> ${_('%s ago') % h.time_ago(self.member['join_date'])  }<br />
+                % if self.current_user:
+                    <span class="detail-title">${_('Type')}:</span> ${_('_' + self.member['account_type']).capitalize()}
+                % endif
+                
+                <br />
+                <%
+                    groups = d['groups']['items']
+                    if len(groups) == 0:
+                        _type = "_"+d['member']['type'].capitalize()
+                        role = _(_type)
+                        org  = "Civicboom"
+                    elif len(groups) == 1:
+                        role = groups[0]['role'].capitalize()
+                        org = groups[0]['name'] or groups[0]['username']
+                    else:
+                        role = "Contributor"
+                        org = _("%s groups") % len(groups)
+                %>
+                
+                <span class="org"><span class="value-title" title="${org}"></span></span>
+                <span class="role"><span class="value-title" title="${role}"></span></span>
+                
+                % if self.member['type'] == "group" and self.member['location_home']:
+                    <% lon, lat = self.member['location_home'].split() %>
+                    <span class="geo">
+                        <span class="latitude"><span class="value-title" title="${lat}"></span></span>
+                        <span class="longitude"><span class="value-title" title="${lon}"></span></span>
+                    </span>
+                % endif
+                
+                % if 'follow' in self.actions:
+                    ${h.secure_link(
+                        h.args_to_tuple('member_action', action='follow'    , id=self.id, format='redirect') ,
+                        value           = _('Follow') ,
+                        link_class = 'button button_large',
+                        title           = _("Follow %s" % self.name) ,
+                    )}
+                    <span class="separtor"></span>
+                % endif
+                
+                % if 'unfollow' in self.actions:
+                    ${h.secure_link(
+                        h.args_to_tuple('member_action', action='unfollow'  , id=self.id, format='redirect') ,
+                        value           = _('Unfollow') if 'follow' not in self.actions else _('Ignore invite') ,
+                        link_class = 'button button_large',
+                        title           = _("Stop following %s" % self.name) if 'follow' not in self.actions else _('Ignore invite from %s' % self.name) ,
+                    )}
+                    <span class="separtor"></span>
+                % endif
+            </div>
         </div>
-        </div>
-        <div style="clear: both;"></div>
+        
         ## Community ----------------------------------------
-    
-    % if self.num_unread_messages != None and self.num_unread_notifications != None:
-        ${messages_frag_list()}
-    % endif
-    
-    ${frag_list.member_list_thumbnails(
-        d['following'],
-        _('Following'),
-        ##h.args_to_tuple('member_action', id=self.id, action='following'),
-        #h.args_to_tuple('members', followed_by=self.id), # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
-        icon =  'follow'
-    )}
-    
-    <%def name="invite_members_trusted()">
-        ${invite_members(
-           title='Invite Trusted Followers',
-           href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower'),
-           help_text=_('Invite other members to become trusted followers'),
-           help_classes='mo-help-r mo-help-b'
+        % if self.num_unread_messages != None and self.num_unread_notifications != None:
+            ${messages_frag_list()}
+        % endif
+        
+        ${frag_list.member_list_thumbnails(
+            d['following'],
+            _('Following'),
+            icon =  'follow'
         )}
-    </%def>
-
-    ${frag_list.member_list_thumbnails(
-        d['followers'] ,
-        _('Followers') ,
-        ##h.args_to_tuple('member_action', id=self.id, action='followers') ,
-        #h.args_to_tuple('members', follower_of=self.id), # AllanC - list kwargs are now in API output, so this manual url generating is not needed anymore
-        icon    = 'follow',
-        actions = invite_members_trusted if 'invite_trusted_followers' in self.actions else None ,
-    )}
+        
+        <%def name="invite_members_trusted()">
+            ${invite_members(
+               title='Invite Trusted Followers',
+               href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='trusted_follower'),
+               help_text=_('Invite other members to become trusted followers'),
+               help_classes='mo-help-r mo-help-b'
+            )}
+        </%def>
     
-    ${frag_list.member_list_thumbnails(
-        [m for m in d['groups']['items'] if m['status']=='active'],
-        _('_Groups') ,
-        h.args_to_tuple('member_action', id=self.id, action='groups') ,
-        icon    = 'group' ,
-    )}
-    
-    ${frag_list.member_list_thumbnails(
-        [m for m in d['groups']['items'] if m['status']=='invite'] ,
-        _('Pending group invitations') ,
-        h.args_to_tuple('member_action', id=self.id, action='groups') ,
-        icon = 'group' ,
-    )}
-    
-    % if self.member['type']=='group':
-    <%def name="invite_members_group()">
-        ${invite_members(
-           title='Invite Members to join',
-           href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group'),
-           help_text=_('Invite other members to join this _Group'),
-           help_classes='mo-help-r mo-help-b'
+        ${frag_list.member_list_thumbnails(
+            d['followers'] ,
+            _('Followers') ,
+            icon    = 'follow',
+            actions = invite_members_trusted if 'invite_trusted_followers' in self.actions else None ,
         )}
-    </%def>
+        
+        ${frag_list.member_list_thumbnails(
+            [m for m in d['groups']['items'] if m['status']=='active'],
+            _('_Groups') ,
+            h.args_to_tuple('member_action', id=self.id, action='groups') ,
+            icon    = 'group' ,
+        )}
+        
+        ${frag_list.member_list_thumbnails(
+            [m for m in d['groups']['items'] if m['status']=='invite'] ,
+            _('Pending group invitations') ,
+            h.args_to_tuple('member_action', id=self.id, action='groups') ,
+            icon = 'group' ,
+        )}
+        
+        % if self.member['type']=='group':
+        <%def name="invite_members_group()">
+            ${invite_members(
+               title='Invite Members to join',
+               href_tuple=h.args_to_tuple(controller='invite', action='index', id='me', invite='group'),
+               help_text=_('Invite other members to join this _Group'),
+               help_classes='mo-help-r mo-help-b'
+            )}
+        </%def>
+        
+        ${frag_list.member_list_thumbnails(
+            [m for m in d['members']['items'] if m['status']=='active'],
+            _('Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members') ,
+            icon = 'user' ,
+            actions = invite_members_group if 'invite_members' in self.actions else None ,
+        )}
+        
+        ${frag_list.member_list_thumbnails(
+            [m for m in d['members']['items'] if m['status']=='invite'],
+            _('Invited Members'),
+            h.args_to_tuple('member_action', id=self.id, action='members') ,
+            icon = 'invite' ,
+        )}
     
-    ${frag_list.member_list_thumbnails(
-        [m for m in d['members']['items'] if m['status']=='active'],
-        _('Members'),
-        h.args_to_tuple('member_action', id=self.id, action='members') ,
-        icon = 'user' ,
-        actions = invite_members_group if 'invite_members' in self.actions else None ,
-    )}
-    
-    ${frag_list.member_list_thumbnails(
-        [m for m in d['members']['items'] if m['status']=='invite'],
-        _('Invited Members'),
-        h.args_to_tuple('member_action', id=self.id, action='members') ,
-        icon = 'invite' ,
-    )}
-
-    % endif
-    
-    ${member_map()}
-    </div>
-
+        % endif
+        
+        ${member_map()}
     </div>
     
     ## Right col
-    <div class="frag_right_col">
-        <div class="frag_col">
-        
+    <div class="frag_col frag_right_col">
         ${guides()}
         
         ## Accepted Assignments --------------------------------------
-        
         ${frag_list.content_list(
             d['assignments_accepted'] ,
             _('My to-do'), #_('Accepted _assignments') ,
@@ -441,7 +428,6 @@
         
         
         ## Memers Content --------------------------------------------
-        
         % for list, icon, description in [n for n in self.trans_strings if n[0] not in ["all","assignments_active" ]]:
         ${frag_list.content_list(
             d[list] ,
@@ -454,7 +440,6 @@
         
         
         ## Boomed Content --------------------------------------------
-        
         ${frag_list.content_list(
             d['boomed'],
             _('Boomed _content'),
@@ -464,10 +449,7 @@
             icon = 'boom' ,
             extra_info = True ,
         )}
-        
-        </div>
     </div>
-
 </%def>
 
 ##------------------------------------------------------------------------------

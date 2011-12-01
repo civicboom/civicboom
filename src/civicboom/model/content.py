@@ -151,6 +151,7 @@ class Content(Base):
             'creation_date': None ,
             'update_date'  : None ,
             'location'     : lambda content: location_to_string(content.location),
+            'location_text': lambda content: None, # AllanC - this could be a requested feature later, it would need to be handled by a db trigger?
             'distance'     : lambda content: None, # if we search for a location, the extra 'distance' column will overwrite this
             'num_responses': None ,
             'num_comments' : None ,
@@ -168,7 +169,7 @@ class Content(Base):
     })
     __to_dict__['full'].update({
             'content'     : None ,
-            'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else None ,
+            'parent'      : lambda content: content.parent.to_dict(include_fields='creator') if content.parent else {} ,
             'creator'     : lambda content: content.creator.to_dict() if content.creator else None ,
             'attachments' : lambda content: [   media.to_dict(                        ) for media    in content.attachments] ,
             #'responses'   : lambda content: [response.to_dict(include_fields='creator') for response in content.responses  ] ,
@@ -176,6 +177,7 @@ class Content(Base):
             'license'     : lambda content: content.license.to_dict() ,
             'root_parent' : lambda content: content.root_parent.to_dict(include_fields='creator') if content.root_parent else None,
             'extra_fields': None ,
+            'langauge'    : lambda content: None, # AllanC - it is unknown what format this should take, content should have a language, so users can search for french content etc, this should default to the users current langauge
     })
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']

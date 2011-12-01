@@ -1,0 +1,1 @@
+../jquery.tinymce.js
