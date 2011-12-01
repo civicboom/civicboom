@@ -20,8 +20,10 @@ class FlaggedEntity(Base):
     offending_member_id  = Column(String(32), ForeignKey('member.id', onupdate="cascade"), nullable=True )
     offending_message_id = Column(Integer() , ForeignKey('message.id')                   , nullable=True )
 
-    raising_member       = relationship("Member", primaryjoin="FlaggedEntity.raising_member_id==Member.id", backref=backref('flags_raised', cascade="all, delete-orphan"))
+    # member:flag is already defined
+    #raising_member       = relationship("Member", primaryjoin="FlaggedEntity.raising_member_id==Member.id", backref=backref('flags_raised', cascade="all, delete-orphan"))
 
     def __str__(self):
-        return "%s - %s (%s)" % (self.raising_member.username if self.raising_member else "System", self.comment, self.type)
+        #return "%s - %s (%s)" % (self.raising_member.username if self.raising_member else "System", self.comment, self.type)
+        return "%s - %s (%s)" % (self.raising_member_id if self.raising_member_id else "System", self.comment, self.type)
 
