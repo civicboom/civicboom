@@ -53,6 +53,8 @@ def main(source_url, output):
         username = getpass.getuser()
         password = getpass.getpass("authentication for %s required - password:" % source_url)
         redmine_data = get_url_data(source_url, username, password)
+	if redmine_data:
+            file(cached_filename, "w").write(redmine_data)
     # Decode JSON data into a Python data structure
     redmine_data = json.loads(redmine_data)
     

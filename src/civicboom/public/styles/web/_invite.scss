@@ -3,9 +3,10 @@
 		float: left;
 		width: 50%;
 		height: 100%;
+		margin-left: 0 !important;
 	}
 	input.search-name {
-        width: 8.75em;
+        width: 6.5em;
 	}
 	.frag_right_col {
 		float: right;
@@ -29,6 +30,9 @@
 	}
 	.button_white.disabled {
 	 color: #999;
+	}
+	.bottom {
+	  clear: both;
 	}
 	.button.disabled {
 		border: 1px solid #545d87;
