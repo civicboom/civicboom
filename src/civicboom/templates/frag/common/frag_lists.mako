@@ -73,7 +73,7 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul', 'li'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul', 'li'), list_class='member_thumbnail'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
