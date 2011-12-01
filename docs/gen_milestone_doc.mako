@@ -62,13 +62,9 @@
                 <th>Time and Resorces</th>
                 <% num_cols = 4 %>
             </tr>
-        % for item in redmine_data:
-            <%
-                item_class = 'feature'
-                if item['tracker_id']!=2:
-                    item_class = 'maintinence'
-            %>
-            <tr class="${item_class}">
+            
+        % for item in redmine_data['issues']:
+            <tr class="${item['tracker']['name']}">
                 <td>
                     ${item['subject']}
                     
