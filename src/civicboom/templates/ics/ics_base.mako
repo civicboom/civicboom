@@ -170,7 +170,7 @@ LANGUAGE=${content_or_member.get('langauge') if content_or_member.get('langauge'
         if content.get('type') == 'comment':
             text = content.get('content')
         else:
-            text = content.get('content_short') or h.truncate(strip_html_tags(content.get('content')), length=150, whole_word=True, indicator='...')
+            text = content.get('content_short')
     text = re.sub(r'[\t\n\r\f\v]', '\\\\n', text)
 %>\
 ${text}\

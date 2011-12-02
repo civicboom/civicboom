@@ -8,6 +8,8 @@ ${d['member']['name']} (${d['member']['username']})
     %endif
 </%def>
 
+<%def name="description()">${d['member']['description']}</%def>
+
 <%def name="body()">
     ##please use ${h.url('contents', creator=d['member']['username'], format='rss', qualified=True)}
     
