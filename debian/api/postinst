@@ -13,6 +13,8 @@ fi
 initctl stop cb-website || true
 initctl stop cb-worker  || true
 
+rm -f `find /tmp/cb-website-data/templates -name "*.mako.*"`
+
 initctl start cb-website || true
 initctl start cb-worker  || true
 

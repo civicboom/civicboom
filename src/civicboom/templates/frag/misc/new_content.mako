@@ -19,7 +19,7 @@
                 <h1>${_('1. Post your story on Civicboom:')}</h1>
             </div>
             <div class="frag_whitewrap na-other">
-                <div class="fr"><a href="${h.url(controller='contens', target_type='assignment', action='index')}" class="button link_new_frag" data-frag="${h.url(controller='contents', target_type='assignment', action='index', format='frag')}">${_('See full list')}</a></div>
+                <div class="fr"><a href="${h.url(controller='contents', target_type='assignment', action='index')}" class="button link_new_frag" data-frag="${h.url(controller='contents', target_type='assignment', action='index', format='frag')}">${_('See full list')}</a></div>
                 <h1>${_('2. Respond to a _assignment:')}</h1>
             </div>
         </div>

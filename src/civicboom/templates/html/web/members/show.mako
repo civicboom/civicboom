@@ -14,7 +14,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="title()">${d['member']['name'] or d['member']['username']}</%def>
-<%def name="description()">${h.strip_html_tags(d['member']['description'] or '')[:300]}</%def>
+<%def name="description()">${h.truncate(d['member']['description'], length=300, indicator='...', whole_word=True)}</%def>
 <%def name="breadcrumbs()">
 <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
 	<a href="${h.url('members')}" itemprop="url"><span itemprop="title">Members</span></a>
