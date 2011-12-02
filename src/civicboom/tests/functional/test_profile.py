@@ -1,5 +1,6 @@
 from civicboom.tests import *
 
+from nose.plugins.skip import SkipTest
 
 class TestUserProfileController(TestController):
 
@@ -10,3 +11,9 @@ class TestUserProfileController(TestController):
     def test_index(self):
         response = self.app.get(url(controller='profile', action='index'))
         self.assertIn("Mr U. Test", response)
+
+    def test_messages(self):
+        raise SkipTest('finish this test')
+    
+    def test_personas(self):
+        raise SkipTest('finish this test')
