@@ -346,7 +346,7 @@ civicboom/public/doc/index.html: ../docs/api.*.html civicboom/controllers/*.py
 	../docs/gen_api_doc -i civicboom/controllers/ -t ../docs -o civicboom/public/doc/index.html
 
 milestone-doc:
-	../docs/gen_milestone_doc -s https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6 -o ../docs/milestone.html
+	../docs/gen_milestone_doc -s "https://dev.civicboom.com/redmine/projects/civicboom/issues.json?query_id=6&limit=100" -o ../docs/milestone.html
 
 shell:
 	paster shell

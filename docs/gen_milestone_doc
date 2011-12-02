@@ -5,13 +5,14 @@ A script to extract JSON data from Redmine issue tracker and construct a HTML up
 """
 
 import sys
-import os.path
+import os
 from optparse import OptionParser
 import getpass
 
 import urllib
 import urllib2
 import json
+import datetime
 
 from mako.template import Template
 
@@ -46,15 +47,25 @@ def main(source_url, output):
     # For development check to see if there is a .json file named the same as this script for use in a test enviroment
     redmine_data = "[]"
     cached_filename = os.path.relpath(__file__)+".json"
-    if os.path.exists(cached_filename):
+    # If the cache file exisits and is not over a day old
+    if os.path.exists(cached_filename) and not (datetime.datetime.now() - datetime.datetime.fromtimestamp(os.stat(cached_filename).st_mtime)).days:
+        print "using cache file: %s" % cached_filename
         redmine_data = open(cached_filename, 'r').read()
     # Else aquire data from url provided
     else:
         username = getpass.getuser()
         password = getpass.getpass("authentication for %s required - password:" % source_url)
         redmine_data = get_url_data(source_url, username, password)
+	if redmine_data:
+            file(cached_filename, "w").write(redmine_data)
+            
+
     # Decode JSON data into a Python data structure
     redmine_data = json.loads(redmine_data)
+    
+    if not redmine_data or not redmine_data.get('issues'):
+        print "Error: not data to process"
+        return
     
     # Render Template
     template_filename = os.path.relpath(__file__)+".mako"

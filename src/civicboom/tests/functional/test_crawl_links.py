@@ -23,9 +23,9 @@ class TestCrawlSite(TestController):
         # /members/civicboom as this does not exist unless we are looking at the live site!
         # None for blank hrefs (we use href='' quite a bit?!)
         # 'False' for invalid href (Why does this happen in /help/article, WTF?!)
-        crawled     = ['/members/civicboom', '/doc/', None, 'False']
-        count       = 0
-        error_count = 0
+        self.crawled     = ['/members/civicboom', '/doc/', '/doc', 'None', 'False']
+        self.count       = 0
+        self.error_count = 0
 
     def crawl(self, url, prev_url, **kwargs):
         self.crawled.append(url)
@@ -38,15 +38,17 @@ class TestCrawlSite(TestController):
             return
         self.count += 1
         soup = BeautifulSoup(response.body)
-        hrefs = [ link.get('href') for link in soup.findAll('a') if not re.match(not_civicboom, link.get('href', ''))]
+        hrefs = [ link.get('href') for link in soup.findAll('a') if link.get('href') and not re.match(not_civicboom, link.get('href', ''))]
+        hrefs.extend([ link.get('data-frag') for link in soup.findAll('a') if link.get('data-frag') and not re.match(not_civicboom, link.get('href', ''))])
+        hrefs = set(hrefs)
         ## Iframe srcs? widget. and m. links
         for href in hrefs:
-            if href not in self.crawled:
+            if href and href not in self.crawled:
                 self.crawl(href, url)
         if not prev_url:
             print 'Crawled', self.count
-            if error_count:
-                assert False
+            if self.error_count:
+                assert False, 'An error occured whilst crawling, see printed log'
 
     #---------------------------------------------------------------------------
     # Tests
@@ -59,6 +61,7 @@ class TestCrawlSite(TestController):
         self.crawl('/', None)       # Crawl when logged in
         
     def test_crawl_mobile(self):
+        sub_domain = 'm'
         self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
         self.log_in_as('unittest')
         self.count = 0

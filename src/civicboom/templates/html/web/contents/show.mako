@@ -17,7 +17,7 @@
 ##------------------------------------------------------------------------------
 
 <%def name="title()">${d['content']['title']}</%def>
-<%def name="description()">${h.strip_html_tags(d['content']['content'])[:300]}</%def>
+<%def name="description()">${d['content']['content_short']}</%def>
 <%def name="canonical_url()">${h.url(controller='contents', action='show', id=d['content']['id'], title=h.make_username(d['content']['title']), sub_domain='www', protocol='https', qualified=True)}</%def>
 <%def name="breadcrumbs()">
 <span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">

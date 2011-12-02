@@ -1,4 +1,7 @@
 <%namespace name="share" file="/frag/common/share.mako"     />
+<%!
+  from pylons import request
+%>
 
 <%def name="body()">
 	% if config['online']:
@@ -7,7 +10,8 @@
 		##${share.share_this_js()}
 	% endif
 
-	% if config['development_mode']:
+  <script src="${h.wh_url("public", "javascript/tiny_mce/tiny_mce.js")}"></script>
+	% if config['development_mode'] and 'MSIE' not in request.environ.get('HTTP_USER_AGENT', ''):
         <div id="this is just here to make reading the source tree easier in dev mode">
             <%
             from glob import glob
@@ -19,13 +23,12 @@
                 <script src="/${script}"></script>
             % endfor
         </div>
-	% else:
-		<script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
+  % elif config['development_mode']:
+    <script src="${h.wh_url("public", "javascript/_combined.foot.js")}"></script>
+  % else:
+		<script src="${h.wh_url("public", "javascript/_combined.foot.min.js")}"></script>
 	% endif
 
-	## tinymce, should also be loaded on demand
-	<script src="/javascript/tiny_mce/tiny_mce.js"></script>
-	<script src="/javascript/tiny_mce/jquery.tinymce.js"></script>
 </%def>
 
 
