@@ -335,15 +335,18 @@ def url_pair(*args, **kwargs):
 
 
 ## AllanC - TODO - need to specify frag size as an optional arg
-def frag_link(value, title='', class_='', href_tuple=([], {})): #*args, **kwargs
+def frag_link(value, title='', class_='', href_tuple=([], {}), data=None): #*args, **kwargs
     href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
+    kwargs = {'data-frag' : href_frag}
+    if data:
+        kwargs.update(dict([('data-'+k, v) for k,v in data.iteritems()]))
     return HTML.a(
         value ,
         href    = href ,
-        class_  = 'link_new_frag ' + class_ ,
+        class_  = class_ + ' link_new_frag' ,
         title   = title if title else value,
         ##onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
-        **{'data-frag' : href_frag}
+        **kwargs
     )
 
 
