@@ -35,15 +35,7 @@ class TestAutoDraftToComment(TestController):
         self.assertEquals('draft', response_json['data']['content']['type'])
         
         # Publish draft - BUT! as content is less than config[setting.content.max_comment_length] it SHOULD audo convert to comment
-        response = self.app.put(
-            url('content', id=draft_id_1, format='json'),
-            params={
-                '_authentication_token': self.auth_token ,
-                #'_method'              : 'update' ,
-                'submit_publish'       : u'publish' ,
-            }
-        )
-        response_json = json.loads(response.body)
+        self.publish_content(draft_id_1)
         
         # Check comments on assignment has 'auto_draft_to_comment_response' as first comment
         response      = self.app.get(url('content', id=assignment_id, format='json'), status=200)
@@ -67,14 +59,7 @@ class TestAutoDraftToComment(TestController):
         self.assertEquals('draft', response_json['data']['content']['type'])
         
         # Publish draft - as content is MORE than config[setting.content.max_comment_length] it WILL NOT auto convert to comment
-        response = self.app.put(
-            url('content', id=draft_id_2, format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'submit_publish': u'publish' ,
-            }
-        )
-        response_json = json.loads(response.body)
+        self.publish_content(draft_id_2)
         
         # Check comments on assignment has 'auto_draft_to_comment_response' as first comment
         response      = self.app.get(url('content', id=assignment_id, format='json'), status=200)
