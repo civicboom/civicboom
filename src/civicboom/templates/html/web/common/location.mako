@@ -2,7 +2,11 @@
 <%
 field_id = h.uniqueish_id(field_name)
 %>
+% if height == "fill":
+<div class="fill">
+% else:
 <div style="position: relative;">
+% endif
 <!--<label${' class=%s' % label_class if label_class else ''} for="${field_name}_name">${_("Location name")}</label><br />-->
 <input id="${field_id}_name" name="${field_name}_name" type="search" placeholder="${_("Search for location")}" style="width: ${width}">
 <div id="${field_id}_comp"></div>
@@ -21,7 +25,12 @@ style = ""
 if not always_show_map:
 	style = style + " display: none; position: absolute; -webkit-box-shadow: 3px 3px 3px #666;"
 %>
+
+% if height == "fill":
+<div style="width: ${width}; height: 90%;${style}" id="${field_id}_div"></div>
+% else:
 <div style="width: ${width}; height: ${height};${style}" id="${field_id}_div"></div>
+% endif
 <script type="text/javascript">
 $(function() {
 	map = map_picker('${field_id}', {

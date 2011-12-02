@@ -845,7 +845,8 @@
                     _("You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.") +\
                     "</p>",
                 confirm_yes = _('Yes. Approve and _lock'),
-                confirm_no  = _('No. Take me back')
+                confirm_no  = _('No. Take me back'),
+                confirm_title = _("Approve and _Lock"),
             ),
             title           = _("Approve and _lock this content so no further editing is possible"),
         )}
@@ -897,7 +898,8 @@
             link_data = dict(
                 confirm = _('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can _disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.'),
                 confirm_yes = _('Yes. _Disassociate'),
-                confirm_no = _('No. Take me back')
+                confirm_no = _('No. Take me back'),
+                confirm_title = _('_Disassociate'),
             ),
             title           = _("_Disassociate your content from this response") ,
         )}
@@ -1103,7 +1105,8 @@ r = (d['content']['rating'] * 5)
                                     _('You will get an email explaining this in greater detail. The email will also give you access to the original file (if video, image or audio) to download and edit as you see fit - meaning your email file space is kept free.') +\
                                     '</p>',
                                 confirm_yes = _('Yes. Approve and _lock'),
-                                confirm_no  = _('No. Take me back')
+                                confirm_no  = _('No. Take me back'),
+                                confirm_title = _("Approve and _Lock"),
                             ),
                             title           = _("Approve and _lock this content so no further editing is possible"),
                         )}
@@ -1119,7 +1122,8 @@ r = (d['content']['rating'] * 5)
                             link_data = dict(
                                 confirm = _('If you think that this post is not appropriate for your brand or audience, but does not break any terms and conditions, you can _disassociate it from your request. This means the content still "exists" on Civicboom but is not attached in any way to your request and will not be visible as a listed response to your request.'),
                                 confirm_yes = _('Yes. _Disassociate'),
-                                confirm_no = _('No. Take me back')
+                                confirm_no = _('No. Take me back'),
+                                confirm_title = _('_Disassociate'),
                             ),
                             title           = _("_Disassociate your content from this response") ,
                         )}
