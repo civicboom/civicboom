@@ -130,3 +130,35 @@ class TestCache(TestController):
         This should work as the the admin pannel uses the SQLAlchemy model and invlidation events are tied to the model
         """
         raise SkipTest("Not implemented")
+
+
+    def test_content_morph(self):
+        """
+        morph a draft from one type to another
+        """
+        # Profile
+        self.log_in_as('unittest')
+        response      = self.app.get(url(controller='profile', action='index', format='json'))
+        #response_json = json.loads(response.body)
+        self.assertIn("Mr U. Test", response.body)
+        
+        # Create draft - check on profile
+        content_id = self.create_content(title='cache morph test', content='cache morph test', type='draft', target_type='assignment')
+        response      = self.app.get(url(controller='profile', action='index', format='json'))
+        response_json = json.loads(response.body)
+        self.assertEquals("cache morph test", response_json['data']['drafts']['items'][0]['title'])
+        self.assertEquals(content_id        , response_json['data']['drafts']['items'][0]['id']   )
+        draft_count = response_json['data']['drafts']['count']
+        
+        # Publish draft - it should become an assignment
+        self.publish_content(content_id)
+        
+        # Check lists have updated
+        response      = self.app.get(url(controller='profile', action='index', format='json'))
+        response_json = json.loads(response.body)
+        self.assertEquals(response_json['data']['drafts']['count'], draft_count - 1)
+        self.assertIn("cache morph test", response.body)
+        self.assertEquals(content_id        , response_json['data']['assignments_active']['items'][0]['id'])
+        
+        # Cleanup
+        self.delete_content(content_id)

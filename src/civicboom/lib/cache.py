@@ -372,7 +372,24 @@ def _invalidate_obj_cache(bucket, obj, fields=['id']):
                 keys_to_invalidate.append(str(getattr(obj, field)))
         for key in keys_to_invalidate:
             cache.remove_value(key=key)
-        
+
+def invalidate_content_list(content_type, creator_id):
+    """
+    utill helper that helps invalidate lists when morphing content, also useded in normal invalidation
+    
+    AllanC - Currently this only helps support morphing a draft to something else (invalidating the draft list)
+             there could be a cleaner way of doing this
+    """
+    try:
+        content_type = content_type.__type__
+    except:
+        pass
+    if content_type == 'draft':
+        invalidate_list_version('contents_index', 'drafts'      , creator_id)
+    if content_type == 'assignment':
+        invalidate_list_version('contents_index', 'assignments' , creator_id)
+
+
 
 def invalidate_member(member, remove=False):
     _invalidate_obj_cache('member', member) #, ['id','email']
@@ -420,14 +437,10 @@ def invalidate_content(content, remove=False):
             invalidate_list_version('contents_index', 'responses'  , creator_id) # Invalidate responses this creator has written
             # we dont need to invalidate the whole parent object - just the responses list
         
-        if content.__type__ == 'draft':
-            invalidate_list_version('contents_index', 'drafts'      , creator_id)
-        
         if content.__type__ == 'article' and not parent_id:
             invalidate_list_version('contents_index', 'articles'    , creator_id)
             
-        if content.__type__ == 'assignment':
-            invalidate_list_version('contents_index', 'assignments' , creator_id)
+        invalidate_content_list(content.__type__, creator_id)
     
     # If removing the content item entirely - invalidate all sub lists
     if remove:

@@ -23,7 +23,8 @@
 </%def>
 
 <%def name="search()">
-    <%include file="/frag/contents/search.mako"/>
+<% args, kwargs = c.web_params_to_kwargs %>
+<!--#include virtual="${h.url(controller='misc', action='search_contents', format='frag', **kwargs)}"-->
 </%def>
 
 <%def name="list()">

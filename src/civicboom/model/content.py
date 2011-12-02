@@ -182,7 +182,7 @@ class Content(Base):
     del __to_dict__['full']['parent_id']
     del __to_dict__['full']['creator_id']
     del __to_dict__['full']['license_id']
-    del __to_dict__['full']['content_short']
+    #del __to_dict__['full']['content_short'] # AllanC - this functionality was being duplicated by viewing templates by the templates themselfs truncating and stripping the content item - it is now a guarenteed field for all content list and object returns
     
     def __init__(self):
         self.extra_fields = {} # AllanC - for some holy reason even though the default is setup in the field list above, if the object isnt added to the session this dict is None - force an epty dict - extending class's must ensure that they call Content.__init__() in there own init methods
@@ -345,7 +345,7 @@ class Content(Base):
         AllanC TODO: Derived field - Postgress trigger needed
         """
         from cbutils.text import strip_html_tags
-        return truncate(strip_html_tags(self.content).strip(), length=500, indicator='...', whole_word=True)
+        return truncate(strip_html_tags(self.content).strip(), length=300, indicator='...', whole_word=True)
 
 
 DDL('DROP TRIGGER update_response_count ON content').execute_at('before-drop', Content.__table__)

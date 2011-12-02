@@ -139,7 +139,7 @@ import civicboom.lib.form_validators.registration
 
 # Type validators, convert from our from type to validators
 type_validators = { 'string':           formencode.validators.UnicodeString(),
-                    'longstring':       formencode.validators.UnicodeString(),
+                    'longstring':       civicboom.lib.form_validators.base.UnicodeStripHTMLValidator(), #formencode.validators.UnicodeString(),
                     'url':              formencode.validators.URL(),
                     'email':            civicboom.lib.form_validators.registration.UniqueEmailValidator(),
                     'password':         civicboom.lib.form_validators.base.PasswordValidator(),

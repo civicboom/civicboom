@@ -112,6 +112,14 @@ class MiscController(BaseController):
             data['assignments'] = content_search(term=kwargs.get("term"), list="assignments_active", limit=3)['data']['list']
             data['articles']    = content_search(term=kwargs.get("term"), list="articles"          , limit=3)['data']['list']
             return action_ok(data=data)
+        
+    @web
+    def search_members(self, **kwargs):
+        return action_ok()
+    
+    @web
+    def search_contents(self, **kwargs):
+        return action_ok()
 
     # don't cache this, it does UA-specific things
     @auto_format_output

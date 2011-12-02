@@ -211,9 +211,9 @@
                     % if self.member.get('description'):
                         <p class="description">${self.member['description']}</p>
                     % elif c.logged_in_user and c.logged_in_user.username == self.member['username']:
-                        <p class="description" style="font-size: 150%;">To complete your profile, add a description <a href="/settings" style="color: blue;">here</a></p>
+                        <p class="description" style="font-size: 150%;">${_('To complete your profile, add a description')}<a href="/settings" style="color: blue;">here</a></p>
                     % else:
-                        <p class="description">This user has not added a description about themselves yet</p>
+                        <p class="description">${_('This user has not added a description about themselves yet')}</p>
                     % endif
                     
                     <div class="separator"></div>
