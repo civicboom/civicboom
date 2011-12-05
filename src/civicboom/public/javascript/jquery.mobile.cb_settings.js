@@ -30,4 +30,4 @@ $(document).bind('pageshow', function() {
         $('.ui-body-c, .ui-dialog.ui-overlay-c').attr('style','background: #EEEEEE; !important;');
         $('html').attr('style','background: #EEEEEE; !important;');
     }
-})
+});
