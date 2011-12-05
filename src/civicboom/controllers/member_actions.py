@@ -335,12 +335,12 @@ class MemberActionsController(BaseController):
         @api members 1.0 (WIP)
         
         @return 200    list generated ok
-                list   array of content objects
+                list   array of member objects
         @return 404   member not found
         """
         return member_search(groups_for=id, **kwargs)
         
-        #member = get_member(id)        
+        #member = get_member(id)
         #if member == c.logged_in_persona and kwargs.get('private'):
         #    group_roles = member.groups_roles #self._groups_list_dict(
         #else:
