@@ -2,6 +2,7 @@
 @import "../common/_mixin.scss";
 
 .thumbnail {
+    position: relative;
     display: inline-block;
     font-size: 40px;
     overflow: hidden;
@@ -10,25 +11,23 @@
     padding: 0;
     
     img {
-        max-width: 1em;
+      position: absolute;
+      max-width: 1em;
     }
 }
 
-.thumbnail_landscape {
-    img {
-        max-width: inherit !important;
-        max-height: 1em !important;
-    }
+/* thumbnail orientation classes */
+.landscape { 
+    max-height: 1em !important;
+    max-width: inherit !important;
 }
 
 .thumbnail_small {
-	font-size: 20px;
-	background: none;
+  	font-size: 20px;
+  	background: none;
 }
 
-.thumbnail_large {
-	font-size: 80px;
-}
+.thumbnail_large { font-size: 80px; }
 
 .thumbnail .icons {
     position: absolute;

@@ -559,12 +559,19 @@ if(!('frags' in boom)) {
         },
         '.thumbnail' : {
           'boom_load' : function() {
-              var div = $(this);
-              var img = div.children('img').one('load', function() {
-                img.trigger('boom_load');
+            var div = $(this);
+            var img = div.children('img');
+            img.one('load', function() {
+              div.trigger('boom_load');
+            });
+            if (img.width() && img.height()) {
+              if (img.width() > img.height()) img.addClass('landscape');
+              img.css({
+                left: (div.width()/2)-(img.width()/2),
+                top:  (div.height()/2)-(img.height()/2),
               });
-              if (img.width() > img.height())
-                div.addClass('thumbnail_landscape');
+            }
+            return false;
           }
         }
       }
