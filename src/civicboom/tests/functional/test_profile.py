@@ -13,7 +13,12 @@ class TestUserProfileController(TestController):
         self.assertIn("Mr U. Test", response)
 
     def test_messages(self):
-        raise SkipTest('finish this test')
+        response = self.app.get(url(controller='profile', action='index', format='json'))
+        response_json = json.loads(response.body)
+        for field in ['num_unread_messages', 'num_unread_notifications', 'last_message_timestamp', 'last_notification_timestamp']:
+            self.assertIn(field, response_json['data'])
     
     def test_personas(self):
-        raise SkipTest('finish this test')
+        response = self.app.get(url(controller='profile', action='index', format='json'))
+        response_json = json.loads(response.body)
+        self.assertIn('count', response_json['data']['groups'])
