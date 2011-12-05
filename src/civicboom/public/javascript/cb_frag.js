@@ -338,17 +338,28 @@ if(!('frags' in boom)) {
             return true;
           }
         },
-        'form.search[method="get"]' : {
-          'submit' : function() {
+        'form.search[method="GET"]' : {
+          'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
-            var frag_href = form.data('frag');
-            boom.frags.create(form, frag_href + '?' + form.serialize());
-            event.stopImmediatePropagation();
-            return false;
+            var i = true;
+            
+            // frag replace
+            var frag_href;
+            if (frag_href = form.data('frag')) {
+              boom.frags.update(form, frag_href + '?' + form.serialize());
+              event.stopImmediatePropagation();
+              i = false;
+            }
+            if (frag_href = form.data('frag-new')) {
+              boom.frags.create(form, frag_href + '?' + form.serialize());
+              event.stopImmediatePropagation();
+              i = false;
+            }
+            return i;
           }
         },
-        'form[method="post"]' : {
+        'form[method="POST"]' : {
           'submit' : function() {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
