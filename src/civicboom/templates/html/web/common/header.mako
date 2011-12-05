@@ -154,6 +154,7 @@
             ## , members=num_members)}
         % endif
         ## Show currently logged in persona's groups:
+	## AllanC - TODO - convert this to use member_actions/groups? - lets use the index actions as much as possible for a single DB point of contact - (I know members/index isnt cached at time of writing, but it's where we want to move to)
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
             ${persona_select(membership.group, role=membership.role)}
             ## , members=membership.group.num_members)}
