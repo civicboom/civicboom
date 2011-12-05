@@ -10,6 +10,7 @@ from civicboom.model.content import Content, DraftContent, ArticleContent, Assig
 
 from civicboom.model.meta import Session
 
+from civicboom.lib.cache import invalidate_content, invalidate_content_list
 
 #-------------------------------------------------------------------------------
 # Create new object types
@@ -107,12 +108,14 @@ def morph_content_to(content, after_type):
     if content.__type__ == after_type:
         return content # If the before and after types are the same then return the content obj as no processing needs to take place
     
-    if content.id == None: #If the content has not been commited to the DB, then return an object of the correct type
-        # todo?
-        log.warn('content to morph not in DB? investigate')
-        pass
+    if content.id == None: # If the content has not been commited to the DB
+        # then return an object of the correct type?
+        # todo? 
+        #log.warn('content to morph not in DB? investigate')
+        raise Exception('content to morph not in DB? investigate')
     
     id                = content.id
+    prev_type         = content.__type__
     sql_generator_key = content.__type__+":"+after_type
     
     if sql_generator_key not in morph_sql:
@@ -123,7 +126,13 @@ def morph_content_to(content, after_type):
         Session.execute(sql_cmd)
     Session.commit()
     
-    #content.invalidate_cache() # Invalidate cache for this content and update etag - AllanC unneeded as this is done automatically with SQLa events
     content = get_content(id)
     assert content.__type__ == after_type # If this is not true then something has gone very wrong!
+
+    # AllanC - Although the events linked to the commit of this object invalidte the list type for the 'current' content type, they do not take into consideration a content morph from the previous type
+    #          In fact .. we need to invalidate the content item manually here because the SQL statement does not associate with the SQLA object and therefor does not trigger the SQLA events
+    #          We need to manually invalidate the list that this content object was 'before' the morph
+    invalidate_content(content)
+    invalidate_content_list(prev_type, content.creator_id)
+    
     return content
