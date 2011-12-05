@@ -2,12 +2,13 @@
 @import "../common/_mixin.scss";
 
 /*----------------------------------------------------------------------------*/
-/* Fragment Lists
+/* Fragment Lists                                                             */
 /*----------------------------------------------------------------------------*/
 
 #frag_containers .frag_container .frag_data {
-    padding-top: 1em;
+    padding-top: 1em; 
     
+    /* top level frag list "box" */
     .frag_list {
         background-color: $frag-list-top;
         color: $frag-list-title-txt;
@@ -17,8 +18,10 @@
         @include border_radius(0.5em);
         @include drop_shadow(darken($frag-list-top, 40%), 1px, 1px, 3px);
 
+        /* frag list element to hold lists of content/members/etc */
         .frag_list_contents {
-
+        
+            /* styling for lists of content */
             .content {
                 width: 100%;
                 
@@ -73,6 +76,7 @@
                 }
             }
             
+            /* styling for lists of members */
             .member {
                 width: 100%;
                 
@@ -102,6 +106,7 @@
                 }
             }
             
+            /* styling for lists of followers/etc */
             .member_thumbnail {
                 width: 100%;
                 
@@ -114,9 +119,9 @@
                     }
                 }
             }
-            
         }
         
+        /* misc styling for other elements found in frag_lists */
         .link_more {
             text-align: right;
         }

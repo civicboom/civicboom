@@ -1,18 +1,33 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
+/*----------------------------------------------------------------------------*/
+/* Fragments                                                                  */
+/*----------------------------------------------------------------------------*/
+
+/* wrapper for frags */
 #frag_containers {
-	/*overflow-x : scroll;*/
-	white-space: nowrap;
-	display: block;
+    display: block;
     height: 100%;
-	// white-space-collapse: discard; // http://www.w3.org/TR/css3-text/#white-space-collapsing
-	//padding: 0.5em;
+    white-space: nowrap;
+    
+    .frag_col_1 { width: 250px; }
+    /* .frag_col_2 {width: 500px;} /* default is width 2 */
 
-	.frag_col_1 {width: 250px;}
-	/* .frag_col_2 {width: 500px;} /* default is width 2 */
+    /* top level frag element */
+  	.frag_container {
+    		@include border_radius($frag-radius);
+    		@include drop_shadow(1px, 1px, 1px, #333);
+        background-color: $frag-background;
+    		border: 1px solid $frag-border;
+    		display: inline-block !important;
+        height: 100%;
+        margin-right: 0.5em;
+    		overflow: auto !important; /* important because JQuery sets style="" element to block and overflow */
+        position: relative;
+    		white-space: normal;
+    		width: $frag-width;
 
-	.frag_container {
         .fill {
             position: absolute;
             top: 0px;
@@ -20,101 +35,85 @@
             right: 0px;
             bottom: 0px;
         }
-		//vertical-align: top;
-		display: inline-block !important;
-		overflow: auto !important; /* the important property is needed because JQuery sets the style="" element to block and overflow */
-		white-space: normal;
-        position: relative;
-		width: 500px;
-        height: 100%;
-		border: 1px solid $frag-border;
-        margin-right: 0.5em;
-        background-color: $frag-background;
-		@include border_radius($frag-radius);
-		@include drop_shadow(1px, 1px, 1px, #333);
-
-        table.content tr td { padding-right: 3px; }
-        table.content tr td.x { padding-left: 3px; }
-
-        .ui-button {
-            margin-right: 1em;
+    
+        .frag_bars {
+            
         }
-
-        .what-next, .why-respond {
-            color: #666;
-            margin: 1.5em auto 0 0.5em;
-        }
+    
+    		/* fragment Data */
+    		.frag_data {
+    		    @extend .fill;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            top: 20px;
         
-		.content_box {
-			background: $frag-list-top; /* for non-css3 browsers */
-
-			/* border: 0.1em solid $frag-list-border; /* AllanC - removed border for experimenting */
-			@include border_radius($frag-radius);
-			
-			padding: 1em;
-		}
-
-
-        .separator {
-            clear: both;
-            padding: 0.5em;
+            .frag_whitewrap {
+                @include border_radius(0.4em);
+                @include drop_shadow(1px, 1px, 1px, #333);
+                background-color: #fff;
+                margin: 0.5em;
+                padding: 1em;
+            }
+          
+          	.frag_col {
+          	    margin: 0 1em;
+          	}
+          	
+          	.frag_left_col, .frag_right_col {
+          	    display: inline-block;
+          	}
+          	
+          	.frag_left_col {
+          	    margin: 0 0.85em 0 1em;
+          	    float: left;
+          	    width: 46%;
+          	}
+          	
+          	.frag_right_col {
+                margin: 0 1em 0 0.0;
+                float: right;
+                width: 46%;
+          	}
+          	
+        		.title {
+          			padding: 1em 0 0 1em;
+          			font-size: 120%;
+        		}
+        		
+        		.title .title_text {
+          			font-weight: bold;
+          			padding: 0.25em 0 0 0.25em;
+        		}
+    
+            table.content tr td { padding-right: 3px; }
+            table.content tr td.x { padding-left: 3px; }
+    
+            .ui-button {
+                margin-right: 1em;
+            }
+    
+            .what-next, .why-respond {
+                color: #666;
+                margin: 1.5em auto 0 0.5em;
+            }
+            
+        		.content_box {
+          			background: $frag-list-top; /* for non-css3 browsers */
+          			padding: 1em;
+          			@include border_radius($frag-radius);
+        		}
+        
+            .separator {
+                clear: both;
+                padding: 0.5em;
+            }
+        
+            /* action bar */
+        		.icon {
+        			padding-right: 2px;
+        		}
         }
-
-        /*-----------------------------Action bar -----------------------------------*/
-		.icon {
-			padding-right: 2px;
-		}
-
-		/*----------------------------------------------------------------------------*/
-		/* Fragment Data
-		/*----------------------------------------------------------------------------*/
-		.frag_data {
-        overflow-y: scroll;
-        overflow-x: hidden;
-        position: absolute;
-        top: 22px;
-        left: 0px;
-        right: 0px;
-        bottom: 0px;
-		}
-
-    .frag_whitewrap {
-        background-color: #fff;
-        margin: 0.5em;
-        padding: 1em;
-        @include border_radius(0.4em);
-        @include drop_shadow(1px, 1px, 1px, #333);
-    }
-  
-  	.frag_col {
-  	    margin: 0 1em;
   	}
-  	
-  	.frag_left_col, .frag_right_col {
-  	    display: inline-block;
-  	}
-  	
-  	.frag_left_col {
-  	    margin: 0 0.85em 0 1em;
-  	    float: left;
-  	    width: 46%;
-  	}
-  	
-  	.frag_right_col {
-        margin: 0 1em 0 0.0;
-        float: right;
-        width: 46%;
-  	}
-  	
-		.title {
-  			padding: 1em 0 0 1em;
-  			font-size: 120%;
-		}
-		.title .title_text {
-  			font-weight: bold;
-  			padding: 0.25em 0 0 0.25em;
-		}
-	}
 }
 
 /*----------------------------------------------------------------------------*/
