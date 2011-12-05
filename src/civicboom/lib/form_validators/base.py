@@ -30,6 +30,7 @@ class DefaultSchema(formencode.Schema):
     filter_extra_fields = True
 
 class IntervalValidator(validators.UnicodeString):
+    if_empty   = None
     """
     Validate a timedelta inteval form a string
     """
