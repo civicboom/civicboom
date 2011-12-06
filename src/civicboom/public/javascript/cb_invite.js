@@ -1,6 +1,53 @@
 if (!('invite' in window.boom)) {
   boom.invite = {
+    templates: {
+      'assignment': function (id) {
+        return $('<ul></ul>').tagged({
+          hiddenFieldName: 'usernames',
+          placeholder: 'Search...',
+          tagSource: function (term, callback, self) {
+            $.getJSON(
+              '/members.json',
+              {
+                term: term.term,
+                exclude_members: self.hiddenField.val()
+              },
+              function (res) {
+                if (res.status != 'ok') return callback([]);
+                var items = res.data.list.items;
+                callback(items);
+              }
+            )
+          },
+          itemNormaliser: function (item) {
+            return item;
+          },
+          itemRenderer: function (item){
+            return $('<li class="member_item" />')
+              .data('value', item.username)
+              .append(
+                $('<a />')
+                  .append(
+                    $('<div class="thumbnail thumbnail_small" />').append($('<img />').attr('src', item.avatar_url))
+                  ).append(
+                    $('<div class="member_details" />').append(item.name).append('<br />').append('('+item.username+')')
+                  )
+              );
+          }
+      });
+      }
+    },
     init: function () {
+      $('#app').on('click', '.invite_link', function (event) {
+        var link = $(this);
+        var frag = boom.frags.getFragment(link);
+        var invite_type = link.data('invite');
+        var invite_id = link.data('invite-id') || frag.data('id');
+        if (! (invite_type in boom.invite.templates)) return true;
+        var content = $('<div />').append(boom.invite.templates[invite_type]())
+        content.dialog({position: {of: $('.i_plus_blue'), my: 'right top', at: 'left top', collision:'flip'}, width: 200, draggable: false, resizable: false, title: 'Invite', open: function () {  }});
+        return false;
+      });
       var container = '.frag_data.c-invite ';
       $('body').on('click', container+'.invite_click', function () {
       //$(container+'.invite_click').live('click', function () {
