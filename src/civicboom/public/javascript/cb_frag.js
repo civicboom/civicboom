@@ -338,17 +338,28 @@ if(!('frags' in boom)) {
             return true;
           }
         },
-        'form.search[method="get"]' : {
-          'submit' : function() {
+        'form.search[method="GET"]' : {
+          'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
-            var frag_href = form.data('frag');
-            boom.frags.create(form, frag_href + '?' + form.serialize());
-            event.stopImmediatePropagation();
-            return false;
+            var i = true;
+            
+            // frag replace
+            var frag_href;
+            if (frag_href = form.data('frag')) {
+              boom.frags.update(form, frag_href + '?' + form.serialize());
+              event.stopImmediatePropagation();
+              i = false;
+            }
+            if (frag_href = form.data('frag-new')) {
+              boom.frags.create(form, frag_href + '?' + form.serialize());
+              event.stopImmediatePropagation();
+              i = false;
+            }
+            return i;
           }
         },
-        'form[method="post"]' : {
+        'form[method="POST"]' : {
           'submit' : function() {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
@@ -557,14 +568,44 @@ if(!('frags' in boom)) {
             return false;
           }
         },
+        /*
         '.thumbnail' : {
           'boom_load' : function() {
-              var div = $(this);
-              var img = div.children('img').one('load', function() {
-                img.trigger('boom_load');
+            var div = $(this);
+            var img = div.children('img');
+            
+            $("<img/>").attr({
+                src: $(img).attr("src"),
+            }).load(function() {
+                w = this.width; h = this.height;
+                console.log("ENOUGH QUESTIONS GOOD BYE", w, h);
+                if (w > h) $(img).addClass('landscape');
+                if ($(img).width() && $(img).height()) {
+                  $(img).css({
+                    left: (div.width()/2)-(img.width()/2),
+                    top:  (div.height()/2)-(img.height()/2),
+                  });
+                }
+            });
+            return false;
+          }
+        }
+        */
+        '.thumbnail' : {
+          'boom_load' : function() {
+            var div = $(this);
+            var img = div.children('img');
+            img.one('load', function() {
+              div.trigger('boom_load');
+            });
+            if (img.width() && img.height()) {
+              if (img.width() > img.height()) img.addClass('landscape');
+              img.css({
+                left: (div.width()/2)-(img.width()/2),
+                top:  (div.height()/2)-(img.height()/2),
               });
-              if (img.width() > img.height())
-                div.addClass('thumbnail_landscape');
+            }
+            return false;
           }
         }
       }
