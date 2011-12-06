@@ -195,6 +195,9 @@
         data-frag_url="${self.attr.frag_url}"
         data-html_url="${self.attr.html_url}"
         data-json_url="${self.attr.json_url}"
+        data-controller="${c.controller}"
+        data-action="${c.action}"
+        data-id="${c.id}"
     >
     % if c.format=="frag" and c.result.get('message', '') != '':
         <% json_message = h.json.dumps(dict(status=c.result['status'], message=c.result['message'])) %>
