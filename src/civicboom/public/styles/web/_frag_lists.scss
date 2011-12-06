@@ -12,6 +12,72 @@
 @import "../common/_mixin.scss";
 
 
+/* content and member item classes for use in and outside lists */
+.member_item {
+    position: relative;
+    
+    .thumbnail {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 4px;
+    }
+    
+    .member_details {
+        display: inline-block;
+    }
+    
+    .follow {
+        position: absolute;
+        right: 0;
+    }
+}
+            
+.content_item {
+    display: block;
+    position: relative;
+    margin-bottom: 10px;
+    
+    .content_thumbnail {
+        display: inline-block;
+        margin: 0.1em;
+        vertical-align: top;
+        border: 1px solid lighten($cb-lightblue, 30%);
+    }
+    
+    .content_details {
+        display: inline-block;
+        min-height: 50px;
+        max-width: 78%;
+        padding-top: 3px;
+        
+        .content_title {
+            font-size: 130%;
+            padding-right: 25px;
+        }
+        
+        .content_short {
+            padding-right: 25px;
+            word-wrap: break-word
+        }
+        
+        .timestamp, .extra {
+            color: #888;
+        }
+        
+        .thumbnail {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        
+        .prompt {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+    }
+}
+
 /* white frag list "box" */
 #frag_containers .frag_container .frag_data .frag_list {
     @include border_radius(0.5em);
@@ -32,52 +98,6 @@
             li {
                 margin-bottom: 5px;
             }
-            
-            .content_item {
-                display: block;
-                position: relative;
-                margin-bottom: 10px;
-                
-                .content_thumbnail {
-                    display: inline-block;
-                    margin: 0.1em;
-                    vertical-align: top;
-                    border: 1px solid lighten($cb-lightblue, 30%);
-                }
-                
-                .content_details {
-                    display: inline-block;
-                    min-height: 50px;
-                    max-width: 78%;
-                    padding-top: 3px;
-                    
-                    .content_title {
-                        font-size: 130%;
-                        padding-right: 25px;
-                    }
-                    
-                    .content_short {
-                        padding-right: 25px;
-                        word-wrap: break-word
-                    }
-                    
-                    .timestamp, .extra {
-                        color: #888;
-                    }
-                    
-                    .thumbnail {
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                    }
-                    
-                    .prompt {
-                        position: absolute;
-                        bottom: 0;
-                        right: 0;
-                    }
-                }
-            }
         }
         
         /* styling for lists of members */
@@ -87,25 +107,6 @@
             li {
                 display: block;
                 margin-bottom: 5px;
-            }
-            
-            .member_item {
-                position: relative;
-                
-                .thumbnail {
-                    display: inline-block;
-                    vertical-align: top;
-                    margin-top: 4px;
-                }
-                
-                .member_details {
-                    display: inline-block;
-                }
-                
-                .follow {
-                    position: absolute;
-                    right: 0;
-                }
             }
         }
         
