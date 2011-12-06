@@ -363,7 +363,7 @@ if(!('util' in boom)) {
         return;
       selects.after('<input type="checkbox" class="yesnocheck unproc" />');
       selects.hide();
-      var checks = element('input.yesnocheck').filter('.unproc');
+      var checks = element.find('input.yesnocheck').filter('.unproc');
       checks.each(function(index) {
         var value = $(this).prev('select.yesno').val();
         $(this).attr('checked', !(value == '' || value == 'no'));

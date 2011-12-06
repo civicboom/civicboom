@@ -385,6 +385,18 @@ class TestController(TestCase):
             status=200
         )
 
+    def publish_content(self, draft_id):
+        response = self.app.put(
+            url('content', id=draft_id, format='json'),
+            params={
+                '_authentication_token': self.auth_token ,
+                #'_method'              : 'update' ,
+                'submit_publish'       : u'publish' ,
+            }
+        )
+        # TODO - check content?
+
+
     def delete_member(self, username=None):
         """
         Not an API call .. this remove the user from the database! - used to stop there being 100's of test users after the tests have run

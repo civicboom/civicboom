@@ -372,7 +372,8 @@ class TestTimedTasksController(TestController):
         # Cleanup --------------------------------------------------------------
         
         # Reset db state
-        self.setting('summary_email_interval', 'advanced', 'hours=0', assert_set_value=False) # hours=0 turns into None and this breaks the auto assertion at the end of set value
+        #self.setting('summary_email_interval', 'advanced', 'hours=0', assert_set_value=False) # hours=0 turns into None and this breaks the auto assertion at the end of set value
+        self.setting('summary_email_interval', 'advanced', '', assert_set_value=False) #AllanC - an empty string should default to None
         
         # No summary emails should trigger yet because no users have setup an interval
         num_emails = getNumEmails()
