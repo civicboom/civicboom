@@ -65,6 +65,7 @@ server {
 	proxy_set_header X-Real-IP $remote_addr;
 	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 	proxy_set_header X-Url-Scheme $cb_scheme;
+	proxy_set_header If-None-Match $http_if_none_match;
 	proxy_pass_header Set-Cookie;
 	proxy_intercept_errors on;  # intercept error_page errors (see above), still proxy others though (eg 404)
 
