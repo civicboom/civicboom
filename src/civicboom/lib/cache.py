@@ -266,6 +266,11 @@ def etag_cache(cache_key, is_etag_master=False):
     is_etag_master is designed a flag to indicate that after this eTag is created - no more etags are to be set
     """
     if cache_key and not c.etag_master_generated and config['cache.etags.enabled']:
+        # because shish finds hex codes easier to read (or at least, sha1(a) and
+        # sha1(b) are much more obviously different than two 100-char strings with
+        # one number incremented)
+        #import hashlib
+        #cache_key = hashlib.sha1(cache_key).hexdigest()
         log.debug("HTTP eTag being set %s" % cache_key)
         pylons_etag_cache(cache_key) # Set eTag in response header - if etag matchs the eTag in the original request header then abort execution and return the correct HTTP code for "use client etag cached ver"
         log.debug("HTTP eTag does not match client key; continueing ...")
