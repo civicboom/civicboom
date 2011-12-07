@@ -15,6 +15,7 @@
     <div class="nav">
         <p>
             <a href="${h.url(controller='misc', action='about', id='civicboom'  )}">${_("About")}</a>
+            <a href="${h.url(controller='misc', action='about', id='organisations'  )}">${_("Organisations")}</a>
             <a href="${h.url(controller='misc', action='about', id='faq'      )}">${_("FAQ")}</a>
             <a href="${h.url(controller='misc', action='about', id='team'       )}">${_("Team")}</a>
             <!--<a href="${h.url(controller='misc', action='about', id='investors'  )}">${_("Investors")}</a>-->
