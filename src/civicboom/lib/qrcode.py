@@ -33,6 +33,8 @@ from pylons import tmpl_context as c, response
 from civicboom.lib.web import action_error
 
 def cb_qrcode(cb_url, **kwargs):
+    if c.format == 'jpg':
+        c.format='jpeg'
     kwargs['format'        ] = c.format if c.format in ['png', 'jpeg', 'gif', 'bmp', 'tiff'] else 'png'
     kwargs['pixel_size'    ] = int(kwargs.get('pixel_size', 8))
     kwargs['level'         ] = int(kwargs.get('level', qrencode.QR_ECLEVEL_M))
