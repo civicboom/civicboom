@@ -44,3 +44,12 @@ function init_validation(element, validator) {
 		check_timer = setTimeout(validator, 500);
 	});
 }
+
+$(function () {
+  var swfplayerver = swfobject.getFlashPlayerVersion();
+  if (swfplayerver && swfplayerver.major) {
+    $('body').addClass('flash');
+  } else {
+    $('body').addClass('no-flash');
+  }
+});
