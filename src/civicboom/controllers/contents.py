@@ -915,6 +915,7 @@ class ContentsController(BaseController):
         @return 404      content not found
         
         @example https://test.civicboom.com/contents/1.json
+        @example https://test.civicboom.com/contents/1.json?lists=&exclude_fields=creator,license
         @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
