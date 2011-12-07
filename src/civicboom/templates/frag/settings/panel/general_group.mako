@@ -211,9 +211,16 @@
                 </table>
             </div>
                 
-            % if c.logged_in_persona.has_account_required('plus'):
+            
             <h4>4. ${_('Member & content visibility')}</h4>
             <div>
+                % if not c.logged_in_persona.has_account_required('plus'):
+                    <div class="disabled-grayout">
+                    </div>
+                    <div class="disabled-overlay">
+                        ${_('These features are only available for paid accounts. To find out more, please contact us.')}
+                    </div>
+                % endif
                 <table>
                     <tr>
                         <td></td>
@@ -245,8 +252,9 @@
                         <td>
                             <!--
                             <h3>${_("Content default visibility")}</h3>
-                            ${show_error('default_content_visibility')}
                             -->
+                            ${show_error('default_content_visibility')}
+                            
                             &nbsp;
                         </td>
                     </tr>
@@ -270,7 +278,6 @@
                     </tr>
                 </table>
             </div>
-            % endif
         </div>
         </div>
 

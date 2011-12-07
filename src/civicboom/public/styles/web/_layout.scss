@@ -625,3 +625,29 @@ FOOTER {
 		display: none;
 	}
 }
+
+
+// GregM: Disabled areas in forms with description
+.disabled-grayout {
+  z-index: 20;
+  background-color: #000;
+  filter:alpha(opacity=30);
+  opacity: 0.3;
+  -moz-opacity:0.30;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  position: absolute;
+}
+.disabled-overlay {
+  z-index: 21;
+  background-color: #FFF;
+  margin: 1em;
+  padding: 1.5em;
+  filter:alpha(opacity=80);
+  opacity: 0.8;
+  -moz-opacity:0.80;
+  width: 75%;
+  position: relative;
+}
