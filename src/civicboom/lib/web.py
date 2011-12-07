@@ -326,6 +326,7 @@ class action_error(Exception):
 
 
 def overlay_status_message(master_message, new_message):
+
     # Setup master message
     if not master_message:
         master_message = {}
@@ -342,6 +343,8 @@ def overlay_status_message(master_message, new_message):
             master_message['status'] = new_message['status']
         if 'message' in new_message and new_message['message']:
             master_message['message'] += '\n' + new_message['message']
+        if new_message.get('code')<200 or new_message.get('code')>=300:
+            master_message['code'] = new_message['code']
 
     # Overlay new message (if string)
     if isinstance(new_message, basestring):
@@ -355,7 +358,7 @@ def overlay_status_message(master_message, new_message):
     # Pass though all keys that are not already in master
     for key in [key for key in new_message if key not in master_message]:
         master_message[key] = new_message[key]
-
+    
     return master_message
 
 
