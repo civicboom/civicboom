@@ -14,7 +14,8 @@
     <div id="contact_us">
         <h1>${_("Contact _site_name")}</h1>
         <p>${_("Looking to get in touch with _site_name? Fill out the contact form and we'll be back in contact with you as soon as we can!")}</p>
-        <form name="" action="" method="POST">
+        ##<form name="" action="" method="POST">
+        ${h.form(h.args_to_tuple(controller='misc', action='contact_us', format='redirect'), method='POST', data=dict(json_complete="[['modal_close']]"))}
             <label for="name">${_("Your name: ")}</label>
             <input name="name" type="text" value="" required="true" placeholder="e.g. John Smith" />
             
@@ -30,7 +31,7 @@
             <label for="message">${_("Message: ")}</label>
             <textarea name="message" type="text" rows="8" required="true"></textarea>
             
-            <input name="submit" type="submit" value="Send" />
+            <input name="submit" type="submit" value="Send" class="button"/>
         </form>
     </div>
 </%def>

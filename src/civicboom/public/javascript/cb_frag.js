@@ -985,6 +985,11 @@ if(!('frags' in boom)) {
         }
       });
     },
+    modal_close :  function(element, callback) {
+      $.modal.close();
+      if (callback)
+        callback(true);
+    },
     remove_after : function(element, callback) {
       // Removes all fragments after element's fragment
       // Params:
