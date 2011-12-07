@@ -349,6 +349,10 @@
         <br><input class="detail" type="datetime" name="due_date"   value="${due_date}" />
         </td></tr>
         
+        <tr><td>
+        <label for="event_date">${_("Event Date")}</label>
+        <br><input class="detail" type="datetime" name="event_date" value="${event_date}" />
+        </td></tr>
         ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
         ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
         
