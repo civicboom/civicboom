@@ -304,6 +304,10 @@ BODY.c-misc {
     }
    
     #organisations {
+        EM { font-style: italic }
+        
+        STRONG { font-weight: bold }
+        
         H1, H2 { padding-top: 0.5em; }
         
         H2 { font-size: 110%; }
@@ -315,11 +319,10 @@ BODY.c-misc {
         .button { font-size: 115%; }
         
         .learn_more {
-            vertical-align: top;
-            margin-top: 55px;
         }
       
         .flow {
+            margin-left: -0.5em;
             padding-top: 1em;
             width: 100%;
         }
