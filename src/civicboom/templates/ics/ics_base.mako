@@ -134,7 +134,7 @@ END:VTODO
 ##
 ##
 ## Fallback - If assignment has no due or event, just raise a VTODO
-% not if content.get('event_date') and not if content.get('due_date'):
+% if not content.get('event_date') and not content.get('due_date'):
 BEGIN:VTODO
 ${ics_content_base(content)}\
 DTSTART:${api_datestr_to_icsdatestr(content.get('update_date'))}
