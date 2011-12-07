@@ -79,6 +79,7 @@ ${journal(content, **journal_kwargs)}\
 <%def name="assignment(content)">
 ## Assignments may need 2 items raised.
 ##   Event date and Due date are separate events
+## if no event_date or due_date - just raise a plain VTODO
 ##
 ## Event
 % if content.get('event_date'):
@@ -107,7 +108,7 @@ LOCATION:${content.get('location_text')}
     % if d['content']['id'] == content['id']:
         % for atendee in d['accepted_status']['items']:
         ##if status.get(atendee['status'])
-ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])}${ics_member(atendee)}
+ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT=${status.get(atendee['status'])}${ics_member(atendee)}
         % endfor
     % endif
 % except Exception as e:
@@ -115,12 +116,8 @@ ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])}${ics_mem
 ## AllanC - TODO? How could we supoort TENTATIVE, CONFIRMED, CANCELLED
 ##          'CANCELLED' - what if this request is deleted? - we want it to come up as cancled, but we just remove it from the DB. Currently it is not possible to do this
 END:VEVENT
-% else:
-BEGIN:VTODO
-${ics_content_base(content)}\
-DTSTART:${api_datestr_to_icsdatestr(content.get('update_date'))}
-END:VTODO
 % endif
+##
 ##
 ## Todo
 % if content.get('due_date'):
@@ -133,6 +130,15 @@ END:VTODO
 ## 'COMPLETED'?
 ## Could we see if this user has responded to this
 ##COMPLETED:20070707T100000Z
+% endif
+##
+##
+## Fallback - If assignment has no due or event, just raise a VTODO
+% not if content.get('event_date') and not if content.get('due_date'):
+BEGIN:VTODO
+${ics_content_base(content)}\
+DTSTART:${api_datestr_to_icsdatestr(content.get('update_date'))}
+END:VTODO
 % endif
 </%def>
 
