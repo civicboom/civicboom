@@ -7,7 +7,8 @@
       initialTags: [],
       minLength: 1,
       select: false,
-      closeText: 'x',
+      update: null,
+      removeText: 'x',
       requireMatch: true,
       placeholder: null,
       hiddenFieldName: null,
@@ -53,11 +54,12 @@
       
       this.element.on('click', '*', function (event){
         var elem = $(this);
-        if (elem.hasClass('cb-tag-close')) {
+        if (elem.hasClass('cb-tag-remove')) {
           elem.parent().remove();
           self._update();
         }
         self.input.focus();
+        return false;
       });
       
       // If we don't use a timeout we get a search happen with previously selected value :(
@@ -72,6 +74,7 @@
       });
       
       this.input.autocomplete({
+        appendTo: this.options.appendTo,
         minLength: 1,
         source: function (req, callback) {
           if (typeof self.options.tagSource == 'function') {
@@ -95,22 +98,28 @@
           clearTimeout(self.timeoutFocus);
           self.timeoutFocus = null;
           self.input.val('');
-          self.input.parent().before(self.options.itemRenderer(ui.item));
+          self.input.parent().before(self.options.itemRenderer(ui.item).append(self.options.removeElement?self.options.removeElement:$('<a href="#" class="fr cb-tag-remove"></a>').append(self.options.removeText)));
           self._update();
           return false;
         }
       }).data('autocomplete')._renderItem = function (ul, item) {
-        console.log(item);
         if (item.is_no_results) return $('<li />').append(self.options.noResultsString).appendTo(ul);
         return self.options.itemRenderer(item).data( "item.autocomplete", item ).appendTo(ul);
       };
     },
+    clear: function () {
+      this.element.children().not('.cb-tag-new').remove();
+      this._update();
+    },
     _update: function () {
+      if (typeof this.options.update == 'function')
+        this.options.update.apply(this.element);
       this._updateHiddenField();
     },
     _createHiddenField: function (self) {
+      this.hiddenField = this.input.after($('<input type="hidden" />').attr('name', this.options.hiddenFieldName).addClass('cb-tag-hidden')).next('.cb-tag-hidden');
       if (this.options.hiddenFieldName) {
-        this.hiddenField = this.input.after($('<input type="hidden" />').attr('name', this.options.hiddenFieldName).addClass('cb-tag-hidden')).next('.cb-tag-hidden');
+        this.hiddenField.attr('name', this.options.hiddenFieldName);
       }
     },
     _updateHiddenField: function () {
