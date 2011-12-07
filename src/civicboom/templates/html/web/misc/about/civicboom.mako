@@ -10,17 +10,6 @@
         line-height: 200%;
     }
     
-    #about-civicboom ol li {
-        margin-left: 2em;
-        line-height: 200%;
-    }
-    
-    #about-civicboom ul li {
-        list-style: disc;
-        margin-left: 2em;
-        line-height: 200%;
-    }
-    
     #about-civicboom .content a {
         color: #4974b8 !important;
     }

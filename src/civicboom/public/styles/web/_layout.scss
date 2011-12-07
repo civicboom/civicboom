@@ -1,15 +1,24 @@
+/*----------------------------------------------------------------------------*/
+/* Web layout                                                                 */
+/*                                                                            */
+/* For HTML, BODY and common element styling rules across the desktop website */
+/*----------------------------------------------------------------------------*/
+
+
+/*---------------------------------------------------------------------------*/
+/* imports                                                                   */
+/*---------------------------------------------------------------------------*/
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
+
 
 /*----------------------------------------------------------------------------*/
 /*                                Top Level                                   */
 /*                         There is one HTML / BODY                           */
 /*----------------------------------------------------------------------------*/
-
 HTML {
     overflow-x: scroll;
-    /* overflow-y: hidden; */
-	background: $page-background;
+	  background: $page-background;
 }
 HTML.frag_containers {
     background: $page-background;
@@ -17,6 +26,7 @@ HTML.frag_containers {
 HTML.blank_background {
     background: #ffffff;
 }
+
 
 /*----------------------------------------------------------------------------*/
 /*                                Main Level                                  */
@@ -27,30 +37,26 @@ $header_height: 42px;
 $footer_height: 18px;
 
 HEADER {
-	clear: both;
-	//background: url("headerbk.png") #e6e6e6;
-	background: #fff;
-	position: fixed;
-    top  : 0px;
-	left : 0px;
-	right: 0px;
-	/* height: 64px; */
+  	background: #fff;
+  	border-bottom: 1px solid #ccc;
+  	clear: both;
     height: $header_height;
-	z-index: 1;
-	/*
-	 * really, the minimum width is 830px; but on an
-	 * 800px screen, overlapping is slightly less bad
-	 * than the Sign In button going off the edge of
-	 * the screen
-	 */
-	/*
-	 * this should never matter, as for thin browsers
-	 * we go into thin mode; but possibly this is still
-	 * useful for IE7/8
-	 */
-	min-width: 780px;
-
-	border-bottom: 1px solid #ccc;
+  	/*
+  	 * really, the minimum width is 830px; but on an
+  	 * 800px screen, overlapping is slightly less bad
+  	 * than the Sign In button going off the edge of
+  	 * the screen
+  	 * 
+  	 * this should never matter, as for thin browsers
+  	 * we go into thin mode; but possibly this is still
+  	 * useful for IE7/8
+  	 */
+  	min-width: 780px;
+  	left : 0px;
+  	position: fixed;
+  	right: 0px;
+    top  : 0px;
+  	z-index: 1;
 }
 
 A {

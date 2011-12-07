@@ -1,0 +1,47 @@
+/*----------------------------------------------------------------------------*/
+/* Thumbnails                                                                 */
+/*                                                                            */
+/* Styling rules for thumbnail images (content previews, member list avatars) */
+/*----------------------------------------------------------------------------*/
+
+
+/*---------------------------------------------------------------------------*/
+/* imports                                                                   */
+/*---------------------------------------------------------------------------*/
+@import "../common/_palette.scss";
+@import "../common/_mixin.scss";
+
+
+/* class for wrapping div of thumbnail img element */
+.thumbnail {
+    display: inline-block;
+    font-size: 40px;
+    height: 1em;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    width: 1em;
+    
+    img {
+        position: absolute;
+        width: 1em;
+    }
+    
+    /* thumbnail orientation classes */
+    .landscape { 
+        height: 1em;
+        width: auto;
+    }
+}
+
+
+/* alternate thumbnail size classes */
+.thumbnail_small { font-size: 20px; }
+.thumbnail_large { font-size: 80px; }
+
+
+/* thumbnail/content status icons (locked, etc) */
+.thumbnail .icons {
+    position: absolute;
+    z-index: 2;
+}

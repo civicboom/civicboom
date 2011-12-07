@@ -163,6 +163,10 @@ class MiscController(BaseController):
         return action_ok(data={'type':type, 'id':id})
     
     @web
+    def contact_us(self, type=None, id=None):
+        return action_ok()
+    
+    @web
     def what_is_a_hub(self):
         return action_ok()
     
