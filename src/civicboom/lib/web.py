@@ -333,6 +333,7 @@ def overlay_status_message(master_message, new_message):
     master_message['status']  = master_message.get('status' ) or 'ok'
     master_message['message'] = master_message.get('message') or u''
     master_message['data']    = master_message.get('data'   ) or {}
+    master_message['code']    = master_message.get('code'   ) or 200
 
     if isinstance(new_message, basestring):
         new_message = {'status':'ok', 'message':new_message}
@@ -343,7 +344,7 @@ def overlay_status_message(master_message, new_message):
             master_message['status'] = new_message['status']
         if 'message' in new_message and new_message['message']:
             master_message['message'] += '\n' + new_message['message']
-        if new_message.get('code')<200 or new_message.get('code')>=300:
+        if new_message.get('code') and (new_message.get('code')<200 or new_message.get('code')>=300):
             master_message['code'] = new_message['code']
 
     # Overlay new message (if string)
