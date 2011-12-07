@@ -108,7 +108,7 @@
                 ##% endif
                 ##<p class="content">${content['content_short']}</p>
             </div>
-            <p class="respond"><a href="${h.url('new_content', parent_id=content['id'], sub_domain='www')}" target="_blank" class="button">Click to share your _content</a></p>
+            <p class="respond"><a href="${h.url('new_content', parent_id=content['id'], sub_domain='www')}" target="_blank" class="button">${_('Click to share your _content')}</a></p>
         </a>
         <div style="clear:both;"></div>
     </li>

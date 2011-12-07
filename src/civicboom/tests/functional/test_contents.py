@@ -9,7 +9,7 @@ class TestContentsController(TestController):
     
     def test_content_qrcode(self):
         response = self.app.get(url('content_action', id='1', action='qrcode'))
-        response = self.app.get(url('content_action', id='1', action='qrcode', format='jpeg', size=300))
+        response = self.app.get(url('content_action', id='1', action='qrcode', format='jpg', pixel_size=1))
     
     def test_character_escaping(self):
         # AllanC - We should be able to send actual unicode in content ... we should be able to send '€' ... this may need additional investigation

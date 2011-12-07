@@ -1,171 +1,157 @@
+/*---------------------------------------------------------------------------*/
+/* Frag lists                                                                */
+/*                                                                           */
+/* Only for platform wide styling rules common to web, mobile and widget     */
+/*---------------------------------------------------------------------------*/
+
+
+/*---------------------------------------------------------------------------*/
+/* imports                                                                   */
+/*---------------------------------------------------------------------------*/
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-/*----------------------------------------------------------------------------*/
-/* Fragment Lists
-/*----------------------------------------------------------------------------*/
-
-#frag_containers .frag_container .frag_data {
-    padding-top: 1em;
+/* content and member item classes for use in and outside lists */
+.member_item {
+    position: relative;
     
-    .frag_list {
-        background-color: $frag-list-top;
-        color: $frag-list-title-txt;
-        font-size: 90%;
-        margin: 0 0 1em 0;
-        padding: 1em;
-        @include border_radius(0.5em);
-        @include drop_shadow(darken($frag-list-top, 40%), 1px, 1px, 3px);
-
-        .frag_list_contents {
-
-            .content {
-                width: 100%;
-                
-                li {
-                    margin-bottom: 5px;
-                }
-                
-                .content_item {
-                    display: block;
-                    position: relative;
-                    margin-bottom: 10px;
-                    
-                    .content_thumbnail {
-                        display: inline-block;
-                        margin: 0.1em;
-                        vertical-align: top;
-                        border: 1px solid lighten($cb-lightblue, 30%);
-                    }
-                    
-                    .content_details {
-                        display: inline-block;
-                        min-height: 50px;
-                        max-width: 78%;
-                        padding-top: 3px;
-                        
-                        .content_title {
-                            font-size: 130%;
-                            padding-right: 25px;
-                        }
-                        
-                        .content_short {
-                            padding-right: 25px;
-                            word-wrap: break-word
-                        }
-                        
-                        .timestamp, .extra {
-                            color: #888;
-                        }
-                        
-                        .thumbnail {
-                            position: absolute;
-                            top: 0;
-                            right: 0;
-                        }
-                        
-                        .prompt {
-                            position: absolute;
-                            bottom: 0;
-                            right: 0;
-                        }
-                    }
-                }
-            }
+    .thumbnail {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 4px;
+    }
+    
+    .member_details {
+        display: inline-block;
+    }
+    
+    .follow {
+        position: absolute;
+        right: 0;
+    }
+}
             
-            .member {
-                width: 100%;
-                
-                li {
-                    display: block;
-                    margin-bottom: 5px;
-                }
-                
-                
-                .member_item {
-                    position: relative;
-                    
-                    .thumbnail {
-                        display: inline-block;
-                        vertical-align: top;
-                        margin-top: 4px;
-                    }
-                    
-                    .member_details {
-                        display: inline-block;
-                    }
-                    
-                    .follow {
-                        position: absolute;
-                        right: 0;
-                    }
-                }
-            }
-            
-            .member_thumbnail {
-                width: 100%;
-                
-                li {
-                    display: inline;
-                    margin-bottom: 5px;
-                    img {
-                      width: 20px;
-                    }
-                }
-                
-                
-                // .member_item {
-                    // position: relative;
-//                     
-                    // .thumbnail {
-                        // display: inline-block;
-                        // vertical-align: top;
-                        // margin-top: 4px;
-                        // width: 16px;
-                    // }
-//                     
-                    // .member_details {
-                        // display: inline-block;
-                    // }
-//                     
-                    // .follow {
-                        // position: absolute;
-                        // right: 0;
-                    // }
-                // }
-            }
-            
-        }
+.content_item {
+    display: block;
+    position: relative;
+    margin-bottom: 10px;
+    
+    .content_thumbnail {
+        display: inline-block;
+        margin: 0.1em;
+        vertical-align: top;
+        border: 1px solid lighten($cb-lightblue, 30%);
+    }
+    
+    .content_details {
+        display: inline-block;
+        min-height: 50px;
+        max-width: 78%;
+        padding-top: 3px;
         
-        .link_more {
-            text-align: right;
-        }
-        
-        // Proto - do not get why this is called member :o
-        .share_this {
-            li {
-                display: inline-block;
-                margin-bottom: 3px;
-            }
-        }
-        
-        .social_sharing{
-            max-width: 130px;
-            display: inline-block;
-        }
-        
-        .list_actions {
-            float: right;
-        }
-        
-        h2 {
-            position: relative;
+        .content_title {
             font-size: 130%;
-            padding-bottom: 0.25em;
+            padding-right: 25px;
+        }
+        
+        .content_short {
+            padding-right: 25px;
+            word-wrap: break-word
+        }
+        
+        .timestamp, .extra {
+            color: #888;
+        }
+        
+        .thumbnail {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        
+        .prompt {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+    }
+}
+
+/* white frag list "box" */
+#frag_containers .frag_container .frag_data .frag_list {
+    @include border_radius(0.5em);
+    @include drop_shadow(darken($frag-list-top, 40%), 1px, 1px, 3px);
+    background-color: $frag-list-top;
+    color: $frag-list-title-txt;
+    font-size: 90%;
+    margin: 0 0 1em 0;
+    padding: 1em;
+
+    /* frag list element to hold lists of content/members/etc */
+    .frag_list_contents {
+    
+        /* styling for lists of content */
+        .content {
+            width: 100%;
             
-            .count {
-                float: right;
+            li {
+                margin-bottom: 5px;
             }
+        }
+        
+        /* styling for lists of members */
+        .member {
+            width: 100%;
+            
+            li {
+                display: block;
+                margin-bottom: 5px;
+            }
+        }
+        
+        /* styling for lists of followers/etc */
+        .member_thumbnail {
+            width: 100%;
+            
+            li {
+                display: inline;
+                margin-bottom: 5px;
+                
+                img {
+                  width: 20px;
+                }
+            }
+        }
+    }
+    
+    /* misc styling for other elements found in frag_lists */
+    .link_more {
+        text-align: right;
+    }
+    
+    .share_this {
+        li {
+            display: inline-block;
+            margin-bottom: 3px;
+        }
+    }
+    
+    .social_sharing{
+        max-width: 130px;
+        display: inline-block;
+    }
+    
+    .list_actions {
+        float: right;
+    }
+    
+    h2 {
+        position: relative;
+        font-size: 130%;
+        padding-bottom: 0.25em;
+        
+        .count {
+            float: right;
         }
     }
 }

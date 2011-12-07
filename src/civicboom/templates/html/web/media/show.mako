@@ -159,7 +159,7 @@
     <li class="preview_item">
         ## Media preview/link to full
         <a href="${h.url('medium', id=content['hash'])}" class="item-popup-link ${content['hash']}-popup">
-            <div class="item_preview">
+            <div class="item_preview event_load">
                 % if content['type'] == "image":
                     <img src="${content['thumbnail_url']}" alt="${content['caption']}" />
                 % elif content['type'] == "video":
@@ -173,7 +173,6 @@
                 % endif
             </div>
         </a>
-        
         
         ## Popup
         <script>

@@ -31,10 +31,9 @@ class ProfileController(BaseController):
 
         @return 200      page ok
                 member   member object
-                content  a list of the member's contents
-                messages a list of messages, split into 'notifications' and 'to'
-                num_unread_messages
-                num_unread_notifications
+                num_unread_messages integer
+                num_unread_notifications integer
+                * all the default lists retured by member/show with the additional kwarg 'private=True'
         """
         # NOTE: if this method is refactored or renamed please update cb_frag.js (as it is outside pylons and has a hard coded url to '/profile/index')
         
@@ -42,7 +41,7 @@ class ProfileController(BaseController):
         if c.format == "html" and c.subformat == 'web': # Proto: optimisation for web subformat, broke mobile without c.subformat check
             return action_ok() # html format is just "include /profile.frag"
 
-        member_return = members_controller.show(id=c.logged_in_persona, private=True)
+        member_return = members_controller.show(id=c.logged_in_persona, private=True, **kwargs)
 
         member_return['data'].update(self.messages()['data'])
         #member_return['data'].update(self.personas()['data']) # AllanC - there is no need to include this here as it is the same as ['data']['groups']
@@ -57,9 +56,11 @@ class ProfileController(BaseController):
 
         @api profile 1.0 (WIP)
 
-        @return 200      page ok
-                num_unread_messages
-                num_unread_notifications
+        @return 200 page ok
+                num_unread_messages integer
+                num_unread_notifications integer
+                last_message_timestamp dateime
+                last_notification_timestamp datetime
         """
         return action_ok(
             data = {
@@ -79,7 +80,7 @@ class ProfileController(BaseController):
         @api profile 1.0 (WIP)
 
         @return 200      page ok
-            groups a list of personas this user can swich into
+                groups a list of personas this user can swich into
         
         @comment AllanC Shortcut to index/groups_for=me?private=True this is provided by default in the full profile
 

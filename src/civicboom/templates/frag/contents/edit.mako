@@ -349,14 +349,28 @@
         <br><input class="detail" type="datetime" name="due_date"   value="${due_date}" />
         </td></tr>
         
+        <tr><td>
+        <label for="event_date">${_("Event Date")}</label>
+        <br><input class="detail" type="datetime" name="event_date" value="${event_date}" />
+        </td></tr>
         ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
         ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
         
         ## http://trentrichardson.com/examples/timepicker/
-        % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
+        % if self.content['type']=='draft':
+        ##and c.logged_in_persona.has_account_required('plus')
             <tr><td>
+                <div style="position: relative;">
+                % if not c.logged_in_persona.has_account_required('plus'):
+                    <div class="disabled-grayout">
+                    </div>
+                    <div class="disabled-overlay">
+                        ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
+                    </div>
+                % endif
                 <label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label>
                 <br><input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
+                </div>
             </td></tr>
         % endif
         
@@ -450,22 +464,33 @@
 			${text}="${text}"
 		%endif
 	</%def>
-	<tr class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
+	<tr class="">
+	    ##${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}
         <td>
+            <div style="position: relative;">
+            % if not c.logged_in_persona.has_account_required('plus'):
+                <div class="disabled-grayout">
+                </div>
+                <div class="disabled-overlay">
+                    ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
+                </div>
+            % endif
+            
             <label>${_("Want to tell the world, or just a select few?")}</label>
             <br>${_("You can choose to make your content either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.")|n}
             
-            % if not c.logged_in_persona.has_account_required('plus'):
-                <div class="upgrade">
-                    ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
-                </div>
-            % endif
+            ##% if not c.logged_in_persona.has_account_required('plus'):
+            ##    <div class="upgrade">
+            ##        ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
+            ##    </div>
+            ##% endif
             
             <div class="padded">
                 <div class="jqui-radios event_load">
                     <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
                     <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                 </div>
+            </div>
             </div>
         </td>
     </tr>

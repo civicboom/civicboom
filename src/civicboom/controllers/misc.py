@@ -163,6 +163,22 @@ class MiscController(BaseController):
         return action_ok(data={'type':type, 'id':id})
     
     @web
+    def contact_us(self, **kwargs):
+        if not request.POST:
+            return action_ok() # Render the contact form by autolocating the template
+        else:
+            user_log.info("Sending contact email")
+            
+            content_text = "Contact Form\r\n\r\n"
+            for key, value in kwargs.iteritems():
+                content_text += "%s: %s\r\n" % (key, value)
+            
+            send_email(config['email.contact'], subject=_('_site_name contact_form'), content_text=content_text, reply_to=kwargs.get('email',''))
+            return action_ok(_("Thank you for your interest, we will contact you shortly"), code=201)
+            
+        
+    
+    @web
     def what_is_a_hub(self):
         return action_ok()
     
