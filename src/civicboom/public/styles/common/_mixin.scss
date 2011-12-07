@@ -1,3 +1,9 @@
+/*---------------------------------------------------------------------------*/
+/* Mixins                                                                    */
+/*                                                                           */
+/* Shortcuts for common rules. Example: @include border_radius(0.5em)        */
+/*---------------------------------------------------------------------------*/
+
 @mixin horiz_gradient($top, $bot) {
     background: $bot;
     background: -moz-linear-gradient(top, $top 20%, $bot 100% );
@@ -18,12 +24,12 @@
 }
 
 @mixin drop_shadow($offset-x, $offset-y, $size, $color) {
-    -moz-box-shadow:    $offset-x $offset-y $size $color;
+    -moz-box-shadow   : $offset-x $offset-y $size $color;
     -webkit-box-shadow: $offset-x $offset-y $size $color;
-    box-shadow:         $offset-x $offset-y $size $color;
+    box-shadow        : $offset-x $offset-y $size $color;
 }
 
 @mixin transparency($total) {
     opacity: $total/100;
-    filter:alpha(opacity=$total); /* For IE8 and earlier */
+    filter : alpha(opacity=$total); /* For IE8 and earlier */
 }

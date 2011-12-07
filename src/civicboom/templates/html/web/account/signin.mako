@@ -63,6 +63,13 @@
     <div class="layout hide_if_js body page_border" id="type-page">
             <table class="signin">
                 <tr>
+                    <td style="text-align: left; padding-bottom: 1em;">
+                        <a href="#" onclick="
+                            $('#type-page').fadeOut(250, function() {$('#signin-page').fadeIn(250);});
+                        ">${_("Already have an account? Sign in now")}</a>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2">
                         <h1>Individual or Organisation?</h1>
                     </td>

@@ -89,6 +89,7 @@
                 <li>${_('Engage your audience by requesting _content directly')}</li>
                 <li>${_('Innovative & secure workflow efficiency solutions')}</li>
                 <li>${_('Build customised apps, plugins & management tools using our API')}</li>
+                <li><a href="${h.url(controller='about', action='organisations')}" class="button">Find out more</a></li>
             </ul>
         </div>
         

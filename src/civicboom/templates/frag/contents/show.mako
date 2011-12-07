@@ -140,15 +140,13 @@
     </div>
     </div>
     
-    <div class="frag_left_col">
-        <div class="frag_col">
-        ${frag_lists.content_list(
-            d['responses'],
-            _("Responses"),
-            href=h.args_to_tuple('contents', response_to=self.id),
-            creator=True
-        )}
-        </div>
+    <div class="frag_col">
+    ${frag_lists.content_list(
+        d['responses'],
+        _("Responses"),
+        href=h.args_to_tuple('contents', response_to=self.id),
+        creator=True
+    )}
     </div>
     
     <div class="frag_right_col">

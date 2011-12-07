@@ -1,13 +1,9 @@
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-HTML.no-js {
-    #view-media {
-        display: none;
-    }
-}
+HTML.no-js .c-contents.a-show #view-media { display: none; }
 
-HTML.js {
+HTML.js .c-contents.a-show {
     .jcarousel-skin-content-media {
         width: 80%;
         height: 150px;
@@ -87,6 +83,5 @@ HTML.js {
                 }
             }
         }
-        
     }
 }

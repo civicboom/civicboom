@@ -239,12 +239,7 @@ header {
 
 BODY.c-misc {
     color: $misc-page-font;
-    /*background-color: #fff;
 
-    footer {
-        display: none;
-    }*/
-    
     p {
         // line-height: 200%;
     }
@@ -262,17 +257,77 @@ BODY.c-misc {
 
     /* page content wrapper */
     .content_wrapper {
-        position: relative;
-        width: $misc-page-width;
         margin: auto;
         padding: 2em 0 0 0;
+        position: relative;
+        width: $misc-page-width;
     }
 
     /* misc/about page content */
     .content {
-        vertical-align: top;
         display: inline-block;
+        font-size: 105%;
+        line-height: 175%;
+        vertical-align: top;
         width: 80%;
+        
+        ul li { list-style: disc; }
+        
+        ul, ol {
+            li {
+                margin-left: 2em;
+                line-height: 200%;
+            }
+        }
+    }
+    
+    /* specific about page stylings */
+    #contact_us {
+        background-color: #fff;
+        padding: 1em;
+        font-size: 110%;
+        width: 400px;
+        @include border_radius(0.5em);
+        
+        H1, P, INPUT, TEXTAREA {
+            display: block;
+            width: 100%;
+            margin-bottom: 13px;
+        }
+        
+        INPUT, TEXTAREA { margin-top: 3px; }
+        
+        LABEL {
+            font-weight: bold;
+            font-size: 110%;
+        }
+    }
+   
+    #organisations {
+        H1, H2 { padding-top: 0.5em; }
+        
+        H2 { font-size: 110%; }
+
+        H2, SPAN, .short { display: inline-block; }
+        
+        P { padding-bottom: 1em; }
+        
+        .button { font-size: 115%; }
+        
+        .learn_more {
+            vertical-align: top;
+            margin-top: 55px;
+        }
+      
+        .flow {
+            padding-top: 1em;
+            width: 100%;
+        }
+        
+        .short {
+            max-width: 600px;
+            margin-right: 20px;
+        }
     }
 
     /* misc/about page navigation */
