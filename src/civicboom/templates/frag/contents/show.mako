@@ -11,6 +11,7 @@
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
 <%namespace name="media_includes"  file="/html/web/media/show.mako"        />
 <%namespace name="components"       file="/html/web/common/components.mako" />
+<%namespace name="edit"             file="edit.mako" />
 
 ## for deprication
 <%namespace name="loc"             file="/html/web/common/location.mako"     />
@@ -457,13 +458,29 @@
         <td>
         ## --- Publish -----------------------------------------------------------
         % if 'publish' in self.actions:
+        
+            <%
+                (confirm_title, confirm_message) = edit.module.publish_labels(self.content.get('target_type'), self.content, _)
+#                (confirm_title, confirm_message) = (_(confirm_title), _(confirm_message))
+            %>
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish'),
                 method          = "PUT",
                 value           = _('Post'),
                 link_class      = 'button',
-                parent_id       = self.content['parent']['id'] if self.content.get('parent') else None #self.content.get('parent',dict(a=1)).get('id')
-            )}
+                parent_id       = self.content['parent']['id'] if self.content.get('parent') else None,
+                link_data       = dict(
+                    confirm         = confirm_message,
+                    confirm_title   = confirm_title,
+                    confirm_yes     = _('Yes. Post.'),
+                    confirm_no      = _('No. Take me back.'),
+                    confirm_avatar  = 'true',
+                ),
+                form_data       = dict(
+                    json_complete   = "[ ['update', null, '%s'], ['update',['%s', '/profile'], null, null] ]" % (h.url('content', id=self.id, format='frag', prompt_aggregate='True'), h.url('content', id=self.id))
+                ),
+
+)}
         % endif
       
         ## --- Respond -----------------------------------------------------------
