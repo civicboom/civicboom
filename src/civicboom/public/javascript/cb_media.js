@@ -138,6 +138,8 @@ if (!('media_recorder' in boom)) {
             callback_resize: callback_resize,
             callback_uploadcomplete: callback_uploadcomplete
           },
+          classid: 'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000',
+          codebase: 'http://macromedia.com/cabs/swflash.cab#version=6,0,0,0',
           allowscriptaccess: 'always',
           width: '100%',
           height: '100%',
