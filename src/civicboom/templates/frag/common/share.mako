@@ -21,7 +21,7 @@ share_data = {
            'new': {
                'type': {
                     'assignment': "I just posted a request for _content: %(title)s on _site_name. Respond now!",
-                    'response'  : "I just responded to a request for _content by %(owner)s on _site_name. Get involved & add your story too!",
+                    'response'  : "I just responded to a request for _content by %(parent_owner)s on _site_name. Get involved & add your story too!",
                     'group'     : "I just created the %(name)s Hub on _site_name. Follow it now and get involved!",
                     'user'      : "I just signed up to _site_name to get my _content published - you can too!",
                     'article'   : "I just created the content %(title)s on _site_name, check it out here!",
@@ -491,7 +491,7 @@ share_data = {
         cd = aggregation_dict(content, safe_strings=True)
         cd['url'] = h.url('content', id=content['id'], qualified=True)
         
-        share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')}
+        share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name'), 'parent_owner': content.get('parent',{}).get('creator',{}).get('name') }
         
         variables = {
             'share_display':              clean_string(_(share_data_tag)),
@@ -507,37 +507,6 @@ share_data = {
     data-janrain-options="${janrain_options_noparse()}"
     data-janrain-url="${cd['url']}"
     data-janrain-variables="${json.dumps(variables)}"
-</%def>
-
-<%def name="janrain_social_call_content(content, share_type, share_object_type)">
-    ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
-    <%
-        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
-        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
-        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
-        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
-        
-        from civicboom.lib.aggregation import aggregation_dict
-        cd = aggregation_dict(content, safe_strings=True)
-        cd['url'] = h.url('content', id=content['id'], qualified=True)
-        
-        share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')}
-    %>
-    $(function() {
-        var content   = ${json.dumps(cd).replace('\\\"', '&quot;').replace("'", "\\\'").replace('"', "'") | n};
-        var url       = content.url;
-        var variables = {
-            share_display:                '${clean_string(_(share_data_tag)) | n}',
-            action_share_description:     '${clean_string(_(share_data_desc)) | n}',
-            share_usergen_default:        '${clean_string(_(share_usergen_default)) | n}',
-            action_page_title:           content.title,
-            action_page_description:     content.user_generated_content,
-            action_links:                 content.action_links,
-            action:                        content.action,
-            media:                        content.media,
-        };
-        janrain_popup_share(url, ${janrain_options() | n}, variables);
-    });
 </%def>
 
 <%def name="janrain_social_data_member(member, share_type, share_object_type)">
@@ -574,6 +543,43 @@ share_data = {
     data-janrain-variables="${json.dumps(variables)}"
 </%def>
 
+
+
+
+
+<%doc>
+<%def name="janrain_social_call_content(content, share_type, share_object_type)">
+    ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
+    <%
+        persona_type = c.logged_in_persona.__type__ if c.logged_in_persona else 'user'
+        share_data_type = share_data[persona_type][share_type]['type'][share_object_type]
+        share_data_tag  = share_data[persona_type][share_type]['tag' ][share_object_type]
+        share_data_desc = share_data[persona_type][share_type]['desc'][share_object_type]
+        
+        from civicboom.lib.aggregation import aggregation_dict
+        cd = aggregation_dict(content, safe_strings=True)
+        cd['url'] = h.url('content', id=content['id'], qualified=True)
+        
+        share_usergen_default = _(share_data_type) % {'title': cd.get('title'), 'owner': content['creator'].get('name')}
+    %>
+    $(function() {
+        var content   = ${json.dumps(cd).replace('\\\"', '&quot;').replace("'", "\\\'").replace('"', "'") | n};
+        var url       = content.url;
+        var variables = {
+            share_display:                '${clean_string(_(share_data_tag)) | n}',
+            action_share_description:     '${clean_string(_(share_data_desc)) | n}',
+            share_usergen_default:        '${clean_string(_(share_usergen_default)) | n}',
+            action_page_title:           content.title,
+            action_page_description:     content.user_generated_content,
+            action_links:                 content.action_links,
+            action:                        content.action,
+            media:                        content.media,
+        };
+        janrain_popup_share(url, ${janrain_options() | n}, variables);
+    });
+</%def>
+
+
 <%def name="janrain_social_call_member(member, share_type, share_object_type)">
     ## Variables: share_display, share_usergen_default, action_share_description, action_page_title, action_page_description, action_links, properties, images, audio, video
     <%
@@ -608,7 +614,9 @@ share_data = {
         };
         janrain_popup_share(url, ${janrain_options() | n}, variables);
     });
-</%def>
+    </%def>
+
+</%doc>
 
 <%doc>
     % if request.params.get('prompt_aggregate')=='True':

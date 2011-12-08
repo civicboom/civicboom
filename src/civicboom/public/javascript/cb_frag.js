@@ -597,7 +597,7 @@ if(!('frags' in boom)) {
         '.thumbnail' : {
           'boom_load' : function() {
             var div = $(this);
-            var img = div.children('img');
+            var img = div.find('img');
             img.one('load', function() {
               div.trigger('boom_load');
             });

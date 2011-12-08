@@ -156,7 +156,7 @@ class MiscController(BaseController):
     
     @web
     def get_link_embed(self, type=None, id=None):
-        if type not in ['content']:
+        if type not in ['content', 'member']:
             raise action_error(code=404, message="Cannot link to this type")
         if not id:
             raise action_error(code=404, message="No id")
