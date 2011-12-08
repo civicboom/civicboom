@@ -220,36 +220,41 @@
 <%def name="media()">
     <table class="media_files form" width="100%">
         <!-- Add media -->
+        
+        <!-- Add media non javascript version - hidden if JS enabled -->
+        <tbody class="">
+            <tr>
+                <td><label for="media_file" class="hide_if_uploadify">${_("File")}</label></td>
+                <td style="text-align: right;">
+                    <input
+                     data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"
+                     id="media_file" name="media_file" type="file" class="field_file file_upload_uploadify" style="width: 100%" />
+                </td>
+                <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload hide_if_uploadify"/></td>
+
+<!--                <td rowspan="3" class="media_preview_none hide_if_uploadify">${_("Select a file to upload")}</td>-->
+            </tr>
+            <tr class="hide_if_uploadify">
+                <td><label for="media_caption">${_("Caption")}</label></td>
+                <td colspan="2"><input id="media_caption" name="media_caption" type="text" /></td>
+            </tr>
+            <tr class="hide_if_uploadify">
+                <td><label for="media_credit" >${_("Credit")}</label></td>
+                <td colspan="2"><input id="media_credit"  name="media_credit"  type="text" /></td>
+            </tr>
+        </tbody>
+        
         <!-- Add media javascript - visible to JS enabled borwsers -->
         <tbody>
             <tr class="hide_if_nojs">
                 <td colspan="4" style="text-align: center;">
-                    <input data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" class="file_upload_uploadify" id="file_upload" name="file_upload" type="file" />
+                    ##<input data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" class="file_upload_uploadify" id="file_upload" name="file_upload" type="file" />
                     
-                    <a href="#" class="link_popup_next_element">Record from Webcam / Microphone</a>
+                    <a href="#" class="hide_if_nojs hide_if_noflash link_popup_next_element">Record from Webcam / Microphone</a>
                     <div class="popup_element" style="display: none;">
                         ${media_recorder()}
                     </div>
                 </td>
-            </tr>
-        </tbody>
-        
-        <!-- Add media non javascript version - hidden if JS enabled -->
-        <tbody class="hide_if_js">
-            <tr>
-                <td><label for="media_file">${_("File")}</label></td>
-                <td><input id="media_file" name="media_file" type="file" class="field_file" style="width: 200px;"/></td>
-                <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></td>
-
-                <td rowspan="3" class="media_preview_none">${_("Select a file to upload")}</td>
-            </tr>
-            <tr>
-                <td><label for="media_caption">${_("Caption")}</label></td>
-                <td colspan="2"><input id="media_caption" name="media_caption" type="text" /></td>
-            </tr>
-            <tr>
-                <td><label for="media_credit" >${_("Credit")}</label></td>
-                <td colspan="2"><input id="media_credit"  name="media_credit"  type="text" /></td>
             </tr>
         </tbody>
         <!-- End Add media -->
