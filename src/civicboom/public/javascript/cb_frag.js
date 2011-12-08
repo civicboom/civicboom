@@ -599,6 +599,7 @@ if(!('frags' in boom)) {
               div.trigger('boom_load');
             });
             if (img.width() && img.height()) {
+                console.log("NHWAJNWAN", img, img.width(), img.height());
               if (img.width() > img.height()) img.addClass('landscape');
               img.css({
                 left: (div.width()/2)-(img.width()/2),

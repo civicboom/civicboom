@@ -239,11 +239,11 @@ header {
 
 BODY.c-misc {
     color: $misc-page-font;
-
-    p {
-        // line-height: 200%;
-    }
     
+    A {
+        color: $misc-page-link;
+    }
+
     .misc_header, .content_wrapper, .footer {
         a {
             color: $misc-page-link;
@@ -318,8 +318,7 @@ BODY.c-misc {
         
         .button { font-size: 115%; }
         
-        .learn_more {
-        }
+        .learn_more {  }
       
         .flow {
             margin-left: -0.5em;
