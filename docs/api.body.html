@@ -427,7 +427,7 @@ types that it is useful to know about.
     <p>(NOTE: When undertaking the signup process it may not be possible to return to external sites via http_referer,
        this will be investigated upon request)
        
-    <h4>iCalendar/ICS</h4>
+    <h4>ICS (iCalendar)</h4>
     <p>The ICS output format conforms to <a href="http://tools.ietf.org/html/rfc5545.txt">rfc5545</a></p>
     <p>Members and Content can be viewed as ICS files and imported into online or offline calendars.
     <p>This could be used be used to sync accepted assignments with dates an times to there online calendars. If they have mobile phone that references this online calendar the user could always have their diarys up to date.
@@ -447,6 +447,11 @@ types that it is useful to know about.
             <li>COMMENT: as comments or responses
         </ul>
     <p>All items are TRANSPARENT calendar entrys are ar therefore non blocking
+    
+    <h4>CSV</h4>
+    <p>Standard text CSV output. The top row is a list of fieldnames</p>
+    <p>The fields returned are dipendent on the items in the return and may differ between calls</p>
+    
     <!--
     <h4>Frag</h4>
     <p>Fragments are chunks of HTML data with marked up with classes for use with
