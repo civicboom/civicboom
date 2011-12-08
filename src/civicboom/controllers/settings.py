@@ -16,14 +16,11 @@ from civicboom.model.member import group_member_roles, group_join_mode, group_me
 
 from civicboom.lib.constants import setting_titles
 
-import cbutils.warehouse as wh
-
 import copy
-import tempfile
-import Image
 import formencode
 import re
 
+from civicboom.lib.avatar import process_avatar
 from civicboom.lib.communication.messages import generators
 
 from civicboom.lib.form_validators.validator_factory import build_schema
@@ -511,24 +508,9 @@ class SettingsController(BaseController):
         # GregM: check kwargs as if no new avatar and has current avatar this FAILS!
         if kwargs.get('avatar') != None:
             try:
-                with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
-                    a = settings['avatar']
-                    wh.copy_cgi_file(a, original.name)
-                    h = wh.hash_file(original.name)
-                    wh.copy_to_warehouse(original.name, "avatars-original", h, a.filename)
-
-                    with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
-                        size = (160, 160)
-                        im = Image.open(original.name)
-                        if im.mode != "RGB":
-                            im = im.convert("RGB")
-                        im.thumbnail(size, Image.ANTIALIAS)
-                        im.save(processed.name, "JPEG")
-                        wh.copy_to_warehouse(processed.name, "avatars", h, a.filename)
-
-                user.avatar = h
+                user.avatar = process_avatar(file_obj=settings['avatar'])
             except IOError as e:
-                raise action_error(code=400, message="Unable to read avatar image file")
+                raise action_error(code=400, message="Unable to read avatar image file: %s" % e)
             del settings['avatar']
 
         if settings.get('location_home'):

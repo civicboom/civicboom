@@ -239,8 +239,8 @@ import html2text
 
     <script type="text/javascript">
         function set_location(position) {
-			var latitude = position.coords.latitude;
-			var longitude = position.coords.longitude;
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
             // Set the form location value
             $('#location').val(""+ longitude + " " + latitude)
         }
