@@ -240,9 +240,9 @@ header {
 BODY.c-misc {
     color: $misc-page-font;
     
-    A {
-        color: $misc-page-link;
-    }
+    HEADER A { color: #fff; }
+    
+    A { color: $misc-page-link; }
 
     .misc_header, .content_wrapper, .footer {
         a {

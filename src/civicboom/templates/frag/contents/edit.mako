@@ -251,6 +251,7 @@
                     ##<input data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" class="file_upload_uploadify" id="file_upload" name="file_upload" type="file" />
                     
                     <a href="#" class="hide_if_nojs hide_if_noflash link_popup_next_element">Record from Webcam / Microphone</a>
+                    <p class="hide_if_flash">${_("Advanced file uploading and recording from your webcam and microphone are only available if you have Adobe Flash and JavaScript enabled.")}</p>
                     <div class="popup_element" style="display: none;">
                         ${media_recorder()}
                     </div>
