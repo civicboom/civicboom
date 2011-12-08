@@ -318,7 +318,7 @@ class Member(Base):
             'username'          : None , # AllanC - this should be depricated as it is a mirror of the id. This may need careful combing of the templates before removal
             'avatar_url'        : None ,
             'type'              : lambda member: member.__type__ ,
-            'location_home'     : lambda member: location_to_string(member.location_home) ,
+            'location_home'     : lambda member: '', #location_to_string(member.location_home) , # AllanC - this is remmed out because we do not want to show locations until we can have a text description or area
             'num_followers'     : None ,
             'num_following'     : None ,
             'account_type'      : None ,
