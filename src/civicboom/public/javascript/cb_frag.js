@@ -597,12 +597,11 @@ if(!('frags' in boom)) {
         '.thumbnail' : {
           'boom_load' : function() {
             var div = $(this);
-            var img = div.children('img');
+            var img = div.find('img');
             img.one('load', function() {
               div.trigger('boom_load');
             });
             if (img.width() && img.height()) {
-                console.log("NHWAJNWAN", img, img.width(), img.height());
               if (img.width() > img.height()) img.addClass('landscape');
               img.css({
                 left: (div.width()/2)-(img.width()/2),
