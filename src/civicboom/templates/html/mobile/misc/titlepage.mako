@@ -6,16 +6,15 @@
             ${self.title_logo()}
             <h1>${_('The new way to source and share news!')}</h1>
             <div class="title_content">
-    	        <a href="${h.url(controller='account', action='signin')}" rel="external" data-role="button" data-theme="b">${_('Sign in/Sign up')}</a>
+                <a href="${h.url(controller='account', action='signin')}" rel="external" data-role="button" data-theme="b">${_('Sign in/Sign up')}</a>
                 ##<button data-theme="b"></button>
-    	        ##<p>
-    	        <a href="${h.url(controller="contents", action="index")}" rel="external" data-role="button"               >${_("Just start exploring")}</a>
+                ##<p>
+                <a href="${h.url(controller="contents", action="index")}" rel="external" data-role="button"               >${_("Just start exploring")}</a>
                 ##</p>
                 ##<p>
                 <a href="${h.url(controller='misc', action='force_web')}" rel="external" data-role="button"               >${_('View the desktop website')}</a>
                 ##</p>
             </div>
-	    </div>
-	</div>
+        </div>
     </div>
 </%def>
