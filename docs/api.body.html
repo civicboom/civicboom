@@ -427,7 +427,7 @@ types that it is useful to know about.
     <p>(NOTE: When undertaking the signup process it may not be possible to return to external sites via http_referer,
        this will be investigated upon request)
        
-    <h4>iCalendar/ICS</h4>
+    <h4>ICS (iCalendar)</h4>
     <p>The ICS output format conforms to <a href="http://tools.ietf.org/html/rfc5545.txt">rfc5545</a></p>
     <p>Members and Content can be viewed as ICS files and imported into online or offline calendars.
     <p>This could be used be used to sync accepted assignments with dates an times to there online calendars. If they have mobile phone that references this online calendar the user could always have their diarys up to date.
@@ -437,6 +437,7 @@ types that it is useful to know about.
             <tr><td>Assignment</td><td>This could potentialy create 2 calendar entrys. <ul><li>VEVENT (if event date set) with ATENDEE list<li> VTODO (if due date set) <li>If no event_date or due_date set, raise as VTODO</ul></td></tr>
             <tr><td>Article</td><td>VJOURNAL</td></tr>
             <tr><td>Draft</td><td>VJOURNAL Draft</td></tr>
+            <tr><td>Message</td><td>VJOURNAL</td></tr>
         </table>
         The UID's of each calendar item are the Civicboom URL's for that item - with the exception of VTODO objects that have 'due' appended to the UID's to make them distinct and identifyable from the parent VEVENT
     </p>
@@ -447,6 +448,16 @@ types that it is useful to know about.
             <li>COMMENT: as comments or responses
         </ul>
     <p>All items are TRANSPARENT calendar entrys are ar therefore non blocking
+    
+    <h4>CSV</h4>
+    <p><ul>
+        <li>Standard text CSV output.
+        <li>The top row is a list of fieldnames.
+        <li>The fields returned are dipendent on the items in the return and may differ between calls and server versions.
+        <li>Commas are escaped with the URL encoding '%2c'.
+        <li>Only list returns are currently supported.
+    </ul></p>
+    
     <!--
     <h4>Frag</h4>
     <p>Fragments are chunks of HTML data with marked up with classes for use with

@@ -66,7 +66,28 @@ ${journal(content, **journal_kwargs)}\
 <%def name="ics_member_item(member)">
 </%def>
 
-
+##------------------------------------------------------------------------------
+## Message Item
+##------------------------------------------------------------------------------
+<%def name="ics_message_item(message)"><%
+    source = message.get('source', message.get('source_id'))
+    target = message.get('target', message.get('target_id'))
+    url    = h.url('message', id=message.get('id'), qualified=True)
+%>
+BEGIN:VJOURNAL
+UID:${url}
+URL:${url}
+DTSTAMP:${api_datestr_to_icsdatestr(message['timestamp'])}
+SUMMARY:${message['subject']}
+DESCRIPTION:${ics_content_text(message['content'])}
+% if source:
+ORGANIZER${ics_member(source)}
+% endif
+% if target:
+CONTACT${ics_member(target)}
+% endif
+END:VJOURNAL
+</%def>
 
 
 ##------------------------------------------------------------------------------
