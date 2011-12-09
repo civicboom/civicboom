@@ -29,6 +29,9 @@ from civicboom.lib.authentication import signin_user_and_redirect
 # Email - to be removed - this was a short term import
 from civicboom.lib.communication.email_lib import send_email
 
+# Avatar processing
+from civicboom.lib.avatar import process_avatar
+
 # Form Validators
 import formencode
 from civicboom.lib.form_validators.validator_factory import build_schema
@@ -261,27 +264,7 @@ class RegisterController(BaseController):
 
 def _fetch_avatar(url):
     try:
-        import urllib2
-        import tempfile
-        import cbutils.warehouse as wh
-        import Image
-
-        with tempfile.NamedTemporaryFile(suffix=".jpg") as original:
-            data = urllib2.urlopen(url).read()
-            original.write(data)
-            original.flush()
-            h = wh.hash_file(original.name)
-            wh.copy_to_warehouse(original.name, "avatars-original", h)
-            
-            with tempfile.NamedTemporaryFile(suffix=".jpg") as processed:
-                size = (160, 160)
-                im = Image.open(original.name)
-                if im.mode != "RGB":
-                    im = im.convert("RGB")
-                im.thumbnail(size, Image.ANTIALIAS)
-                im.save(processed.name, "JPEG")
-                wh.copy_to_warehouse(processed.name, "avatars", h)
-            return h
+        return process_avatar(url=url)
     except Exception as e:
         log.exception("Error fetching janrain user's avatar")
         return None

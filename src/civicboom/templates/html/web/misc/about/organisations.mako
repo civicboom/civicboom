@@ -25,8 +25,16 @@
     
     <h1>You can use _site_name in two ways:</h1>
     <ol>
-        <li><b>${_("Our browser-based solution: ")}</b>${_("simply sign up, create your organisational Hub, pop your exclusive widget in your website and start asking for content.")}</li>
-        <li><b>${_("Via our Platform/API Services Custom Solution: ")}</b>${_("Everything on our platform is built on our own API. This means whatever we have can be bolted onto existing communications platforms or systems improving work-flow both internally and externally.")}</li>
+        <li>
+            <strong>${_("Our browser-based solution: ")}</strong>
+            ${_("simply sign up, create your organisational Hub, pop your exclusive widget in your website and start asking for content.")}
+            <p><em>Ideal for: </em><strong>magazines, local news, small publications</strong></p>
+        </li>
+        <li>
+            <strong>${_("Via our Platform/API Services Custom Solution: ")}</strong>
+            ${_("Everything on our platform is built on our own API. This means whatever we have can be bolted onto existing communications platforms or systems improving work-flow both internally and externally.")}
+            <p><em>Ideal for: </em><strong>large media organisations, global brands</strong></p>
+        </li>
     </ol>
     
     <div class="short">

@@ -44,3 +44,22 @@ function init_validation(element, validator) {
 		check_timer = setTimeout(validator, 500);
 	});
 }
+
+var swfplayerver = swfobject.getFlashPlayerVersion();
+if (swfplayerver && swfplayerver.major) {
+  $('html').addClass('flash');
+} else {
+  $('html').addClass('no-flash');
+}
+try {
+  delete swfplayerver;
+} catch (e) {}
+
+// $(function () {
+  // var swfplayerver = swfobject.getFlashPlayerVersion();
+  // if (swfplayerver && swfplayerver.major) {
+    // $('body').addClass('flash');
+  // } else {
+    // $('body').addClass('no-flash');
+  // }
+// });

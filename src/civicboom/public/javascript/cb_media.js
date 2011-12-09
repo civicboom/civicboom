@@ -140,7 +140,7 @@ if (!('media_recorder' in boom)) {
           },
           allowscriptaccess: 'always',
           width: '100%',
-          height: '100%',
+          height: '100%'
         });
         
       });

@@ -226,29 +226,32 @@ if(!('frags' in boom)) {
             boom.frags.setAutoSave(this);
           });
           // Set up Uploadify
-          current_frag.find('.file_upload_uploadify').each(function() {
-            var element = $(this);
-            element.uploadify({
-              'uploader' : '/flash/uploadify.swf',
-              'script' : '/media',
-              'scriptData' : {
-                'content_id' : element.data('content_id'),
-                'member_id' : element.data('member_id'),
-                'key' : element.data('key'),
-              },
-              'cancelImg' : '/images/cancel.png',
-              'folder' : '/uploads',
-              'multi' : true,
-              'auto' : true,
-              'fileDataName' : 'file_data',
-              'removeCompleted' : true,
-              'onComplete' : function(event, id, fileObj, response, data) {
-                var form = $(event.target).parents('form');
-                // Boom_load event triggers refresh or media listing
-                $(event.target).parents('table.media_files').trigger('boom_load');
-              }
+          if ($('html').hasClass('flash')) {
+            current_frag.find('.file_upload_uploadify').each(function() {
+              var element = $(this);
+              element.uploadify({
+                'uploader' : '/flash/uploadify.swf',
+                'script' : '/media',
+                'scriptData' : {
+                  'content_id' : element.data('content_id'),
+                  'member_id' : element.data('member_id'),
+                  'key' : element.data('key'),
+                },
+                'cancelImg' : '/images/cancel.png',
+                'folder' : '/uploads',
+                'multi' : true,
+                'auto' : true,
+                'fileDataName' : 'file_data',
+                'removeCompleted' : true,
+                'onComplete' : function(event, id, fileObj, response, data) {
+                  var form = $(event.target).parents('form');
+                  // Boom_load event triggers refresh or media listing
+                  $(event.target).parents('table.media_files').trigger('boom_load');
+                }
+              });
             });
-          });
+            current_frag.find('.hide_if_uploadify').hide();
+          }
           // Uploadify end
           return false;
         },
@@ -594,7 +597,7 @@ if(!('frags' in boom)) {
         '.thumbnail' : {
           'boom_load' : function() {
             var div = $(this);
-            var img = div.children('img');
+            var img = div.find('img');
             img.one('load', function() {
               div.trigger('boom_load');
             });
