@@ -107,11 +107,17 @@
     @include border_radius(0.5em);
     background-color: #fff;
     padding: 1em;
+    width: 500px;
 
     DIV {
        display: inline-block;
-       margin: 0.5em;
        vertical-align: top;
+       width: 245px;
+       
+       IMG {
+         max-width: 100%;
+         margin-left: 5px;
+       }
     }
 }
 

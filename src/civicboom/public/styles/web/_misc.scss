@@ -3,28 +3,27 @@
 
 /* big grey stylish footer THIS IS NOT IN THE RIGHT PLACE >_<*/
 .misc_footer {
-    width: 100%;
-    min-height: 5em;
     background-color: $cb-grey;
     background-image: url('../images/misc/titlepage/footer_shadow.png');
-    background-repeat: repeat-x;
     background-position: top;
-    margin-top: 1em;
-    text-align: center;
-    position: relative;
+    background-repeat: repeat-x;
     font-size: 13px;
+    position: relative;
+    margin-top: 1em;
+    min-height: 5em;
+    text-align: center;
+    width: 100%;
     
     .copyright {
-        width: 100%;
-        text-align: center;
         font-size: 85%;
         padding: 1em;
+        text-align: center;
+        width: 100%;
     }
         
     .footer_wrapper{
-        margin: auto;
-        // text-align: left;
         background-color: transparent;
+        margin: auto;
         position: relative;
         
         .col {

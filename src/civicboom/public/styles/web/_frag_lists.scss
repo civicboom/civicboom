@@ -79,13 +79,9 @@
 
 /* white frag list "box" */
 #frag_containers .frag_container .frag_data .frag_list {
-    @include border_radius(0.5em);
-    @include drop_shadow(darken($frag-list-top, 40%), 1px, 1px, 3px);
-    background-color: $frag-list-top;
-    color: $frag-list-title-txt;
-    font-size: 90%;
-    margin: 0 0 1em 0;
-    padding: 1em;
+    /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! *
+     * Frag list box styled in _frags.scss *
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
     /* frag list element to hold lists of content/members/etc */
     .frag_list_contents {

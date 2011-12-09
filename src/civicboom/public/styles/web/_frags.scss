@@ -84,60 +84,71 @@
             padding-top: 1em;
             top: 20px;
 
-            .frag_whitewrap {
-                @include border_radius(0.4em);
-                @include drop_shadow(1px, 1px, 1px, #333);
-                background-color: #fff;
-                margin: 0.5em;
-                padding: 1em;
+            /* all frag boxes/lists must be inside a col */
+          	.frag_col {
+          	    margin: 0 1em;
+          	
+                .frag_box, .frag_list {
+                    @include border_radius(0.5em);
+                    @include drop_shadow(darken($frag-list-top, 40%), 1px, 1px, 3px);
+                    background-color: $frag-list-top;
+                    color: $frag-list-title-txt;
+                    font-size: 90%;
+                    margin: 0 0 1em 0;
+                    padding: 1em;
+                }
+
+            		.title {
+              			padding: 1em 0 0 1em;
+              			font-size: 120%;
+            		}
+    
+            		.title .title_text {
+              			font-weight: bold;
+              			padding: 0.25em 0 0 0.25em;
+            		}
+    
+                table.content tr td { padding-right: 3px; }
+                table.content tr td.x { padding-left: 3px; }
+    
+                .ui-button { margin-right: 1em; }
+    
+                .what-next, .why-respond {
+                    color: #666;
+                    margin: 1.5em auto 0 0.5em;
+                }
+    
+            		.content_box {
+              			background: $frag-list-top; /* for non-css3 browsers */
+              			padding: 1em;
+              			@include border_radius($frag-radius);
+            		}
+    
+                .separator {
+                    clear: both;
+                    padding: 0.5em;
+                }
             }
 
-          	.frag_col { margin: 0 1em; }
-
-          	.frag_left_col, .frag_right_col { display: inline-block; }
+          	.short { width: 33% !important; }
+          	.half { width: 46%; }
+          	.long { width: 59% !important; }
+          	
+          	.frag_left_col, .frag_right_col {
+          	    @extend .half;
+          	    display: inline-block;
+          	    vertical-align: top;
+          	 }
 
           	.frag_left_col {
           	    float: left;
-          	    margin: 0 0.85em 0 1em;
-          	    width: 46%;
-          	}
+          	    margin-right: 0;
+          	 }
 
           	.frag_right_col {
                 float: right;
-                margin: 0 1em 0 0.0;
-                width: 46%;
+                margin-left: 0;
           	}
-
-        		.title {
-          			padding: 1em 0 0 1em;
-          			font-size: 120%;
-        		}
-
-        		.title .title_text {
-          			font-weight: bold;
-          			padding: 0.25em 0 0 0.25em;
-        		}
-
-            table.content tr td { padding-right: 3px; }
-            table.content tr td.x { padding-left: 3px; }
-
-            .ui-button { margin-right: 1em; }
-
-            .what-next, .why-respond {
-                color: #666;
-                margin: 1.5em auto 0 0.5em;
-            }
-
-        		.content_box {
-          			background: $frag-list-top; /* for non-css3 browsers */
-          			padding: 1em;
-          			@include border_radius($frag-radius);
-        		}
-
-            .separator {
-                clear: both;
-                padding: 0.5em;
-            }
         }
   	}
 }
