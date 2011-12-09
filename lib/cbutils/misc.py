@@ -193,11 +193,12 @@ def obj_to_dict(obj, dict_fields):
         elif type(field_processor)==types.FunctionType:
             field_value = field_processor(obj)
         if field_value:
+            field_value_type = type(field_value)
             if hasattr(field_value,'keys') or hasattr(field_value, '__iter__'):
                 pass
-            elif type(field_value)==types.IntType or type(field_value)==types.FloatType:
+            elif field_value_type in [types.IntType, types.FloatType, types.BooleanType]:
                 pass
-            elif type(field_value) == datetime.datetime:
+            elif field_value_type == datetime.datetime:
                 field_value = field_value.strftime("%Y-%m-%d %H:%M:%S")
             else:
                 try:
