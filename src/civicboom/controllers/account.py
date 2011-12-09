@@ -249,7 +249,8 @@ class AccountController(BaseController):
         """
         c.hash = kwargs.get('hash')
         
-        user = get_member(id or kwargs.get('username') or kwargs.get('email'), search_email=True)
+        username = id or kwargs.get('username') or kwargs.get('email')
+        user = get_member(username, search_email=True)
         if user.__type__ == 'group':
             raise action_error('a _group cannot have a password set, please login as yourself and switch to the _group persona', code=404)
         
@@ -257,7 +258,7 @@ class AccountController(BaseController):
         if not c.hash:
             #send_forgot_password_email(user)
             send_verifiy_email(user, controller='account', action='forgot_password', message=_('reset your password'))
-            return action_ok(_('Password reminder sent, please check your email'))
+            return action_ok(_('Password reminder sent to %s, please check your email' % username))
             
         if not verify_email_hash(user, c.hash): # abort if unable to verify user
             raise action_error(_('unable to verify user'), code=400)

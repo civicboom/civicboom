@@ -42,10 +42,20 @@ class TestForgotPasswordController(TestController):
             },
             status=404
         )
-
-        num_emails = getNumEmails()
         
-        # Request forgotten password email
+        # Request forgotten password email - with email address
+        num_emails = getNumEmails()
+        response = self.app.post(
+            url(controller='account', action='forgot_password'), #, format='json'
+            params={
+                #'_authentication_token': self.auth_token,
+                'username': u'test+unittest@civicboom.com',
+            }
+        )
+        self.assertEqual(getNumEmails(), num_emails + 1)
+        
+        # Request forgotten password email - with username
+        num_emails = getNumEmails()
         response = self.app.post(
             url(controller='account', action='forgot_password'), #, format='json'
             params={
@@ -115,3 +125,25 @@ class TestForgotPasswordController(TestController):
             }
         )
         self.log_in_as('unittest')
+
+
+    #---------------------------------------------------------------------------
+    # Forgot Password Redirect + flash message
+    #---------------------------------------------------------------------------
+    def test_forgot_password_redirect_message(self):
+        """
+        when requesting password the .redirect format is used. Check the flash message has the appropriate details
+        """
+        self.log_out()
+        
+        response = self.app.post(
+            url(controller='account', action='forgot_password', format='redirect'),
+            params={
+                'username': u'unittest',
+            },
+            extra_environ={'HTTP_REFERER': url(controller='account', action='signin', qualified=True)}
+        )
+        while response.status >= 300 and response.status <= 399:
+            response_location = response.header_dict['location']
+            response = response.follow()
+        self.assertIn('Password reminder sent to unittest', response.body)

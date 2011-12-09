@@ -44,7 +44,9 @@ class TestFormats(TestController):
         test_all_formats() # Anon user
 
     def test_sub_domains(self):
-        
+        """
+        Test the widget and mobile subdomain template generation
+        """
         def test_all_sub_domains():
             def get_(url_, sub_domain):
                 return self.app.get(url_, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain}, status=200)
