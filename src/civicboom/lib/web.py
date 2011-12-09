@@ -15,6 +15,7 @@ import re
 from decorator import decorator
 import logging
 import urllib
+import itertools
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -538,6 +539,33 @@ def setup_format_processors():
         #response.headers['Content-type'] = "text/plain; charset=utf-8" # AllanC - useful line for debugging
         return render_template(result, 'ics').replace('\n','\r\n')
         
+    def format_csv(result):
+        #response.headers['Content-type'] = "text/csv; charset=utf-8"
+        response.headers['Content-type'] = "text/plain; charset=utf-8" # AllanC - useful line for debugging
+        
+        def rows(items):
+            # TODO - should only add field keys if they are 'basestring'
+            fields = set(itertools.chain(*[item.keys() for item in items])) # Concatinate all known keys from the returned objects
+            # This is not a reliable return form as the cols can change if differnt items are presnet
+            #fields.sort()
+            yield ','.join(fields)
+            for item in items:
+                field_values = []
+                for key in fields:
+                    value = item.get(key,'')
+                    if   isinstance(value, basestring):
+                        pass
+                    elif isinstance(value, dict) and value.get('id'):
+                        value = str(value.get('id'))
+                    else:
+                        value = ''
+                    field_values.append(value.replace(',',''))
+                yield ','.join(field_values)
+        
+        if result['data'].get('list'):
+            return '\r\n'.join(rows(result['data']['list']['items']))
+        return ''
+        
     def format_pdf(result):
         import subprocess
         print_formatted = format_print(result)
@@ -571,6 +599,7 @@ def setup_format_processors():
         'print'    : format_print,
         'ics'      : format_ics,
         'pdf'      : format_pdf,
+        'csv'      : format_csv,
     }
 
 

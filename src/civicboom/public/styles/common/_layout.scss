@@ -30,6 +30,10 @@ HTML.js {
     }
 }
 
+HTML.no-flash .hide_if_noflash { display: none; }
+
+HTML.flash .hide_if_flash { display: none; }
+
 
 /*---------------------------------------------------------------------------*/
 /* YUI/browser defaulting fixes/overrides                                    */

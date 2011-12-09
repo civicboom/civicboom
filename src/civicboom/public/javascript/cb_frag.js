@@ -226,7 +226,7 @@ if(!('frags' in boom)) {
             boom.frags.setAutoSave(this);
           });
           // Set up Uploadify
-          if ($('body').hasClass('flash')) {
+          if ($('html').hasClass('flash')) {
             current_frag.find('.file_upload_uploadify').each(function() {
               var element = $(this);
               element.uploadify({

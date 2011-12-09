@@ -11,6 +11,33 @@
     auto_georss_link = False
     
     frag_data_css_class = 'frag_content_edit' #content_form
+
+    
+    # These are DYNAMICALLY TRANSLATED, see translated words file
+    def publish_labels(selected_type, content, _):
+        if selected_type == "assignment":
+            confirm_title = _("Once you post this request, it will appear:")
+            confirm_message = _("<ol>" +\
+                "<li>" + "On your _Widget for your community to respond to" +"</li>" +\
+                "<li>" + "In all your _site_name followers' notification streams" +"</li>" +\
+                "<li>" + "On the _site_name request stream" +"</li>" +\
+                "</ol>")
+        elif selected_type == "article":
+            if content.get("parent"):
+                confirm_title = _("Once you share this story, it will:")
+                confirm_message = _("<ol>" +\
+                    "<li>" + "Be sent directly to %s" + "</li>" +\
+                    "<li>" + "Be listed as a response against the request" + "</li>" +\
+                    "<li>" + "Appear in your followers' notification streams" + "</li>" +\
+                    "</ol>") % content['parent'].get('creator', {}).get('name')
+            else:
+                confirm_title = _("Once you post this story:")
+                confirm_message = _("<ol>" +\
+                    "<li>" + "It will appear in your followers' notification streams." + "</li>" +\
+                    "<li>" + "You will also be able to share it on Facebook, LinkedIn and Twitter once you post." + "</li>" +\
+                    "</ol>")
+        return (confirm_title, confirm_message)
+    
 %>
 
 ##------------------------------------------------------------------------------
@@ -251,6 +278,7 @@
                     ##<input data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" class="file_upload_uploadify" id="file_upload" name="file_upload" type="file" />
                     
                     <a href="#" class="hide_if_nojs hide_if_noflash link_popup_next_element">Record from Webcam / Microphone</a>
+                    <p class="hide_if_flash">${_("Advanced file uploading and recording from your webcam and microphone are only available if you have Adobe Flash and JavaScript enabled.")}</p>
                     <div class="popup_element" style="display: none;">
                         ${media_recorder()}
                     </div>
@@ -574,27 +602,8 @@
                             <p>${_(tooltip)}</p>
                         </div>
                         <%
-                            if self.selected_type == "assignment":
-                                confirm_title = _("Once you post this request, it will appear:")
-                                confirm_message = "<ol>" +\
-                                    "<li>" + _("On your _Widget for your community to respond to") +"</li>" +\
-                                    "<li>" + _("In all your _site_name followers' notification streams") +"</li>" +\
-                                    "<li>" + _("On the _site_name request stream") +"</li>" +\
-                                    "</ol>"
-                            elif self.selected_type == "article":
-                                if self.content.get("parent"):
-                                    confirm_title = _("Once you share this story, it will:")
-                                    confirm_message = "<ol>" +\
-                                        "<li>" + (_("Be sent directly to %s") % self.content['parent'].get('creator', dict()).get('name')) + "</li>" +\
-                                        "<li>" + _("Be listed as a response against the request") + "</li>" +\
-                                        "<li>" + _("Appear in your followers' notification streams") + "</li>" +\
-                                        "</ol>"
-                                else:
-                                    confirm_title = _("Once you post this story:")
-                                    confirm_message = "<ol>" +\
-                                        "<li>" + _("It will appear in your followers' notification streams.") + "</li>" +\
-                                        "<li>" + _("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.") + "</li>" +\
-                                        "</ol>"
+                            (confirm_title, confirm_message) = publish_labels(self.selected_type, self.content, _)
+#                            (confirm_title, confirm_message) = (_(confirm_title), _(confirm_message))
                         %>
                         <input type="submit" name="submit_publish" value="Post" class="button"
                             data-confirm="${confirm_message}"
