@@ -25,7 +25,7 @@ class MemberActionsController(BaseController):
     # Image - QR Code
     #---------------------------------------------------------------------------
     @web
-    #@cacheable(time=60*60, anon_only=False)
+    @cacheable(time=60*60, anon_only=False)
     def qrcode(self, id, **kwargs):
         """
         @param pixel_size optional int, default '8' The size of each cqcode module in pixels
