@@ -70,7 +70,7 @@
                 <td>&nbsp;</td>
                 <td>
                     <h2>
-                        <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">${(_'Post _content')}</a><br />
+                        <a href="${h.url(controller='misc', action='new_article', protocol='https', sub_domain='www', qualified=True, r='e_p')}">${_('Post _content')}</a><br />
                     </h2>
                     <a href="http://twitter.com/civicboom">
                         <img src="${site_url}images/twitter-email.png" alt="Twitter"><br />
