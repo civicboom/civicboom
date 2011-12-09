@@ -57,8 +57,8 @@ if(!('frags' in boom)) {
               .addClass('popup-title')
               .append(title)
               // Close button
-              .before(
-                $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
+              .prepend(
+                $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete').click(function () {$.modal.close()})
               )
             )
             .append(
@@ -106,8 +106,8 @@ if(!('frags' in boom)) {
                 // If confirm-title set it as the title, otherwise use the original link's text
                 .append(settings.confirmTitle || originalLink.text() || '')
                 // Close button
-                .before(
-                  $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete')
+                .prepend(
+                  $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete').click(function () {$.modal.close()})
                 )
             )
             .append(
