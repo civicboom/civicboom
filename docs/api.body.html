@@ -454,8 +454,15 @@ types that it is useful to know about.
         <li>Standard text CSV output.
         <li>The top row is a list of fieldnames.
         <li>The fields returned are dipendent on the items in the return and may differ between calls and server versions.
-        <li>Commas are escaped with the URL encoding '%2c'.
         <li>Only list returns are currently supported.
+        <li>Any new_line characters in any string are replaced by the literal '\n'
+        <li>
+            The CSV output has the following query string parameter controls:
+            <ul>
+            <li>field_separator (default=',')
+            <li>field_separator_replacement (default='%2c')
+            <li>line_separator (default='\r\n')
+            </ul>
     </ul></p>
     
     <!--

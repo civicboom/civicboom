@@ -37,4 +37,3 @@ class MessageActionsController(BaseController):
             return action_ok() # This will then trigger the auto-formatter to auto select the appropiate template for the format specified
         else:
             return flag_action(id, **kwargs)
-

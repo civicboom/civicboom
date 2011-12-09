@@ -22,7 +22,37 @@ class TestMessagesController(TestController):
         self.assertIn('msg2', response.body)
         self.assertIn('msg3', response.body)
         
+    
+    def test_mark_all_read(self):
+        # Create new message to unittest
+        self.log_in_as('unitfriend')
+        message_id = self.send_member_message('unittest', 'mark_all_test', 'mark_all_test')
         
+        # Check message is in message list as unittest
+        self.log_in_as('unittest')
+        response      = self.app.get(url('messages', id='me', list='to', format='json'))
+        response_json = json.loads(response.body)
+        self.assertEquals('mark_all_test', response_json['data']['list']['items'][0]['subject'])
+        self.assertEquals(False          , response_json['data']['list']['items'][0]['read']   )
+        
+        # Call mark_all
+        response      = self.app.post(
+            url(controller='profile', action='mark_messages_as_read', list='to', format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+            }
+        )
+        response_json = json.loads(response.body)
+        
+        # Check all messages are read
+        response      = self.app.get(url('messages', id='me', list='to', format='json'))
+        response_json = json.loads(response.body)
+        for message in response_json['data']['list']['items']:
+            self.assertEquals(True, message['read'])
+        
+        # Cleanup
+        self.delete_message(message_id)
+
     
     #---------------------------------------------------------------------------
     

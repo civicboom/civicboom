@@ -544,12 +544,20 @@ def setup_format_processors():
         #response.headers['Content-type'] = "text/csv; charset=utf-8"
         response.headers['Content-type'] = "text/plain; charset=utf-8" # AllanC - useful line for debugging
         
+        kwargs = dict(
+            field_separator             = ','    ,
+            field_separator_replacement = '%2c'  , # Use the URL escape code for commas in content
+            line_separator              = '\r\n' ,
+        )
+        if c.web_params_to_kwargs:
+            kwargs.update(c.web_params_to_kwargs[1])
+        
         def rows(items):
             # TODO - should only add field keys if they are 'basestring'
             fields = set(itertools.chain(*[item.keys() for item in items])) # Concatinate all known keys from the returned objects
             # This is not a reliable return form as the cols can change if differnt items are presnet
             #fields.sort()
-            yield ','.join(fields)
+            yield kwargs['field_separator'].join(fields)
             for item in items:
                 field_values = []
                 for key in fields:
@@ -562,11 +570,11 @@ def setup_format_processors():
                         value = str(value.get('id'))
                     else:
                         value = ''
-                    field_values.append(value.replace(',','%2c')) # Use the URL escape code for commas in content
-                yield ','.join(field_values)
+                    field_values.append(re.sub('[\n\r\f\v]', '\\\\n', value.replace(kwargs['field_separator'], kwargs['field_separator_replacement'])))
+                yield kwargs['field_separator'].join(field_values)
         
         if result['data'].get('list'):
-            return '\r\n'.join(rows(result['data']['list']['items']))
+            return kwargs['line_separator'].join(rows(result['data']['list']['items']))
         return ''
         
     def format_pdf(result):

@@ -13,6 +13,9 @@ member_actions_controller = MemberActionsController()
 #messages_controller       = MessagesController()
 #content_list_names        = content_list_filters.keys()
 
+from civicboom.controllers.messages import list_filters
+from civicboom.model      import Message
+from civicboom.model.meta import Session
 
 class ProfileController(BaseController):
     """
@@ -90,3 +93,23 @@ class ProfileController(BaseController):
                 'groups': member_actions_controller.groups(id=c.logged_in_persona, private=True)
             }
         )
+
+    @web
+    @auth
+    def mark_messages_as_read(self, **kwargs):
+        """
+        POST /profile/{id}/mark_messages_as_read: Mark messages as read
+        @type action
+        @api contents 1.0 (WIP)
+        
+        @param type   type of message object to mark as read from all, to, notification
+        """
+        list_type = kwargs.get('list')
+        if list_type in list_filters and list_type in ['all','to','notification']:
+            results = Session.query(Message).filter(Message.target_id==c.logged_in_persona.id)
+            results = list_filters[list_type](results)
+            for message in results.all():
+                message.read = True
+            Session.commit()
+            return action_ok(message='%s marked as read' % type, code=201)
+        raise action_error(_('list %s not supported') % kwargs.get('list'), code=400)
