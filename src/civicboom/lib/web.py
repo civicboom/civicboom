@@ -16,6 +16,7 @@ from decorator import decorator
 import logging
 import urllib
 import itertools
+import numbers
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -555,11 +556,13 @@ def setup_format_processors():
                     value = item.get(key,'')
                     if   isinstance(value, basestring):
                         pass
+                    elif isinstance(value, numbers.Number):
+                        value = str(value)
                     elif isinstance(value, dict) and value.get('id'):
                         value = str(value.get('id'))
                     else:
                         value = ''
-                    field_values.append(value.replace(',',''))
+                    field_values.append(value.replace(',','%2c')) # Use the URL escape code for commas in content
                 yield ','.join(field_values)
         
         if result['data'].get('list'):
