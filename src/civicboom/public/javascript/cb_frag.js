@@ -255,7 +255,7 @@ if(!('frags' in boom)) {
             var frag_href = $(this).data('frag');
             if(frag_href) {
               $.get(frag_href, function(data, status, res) {
-                boom.util.modal_queue.add(boom.frags.templates.modal_data(link.attr('title'), data));
+                boom.util.modal_queue.add(boom.frags.templates.modal_data(link.attr('title'), data), boom.frags.getFragment(link));
               });
               return false;
             }
@@ -508,7 +508,7 @@ if(!('frags' in boom)) {
           'click' : function() {
             var link = $(this);
             var popup_content = link.next('.popup_element').children().clone(true, true);
-            boom.util.modal_queue.add(boom.frags.templates.modal_data('', popup_content));
+            boom.util.modal_queue.add(boom.frags.templates.modal_data('', popup_content), boom.frags.getFragment(link));
             return false;
           }
         },

@@ -105,7 +105,9 @@ if(!('util' in boom)) {
         .queue(function(next) {
           // Queue the modal, onClose trigger next queue item
           var body = $(this);
-          //parent = parent
+          if (!parent || parent.length == 0)
+            parent = $('body');
+          console.log('parent', parent, $('#app'));
           var dialog = boom.util.convert_jquery(content_body)
             .dialog({
               //autoOpen: false,
@@ -116,7 +118,7 @@ if(!('util' in boom)) {
                 of: parent,
                 at: 'center top',
                 my: 'center top',
-                collision: 'none',
+                collision: 'fit',
                 using: function (position) {
                   var elem = $(this);
                   elem.siblings('.ui-widget-overlay').css('top', - $('#app').offset().top) ;
