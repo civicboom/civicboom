@@ -147,8 +147,20 @@
 				id: obj.id || 'flash_' + Math.floor(Math.random() * 999999999),
 				width: obj.width || 320,
 				height: obj.height || 180,
-				style: obj.style || ''
+				style: obj.style || '',
+        classid: "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000",
+        codebase: "http://macromedia.com/cabs/swflash.cab#version=6,0,0,0"
 			};
+
+      var embed = {
+        src: obj.swf,
+        flashvars: _objectToArguments(obj.flashvars),
+        id: attrs.id,
+        name: attrs.id,
+        width: attrs.width,
+        height: attrs.height,
+        type: attrs.type
+      }
 
 			ENCODE = typeof obj.useEncode !== 'undefined' ? obj.useEncode : instance.encodeParams;
 
@@ -169,6 +181,7 @@
 			flashContainer.innerHTML = [
 				'<object ', _objectFromObject(attrs), '>',
 				_paramsFromObject(obj),
+        '<embed ', _objectFromObject(embed), '>',
 				'</object>'
 			].join('');
 

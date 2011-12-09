@@ -15,6 +15,8 @@ import re
 from decorator import decorator
 import logging
 import urllib
+import itertools
+import numbers
 
 log = logging.getLogger(__name__)
 user_log = logging.getLogger("user")
@@ -326,12 +328,14 @@ class action_error(Exception):
 
 
 def overlay_status_message(master_message, new_message):
+
     # Setup master message
     if not master_message:
         master_message = {}
     master_message['status']  = master_message.get('status' ) or 'ok'
     master_message['message'] = master_message.get('message') or u''
     master_message['data']    = master_message.get('data'   ) or {}
+    master_message['code']    = master_message.get('code'   ) or 200
 
     if isinstance(new_message, basestring):
         new_message = {'status':'ok', 'message':new_message}
@@ -342,6 +346,8 @@ def overlay_status_message(master_message, new_message):
             master_message['status'] = new_message['status']
         if 'message' in new_message and new_message['message']:
             master_message['message'] += '\n' + new_message['message']
+        if new_message.get('code') and (new_message.get('code')<200 or new_message.get('code')>=300):
+            master_message['code'] = new_message['code']
 
     # Overlay new message (if string)
     if isinstance(new_message, basestring):
@@ -355,7 +361,7 @@ def overlay_status_message(master_message, new_message):
     # Pass though all keys that are not already in master
     for key in [key for key in new_message if key not in master_message]:
         master_message[key] = new_message[key]
-
+    
     return master_message
 
 
@@ -534,6 +540,35 @@ def setup_format_processors():
         #response.headers['Content-type'] = "text/plain; charset=utf-8" # AllanC - useful line for debugging
         return render_template(result, 'ics').replace('\n','\r\n')
         
+    def format_csv(result):
+        #response.headers['Content-type'] = "text/csv; charset=utf-8"
+        response.headers['Content-type'] = "text/plain; charset=utf-8" # AllanC - useful line for debugging
+        
+        def rows(items):
+            # TODO - should only add field keys if they are 'basestring'
+            fields = set(itertools.chain(*[item.keys() for item in items])) # Concatinate all known keys from the returned objects
+            # This is not a reliable return form as the cols can change if differnt items are presnet
+            #fields.sort()
+            yield ','.join(fields)
+            for item in items:
+                field_values = []
+                for key in fields:
+                    value = item.get(key,'')
+                    if   isinstance(value, basestring):
+                        pass
+                    elif isinstance(value, numbers.Number):
+                        value = str(value)
+                    elif isinstance(value, dict) and value.get('id'):
+                        value = str(value.get('id'))
+                    else:
+                        value = ''
+                    field_values.append(value.replace(',','%2c')) # Use the URL escape code for commas in content
+                yield ','.join(field_values)
+        
+        if result['data'].get('list'):
+            return '\r\n'.join(rows(result['data']['list']['items']))
+        return ''
+        
     def format_pdf(result):
         import subprocess
         print_formatted = format_print(result)
@@ -567,6 +602,7 @@ def setup_format_processors():
         'print'    : format_print,
         'ics'      : format_ics,
         'pdf'      : format_pdf,
+        'csv'      : format_csv,
     }
 
 

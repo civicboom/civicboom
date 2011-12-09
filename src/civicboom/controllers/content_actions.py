@@ -23,7 +23,7 @@ class ContentActionsController(BaseController):
     @cacheable(time=60*60, anon_only=False)
     def qrcode(self, id, **kwargs):
         """
-        @param size   optional int, default 100 The size in pixels of the generated image
+        @param pixel_size optional int, default '8' The size of each cqcode module in pixels
         @parsm format optional string, default PNG accepts [png, jpeg, bmp, gif, tiff]
         @param level  optional int, default 1 Error correction level 0 to 3
         

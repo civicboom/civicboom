@@ -62,7 +62,7 @@ ${key}="${value}"
     ##% if include_name == 'prefix':
     ##  nothing
     ##% endif
-    <div class="thumbnail ${class_}">
+    <div class="thumbnail ${class_} event_load">
 	% if as_link:
 		${member_link()}
 	% endif

@@ -7,84 +7,87 @@
 <section>
 <h3>System Overview</h3>
 <div>
-	<p>Civicboom is platform that facilitates the generation and exploration of member to member content. At its core it allows members to request content and respond with rich media in a structured way.</p>
-	<p>The core of Civicboom is based around 2 major object types:</p>
-	<ul>
-		<li>Content - <a href="https://www.civicboom.com/contents/3.json">https://www.civicboom.com/contents/3.json</a></li>
-		<li>Member - <a href="https://www.civicboom.com/members/civicboom.json">https://www.civicboom.com/members/civicboom.json</a></li>
-	</ul>
-	
-	<p>Any item of <em>content</em> can:</p>
-	<ul>
-		<li>have a range of attached media (video, audio or text)
-		<li>have a geolocation
-		<li>have a licence type for distribution
-		<li>be created as a Draft to be worked on incrementally until it is read for publishing
-		<li>be public or private (visible only by trusted followers)
-		<li>be split into the following types:
-			<ul>
-				<li>Article (a standalone item of content)
-				<li>Assignment (a question/request for content)
-				<li>Comment (a small text response)
-				<li>Draft (content that is not publicly visible yet)
-			</ul>
-		<li>be in response to another item of content
-		<li>An <em>article</em> that is made in response to an <em>assignment</em> is termed a <em>response</em>
-		<li>be flagged by members as offensive or spam
-	</ul>
-	<p><em>Members</em> can</p>
-	<ul>
-		<li>be sent messages
-		<li>follow other members to receive notifications
-		<li>have a home geolocation (optional)
-		<li>members have a profile listing all content they have created or <em>boom</em>ed
-	</ul>
+    <p>Civicboom is platform that facilitates the generation and exploration of member to member content. At its core it allows members to request content and respond with rich media in a structured way.</p>
+    <p>The core of Civicboom is based around 2 major object types:</p>
+    <ul>
+        <li>Content - <a href="https://www.civicboom.com/contents/3.json">https://www.civicboom.com/contents/3.json</a></li>
+        <li>Member - <a href="https://www.civicboom.com/members/civicboom.json">https://www.civicboom.com/members/civicboom.json</a></li>
+    </ul>
+    
+    <p>Any item of <em>content</em> can:</p>
+    <ul>
+        <li>have a range of attached media (video, audio or text)
+        <li>have a geolocation
+        <li>have a licence type for distribution
+        <li>be created as a Draft to be worked on incrementally until it is read for publishing
+        <li>be public or private (visible only by trusted followers)
+        <li>be split into the following types:
+            <ul>
+                <li>Article (a standalone item of content)
+                <li>Assignment (a question/request for content)
+                <li>Comment (a small text response)
+                <li>Draft (content that is not publicly visible yet)
+            </ul>
+        <li>be in response to another item of content
+        <li>An <em>article</em> that is made in response to an <em>assignment</em> is termed a <em>response</em>
+        <li>be flagged by members as offensive or spam
+    </ul>
+    <p><em>Members</em> can</p>
+    <ul>
+        <li>be sent messages
+        <li>follow other members to receive notifications
+        <li>have a home geolocation (optional)
+        <li>members have a profile listing all content they have created or <em>boom</em>ed
+    </ul>
 
-	<p>On top of the core object types <em>Members</em> can form <em>Groups</em>. Groups facilitate collaboration by allowing multiple members to <em>take the persona</em> of the group. Members can be given a variety of roles such as Editors that can publish content or Contributors that can only create and edit private drafts.</p>
-	<p>Members can <em>boom</em> other members content. This showcases other members content from your profile. This is useful for pushing relevant related assignments or content that other users have worked on.</p>
-	<p>Followers can be flagged as <em>trusted</em>. This entitles trusted followers to view <em>private content</em>.</p>
-	<p>Messages/notification to a group propagate to all of the groups members</p>
-	<p><em>responses</em> to an <em>assignment</em> can be approved/disassociated by the creator of the <em>assignment</em> (paid for service)</p>
+    <p>On top of the core object types <em>Members</em> can form <em>Groups</em>. Groups facilitate collaboration by allowing multiple members to <em>take the persona</em> of the group. Members can be given a variety of roles such as Editors that can publish content or Contributors that can only create and edit private drafts.</p>
+    <p>Members can <em>boom</em> other members content. This showcases other members content from your profile. This is useful for pushing relevant related assignments or content that other users have worked on.</p>
+    <p>Followers can be flagged as <em>trusted</em>. This entitles trusted followers to view <em>private content</em>.</p>
+    <p>Messages/notification to a group propagate to all of the groups members</p>
+    <p><em>responses</em> to an <em>assignment</em> can be approved/disassociated by the creator of the <em>assignment</em> (paid for service)</p>
 
 </div>
 </section>
 
 <section>
-	<h3>Internal use of the API</h3>
-	<div>
-	<p>Our website, mobile app and boombox are all created using this documented API.</p>
-	</div>
+    <h3>Internal use of the API</h3>
+    <div>
+    <p>Our website, mobile app and boombox are all created using this documented API.</p>
+    </div>
 </section>
 
 <section>
-	<h3>API Useage suggestions</h3>
-	<div>
-	<p>The API can be used to drive new applications. Some suggestions include:<p>
-	<ul>
-		<li><h5>Native desktop interface</h5>
-			<p>When dealing with a magnitude of around 20 responses the web interface is sufficient. If a user was to manage 100s or 1000s of responses they could require the power of a native desktop interface. A local mirror of content could be setup downloading content and attached videos. Users of the native interface could watch the full attached videos from a local server and approve/disassociate content quickly.</p>
-		</li>
-		<li><h5>Display foyer screen</h5>
-			<p>A large plasma display or projector could show a map of the local county and visualise geolocated content as it is uploaded. Visual effects like fading and scrolling could be used to create an engaging media filled news feed.</p>
-		</li>
-		<li><h5>Custom mobile app</h5>
-			<p>A custom mobile app could be produced to collected responses for a selected group or request.</p>
-		</li>
-		<li><h5>Website backend</h5>
-			<p>A website could be created completely populated by our API and white labeled/branded/styled to fit a particular branding requirement.</p>
-		</li>
-		<li><h5>Data mining and visualiseation</h5>
-			<p>The data could be collected from the API and used for statistical analysis. The statistics could be visualised as graphs or in other interesting visual ways.</p>
-		</li>
-	</ul>
-	</div>
+    <h3>API Useage suggestions</h3>
+    <div>
+    <p>The API can be used to drive new applications. Some suggestions include:<p>
+    <ul>
+        <li><h5>Native desktop interface</h5>
+            <p>When dealing with a magnitude of around 20 responses the web interface is sufficient. If a user was to manage 100s or 1000s of responses they could require the power of a native desktop interface. A local mirror of content could be setup downloading content and attached videos. Users of the native interface could watch the full attached videos from a local server and approve/disassociate content quickly.</p>
+        </li>
+        <li><h5>Display foyer screen</h5>
+            <p>A large plasma display or projector could show a map of the local county and visualise geolocated content as it is uploaded. Visual effects like fading and scrolling could be used to create an engaging media filled news feed.</p>
+        </li>
+        <li><h5>Custom mobile app</h5>
+            <p>A custom mobile app could be produced to collected responses for a selected group or request.</p>
+        </li>
+        <li><h5>Website backend</h5>
+            <p>A website could be created completely populated by our API and white labeled/branded/styled to fit a particular branding requirement.</p>
+        </li>
+        <li><h5>Data mining and visualiseation</h5>
+            <p>The data could be collected from the API and used for statistical analysis. The statistics could be visualised as graphs or in other interesting visual ways.</p>
+        </li>
+        <li><h5>Calendar and Event Syncronisation</h5>
+            <p>Organisation could use the ICS format to syncronise a pool of journalists/contributors/etc with the requests that have been set.</p>
+        </li>
+    </ul>
+    </div>
 </section>
-	
+    
 <section>
-	<h3>Paid for features</h3>
-	<div>
-	<p>Some operations are restricted to paid members. These features have been selected as <em>additional features for organisations</em>. The API and majority of the site functionality will always remain free for general use.</p>
-	</div>
+    <h3>Paid for features</h3>
+    <div>
+    <p>Some operations are restricted to paid members. These features have been selected as <em>additional features for organisations</em>. The API and majority of the site functionality will always remain free for general use.</p>
+    </div>
 </section>
 
 
@@ -96,7 +99,7 @@
 <section>
 <h3>Contacts</h3>
 <div>
-	For technical questions and comments, email <a href="mailto:developers@civicboom.com">developers@civicboom.com</a>
+    For technical questions and comments, email <a href="mailto:developers@civicboom.com">developers@civicboom.com</a>
 </div>
 </section>
 
@@ -146,13 +149,13 @@
 <h3>Servers</h3>
 <div>
     <p><a href="http://api-v1.civicboom.com/">http://api-v1.civicboom.com/</a> - Clients
-	should use this rather than www.civicboom.com - www
-	will always be running the latest code and may sometimes break compatability in major
-	ways. If a major break is necessary, we will try and keep older versions of the API
-	available on the API domains long enough for people to transition to the new one.
-	<p>The API servers allow HTTP as well as HTTPS; it is presumed that anyone writing an
-	API client will know the costs and benefits of an unencrypted connection and can make
-	and informed decision for themselves.
+    should use this rather than www.civicboom.com - www
+    will always be running the latest code and may sometimes break compatability in major
+    ways. If a major break is necessary, we will try and keep older versions of the API
+    available on the API domains long enough for people to transition to the new one.
+    <p>The API servers allow HTTP as well as HTTPS; it is presumed that anyone writing an
+    API client will know the costs and benefits of an unencrypted connection and can make
+    and informed decision for themselves.
     <p>When providing user visible links to our platform, always use www as this will
     always redirect web users to HTTPS
 
@@ -167,12 +170,12 @@
 <h3><span>(1.0 WIP)</span>Transport</h3>
 <div>
     <ul>
-	<li>All API requests should have a contact email address; preferably in the HTTP
-	    User-Agent field, though adding ?client_contact=[email address] to the URL
-		can suffice (altering the URL will lower performance though). If your client
-		is found to be problematic we will try to contact you to discuss and improve
-		it - if the address is empty or unreachable, we may have to resort to blocking
-		your IP to bring it under control.
+    <li>All API requests should have a contact email address; preferably in the HTTP
+        User-Agent field, though adding ?client_contact=[email address] to the URL
+        can suffice (altering the URL will lower performance though). If your client
+        is found to be problematic we will try to contact you to discuss and improve
+        it - if the address is empty or unreachable, we may have to resort to blocking
+        your IP to bring it under control.
     <li>All content-modifying actions (POST, PUT, DELETE) require an _authentication_token
         argument; since this is universal, it isn't mentioned in the docs for each action
         separately. The token can be found by calling /account/signin.json or /account/signin.xml
@@ -201,33 +204,33 @@
 <h3><span>(1.0 WIP)</span><a name="objects">Object types overview</a></h3>
 <style>
 #model TABLE {
-	width: 100%;
+    width: 100%;
 }
 #model DIV {
-	border: 2px solid #abbccd;
-	margin: 16px;
-	padding: 0px 16px 16px 16px;
+    border: 2px solid #abbccd;
+    margin: 16px;
+    padding: 0px 16px 16px 16px;
 
-	-moz-box-shadow: 6px 6px 4px #888;
-	-webkit-box-shadow: 6px 6px 4px #888;
-	box-shadow: 6px 6px 4px #888;
+    -moz-box-shadow: 6px 6px 4px #888;
+    -webkit-box-shadow: 6px 6px 4px #888;
+    box-shadow: 6px 6px 4px #888;
 
-	-moz-border-radius: 32px;
-	border-radius: 32px;
+    -moz-border-radius: 32px;
+    border-radius: 32px;
 }
 #model>DIV {
-	margin: auto;
-	margin-bottom: 16px;
-	max-width: 1000px;
+    margin: auto;
+    margin-bottom: 16px;
+    max-width: 1000px;
 }
 #model TD {
-	vertical-align: top;
+    vertical-align: top;
 }
 #model H4 {
-	background: none;
-	border: none;
-	text-align: center;
-	margin-top: 8px;
+    background: none;
+    border: none;
+    text-align: center;
+    margin-top: 8px;
 }
 </style>
 <div id="model">
@@ -238,58 +241,58 @@ Content is the main point of Civicboom - each bit of Content can have a title,
 text, attachments, location, a creator, the date it was created, if it is a
 reply to something else, a redistribution license, etc etc.
 <table><tr>
-	<td style="width: 50%;">
-		<div style="background: #dbb">
-		<h4>Draft</h4>
-		Content that is being worked on privately. Notably, it has a target_type
-		field which determines what type of Content it will become after the
-		user hits "Publish"
-		</div>
-	</td>
-	<td style="width: 50%;">
-		<div style="background: #dbb">
-		<h4>Comment</h4>
-		A short comment attached to another bit of Content, normally used to
-		request more details or clarify points in a request
-		</div>
-	</td>
+    <td style="width: 50%;">
+        <div style="background: #dbb">
+        <h4>Draft</h4>
+        Content that is being worked on privately. Notably, it has a target_type
+        field which determines what type of Content it will become after the
+        user hits "Publish"
+        </div>
+    </td>
+    <td style="width: 50%;">
+        <div style="background: #dbb">
+        <h4>Comment</h4>
+        A short comment attached to another bit of Content, normally used to
+        request more details or clarify points in a request
+        </div>
+    </td>
 </tr><tr>
-	<td colspan="2">
-		<div style="background: #dbb">
-		<h4>Visible Content</h4>
-		A bit of content designed to be viewed as a stand-alone unit. Will keep
-		track of the number of times it gets viewed and boomed.
-		<table><tr>
-			<td style="width: 50%;">
-				<div style="background: #b99">
-				<h4>Article</h4>
-				A stand-alone article; possibly in response to an Assignment
-				(if parent_id is set). Can have a rating (e.g. 1-5 stars).
-				If it is in response to an Assignment, the assigner can
-				approve or reject it.
-				</div>
-			</td>
-			<td style="width: 50%;">
-				<div style="background: #b99">
-				<h4>Assignment</h4>
-				A question to be responded to; can have an event date (e.g.
-				the date of a festival to report on) and a due date (e.g. a
-				couple of days later, so the responders have time to write
-				and organise media)
-				</div>
-			</td>
-			<!--
-			<td style="width: 33%;">
-				<div style="background: #b99">
-				<h4>Syndicated (Not implemented)</h4>
-				An article that a user has written and wants a newspaper to
-				pay for
-				</div>
-			</td>
-			-->
-		</tr></table>
-		</div>
-	</td>
+    <td colspan="2">
+        <div style="background: #dbb">
+        <h4>Visible Content</h4>
+        A bit of content designed to be viewed as a stand-alone unit. Will keep
+        track of the number of times it gets viewed and boomed.
+        <table><tr>
+            <td style="width: 50%;">
+                <div style="background: #b99">
+                <h4>Article</h4>
+                A stand-alone article; possibly in response to an Assignment
+                (if parent_id is set). Can have a rating (e.g. 1-5 stars).
+                If it is in response to an Assignment, the assigner can
+                approve or reject it.
+                </div>
+            </td>
+            <td style="width: 50%;">
+                <div style="background: #b99">
+                <h4>Assignment</h4>
+                A question to be responded to; can have an event date (e.g.
+                the date of a festival to report on) and a due date (e.g. a
+                couple of days later, so the responders have time to write
+                and organise media)
+                </div>
+            </td>
+            <!--
+            <td style="width: 33%;">
+                <div style="background: #b99">
+                <h4>Syndicated (Not implemented)</h4>
+                An article that a user has written and wants a newspaper to
+                pay for
+                </div>
+            </td>
+            -->
+        </tr></table>
+        </div>
+    </td>
 </tr></table>
 </div>
 
@@ -299,21 +302,21 @@ Most actions in Civicboom can be applied to Users and Groups equally; e.g.
 any Member can contribute to Content, any Member can be sent a Message, any
 Member can be part of a Group (i.e., Groups can be nested)
 <table><tr>
-	<td style="width: 50%;">
-		<div style="background: #bdb">
-		<h4>User</h4>
-		A User represents an individual person, somebody who signs in to the
-		site. Even when somebody wants an account for their organisation,
-		they still sign in as themselves before switching to control the
-		Group persona.
-	</td>
-	<td style="width: 50%;">
-		<div style="background: #bdb">
-		<h4>Group</h4>
-		A Group is a collection of Members (either Users or other Groups). A
-		Group essentially acts and does things the same way that a User does,
-		but it can be controlled by multiple people at once.
-	</td>
+    <td style="width: 50%;">
+        <div style="background: #bdb">
+        <h4>User</h4>
+        A User represents an individual person, somebody who signs in to the
+        site. Even when somebody wants an account for their organisation,
+        they still sign in as themselves before switching to control the
+        Group persona.
+    </td>
+    <td style="width: 50%;">
+        <div style="background: #bdb">
+        <h4>Group</h4>
+        A Group is a collection of Members (either Users or other Groups). A
+        Group essentially acts and does things the same way that a User does,
+        but it can be controlled by multiple people at once.
+    </td>
 </tr></table>
 </div>
 
@@ -322,16 +325,16 @@ Member can be part of a Group (i.e., Groups can be nested)
 Content and Members are the core focus of Civicboom, but there are some other data
 types that it is useful to know about.
 <table><tr><td style="width: 50%">
-	<div style="background: #ddf">
-	<h4>Message</h4>
-	A short bit of text; either from one Member to another (for private messaging),
-	or from nobody (for system notifications)
-	</div>
+    <div style="background: #ddf">
+    <h4>Message</h4>
+    A short bit of text; either from one Member to another (for private messaging),
+    or from nobody (for system notifications)
+    </div>
 </td><td style="width: 50%">
-	<div style="background: #ffd">
-	<h4>Media</h4>
-	An attachment to some Content
-	</div>
+    <div style="background: #ffd">
+    <h4>Media</h4>
+    An attachment to some Content
+    </div>
 </td></tr></table>
 </div>
 
@@ -354,17 +357,18 @@ types that it is useful to know about.
         <li>XML
         <li>RSS
         <li>Redirect
-		<!--
+        <li>iCalendar/ICS
+        <!--
         <li>Frag
-        <li>iCal
+        
         <li>PDF
-		-->
+        -->
     </ul>
     
     <h4>JSON</h4>
-	<p>Note that in all cases, JSON requests can have a "callback" parameter
-	passed to them in order to wrap the data as JSONP. Valid callback names
-	can have letters, numbers, and underscores in them.
+    <p>Note that in all cases, JSON requests can have a "callback" parameter
+    passed to them in order to wrap the data as JSONP. Valid callback names
+    can have letters, numbers, and underscores in them.
 
     <p>JSON data format:
     <pre>{
@@ -408,9 +412,9 @@ types that it is useful to know about.
        The list of fields returned in the RSS is often a subset of the JSON/XML output.
     <p><!--It is part of the RSS standard that clients can sort items by date.
        Some objects may return lists of items that are not in date order.-->
-	   Note that entries are not necessarily in order, i.e. a member object will
-	   be built of several smaller lists (e.g. top 3 requests + top 3 articles +
-	   top 3 boomed).
+       Note that entries are not necessarily in order, i.e. a member object will
+       be built of several smaller lists (e.g. top 3 requests + top 3 articles +
+       top 3 boomed).
     <p>Hint: Common use of RSS 'content' lists:
        By default media attachments are not included in the RSS return
        but can be enabled by including the parameter 'include_fields=attachments'</p>
@@ -421,9 +425,40 @@ types that it is useful to know about.
     <p>If the request has come from an external site the user will be prompted to confirm they want to perform the action.
        If they are not currently logged in they will be prompted to sign in / sign up.
     <p>(NOTE: When undertaking the signup process it may not be possible to return to external sites via http_referer,
-       this will be investigated)
+       this will be investigated upon request)
        
-	<!--
+    <h4>ICS (iCalendar)</h4>
+    <p>The ICS output format conforms to <a href="http://tools.ietf.org/html/rfc5545.txt">rfc5545</a></p>
+    <p>Members and Content can be viewed as ICS files and imported into online or offline calendars.
+    <p>This could be used be used to sync accepted assignments with dates an times to there online calendars. If they have mobile phone that references this online calendar the user could always have their diarys up to date.
+    <p>An example could be users subscribing their calendar to http://www.civicboom.com/members/USERNAME/assignments_accepted.ics</p>
+    <p>Civicboom objects are mapped in the following way
+        <table class="api-table">
+            <tr><td>Assignment</td><td>This could potentialy create 2 calendar entrys. <ul><li>VEVENT (if event date set) with ATENDEE list<li> VTODO (if due date set) <li>If no event_date or due_date set, raise as VTODO</ul></td></tr>
+            <tr><td>Article</td><td>VJOURNAL</td></tr>
+            <tr><td>Draft</td><td>VJOURNAL Draft</td></tr>
+            <tr><td>Message</td><td>VJOURNAL</td></tr>
+        </table>
+        The UID's of each calendar item are the Civicboom URL's for that item - with the exception of VTODO objects that have 'due' appended to the UID's to make them distinct and identifyable from the parent VEVENT
+    </p>
+    <p>The following RFC5545 fields are also supported
+        <ul>
+            <li>GEO
+            <li>CLASS:PUBLIC/PRIVATE
+            <li>COMMENT: as comments or responses
+        </ul>
+    <p>All items are TRANSPARENT calendar entrys are ar therefore non blocking
+    
+    <h4>CSV</h4>
+    <p><ul>
+        <li>Standard text CSV output.
+        <li>The top row is a list of fieldnames.
+        <li>The fields returned are dipendent on the items in the return and may differ between calls and server versions.
+        <li>Commas are escaped with the URL encoding '%2c'.
+        <li>Only list returns are currently supported.
+    </ul></p>
+    
+    <!--
     <h4>Frag</h4>
     <p>Fragments are chunks of HTML data with marked up with classes for use with
        injecting content directly into existing web pages. The developer can then
@@ -432,12 +467,9 @@ types that it is useful to know about.
        not generic enough for mainstream use. Work is currently underway to make the
        .frag a generic tool for developers. (tentatively May 2011)
     
-    <h4>iCal</h4>
-    <p>Pending implementation</p>
-    
     <h4>PDF</h4>
     <p>Pending implementation</p>
-	-->
+    -->
 </div>
 </section>
 
@@ -446,9 +478,9 @@ types that it is useful to know about.
 <h3><span>(1.0 WIP)</span>Data Types</h3>
 <div>
     <p>In addition to the standard Integer / String, geolocations should be
-	   specified as a string with floating-point longitude and latitude
-	   separated by a space or comma, eg "1.0809 51.2797" is Canterbury
-	   town center.
+       specified as a string with floating-point longitude and latitude
+       separated by a space or comma, eg "1.0809 51.2797" is Canterbury
+       town center.
 </div>
 </section>
 

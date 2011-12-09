@@ -252,7 +252,15 @@
     
                 <a class="link_janrain" style="float: right; font-size: 1.25em; padding-right: 3em;" href="#" ${share.janrain_social_data_member(self.member, 'existing' if c.logged_in_persona and c.logged_in_persona.username == self.id else 'other', self.member['type'])}><p class="janrain_link">${_("Get others involved!")}</p></a>
     
-                <div class="separator"></div>
+            <div class="qr">
+            <%
+                popup.link(
+                    h.args_to_tuple(controller='misc', action='get_link_embed', type='member', id=self.id),
+                    title = _('Link to this member'),
+                    text  = h.literal("<span class='icon16 i_widget'></span>%s") % _("Link to this member"),
+                )
+            %>
+            </div>
             </div>    
             
             ## My requests

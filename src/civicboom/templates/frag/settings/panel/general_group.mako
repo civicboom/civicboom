@@ -57,7 +57,7 @@
 
         ## accordion can be set to fill parent, but we don't want /filled/, we want a little
         ## margin at top and bottom for title and buttons
-        <div style="position: absolute; top: 2.5em; bottom: 4em; left: 1em; right: 1em;">
+        <div style="position: absolute; top: 2.5em; bottom: 0em; padding-bottom: 4em; left: 1em; right: 1em;">
         <div class="jqui_accordion event_load event_resize" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
             <h4>1. ${_("Describe the _Group")}</h4>
             <div>
@@ -211,9 +211,16 @@
                 </table>
             </div>
                 
-            % if c.logged_in_persona.has_account_required('plus'):
+            
             <h4>4. ${_('Member & content visibility')}</h4>
             <div>
+                % if not c.logged_in_persona.has_account_required('plus'):
+                    <div class="disabled-grayout">
+                    </div>
+                    <div class="disabled-overlay">
+                        ${_('These features are only available for paid accounts. To find out more, please contact us.')}
+                    </div>
+                % endif
                 <table>
                     <tr>
                         <td></td>
@@ -245,8 +252,9 @@
                         <td>
                             <!--
                             <h3>${_("Content default visibility")}</h3>
-                            ${show_error('default_content_visibility')}
                             -->
+                            ${show_error('default_content_visibility')}
+                            
                             &nbsp;
                         </td>
                     </tr>
@@ -270,7 +278,6 @@
                     </tr>
                 </table>
             </div>
-            % endif
         </div>
         </div>
 

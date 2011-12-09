@@ -449,7 +449,7 @@ if(!('util' in boom)) {
     }
   }
   boom.init_foot.push(boom.util.modal_queue.init);
-  boom.util.flash_message.init();
+  boom.init_foot.push(boom.util.flash_message.init);
   $(boom.util.message_indicators.init);
   boom.util.validators.init();
 }
