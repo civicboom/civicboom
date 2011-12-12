@@ -58,6 +58,7 @@
     <script type="text/javascript">
         var widget_var_prefix = '${var_prefix}';
         function preview_widget(element) {
+            var escaper = encodeURIComponent || escape;
             widget_creator = element.closest('.widget_creator');
             
             var link = ""
@@ -73,7 +74,7 @@
             
             // Overlay widget variables over link url
             if (widget_vars['base_list']) {
-              link += "/" + escape(widget_vars['base_list']);
+              link += "/" + escaper(widget_vars['base_list']);
               delete widget_vars['base_list'];
             }
             link += "?";
@@ -82,7 +83,7 @@
             for (key in widget_vars) {
                 var value = widget_vars[key];
                 if (typeof value == 'string') {
-                    link += widget_var_prefix+key+"="+escape(value)+"&";
+                    link += widget_var_prefix+key+"="+escaper(value)+"&";
                 }
             }
             
