@@ -47,8 +47,8 @@
         <div class="text">
             <p class="headline">${_('Channel your _content')}, <br />${_('make yourself heard')}</p>
             <p class="tagline">
-                ${_('Connecting those who want _content,')}<br />
-                ${_('with the people that have it')}<br />
+                ${_('Connecting those who ')}<b>want</b>${_(' _content,')}<br />
+                ${_('with the people that ')}<b>have</b>${_(' it')}<br />
             </p>
             <a href="${url(controller='account', action='signin')}">
                 <div class="signup_btn">
