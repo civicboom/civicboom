@@ -14,7 +14,7 @@ from paste.script.appinstall import SetupCommand
 from pylons import url
 from routes.util import URLGenerator
 
-from civicboom.model      import Message
+from civicboom.model      import Message, Content
 from civicboom.model.meta import Session
 from sqlalchemy           import or_, and_, not_, null
 
@@ -326,6 +326,32 @@ class TestController(TestCase):
         response_json = json.loads(response.body)
         return response_json['data']['list']
     
+    def view_content(self, content_id, username=None, can_view=True):
+        """
+        A convenience test that looks up an item of content as a single item and in a list
+        This is useful for checking that the lists are in sync with the actual individual items for permissions
+        pass username=False to check as logged out user
+        """
+        if username != None and username != self.logged_in_as:
+            original_username = self.logged_in_as
+            # AllanC - took this out because I think it reduces clarity
+            #if isinstance(username,list):
+            #    for u in username:
+            #        can_view_content(self, content_id, u)
+            if username==False:
+                self.log_out()
+            else:
+                self.log_in_as(username)
+        if can_view:
+            self.get_content(content_id)
+            content_ids = [content['id'] for content in self.app.get(url('contents', id=content_id, format='json'), status=200).json['data']['items']]
+            self.assertIn(content_id, content_ids)
+        if not can_view:
+            assert False # AllanC - TODO - implement this .. the content should not be visible
+        if original_username:
+            self.log_in_as(original_username)
+        return True
+    
     def create_content(self, title=u'Test', content=u'Test', type='article', **kwargs):
         params={
             '_authentication_token': self.auth_token,
@@ -377,13 +403,17 @@ class TestController(TestCase):
         )
         # Todo - check notifications
 
-    def delete_content(self, id):
-        self.assertIn('delete', self.get_actions(id))
-        response = self.app.post(
-            url('content', id=id, format="json"),
-            params={'_method': 'delete', '_authentication_token': self.auth_token,},
-            status=200
-        )
+    def delete_content(self, id, force=False):
+        if force: # ignore logged in user and just get rid of it
+            Session.delete(Session.query(Content).get(id))
+            Session.commit()
+        else:
+            self.assertIn('delete', self.get_actions(id))
+            response = self.app.post(
+                url('content', id=id, format="json"),
+                params={'_method': 'delete', '_authentication_token': self.auth_token,},
+                status=200
+            )
 
     def publish_content(self, draft_id):
         response = self.app.put(
