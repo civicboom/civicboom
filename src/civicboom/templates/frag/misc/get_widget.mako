@@ -73,7 +73,7 @@
             
             // Overlay widget variables over link url
             if (widget_vars['base_list']) {
-              link += "/" + Url.encode(widget_vars['base_list']);
+              link += "/" + escape(widget_vars['base_list']);
               delete widget_vars['base_list'];
             }
             link += "?";
@@ -82,7 +82,7 @@
             for (key in widget_vars) {
                 var value = widget_vars[key];
                 if (typeof value == 'string') {
-                    link += widget_var_prefix+key+"="+Url.encode(value)+"&";
+                    link += widget_var_prefix+key+"="+escape(value)+"&";
                 }
             }
             
