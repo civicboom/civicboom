@@ -239,7 +239,7 @@ header {
 BODY.c-misc {
     color: $misc-page-font;
     
-    HEADER A { color: #fff; }
+    .button { color: #fff !important; }
     
     A { color: $misc-page-link; }
 
@@ -265,12 +265,14 @@ BODY.c-misc {
     /* misc/about page content */
     .content {
         display: inline-block;
-        font-size: 105%;
+        font-size: 11pt;
         line-height: 175%;
         vertical-align: top;
         width: 80%;
         
-        H2 { font-size: 120%; }
+        H1 { font-size: 13pt; }
+        
+        H2 { font-size: 13pt; }
         
         UL, P { padding-bottom: 10px; }
         
