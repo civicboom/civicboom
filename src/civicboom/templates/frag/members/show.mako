@@ -278,7 +278,7 @@
     </div>
     
     ## Left col
-    <div class="frag_col frag_left_col">
+    <div class="frag_col frag_left_col short">
         ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ## this class attributes in this section are rather important; rather
         ## than being used for CSS, they are part of the hCard standard, they
@@ -421,7 +421,7 @@
     </div>
     
     ## Right col
-    <div class="frag_col frag_right_col">
+    <div class="frag_col frag_right_col long">
         ${guides()}
         
         ## Accepted Assignments --------------------------------------

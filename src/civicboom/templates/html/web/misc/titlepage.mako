@@ -47,8 +47,8 @@
         <div class="text">
             <p class="headline">${_('Channel your _content')}, <br />${_('make yourself heard')}</p>
             <p class="tagline">
-                ${_('Connecting people who want _content,')}<br />
-                ${_('with the people that need it')}<br />
+                ${_('Connecting those who ')}<b>want</b>${_(' _content,')}<br />
+                ${_('with the people that ')}<b>have</b>${_(' it')}<br />
             </p>
             <a href="${url(controller='account', action='signin')}">
                 <div class="signup_btn">
@@ -71,11 +71,16 @@
             <div class="col-img">
                 <img src="images/misc/titlepage/audience.png" />
             </div>
-            <h1>${_('Individuals')}</h1>
+            <h1>${_('Have _content to give?')}</h1>
             <ul>
+                <li><b>${_("Capture & send ")}</b>${_("_content directly")}</li>
+                <li><b>${_("Participate ")}</b>${_("in debate")}</li>
+                <li><b>${_("Get recognition ")}</b>${_("for your _content")}</li>
+                <%doc>
                 <li>${_('Participate in debate')}</li>
                 <li>${_('Capture & send _content straight to organisations')}</li>
                 <li>${_('Get recognition for your _content')}</li>
+                </%doc>
             </ul>
         </div>
         
@@ -84,13 +89,18 @@
             <div class="col-img">
                 <img src="images/misc/titlepage/organisation.png" />
             </div>
-            <h1>${_('Organisations')}</h1>
+            <h1>${_('Want _content to use?')}</h1>
             <ul>
+                <li><b>${_("Engage ")}</b>${_("_content directly")}</li>
+                <li><b>${_("Manage ")}</b>${_("_content directly")}</li>
+                <li>${_("Custom ")}<b>${_("Apps ")}</b>${_("and ")}<b>${_("Plugins")}</b></li>
+                <%doc>
                 <li>${_('Engage your audience by requesting _content directly')}</li>
                 <li>${_('Innovative & secure workflow efficiency solutions')}</li>
                 <li>${_('Build customised apps, plugins & management tools using our API')}</li>
-                <li><a href="${h.url(controller='about', action='organisations')}" class="button">Find out more</a></li>
+                </%doc>
             </ul>
+            <a href="${h.url(controller='about', action='organisations')}" class="button" style="margin: 10px 20px">Find out more</a>
         </div>
         
         ## Right col - mobile
