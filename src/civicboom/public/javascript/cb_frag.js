@@ -526,41 +526,20 @@ if(!('frags' in boom)) {
             return false;
           }
         },
-        /*
-        '.thumbnail' : {
-          'boom_load' : function() {
-            var div = $(this);
-            var img = div.children('img');
-            
-            $("<img/>").attr({
-                src: $(img).attr("src"),
-            }).load(function() {
-                w = this.width; h = this.height;
-                console.log("ENOUGH QUESTIONS GOOD BYE", w, h);
-                if (w > h) $(img).addClass('landscape');
-                if ($(img).width() && $(img).height()) {
-                  $(img).css({
-                    left: (div.width()/2)-(img.width()/2),
-                    top:  (div.height()/2)-(img.height()/2),
-                  });
-                }
-            });
-            return false;
-          }
-        }
-        */
         '.thumbnail' : {
           'boom_load' : function() {
             var div = $(this);
             var img = div.find('img');
-            img.one('load', function() {
-              div.trigger('boom_load');
+            img.on('load', function() {
+              setTimeout(function () {
+                div.trigger('boom_load');
+              },0);
             });
             if (img.width() && img.height()) {
               if (img.width() > img.height()) img.addClass('landscape');
               img.css({
                 left: (div.width()/2)-(img.width()/2),
-                top:  (div.height()/2)-(img.height()/2),
+                top:  (div.height()/2)-(img.height()/2)
               });
             }
             return false;
