@@ -32,20 +32,27 @@
     </%def>
 
 
-    ## Setup Form
-    <%
-        if 'action' not in d or c.controller == 'groups':
-            d['action'] = 'edit'
-    %>
-    % if c.action != 'new' and c.controller !='groups':
-        ## Editing Form
-        ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
-    % else:
-        ## Creating Form
-        ${h.form(h.url('groups', )                 , method='POST', multipart=True)}
-    % endif
-    <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
+
     <div class="group_settings">
+        
+        ## Delete
+        ##  This cannot be inside the actual bulk of the form as this is a secure link
+        ## AllanC - by vertue of the fact they can see this page, they are already an administrator
+        % if c.controller == 'settings':
+            ${h.secure_link(
+                ##h.args_to_tuple('group', id=d['username'], format='redirect'),
+                h.url('group', id=d['username']),
+                method      = "DELETE",
+                value       = _("Delete _group"),
+                link_class  = 'fr',
+                link_data   = dict(
+                    confirm = _("Are your sure you want to delete this group? (All content published by this group will be deleted. All members will be notified)"),
+                ),
+                form_data   = dict(json_complete = "[ ['update'], ['refresh', '%s'] ]" % h.url('member', id=d['username'])),
+                ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
+            )}
+        % endif
+        
         <h1>
         % if c.action != 'new' and c.controller != 'groups':
             ${_("Edit _Group Settings")}
@@ -53,7 +60,25 @@
             ${_("Create _Group")}
         % endif
         </h1>
+        
+        
         <!-- <a href="${h.url(controller='misc', action='what_is_a_hub')}">${_('What is a _Group?')}</a> -->
+
+        ## Setup Form
+        <%
+            if 'action' not in d or c.controller == 'groups':
+                d['action'] = 'edit'
+        %>
+        % if c.action != 'new' and c.controller !='groups':
+            ## Editing Form
+            ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
+        % else:
+            ## Creating Form
+            ${h.form(h.url('groups', )                 , method='POST', multipart=True)}
+        % endif
+        ## <div style="display:none"> </div> ## AllanC - why was this surrounding the hidden input?
+        <input type="hidden" name="panel" value="${c.result.get('panel')}" />
+
 
         ## accordion can be set to fill parent, but we don't want /filled/, we want a little
         ## margin at top and bottom for title and buttons
@@ -61,22 +86,6 @@
         <div class="jqui_accordion event_load event_resize" data-jqui_accordion="{&quot;fillSpace&quot;: true, &quot;autoHeight&quot;: false}">
             <h4>1. ${_("Describe the _Group")}</h4>
             <div>
-##    ## AllanC - disabled for now .. still working on it, had other prioritys
-##    % if c.controller == 'settings':
-##        ## AllanC - by vertue of the fact they can see this page, they are already an administrator
-##        ${h.secure_link(
-##            ##h.args_to_tuple('group', id=d['username'], format='redirect'),
-##            h.url('group', id=d['username']),
-##            method          = "DELETE",
-##            value           = _("Delete _group"),
-##            ##link_class      = 'fr',
-##            link_data            = dict(
-##                confirm    = _("Are your sure you want to delete this group? (All content published by this group will be deleted. All members will be notified)"),
-##            ),
-##            form_data       = dict(json_complete = "[ ['update'], ['refresh', '%s'] ]" % h.url('member', id=d['username'])),
-##            ##json_form_complete_actions = "cb_frag_reload('%s', current_element); cb_frag_remove(current_element);" % h.url('member', id=self.id),
-##        )}
-##    % endif
                 <table>
                     <tr>
                         <td>
@@ -295,10 +304,13 @@
                 ${popup.popup_static('terms and conditions', terms_and_conds, '', html_class="terms_and_conds")}
             </div>
         </div>
+        
+        ${h.end_form()}
+        
         <div class="cb"></div>
     </div>
     
-    ${h.end_form()}
+    
 </%def>
 
 <%def name="terms_and_conds()">

@@ -75,7 +75,7 @@ BODY.c-misc.a-titlepage {
         //background-image: url('/images/misc/titlepage/banner_gradient.png');
         background-repeat: no-repeat;
         //background-color: $cb-lightblue;
-        height: 400px;
+        height: 350px;
         width: 100%;
         margin-top: 0.5em;
         margin-bottom: 1em;
@@ -83,7 +83,7 @@ BODY.c-misc.a-titlepage {
         
         .text {
             position: absolute;
-            top: 20%; //14%;
+            top: 17%;//20%; //14%;
             right: 3%;
             height: 100%;
             max-width: 52%;
@@ -107,8 +107,8 @@ BODY.c-misc.a-titlepage {
         
         .graphic {
             position: absolute;
-            height: 85%;
-            margin: 7.5% auto 7.5% 3%;
+            height: 100%;
+            margin: 0 auto 0 3%;
         }
     }
     
