@@ -270,6 +270,8 @@ BODY.c-misc {
         vertical-align: top;
         width: 80%;
         
+        H2 { font-size: 120%; }
+        
         ul li { list-style: disc; }
         
         ul, ol {
@@ -281,6 +283,25 @@ BODY.c-misc {
     }
     
     /* specific about page stylings */
+    #about_civicboom {
+        line-height: 200%;
+
+        H2, IMG { padding-top: 1em; }
+
+        .content A {
+            color: #4974b8 !important;
+
+            &:hover { color: #FF8814 !important; }
+        }
+
+        .logo {  }
+
+        .flow {
+            margin-left: -0.5em;
+            width: 100%;
+        }
+    }
+
     #contact_us {
         background-color: #fff;
         padding: 1em;
@@ -625,27 +646,27 @@ BODY.c-misc.a-new_article.u-user {
 
 BODY.c-misc.a-what_is_a_hub {
     .frag_whitewrap {
-	background: white;
-	border-radius: 16px;
-	padding: 16px;
-	margin: 1em;
-	width: 800px;
-	margin: auto;
-	color: $text-colour;
-	
-	.create_hub {
-	    width: 10em;
-	    border: 1px solid #999;
-	    padding: 1em 3em 1em 3em;
-	    margin: 1em auto 0 auto;
-	    @include border_radius(0.5em);
-	    font-size: 130%;
-	    text-align: center;
-	}
-	
-	img {
-	    max-width: 300px;
-	}
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 1em;
+  width: 800px;
+  margin: auto;
+  color: $text-colour;
+  
+  .create_hub {
+      width: 10em;
+      border: 1px solid #999;
+      padding: 1em 3em 1em 3em;
+      margin: 1em auto 0 auto;
+      @include border_radius(0.5em);
+      font-size: 130%;
+      text-align: center;
+  }
+  
+  img {
+      max-width: 300px;
+  }
     }
 }
 
