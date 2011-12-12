@@ -1,5 +1,6 @@
 <%inherit file="/frag/common/frag.mako"/>
 <%namespace name="popup" file="/html/web/common/popup_base.mako" />
+<%namespace name="orgs"  file="/html/web/misc/about/organisations.mako" />
 
 <%!
     from sets import Set
@@ -228,6 +229,11 @@
                     </div>
                     <div class="disabled-overlay">
                         ${_('These features are only available for paid accounts. To find out more, please contact us.')}
+                        ${popup.link(
+                            h.args_to_tuple(controller='misc', action='contact_us'),
+                            title = _('Contact us'),
+                            text  = h.literal("<span class='learn_more button'>%s</span>") % _('Contact us'),
+                        )}
                     </div>
                 % endif
                 <table>
