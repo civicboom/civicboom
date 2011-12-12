@@ -3,8 +3,6 @@
 
 <div id="about_civicboom">
     
-    <img src="/images/logo-v3-411x90.png" class="logo" />
-    
     <h1>${_("Civicboom is a flexible platform that makes direct rich-media engagement between the audience [you!] and audience-facing organisations [them!] more efficient, and more manageable.")}</h1>
     
     <h2>${_("The How")}</h2>
@@ -38,11 +36,11 @@
     </ol>
     
     <h2>${_('For more information on either please contact either')}</h2>
-    <a href="mailto:e.hodgson@civicboom.com"><p>${_('e.hodgson@civicboom.com')}</p></a>
-    <a href="mailto:t.foster@civicboom.com"><p>${_('t.foster@civicboom.com')}</p></a>
+    <p><a href="mailto:e.hodgson@civicboom.com">${_('e.hodgson@civicboom.com')}</a><br />
+    <a href="mailto:t.foster@civicboom.com">${_('t.foster@civicboom.com')}</a></p>
     
     <h2>${_('Find us at:')}</h2>
-    <p><a href="http://www.programmableweb.com/api/civicboom">${_('Programmable Web')}</a></p>
-    <p><a href="http://civic.mit.edu/projects/community/civicboom">${_('MIT Centre For Civic Media')}</a></p>
+    <p><a href="http://www.programmableweb.com/api/civicboom">${_('Programmable Web')}</a><br />
+    <a href="http://civic.mit.edu/projects/community/civicboom">${_('MIT Centre For Civic Media')}</a></p>
 
 </div>
