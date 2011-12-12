@@ -12,7 +12,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     %if d['type'] in ['content', 'member']:
-        <div id="link_embed">
+        <div style="width: 300px;">
             <div>
                 <h1>Link</h1>
                 <p>
