@@ -437,6 +437,7 @@ types that it is useful to know about.
             <tr><td>Assignment</td><td>This could potentialy create 2 calendar entrys. <ul><li>VEVENT (if event date set) with ATENDEE list<li> VTODO (if due date set) <li>If no event_date or due_date set, raise as VTODO</ul></td></tr>
             <tr><td>Article</td><td>VJOURNAL</td></tr>
             <tr><td>Draft</td><td>VJOURNAL Draft</td></tr>
+            <tr><td>Message</td><td>VJOURNAL</td></tr>
         </table>
         The UID's of each calendar item are the Civicboom URL's for that item - with the exception of VTODO objects that have 'due' appended to the UID's to make them distinct and identifyable from the parent VEVENT
     </p>
@@ -449,8 +450,20 @@ types that it is useful to know about.
     <p>All items are TRANSPARENT calendar entrys are ar therefore non blocking
     
     <h4>CSV</h4>
-    <p>Standard text CSV output. The top row is a list of fieldnames</p>
-    <p>The fields returned are dipendent on the items in the return and may differ between calls</p>
+    <p><ul>
+        <li>Standard text CSV output.
+        <li>The top row is a list of fieldnames.
+        <li>The fields returned are dipendent on the items in the return and may differ between calls and server versions.
+        <li>Only list returns are currently supported.
+        <li>Any new_line characters in any string are replaced by the literal '\n'
+        <li>
+            The CSV output has the following query string parameter controls:
+            <ul>
+            <li>field_separator (default=',')
+            <li>field_separator_replacement (default='%2c')
+            <li>line_separator (default='\r\n')
+            </ul>
+    </ul></p>
     
     <!--
     <h4>Frag</h4>
