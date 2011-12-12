@@ -121,9 +121,10 @@ if(!('util' in boom)) {
                 collision: 'fit',
                 using: function (position) {
                   var elem = $(this);
-                  elem.siblings('.ui-widget-overlay').css('top', - $('#app').offset().top) ;
+                  elem.siblings('.ui-widget-overlay').css('top', 0 - $('#app').offset().top) ;
                   elem.css('width', elem.css('width')); // Force element width!
                   elem.css('left', position.left);//.css('top', position.top); Leave unset for top of frag containers
+                  elem.css('top', '6px');
                 }
               },
               draggable: false,
