@@ -239,7 +239,7 @@ header {
 BODY.c-misc {
     color: $misc-page-font;
     
-    HEADER A { color: #fff; }
+    .button { color: #fff !important; }
     
     A { color: $misc-page-link; }
 
