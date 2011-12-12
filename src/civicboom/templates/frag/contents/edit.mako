@@ -3,6 +3,7 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="orgs"            file="/html/web/misc/about/organisations.mako" />
 
 <%!
     from webhelpers.html import HTML, literal
@@ -399,6 +400,11 @@
                     </div>
                     <div class="disabled-overlay">
                         ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
+                        ${popup.link(
+                            h.args_to_tuple(controller='misc', action='contact_us'),
+                            title = _('Contact us'),
+                            text  = h.literal("<span class='learn_more button'>%s</span>") % _('Contact us'),
+                        )}
                     </div>
                 % endif
                 <label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label>
