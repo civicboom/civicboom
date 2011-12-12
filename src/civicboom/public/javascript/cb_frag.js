@@ -640,14 +640,18 @@ if(!('frags' in boom)) {
       form = boom.util.convert_jquery(form);
       boom.frags.setInterval(form, 'auto_save', false, function() {
         boom.util.tinymce.save(form);
-        var data = form.find('.auto_save:input,[name="_authentication_token"]:input,[name="_method"]:input').serialize();
+        var form_data = form.find('.auto_save:input,[name="_authentication_token"]:input,[name="_method"]:input').serialize();
+        // Check previously auto-saved data attached to form, if nothing has changed simply return.
+        if (form.data('autoSaveDiff') == form_data) return;
         $.ajax({
           type : 'POST',
           dataType : 'json',
           url : form.data('json'),
-          data : data,
+          data : form_data,
           success : function(data) {
             boom.util.flash_message.show(data);
+            // When auto-save successful store form data
+            form.data('autoSaveDiff', form_data);
           },
           error : function(data) {
             boom.util.flash_message.show({
