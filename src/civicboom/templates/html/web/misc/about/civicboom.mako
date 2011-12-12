@@ -3,9 +3,9 @@
 
 <div id="about_civicboom">
     
-    <h1>${_("Civicboom is a flexible platform that makes direct rich-media engagement between the audience [you!] and audience-facing organisations [them!] more efficient, and more manageable.")}</h1>
-    
     <img src="/images/logo-v3-411x90.png" class="logo" />
+    
+    <h1>${_("Civicboom is a flexible platform that makes direct rich-media engagement between the audience [you!] and audience-facing organisations [them!] more efficient, and more manageable.")}</h1>
     
     <h2>${_("The How")}</h2>
     <p>${_("Our platform allows anyone to post Requests for specific items of content, to publicise those Requests and to manage content as it comes flooding back to you! We provide an altogether deeper level of engagement within communities.")}</p>
@@ -29,6 +29,13 @@
         ${_("We are an open platform, therefore the entire data-set of requests and responses are available through a public documented ")}<a href="http://www.programmableweb.com/api/civicboom">${_("API [Application Programing Interface]")}</a>${_(". Developers are able to integrate our technology into existing systems, to mashup with existing APIs.")}
     </p>
     <p>${_("The data is open for the public to see, use and interact with.")}</p>
+    
+    <h2>${_("Packages")}</h2>
+    <p>${_("For organisations, we offer two packages to be tailored according to your requirements:")}</p>
+    <ol>
+        <li><b>${_("Browser-Based + Limited Services: ")}</b>${_("Access to the site as it is with the additional use of certain content management tools, extra privileges and features")}</li>
+        <li><b>${_("API + Extensive Services: ")}</b>${_("Unlimited access to our API and the provision of a customised solution to your internal or external engagement inefficiencies.")}</li>
+    </ol>
     
     <h2>${_('For more information on either please contact either')}</h2>
     <a href="mailto:e.hodgson@civicboom.com"><p>${_('e.hodgson@civicboom.com')}</p></a>

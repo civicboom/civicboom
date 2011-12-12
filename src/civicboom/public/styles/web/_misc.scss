@@ -272,10 +272,12 @@ BODY.c-misc {
         
         H2 { font-size: 120%; }
         
-        ul li { list-style: disc; }
+        UL, P { padding-bottom: 10px; }
         
-        ul, ol {
-            li {
+        UL LI { list-style: disc; }
+        
+        UL, OL {
+            LI {
                 margin-left: 2em;
                 line-height: 200%;
             }
@@ -286,7 +288,7 @@ BODY.c-misc {
     #about_civicboom {
         line-height: 200%;
 
-        H2, IMG { padding-top: 1em; }
+        H2 { padding-top: 0.75em; }
 
         .content A {
             color: #4974b8 !important;
@@ -294,7 +296,7 @@ BODY.c-misc {
             &:hover { color: #FF8814 !important; }
         }
 
-        .logo {  }
+        .logo { padding-bottom: 10px; }
 
         .flow {
             margin-left: -0.5em;
