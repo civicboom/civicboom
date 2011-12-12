@@ -575,7 +575,7 @@ def setup_format_processors():
         
         if result['data'].get('list'):
             return kwargs['line_separator'].join(rows(result['data']['list']['items']))
-        return ''
+        return 'Only lists are renderable in CSV'
         
     def format_pdf(result):
         import subprocess
