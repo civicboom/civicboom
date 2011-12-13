@@ -1,5 +1,6 @@
 <%!
     from webhelpers.html import HTML, literal
+    from paste.deploy.converters import asbool
 %>
 
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
@@ -158,4 +159,31 @@
             % endif
         </div>
     </div>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Yes/No input
+##------------------------------------------------------------------------------
+
+<%def name="yesno(selected=None, yes_value='yes', no_value='no', yes_display=None, no_display=None)">
+<%
+    selected_string = 'selected=selected'
+    selected_yes = ''
+    selected_no  = ''
+    try:
+	selected = asbool(selected)
+    except:
+	pass
+    if isinstance(selected, bool):
+	selected_yes = selected_string if selected==True  else ''
+	selected_no  = selected_string if selected==False else ''
+    elif isinstance(selected, basestring):
+	selected_yes = selected_string if selected==yes_value else ''
+	selected_no  = selected_string if selected==no_value  else ''
+%>
+<select name="responses_require_moderation" class="yesno">
+    <option value="${yes_value}" class="yes" ${selected_yes}>${yes_display if yes_display else yes_value}</option>
+    <option value="${ no_value}" class="no"  ${selected_no }>${ no_display if  no_display else  no_value}</option>
+</select>
 </%def>
