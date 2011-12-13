@@ -3,11 +3,15 @@
 
 <div id="about_civicboom">
     
-    <h1>${_("Civicboom is a flexible platform that makes direct rich-media engagement between the audience [you!] and audience-facing organisations [them!] more efficient, and more manageable.")}</h1>
+    <h1>${_("_site_name enables content-hungry organisations to ask for and get back video, images and audio from their audience simply and directly via mobile or PC.")}</h1>
     
     <h2>${_("The How")}</h2>
-    <p>${_("Our platform allows anyone to post Requests for specific items of content, to publicise those Requests and to manage content as it comes flooding back to you! We provide an altogether deeper level of engagement within communities.")}</p>
-    <p>${_("Put simply, the Civicboom process is that a content-seeker can set a Request for specific content. Then by using our customised mobile app or by uploading to the browser-based site, a content-giver can Respond with rich-media directly to that Request. All incoming rich-media content can then be managed by the content-seeker, and directed to a customisable plugin to be embedded on a website.")}</p>
+    <p>${_("Our platform allows anyone to post requests for specific items of content, to publicise those requests and to manage content. We provide an altogether deeper level of engagement within communities.")}</p>
+    <ol>
+        <li>${_("An organisation can put out a request for video, images or audio via a simple widget on their site, plus our free mobile application and social networks.")}</li>
+        <li>${_("The audience can then respond to the request directly via their mobile or web.")}</li>
+        <li>${_("When the organisation gets the content back they can validate, approve and use.")}</li>
+    </ol>
     <img src="/images/misc/about/organisations/flow.png" class="flow" />
     
     <h2>${_("The Smart Part")}</h2>
@@ -19,8 +23,6 @@
         <li>${_("Our Mobile Website - for those without access to our Apps.")}</li>
     </ul>
     <p>${_("Content can also be suggested or pushed-to specific audience-facing organisations unprompted.")}</p>
-    <p>${_("Rather than having opinions interpreted on their behalf by potentially biased media organisations - an audience or community is given a voice of its own. By providing the tools to request for and suggest content, we hope that local communities, governments and organisations can be encouraged to collaborate.")}</p>
-    <p>${_("We believe that the provision of such tools will invigorate democracy, inform decision-making and stimulate the fourth estate.")}</p>
     
     <h2>${_("An Open Documented Platform")}</h2>
     <p>
@@ -35,9 +37,10 @@
         <li><b>${_("API + Extensive Services: ")}</b>${_("Unlimited access to our API and the provision of a customised solution to your internal or external engagement inefficiencies.")}</li>
     </ol>
     
-    <h2>${_('For more information on either please contact either')}</h2>
-    <p><a href="mailto:e.hodgson@civicboom.com">${_('e.hodgson@civicboom.com')}</a><br />
-    <a href="mailto:t.foster@civicboom.com">${_('t.foster@civicboom.com')}</a></p>
+    <h2>${_('Want to learn more?')}</h2>
+    <p>${_("Either sign up or contact us:")}</p>
+    ${parent.sign_up()}
+    ${parent.contact_us()}
     
     <h2>${_('Find us at:')}</h2>
     <p><a href="http://www.programmableweb.com/api/civicboom">${_('Programmable Web')}</a><br />

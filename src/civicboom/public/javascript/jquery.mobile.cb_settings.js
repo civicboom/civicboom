@@ -25,9 +25,8 @@ function isWebOS() {
 }
 
 // AllanC: Horrible fix for jQueryMobile background problems on WebOS devices
-$(document).bind('pageshow', function() {
+$(document).bind('pageinit', function() {
     if (isWebOS()) {
-        $('.ui-body-c, .ui-dialog.ui-overlay-c').attr('style','background: #EEEEEE; !important;');
-        $('html').attr('style','background: #EEEEEE; !important;');
+        $('.ui-content, .ui-page').attr('style','background: #EEEEEE; !important;');
     }
 });

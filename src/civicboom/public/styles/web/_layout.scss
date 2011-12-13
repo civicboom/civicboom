@@ -33,8 +33,6 @@ HTML.blank_background {
 /*                   Three big blocks - header, app, footer                   */
 /*----------------------------------------------------------------------------*/
 
-$header_height: 42px;
-$footer_height: 18px;
 
 HEADER {
   	background: #fff;
@@ -374,8 +372,6 @@ HEADER #aboutbtns .button {
 /*                                Search                                      */
 /*----------------------------------------------------------------------------*/
 
-$search_width: 300px;
-$search_buttons: 3;
 
 HEADER #search {
 	position: absolute;
