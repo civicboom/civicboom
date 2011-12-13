@@ -3,7 +3,6 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
-<%namespace name="orgs"            file="/html/web/misc/about/organisations.mako" />
 
 <%!
     from webhelpers.html import HTML, literal

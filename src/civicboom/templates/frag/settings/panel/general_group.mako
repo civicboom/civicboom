@@ -1,6 +1,5 @@
 <%inherit file="/frag/common/frag.mako"/>
 <%namespace name="popup" file="/html/web/common/popup_base.mako" />
-<%namespace name="orgs"  file="/html/web/misc/about/organisations.mako" />
 
 <%!
     from sets import Set
