@@ -563,6 +563,7 @@ class AssignmentContent(UserVisibleContent):
             'closed'                  : None ,
             'num_accepted'            : None ,
             'default_response_license': lambda content: content.license.to_dict() ,
+            'responses_require_moderation': None,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
