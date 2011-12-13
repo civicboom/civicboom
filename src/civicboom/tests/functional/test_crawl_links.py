@@ -60,10 +60,16 @@ class TestCrawlSite(TestController):
         self.count = 0              # Reset counter
         self.crawl('/', None)       # Crawl when logged in
         
-    def test_crawl_mobile(self):
-        sub_domain = 'm'
-        self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
-        self.log_in_as('unittest')
-        self.count = 0
-        self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
-    
+    def test_crawl_sub_domains(self):
+        for sub_domain in ['m']:
+            self.count = 0
+            self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
+            self.log_in_as('unittest')
+            self.count = 0
+            self.crawl('/', None, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain})
+
+    # AllanC - annoyingly crawls the whole site again ... these are covered by the test_widget file anyway.
+    #def test_crawl_widget(self):
+    #    self.crawl(url('member_action', id='unittest', action='content_and_boomed', w_theme='basic'   ), None, extra_environ={'HTTP_HOST': 'widget.civicboom_test.com'})
+    #    count = 0
+    #    self.crawl(url('member_action', id='unittest', action='content_and_boomed', w_theme='gradient'), None, extra_environ={'HTTP_HOST': 'widget.civicboom_test.com'})
