@@ -20,7 +20,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 # Search imports
 from civicboom.model.filters import *
 from sqlalchemy.orm       import joinedload
-from sqlalchemy           import asc, desc
+from sqlalchemy           import asc, desc, or_
 
 # Other imports
 from cbutils.misc import substring_in
@@ -77,6 +77,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
+    responses_require_moderation = civicboom.lib.form_validators.base.ModerateResponseValidator(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     #creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused? # AllanC - The answer is .. YES IT COULD BE ABUSED!! ... dumbass ...
     #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
@@ -260,6 +261,8 @@ class ContentsController(BaseController):
             if kwargs.get('response_to'):
                 parent_root = get_content(kwargs['response_to'], is_viewable=True) # get_content will fail if current user does not have permission to view it
                 parent_root = parent_root.root_parent or parent_root
+                if parent_root.responses_require_moderation:
+                    kwargs['_show_only_moderated_content'] = True
                 creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
                 # AllanC note - 'creator' is compared against c.logged_in_persona later
@@ -272,6 +275,8 @@ class ContentsController(BaseController):
         if creator:
             if c.logged_in_persona == creator:
                 kwargs['_is_logged_in_as_creator'] = True
+                try   : del kwargs['_show_only_moderated_content'] # AllanC - always show to the creator ALL responses
+                except: None
             else:
                 kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
 
@@ -303,14 +308,17 @@ class ContentsController(BaseController):
                 results = results.filter(Content.__type__=='comment')
             else:
                 results = results.filter(Content.__type__!='comment')
-    
+            
             if kwargs['_is_logged_in_as_creator']:
                 pass # allow private content
             else:
                 if not kwargs['_is_trusted_follower']:
                     results = results.filter(Content.private==False) # public content only
                 results = results.filter(Content.__type__!='draft') # Don't show drafts to anyone other than the creator
-    
+
+            if kwargs.get('_show_only_moderated_content'):
+                results = results.filter(or_(ArticleContent.approval=='approved', ArticleContent.approval=='seen'))
+
             # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
             for col in ['creator', 'attachments', 'tags', 'parent', 'license']:
                 if col in kwargs.get('include_fields', []):
@@ -542,9 +550,12 @@ class ContentsController(BaseController):
         @param media_file
         @param private
             True
-            False
+            False (default)
+        @param responses_require_moderation paid for feature, assignment only
+            True
+            False (default)
         @param license_id
-            'CC-BY'
+            'CC-BY' (default)
             'CC-BY-ND'
             'CC-BY-SA'
             'CC-BY-NC'
@@ -553,7 +564,7 @@ class ContentsController(BaseController):
             'CC-PD'
         @param closed WIP
             True
-            False
+            False (default)
         @param auto_publish_trigger_datetime
         @param event_date
         @param due_date
