@@ -6,7 +6,7 @@
     <h1>${_("_site_name enables content-hungry organisations to ask for and get back video, images and audio from their audience simply and directly via mobile or PC.")}</h1>
     
     <h2>${_("The How")}</h2>
-    <p>${_("Our platform allows anyone to post Requests for specific items of content, to publicise those Requests and to manage content! We provide an altogether deeper level of engagement within communities.")}</p>
+    <p>${_("Our platform allows anyone to post requests for specific items of content, to publicise those requests and to manage content. We provide an altogether deeper level of engagement within communities.")}</p>
     <ol>
         <li>${_("An organisation can put out a request for video, images or audio via a simple widget on their site, plus our free mobile application and social networks.")}</li>
         <li>${_("The audience can then respond to the request directly via their mobile or web.")}</li>
