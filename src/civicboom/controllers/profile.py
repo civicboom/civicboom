@@ -104,7 +104,7 @@ class ProfileController(BaseController):
         
         @param type   type of message object to mark as read from all, to, notification
         """
-        list_type = kwargs.get('list')
+        list_type = kwargs.get('list', 'all')
         if list_type in list_filters and list_type in ['all','to','notification']:
             results = Session.query(Message).filter(Message.target_id==c.logged_in_persona.id)
             results = list_filters[list_type](results)

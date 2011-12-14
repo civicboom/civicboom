@@ -13,7 +13,7 @@
     
     <img src="/images/misc/about/organisations/flow.png" class="flow" />
     
-    <h1>You can use _site_name in two ways:</h1>
+    <h1>${_("You can use _site_name in two ways:")}</h1>
     <ol>
         <li>
             <strong>${_("Our browser-based solution: ")}</strong>
