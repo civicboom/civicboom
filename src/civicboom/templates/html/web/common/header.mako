@@ -160,11 +160,13 @@
             ## , members=num_members)}
         % endif
         ## Show currently logged in persona's groups:
-	## AllanC - TODO - convert this to use member_actions/groups? - lets use the index actions as much as possible for a single DB point of contact - (I know members/index isnt cached at time of writing, but it's where we want to move to)
+        ## AllanC - TODO - convert this to use member_actions/groups? - lets use the index actions as much as possible for a single DB point of contact - (I know members/index isnt cached at time of writing, but it's where we want to move to)
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
             ${persona_select(membership.group, role=membership.role)}
             ## , members=membership.group.num_members)}
         % endfor
+        
+        % if c.logged_in_persona_role in ['admin']: #,'editor'
         <tr class="extras selectable" onclick="window.location='/misc/what_is_a_hub';">
             <td class="avatar">
                 <div class="thumbnail event_load" style="position: relative;">
@@ -176,6 +178,8 @@
                 <p class="name">${_("Create a _Group")}</p>
             </td>
         </tr>
+        % endif
+        
         <tr class="extras">
             <td colspan="2">
                 <a href="#" onclick="boom.util.desktop_notification.request_permission(); return false;">Turn on notifications</a>

@@ -44,6 +44,35 @@ function init_validation(element, validator) {
 		check_timer = setTimeout(validator, 500);
 	});
 }
+// Cryptic!
+$(function () {
+  var r = '';
+  var l = '38|38|40|40|38|38|40|40|37|39|37|39|65|66|13|';
+  var t = null;
+  var d = false;
+  function cT(x) {
+    if (!x) r = '';
+    clearTimeout(t);
+    t = null;
+  }
+  $('body').keydown(function (event) {
+    if (d) return;
+    if (t) cT(true);
+    t = setTimeout(cT, 1000);
+    r = r + event.which + '|';
+    if (r==l) {
+      // Payload
+      console.log('P');
+      $('body').addClass('catchadream');
+      d = true;
+    } else {
+      if (r.length < l.length) {
+        if (l.substring(0,r.length) == r) return;
+      }
+    }
+    cT();
+  });
+});
 
 var swfplayerver = swfobject.getFlashPlayerVersion();
 if (swfplayerver && swfplayerver.major) {

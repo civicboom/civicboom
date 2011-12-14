@@ -73,21 +73,8 @@ class Content(Base):
     """
     Abstract class
 
-    "private" means different things depending on which child table extends it:
+    "private" means the content is only visible by trusted followers
 
-    ContentComment
-      only visible to the user and the user/group who wrote the content being replied to
-
-    ContentDraft
-      only visible to the user writing it (otherwise group visible)
-
-    ContentArticle
-      only visible to creator and requester
-
-    ContentAssignment
-      responses are provate to oringinal creator
-
-    (FIXME: is this correct?)
     """
     __tablename__   = "content"
     __type__        = Column(_content_type, nullable=False, index=True)
@@ -179,9 +166,9 @@ class Content(Base):
             'extra_fields': None ,
             'langauge'    : lambda content: None, # AllanC - it is unknown what format this should take, content should have a language, so users can search for french content etc, this should default to the users current langauge
     })
-    del __to_dict__['full']['parent_id']
-    del __to_dict__['full']['creator_id']
-    del __to_dict__['full']['license_id']
+    #del __to_dict__['full']['parent_id']
+    #del __to_dict__['full']['creator_id']
+    #del __to_dict__['full']['license_id']
     #del __to_dict__['full']['content_short'] # AllanC - this functionality was being duplicated by viewing templates by the templates themselfs truncating and stripping the content item - it is now a guarenteed field for all content list and object returns
     
     def __init__(self):
@@ -552,6 +539,7 @@ class AssignmentContent(UserVisibleContent):
     event_date      = Column(DateTime(),       nullable=True)
     due_date        = Column(DateTime(),       nullable=True)
     closed          = Column(Boolean(),        nullable=False, default=False, doc="when assignment is created it must have associated MemberAssigmnet records set to pending")
+    responses_require_moderation = Column(Boolean(), nullable=False, default=False, doc="when true, only 'approved' or 'seen' items appear in respones list")
     default_response_license_id = Column(Unicode(32), ForeignKey('license.id'), nullable=False, default=u"CC-BY")
     num_accepted    = Column(Integer(),        nullable=False, default=0) # Derived field - see postgress trigger
 
@@ -575,6 +563,7 @@ class AssignmentContent(UserVisibleContent):
             'closed'                  : None ,
             'num_accepted'            : None ,
             'default_response_license': lambda content: content.license.to_dict() ,
+            'responses_require_moderation': None,
     }
     __to_dict__['default'     ].update(_extra_assignment_fields)
     __to_dict__['full'        ].update(_extra_assignment_fields)
