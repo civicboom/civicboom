@@ -1,6 +1,5 @@
 from civicboom.lib.base import url, config, _
 
-from civicboom.lib.services.twitter_global import status as twitter_global_status
 from civicboom.lib.services.janrain        import janrain
 from civicboom.lib.helpers                 import truncate
 from civicboom.model.meta import Session
@@ -9,9 +8,19 @@ from cbutils.text     import strip_html_tags, safe_python_strings
 
 import simplejson as json
 
+from twitter.api import Twitter, TwitterError
+from twitter.oauth import OAuth
+
 import logging
 log      = logging.getLogger(__name__)
 
+
+twitter_auth = dict(
+    oauth_token        = config['api_key.twitter.oauth_token'       ],
+    oauth_token_secret = config['api_key.twitter.oauth_token_secret'],
+    consumer_key       = config['api_key.twitter.consumer_key'      ],
+    consumer_secret    = config['api_key.twitter.consumer_secret'   ],
+)
 
 #-------------------------------------------------------------------------------
 # Content Aggrigation
@@ -111,7 +120,7 @@ def aggregate_via_user(content, user):
 
 
 
-def twitter_global(content, live=False):
+def twitter_global_status(content, live=False):
     """
     Twitter content via Civicbooms global feed
     
@@ -151,6 +160,20 @@ def twitter_global(content, live=False):
     # t['place_id']  = "" #need reverse Geocode using the twitter api call geo/reverse_geocode
     # t['include_entities'] = True
     if live:
-        twitter_global_status(**twitter_post)
+        
+        twitter_post['status'] = twitter_post['status'].encode('utf8', 'replace')
+        t = Twitter(
+            auth=OAuth(
+                twitter_auth['oauth_token'       ],
+                twitter_auth['oauth_token_secret'],
+                twitter_auth['consumer_key'      ],
+                twitter_auth['consumer_secret'   ],
+            ),
+            secure      = True,
+            api_version = '1',
+            domain      = 'api.twitter.com',
+        )
+        t.statuses.update(**twitter_post)
+        
     else:
         log.info('twitter_global aggregation disabled: \n%s' % twitter_post)
