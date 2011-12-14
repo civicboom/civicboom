@@ -360,8 +360,7 @@ if(!('util' in boom)) {
     },
     convertYesNoCheckboxes : function(element) {
       element = boom.util.convert_jquery(element);
-      //return;
-      var selects = element.find('select.yesno').filter(':visible');
+      var selects = element.find('select.yesno').not('.proc');
       if(selects.length == 0)
         return;
       selects.after('<input type="checkbox" class="yesnocheck unproc" />');
@@ -377,7 +376,7 @@ if(!('util' in boom)) {
         var no = yesno.children('.no').val();
         yesno.val(this.checked ? yes : no);
       });
-      checks.removeClass('unproc');
+      checks.removeClass('unproc').addClass('proc');
     },
     validators : {
       init : function() {

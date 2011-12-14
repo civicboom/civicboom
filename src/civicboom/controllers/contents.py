@@ -776,7 +776,7 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        permitted_extra_fields = ['due_date', 'event_date',] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        permitted_extra_fields = ['due_date', 'event_date', 'responses_require_moderation'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
         for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
             if kwargs[extra_field] == None: # if due_date=None, we don't want to store due_date="None"
                 if extra_field in content.extra_fields:
