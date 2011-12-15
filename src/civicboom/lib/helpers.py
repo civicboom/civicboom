@@ -397,7 +397,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, title=None, method='POST', form_data=None, link_data=None, link_class='', parent_id=None, force_profile=False):
+def secure_link(href, value='Submit', value_formatted=None, title=None, method='post', form_data=None, link_data=None, link_class='', parent_id=None, force_profile=False):
 #def secure_link(href, value='Submit', value_formatted=None, css_class='', title=None, rel=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None, data={}):
     """
     Create two things:
@@ -437,7 +437,7 @@ def secure_link(href, value='Submit', value_formatted=None, title=None, method='
             if kwargs.get('format'):
                 del kwargs['format']
             kwargs['action'] = 'show'
-            action1 = ['remove'] if method == 'DELETE' else ['update']
+            action1 = ['remove'] if method == 'DELETE' or method == 'delete' else ['update']
             action2 = ['update', [url(*args, **kwargs)], None, None]
             if parent_id:
                 kwargs['id'] = parent_id

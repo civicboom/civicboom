@@ -34,7 +34,7 @@ class TestListsController(TestController):
             response = self.app.post(
                 url('setting',id="me",format="frag"),
                 params={
-                    '_method': 'PUT',
+                    '_method': 'put',
                     '_authentication_token': self.auth_token,
                 },
                 upload_files = [("avatar", "3x3.png", self.generate_image((3, 3), 100+salt))],

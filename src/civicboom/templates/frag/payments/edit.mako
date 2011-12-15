@@ -26,7 +26,7 @@
         self.id = self.account.get('id')
     %>
     <div class="frag_whitewrap">
-        ${h.form(h.url('payment', id=self.id, format='redirect'), method='PUT')}
+        ${h.form(h.url('payment', id=self.id, format='redirect'), method='put')}
         ${form_content(self)}
         <input type="submit" value="${_('Save')}" class="button" />
         ${h.end_form()}

@@ -14,7 +14,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="thisuserdoesnotexist"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel'               : u'general',
                 'password_current'    : u'password',
@@ -30,7 +30,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="unitfriend"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel'               : u'general',
                 'password_current'    : u'password',
@@ -46,7 +46,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel'               : u'general',
                 'password_current'    : u'password',
@@ -60,7 +60,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel'               : u'general',
                 'password_current'    : u'password',
@@ -73,7 +73,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel'               : u'general',
                 'password_current'    : u'password2',
@@ -96,7 +96,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'email'    : u'test',
             },
@@ -109,7 +109,7 @@ class TestSettingsController(TestController):
 #        response = self.app.post(
 #            url(controller='settings', action='update'),
 #            params={
-#                '_method': 'PUT',
+#                '_method': 'put',
 #                '_authentication_token': self.auth_token,
 #                'email'    : u'test@idonotexistontheinternets.io',
 #            },
@@ -122,7 +122,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'email'    : u'',
             },
@@ -134,7 +134,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'email'    : u'test+settings@civicboom.com',
             },
@@ -159,7 +159,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'email'    : self.email_address,
             },
@@ -191,7 +191,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'email'    : u'test+settings@civicboom.com',
             },
@@ -210,7 +210,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel'               : u'general',
                 'password_current'    : u'password',
@@ -234,7 +234,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'email'    : self.email_address,
             },
@@ -258,7 +258,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
             },
             upload_files = [("avatar", "3x3.png", self.generate_image((3, 3), 42))],
@@ -269,7 +269,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
             },
             upload_files = [("avatar", "3x3.png", self.generate_image((3, 3), 1337))],
@@ -287,7 +287,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'description'    : 'This is a new test description, with some sort of weird dot: \xe2\x80\xa2',
             },
@@ -301,7 +301,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'description'    : self.old_description,
             },
@@ -312,7 +312,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'location_home_name': 'blah',
                 'location_home'    : 'biscuits',
@@ -332,7 +332,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'location_home_name': 'blah',
                 'location_home'    : '%f %f' % (1+random(), 51+random()), # non-deterministic testing, yay
@@ -347,7 +347,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'location_home'    : self.old_location,
             },
@@ -364,7 +364,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'name'    : u'Mr Unit Test',
             },
@@ -378,7 +378,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'description'    : self.old_name,
             },
@@ -395,7 +395,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'website'    : u'mailto:test+settings@civicboom.com',
             },
@@ -407,7 +407,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'website'    : u'http://cb.shishnet.org',
             },
@@ -422,7 +422,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'website'    : self.old_website,
             },
@@ -435,7 +435,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'DELETE',
+                '_method': 'delete',
                 '_authentication_token': self.auth_token,
             },
             status=501
@@ -472,7 +472,7 @@ class TestSettingsController(TestController):
             response = self.app.post(
                 url('setting',id="me",format="frag"),
                 params={
-                    '_method': 'PUT',
+                    '_method': 'put',
                     '_authentication_token': self.auth_token,
                     'panel': 'notifications',
                     'route_assignment_interest_withdrawn': route,
@@ -486,7 +486,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="frag"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel': 'notifications',
                 'route_assignment_interest_withdrawn': self.old_route,
@@ -506,7 +506,7 @@ class TestSettingsController(TestController):
         response = self.app.post(
             url('setting',id="me",format="json"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'panel': 'notifications',
                 'help_popup_created_user': 'True',

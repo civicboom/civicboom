@@ -296,12 +296,17 @@ if(!('frags' in boom)) {
             return false;
           }
         },
-        'form.search[method="GET"]' : {
+        // This looks stupid but selectors are case sensitive! AND IS ALSO BROKEN YOU ID10T! GMiell -> GMiell
+        //'form.search[method="GET"]' : {
+        //  'submit': function() {
+        //    boom.frags.events.live['form.search[method="get"]'].apply(this, arguments);
+        //  }
+        //},
+        'form.search[method="get"]' : {
           'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
             var i = true;
-            
             // frag replace
             var frag_href;
             if (frag_href = form.data('frag')) {
@@ -317,7 +322,13 @@ if(!('frags' in boom)) {
             return i;
           }
         },
-        'form[method="POST"]' : {
+        // This looks stupid but selectors are case sensitive! AND IS ALSO BROKEN YOU ID10T! GMiell -> GMiell
+        //'form[method="POST"]' : {
+        //  'submit' : function() {
+        //    boom.frags.events.live['form[method="post"]'].apply(this, arguments);
+        //  }
+        //},
+        'form[method="post"]' : {
           'submit' : function() {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
@@ -489,7 +500,7 @@ if(!('frags' in boom)) {
               callback : function(ui, type, value) {
                 $.ajax({
                   url : rating_form.data('json'),
-                  type : "POST",
+                  type : "post",
                   data : rating_form.serialize(),
                   dataType : "json",
                   success : function(data) {
@@ -644,7 +655,7 @@ if(!('frags' in boom)) {
         // Check previously auto-saved data attached to form, if nothing has changed simply return.
         if (form.data('autoSaveDiff') == form_data) return;
         $.ajax({
-          type : 'POST',
+          type : 'post',
           dataType : 'json',
           url : form.data('json'),
           data : form_data,

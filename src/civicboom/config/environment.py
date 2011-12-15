@@ -120,7 +120,12 @@ def load_environment(global_conf, app_conf):
 
     # set up worker processors
     if pylons.config['worker.queue.type'] in ["inline", "threads"]:
-        worker.config = pylons.config
+        # AllanC changed it from worker.config=pylons.config because = replaces the reference. If worker.config is imported BEFORE this code is run then the importing class only access the empty original dict
+        worker.config.update(pylons.config)
+        # WARNING!!!
+        # AllanC - NOTE!!! this update is fine AS LONG AS THE CONFIG IS NEVER CHANGED WHILE THE SITE IS RUNNING!
+        #          in production this is never changed ... howver .. in testing we alter the state of the config to test ... even if most tests pass we could have some horrible hard to track down bugs because of this .update fix
+        
         from civicboom.worker import init_worker_functions
         init_worker_functions(worker)
 

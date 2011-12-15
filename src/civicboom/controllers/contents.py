@@ -261,8 +261,11 @@ class ContentsController(BaseController):
             if kwargs.get('response_to'):
                 parent_root = get_content(kwargs['response_to'], is_viewable=True) # get_content will fail if current user does not have permission to view it
                 parent_root = parent_root.root_parent or parent_root
-                if parent_root.responses_require_moderation:
-                    kwargs['_show_only_moderated_content'] = True
+                try:
+                    if parent_root.responses_require_moderation:
+                        kwargs['_show_only_moderated_content'] = True
+                except:
+                    pass
                 creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
                 # AllanC note - 'creator' is compared against c.logged_in_persona later
@@ -822,10 +825,10 @@ class ContentsController(BaseController):
                 add_job('profanity_check', url_base=url('',qualified=True))
             # AllanC - GOD DAM IT!!! - we cant have the messages happening in the worker because we cant use the translation. This is ANOYING! I wanted the profanity filter to clean the content BEFORE messages were twittered out etc
             #          for now I have put it back inline .. but this REALLY needs sorting
-            #add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
-            from civicboom.worker.functions.content_notifications import content_notifications
-            content_notifications(content, publishing_for_first_time=publishing_for_first_time)
-            Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
+            add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            #from civicboom.worker.functions.content_notifications import content_notifications
+            #content_notifications(content, publishing_for_first_time=publishing_for_first_time)
+            #Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
         
         if content.__type__ == 'comment':
             if config['feature.profanity_filter']:
@@ -940,6 +943,7 @@ class ContentsController(BaseController):
                 #'contributors',
                 'actions', # AllanC - humm .. how can we cache this?
                 'accepted_status',
+                'boomed_by',
             ]
         kwargs['lists'].sort()
         
