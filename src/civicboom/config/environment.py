@@ -24,7 +24,8 @@ import platform
 from redis import Redis
 import cbutils.worker as worker
 
-
+#import logging
+#log = logging.getLogger("sitemaster")
 
 def load_environment(global_conf, app_conf):
     """
@@ -64,6 +65,14 @@ def load_environment(global_conf, app_conf):
     # Setup the SQLAlchemy database engine
     engine = engine_from_config(config, 'sqlalchemy.main.')
     init_model(engine)
+
+    # Global translator setup
+    #log.info("Init global i18n as en")
+    #import gettext
+    #langs = {
+    #    "en": gettext.translation("civicboom", "./civicboom/i18n", languages=['en']),
+    #}
+    #langs["en"].install()
 
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
