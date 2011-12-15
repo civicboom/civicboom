@@ -124,7 +124,7 @@ class TestPermissionsController(TestController):
             url('content', id=draft_id, format="json"),
             params={
                 '_authentication_token': self.auth_token,
-                '_method'       : 'PUT'               ,
+                '_method'       : 'put'               ,
                 'title'         : "permission article",
                 'content'       : "a test update"     ,
                 'type'          : "article"           ,

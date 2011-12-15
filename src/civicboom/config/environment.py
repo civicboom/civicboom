@@ -24,7 +24,8 @@ import platform
 from redis import Redis
 import cbutils.worker as worker
 
-
+#import logging
+#log = logging.getLogger("sitemaster")
 
 def load_environment(global_conf, app_conf):
     """
@@ -64,6 +65,14 @@ def load_environment(global_conf, app_conf):
     # Setup the SQLAlchemy database engine
     engine = engine_from_config(config, 'sqlalchemy.main.')
     init_model(engine)
+
+    # Global translator setup
+    #log.info("Init global i18n as en")
+    #import gettext
+    #langs = {
+    #    "en": gettext.translation("civicboom", "./civicboom/i18n", languages=['en']),
+    #}
+    #langs["en"].install()
 
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
@@ -120,7 +129,12 @@ def load_environment(global_conf, app_conf):
 
     # set up worker processors
     if pylons.config['worker.queue.type'] in ["inline", "threads"]:
-        worker.config = pylons.config
+        # AllanC changed it from worker.config=pylons.config because = replaces the reference. If worker.config is imported BEFORE this code is run then the importing class only access the empty original dict
+        worker.config.update(pylons.config)
+        # WARNING!!!
+        # AllanC - NOTE!!! this update is fine AS LONG AS THE CONFIG IS NEVER CHANGED WHILE THE SITE IS RUNNING!
+        #          in production this is never changed ... howver .. in testing we alter the state of the config to test ... even if most tests pass we could have some horrible hard to track down bugs because of this .update fix
+        
         from civicboom.worker import init_worker_functions
         init_worker_functions(worker)
 

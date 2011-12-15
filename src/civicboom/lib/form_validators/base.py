@@ -8,7 +8,7 @@ from formencode import validators
 
 
 
-from pylons.i18n.translation import _
+from pylons.i18n.translation import _ # AllanC - unneeded as global _ shoudl now be in use
 
 
 from cbutils.text import clean_html_markup, strip_html_tags

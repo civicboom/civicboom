@@ -1,6 +1,4 @@
-# AllanC - FOR FUCKS SAKE!! ... The inconsistancys in importing the config are providing serious issues
-#from cbutils.worker import config
-from pylons import config
+from cbutils.worker import config
 
 from cbutils.misc   import now, debug_type
 
@@ -72,5 +70,5 @@ def twitter_global(content):
     # TODO? diseminate new or updated content? This could be done in the originator of this worker
     
     live = config['online'] and config['feature.aggregate.twitter_global']
-    from civicboom.lib.aggregation import twitter_global
-    twitter_global(content, live)
+    from civicboom.lib.aggregation import twitter_global_status
+    twitter_global_status(content, live)

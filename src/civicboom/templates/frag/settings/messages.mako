@@ -8,7 +8,7 @@
 <%def name="title()">${_("Edit your notification settings")}</%def>
 
 <%def name="body()">
-${h.form(h.url('setting', id='messages'), method='PUT')}
+${h.form(h.url('setting', id='messages'), method='put')}
 <%
 from civicboom.lib.communication.messages import generators
 

@@ -93,7 +93,7 @@
             h.args_to_tuple('content', id=self.id, format="redirect"),
             id           = 'edit_%s' % self.id,
             name         = "content",
-            method       = 'PUT',
+            method       = 'put',
             multipart    = True,
             data         = dict(
                 json_complete = "[ ['update', null, '%s'], ['update', ['%s','%s'] ] ]" %
@@ -158,7 +158,7 @@
         % if 'delete' in self.actions:
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect'),
-                method          = "DELETE",
+                method          = "delete",
                 value           = _('Delete'),
                 value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
                 link_data       = dict(
@@ -254,10 +254,11 @@
         <tbody class="">
             <tr>
                 <td><label for="media_file" class="hide_if_uploadify">${_("File")}</label></td>
-                <td style="text-align: right;">
+                <td style="text-align: center;">
                     <input
                      data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"
-                     id="media_file" name="media_file" type="file" class="field_file file_upload_uploadify" style="width: 100%" />
+                     id="media_file" name="media_file" type="file" class="field_file file_upload_uploadify" style="width: 100%" /><br />
+                    ${_("(Please note there is currently a limit of 100MB for file uploads.)")}
                 </td>
                 <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload hide_if_uploadify"/></td>
 

@@ -13,7 +13,7 @@
 
 <%def name="body()">
 ## GregM: have moved as an addition to general group
-    ${h.form(h.url('setting', id='None'), method='PUT', multipart=True)}
+    ${h.form(h.url('setting', id='None'), method='put', multipart=True)}
     <%
         # Setup Settings groups
         setting_groups = {}

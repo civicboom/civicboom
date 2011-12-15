@@ -83,7 +83,7 @@
 ## Used for setting user settings to not display this chunk again
 <%def name="guidance_disable_link(config_key)">
     <div class="mo-help">
-	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
+	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='put', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
 	    ##${_("Don't show me this again")}
 	    ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
 	    ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>

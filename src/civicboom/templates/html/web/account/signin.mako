@@ -133,7 +133,7 @@
 <%def name="signin()">
 <section id="signin-box">
 	<h1>${_("Sign in")}</h1>
-	<form action="${h.url('current', format='redirect')}" method="POST">
+	<form action="${h.url('current', format='redirect')}" method="post">
 		<table class="form">
 			<tr>
 				<td width="50"><label for="username">${_("Username")}</label></td>

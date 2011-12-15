@@ -1,3 +1,5 @@
+from cbutils.worker import config
+
 import logging
 log = logging.getLogger(__name__)
 
@@ -25,8 +27,6 @@ def send_notification(members, message): #members, rendered_message
     Threaded message system
     Save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
-    
-    from cbutils.worker import config
 
     message['source'] = get_member(message.get('source') or message.get('source_id')) or message.get('source') # Attempt to normalize source member
 
