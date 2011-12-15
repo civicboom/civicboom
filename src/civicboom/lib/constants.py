@@ -3,7 +3,7 @@ Consistants
 
 (cant put these in app_globals because we can use '_')
 """
-from civicboom.lib.base import url, _, current_url
+from civicboom.lib.base import url, current_url, _
 import re
 
 
