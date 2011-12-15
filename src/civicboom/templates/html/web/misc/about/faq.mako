@@ -17,7 +17,7 @@
 <br />${_("How Civicboom can help you depends on what you want to do")}
     <ol>
         <li> <i> ${_("Journalists, blogger, publishers, news organisations - get _articles, videos, images and audio directly from your audience.")} </i> </li>
-        <li> <i> ${_("People - Everyone has _article and _site_name is the tool that lets you share those it with newspapers, bloggers and journalists.")} </i> </li>
+        <li> <i> ${_("People - Everyone has _article and _site_name is the tool that lets you share it with newspapers, bloggers and journalists.")} </i> </li>
     </ol>
 </p>
 
