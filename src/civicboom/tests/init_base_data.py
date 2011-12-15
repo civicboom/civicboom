@@ -16,8 +16,11 @@ log = logging.getLogger(__name__)
 
 def init_base_data():
     # Notifications disabled because no i18n is setup
-    from pylons import config
+    #from pylons import config
+    from cbutils.worker import config
+    feature_notifications_default = config['feature.notifications']
     config['feature.notifications'] = False
+    # This is set back to default at end
 
     ###############################################################
     def test_base():
@@ -343,3 +346,5 @@ def init_base_data():
         demo_base()
     if config['data_base'] == 'none':  # production
         pass
+
+    config['feature.notifications'] = feature_notifications_default
