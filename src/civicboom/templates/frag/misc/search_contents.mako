@@ -29,7 +29,7 @@
 	<% args, kwargs = c.web_params_to_kwargs %>
     <div class="frag_col">
 	    <div class="frag_list">
-		<form class="form search" id="form_search" action="${url('contents')}" method="GET"
+		<form class="form search" id="form_search" action="${url('contents')}" method="get"
 		  ## update current frag with new search 
 	      data-frag="${h.url(controller='misc', action='search_contents', format='frag')}"
 	      data-frag-new="${h.url('contents', format='frag')}">

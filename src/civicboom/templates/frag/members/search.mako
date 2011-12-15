@@ -27,7 +27,7 @@
 	<% args, kwargs = c.web_params_to_kwargs %>
     <div class="frag_col">
 	    <div class="frag_list">
-        <form class="form search" id="form_search" action="${url('members')}" method="GET"
+        <form class="form search" id="form_search" action="${url('members')}" method="get"
             data-frag="${h.url('members', format='frag')}">
             <fieldset>
                 <p><label for="term">${_("Search for")}</label><br/>

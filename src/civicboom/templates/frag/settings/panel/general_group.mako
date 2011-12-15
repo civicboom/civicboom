@@ -42,7 +42,7 @@
             ${h.secure_link(
                 ##h.args_to_tuple('group', id=d['username'], format='redirect'),
                 h.url('group', id=d['username']),
-                method      = "DELETE",
+                method      = "delete",
                 value       = _("Delete _group"),
                 link_class  = 'fr',
                 link_data   = dict(
@@ -71,10 +71,10 @@
         %>
         % if c.action != 'new' and c.controller !='groups':
             ## Editing Form
-            ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='PUT' , multipart=True)}
+            ${h.form(h.url('setting', id=c.result.get('id', 'me')), method='put' , multipart=True)}
         % else:
             ## Creating Form
-            ${h.form(h.url('groups', )                 , method='POST', multipart=True)}
+            ${h.form(h.url('groups', )                 , method='post', multipart=True)}
         % endif
         ## <div style="display:none"> </div> ## AllanC - why was this surrounding the hidden input?
         <input type="hidden" name="panel" value="${c.result.get('panel')}" />
