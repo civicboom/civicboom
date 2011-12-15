@@ -3,7 +3,7 @@ Python log of emails that have been sent
 Used by unit tests to check email output
 """
 
-from pylons import config
+from cbutils.worker import config
 
 import logging
 log = logging.getLogger(__name__)

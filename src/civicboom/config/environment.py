@@ -7,11 +7,12 @@ from mako.lookup import TemplateLookup
 from pylons.error import handle_mako_error
 from sqlalchemy import engine_from_config
 
-from paste.deploy.converters import asbool
+
 
 import civicboom.lib.app_globals as app_globals
 import civicboom.lib.helpers
 from civicboom.config.routing import make_map
+from civicboom.config.config_utils import config_type_replacement
 from civicboom.model import init_model, init_model_extra
 import cbutils.warehouse as wh
 
@@ -76,45 +77,7 @@ def load_environment(global_conf, app_conf):
 
     # CONFIGURATION OPTIONS HERE (note: all config options will override
     # any Pylons config options)
-    config['development_mode'] = asbool(config['debug'])
-
-    # Booleans in config file
-    boolean_varnames = ['feature.notifications',
-                        'feature.aggregate.email',
-                        'feature.aggregate.janrain',
-                        'feature.aggregate.twitter_global',
-                        'feature.profanity_filter',
-                        'security.disallow_https_cookie_in_http',
-                        'online',
-                        'test_mode',
-                        'demo_mode',
-                        'profile',
-                        'beaker.cache.enabled',
-                        'cache.etags.enabled',
-                        'cache.static_decorators.enabled',
-                        'test.crawl_links',
-                        ]
-    for varname in boolean_varnames:
-        config[varname] = asbool(config.get(varname))
-
-    # Integers in config file
-    integer_varnames = ['payment.free.assignment_limit'  ,
-                        'payment.plus.assignment_limit'  ,
-                        'search.default.limit.sub_list'  ,
-                        'search.default.limit.contents'  ,
-                        'search.default.limit.members'   ,
-                        'search.default.limit.messages'  ,
-                        'setting.session.login_expire_time',
-                        'email.smtp_port',
-                        'setting.content.max_comment_length',
-                        'setting.age.min_signup',
-                        'setting.age.accept',
-                        'timedtask.batch_chunk_size',
-                        #'media.media.width', # AllanC - the media processing imports the config in a differnt way. I dont know if this cast to int is needed
-                        #'media.media.height',
-                        ]
-    for varname in integer_varnames:
-        config[varname] = int(config[varname].strip())
+    config_type_replacement(config) # Replace known string values in the config with actual type converted values
 
     # websetup.py tries to access pylons.config before it is
     # officially ready -- so make it unofficially ready and pray (HACK)
@@ -124,20 +87,21 @@ def load_environment(global_conf, app_conf):
     # configure modules that used to require pylons.config
     wh.configure(pylons.config)
 
-    import civicboom.lib.communication.email_lib as email
-    email.configure(pylons.config)
+    # AllanC - unneeds as imports worker config directly
+    #import civicboom.lib.communication.email_lib as email
+    #email.configure(pylons.config)
+
+    # AllanC changed it from worker.config=pylons.config because = replaces the reference. If worker.config is imported BEFORE this code is run then the importing class only access the empty original dict
+    worker.config.update(pylons.config)
+    # WARNING!!!
+    # AllanC - NOTE!!! this update is fine AS LONG AS THE CONFIG IS NEVER CHANGED WHILE THE SITE IS RUNNING!
+    #          in production this is never changed ... howver .. in testing we alter the state of the config to test ... even if most tests pass we could have some horrible hard to track down bugs because of this .update fix
 
     # set up worker processors
     if pylons.config['worker.queue.type'] in ["inline", "threads"]:
-        # AllanC changed it from worker.config=pylons.config because = replaces the reference. If worker.config is imported BEFORE this code is run then the importing class only access the empty original dict
-        worker.config.update(pylons.config)
-        # WARNING!!!
-        # AllanC - NOTE!!! this update is fine AS LONG AS THE CONFIG IS NEVER CHANGED WHILE THE SITE IS RUNNING!
-        #          in production this is never changed ... howver .. in testing we alter the state of the config to test ... even if most tests pass we could have some horrible hard to track down bugs because of this .update fix
-        
         from civicboom.worker import init_worker_functions
         init_worker_functions(worker)
-
+    
     # set up worker queue
     if pylons.config['worker.queue.type'] == "inline":
         worker.init_queue(None)

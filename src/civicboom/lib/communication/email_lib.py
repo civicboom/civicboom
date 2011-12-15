@@ -9,13 +9,11 @@ import re
 import logging
 log = logging.getLogger(__name__)
 
-
-config = {}
-
-
-def configure(c):
-    global config
-    config = c
+from cbutils.worker import config
+#config = {}
+#def configure(c):
+#    global config
+#    config = c
 
 
 #-------------------------------------------------------------------------------

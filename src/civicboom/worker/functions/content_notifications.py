@@ -66,7 +66,7 @@ def twitter_global(content):
     content = get_content(content)
     
     assert content.__type__  not in ['comment','draft']
-    
+
     # TODO? diseminate new or updated content? This could be done in the originator of this worker
     
     live = config['online'] and config['feature.aggregate.twitter_global']
