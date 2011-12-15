@@ -24,7 +24,7 @@ def config_type_replacement(config):
                         'cache.static_decorators.enabled',
                         'test.crawl_links',
                         ]
-    for varname in boolean_varnames:
+    for varname in [varname for varname in boolean_varnames if varname in config]:
         config[varname] = asbool(config[varname])
 
     # Integers in config file
@@ -43,6 +43,6 @@ def config_type_replacement(config):
                         #'media.media.width', # AllanC - the media processing imports the config in a differnt way. I dont know if this cast to int is needed
                         #'media.media.height',
                         ]
-    for varname in integer_varnames:
+    for varname in [varname for varname in integer_varnames if varname in config]:
         config[varname] = int(config[varname].strip())
 
