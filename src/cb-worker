@@ -45,6 +45,9 @@ def main(argv):
         w.config[opt] = c.get("app:main", opt)
     w.config["sqlalchemy.main.url"] = c.get("app:main", "sqlalchemy.main.url")
 
+    from civicboom.config.config_utils import config_type_replacement
+    config_type_replacement(w.config)
+
     if ("error_email_from" in w.config) and ("email_to" in w.config):
         import platform
         smtp = logging.handlers.SMTPHandler(
@@ -95,6 +98,7 @@ def set_up_environment():
     import civicboom.model as model
     from civicboom.model.meta import Session
     model.init_model(create_engine(w.config['sqlalchemy.main.url']))
+    model.init_model_extra()
 
     # set the language for each job
     log.info("Init i18n")
@@ -125,8 +129,9 @@ def set_up_environment():
     import cbutils.warehouse as wh
     wh.configure(w.config)
 
-    import civicboom.lib.communication.email_lib as email
-    email.configure(w.config)
+    # AllanC - unneeded - Direct workerimport used
+    #import civicboom.lib.communication.email_lib as email
+    #email.configure(w.config)
 
     # attach the things above to the worker
     log.info("Init callbacks")
