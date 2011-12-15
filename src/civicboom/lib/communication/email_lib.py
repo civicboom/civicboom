@@ -84,10 +84,10 @@ def send_email(email_to, **kwargs):
     if 'content_text' not in kwargs or 'content_html' not in kwargs:
         kwargs.update(render_email(**kwargs))
     
-    if config['online'] and config['feature.aggregate.email']:
-        send_email_smtp(email_to, **kwargs)
-    elif config['development_mode']:
+    if config['development_mode']:
         email_log(email_to, **kwargs) # Log Debug data if send disabled
+    elif config['online'] and config['feature.aggregate.email']:
+        send_email_smtp(email_to, **kwargs)
     else:
         log.warn('Email send state error - email not sent')
 

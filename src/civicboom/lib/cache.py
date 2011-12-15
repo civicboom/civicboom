@@ -246,7 +246,11 @@ def get_lists_versions(lists, list_variables):
     return zip(lists, list_versions)
 
 def gen_key_for_lists(lists, list_variables, **kwargs):
-    return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
+    # AllanC - TEMP DISBALE OF gen_key_for_lists
+    #          The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
+    etag_cache('', **kwargs) # This is needed so is_etag_master is set
+    return '' 
+
     try:
         cache_key = cache_separator.join([list_name+key_var_separator+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
     except ListVersionException:
