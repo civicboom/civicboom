@@ -296,12 +296,17 @@ if(!('frags' in boom)) {
             return false;
           }
         },
+        // This looks stupid but selectors are case sensitive!
+        'form.search[method="GET"]' : {
+          'submit': function() {
+            boom.frags.events.live['form.search[method="get"]'].apply(this, arguments);
+          }
+        },
         'form.search[method="get"]' : {
           'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
             var i = true;
-            
             // frag replace
             var frag_href;
             if (frag_href = form.data('frag')) {
@@ -315,6 +320,12 @@ if(!('frags' in boom)) {
               i = false;
             }
             return i;
+          }
+        },
+        // This looks stupid but selectors are case sensitive!
+        'form[method="POST"]' : {
+          'submit' : function() {
+            boom.frags.events.live['form[method="post"]'].apply(this, arguments);
           }
         },
         'form[method="post"]' : {
