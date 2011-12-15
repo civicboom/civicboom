@@ -147,6 +147,16 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
     msgText = MIMEText(content_html, 'html', 'UTF-8')
     msgAlternative.attach(msgText)
     
+    # Add attachments
+    # This includes additional email parts like ICS/Calendar entrys for this assignment etc
+    # TODO
+    #  here is a snippet taken from http://www.jasha.eu/blogposts/2011/04/send-email-with-icalendar-events-from-your-website.html
+    #  it's dirty dirty Java, but we can use the same principle
+        #String name = eventDocument.getName() + ".ics";
+        #String contentType = String.format("text/calendar; name=\"%s\"", name);
+        #email.attach(new ByteArrayDataSource(attachmentData, contentType),
+        #        name, "", EmailAttachment.ATTACHMENT);
+    
     # Convert comma separated emails to list (if needed)
     if isinstance(email_to, basestring):
         email_to = [email.strip() for email in email_to.split(',')]
