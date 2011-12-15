@@ -296,7 +296,7 @@ if(!('frags' in boom)) {
             return false;
           }
         },
-        'form.search[method="GET"]' : {
+        'form.search[method="get"]' : {
           'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
@@ -317,7 +317,7 @@ if(!('frags' in boom)) {
             return i;
           }
         },
-        'form[method="POST"]' : {
+        'form[method="post"]' : {
           'submit' : function() {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
@@ -489,7 +489,7 @@ if(!('frags' in boom)) {
               callback : function(ui, type, value) {
                 $.ajax({
                   url : rating_form.data('json'),
-                  type : "POST",
+                  type : "post",
                   data : rating_form.serialize(),
                   dataType : "json",
                   success : function(data) {
@@ -644,7 +644,7 @@ if(!('frags' in boom)) {
         // Check previously auto-saved data attached to form, if nothing has changed simply return.
         if (form.data('autoSaveDiff') == form_data) return;
         $.ajax({
-          type : 'POST',
+          type : 'post',
           dataType : 'json',
           url : form.data('json'),
           data : form_data,

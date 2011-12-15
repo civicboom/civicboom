@@ -72,7 +72,7 @@ import html2text
         h.url('content', id=self.id, format="redirect"),
         id           = 'edit_%s' % self.id,
         name         = "content",
-        method       = 'PUT',
+        method       = 'put',
         multipart    = True,
         ##pre_onsubmit = "tinyMCE.triggerSave(true,true);",
         ##json_form_complete_actions = "json_submit_complete_for_%(id)s();" % dict(id=self.id)
@@ -133,11 +133,11 @@ import html2text
 <script type="text/javascript">
     function ajaxSave() {
         $.ajax({
-            type    : 'POST',
+            type    : 'post',
             dataType: 'json',
             url     : "${url('content', id=self.id, format='json')}",
             data    : {
-                "_method": 'PUT',
+                "_method": 'put',
                 "title"              : $('#title_${self.id}'  ).val(),
                 "content"            : $('#content_${self.id}').val(),
                 "content_text_format": $('#content_text_format_${self.id}').val(),

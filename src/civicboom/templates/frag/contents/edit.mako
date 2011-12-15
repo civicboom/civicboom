@@ -93,7 +93,7 @@
             h.args_to_tuple('content', id=self.id, format="redirect"),
             id           = 'edit_%s' % self.id,
             name         = "content",
-            method       = 'PUT',
+            method       = 'put',
             multipart    = True,
             data         = dict(
                 json_complete = "[ ['update', null, '%s'], ['update', ['%s','%s'] ] ]" %
@@ -158,7 +158,7 @@
         % if 'delete' in self.actions:
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect'),
-                method          = "DELETE",
+                method          = "delete",
                 value           = _('Delete'),
                 value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
                 link_data       = dict(

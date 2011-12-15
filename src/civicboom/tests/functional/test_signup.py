@@ -207,7 +207,7 @@ class TestSignup(TestController):
         response = self.app.post(
             url('setting',id="me",format="json"),
             params={
-                '_method': 'PUT',
+                '_method': 'put',
                 '_authentication_token': self.auth_token,
                 'allow_registration_follows' : 'true',
             },

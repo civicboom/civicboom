@@ -503,7 +503,7 @@
     % if list!='sent':
         ${h.secure_link(
             h.args_to_tuple('message', id=message['id'], format='redirect') ,
-            method="DELETE",
+            method="delete",
             value="",
             title=_("Delete"),
             link_class="icon16 i_delete",
