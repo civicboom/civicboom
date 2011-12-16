@@ -15,7 +15,7 @@
 
 <%def name="body()">
 ## GregM: have moved as an addition to general group
-    ${h.form(h.url('setting', id=d.get('username', 'me')), method='PUT', multipart=True)}
+    ${h.form(h.url('setting', id=d.get('username', 'me')), method='put', multipart=True)}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
         panel = c.result.get('panel', d.get('panel'))
@@ -82,8 +82,8 @@
                             selected = setting_value and setting_value!=''
                         %>
                 		<select class="yesno" name="${setting_name[0]}" ${readonly()} id="${setting_name[0]}">
-                			<option class="yes" value="True" ${'selected="selected"' if selected else ''}>Yes</option>
-                			<option class="no" value="" ${'selected="selected"' if not selected else ''}>No</option>
+                			<option class="yes" value="True" ${'selected=selected' if selected else ''}>Yes</option>
+                			<option class="no" value="" ${'selected=selected' if not selected else ''}>No</option>
                 		</select>
                     % elif setting_type == 'longstring':
                         <textarea name="${setting_name[0]}" ${readonly()} ${placeholder()} rows="4">${setting_value}</textarea>

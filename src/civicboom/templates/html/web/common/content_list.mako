@@ -84,7 +84,7 @@
               </a>
 			  ${h.secure_link(
 				href=url('content', id=content['id'], format="redirect"),
-                method="DELETE",
+                method="delete",
 				value=_("Delete"),
 				link_class="button_small button_small_style_2",
 				confirm_text=_("Are your sure you want to delete this content?")

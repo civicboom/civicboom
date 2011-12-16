@@ -53,9 +53,11 @@
 </%def>
 <div id="persona_select">
     <div id="persona_holder" style="vertical-align: center;" onclick="window.location='/profile';">
-      <a id="persona_avatar" href="${url(controller='profile', action='index')}"><!--
-        --><img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"' /><!--
-      --></a>
+      <a id="persona_avatar" href="${url(controller='profile', action='index')}">
+          <div class="thumbnail event_load">
+              <img src="${c.logged_in_persona.avatar_url}" alt="${c.logged_in_persona.name}" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"' />
+          </div>
+      </a>
       <div id="persona_details">
         ${c.logged_in_persona.name}
       </div>
@@ -70,6 +72,7 @@
       </div>
     </div>
     <table>
+        % if c.logged_in_persona_role != 'contributor':
         <tr>
             <td colspan="4">
                 <a href="${h.url('settings')}" id="settings">${_('My settings')}</a>
@@ -84,6 +87,7 @@
                 % endif
             </td>
         </tr>
+        %endif
         <%def name="persona_select(member, **kwargs)">
             <%
                 current_persona = member==c.logged_in_persona
@@ -99,7 +103,9 @@
                 % endif
             >
                 <td class="avatar">
-                    <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
+                    <div class="thumbnail event_load">
+                        <img src="${member.avatar_url}" alt="" onerror='this.onerror=null;this.src="/images/default/avatar_user.png"'/>
+                    </div>
                 </td>
                 <td class="name">
                     <p class="name">${member.name or member.username}</p>
@@ -154,13 +160,16 @@
             ## , members=num_members)}
         % endif
         ## Show currently logged in persona's groups:
+        ## AllanC - TODO - convert this to use member_actions/groups? - lets use the index actions as much as possible for a single DB point of contact - (I know members/index isnt cached at time of writing, but it's where we want to move to)
         % for membership in [membership for membership in c.logged_in_persona.groups_roles if membership.status=="active" and membership.group!=c.logged_in_persona and membership.group!=c.logged_in_user]:
             ${persona_select(membership.group, role=membership.role)}
             ## , members=membership.group.num_members)}
         % endfor
+        
+        % if c.logged_in_persona_role in ['admin']: #,'editor'
         <tr class="extras selectable" onclick="window.location='/misc/what_is_a_hub';">
             <td class="avatar">
-                <div style="position: relative;">
+                <div class="thumbnail event_load" style="position: relative;">
                     <img src="/images/default/avatar_group.png" alt=""/>
                     <a class="icon16 i_plus_bordered" style="position: absolute; bottom: 0px; right: 0px;"></a>
                 </div>
@@ -169,6 +178,8 @@
                 <p class="name">${_("Create a _Group")}</p>
             </td>
         </tr>
+        % endif
+        
         <tr class="extras">
             <td colspan="2">
                 <a href="#" onclick="boom.util.desktop_notification.request_permission(); return false;">Turn on notifications</a>

@@ -33,9 +33,9 @@
             <td>
                 <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
                     % if owner_name:
-                    <img src="${owner['avatar_url']}" alt="${owner_name}"      style="height:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default/avatar_user.png'" />
+                    <img src="${owner['avatar_url']}" alt="${owner_name}"    style="max-height:${size_avatar}px; max-width:${size_avatar}px;" onerror="this.onerror=null;this.src='/images/default/avatar_user.png'" />
                     % else:
-                    <img src="/images/boom128.png"  alt="${_('_site_name')}" style="height:${size_avatar}px;" />
+                    <img src="/images/boom128.png"  alt="${_('_site_name')}" style="max-height:${size_avatar}px; max-width:${size_avatar}px;" />
                     % endif
                 </a>
             </td>

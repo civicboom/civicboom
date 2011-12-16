@@ -28,9 +28,9 @@ class MemberActionsController(BaseController):
     @cacheable(time=60*60, anon_only=False)
     def qrcode(self, id, **kwargs):
         """
-        @param size   optional int, default 100 The size in pixels of the generated image
+        @param pixel_size optional int, default '8' The size of each cqcode module in pixels
         @parsm format optional string, default PNG accepts [png, jpeg, bmp, gif, tiff]
-        @param level  optional int, default 1 Error correction level 0 to 3
+        @param level optional int, default 1 Error correction level 0 to 3
         
         @return 200 a PNG
         """
@@ -335,12 +335,12 @@ class MemberActionsController(BaseController):
         @api members 1.0 (WIP)
         
         @return 200    list generated ok
-                list   array of content objects
+                list   array of member objects
         @return 404   member not found
         """
         return member_search(groups_for=id, **kwargs)
         
-        #member = get_member(id)        
+        #member = get_member(id)
         #if member == c.logged_in_persona and kwargs.get('private'):
         #    group_roles = member.groups_roles #self._groups_list_dict(
         #else:

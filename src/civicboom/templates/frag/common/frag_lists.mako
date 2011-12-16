@@ -73,7 +73,7 @@
 ##------------------------------------------------------------------------------
 ## When imported, these are the main methods of use
 <%def name="member_list_thumbnails(*args, **kwargs)">
-    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul', 'li'), list_class='member'        , *args, **kwargs)}
+    ${frag_list(render_item_function=render_item_member_thumbnail, type_=('ul', 'li'), list_class='member_thumbnail'        , *args, **kwargs)}
 </%def>
 
 <%def name="member_list(*args, **kwargs)">
@@ -355,9 +355,11 @@
             <a class="link_new_frag" href="${item_url}" data-frag="${data_frag}">
                 <p class="content_title">${h.truncate(content['title']  , length=45, indicator='...', whole_word=True)}</p>
             </a>
+            % if request.GET.get('term', '') and 'content_short' in content:
             <p class="content_short">
-                ${content['content_short']}
+                ${content['content_short']|n}
             </p>
+            % endif
             <p class="timestamp">
                 ${timestamp(content)}
                 % if content['type']=='article' and (content.get('parent_id') or content.get('parent')):
@@ -501,7 +503,7 @@
     % if list!='sent':
         ${h.secure_link(
             h.args_to_tuple('message', id=message['id'], format='redirect') ,
-            method="DELETE",
+            method="delete",
             value="",
             title=_("Delete"),
             link_class="icon16 i_delete",

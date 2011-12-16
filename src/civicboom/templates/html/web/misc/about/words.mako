@@ -190,3 +190,29 @@ share_data = {
 %>
 
 
+
+## From frag/contents/edit.mako:
+<%
+#        if selected_type == "assignment":
+    confirm_title = _("Once you post this request, it will appear:")
+    confirm_message = _("<ol>" +\
+                "<li>" + "On your _Widget for your community to respond to" +"</li>" +\
+                "<li>" + "In all your _site_name followers' notification streams" +"</li>" +\
+                "<li>" + "On the _site_name request stream" +"</li>" +\
+                "</ol>")
+#        elif selected_type == "article":
+#            if content.get("parent"):
+    confirm_title = _("Once you share this story, it will:")
+    confirm_message = _("<ol>" +\
+                    "<li>" + "Be sent directly to %s" + "</li>" +\
+                    "<li>" + "Be listed as a response against the request" + "</li>" +\
+                    "<li>" + "Appear in your followers' notification streams" + "</li>" +\
+                    "</ol>")
+#            else:
+    confirm_title = _("Once you post this story:")
+    confirm_message = _("<ol>" +\
+                    "<li>" + "It will appear in your followers' notification streams." + "</li>" +\
+                    "<li>" + "You will also be able to share it on Facebook, LinkedIn and Twitter once you post." + "</li>" +\
+                    "</ol>")
+
+%>

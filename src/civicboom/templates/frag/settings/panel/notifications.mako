@@ -9,7 +9,7 @@
 <%def name="title()">${_("Edit your notification settings")}</%def>
 
 <%def name="body()">
-    ${h.form(h.url('setting', id=c.result.get('username', 'me')), method='PUT')}
+    ${h.form(h.url('setting', id=c.result.get('username', 'me')), method='put')}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     % if setting_icons.get('messages'):
         <img style="float:right;" src="/images/settings/${setting_icons.get('messages')}.png" />

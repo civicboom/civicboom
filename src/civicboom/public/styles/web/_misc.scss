@@ -3,28 +3,27 @@
 
 /* big grey stylish footer THIS IS NOT IN THE RIGHT PLACE >_<*/
 .misc_footer {
-    width: 100%;
-    min-height: 5em;
     background-color: $cb-grey;
     background-image: url('../images/misc/titlepage/footer_shadow.png');
-    background-repeat: repeat-x;
     background-position: top;
-    margin-top: 1em;
-    text-align: center;
-    position: relative;
+    background-repeat: repeat-x;
     font-size: 13px;
+    position: relative;
+    margin-top: 1em;
+    min-height: 5em;
+    text-align: center;
+    width: 100%;
     
     .copyright {
-        width: 100%;
-        text-align: center;
         font-size: 85%;
         padding: 1em;
+        text-align: center;
+        width: 100%;
     }
         
     .footer_wrapper{
-        margin: auto;
-        // text-align: left;
         background-color: transparent;
+        margin: auto;
         position: relative;
         
         .col {
@@ -239,16 +238,11 @@ header {
 
 BODY.c-misc {
     color: $misc-page-font;
-    /*background-color: #fff;
+    
+    .button { color: #fff !important; }
+    
+    A { color: $misc-page-link; }
 
-    footer {
-        display: none;
-    }*/
-    
-    p {
-        // line-height: 200%;
-    }
-    
     .misc_header, .content_wrapper, .footer {
         a {
             color: $misc-page-link;
@@ -262,17 +256,104 @@ BODY.c-misc {
 
     /* page content wrapper */
     .content_wrapper {
-        position: relative;
-        width: $misc-page-width;
         margin: auto;
         padding: 2em 0 0 0;
+        position: relative;
+        width: $misc-page-width;
     }
 
     /* misc/about page content */
     .content {
-        vertical-align: top;
         display: inline-block;
+        font-size: 11pt;
+        line-height: 175%;
+        vertical-align: top;
         width: 80%;
+        
+        H1 { font-size: 13pt; }
+        
+        H2 { font-size: 13pt; }
+        
+        UL, P { padding-bottom: 10px; }
+        
+        UL LI { list-style: disc; }
+        
+        UL, OL {
+            LI {
+                margin-left: 2em;
+                line-height: 200%;
+            }
+        }
+    }
+    
+    /* specific about page stylings */
+    #about_civicboom {
+        line-height: 200%;
+
+        H2 { padding-top: 0.75em; }
+
+        .content A {
+            color: #4974b8 !important;
+
+            &:hover { color: #FF8814 !important; }
+        }
+
+        .logo { padding-bottom: 10px; }
+
+        .flow {
+            margin-left: -0.5em;
+            width: 100%;
+        }
+    }
+
+    #contact_us {
+        background-color: #fff;
+        padding: 1em;
+        font-size: 110%;
+        width: 400px;
+        @include border_radius(0.5em);
+        
+        H1, P, INPUT, TEXTAREA {
+            display: block;
+            width: 100%;
+            margin-bottom: 13px;
+        }
+        
+        INPUT, TEXTAREA { margin-top: 3px; }
+        
+        LABEL {
+            font-weight: bold;
+            font-size: 110%;
+        }
+    }
+   
+    #organisations {
+        EM { font-style: italic }
+        
+        STRONG { font-weight: bold }
+        
+        H1, H2 { padding-top: 0.5em; }
+        
+        H2 { font-size: 110%; }
+
+        H2, SPAN, .short { display: inline-block; }
+        
+        P { padding-bottom: 1em; }
+        
+        .button { font-size: 115%; }
+        
+        .learn_more {  }
+      
+        .flow {
+            margin-left: -0.5em;
+            padding-top: 1em;
+            width: 100%;
+        }
+        
+        .short {
+            max-width: 600px;
+            margin-right: 20px;
+        }
     }
 
     /* misc/about page navigation */
@@ -569,27 +650,27 @@ BODY.c-misc.a-new_article.u-user {
 
 BODY.c-misc.a-what_is_a_hub {
     .frag_whitewrap {
-	background: white;
-	border-radius: 16px;
-	padding: 16px;
-	margin: 1em;
-	width: 800px;
-	margin: auto;
-	color: $text-colour;
-	
-	.create_hub {
-	    width: 10em;
-	    border: 1px solid #999;
-	    padding: 1em 3em 1em 3em;
-	    margin: 1em auto 0 auto;
-	    @include border_radius(0.5em);
-	    font-size: 130%;
-	    text-align: center;
-	}
-	
-	img {
-	    max-width: 300px;
-	}
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  margin: 1em;
+  width: 800px;
+  margin: auto;
+  color: $text-colour;
+  
+  .create_hub {
+      width: 10em;
+      border: 1px solid #999;
+      padding: 1em 3em 1em 3em;
+      margin: 1em auto 0 auto;
+      @include border_radius(0.5em);
+      font-size: 130%;
+      text-align: center;
+  }
+  
+  img {
+      max-width: 300px;
+  }
     }
 }
 
@@ -612,4 +693,62 @@ BODY.c-misc.a-how_to {
         font-size: 300%;
         text-align: center;
     }
+}
+
+
+/*
+ * CSS animated rainbow dividers of awesome 
+ * by Chris Heilmann @codepo8 and Lea Verou @leaverou 
+**/
+@-moz-keyframes charlieeee {
+  from { background-position:top left; } 
+  to {background-position:top right; }
+}
+@-webkit-keyframes charlieeee { 
+  from { background-position:top left; }  
+  to { background-position:top right; }  
+}
+@-o-keyframes charlieeee { 
+  from { background-position:top left; }  
+  to { background-position:top right; }  
+}
+@-ms-keyframes charlieeee { 
+  from { background-position:top left; }  
+  to { background-position:top right; }  
+}
+@-khtml-keyframes charlieeee { 
+  from { background-position:top left; }  
+  to { background-position:top right; }  
+}
+@keyframes charlieeee { 
+  from { background-position:top left; }  
+  to { background-position:top right; }  
+}
+.catchadream{
+  background-image:-webkit-linear-gradient( left, red, orange, yellow, green,
+                                          blue, indigo, violet, indigo, blue,
+                                          green, yellow, orange, red );
+  background-image:-moz-linear-gradient( left, red, orange, yellow, green,
+                                         blue,indigo, violet, indigo, blue,
+                                         green, yellow, orange,red );
+  background-image:-o-linear-gradient( left, red, orange, yellow, green,
+                                         blue,indigo, violet, indigo, blue,
+                                         green, yellow, orange,red );
+  background-image:-ms-linear-gradient( left, red, orange, yellow, green,
+                                         blue,indigo, violet, indigo, blue,
+                                         green, yellow, orange,red );
+  background-image:-khtml-linear-gradient( left, red, orange, yellow, green,
+                                         blue,indigo, violet, indigo, blue,
+                                         green, yellow, orange,red );
+  background-image:linear-gradient( left, red, orange, yellow, green,
+                                         blue,indigo, violet, indigo, blue,
+                                         green, yellow, orange,red );
+  -moz-animation:charlieeee 2.5s forwards linear infinite;
+  -webkit-animation:charlieeee 2.5s forwards linear infinite;
+  -o-animation:charlieeee 2.5s forwards linear infinite;
+  -khtml-animation:charlieeee 2.5s forwards linear infinite;
+  -ms-animation:charlieeee 2.5s forwards linear infinite;
+  -lynx-animation:charlieeee 2.5s forwards linear infinite;
+  animation:charlieeee 2.5s forwards linear infinite;
+  background-size:50% auto;
 }

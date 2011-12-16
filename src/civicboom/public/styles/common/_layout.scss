@@ -1,66 +1,73 @@
+/*----------------------------------------------------------------------------*/
+/* Common layout                                                              */
+/*                                                                            */
+/* Only for platform wide styling rules common to web, mobile and widget      */
+/*----------------------------------------------------------------------------*/
+
+
+/*---------------------------------------------------------------------------*/
+/* imports                                                                   */
+/*---------------------------------------------------------------------------*/
 @import "../common/_palette.scss";
 @import "../common/_mixin.scss";
 
-/*
- * If we have javascript, hide the things that are shown using javascript
- */
-HTML.js .hideable {
-	display: none;
-}
-HTML.js .popup {
-	display: none;
-	position: fixed;
-	left: 200px;
-	top: 50px;
+
+/*---------------------------------------------------------------------------*/
+/* javascript availability dependant styling                                 */
+/*---------------------------------------------------------------------------*/
+HTML.no-js .hide_if_nojs { display: none; }
+
+HTML.js {
+    .hide_if_js { display: none; }
+
+    .hideable { display: none; }
+
+    .popup {
+          display: none;
+          left: 200px;
+          position: fixed;
+          top: 50px;
+    }
 }
 
-b {
-  font-weight: bold;
-}
+HTML.no-flash .hide_if_noflash { display: none; }
 
-/* for browsers without JS hide sections of the page */
-HTML.no-js .hide_if_nojs {display: none;}
-HTML.js    .hide_if_js   {display: none;}
+HTML.flash .hide_if_flash { display: none; }
 
-/*
- * layout for the web page, starting with the body to cover everything
- *
- * In most browsers body=the whole screen, but in chrome HTML=whole screen
- * and body can be smaller with white borders?
- */
-HTML, BODY {
-	/* background: #DDD; */
-}
-/*
- * YUI grids and chrome defaults both override INPUT font,
- * so let's try and over-override it...
- */
-HTML, BODY, INPUT {
-	//font-family: "Helvetica", "Arial", sans-serif !important;
-	font-family: "FamiliarPro", "Helvetica", "Arial", sans-serif !important;
-}
+.hidden {display: none;}
 
-/*
- * YUI grids turns off numbering of ordered lists
- */
+/*---------------------------------------------------------------------------*/
+/* YUI/browser defaulting fixes/overrides                                    */
+/*---------------------------------------------------------------------------*/
+/* YUI grids and chrome defaults both override INPUT font */
+HTML, BODY, INPUT { font-family: "FamiliarPro", "Helvetica", "Arial", sans-serif !important; }
+
+HTML INPUT, HTML TEXTAREA { padding: 2px 5px; }
+
+HTML SELECT { padding: 1px 5px; }
+
+B { font-weight: bold; }
+
+/* YUI grids turns off numbering of ordered lists */
 UL.bulleted LI {
-	display: list-item;
-	margin-left: 3em;
-	list-style: circle;
-}
-OL LI {
-	display: list-item;
-	margin-left: 3em;
-	list-style: decimal;
-}
-OL OL LI {
-	/*list-style-type: lower-alpha;*/
+      display: list-item;
+      margin-left: 3em;
+      list-style: circle;
 }
 
-
-INPUT[type="search"] {
-	-webkit-appearance: none; /* chrome thinks it knows best when <input type="search"> */
+OL {
+    LI {
+          display: list-item;
+          margin-left: 3em;
+          list-style: decimal;
+    }
+    
+    OL LI { /*list-style-type: lower-alpha;*/ }
 }
+
+/* chrome thinks it knows best when <input type="search"> */
+INPUT[type="search"] { -webkit-appearance: none; }
+
 .mceEditor.defaultSkin table.mceLayout,
 INPUT[type="text"],
 INPUT[type="date"],
@@ -70,88 +77,68 @@ INPUT[type="email"],
 INPUT[type="password"],
 SELECT,
 TEXTAREA {
-	border: 1px solid $input-border;
+      border: 1px solid $input-border;
     @include border_radius($input-radius);
     @include box_sizing(border-box);
 }
-.mceEditor.defaultSkin table.mceLayout tr.mceFirst td {
-	border-top: none;
-}
-HTML INPUT, HTML TEXTAREA {
-	padding: 2px 5px;
-}
-HTML SELECT {
-	padding: 1px 5px;
-}
 
+.mceEditor.defaultSkin table.mceLayout tr.mceFirst td { border-top: none; }
 
-/*----------------------------------------------------------------------------*/
-/*                                Title Styles                                */
-/*----------------------------------------------------------------------------*/
+/* title/heading styles */
+H1 { font-size: 150% !important; }
 
-// important because YUI tries to override these -_-
 H1,H2,H3,H4 {
     font-weight: bold !important;
     margin: 0.25em 0em !important;
-}
-H1 {
-    font-size: 150% !important;
 }
 
 
 /*----------------------------------------------------------------------------*/
 /* Table - Zebra Colours                                                      */
 /*----------------------------------------------------------------------------*/
-
 .zebra {
-	width: 100%;
-	border: 1px solid black;
-
-	TH {
-		font-weight: bold;
-	}
-	THEAD TR                 {background: #888;}
-	TBODY TR:nth-child(odd)  {background: #CCC;}
-	TBODY TR:nth-child(even) {background: #EEE;}
-
-	THEAD TR            {border-bottom: 1px solid black;}
-	TBODY TR            {border-bottom: 1px solid #999;}
-	TBODY TR:last-child {border-bottom: none;}
-
-	THEAD TH,
-	TBODY TD {
-		padding: 2px;
-	}
+      width: 100%;
+      border: 1px solid black;
+  
+      TH { font-weight: bold; }
+      THEAD TR                 { background: #888; }
+      TBODY TR:nth-child(odd)  { background: #CCC; }
+      TBODY TR:nth-child(even) { background: #EEE; }
+  
+      THEAD TR            { border-bottom: 1px solid black; }
+      TBODY TR            { border-bottom: 1px solid #999; }
+      TBODY TR:last-child { border-bottom: none; }
+  
+      THEAD TH, TBODY TD { padding: 2px; }
 }
 
 
 /*----------------------------------------------------------------------------*/
 /* Table - Simple name:value forms                                            */
 /*----------------------------------------------------------------------------*/
-
 .form {
-	TH {
-		font-weight: bold;
-		text-align: center;
-		padding: 2px;
-	}
-	TD {
-		padding: 2px;
-		&:first-child {
-			text-align: right;
-			vertical-align: top;
-		}
-	}
+    TH {
+        font-weight: bold;
+        text-align: center;
+        padding: 2px;
+    }
+    TD {
+        padding: 2px;
+        &:first-child {
+            text-align: right;
+            vertical-align: top;
+        }
+    }
 
-	INPUT[type="text"],
-	INPUT[type="submit"],
-	INPUT[type="email"],
-	INPUT[type="search"],
-	INPUT[type="password"],
-	SELECT,
-	TEXTAREA {
-		width: 100%;
-	}
+    INPUT[type="text"],
+    INPUT[type="submit"],
+    INPUT[type="email"],
+    INPUT[type="search"],
+    INPUT[type="password"],
+    SELECT,
+    TEXTAREA {
+        width: 100%;
+    }
 }
 
 
@@ -160,51 +147,13 @@ H1 {
 /*----------------------------------------------------------------------------*/
 
 .valid {
-	background: #AFA;
+    background: #AFA;
 }
 .invalid {
-	background: #FAA;
+    background: #FAA;
 }
 .validation-result {
-	display: none;
-}
-
-
-/*----------------------------------------------------------------------------*/
-/* Tooltip Hover                                                              */
-/* from http://psacake.com/web/jl.asp */
-/*----------------------------------------------------------------------------*/
-
-.tooltip {
-	position:relative; /*this is the key*/
-	z-index:24; background-color:#ccc;
-	color:#000;
-	text-decoration:none;
-
-	display: inline-block;
-	width: 1em;
-	height: 1em;
-}
-.tooltip:hover {
-	z-index:25; background-color:#ccc;
-}
-.tooltip span,
-.tooltip .tooltip_content {
-	display: none;
-    @include border_radius(5px);
-	box-shadow        : 0.2em 0.2em 0.2em rgba(0, 0, 0, 0.1);
-	-webkit-box-shadow: 0.2em 0.2em rgba(0, 0, 0, 0.1);
-	-moz-box-shadow   : 0.2em 0.2em rgba(0, 0, 0, 0.1);
-}
-.tooltip:hover span,
-.tooltip:hover .tooltip_content { /*the span will display just on :hover state*/
-	display:block;
-	position:absolute;
-	top:1em; left:1em; width:15em;
-	border:1px solid #888;
-	background-color: #ccc;
-	color:#000;
-	text-align: center;
+    display: none;
 }
 
 
@@ -213,19 +162,20 @@ H1 {
 /*----------------------------------------------------------------------------*/
 
 #flash_message {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0px;
-	z-index: 3;
-	padding: 8px;
-	display: none;
-	border-bottom: 1px solid black;
-	text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0px;
+    z-index: 3;
+    padding: 8px;
+    display: none;
+    border-bottom: 1px solid black;
+    text-align: center;
     background: #FFA;
     opacity: 0.90;
 }
-HTML.no-js #flash_message {
+HTML.no-js #flash_message.event_load {
+    // event_load is only present if a message is present - this ensures the flash message is not visible if it has no content in the static site
     position: static;
     display: block;
 }
@@ -240,32 +190,32 @@ HTML.no-js #flash_message {
 /*----------------------------------------------------------------------------*/
 
 .olMap {
-	border: 1px solid $input-border;
+    border: 1px solid $input-border;
     @include box_sizing(border-box);
 }
 .olControlAttribution {
-	bottom: 0em !important;
-	right: 0em !important;
-	padding: 2px;
-	border-top-left-radius: 6px 6px;
-	background: $page-background;
-	border-top: 1px solid $input-border;
-	border-left: 1px solid $input-border;
-	font-size: 8px;
+    bottom: 0em !important;
+    right: 0em !important;
+    padding: 2px;
+    border-top-left-radius: 6px 6px;
+    background: $page-background;
+    border-top: 1px solid $input-border;
+    border-left: 1px solid $input-border;
+    font-size: 8px;
 }
 .olPopup {
-	border: 2px solid gray;
+    border: 2px solid gray;
     @include border_radius(8px);
-	padding: 4px;
+    padding: 4px;
 }
 
 .olLayerGeoRSSClose {
-	float: right;
-	cursor: pointer;
+    float: right;
+    cursor: pointer;
 }
 
 .olLayerGeoRSSTitle {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 
@@ -273,19 +223,19 @@ HTML.no-js #flash_message {
 /* Common widgets                                                             */
 /*----------------------------------------------------------------------------*/
 
-.button, .ui-button.ui-state-active {
+.button, .ui-button.ui-state-active, .ui-button.ui-state-default {
     @include border_radius($button-radius);
-	display: inline-block;
-	background: $button-top;
-	border: 1px solid $button-border;
-	color: $button-txt;
-	text-align: center;
-	text-decoration: none;
-	font-weight: bold;
-	cursor: pointer;
+    display: inline-block;
+    background: $button-top;
+    border: 1px solid $button-border;
+    color: $button-txt;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.ui-button.ui-state-active span.ui-button-text {
+.ui-button.ui-state-active span.ui-button-text, .ui-button.ui-state-default span.ui-button-text {
   color: white !important;
 }
 
@@ -303,69 +253,69 @@ HTML.no-js #flash_message {
 }
 
 .acceptrequest {
-	width: 100%;
-	text-align: center;
+    width: 100%;
+    text-align: center;
 }
 .acceptrequest .button {
-	width: 40%;
+    width: 40%;
 }
 
 DIV#app .button {
-	padding: 0.25em 0.5em;
-	/* display: inline-block; */
+    padding: 0.25em 0.5em;
+    /* display: inline-block; */
 }
 
 .title_bar {
-	/*background: $titlebar-top; /* for non-css3 browsers */
-	/*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$titlebar-top}', endColorstr='#{$titlebar-bot}'); /* for IE */
-	/*background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $titlebar-top), color-stop(0.81, $titlebar-bot)); /* for webkit browsers */
-	/*background: -moz-linear-gradient(top, $titlebar-top, $titlebar-bot 81%); /* for firefox 3.6+ */
-	color: $titlebar-txt;
+    /*background: $titlebar-top; /* for non-css3 browsers */
+    /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$titlebar-top}', endColorstr='#{$titlebar-bot}'); /* for IE */
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $titlebar-top), color-stop(0.81, $titlebar-bot)); /* for webkit browsers */
+    /*background: -moz-linear-gradient(top, $titlebar-top, $titlebar-bot 81%); /* for firefox 3.6+ */
+    color: $titlebar-txt;
 }
 
 .button, .ui-button.ui-state-active {
-	background: $button-top; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-top}', endColorstr='#{$button-bot}'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top), color-stop(0.81, $button-bot)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, $button-top, $button-bot 81%); /* for firefox 3.6+ */
-	color: $button-txt;
-	-moz-box-shadow: 1px 1px 1px #666;
-	-webkit-box-shadow: 1px 1px 1px #666;
-	box-shadow: 1px 1px 1px #666;
+    background: $button-top; /* for non-css3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-top}', endColorstr='#{$button-bot}'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top), color-stop(0.81, $button-bot)); /* for webkit browsers */
+    background: -moz-linear-gradient(top, $button-top, $button-bot 81%); /* for firefox 3.6+ */
+    color: $button-txt;
+    -moz-box-shadow: 1px 1px 1px #666;
+    -webkit-box-shadow: 1px 1px 1px #666;
+    box-shadow: 1px 1px 1px #666;
 }
 .button:hover {
-	background: $button-top + #101010; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-top + #101010}', endColorstr='#{$button-bot + #101010}'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top + #101010), color-stop(0.81, $button-bot + #101010)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, $button-top + #101010, $button-bot + #101010 81%); /* for firefox 3.6+ */
-	color: $button-txt;
+    background: $button-top + #101010; /* for non-css3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-top + #101010}', endColorstr='#{$button-bot + #101010}'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, $button-top + #101010), color-stop(0.81, $button-bot + #101010)); /* for webkit browsers */
+    background: -moz-linear-gradient(top, $button-top + #101010, $button-bot + #101010 81%); /* for firefox 3.6+ */
+    color: $button-txt;
 }
 .button:active {
-	background: $button-top; /* for non-css3 browsers */
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-bot}', endColorstr='#{$button-top}'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, $button-bot), color-stop(1.0, $button-top)); /* for webkit browsers */
-	background: -moz-linear-gradient(top, $button-bot 19%, $button-top); /* for firefox 3.6+ */
+    background: $button-top; /* for non-css3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$button-bot}', endColorstr='#{$button-top}'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.19, $button-bot), color-stop(1.0, $button-top)); /* for webkit browsers */
+    background: -moz-linear-gradient(top, $button-bot 19%, $button-top); /* for firefox 3.6+ */
 }
 
 .button_large {
-	padding: 4px 4px 4px 4px;
-	font-size: 125%;
+    padding: 4px 4px 4px 4px;
+    font-size: 125%;
 }
 
 .border {
-	border: 0.2em solid #4A73B8;
-	border-top: none;
+    border: 0.2em solid #4A73B8;
+    border-top: none;
 }
 
 .link_pointer {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .border_box {
     @include border_radius($button-radius);
-	display: inline-block;
-	background: white;
-	border: 1px solid #BBB;
+    display: inline-block;
+    background: white;
+    border: 1px solid #BBB;
 }
 /*----------------------------------------------------------------------------*/
 /* Filters                                                                    */
@@ -396,87 +346,87 @@ DIV#app .button {
 /*----------------------------------------------------------------------------*/
 
 .icon_overlay_red {
-	display: inline-block;
-	height: 1.3em;
-	text-align: center;
-	font-weight: bold;
-	color: #FFF;
-	background-color: #F00;
+    display: inline-block;
+    height: 1.3em;
+    text-align: center;
+    font-weight: bold;
+    color: #FFF;
+    background-color: #F00;
     @include border_radius(0.5em);
 }
 
 .content_short P {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 
 /*----------------------------------------------------------------------------*/
-/*                          Content Mouse Over Help                           */
+/* mouse over help                                                            */
 /*----------------------------------------------------------------------------*/
-
 .mo-help {
-	position: relative;
-
-	.mo-help-r, .mo-help-l {
-		display: none;
-		position: absolute;
-		z-index: 100;
-		width: 200px;
-		padding: 12px;
-		bottom: 3em;
-		
-		background: white;
-		border: 8px solid lighten($cb-lightblue, 20%);
-		
-		color: #333;
-		font-size: 12px;
-		text-align: center;
-		text-shadow: none;
-		
-		opacity: 0.9;
-		filter:alpha(opacity=9);
-		
-		@include border_radius(0.5em);
-		@include drop_shadow(1px, 1px, 5px, #333);
-	}
-	
-	.mo-help-l {
-		right: 0em;
-	}
-	
-	.mo-help-r {
-		left: 0em;
-	}
-	
-	.mo-help-b {
-		bottom: auto;
-		heigth: auto;
-		top: 0em;
-		margin-top: 2em;
-	}
-	
-	.mo-help-r:hover, .mo-help-l:hover {
-	    display: none;
-	}
+      position: relative;
+  
+      .mo-help-r, .mo-help-l {
+            display: none;
+            position: absolute;
+            z-index: 100;
+            width: 200px;
+            padding: 12px;
+            bottom: 3em;
+            
+            background: white;
+            border: 8px solid lighten($cb-lightblue, 20%);
+            
+            color: #333;
+            font-size: 12px;
+            text-align: center;
+            text-shadow: none;
+            
+            opacity: 0.9;
+            filter:alpha(opacity=9);
+            
+            @include border_radius(0.5em);
+            @include drop_shadow(1px, 1px, 5px, #333);
+      }
+      
+      .mo-help-l {
+            right: 0em;
+      }
+      
+      .mo-help-r {
+            left: 0em;
+      }
+      
+      .mo-help-b {
+            bottom: auto;
+            height: inherit;
+            top: 0em;
+            margin-top: 2em;
+      }
+      
+      .mo-help-r:hover, .mo-help-l:hover {
+          display: none;
+      }
 }
 
 .mo-help:hover {
-	.mo-help-r, .mo-help-l {
-		display: block;
-	}
+      .mo-help-r, .mo-help-l {
+            display: block;
+      }
 }
 
 
 /*----------------------------------------------------------------------------*/
-/*                          Content Mouse Over Help                           */
+/* misc/common styling classes                                                */
 /*----------------------------------------------------------------------------*/
-
 .fl {
-	float: left;
+     float: left;
 }
+
 .fr {
-	float: right;
+     float: right;
 }
+
 .cb {
-	clear: both;
+     clear: both;
 }

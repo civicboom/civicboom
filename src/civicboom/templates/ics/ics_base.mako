@@ -66,7 +66,28 @@ ${journal(content, **journal_kwargs)}\
 <%def name="ics_member_item(member)">
 </%def>
 
-
+##------------------------------------------------------------------------------
+## Message Item
+##------------------------------------------------------------------------------
+<%def name="ics_message_item(message)"><%
+    source = message.get('source', message.get('source_id'))
+    target = message.get('target', message.get('target_id'))
+    url    = h.url('message', id=message.get('id'), qualified=True)
+%>
+BEGIN:VJOURNAL
+UID:${url}
+URL:${url}
+DTSTAMP:${api_datestr_to_icsdatestr(message['timestamp'])}
+SUMMARY:${message['subject']}
+DESCRIPTION:${ics_content_text(message['content'])}
+% if source:
+ORGANIZER${ics_member(source)}
+% endif
+% if target:
+CONTACT${ics_member(target)}
+% endif
+END:VJOURNAL
+</%def>
 
 
 ##------------------------------------------------------------------------------
@@ -79,6 +100,7 @@ ${journal(content, **journal_kwargs)}\
 <%def name="assignment(content)">
 ## Assignments may need 2 items raised.
 ##   Event date and Due date are separate events
+## if no event_date or due_date - just raise a plain VTODO
 ##
 ## Event
 % if content.get('event_date'):
@@ -107,7 +129,7 @@ LOCATION:${content.get('location_text')}
     % if d['content']['id'] == content['id']:
         % for atendee in d['accepted_status']['items']:
         ##if status.get(atendee['status'])
-ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])}${ics_member(atendee)}
+ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT=${status.get(atendee['status'])}${ics_member(atendee)}
         % endfor
     % endif
 % except Exception as e:
@@ -115,12 +137,8 @@ ATTENDEE;ROLE=OPT-PARTICIPANT;PARTSTAT;${status.get(atendee['status'])}${ics_mem
 ## AllanC - TODO? How could we supoort TENTATIVE, CONFIRMED, CANCELLED
 ##          'CANCELLED' - what if this request is deleted? - we want it to come up as cancled, but we just remove it from the DB. Currently it is not possible to do this
 END:VEVENT
-% else:
-BEGIN:VTODO
-${ics_content_base(content)}\
-DTSTART:${api_datestr_to_icsdatestr(content.get('update_date'))}
-END:VTODO
 % endif
+##
 ##
 ## Todo
 % if content.get('due_date'):
@@ -133,6 +151,15 @@ END:VTODO
 ## 'COMPLETED'?
 ## Could we see if this user has responded to this
 ##COMPLETED:20070707T100000Z
+% endif
+##
+##
+## Fallback - If assignment has no due or event, just raise a VTODO
+% if not content.get('event_date') and not content.get('due_date'):
+BEGIN:VTODO
+${ics_content_base(content)}\
+DTSTART:${api_datestr_to_icsdatestr(content.get('update_date'))}
+END:VTODO
 % endif
 </%def>
 
@@ -170,7 +197,7 @@ LANGUAGE=${content_or_member.get('langauge') if content_or_member.get('langauge'
         if content.get('type') == 'comment':
             text = content.get('content')
         else:
-            text = content.get('content_short') or h.truncate(strip_html_tags(content.get('content')), length=150, whole_word=True, indicator='...')
+            text = content.get('content_short')
     text = re.sub(r'[\t\n\r\f\v]', '\\\\n', text)
 %>\
 ${text}\

@@ -39,7 +39,7 @@
 ##------------------------------------------------------------------------------
 <%def name="body()">
     <input type="hidden" class="frag_refresh" value="${d['frag_refresh']}" />
-	<form onsubmit="" class="inviteform frag_whitewrap" method="POST" action="${h.url('current')}">
+	<form onsubmit="" class="inviteform frag_whitewrap" method="post" action="${h.url('current')}">
 		<input type="hidden" class="search-limit" name="search-limit" value="${d['search-limit']}" />
 		<input type="hidden" name="id" value="${d.get('id')}" />
 		<input type="hidden" name="invite" value="${d.get('invite')}" />

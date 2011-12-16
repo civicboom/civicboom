@@ -11,7 +11,7 @@ class TestFormats(TestController):
         
         def test_all_formats():
             
-            for format in ['json', 'xml', 'frag', 'html', 'rss', 'ics']:
+            for format in ['json', 'xml', 'frag', 'html', 'rss', 'ics', 'csv']:
                 # index - Lists ------------------------------------------------
                 # Content Lists
                 response = self.app.get(url('contents', creator='unittest', format=format), status=200)
@@ -21,29 +21,32 @@ class TestFormats(TestController):
                     response = self.app.get(url('members' , term='unittest', format=format), status=200)
                     self.assertIn("Mr U. Test", response)
                 # Message Lists
-                if self.logged_in_as and format not in ['ics']:
+                if self.logged_in_as: #and format not in ['ics']
                     response = self.app.get(url('messages', list='notification', sort='timestamp', format=format), status=200)
                     self.assertIn('Base Notification', response)
                 
                 # show - Single ------------------------------------------------
                 # Content
-                response = self.app.get(url('content', id=1         , format=format), status=200)
-                self.assertIn('API Documentation', response)
-                # Member
-                #if format not in ['ics']:
-                response = self.app.get(url('member' , id='unittest', format=format), status=200)
-                self.assertIn('unittest'         , response)
-                # Message
-                if self.logged_in_as and format not in ['rss','ics']:
-                    response = self.app.get(url('message', id=1, format=format), status=200)
-                    self.assertIn('Base Message', response)
+                if format not in ['csv']:
+                    response = self.app.get(url('content', id=1         , format=format), status=200)
+                    self.assertIn('API Documentation', response)
+                    # Member
+                    #if format not in ['ics']:
+                    response = self.app.get(url('member' , id='unittest', format=format), status=200)
+                    self.assertIn('unittest'         , response)
+                    # Message
+                    if self.logged_in_as and format not in ['rss','ics']:
+                        response = self.app.get(url('message', id=1, format=format), status=200)
+                        self.assertIn('Base Message', response)
         
         test_all_formats() # Logged in user
         self.log_out()
         test_all_formats() # Anon user
 
     def test_sub_domains(self):
-        
+        """
+        Test the widget and mobile subdomain template generation
+        """
         def test_all_sub_domains():
             def get_(url_, sub_domain):
                 return self.app.get(url_, extra_environ={'HTTP_HOST': '%s.civicboom_test.com' % sub_domain}, status=200)

@@ -285,12 +285,15 @@ class MembersController(BaseController):
         @api members 1.0 (WIP)
         
         @param * (see common list return controls)
+        @param lists A comma separated list of lists to return with this call. Default 'followers, following, groups, members, drafts, assignments_active, assignments_previous, articles, responses, assignments_accepted, actions, boomed'
         
         @return 200      page ok
                 member   member object
         @return 404      member not found
         
         @example https://test.civicboom.com/members/unittest.json
+        @example https://test.civicboom.com/members/unittest.json?lists=
+        @example https://test.civicboom.com/members/unittest/assignments_accepted.ics
         """
         
         if isinstance(kwargs.get('lists'), basestring):

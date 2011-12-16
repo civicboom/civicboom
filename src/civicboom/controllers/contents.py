@@ -20,7 +20,7 @@ from civicboom.lib.form_validators.dict_overlay import validate_dict
 # Search imports
 from civicboom.model.filters import *
 from sqlalchemy.orm       import joinedload
-from sqlalchemy           import asc, desc
+from sqlalchemy           import asc, desc, or_
 
 # Other imports
 from cbutils.misc import substring_in
@@ -77,6 +77,7 @@ class ContentSchema(civicboom.lib.form_validators.base.DefaultSchema):
     parent_id   = civicboom.lib.form_validators.base.ContentObjectValidator(not_empty=False)
     location    = civicboom.lib.form_validators.base.LocationValidator(not_empty=False)
     private     = civicboom.lib.form_validators.base.PrivateContentValidator(not_empty=False) #formencode.validators.StringBool(not_empty=False)
+    responses_require_moderation = civicboom.lib.form_validators.base.ModerateResponseValidator(not_empty=False)
     license_id  = civicboom.lib.form_validators.base.LicenseValidator(not_empty=False)
     #creator_id  = civicboom.lib.form_validators.base.MemberValidator(not_empty=False) # AllanC - debatable if this is needed, do we want to give users the power to give content away? Could this be abused? # AllanC - The answer is .. YES IT COULD BE ABUSED!! ... dumbass ...
     #tags        = civicboom.lib.form_validators.base.ContentTagsValidator(not_empty=False) # not needed, handled by update method
@@ -260,6 +261,11 @@ class ContentsController(BaseController):
             if kwargs.get('response_to'):
                 parent_root = get_content(kwargs['response_to'], is_viewable=True) # get_content will fail if current user does not have permission to view it
                 parent_root = parent_root.root_parent or parent_root
+                try:
+                    if parent_root.responses_require_moderation:
+                        kwargs['_show_only_moderated_content'] = True
+                except:
+                    pass
                 creator     = parent_root.creator
                 kwargs['list'] = 'not_drafts' # AllanC - HACK!!! when dealing with responses to .. never show drafts ... there has to be a better when than this!!! :( sorry
                 # AllanC note - 'creator' is compared against c.logged_in_persona later
@@ -272,6 +278,8 @@ class ContentsController(BaseController):
         if creator:
             if c.logged_in_persona == creator:
                 kwargs['_is_logged_in_as_creator'] = True
+                try   : del kwargs['_show_only_moderated_content'] # AllanC - always show to the creator ALL responses
+                except: None
             else:
                 kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
 
@@ -303,14 +311,17 @@ class ContentsController(BaseController):
                 results = results.filter(Content.__type__=='comment')
             else:
                 results = results.filter(Content.__type__!='comment')
-    
+            
             if kwargs['_is_logged_in_as_creator']:
                 pass # allow private content
             else:
                 if not kwargs['_is_trusted_follower']:
                     results = results.filter(Content.private==False) # public content only
                 results = results.filter(Content.__type__!='draft') # Don't show drafts to anyone other than the creator
-    
+
+            if kwargs.get('_show_only_moderated_content'):
+                results = results.filter(or_(ArticleContent.approval=='approved', ArticleContent.approval=='seen'))
+
             # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
             for col in ['creator', 'attachments', 'tags', 'parent', 'license']:
                 if col in kwargs.get('include_fields', []):
@@ -542,9 +553,12 @@ class ContentsController(BaseController):
         @param media_file
         @param private
             True
-            False
+            False (default)
+        @param responses_require_moderation paid for feature, assignment only
+            True
+            False (default)
         @param license_id
-            'CC-BY'
+            'CC-BY' (default)
             'CC-BY-ND'
             'CC-BY-SA'
             'CC-BY-NC'
@@ -553,7 +567,7 @@ class ContentsController(BaseController):
             'CC-PD'
         @param closed WIP
             True
-            False
+            False (default)
         @param auto_publish_trigger_datetime
         @param event_date
         @param due_date
@@ -765,7 +779,7 @@ class ContentsController(BaseController):
                 content.tags.append(get_tag(new_tag_name))
         
         # Extra fields
-        permitted_extra_fields = ['due_date', 'event_date',] # AllanC - this could be customised depending on content.__type__ if needed at a later date
+        permitted_extra_fields = ['due_date', 'event_date', 'responses_require_moderation'] # AllanC - this could be customised depending on content.__type__ if needed at a later date
         for extra_field in [f for f in permitted_extra_fields if f in kwargs and not hasattr(content, f)]:
             if kwargs[extra_field] == None: # if due_date=None, we don't want to store due_date="None"
                 if extra_field in content.extra_fields:
@@ -811,15 +825,19 @@ class ContentsController(BaseController):
                 add_job('profanity_check', url_base=url('',qualified=True))
             # AllanC - GOD DAM IT!!! - we cant have the messages happening in the worker because we cant use the translation. This is ANOYING! I wanted the profanity filter to clean the content BEFORE messages were twittered out etc
             #          for now I have put it back inline .. but this REALLY needs sorting
-            #add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
-            from civicboom.worker.functions.content_notifications import content_notifications
-            content_notifications(content, publishing_for_first_time=publishing_for_first_time)
-            Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
+            add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            #from civicboom.worker.functions.content_notifications import content_notifications
+            #content_notifications(content, publishing_for_first_time=publishing_for_first_time)
+            #Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
         
         if content.__type__ == 'comment':
             if config['feature.profanity_filter']:
                 add_job('profanity_check', url_base=url('',qualified=True))
             add_job('content_notifications')
+            #from civicboom.worker.functions.content_notifications import content_notifications
+            #content_notifications(content)
+            #Session.commit() 
+            
         
         
         # -- Redirect (if needed)-----------------------------------------------
@@ -915,6 +933,7 @@ class ContentsController(BaseController):
         @return 404      content not found
         
         @example https://test.civicboom.com/contents/1.json
+        @example https://test.civicboom.com/contents/1.json?lists=&exclude_fields=creator,license
         @example https://test.civicboom.com/contents/1.rss
         """
         # url('content', id=ID)
@@ -928,6 +947,7 @@ class ContentsController(BaseController):
                 #'contributors',
                 'actions', # AllanC - humm .. how can we cache this?
                 'accepted_status',
+                'boomed_by',
             ]
         kwargs['lists'].sort()
         

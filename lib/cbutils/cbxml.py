@@ -2,6 +2,8 @@
 XML Handling Utils
 """
 
+import types
+
 #-------------------------------------------------------------------------------
 # XML to Python Dictionary
 #-------------------------------------------------------------------------------
@@ -83,7 +85,7 @@ def dictToXMLString(d):
         e = Element(tag)
         if isinstance(d, basestring): # is String
             e.text = d
-        elif type(d) in [int, long]:
+        elif type(d) in [types.IntType, types.FloatType, types.BooleanType]:
             e.text = str(d)
         elif hasattr(d,'keys'): # is Dict
             for key in d.keys():

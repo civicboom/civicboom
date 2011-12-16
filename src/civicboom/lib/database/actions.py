@@ -1,5 +1,5 @@
 from pylons.templating  import render_mako as render #for rendering emails
-from pylons.i18n.translation import _
+from pylons.i18n.translation import _ # AllanC - uneeded as global _ should now be setup
 
 from civicboom.model.meta    import Session
 from civicboom.model         import Rating, FlaggedEntity

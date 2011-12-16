@@ -1,5 +1,6 @@
 <%!
     from webhelpers.html import HTML, literal
+    from paste.deploy.converters import asbool
 %>
 
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
@@ -82,7 +83,7 @@
 ## Used for setting user settings to not display this chunk again
 <%def name="guidance_disable_link(config_key)">
     <div class="mo-help">
-	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='PUT', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
+	${h.form(h.args_to_tuple(controller='settings', id=c.logged_in_user.username, action='update', format='redirect'), method='put', json_form_complete_actions="current_element.parent().parent().toggle(500, function(){current_element.parent().parent().remove();});")}
 	    ##${_("Don't show me this again")}
 	    ##<input type='checkbox' name='${config_key}' value='True' onclick="var form = $(this).closest('form'); form.submit(); form.parent().toggle(500, function(){form.parent().remove();})" />
 	    ##<input class='hide_if_js' type='submit' name='submit' value='hide'/>
@@ -158,4 +159,31 @@
             % endif
         </div>
     </div>
+</%def>
+
+
+##------------------------------------------------------------------------------
+## Yes/No input
+##------------------------------------------------------------------------------
+
+<%def name="yesno(selected=None, yes_value='yes', no_value='no', yes_display=None, no_display=None)">
+<%
+    selected_string = 'selected=selected'
+    selected_yes = ''
+    selected_no  = ''
+    try:
+	selected = asbool(selected)
+    except:
+	pass
+    if isinstance(selected, bool):
+	selected_yes = selected_string if selected==True  else ''
+	selected_no  = selected_string if selected==False else ''
+    elif isinstance(selected, basestring):
+	selected_yes = selected_string if selected==yes_value else ''
+	selected_no  = selected_string if selected==no_value  else ''
+%>
+<select name="responses_require_moderation" class="yesno">
+    <option value="${yes_value}" class="yes" ${selected_yes}>${yes_display if yes_display else yes_value}</option>
+    <option value="${ no_value}" class="no"  ${selected_no }>${ no_display if  no_display else  no_value}</option>
+</select>
 </%def>

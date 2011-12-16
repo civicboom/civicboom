@@ -3,14 +3,43 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="components"      file="/html/web/common/components.mako" />
 
 <%!
+    from paste.deploy.converters import asbool
     from webhelpers.html import HTML, literal
     share_url        = False
     rss_url          = False
     auto_georss_link = False
     
     frag_data_css_class = 'frag_content_edit' #content_form
+
+    
+    # These are DYNAMICALLY TRANSLATED, see translated words file
+    def publish_labels(selected_type, content, _):
+        if selected_type == "assignment":
+            confirm_title = _("Once you post this request, it will appear:")
+            confirm_message = _("<ol>" +\
+                "<li>" + "On your _Widget for your community to respond to" +"</li>" +\
+                "<li>" + "In all your _site_name followers' notification streams" +"</li>" +\
+                "<li>" + "On the _site_name request stream" +"</li>" +\
+                "</ol>")
+        elif selected_type == "article":
+            if content.get("parent"):
+                confirm_title = _("Once you share this story, it will:")
+                confirm_message = _("<ol>" +\
+                    "<li>" + "Be sent directly to %s" + "</li>" +\
+                    "<li>" + "Be listed as a response against the request" + "</li>" +\
+                    "<li>" + "Appear in your followers' notification streams" + "</li>" +\
+                    "</ol>") % content['parent'].get('creator', {}).get('name')
+            else:
+                confirm_title = _("Once you post this story:")
+                confirm_message = _("<ol>" +\
+                    "<li>" + "It will appear in your followers' notification streams." + "</li>" +\
+                    "<li>" + "You will also be able to share it on Facebook, LinkedIn and Twitter once you post." + "</li>" +\
+                    "</ol>")
+        return (confirm_title, confirm_message)
+    
 %>
 
 ##------------------------------------------------------------------------------
@@ -64,7 +93,7 @@
             h.args_to_tuple('content', id=self.id, format="redirect"),
             id           = 'edit_%s' % self.id,
             name         = "content",
-            method       = 'PUT',
+            method       = 'put',
             multipart    = True,
             data         = dict(
                 json_complete = "[ ['update', null, '%s'], ['update', ['%s','%s'] ] ]" %
@@ -129,7 +158,7 @@
         % if 'delete' in self.actions:
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect'),
-                method          = "DELETE",
+                method          = "delete",
                 value           = _('Delete'),
                 value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
                 link_data       = dict(
@@ -220,36 +249,43 @@
 <%def name="media()">
     <table class="media_files form" width="100%">
         <!-- Add media -->
+        
+        <!-- Add media non javascript version - hidden if JS enabled -->
+        <tbody class="">
+            <tr>
+                <td><label for="media_file" class="hide_if_uploadify">${_("File")}</label></td>
+                <td style="text-align: center;">
+                    <input
+                     data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"
+                     id="media_file" name="media_file" type="file" class="field_file file_upload_uploadify" style="width: 100%" /><br />
+                    ${_("(Please note there is currently a limit of 100MB for file uploads.)")}
+                </td>
+                <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload hide_if_uploadify"/></td>
+
+<!--                <td rowspan="3" class="media_preview_none hide_if_uploadify">${_("Select a file to upload")}</td>-->
+            </tr>
+            <tr class="hide_if_uploadify">
+                <td><label for="media_caption">${_("Caption")}</label></td>
+                <td colspan="2"><input id="media_caption" name="media_caption" type="text" /></td>
+            </tr>
+            <tr class="hide_if_uploadify">
+                <td><label for="media_credit" >${_("Credit")}</label></td>
+                <td colspan="2"><input id="media_credit"  name="media_credit"  type="text" /></td>
+            </tr>
+        </tbody>
+        
         <!-- Add media javascript - visible to JS enabled borwsers -->
         <tbody>
             <tr class="hide_if_nojs">
                 <td colspan="4" style="text-align: center;">
-                    <input data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" class="file_upload_uploadify" id="file_upload" name="file_upload" type="file" />
+                    ##<input data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" class="file_upload_uploadify" id="file_upload" name="file_upload" type="file" />
                     
-                    <a href="#" class="link_popup_next_element">Record from Webcam / Microphone</a>
+                    <a href="#" class="hide_if_nojs hide_if_noflash link_popup_next_element">Record from Webcam / Microphone</a>
                     <div class="popup_element" style="display: none;">
                         ${media_recorder()}
                     </div>
+                    <p class="hide_if_flash">${_("Advanced file uploading and recording from your webcam and microphone are only available if you have Adobe Flash and JavaScript enabled.")}</p>
                 </td>
-            </tr>
-        </tbody>
-        
-        <!-- Add media non javascript version - hidden if JS enabled -->
-        <tbody class="hide_if_js">
-            <tr>
-                <td><label for="media_file">${_("File")}</label></td>
-                <td><input id="media_file" name="media_file" type="file" class="field_file" style="width: 200px;"/></td>
-                <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload"/></td>
-
-                <td rowspan="3" class="media_preview_none">${_("Select a file to upload")}</td>
-            </tr>
-            <tr>
-                <td><label for="media_caption">${_("Caption")}</label></td>
-                <td colspan="2"><input id="media_caption" name="media_caption" type="text" /></td>
-            </tr>
-            <tr>
-                <td><label for="media_credit" >${_("Credit")}</label></td>
-                <td colspan="2"><input id="media_credit"  name="media_credit"  type="text" /></td>
             </tr>
         </tbody>
         <!-- End Add media -->
@@ -343,22 +379,57 @@
             due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
             event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
             auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime')                                                          or '')[:16]
+            responses_require_moderation  = self.content.get('responses_require_moderation') or asbool(self.content.get('extra_fields',{}).get('responses_require_moderation'))
         %>
         <tr><td>
         <label for="due_date">${_("Due Date")}</label>
         <br><input class="detail" type="datetime" name="due_date"   value="${due_date}" />
         </td></tr>
         
+        <tr><td>
+        <label for="event_date">${_("Event Date")}</label>
+        <br><input class="detail" type="datetime" name="event_date" value="${event_date}" />
+        </td></tr>
         ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
         ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
+
+        <%def name="plus_feature()">
+            % if not c.logged_in_persona.has_account_required('plus'):
+                <div class="disabled-grayout">
+                </div>
+                <div class="disabled-overlay">
+                    ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
+                    ${popup.link(
+                        h.args_to_tuple(controller='misc', action='contact_us'),
+                        title = _('Contact us'),
+                        text  = h.literal("<span class='learn_more button'>%s</span>") % _('Contact us'),
+                    )}
+                </div>
+            % endif
+        </%def>
         
         ## http://trentrichardson.com/examples/timepicker/
-        % if self.content['type']=='draft' and c.logged_in_persona.has_account_required('plus'):
+        % if self.content['type']=='draft':
+        ##and c.logged_in_persona.has_account_required('plus')
             <tr><td>
+                <div style="position: relative;">
+                ${plus_feature()}
                 <label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label>
                 <br><input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
+                </div>
             </td></tr>
         % endif
+
+        <tr><td>
+            <div style="position: relative;">
+            ${plus_feature()}
+            <label for="responses_require_moderation">${_("Responses will require moderation")}</label>
+            <br>
+                ${components.yesno(selected=responses_require_moderation, yes_display=_('Moderation Required'), no_display=_('None'))}
+                ##<input class="detail" type="checkbox" name="responses_require_moderation" value="True" ${'checked' if responses_require_moderation else ''}/>
+            </div>
+        </td></tr>
+
         
         <%doc>
         <p>${_("Response License:")}
@@ -450,22 +521,33 @@
 			${text}="${text}"
 		%endif
 	</%def>
-	<tr class="${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}">
+	<tr class="">
+	    ##${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}
         <td>
+            <div style="position: relative;">
+            % if not c.logged_in_persona.has_account_required('plus'):
+                <div class="disabled-grayout">
+                </div>
+                <div class="disabled-overlay">
+                    ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
+                </div>
+            % endif
+            
             <label>${_("Want to tell the world, or just a select few?")}</label>
             <br>${_("You can choose to make your content either <b>public</b> for anyone to see or <b>private</b> to you, your trusted followers and anyone you invite to respond to your request.")|n}
             
-            % if not c.logged_in_persona.has_account_required('plus'):
-                <div class="upgrade">
-                    ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
-                </div>
-            % endif
+            ##% if not c.logged_in_persona.has_account_required('plus'):
+            ##    <div class="upgrade">
+            ##        ${_('This requires a plus account. Please <a href="%s">upgrade</a> if you want access to this feature.') % (h.url(controller='about', action='upgrade_plans')) | n }
+            ##    </div>
+            ##% endif
             
             <div class="padded">
                 <div class="jqui-radios event_load">
                     <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
                     <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                 </div>
+            </div>
             </div>
         </td>
     </tr>
@@ -544,27 +626,8 @@
                             <p>${_(tooltip)}</p>
                         </div>
                         <%
-                            if self.selected_type == "assignment":
-                                confirm_title = _("Once you post this request, it will appear:")
-                                confirm_message = "<ol>" +\
-                                    "<li>" + _("On your _Widget for your community to respond to") +"</li>" +\
-                                    "<li>" + _("In all your _site_name followers' notification streams") +"</li>" +\
-                                    "<li>" + _("On the _site_name request stream") +"</li>" +\
-                                    "</ol>"
-                            elif self.selected_type == "article":
-                                if self.content.get("parent"):
-                                    confirm_title = _("Once you share this story, it will:")
-                                    confirm_message = "<ol>" +\
-                                        "<li>" + (_("Be sent directly to %s") % self.content['parent'].get('creator', dict()).get('name')) + "</li>" +\
-                                        "<li>" + _("Be listed as a response against the request") + "</li>" +\
-                                        "<li>" + _("Appear in your followers' notification streams") + "</li>" +\
-                                        "</ol>"
-                                else:
-                                    confirm_title = _("Once you post this story:")
-                                    confirm_message = "<ol>" +\
-                                        "<li>" + _("It will appear in your followers' notification streams.") + "</li>" +\
-                                        "<li>" + _("You will also be able to share it on Facebook, LinkedIn and Twitter once you post.") + "</li>" +\
-                                        "</ol>"
+                            (confirm_title, confirm_message) = publish_labels(self.selected_type, self.content, _)
+#                            (confirm_title, confirm_message) = (_(confirm_title), _(confirm_message))
                         %>
                         <input type="submit" name="submit_publish" value="Post" class="button"
                             data-confirm="${confirm_message}"

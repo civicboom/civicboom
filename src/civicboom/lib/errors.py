@@ -1,7 +1,7 @@
 """
 Consistant action_error type returns
 """
-from pylons.i18n.translation  import _
+from pylons.i18n.translation  import _ # AllanC - unneeded as glbal _ is setup now in env
 
 from civicboom.lib.web import action_error
 

@@ -335,15 +335,18 @@ def url_pair(*args, **kwargs):
 
 
 ## AllanC - TODO - need to specify frag size as an optional arg
-def frag_link(value, title='', class_='', href_tuple=([], {})): #*args, **kwargs
+def frag_link(value, title='', class_='', href_tuple=([], {}), data=None): #*args, **kwargs
     href, href_frag = url_pair(gen_format='frag', *href_tuple[0], **href_tuple[1]) # generate standard and frag URL's
+    kwargs = {'data-frag' : href_frag}
+    if data:
+        kwargs.update(dict([('data-'+k, v) for k,v in data.iteritems()]))
     return HTML.a(
         value ,
         href    = href ,
-        class_  = 'link_new_frag ' + class_ ,
+        class_  = class_ + ' link_new_frag' ,
         title   = title if title else value,
         ##onClick ="cb_frag($(this), '%s'); return false;" % href_frag ,
-        **{'data-frag' : href_frag}
+        **kwargs
     )
 
 
@@ -394,7 +397,7 @@ def form(*args, **kwargs):
 # Secure Link - Form Submit or Styled link (for JS browsers)
 #-------------------------------------------------------------------------------
 
-def secure_link(href, value='Submit', value_formatted=None, title=None, method='POST', form_data=None, link_data=None, link_class='', parent_id=None, force_profile=False):
+def secure_link(href, value='Submit', value_formatted=None, title=None, method='post', form_data=None, link_data=None, link_class='', parent_id=None, force_profile=False):
 #def secure_link(href, value='Submit', value_formatted=None, css_class='', title=None, rel=None, confirm_text=None, method='POST', json_form_complete_actions='', modal_params=None, data={}):
     """
     Create two things:
@@ -434,7 +437,7 @@ def secure_link(href, value='Submit', value_formatted=None, title=None, method='
             if kwargs.get('format'):
                 del kwargs['format']
             kwargs['action'] = 'show'
-            action1 = ['remove'] if method == 'DELETE' else ['update']
+            action1 = ['remove'] if method == 'DELETE' or method == 'delete' else ['update']
             action2 = ['update', [url(*args, **kwargs)], None, None]
             if parent_id:
                 kwargs['id'] = parent_id

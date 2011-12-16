@@ -1,6 +1,4 @@
-# AllanC - FOR FUCKS SAKE!! ... The inconsistancys in importing the config are providing serious issues
-#from cbutils.worker import config
-from pylons import config
+from cbutils.worker import config
 
 from cbutils.misc   import now, debug_type
 
@@ -19,7 +17,7 @@ def content_notifications(content, publishing_for_first_time=True):
     # Comments just notify parent creator --------------------------------------
     if content.__type__ == "comment":
         content.parent.creator.send_notification(
-            messages.comment(member=content.creator, content=content, you=content.parent.creator)
+            messages.comment(member=content.creator, content=content.parent, you=content.parent.creator)
         )
         return
     
@@ -68,9 +66,9 @@ def twitter_global(content):
     content = get_content(content)
     
     assert content.__type__  not in ['comment','draft']
-    
+
     # TODO? diseminate new or updated content? This could be done in the originator of this worker
     
     live = config['online'] and config['feature.aggregate.twitter_global']
-    from civicboom.lib.aggregation import twitter_global
-    twitter_global(content, live)
+    from civicboom.lib.aggregation import twitter_global_status
+    twitter_global_status(content, live)

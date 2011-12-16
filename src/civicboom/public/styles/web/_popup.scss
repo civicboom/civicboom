@@ -52,6 +52,7 @@
         .popup-message {
             font-size: 140%;
             margin: 1em 0 1em 0;
+            
             ul, li {
               padding-left: 0em;
               margin-left: 2em;
@@ -98,6 +99,25 @@
             padding: 1em;
             margin-bottom: 1em;
         }
+    }
+}
+
+/* specific pop up rules */
+#link_embed {
+    @include border_radius(0.5em);
+    background-color: #fff;
+    padding: 1em;
+    width: 500px;
+
+    DIV {
+       display: inline-block;
+       vertical-align: top;
+       width: 245px;
+       
+       IMG {
+         max-width: 100%;
+         margin-left: 5px;
+       }
     }
 }
 

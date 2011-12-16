@@ -112,6 +112,14 @@ class MiscController(BaseController):
             data['assignments'] = content_search(term=kwargs.get("term"), list="assignments_active", limit=3)['data']['list']
             data['articles']    = content_search(term=kwargs.get("term"), list="articles"          , limit=3)['data']['list']
             return action_ok(data=data)
+        
+    @web
+    def search_members(self, **kwargs):
+        return action_ok()
+    
+    @web
+    def search_contents(self, **kwargs):
+        return action_ok()
 
     # don't cache this, it does UA-specific things
     @auto_format_output
@@ -148,11 +156,27 @@ class MiscController(BaseController):
     
     @web
     def get_link_embed(self, type=None, id=None):
-        if type not in ['content']:
+        if type not in ['content', 'member']:
             raise action_error(code=404, message="Cannot link to this type")
         if not id:
             raise action_error(code=404, message="No id")
         return action_ok(data={'type':type, 'id':id})
+    
+    @web
+    def contact_us(self, **kwargs):
+        if not request.POST:
+            return action_ok() # Render the contact form by autolocating the template
+        else:
+            user_log.info("Sending contact email")
+            
+            content_text = "Contact Form\r\n\r\n"
+            for key, value in kwargs.iteritems():
+                content_text += "%s: %s\r\n" % (key, value)
+            
+            send_email(config['email.contact'], subject=_('_site_name contact_form'), content_text=content_text, reply_to=kwargs.get('email',''))
+            return action_ok(_("Thank you for your interest, we will contact you shortly"), code=201)
+            
+        
     
     @web
     def what_is_a_hub(self):

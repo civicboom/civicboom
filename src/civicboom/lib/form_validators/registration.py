@@ -5,7 +5,7 @@ from formencode import validators
 from base import DefaultSchema, IsoFormatDateConverter
 
 # Pylons Imports
-from pylons.i18n.translation import _
+from pylons.i18n.translation import _ # AllanC - unneeded as global _ should now be in use
 
 # Database Objects
 from civicboom.model.meta              import Session

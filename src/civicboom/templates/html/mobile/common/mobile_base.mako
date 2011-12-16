@@ -29,18 +29,18 @@
         % else:
             <script type="text/javascript" src="${h.wh_url("public", "javascript/_combined.mobile.min.js")}"></script>
         % endif
-	
-	##----------------------------------------------------------------------
-	## Google Analitics (async setup, see scripts_end for more)
-	##----------------------------------------------------------------------
-	<%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
-	${scripts_end.google_analytics_head()}
+    
+    ##----------------------------------------------------------------------
+    ## Google Analitics (async setup, see scripts_end for more)
+    ##----------------------------------------------------------------------
+    <%namespace name="scripts_end" file="/html/web/common/scripts_end.mako"/>
+    ${scripts_end.google_analytics_head()}
     </head>
   
     <body class="c-${c.controller} a-${c.action}">
         ##${self.flash_message()}
         ${next.body()}
-	${scripts_end.google_analytics_end()}
+    ${scripts_end.google_analytics_end()}
     </body>
 </html>
 
@@ -92,8 +92,8 @@
 
 <%def name="footer()">
     <div data-role="footer" data-id="nav" data-position="fixed">
-		<div data-role="navbar">
-			<ul>
+        <div data-role="navbar">
+            <ul>
                 <li><a data-icon="search" href="${h.url('contents')                                   }" rel="external">${_('Explore')}</a></li>
                 % if c.logged_in_persona:
                 ##<li><a data-icon="info"   href="${h.url('contents')                                   }" rel="external">${_('Feeds')}</a></li>
@@ -103,15 +103,15 @@
                     if not num_messages:
                         num_messages = ''
                 %>
-				<li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages" rel="external">${_('%s Messages') % num_messages}</a></li>
+                <li><a data-icon="alert"  href="${h.url(controller='profile', action="index")}#messages" rel="external">${_('%s Messages') % num_messages}</a></li>
                 <li><a data-icon="home"   href="${h.url(controller='profile', action="index")         }" rel="external">${_('Profile')}</a></li>
                 % else:
                 <li><a data-icon="search" href="${h.url(controller='account', action='signin')        }" rel="external">${_('Sign in')}</a></li>
                 % endif
                 ##class="ui-btn-active ui-state-persist"
-			</ul>
-		</div><!-- /navbar -->
-	</div><!-- /footer -->
+            </ul>
+        </div><!-- /navbar -->
+    </div><!-- /footer -->
 </%def>
 
 

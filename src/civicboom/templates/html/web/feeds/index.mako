@@ -5,7 +5,7 @@
 
 <hr>
 
-${h.form(url('feeds', format='redirect'), method="POST")}
+${h.form(url('feeds', format='redirect'), method="post")}
 	${_("Name:")} <input type="text" name="name" placeholder="e.g. Sport in Whitstable">
 	<p><input type="submit">
 ${h.end_form()}
