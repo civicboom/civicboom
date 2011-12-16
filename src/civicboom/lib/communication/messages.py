@@ -8,10 +8,11 @@ m2 = Member()
 m1.send_notification(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
-from pylons.i18n          import lazy_ugettext as _
+
 from cbutils.worker import config # This is a copy of the config at server start! it is not the real dynamic pylons dict that can be changed
-#def _(*args, **kwargs):
-#    return args[0]
+#from pylons.i18n          import lazy_ugettext as _
+def _(arg):
+    return arg
 
 
 from webhelpers.html      import HTML
