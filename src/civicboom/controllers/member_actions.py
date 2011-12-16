@@ -254,6 +254,29 @@ class MemberActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
+    # List - Follower Content
+    #---------------------------------------------------------------------------
+    @web
+    def following_content(self, id, **kwargs):
+        """
+        GET /members/{name}/following_content: get a list of content from all the followers of this user
+
+        shortcut to content?creator={ids of following}
+        Currently unimplemented
+
+        @type list
+        @api members 1.0 (WIP)
+        
+        @param * (see common list return controls)
+        
+        @return 200   list ok
+                list  the list
+        @return 404   not found
+        """
+        return to_apilist()
+
+
+    #---------------------------------------------------------------------------
     # List - Content
     #---------------------------------------------------------------------------
     @web

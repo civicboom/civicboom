@@ -24,7 +24,7 @@ of themselves
 and_(or_(
     Content.content.matches('terrorists'),
     and_(Content.location.near((1.000000, 51.000000), 10.000000), Content.tags.contains('Science & Nature')),
-    Content.creator_id = 'unittest'
+    Content.creator_id in ['unittest']
 ), not_(or_(
     Content.content.matches('waffles'),
     Content.tags.contains('Business')
@@ -44,7 +44,7 @@ AndFilter([OrFilter([
 <div class='and'>all of:<p><div class='or'>any of:<p><div class='fil'>TextFilter('terrorists')</div><p>or<p><div class='and'>all of:<p><div class='fil'>LocationFilter(1.000000, 51.000000, 10.000000)</div><p>and<p><div class='fil'>TagFilter('Science & Nature')</div></div><p>or<p><div class='fil'>CreatorFilter('unittest')</div></div><p>and<p><div class='not'>but not:<p><div class='or'>any of:<p><div class='fil'>TextFilter('waffles')</div><p>or<p><div class='fil'>TagFilter('Business')</div></div></div></div>
 
 >>> print sql(query)
-((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id = 'unittest')) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
+((to_tsvector('english', title || ' ' || content) @@ to_tsquery('terrorists')) OR ((ST_DWithin(content.location, 'SRID=4326;POINT(1.000000 51.000000)', 10.000000)) AND (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Science & Nature'))) OR (content.creator_id IN ('unittest'))) AND (NOT ((to_tsvector('english', title || ' ' || content) @@ to_tsquery('waffles')) OR (content.id IN (select content_id from map_content_to_tag join tag on tag_id=tag.id where tag.name = 'Business'))))
 
 
 LabelFilter is a thing to put text into the human-readable output while having
@@ -447,9 +447,12 @@ class ParentIDFilter(Filter):
 
 
 class CreatorFilter(Filter):
-    def __init__(self, creator_id):
-        assert type(creator_id) in [str, unicode], debug_type(creator_id)
-        self.creator_id = make_username(creator_id)
+    def __init__(self, id_list):
+        # AllanC - maybe this should do some checking on the string input?
+        if isinstance(id_list, basestring):
+            self.id_list = "'%s'" % id_list
+        elif isinstance(id_list, list):
+            self.id_list = ", ".join(["'%s'"%id for id in id_list])
 
     @staticmethod
     def from_string(s):
@@ -457,20 +460,19 @@ class CreatorFilter(Filter):
             s = s.id
         except:
             pass
-        #if s == "me":
-        #    s = c.logged_in_persona.id # AllanC - this is dangerious for cache - should be normalized beforehand
-        return CreatorFilter(s)
-
-        #raise FilterException("Member not found: %s" % s) # AllanC - unreachable, no call of get_member to be none
+        assert type(s) in [str, unicode], debug_type(s)
+        id_list = [make_username(id) for id in s.split(',')]
+        return CreatorFilter(id_list)
 
     def __unicode__(self):
-        return "Content.creator_id = '%s'" % self.creator_id
+        return "Content.creator_id in [%s]" % self.id_list
 
     def __repr__(self):
-        return "CreatorFilter(%s)" % repr(self.creator_id)
+        return "CreatorFilter(%s)" % repr(self.id_list)
 
     def __sql__(self):
-        return "content.creator_id = '%s'" % self.creator_id
+        return "content.creator_id IN (%s)" % self.id_list
+
 
 
 class BoomedByFilter(Filter):
