@@ -134,6 +134,7 @@ def run_worker():
             task = _worker_queue.get()
             live = run_one_job(task)
             _worker_queue.task_done()
+            flush()
         except Exception:
             log.exception("Error talking to queue; sleeping before reconnect")
             sleep(3)

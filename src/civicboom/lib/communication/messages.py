@@ -8,10 +8,50 @@ m2 = Member()
 m1.send_notification(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
-from pylons.i18n          import lazy_ugettext as _
+
 from cbutils.worker import config # This is a copy of the config at server start! it is not the real dynamic pylons dict that can be changed
-#def _(*args, **kwargs):
-#    return args[0]
+
+#from pylons.i18n          import lazy_ugettext as _
+def _(text):
+    """
+    AllanC
+    OH MY GOD!!!!!!!!!
+    I PRAY THIS IS SHORT TERM!!!!! REALLY!!!!
+    This is copy and pasted from the admin_scripts translation - it cant be imported because it is outside the lib folder
+    REMOVE THIS HACK!! PLEASE!! PLEASE!!!
+    """
+    words = [
+        ("contents",   "content"),
+        ("content",    "content"),
+        ("articles",   "content"),
+        ("article",    "content"),
+        ("draft",      "draft"),
+        ("assignment", "request"),
+        #("request",    "request"), # AllanC - Should not be needed, we reffer to them as assignments for consistancy
+        ("response",   "response"),
+        ("respond", "respond"),
+        
+        ("disassociate", "remove"),
+        ("locked", "grabbed"),
+        ("lock", "grab"),
+        
+        ("member",     "member"),
+        ("user",       "user"),
+        ("group",      "Hub"),
+
+        ("free",       "free"),
+        ("plus",       "pro lite"),
+        ("corporate",  "pro premium"),
+
+        ("widget",  "Boombox"),
+    ]
+    for w, r in words:
+        text = text.replace("_"+w, r)
+        text = text.replace("_"+w.capitalize(), r.capitalize())
+        text = text.replace("_"+w.upper(), r.upper())
+
+    return text
+    
 
 
 from webhelpers.html      import HTML

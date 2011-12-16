@@ -17,7 +17,7 @@ def content_notifications(content, publishing_for_first_time=True):
     # Comments just notify parent creator --------------------------------------
     if content.__type__ == "comment":
         content.parent.creator.send_notification(
-            messages.comment(member=content.creator, content=content, you=content.parent.creator)
+            messages.comment(member=content.creator, content=content.parent, you=content.parent.creator)
         )
         return
     
