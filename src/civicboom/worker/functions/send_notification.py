@@ -28,7 +28,7 @@ def send_notification(members, message): #members, rendered_message
     Save and handles propogating the message to different technologies for all members of a group or an indvidual
     """
 
-    #log.debug('Running send_notification to members=%s message=%s' % (members,messages))
+    #log.debug('Running send_notification to members=%s message=%s' % (members,message))
 
     message['source'] = get_member(message.get('source') or message.get('source_id')) or message.get('source') # Attempt to normalize source member
 
