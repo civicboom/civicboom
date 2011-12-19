@@ -1,4 +1,5 @@
-from civicboom.lib.base import url, config, _
+from cbutils.worker import config # Because this can be run from within the worker we need to ensure the config is imported form the correct place. This Needs to be unifyed
+from civicboom.lib.base import url, _ #config,
 
 from civicboom.lib.services.janrain        import janrain
 from civicboom.lib.helpers                 import truncate
