@@ -175,10 +175,10 @@ js-daemon:
 ##############################################################################
 # testing
 
-test:
+test: ini
 	nosetests --verbose
 
-test-coverage:
+test-coverage: ini
 	nosetests --verbose --with-coverage --cover-erase --cover-html --cover-html-dir=./data/coverage/
 
 
@@ -247,7 +247,7 @@ blank-db:
 	$(MAKE) db-blank
 	paster setup-app production.ini
 
-test-db:
+test-db: 
 	$(MAKE) db-blank
 	#nosetests civicboom/tests/functional/test_stub.py
 	paster setup-app test.ini
