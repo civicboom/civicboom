@@ -938,7 +938,11 @@ if(!('frags' in boom)) {
       });
     },
     modal_close :  function(element, callback) {
-      $.modal.close();
+      try {
+        $.modal.close();
+      } catch (e) {}
+      $(element).parents('.ui-dialog-content').dialog('close');
+
       if (callback)
         callback(true);
     },
