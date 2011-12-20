@@ -358,6 +358,7 @@ types that it is useful to know about.
         <li>RSS
         <li>Redirect
         <li>iCalendar/ICS
+        <li>CSV
         <!--
         <li>Frag
         
@@ -506,6 +507,7 @@ types that it is useful to know about.
             <li>'default' = object fields (usually used for list as no links to other objects are present)
             <li>'full' = object + links (links to sub objects or lists are followed e.g. a contents creator field will contain a sub object member).
                  full field lists often include fields that are expensive to process and are normally unnecessary for summary lists.
+            <li>'id' = return a list of id's only (currently implemented inefficently as demo functionality)
             </ul>
         
         <li>

@@ -169,6 +169,7 @@ def normalize_kwargs_for_cache(kwargs):
         if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
             if isinstance(value, list):
                 kwargs[key].sort()
+                #kwargs[key] = ",".join(kwargs[key])
             else:
                 try   : value = value.id
                 except: pass

@@ -304,6 +304,9 @@ class ContentsController(BaseController):
 
             time_start = time()
             
+            #if kwargs.get('list_type') == 'id':
+            #    results = Session.query(Content.id).select_from(Content)
+            #else:
             results = Session.query(Content).with_polymorphic('*') # TODO: list
             results = results.filter(Content.visible==True)
             # AllanC - not to sure about this comments addition. It would be nice to have it built with the filters? could this be moved down? thoughts?
@@ -323,6 +326,7 @@ class ContentsController(BaseController):
                 results = results.filter(or_(ArticleContent.approval=='approved', ArticleContent.approval=='seen'))
 
             # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
+            #if kwargs.get('list_type') != 'id':
             for col in ['creator', 'attachments', 'tags', 'parent', 'license']:
                 if col in kwargs.get('include_fields', []):
                     results = results.options(joinedload(getattr(Content, col)))
@@ -379,6 +383,9 @@ class ContentsController(BaseController):
             results = results.filter("("+sql(feed)+")")
             results = sort_results(results, kwargs.get('sort'))
             
+            #if  kwargs.get('list_type') == 'id': # This relys on the Query being setup at the beggining to return Session.query(Content.id), I wanted to do this in a more generic way
+            #    results = to_idlist (results)
+            #else:
             results = to_apilist(results, obj_type='contents', **kwargs)
             
             # hacky benchmarking just to get some basic idea of how each feed performs
@@ -825,18 +832,18 @@ class ContentsController(BaseController):
                 add_job('profanity_check', url_base=url('',qualified=True))
             # AllanC - GOD DAM IT!!! - we cant have the messages happening in the worker because we cant use the translation. This is ANOYING! I wanted the profanity filter to clean the content BEFORE messages were twittered out etc
             #          for now I have put it back inline .. but this REALLY needs sorting
-            #add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
-            from civicboom.worker.functions.content_notifications import content_notifications
-            content_notifications(content, publishing_for_first_time=publishing_for_first_time)
-            Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
+            add_job('content_notifications', publishing_for_first_time=publishing_for_first_time)
+            #from civicboom.worker.functions.content_notifications import content_notifications
+            #content_notifications(content, publishing_for_first_time=publishing_for_first_time)
+            #Session.commit() # AllanC - this is needed because the worker auto commits at the end .. running the method on it's own does not.
         
         if content.__type__ == 'comment':
             if config['feature.profanity_filter']:
                 add_job('profanity_check', url_base=url('',qualified=True))
-            #add_job('content_notifications')
-            from civicboom.worker.functions.content_notifications import content_notifications
-            content_notifications(content)
-            Session.commit() 
+            add_job('content_notifications')
+            #from civicboom.worker.functions.content_notifications import content_notifications
+            #content_notifications(content)
+            #Session.commit() 
             
         
         
