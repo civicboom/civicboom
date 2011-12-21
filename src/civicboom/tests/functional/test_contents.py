@@ -41,6 +41,12 @@ class TestContentsController(TestController):
             self.assertEqual(draft['type'],'draft')
         self.assertEquals(response_json['data']['list']['count'], 0) # Anon users can never see drafts (this could change in future with public drafts)
         
+        # idlist
+        response = self.app.get(url('contents', list_type='id', format='json'))
+        response_json = json.loads(response.body)
+        self.assertIn(1, response_json['data']['idlist'])
+        self.assertIn(3, response_json['data']['idlist'])
+        
     def test_index_order(self):
         contents = []
         for i in range(3):
