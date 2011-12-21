@@ -273,12 +273,13 @@ class ContentsController(BaseController):
             user_log.exception("Error searching:") # AllanC - um? why is this in a genertic exception catch? if get_content fails then we want that exception to propergate
 
         if kwargs.get('creator'):
-            try:
+            #try:
+            if isinstance(kwargs['creator'], basestring):
                 assert kwargs['creator'].find(',')==-1 # AllanC - assertion to prevent usernames with ',' attempting to be searhced for
-                creator = get_member(kwargs['creator'])
-            except:
-                raise action_error('Creator lists are currently disabled as they violate caching rules')
-                #pass # AllanC - we dont care about errors - this creator could be a list of a string split by commas
+            creator = get_member(kwargs['creator'])
+            #except:
+            #    raise action_error('Creator lists are currently disabled as they violate caching rules')
+            #    #pass # AllanC - we dont care about errors - this creator could be a list of a string split by commas
         
         if creator:
             if c.logged_in_persona == creator:
