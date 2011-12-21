@@ -427,7 +427,7 @@
                     link_class = 'button',
                     value     = _("Respond with your _content") ,
                     form_data = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
                     ),
     
                 )}
@@ -491,7 +491,7 @@
                     link_class  = 'button' ,
                     value       = _("Respond with your _content") ,
                     form_data   = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ) ,
                     link_data   = dict(
                         confirm = _("Would you like to respond to:"),
@@ -521,7 +521,7 @@
                     link_class = 'button',
                     value     = _("Respond with your _content") ,
                     form_data = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ),
                 )}
             ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
