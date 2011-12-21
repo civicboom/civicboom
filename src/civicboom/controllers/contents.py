@@ -254,7 +254,7 @@ class ContentsController(BaseController):
                     raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
 
         creator = None
-
+        
         try:
             # If displaying responses - Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 'show' private content API call
@@ -273,7 +273,13 @@ class ContentsController(BaseController):
             user_log.exception("Error searching:") # AllanC - um? why is this in a genertic exception catch? if get_content fails then we want that exception to propergate
 
         if kwargs.get('creator'):
+            #try:
+            if isinstance(kwargs['creator'], basestring):
+                assert kwargs['creator'].find(',')==-1 # AllanC - assertion to prevent usernames with ',' attempting to be searhced for
             creator = get_member(kwargs['creator'])
+            #except:
+            #    raise action_error('Creator lists are currently disabled as they violate caching rules')
+            #    #pass # AllanC - we dont care about errors - this creator could be a list of a string split by commas
         
         if creator:
             if c.logged_in_persona == creator:
@@ -282,8 +288,7 @@ class ContentsController(BaseController):
                 except: None
             else:
                 kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
-
-
+        
         # Create Cache key based on kwargs -------------------------------------
         
         kwargs = normalize_kwargs_for_cache(kwargs) # This str()'s all kwargs and gets id from any objects - and sorts any lists
@@ -301,7 +306,7 @@ class ContentsController(BaseController):
         # Everything past here can be cached based on the kwargs state
 
         def contents_index(_filter=None, **kwargs):
-
+    
             time_start = time()
             
             #if kwargs.get('list_type') == 'id':
@@ -363,7 +368,10 @@ class ContentsController(BaseController):
                     val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired - this strips and strings the input arguments
                     #val = str(kwargs.get(filter_name, '')).strip()
                     if val:
-                        f = filter_map[filter_name].from_string(val)
+                        if isinstance(val, basestring): # AllanC - the val may be a string OR a list of strings - these have already been normalised as kwargs
+                            f = filter_map[filter_name].from_string(val)
+                        else:
+                            f = filter_map[filter_name](val)
                         if hasattr(f, 'mangle'):
                             results = f.mangle(results)
                         parts.append(f)

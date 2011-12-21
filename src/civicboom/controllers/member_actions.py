@@ -276,7 +276,6 @@ class MemberActionsController(BaseController):
         from civicboom.model      import Follow
         from civicboom.model.meta import Session
         following_ids = [follow.member_id for follow in Session.query(Follow).filter(Follow.follower_id==id).all()] # AllanC - rushed functionality to enable the content following stream - this should be replaced by an internal API call rather than a hard SQLAlchemy session call
-        print following_ids
         return content_search(creator=following_ids, **kwargs)
 
 

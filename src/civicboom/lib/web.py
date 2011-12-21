@@ -162,7 +162,10 @@ def current_referer(protocol=None):
 
 
 def current_protocol():
-    return request.environ.get('wsgi.url_scheme', 'http')
+    try:
+        return request.environ.get('wsgi.url_scheme', 'http')
+    except:
+        return 'http'
 
 
 def current_host(protocol=None):
