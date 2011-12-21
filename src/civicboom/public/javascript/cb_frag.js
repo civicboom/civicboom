@@ -101,7 +101,7 @@ if(!('frags' in boom)) {
                     original.siblings('form').data('json', link.data('json'));
                     //original.data('json', link.data('json'));
                     original.click();
-                    $(this).dialog('close');
+                    boom.frags.modal_close(link);
                   })
                 )
                 .append(
@@ -938,6 +938,7 @@ if(!('frags' in boom)) {
       });
     },
     modal_close :  function(element, callback) {
+      console.log('modal_close', element);
       try {
         $.modal.close();
       } catch (e) {}
