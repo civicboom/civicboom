@@ -451,6 +451,10 @@ class CreatorFilter(Filter):
         """
         id_list is a list of strings
         """
+        try:
+            id_list = id_list.id
+        except:
+            pass
         if isinstance(id_list, basestring):
             id_list = [make_username(id) for id in id_list.split(',')]
         assert isinstance(id_list, list)
@@ -458,10 +462,6 @@ class CreatorFilter(Filter):
 
     @staticmethod
     def from_string(s):
-        try:
-            s = s.id
-        except:
-            pass
         assert type(s) in [str, unicode], debug_type(s)
         return CreatorFilter(s)
 
@@ -478,15 +478,15 @@ class CreatorFilter(Filter):
 
 class BoomedByFilter(Filter):
     def __init__(self, boomer_id):
+        try:
+            boomer_id = boomer_id.id
+        except:
+            pass
         assert type(boomer_id) in [str, unicode], debug_type(boomer_id)
         self.boomer_id = make_username(boomer_id)
 
     @staticmethod
     def from_string(s):
-        try:
-            s = s.id
-        except:
-            pass
         #if s == "me":
         #    s = c.logged_in_persona.id # AllanC - this is dangerious for cache - should be normalized beforehand
         return BoomedByFilter(s)
