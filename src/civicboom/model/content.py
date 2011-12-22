@@ -268,6 +268,13 @@ class Content(Base):
             return True
         return False
 
+    def is_parent_owner(self, member):
+        # TODO
+        # Currently just check editable_by, but needs aditional checks to see if member is part of organisation
+        if self.parent:
+            return self.parent.editable_by(member)
+        return False
+
     def flag(self, **kargs):
         """
         Flag content as offensive or spam (can throw exception if fails)
@@ -282,6 +289,10 @@ class Content(Base):
         """
         from civicboom.lib.database.actions import del_content
         del_content(self)
+
+    def parent_disassociate(self):
+        from civicboom.lib.database.actions import parent_disassociate
+        return parent_disassociate(self)
 
     def aggregate_via_creator(self):
         """
@@ -464,13 +475,6 @@ class UserVisibleContent(Content):
             action_list.append('boom')
         return action_list
 
-    def is_parent_owner(self, member):
-        # TODO
-        # Currently just check editable_by, but needs aditional checks to see if member is part of organisation
-        if self.parent:
-            return self.parent.editable_by(member)
-        return False
-
     def boom_content(self, member):
         from civicboom.lib.database.actions import boom_content
         return boom_content(self, member)
@@ -519,10 +523,6 @@ class ArticleContent(UserVisibleContent):
     def parent_approve(self):
         from civicboom.lib.database.actions import parent_approve
         return parent_approve(self)
-
-    def parent_disassociate(self):
-        from civicboom.lib.database.actions import parent_disassociate
-        return parent_disassociate(self)
 
 
 class SyndicatedContent(UserVisibleContent):
@@ -582,6 +582,8 @@ class AssignmentContent(UserVisibleContent):
         action_list = UserVisibleContent.action_list_for(self, member, role)
         if self.creator == member:
             action_list.append('invite_to_assignment')
+            if has_role_required('editor', role) and member.has_account_required('plus'):
+                action_list.append('moderator')
         if self.acceptable_by(member):
             status = self.previously_accepted_by(member)
             if not status:
