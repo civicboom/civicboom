@@ -190,7 +190,7 @@ def _gen_list_key(*args):
     """
     def string_arg(arg):
         if isinstance(arg, list):
-            arg = list_item_separator.join(arg)
+            arg = list_item_separator.join([string_arg(a) for a in arg])
         if not isinstance(arg, basestring):
             arg = str(arg)
         return arg

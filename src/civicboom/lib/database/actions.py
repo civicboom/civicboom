@@ -816,10 +816,15 @@ def parent_disassociate(content, delay_commit=False):
     #invalidate_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
     #invalidate_content(content)        # this currently has code to update parents reponses, is the line above needed?
 
-    content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent))
-    
-    content.parent   = None
-    content.approval = "dissassociated"
+    if content.__type__ == 'comment':
+        content.creator.send_notification(messages.comment_dissassociated(parentcreator=content.parent.creator, parentcontent=content.parent))
+        content.visible = False
+    else:
+        content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent))
+        # TODO: what if an assignment is dissasocaited from an assignment?
+        if content.__type__ == 'article':
+            content.approval = "dissassociated"
+        content.parent   = None
     
     if not delay_commit:
         Session.commit()
