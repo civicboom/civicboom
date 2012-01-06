@@ -15,7 +15,7 @@
 
 <%def name="body()">
 ## GregM: have moved as an addition to general group
-    ${h.form(h.url('setting', id=d.get('username', 'me')), method='PUT', multipart=True)}
+    ${h.form(h.url('setting', id=d.get('username', 'me')), method='put', multipart=True)}
     <div style="display:none"><input type="hidden" name="panel" value="${c.result.get('panel')}" /></div>
     <%
         panel = c.result.get('panel', d.get('panel'))

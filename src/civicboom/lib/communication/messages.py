@@ -8,8 +8,52 @@ m2 = Member()
 m1.send_notification(messages.tipoff(member=m2, tipoff="there is a bomb"))
 """
 
-from pylons import config
-from pylons.i18n          import lazy_ugettext as _
+
+from cbutils.worker import config # This is a copy of the config at server start! it is not the real dynamic pylons dict that can be changed
+
+#from pylons.i18n          import lazy_ugettext as _
+def _(text):
+    """
+    AllanC
+    OH MY GOD!!!!!!!!!
+    I PRAY THIS IS SHORT TERM!!!!! REALLY!!!!
+    This is copy and pasted from the admin_scripts translation - it cant be imported because it is outside the lib folder
+    REMOVE THIS HACK!! PLEASE!! PLEASE!!!
+    """
+    words = [
+        ("contents",   "content"),
+        ("content",    "content"),
+        ("articles",   "content"),
+        ("article",    "content"),
+        ("draft",      "draft"),
+        ("assignment", "request"),
+        #("request",    "request"), # AllanC - Should not be needed, we reffer to them as assignments for consistancy
+        ("response",   "response"),
+        ("respond", "respond"),
+        
+        ("disassociate", "remove"),
+        ("locked", "grabbed"),
+        ("lock", "grab"),
+        
+        ("member",     "member"),
+        ("user",       "user"),
+        ("group",      "Hub"),
+
+        ("free",       "free"),
+        ("plus",       "pro lite"),
+        ("corporate",  "pro premium"),
+
+        ("widget",  "Boombox"),
+    ]
+    for w, r in words:
+        text = text.replace("_"+w, r)
+        text = text.replace("_"+w.capitalize(), r.capitalize())
+        text = text.replace("_"+w.upper(), r.upper())
+
+    return text
+    
+
+
 from webhelpers.html      import HTML
 
 import cbutils.worker as worker
@@ -88,6 +132,7 @@ generators = [
     # Content Actions
     ["article_rated",                        "",   _("_article rated"),              _("%(your)s _article %(article)s was rated a %(rating)s")],
     ["comment",                              "n",  _("comment made on _article"),    _("%(member)s commented on %(you)s _article %(content)s")],  #TODO Also passes comment.contents as a string and could be used here
+    ["comment_dissassociated",               "ne", _("comment disassociated from content"), _("%(parentcreator)s removed %(your)s comment from %(parentcontent)s")],
 
     # Content Responses
     # AllanC- we don't distingusih mobile responses anymore #["assignment_response_mobile",           "ne", _("_assignment mobile response"), _("%(member)s has uploaded mobile _article titled %(article)s based on your _assignment %(assignment)s")],

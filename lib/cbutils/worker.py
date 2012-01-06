@@ -137,6 +137,8 @@ def run_worker():
         except Exception:
             log.exception("Error talking to queue; sleeping before reconnect")
             sleep(3)
+        finally:
+            flush()
 
 
 class WorkerThread(Thread):

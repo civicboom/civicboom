@@ -3,8 +3,10 @@
 <%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="loc"             file="/html/web/common/location.mako"   />
 <%namespace name="member_includes" file="/html/web/common/member.mako"     />
+<%namespace name="components"      file="/html/web/common/components.mako" />
 
 <%!
+    from paste.deploy.converters import asbool
     from webhelpers.html import HTML, literal
     share_url        = False
     rss_url          = False
@@ -91,7 +93,7 @@
             h.args_to_tuple('content', id=self.id, format="redirect"),
             id           = 'edit_%s' % self.id,
             name         = "content",
-            method       = 'PUT',
+            method       = 'put',
             multipart    = True,
             data         = dict(
                 json_complete = "[ ['update', null, '%s'], ['update', ['%s','%s'] ] ]" %
@@ -156,7 +158,7 @@
         % if 'delete' in self.actions:
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect'),
-                method          = "DELETE",
+                method          = "delete",
                 value           = _('Delete'),
                 value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
                 link_data       = dict(
@@ -252,10 +254,11 @@
         <tbody class="">
             <tr>
                 <td><label for="media_file" class="hide_if_uploadify">${_("File")}</label></td>
-                <td style="text-align: right;">
+                <td style="text-align: center;">
                     <input
                      data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}"
-                     id="media_file" name="media_file" type="file" class="field_file file_upload_uploadify" style="width: 100%" />
+                     id="media_file" name="media_file" type="file" class="field_file file_upload_uploadify" style="width: 100%" /><br />
+                    ${_("(Please note there is currently a limit of 100MB for file uploads.)")}
                 </td>
                 <td><input type="submit" name="submit_draft" value="${_("Upload")}" class="file_upload hide_if_uploadify"/></td>
 
@@ -376,6 +379,7 @@
             due_date                      = str(self.content.get('due_date'  )                    or self.content.get('extra_fields',{}).get('due_date'  ) or '')[:16]
             event_date                    = str(self.content.get('event_date')                    or self.content.get('extra_fields',{}).get('event_date') or '')[:16]
             auto_publish_trigger_datetime = str(self.content.get('auto_publish_trigger_datetime')                                                          or '')[:16]
+            responses_require_moderation  = self.content.get('responses_require_moderation') or asbool(self.content.get('extra_fields',{}).get('responses_require_moderation'))
         %>
         <tr><td>
         <label for="due_date">${_("Due Date")}</label>
@@ -388,24 +392,44 @@
         </td></tr>
         ##<span class="padded"><label for="event_date">${_("Event Date")}</label></span>
         ##<input class="detail" type="datetime" name="event_date" value="${event_date}">
+
+        <%def name="plus_feature()">
+            % if not c.logged_in_persona.has_account_required('plus'):
+                <div class="disabled-grayout">
+                </div>
+                <div class="disabled-overlay">
+                    ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
+                    ${popup.link(
+                        h.args_to_tuple(controller='misc', action='contact_us'),
+                        title = _('Contact us'),
+                        text  = h.literal("<span class='learn_more button'>%s</span>") % _('Contact us'),
+                    )}
+                </div>
+            % endif
+        </%def>
         
         ## http://trentrichardson.com/examples/timepicker/
         % if self.content['type']=='draft':
         ##and c.logged_in_persona.has_account_required('plus')
             <tr><td>
                 <div style="position: relative;">
-                % if not c.logged_in_persona.has_account_required('plus'):
-                    <div class="disabled-grayout">
-                    </div>
-                    <div class="disabled-overlay">
-                        ${_('This feature is only available for paid accounts. To find out more, please contact us.')}
-                    </div>
-                % endif
+                ${plus_feature()}
                 <label for="auto_publish_trigger_datetime">${_("Automatically publish on")}</label>
                 <br><input class="detail" type="datetime" name="auto_publish_trigger_datetime" value="${auto_publish_trigger_datetime}" />
                 </div>
             </td></tr>
         % endif
+
+        <tr><td>
+            <div style="position: relative;">
+            ${plus_feature()}
+            <label for="responses_require_moderation">${_("Responses will require moderation")}</label>
+            <br>
+                ${components.yesno(selected=responses_require_moderation, yes_display=_('Moderation Required'), no_display=_('None'))}
+                ##<input class="detail" type="checkbox" name="responses_require_moderation" value="True" ${'checked' if responses_require_moderation else ''}/>
+            </div>
+        </td></tr>
+
         
         <%doc>
         <p>${_("Response License:")}

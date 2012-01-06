@@ -1,16 +1,6 @@
 <%inherit file="base.mako"/>
-<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
-<%def name="title()">${_("Using _site_name for your organisation")}</%def>
 
-<%def name="contact_us()">
-    <%
-        popup.link(
-            h.args_to_tuple(controller='misc', action='contact_us'),
-            title = _('Contact us'),
-            text  = h.literal("<span class='learn_more button'>%s</span>") % _('Contact us'),
-        )
-    %>
-</%def>
+<%def name="title()">${_("Using _site_name for your organisation")}</%def>
 
 <div id="organisations">
 
@@ -23,7 +13,7 @@
     
     <img src="/images/misc/about/organisations/flow.png" class="flow" />
     
-    <h1>You can use _site_name in two ways:</h1>
+    <h1>${_("You can use _site_name in two ways:")}</h1>
     <ol>
         <li>
             <strong>${_("Our browser-based solution: ")}</strong>
@@ -43,7 +33,7 @@
             ${_("We're working with some really innovative companies who understand the power and reach of our technology. If you want to be one of them, just hit the Contact us button.")}
         </p>
     </div>
-    ${contact_us()}
+    ${parent.contact_us()}
     
     <h1>${_("The system in more detail")}</h1>
     <p>${_("Civicboom is a flexible audience engagement platform with a range of features for content management - a Software as a Service solution [SaaS]. This platform is powered by its own API. It is designed make the process of asking for and getting back rich media content between the content-hungry organisations and their audience or established contributors more efficient, and more manageable.")}</p>
@@ -70,6 +60,6 @@
             ${_("Then get in touch: ")}
         </span>
     </div>
-    ${contact_us()}
+    ${parent.contact_us()}
 
 </div>

@@ -47,26 +47,10 @@ if(!('frags' in boom)) {
        * Returns modal popup content with added title, message, and confirm_type class
        */
       modal_data : function(title, message, confirm_type) {
-        return $('<div />')
-          .addClass('popup-modal')
-          .append(
-            $('<div />')
-            .addClass(confirm_type || 'information')
-            .append(
-              $('<div />')
-              .addClass('popup-title')
-              .append(title)
-              // Close button
-              .prepend(
-                $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete').click(function () {$.modal.close()})
-              )
-            )
-            .append(
-              $('<div />')
-              .addClass('popup-message')
-              .append(message)
-            )
-          )
+        return {
+          title: title,
+          body: message
+        }
       },
       /*
        * Returns modal popup content to confirm an action, taking values from a link's data.
@@ -75,101 +59,71 @@ if(!('frags' in boom)) {
        * The link can have data-*:
        *  confirm-type:   class for confirm box
        *  confirm-avatar: if true display current persona avatar above title
-       *  confirm-icon:   if true take icon from original link and make 32x32
+       *  confirm-icon:   if true take icon from original link ---and make 32x32
        *  confirm:        html message to display
        *  confirm-yes:    text to display on yes link
        *  confirm-no:     text to dispkay on no link
        *  confirm-secure-options: array of objects used to create yes links that change the secure link, instead of yes / no buttons.
        *    e.g. [ {confirm: "Text of the secure link", json: "/new/json/url/for?secure=link"}, {confirm: "Repeat here, leave json out to use original json url"} ]
        */
-      modal_confirm : function(settings, originalLink) {
+      new_modal_confirm: function(settings, originalLink){
         if( typeof settings == 'string')
           settings = JSON.parse(settings.replace(/\'/g, '\"'));
         console.log(settings.confirmSecureOptions);
         if( typeof settings.confirmSecureOptions == 'string')
           settings.confirmSecureOptions = JSON.parse(settings.confirmSecureOptions.replace(/\'/g, '\"'));
-        // Return modal content as jQuery object
-        // Popup jQuery, begin with outer layer, work in. popup-modal:
-        return $('<div />').addClass('popup-modal').append(
-          // popup_content
-          $('<div />').addClass('popup_content').append(
-            // information/alert/etc.
-            $('<div />').addClass(settings.confirmType || 'information').append(
-              // popup-title
-              $('<div />').addClass('popup-title')
-                // If confirm-avatar copy avatar from top right of site & re-style
-                .append(settings.confirmAvatar ? $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone()).append($('#persona_details').clone().text())
-                //                    $('#persona_holder').clone().attr('id','').addClass('popup-persona')
-                : '')
-                // If icon set icon else take icon name from link clicked
-                .append(settings.icon ? $('<span />').addClass('icon32').addClass('i_' + settings.icon) : originalLink.children('.icon32, .icon16').first().clone(false).removeClass('icon16').addClass('icon32'))
-                // If confirm-title set it as the title, otherwise use the original link's text
-                .append(settings.confirmTitle || originalLink.text() || '')
-                // Close button
-                .prepend(
-                  $('<a />').attr('href', '#').addClass('simplemodalClose fr icon16 i_delete').click(function () {$.modal.close()})
-                )
-            )
-            .append(
-              // popup-message
-              $('<div />').addClass('popup-message').append(settings.confirm || '')
-            )
-            .append(
-              // popup-actions
-              $('<div />').addClass('popup-actions').append(
-                (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) ? (
-                  // secure options
-                  $('<ul />').appendEach(
-                    $.map(settings.confirmSecureOptions, function(value) {
-                      return $('<li />')
-                        .append(value.title ? $('<h3 />').append(value.title) : '')
-                        .append(value.content)
-                        .append(
-                          $('<a />')
-                          .addClass('button')
-                          .append(originalLink.text())
-                          .data('original', originalLink)
-                          .data('json', value.json)
-                          .click(function() {
-                            var link = $(this);
-                            var original = link.data('original');
-                            console.log(link, link.data());
-                            console.log(original, original.data());
-                            original.data('confirmed', 'true');
-                            console.log(1, original.siblings('form').data('json'));
-                            original.siblings('form').data('json', link.data('json'));
-                            //original.data('json', link.data('json'));
-                            console.log(2, original.siblings('form').data('json'));
-                            console.log(original, original.data());
-                            original.click();
-                            $.modal.close();
-                          })
-                        );
-                    })
-                  )
-                ) : (
-                  // buttons
+        obj = {
+          body: $('<div />').addClass('popup-message').append(settings.confirm || ''),
+          title: $('<div />').append($('<div />').append(settings.confirmTitle || originalLink.text() || '')),
+          buttons: {}
+        }
+        if (settings.confirmAvatar)
+          obj.title.prepend(
+            $('<div />').addClass('popup-persona').append($('#persona_avatar').children('img').clone().css('width', '16px')).append($('#persona_details').clone().text())
+          );
+        if (settings.confirmSecureOptions && originalLink.hasClass('link_secure')) {
+          // secure options
+          $('<ul />').appendEach(
+            $.map(settings.confirmSecureOptions, function(value) {
+              return $('<li />')
+                .append(value.title ? $('<h3 />').append(value.title) : '')
+                .append(value.content)
+                .append(
                   $('<a />')
-                    .addClass('button')
-                    .data('original', originalLink)
-                    .html(settings.confirmYes || 'Yes')
-                    .click(function() {
-                      var link = $(this);
-                      console.log('click', this, link);
-                      var original = link.data('original');
-                      original.data('confirmed', 'true');
-                      original.click();
-                      $.modal.close();
-                    })
-                    .after(
-                      originalLink.hasClass('link_dummy') ? '' : $('<a />').addClass('button').html(settings.confirmNo || 'No').click($.modal.close)
-                    )
+                  .addClass('button')
+                  .append(originalLink.text())
+                  .data('original', originalLink)
+                  .data('json', value.json)
+                  .click(function() {
+                    var link = $(this);
+                    var original = link.data('original');
+                    original.data('confirmed', 'true');
+                    original.siblings('form').data('json', link.data('json'));
+                    //original.data('json', link.data('json'));
+                    original.click();
+                    boom.frags.modal_close(link);
+                  })
                 )
-              )
-            )
-          )
-        );
-      }
+                .append(
+                  $('<div />').addClass('cb')
+                );
+            })
+          ).appendTo(obj.body)
+        } else {
+          // No secure options == BUTTONS!
+          obj.buttons[settings.confirmYes || 'Yes'] = function () {
+            originalLink.data('confirmed', 'true');
+            console.log('old', originalLink.data('confirmed'));
+            originalLink.click();
+            $(this).dialog('close');
+          }
+          if (!originalLink.hasClass('link_dummy'))
+            obj.buttons[settings.confirmNo || 'No'] = function () {
+              $(this).dialog('close');
+            }
+        }
+        return obj;
+      },
     },
     // Frag counter (ensures frags are unique)
     counter : 0,
@@ -288,7 +242,8 @@ if(!('frags' in boom)) {
               // Continue
             }
             // Add modal_confirm to queue
-            boom.util.modal_queue.add(boom.frags.templates.modal_confirm(link.data(), link));
+            boom.util.modal_queue.add(boom.frags.templates.new_modal_confirm(link.data(), link), boom.frags.getFragment(link));
+            //boom.util.modal_queue.add(boom.frags.templates.modal_confirm(link.data(), link), boom.frags.getFragment(link));
             event.stopImmediatePropagation();
             return false;
           }
@@ -300,7 +255,7 @@ if(!('frags' in boom)) {
             var frag_href = $(this).data('frag');
             if(frag_href) {
               $.get(frag_href, function(data, status, res) {
-                boom.util.modal_queue.add(boom.frags.templates.modal_data(link.attr('title'), data));
+                boom.util.modal_queue.add(boom.frags.templates.modal_data(link.attr('title'), data), boom.frags.getFragment(link));
               });
               return false;
             }
@@ -334,19 +289,24 @@ if(!('frags' in boom)) {
           }
         },
         'input[type="submit"][name]' : {
-          'click' : function() {
+          'click' : function(event) {
             console.log('input[type="submit"][name] submit')
             var submit_button = $(this);
-            $(this).parents('form').data('json-submit-field', submit_button);
-            return true;
+            $(this).parents('form').data('json-submit-field', submit_button).submit();
+            return false;
           }
         },
-        'form.search[method="GET"]' : {
+        // This looks stupid but selectors are case sensitive! AND IS ALSO BROKEN YOU ID10T! GMiell -> GMiell
+        //'form.search[method="GET"]' : {
+        //  'submit': function() {
+        //    boom.frags.events.live['form.search[method="get"]'].apply(this, arguments);
+        //  }
+        //},
+        'form.search[method="get"]' : {
           'submit' : function(event) {
             console.log('form.search[method="get"] submit');
             var form = $(this);
             var i = true;
-            
             // frag replace
             var frag_href;
             if (frag_href = form.data('frag')) {
@@ -362,7 +322,13 @@ if(!('frags' in boom)) {
             return i;
           }
         },
-        'form[method="POST"]' : {
+        // This looks stupid but selectors are case sensitive! AND IS ALSO BROKEN YOU ID10T! GMiell -> GMiell
+        //'form[method="POST"]' : {
+        //  'submit' : function() {
+        //    boom.frags.events.live['form[method="post"]'].apply(this, arguments);
+        //  }
+        //},
+        'form[method="post"]' : {
           'submit' : function() {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
@@ -534,7 +500,7 @@ if(!('frags' in boom)) {
               callback : function(ui, type, value) {
                 $.ajax({
                   url : rating_form.data('json'),
-                  type : "POST",
+                  type : "post",
                   data : rating_form.serialize(),
                   dataType : "json",
                   success : function(data) {
@@ -553,7 +519,7 @@ if(!('frags' in boom)) {
           'click' : function() {
             var link = $(this);
             var popup_content = link.next('.popup_element').children().clone(true, true);
-            boom.util.modal_queue.add(boom.frags.templates.modal_data('', popup_content));
+            boom.util.modal_queue.add(boom.frags.templates.modal_data('', popup_content), boom.frags.getFragment(link));
             return false;
           }
         },
@@ -571,41 +537,20 @@ if(!('frags' in boom)) {
             return false;
           }
         },
-        /*
-        '.thumbnail' : {
-          'boom_load' : function() {
-            var div = $(this);
-            var img = div.children('img');
-            
-            $("<img/>").attr({
-                src: $(img).attr("src"),
-            }).load(function() {
-                w = this.width; h = this.height;
-                console.log("ENOUGH QUESTIONS GOOD BYE", w, h);
-                if (w > h) $(img).addClass('landscape');
-                if ($(img).width() && $(img).height()) {
-                  $(img).css({
-                    left: (div.width()/2)-(img.width()/2),
-                    top:  (div.height()/2)-(img.height()/2),
-                  });
-                }
-            });
-            return false;
-          }
-        }
-        */
         '.thumbnail' : {
           'boom_load' : function() {
             var div = $(this);
             var img = div.find('img');
-            img.one('load', function() {
-              div.trigger('boom_load');
+            img.on('load', function() {
+              setTimeout(function () {
+                div.trigger('boom_load');
+              },0);
             });
             if (img.width() && img.height()) {
               if (img.width() > img.height()) img.addClass('landscape');
               img.css({
                 left: (div.width()/2)-(img.width()/2),
-                top:  (div.height()/2)-(img.height()/2),
+                top:  (div.height()/2)-(img.height()/2)
               });
             }
             return false;
@@ -706,14 +651,18 @@ if(!('frags' in boom)) {
       form = boom.util.convert_jquery(form);
       boom.frags.setInterval(form, 'auto_save', false, function() {
         boom.util.tinymce.save(form);
-        var data = form.find('.auto_save:input,[name="_authentication_token"]:input,[name="_method"]:input').serialize();
+        var form_data = form.find('.auto_save:input,[name="_authentication_token"]:input,[name="_method"]:input').serialize();
+        // Check previously auto-saved data attached to form, if nothing has changed simply return.
+        if (form.data('autoSaveDiff') == form_data) return;
         $.ajax({
-          type : 'POST',
+          type : 'post',
           dataType : 'json',
           url : form.data('json'),
-          data : data,
+          data : form_data,
           success : function(data) {
             boom.util.flash_message.show(data);
+            // When auto-save successful store form data
+            form.data('autoSaveDiff', form_data);
           },
           error : function(data) {
             boom.util.flash_message.show({
@@ -989,7 +938,12 @@ if(!('frags' in boom)) {
       });
     },
     modal_close :  function(element, callback) {
-      $.modal.close();
+      console.log('modal_close', element);
+      try {
+        $.modal.close();
+      } catch (e) {}
+      $(element).parents('.ui-dialog-content').dialog('close');
+
       if (callback)
         callback(true);
     },

@@ -53,12 +53,12 @@
 ##-------------------
 ## Javascripts
 ##-------------------
-% if config['development_mode'] and 'MSIE' not in request.environ.get('HTTP_USER_AGENT', ''):
     <script>
         boom_development = true;
         if (!window.console || ! window.console.log)
             console = {log: function (){}}
     </script>
+% if config['development_mode'] and 'MSIE' not in request.environ.get('HTTP_USER_AGENT', ''):
     <%
     from glob import glob
     scripts_head = glob("civicboom/public/javascript/head/*.js")

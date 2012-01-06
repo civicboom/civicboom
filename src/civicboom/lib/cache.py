@@ -169,6 +169,7 @@ def normalize_kwargs_for_cache(kwargs):
         if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
             if isinstance(value, list):
                 kwargs[key].sort()
+                #kwargs[key] = ",".join(kwargs[key])
             else:
                 try   : value = value.id
                 except: pass
@@ -189,7 +190,7 @@ def _gen_list_key(*args):
     """
     def string_arg(arg):
         if isinstance(arg, list):
-            arg = list_item_separator.join(arg)
+            arg = list_item_separator.join([string_arg(a) for a in arg])
         if not isinstance(arg, basestring):
             arg = str(arg)
         return arg
@@ -246,7 +247,11 @@ def get_lists_versions(lists, list_variables):
     return zip(lists, list_versions)
 
 def gen_key_for_lists(lists, list_variables, **kwargs):
-    return '' # AllanC - The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
+    # AllanC - TEMP DISBALE OF gen_key_for_lists
+    #          The content_show and member_show methods dont have version numbers for every list - for now DONT return a key but have the structure in place in the methods so that when this is enabled it'll be rockin
+    etag_cache('', **kwargs) # This is needed so is_etag_master is set
+    return '' 
+
     try:
         cache_key = cache_separator.join([list_name+key_var_separator+str(list_version) for list_name, list_version in get_lists_versions(lists, list_variables)])
     except ListVersionException:

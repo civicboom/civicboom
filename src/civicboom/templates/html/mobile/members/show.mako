@@ -31,11 +31,9 @@
                 <a href="#member-persona-${id}" data-rel="dialog" data-transition="fade">Switch persona</a>
             </li>
             <li>
-                ${h.secure_link(
-                    h.url(controller='account', action='signout'),
-                    _('Sign out'),
-                    #css_class="button",
-                )}
+                ${h.secure_form(h.url(controller='account', action='signout'), data_ajax=False)}
+                <input type="submit" value="${_('Sign out')}">
+                ${h.end_form()}
             </li>
         </%def>
         

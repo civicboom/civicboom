@@ -162,7 +162,10 @@ def current_referer(protocol=None):
 
 
 def current_protocol():
-    return request.environ.get('wsgi.url_scheme', 'http')
+    try:
+        return request.environ.get('wsgi.url_scheme', 'http')
+    except:
+        return 'http'
 
 
 def current_host(protocol=None):
@@ -575,7 +578,7 @@ def setup_format_processors():
         
         if result['data'].get('list'):
             return kwargs['line_separator'].join(rows(result['data']['list']['items']))
-        return ''
+        return 'Only lists are renderable in CSV'
         
     def format_pdf(result):
         import subprocess

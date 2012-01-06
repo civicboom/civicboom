@@ -244,7 +244,7 @@
     % if 'delete' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
-            method          = "DELETE",
+            method          = "delete",
             value           = _('Delete'),
             value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
             link_data       = dict(
@@ -427,7 +427,7 @@
                     link_class = 'button',
                     value     = _("Respond with your _content") ,
                     form_data = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
                     ),
     
                 )}
@@ -465,7 +465,7 @@
             %>
             ${h.secure_link(
                 h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish'),
-                method          = "PUT",
+                method          = "put",
                 value           = _('Post'),
                 link_class      = 'button',
                 parent_id       = self.content['parent']['id'] if self.content.get('parent') else None,
@@ -491,7 +491,7 @@
                     link_class  = 'button' ,
                     value       = _("Respond with your _content") ,
                     form_data   = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ) ,
                     link_data   = dict(
                         confirm = _("Would you like to respond to:"),
@@ -521,7 +521,7 @@
                     link_class = 'button',
                     value     = _("Respond with your _content") ,
                     form_data = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ),
                 )}
             ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
@@ -743,6 +743,20 @@
             % if c.logged_in_persona:
             <td>
                 ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
+                
+                % if 'moderator' in self.actions:
+                    ${h.secure_link(
+                        h.args_to_tuple('content_action', action='disassociate', format='redirect', id=comment['id']),
+                        value           = _('disassociate'),
+                        value_formatted ='<span class="icon16 i_delete"></span>',
+                        title           = _("Remove this comment by %s" % comment['creator']['name']) ,
+                        link_data       = dict(
+                            confirm = _("Are you sure you want to disassociate this comment?"),
+                            confirm_yes = _("Yes. Remove it"),
+                            confirm_no  = _("No.  Take me back!"),
+                        ),
+                    )}
+                % endif
             </td>
             % endif
         </tr>
@@ -780,7 +794,7 @@
     % if 'publish' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect', submit_publish='publish') ,
-            method = "PUT" ,
+            method = "put" ,
             value           = _('Publish') ,
             value_formatted = h.literal("<span class='icon16 i_publish'></span>&nbsp;%s") % _('Publish') ,
             json_form_complete_actions = "cb_frag_reload(current_element); cb_frag_reload('profile');" , BROKEN, needs new style frag link
@@ -977,7 +991,7 @@
     % if 'delete' in self.actions:
         ${h.secure_link(
             h.args_to_tuple('content', id=self.id, format='redirect'),
-            method          = "DELETE",
+            method          = "delete",
             value           = _('Delete'),
             value_formatted ='<span class="icon16 i_delete"></span>%s' % _('Delete'),
             link_data       = dict(
@@ -1076,7 +1090,7 @@ def selif(r, n):
         return ""
 r = (d['content']['rating'] * 5)
 %>
-        <form class="content_rating event_load" action="${url('content_action', action='rate', id=d['content']['id'], format='redirect')}" method="POST" data-json="${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}">
+        <form class="content_rating event_load" action="${url('content_action', action='rate', id=d['content']['id'], format='redirect')}" method="post" data-json="${url(controller='content_actions', action='rate', id=d['content']['id'], format='json')}">
             <input type="hidden" name="_authentication_token" value="${h.authentication_token()}">
             <select name="rating" style="width: 120px">
                 <option value="0">Unrated</option>

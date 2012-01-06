@@ -8,7 +8,7 @@ from formencode import validators
 
 
 
-from pylons.i18n.translation import _
+from pylons.i18n.translation import _ # AllanC - unneeded as global _ shoudl now be in use
 
 
 from cbutils.text import clean_html_markup, strip_html_tags
@@ -185,6 +185,19 @@ class LicenseValidator(validators.FancyValidator):
 class PrivateContentValidator(validators.StringBool):
     messages = {
         'not_account_type': x_('unable to use private content features without account upgrade'),
+    }
+
+    def _to_python(self, value, state):
+        value = validators.StringBool._to_python(self, value, state)
+        from pylons import tmpl_context as c
+        if value and not c.logged_in_persona.has_account_required('plus'):
+            raise formencode.Invalid(self.message('not_account_type', state), value, state)
+        return value
+
+# AllanC - TODO - can this be merged with the validator above, they are doing the same thing just with a differnt message return
+class ModerateResponseValidator(validators.StringBool):
+    messages = {
+        'not_account_type': x_('unable to use content moderation features without account upgrade'),
     }
 
     def _to_python(self, value, state):

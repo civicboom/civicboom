@@ -179,7 +179,7 @@ def get_members(members, expand_group_members=True):
     # normalize member names
     members = [member if not hasattr(member, 'id') else member.id for member in members]
     
-    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.id.in_(members)).all()
+    member_objects = Session.query(Member).with_polymorphic('*').filter(Member.id.in_(members)).filter(Member.status=='active').all()
     
     if expand_group_members:
         group_members = []

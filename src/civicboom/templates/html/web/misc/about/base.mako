@@ -1,8 +1,23 @@
 <%inherit file="/html/web/common/html_base.mako"/>
+<%namespace name="popup"           file="/html/web/common/popup_base.mako" />
 <%namespace name="components" file="/html/web/common/components.mako" />
 
 <%def name="html_class_additions()">blank_background</%def>
 <%def name="footer()">${components.misc_footer()}</%def>
+<%def name="contact_us()">
+    <%
+        popup.link(
+            h.args_to_tuple(controller='misc', action='contact_us'),
+            title = _('Contact us'),
+            text  = h.literal("<span class='learn_more button'>%s</span>") % _('Contact us'),
+        )
+    %>
+</%def>
+<%def name="sign_up()">
+    <a class="button" href="${url(controller='account', action='signin')}">
+        ${_('Sign up')}
+    </a>
+</%def>
 
 <div class="content_wrapper">
     <div class="content">

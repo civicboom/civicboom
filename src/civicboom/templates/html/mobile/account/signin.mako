@@ -31,7 +31,7 @@
 </%def>
 
 <%def name="signin()">
-	<form action="${h.url('current', format='redirect')}" method="POST" data-ajax="false">
+	<form action="${h.url('current', format='redirect')}" method="post" data-ajax="false">
 	    <div data-role="fieldcontain" data-theme="b">
 			<label for="username">${_("Username")}</label>
 			<input type="text" id="username" name="username" placeholder="e.g. dave43"/>
@@ -45,7 +45,7 @@
 </%def>
 
 <%def name="signup()">
-    <form action="${h.url(controller='register', action='email', format='redirect')}" method="POST" data-ajaz="false">
+    <form action="${h.url(controller='register', action='email', format='redirect')}" method="post" data-ajaz="false">
         <div data-role="fieldcontain" data-theme="b">
             <label for="username_register">${_("Username")}</label>
             <input type="text" id="username_register" name="username" placeholder="e.g. dave43"/>

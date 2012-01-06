@@ -254,6 +254,32 @@ class MemberActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
+    # List - Follower Content
+    #---------------------------------------------------------------------------
+    @web
+    def following_content(self, id, **kwargs):
+        """
+        GET /members/{name}/following_content: get a list of content from all the followers of this user
+
+        shortcut to content?creator={ids of following}
+        Currently unimplemented
+
+        @type list
+        @api members 1.0 (WIP)
+        
+        @param * (see common list return controls)
+        
+        @return 200   list ok
+                list  the list
+        @return 404   not found
+        """
+        from civicboom.model      import Follow
+        from civicboom.model.meta import Session
+        following_ids = [follow.member_id for follow in Session.query(Follow).filter(Follow.follower_id==id).all()] # AllanC - rushed functionality to enable the content following stream - this should be replaced by an internal API call rather than a hard SQLAlchemy session call
+        return content_search(creator=following_ids, **kwargs)
+
+
+    #---------------------------------------------------------------------------
     # List - Content
     #---------------------------------------------------------------------------
     @web

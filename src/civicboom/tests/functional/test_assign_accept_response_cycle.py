@@ -418,3 +418,66 @@ class TestAssignAcceptResponseCycleController(TestController):
         #TODO
         # Check delete cascade - AllanC: see test_delete_cascades.py
         # Check assignment canceled notification was sent
+
+
+    #---------------------------------------------------------------------------
+    # Dissassociate comments
+    #---------------------------------------------------------------------------
+    def test_dissasocaite_comments(self):
+        self.log_in_as('unittest')
+        assignment_id = self.create_content(title='moderator test', content='reply with an offensive comments and I will dissassociate it', type='assignment', responses_require_moderation=True)
+        
+        self.log_in_as('unitfriend')
+        self.assertNotIn('moderator', self.get_actions(assignment_id))
+        comment_id_1 = self.comment(assignment_id, 'My god this assignment is barbaric!!! what lies! what slader!')
+        
+        self.log_in_as('kitten')
+        comment_id_2 = self.comment(assignment_id, 'I agree! youre horrible Mr Unittest! I HATE YOU!')
+        
+        self.log_in_as('unittest')
+        comment_id_3 = self.comment(assignment_id, 'We will soon see about that mi-lado! Lets the dissassociation commence!')
+        
+        assignment = self.get_content(assignment_id)
+        self.assertIn('moderator', assignment['actions'])
+        comment_ids = [comment['id'] for comment in assignment['comments']['items']]
+        self.assertIn(comment_id_1, comment_ids)
+        self.assertIn(comment_id_2, comment_ids)
+        self.assertIn(comment_id_3, comment_ids)
+        
+        response = self.app.post(
+            url('content_action', action='disassociate', id=comment_id_1, format='json'),
+            params={'_authentication_token': self.auth_token,},
+            status=200
+        )
+        assignment = self.get_content(assignment_id)
+        comment_ids = [comment['id'] for comment in assignment['comments']['items']]
+        self.assertNotIn(comment_id_1, comment_ids)
+        self.assertIn   (comment_id_2, comment_ids)
+        self.assertIn   (comment_id_3, comment_ids)
+        notification = self.getLastNotification('unitfriend')
+        self.assertIn   (url('content', id=assignment_id), notification['content'])
+        self.assertIn   ('disassociated', notification['subject'])
+        
+        self.log_in_as('kitten')
+        comment_id_4 = self.comment(assignment_id, 'NOOO!!! How dare you! you bastard! He had a valid point! Will anyone help us in our hour of need!')
+        
+        self.log_in_as('unittest')
+        response = self.app.post(
+            url('content_action', action='disassociate', id=comment_id_2), # deliberatly dont use a format - test the html_fallback_url
+            params={'_authentication_token': self.auth_token,},
+            status=302
+        )
+        assignment = self.get_content(assignment_id)
+        comment_ids = [comment['id'] for comment in assignment['comments']['items']]
+        self.assertNotIn(comment_id_1, comment_ids)
+        self.assertNotIn(comment_id_2, comment_ids)
+        self.assertIn   (comment_id_3, comment_ids)
+        self.assertIn   (comment_id_4, comment_ids)
+        
+        self.log_in_as('unittest')
+        self.delete_content(assignment_id)
+        
+        self.delete_content(comment_id_1, force=True)
+        self.delete_content(comment_id_2, force=True)
+        #self.delete_content(comment_id_3, force=True) # These have already been deleted by the delete casades
+        #self.delete_content(comment_id_4, force=True)

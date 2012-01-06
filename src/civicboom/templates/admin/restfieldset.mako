@@ -152,13 +152,13 @@ from civicboom.model import Content, User, Group, Media, FlaggedEntity
         </a>
       </p>
     %elif action == 'edit':
-      <form action="${model_url(member_name, id=id)}" method="POST" enctype="multipart/form-data">
+      <form action="${model_url(member_name, id=id)}" method="post" enctype="multipart/form-data">
         ${fs.render()|n}
         <input type="hidden" name="_method" value="PUT" />
         ${buttons()}
       </form>
     %else:
-      <form action="${model_url(collection_name)}" method="POST" enctype="multipart/form-data">
+      <form action="${model_url(collection_name)}" method="post" enctype="multipart/form-data">
         ${fs.render()|n}
         ${buttons()}
       </form>

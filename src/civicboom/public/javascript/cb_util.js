@@ -88,29 +88,103 @@ if(!('util' in boom)) {
       /*
        * Add content to the modal queue, ready to display at the next available opportunity
        */
-      add : function(content, onClose) {
+      add : function(content, parent, onClose) {
+        var content_body, content_title, content_buttons;
+        if (typeof content == 'object') {
+          content_body = content.body;
+          content_title = content.title;
+          content_buttons = content.buttons;
+        } else {
+          content_body = content;
+        }
+        
+        content_body = $('<div />').addClass('resizeThis').append(boom.util.convert_jquery(content_body));
+        
+        
         $('body').delay(0)// Needed to trigger the queue
         .queue(function(next) {
           // Queue the modal, onClose trigger next queue item
           var body = $(this);
-          $.modal(content, {
-            onClose : function() {
-              if(onClose)
-                onClose();
-              $.modal.close();
-              next();
-            },
-            onShow : function() {
-              $.modal.update();
-              // this.d.data.find('.event_load').each(function() {
-              // var evented = $(this);
-              // console.log(evented, evented.length);
-              // evented.trigger('boom_load');
-              // })
-              this.d.data.find('.event_load').trigger('boom_load');
-            }
-          })
-        }).delay(100);
+          if (!parent || parent.length == 0)
+            parent = $('body');
+          console.log('parent', parent, $('#app'));
+          var dialog = boom.util.convert_jquery(content_body)
+            .dialog({
+              //autoOpen: false,
+              title: content_title,
+              buttons: content_buttons,
+              modal: true,
+              position: {
+                of: parent,
+                at: 'center top',
+                my: 'center top',
+                collision: 'fit',
+                using: function (position) {
+                  var elem = $(this);
+                  elem.siblings('.ui-widget-overlay').css('top', 0 - $('#app').offset().top) ;
+                  elem.css('width', elem.css('width')); // Force element width!
+                  elem.css('left', position.left);//.css('top', position.top); Leave unset for top of frag containers
+                  elem.css('top', '6px');
+                }
+              },
+              draggable: false,
+              resizable: false,
+              show: {
+                effect: 'slide',
+                direction: 'up'
+              },
+              hide: {
+                effect: 'slide',
+                direction: 'up'
+              },
+              width: 'auto',
+              minWidth: '300px',
+              height: 'auto',
+              open: function (event, ui) {
+                //if (parent) $(this).parent().appendTo(parent);
+                $(this).find('.event_load').trigger('boom_load');
+              },
+              beforeClose: function () {
+                // For some reason close does not trigger on x clicked / esc pressed
+                console.log('dialog.beforeClose');
+                if (onClose) onClose();
+                next();
+                return true; // Must return true otherwise close never triggered
+              },
+              close: function (event, ui) {
+                console.log('dialog.close');
+                var i = $(this).dialog('destroy');
+                i.remove();
+                return false;
+              },
+              resize: function (event, ui) {
+                console.log('resize', $(this).dialog('option', 'position'));
+              },
+              resizeStop: function (event, ui) {
+                console.log('resizeStop', $(this).dialog('option', 'position'));
+                var position = $(this).dialog('option', 'position');
+                $(this).dialog('option', 'position');
+              }
+            });
+            //dialog.dialog('open');
+          // $.modal(content, {
+            // onClose : function() {
+              // if(onClose)
+                // onClose();
+              // $.modal.close();
+              // next();
+            // },
+            // onShow : function() {
+              // $.modal.update();
+              // // this.d.data.find('.event_load').each(function() {
+              // // var evented = $(this);
+              // // console.log(evented, evented.length);
+              // // evented.trigger('boom_load');
+              // // })
+              // this.d.data.find('.event_load').trigger('boom_load');
+            // }
+          // })
+        }).delay(150);
         // Next queue item always 100ms delay between popups
       },
       /*
@@ -286,8 +360,7 @@ if(!('util' in boom)) {
     },
     convertYesNoCheckboxes : function(element) {
       element = boom.util.convert_jquery(element);
-      //return;
-      var selects = element.find('select.yesno').filter(':visible');
+      var selects = element.find('select.yesno').not('.proc');
       if(selects.length == 0)
         return;
       selects.after('<input type="checkbox" class="yesnocheck unproc" />');
@@ -303,7 +376,7 @@ if(!('util' in boom)) {
         var no = yesno.children('.no').val();
         yesno.val(this.checked ? yes : no);
       });
-      checks.removeClass('unproc');
+      checks.removeClass('unproc').addClass('proc');
     },
     validators : {
       init : function() {

@@ -9,13 +9,11 @@ import re
 import logging
 log = logging.getLogger(__name__)
 
-
-config = {}
-
-
-def configure(c):
-    global config
-    config = c
+from cbutils.worker import config
+#config = {}
+#def configure(c):
+#    global config
+#    config = c
 
 
 #-------------------------------------------------------------------------------
@@ -84,10 +82,10 @@ def send_email(email_to, **kwargs):
     if 'content_text' not in kwargs or 'content_html' not in kwargs:
         kwargs.update(render_email(**kwargs))
     
-    if config['online'] and config['feature.aggregate.email']:
-        send_email_smtp(email_to, **kwargs)
-    elif config['development_mode']:
+    if config['development_mode']:
         email_log(email_to, **kwargs) # Log Debug data if send disabled
+    elif config['online'] and config['feature.aggregate.email']:
+        send_email_smtp(email_to, **kwargs)
     else:
         log.warn('Email send state error - email not sent')
 
@@ -146,6 +144,16 @@ def send_email_smtp(email_to, subject, content_text, content_html, **kwargs):
         pass
     msgText = MIMEText(content_html, 'html', 'UTF-8')
     msgAlternative.attach(msgText)
+    
+    # Add attachments
+    # This includes additional email parts like ICS/Calendar entrys for this assignment etc
+    # TODO
+    #  here is a snippet taken from http://www.jasha.eu/blogposts/2011/04/send-email-with-icalendar-events-from-your-website.html
+    #  it's dirty dirty Java, but we can use the same principle
+        #String name = eventDocument.getName() + ".ics";
+        #String contentType = String.format("text/calendar; name=\"%s\"", name);
+        #email.attach(new ByteArrayDataSource(attachmentData, contentType),
+        #        name, "", EmailAttachment.ATTACHMENT);
     
     # Convert comma separated emails to list (if needed)
     if isinstance(email_to, basestring):

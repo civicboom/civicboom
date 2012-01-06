@@ -14,7 +14,7 @@
     <div id="contact_us">
         <h1>${_("Contact _site_name")}</h1>
         <p>${_("Looking to get in touch with _site_name? Fill out the contact form and we'll be back in contact with you as soon as we can!")}</p>
-        ##<form name="" action="" method="POST">
+        ##<form name="" action="" method="post">
         ${h.form(h.args_to_tuple(controller='misc', action='contact_us', format='redirect'), method='POST', data=dict(json_complete="[['modal_close']]"))}
             <label for="name">${_("Your name: ")}</label>
             <input name="name" type="text" value="" required="true" placeholder="e.g. John Smith" />
