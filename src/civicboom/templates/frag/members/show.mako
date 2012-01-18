@@ -97,7 +97,7 @@
             self.trans_strings = [
                 #list name , icon, description
                 ('all'                 , 'article'    , _('All')   ),
-                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('drafts'              , 'draft'      , _("Drafts")   ),
                 ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
                 ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses I've written") ),
@@ -107,7 +107,7 @@
             self.trans_strings = [
                 #list name , icon, description
                 ('all'                 , 'article'    , _('All')   ),
-                ('drafts'              , 'draft'      , _("What I am working on now")   ),
+                ('drafts'              , 'draft'      , _("Drafts")   ),
                 ('assignments_active'  , 'assignment' , _("Requests I want a response to")  ),
                 ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses I've written") ),
@@ -117,7 +117,7 @@
             self.trans_strings = [
                 #list name , icon, description
                 ('all'                 , 'article'    , _('All')   ),
-                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('drafts'              , 'draft'      , _("Drafts")   ),
                 ('assignments_active'  , 'assignment' , _("Requests we want you to respond to")  ),
                 ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses we've written") ),
@@ -127,7 +127,7 @@
             self.trans_strings = [
                 #list name , icon, description
                 ('all'                 , 'article'    , _('All')   ),
-                ('drafts'              , 'draft'      , _("What we are working on now")   ),
+                ('drafts'              , 'draft'      , _("Drafts")   ),
                 ('assignments_active'  , 'assignment' , _("Requests we want a response to")  ),
                 ('assignments_previous', 'assignment' , _('Previous _assignments') ),
                 ('responses'           , 'response'   , _("Responses we've written") ),
