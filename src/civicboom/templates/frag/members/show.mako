@@ -378,7 +378,7 @@
         
         ${frag_list.member_list_thumbnails(
             [m for m in d['groups']['items'] if m['status']=='active'],
-            _('_Groups') ,
+            _('My _Groups') ,
             h.args_to_tuple('member_action', id=self.id, action='groups') ,
             icon    = 'group' ,
         )}
