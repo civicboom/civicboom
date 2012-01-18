@@ -75,10 +75,10 @@
                     <tr>
                         <td>${d['settings_meta'][setting_name[0]]['description']}</td>
                         % for notif_type in notification_types:
-                            <td>
+                            <td style="text-align: center;">
                                 <select class="yesno" name="${setting_name[0]}-${notif_type[0]}">
-                                    <option class="yes" ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
-                                    <option class="no"  ${select(setting_name[0],notif_type[0],False)} value="">No</option>
+                                    <option class="nt-${notif_type} yes" ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
+                                    <option class="nt-${notif_type} no"  ${select(setting_name[0],notif_type[0],False)} value="">No</option>
                                 </select>
                             </td>
                         % endfor
