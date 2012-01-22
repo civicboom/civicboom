@@ -236,6 +236,14 @@ header {
 */
 /* END >_< ABLASLAHTPONWATPOMTWA */
 
+// not all "misc" pages are "wall of text with special formatting" pages...
+BODY.c-misc.a-search_redirector {
+    .content {
+        font-size: 12px;
+        line-height: 14px;
+	}
+}
+
 BODY.c-misc {
     color: $misc-page-font;
     
