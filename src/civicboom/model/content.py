@@ -478,6 +478,10 @@ class UserVisibleContent(Content):
     def boom_content(self, member):
         from civicboom.lib.database.actions import boom_content
         return boom_content(self, member)
+        
+    def unboom_content(self, member):
+        from civicboom.lib.database.actions import unboom_content
+        return unboom_content(self, member)
 
 
 class ArticleContent(UserVisibleContent):

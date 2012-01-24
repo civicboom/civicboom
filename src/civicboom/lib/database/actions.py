@@ -742,6 +742,8 @@ Author: %(creator_name)s
 
 
 def boom_content(content, member, delay_commit=False):
+    content = get_content(content)
+    member  = get_member (member)
     
     # Validation
     if content.private == True:
@@ -769,7 +771,17 @@ def boom_content(content, member, delay_commit=False):
     elif content.__type__ == 'assignment':
         member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content))
     
-
+def unboom_content(content, member, delay_commit=False):
+    content = get_content(content)
+    member  = get_member (member)
+    try:
+        boom = Session.query(Boom).filter(Boom.member_id==member.id).filter(Boom.content_id==content.id).one()
+        Session.delete(boom)
+    except:
+        raise action_error(_("%s has not boomed previously boomed this _content" % member), code=400)
+        
+    if not delay_commit:
+        Session.commit()
 
 
 def parent_seen(content, delay_commit=False):

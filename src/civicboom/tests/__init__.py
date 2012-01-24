@@ -545,6 +545,7 @@ class TestController(TestCase):
 
 
     def boom_content(self, content_id):
+        self.assertIn('boom', self.get_actions(content_id))
         response = self.app.post(
             url('content_action', action='boom', id=content_id, format='json'),
             params={
@@ -554,6 +555,20 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         assert response_json['status'] == 'ok'
+        
+    def unboom_content(self, content_id):
+        #self.assertIn('unboom', self.get_actions(content_id))
+        response = self.app.post(
+            url('content_action', action='unboom', id=content_id, format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        assert response_json['status'] == 'ok'
+        
+
 
     def comment(self, content_id, comment='comment'):
         response = self.app.post(
