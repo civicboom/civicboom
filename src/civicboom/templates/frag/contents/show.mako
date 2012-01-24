@@ -270,6 +270,21 @@
         </span>
         <div class="separator"></div>
     % endif
+
+    % if 'unboom' in self.actions:
+        <span class="mo-help">
+            ${h.secure_link(
+                h.args_to_tuple('content_action', action='unboom', format='redirect', id=self.id) ,
+                value           = _('Unboom') ,
+                value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Unboom') ,
+                force_profile   = True,
+            )}
+            <div class="mo-help-l mo-help-b">
+                ${_('UnBooming this content will remove it from your list of boomed content.')}
+            </div>
+        </span>
+        <div class="separator"></div>
+    % endif
     
     % if 'flag' in self.actions:
         <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>&nbsp;Flag</a>

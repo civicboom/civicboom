@@ -61,7 +61,7 @@ class TestBoom(TestController):
         response      = self.app.get(url('content', id=content_id, format='json'), status=200)
         response_json = json.loads(response.body)
         # assert 'boomed by unitfriend'
-        self.assertIn('boom', response_json['data']['actions'])
+        self.assertIn('unboom', response_json['data']['actions'])
         self.assertEqual( int(response_json['data']['content']['boom_count']), boom_count + 1)
         
         # Check the 'content and boomed' union stream

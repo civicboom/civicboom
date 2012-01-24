@@ -557,7 +557,7 @@ class TestController(TestCase):
         assert response_json['status'] == 'ok'
         
     def unboom_content(self, content_id):
-        #self.assertIn('unboom', self.get_actions(content_id))
+        self.assertIn('unboom', self.get_actions(content_id))
         response = self.app.post(
             url('content_action', action='unboom', id=content_id, format='json'),
             params={
