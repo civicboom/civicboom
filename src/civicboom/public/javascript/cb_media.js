@@ -51,8 +51,9 @@ if (!('media_update' in boom)) {
         return false;
       });
       // Clicking a media remove button triggers ajax remove, on success removes element from list.
-      $('body').on('click', 'table.media_files tbody.file input.file_remove', function () {
+      $('body').on('click', 'table.media_files tbody.file input.file_remove', function (event) {
       //$('ul.media_files li.media_file input.file_remove').live('click', function () {
+        event.stopImmediatePropagation();
         console.log('table.media_files tbody.file input.file_remove click');
         var input = $(this);
         var container = input.parents('tbody');

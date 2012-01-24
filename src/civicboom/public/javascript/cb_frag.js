@@ -288,7 +288,7 @@ if(!('frags' in boom)) {
             return false;
           }
         },
-        'input[type="submit"][name]' : {
+        'input[type="submit"][name]:not(.no_submit)' : {
           'click' : function(event) {
             console.log('input[type="submit"][name] submit')
             var submit_button = $(this);
