@@ -743,6 +743,20 @@
             % if c.logged_in_persona:
             <td>
                 ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
+                
+                % if 'moderator' in self.actions:
+                    ${h.secure_link(
+                        h.args_to_tuple('content_action', action='disassociate', format='redirect', id=comment['id']),
+                        value           = _('disassociate'),
+                        value_formatted ='<span class="icon16 i_delete"></span>',
+                        title           = _("Remove this comment by %s" % comment['creator']['name']) ,
+                        link_data       = dict(
+                            confirm = _("Are you sure you want to disassociate this comment?"),
+                            confirm_yes = _("Yes. Remove it"),
+                            confirm_no  = _("No.  Take me back!"),
+                        ),
+                    )}
+                % endif
             </td>
             % endif
         </tr>
