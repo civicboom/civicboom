@@ -693,14 +693,14 @@ def links_to_frag_links(content):
     """
     
     def replace_content_link(matchobj):
-        return """<a href="%(url)s" onclick="cb_frag($(this), '%(url_frag)s'); return false;">%(text)s</a>""" % {\
+        return """<a href="%(url)s" data-frag='%(url_frag)s' class="link_new_frag">%(text)s</a>""" % {\
             'url'     : url('content', id=matchobj.group(1)               ) ,
             'url_frag': url('content', id=matchobj.group(1), format='frag') ,
             'text'    : matchobj.group(2) ,
         }
 
     def replace_member_link(matchobj):
-        return """<a href="%(url)s" onclick="cb_frag($(this), '%(url_frag)s'); return false;">%(text)s</a>""" % {\
+        return """<a href="%(url)s" data-frag='%(url_frag)s' class="link_new_frag">%(text)s</a>""" % {\
             'url'     : url('member', id=matchobj.group(1)               ) ,
             'url_frag': url('member', id=matchobj.group(1), format='frag') ,
             'text'    : matchobj.group(2) ,
