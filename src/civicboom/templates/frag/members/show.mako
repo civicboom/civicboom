@@ -424,6 +424,8 @@
     <div class="frag_col frag_right_col long">
         ${guides()}
         
+        <%doc>
+        ## AllanC - display removed because users have drafts created and dont need it pushed to them twice.
         ## Accepted Assignments --------------------------------------
         ${frag_list.content_list(
             d['assignments_accepted'] ,
@@ -433,7 +435,7 @@
             icon = 'assignment' ,
             extra_info = True ,
         )}
-        
+        </%doc>
         
         ## Memers Content --------------------------------------------
         % for list, icon, description in [n for n in self.trans_strings if n[0] not in ["all","assignments_active" ]]:
