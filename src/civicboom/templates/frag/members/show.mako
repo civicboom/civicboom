@@ -545,7 +545,7 @@
                             href="${h.url('messages', list='to')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_message"     ></span>
-                                <div class="icon_overlay_red"
+                                <div class="icon_overlay_red msg_c_m"
                                     % if self.num_unread_messages == 0:
                                         style="display:none"
                                     % endif
@@ -568,7 +568,7 @@
                             href="${h.url('messages', list='notification')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_notification"></span>
-                                <div class="icon_overlay_red"
+                                <div class="icon_overlay_red msg_c_n"
                                     % if self.num_unread_notifications == 0:
                                         style="display:none"
                                     % endif

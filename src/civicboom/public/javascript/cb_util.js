@@ -344,6 +344,8 @@ if(!('util' in boom)) {
         if ((!body.hasClass('u-user')) || body.hasClass('c-register') ) return;
         console.log('user logged in');
         setInterval(boom.util.message_indicators.update, 120000);
+        // Fudge update method for message indicators into boom.frags.update_message_indicators to allow form complete action.
+        boom.frags.update_message_indicators = boom.util.message_indicators.update;
         $(function() {
           if(boom.util.desktop_notification.has_support() && !boom.util.desktop_notification.has_permission())
             $('.desktop_notifications').show();
