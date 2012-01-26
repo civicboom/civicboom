@@ -198,9 +198,25 @@ if(!('frags' in boom)) {
                 'fileDataName' : 'file_data',
                 'removeCompleted' : true,
                 'onComplete' : function(event, id, fileObj, response, data) {
+                  console.log('uploadify onComplete');
                   var form = $(event.target).parents('form');
                   // Boom_load event triggers refresh or media listing
                   $(event.target).parents('table.media_files').trigger('boom_load');
+                  if (data.fileCount == 0) form.removeData('prevent-submit');
+                },
+                'onAllComplete' : function (event) {
+                  console.log('uploadify onAllComplete');
+                  form.removeData('prevent-submit');
+                },
+                'onCancel' : function (event, id, fileObj, data) {
+                  console.log('uploadify onCancel');
+                  var form = $(event.target).parents('form');
+                  if (data.fileCount == 0) form.removeData('prevent-submit');
+                },
+                'onOpen' : function (event, data) {
+                  console.log('uploadify onSelect');
+                  var form = $(event.target).parents('form');
+                  form.data('prevent-submit', 'A file is still uploading, please wait until this has completed before saving or publishing.');
                 }
               });
             });
@@ -333,6 +349,11 @@ if(!('frags' in boom)) {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
             var form = $(this);
+            var prevent_submit;
+            if (prevent_submit = form.data('prevent-submit')) {
+              boom.util.modal_queue.add(prevent_submit, form);
+              return false;
+            }
             boom.util.tinymce.save(form);
             var json_href = form.data('json');
             if(json_href) {

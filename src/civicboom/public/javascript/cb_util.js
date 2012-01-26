@@ -97,6 +97,8 @@ if(!('util' in boom)) {
         } else {
           content_body = content;
         }
+        if (typeof content_body === 'string')
+          content_body = $('<div />').append(content_body);
         
         content_body = $('<div />').addClass('resizeThis').append(boom.util.convert_jquery(content_body));
         
