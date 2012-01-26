@@ -1,4 +1,5 @@
 from pylons import tmpl_context as c, config, request
+from paste.deploy.converters import asbool
 
 
 #-------------------------------------------------------------------------------
@@ -21,6 +22,8 @@ widget_defaults['basic'] = dict(
     color_action_bar = 'ddd' ,
     color_content    = 'eee' ,
     theme            = 'basic',
+    show_responses   = False,
+    button_respond   = 'Respond with your text, images and video now!'
 )
 
 widget_defaults['gradient'] = dict(
@@ -60,7 +63,12 @@ def setup_widget_env():
         #        return None
         for key in [key for key in c.widget.keys() if widget_var_prefix+key in request.params]:  #app_globals.widget_variables:
             value = request.params[widget_var_prefix+key].encode('utf-8')
-            if isinstance(c.widget[key], int): # keep widget int's as ints
+            if isinstance(c.widget[key], bool): # keep widget bools as bools
+                try:
+                    c.widget[key] = asbool(value)
+                except:
+                    pass
+            elif isinstance(c.widget[key], int): # keep widget int's as ints
                 try:
                     c.widget[key] = int(value)
                 except:

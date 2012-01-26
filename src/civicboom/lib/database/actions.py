@@ -740,18 +740,22 @@ Author: %(creator_name)s
         content_html = "<pre>"+email_text+"</pre>",
     )
 
+def has_boomed(content, member):
+    """
+    Return boom_object or None for - has this member boomed this content
+    """
+    content = get_content(content)
+    member  = get_member (member)
+    try:
+        return Session.query(Boom).filter(Boom.member_id==member.id).filter(Boom.content_id==content.id).one()
+    except:
+        return None
 
 def boom_content(content, member, delay_commit=False):
-    
     # Validation
     if content.private == True:
         raise action_error(_("cannot boom private content"), code=400)
-    boom = None
-    try:
-        boom = Session.query(Boom).filter(Boom.member_id==member.id).filter(Boom.content_id==content.id).one()
-    except:
-        pass
-    if boom:
+    if has_boomed(content, member):
         raise action_error(_("You have previously boomed this _content"), code=400)
     
     boom = Boom()
@@ -769,7 +773,15 @@ def boom_content(content, member, delay_commit=False):
     elif content.__type__ == 'assignment':
         member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content))
     
-
+def unboom_content(content, member, delay_commit=False):
+    boom = has_boomed(content, member)
+    if boom:
+        Session.delete(boom)
+    else:
+        raise action_error(_("%s has not boomed previously boomed this _content" % member), code=400)
+        
+    if not delay_commit:
+        Session.commit()
 
 
 def parent_seen(content, delay_commit=False):

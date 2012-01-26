@@ -1,6 +1,7 @@
 from civicboom.tests import *
 from pylons import config
 
+from nose.plugins.skip import SkipTest
 
 class TestAutoDraftToComment(TestController):
 
@@ -10,6 +11,8 @@ class TestAutoDraftToComment(TestController):
     def test_draft_to_comment(self):
         """
         """
+        
+        raise SkipTest('Feature disabled at customer request')
         
         #-----------------------------------------------------------------------
         # Create assignment 

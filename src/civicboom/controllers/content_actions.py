@@ -85,6 +85,30 @@ class ContentActionsController(BaseController):
 
 
     #---------------------------------------------------------------------------
+    # Action - UnBoom: Inverse of boom
+    #---------------------------------------------------------------------------
+    @web
+    @auth
+    def unboom(self, id, **kwargs):
+        """
+        POST /contents/{id}/unboom: remove content from your boomed content list
+        @type action
+        @api contents 1.0 (WIP)
+
+        @return 200   boom removed successfully
+        
+        @comment AllanC When content is boomed, notifications are sent out. This call dose not retreave this notifications, it simply removes it from your boomed content list
+        """
+
+        content = get_content(id, set_html_action_fallback=True)
+        content.unboom_content(c.logged_in_persona)
+
+        user_log.debug("UnBoomed Content #%d" % content.id)
+        return action_ok(_("Content has been Boomed"))
+
+
+
+    #---------------------------------------------------------------------------
     # Action - Approve: Response Content (organisation only)
     #---------------------------------------------------------------------------
     @web
