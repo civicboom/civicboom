@@ -1,34 +1,16 @@
 from civicboom.tests import *
-#import json
 
 
-class TestBoomController(TestController):
+class TestBoom(TestController):
     
-    def test_all(self):
-        
-        #-----------------------------------------------------------------------
-        
+    def test_boom(self):
         self.log_in_as('unittest')
         
-        # Create publis content as unittest
-        response = self.app.post(
-            url('contents', format='json'),
-            params={
-                '_authentication_token': self.auth_token,
-                'title'        : u'Content to BOOM!',
-                'contents'     : u'This tests is going to Boom be boomed by unitfriend' ,
-                'type'         : u'article' ,
-                #'submit_publish': u'publish' ,
-            },
-            status=201
-        )
-        response_json = json.loads(response.body)
-        content_id    = int(response_json['data']['id'])
-        self.assertNotEqual(content_id, 0)
+        # Create public content as unittest
+        content_id = self.create_content(title=u'Content to BOOM!', contents=u'This tests is going to Boom be boomed by unitfriend', type=u'article')
         
         self.log_in_as('unitfriend')
         
-
         # Count content (to be used for assertion later)
         response      = self.app.get(url('member_action', action='content'       , id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
@@ -79,7 +61,7 @@ class TestBoomController(TestController):
         response      = self.app.get(url('content', id=content_id, format='json'), status=200)
         response_json = json.loads(response.body)
         # assert 'boomed by unitfriend'
-        self.assertIn('boom', response_json['data']['actions'])
+        self.assertIn('unboom', response_json['data']['actions'])
         self.assertEqual( int(response_json['data']['content']['boom_count']), boom_count + 1)
         
         # Check the 'content and boomed' union stream
@@ -122,3 +104,17 @@ class TestBoomController(TestController):
         response = self.app.get(url('member', id='unitfriend', format='json'), status=200)
         response_json = json.loads(response.body)
         self.assertNotIn('Content to BOOM!', response)
+
+
+    def test_unboom(self):
+        self.log_in_as('unittest')
+        content_id = self.create_content(title=u'Content to BOOM!', contents=u'This tests is going to Boom be boomed by unitfriend', type=u'article')
+        
+        self.log_in_as('unitfriend')
+        self.boom_content(content_id)
+        self.unboom_content(content_id)
+        
+        self.assertNotIn(content_id, [item['id'] for item in self.get_member('unitfriend')['boomed']['items']])
+
+        self.log_in_as('unittest')
+        self.delete_content(content_id)

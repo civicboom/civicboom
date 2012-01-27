@@ -704,13 +704,15 @@ class ContentsController(BaseController):
         # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
         #   maybe bits need to be added to 'create' to avoid this issue
         
-        if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
-           content.parent_id and \
-           submit_type == 'publish' and \
-           not content.attachments and not kwargs.get('media_file') and \
-           len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
-            kwargs['type']    = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
-            kwargs['content'] = strip_html_tags(kwargs.get('content', content.content)) # HACK - AllanC - because the content validator has already triggered so I  manually force the removal of html tags - we dont want html in comments
+        # AllanC - Disabled at customer request
+        # Automatic draft to comment
+        #if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
+        #   content.parent_id and \
+        #   submit_type == 'publish' and \
+        #   not content.attachments and not kwargs.get('media_file') and \
+        #   len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
+        #    kwargs['type']    = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
+        #    kwargs['content'] = strip_html_tags(kwargs.get('content', content.content)) # HACK - AllanC - because the content validator has already triggered so I  manually force the removal of html tags - we dont want html in comments
         
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:

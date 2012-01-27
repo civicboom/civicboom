@@ -424,6 +424,8 @@
     <div class="frag_col frag_right_col long">
         ${guides()}
         
+        <%doc>
+        ## AllanC - display removed because users have drafts created and dont need it pushed to them twice.
         ## Accepted Assignments --------------------------------------
         ${frag_list.content_list(
             d['assignments_accepted'] ,
@@ -433,7 +435,7 @@
             icon = 'assignment' ,
             extra_info = True ,
         )}
-        
+        </%doc>
         
         ## Memers Content --------------------------------------------
         % for list, icon, description in [n for n in self.trans_strings if n[0] not in ["all","assignments_active" ]]:
@@ -545,7 +547,7 @@
                             href="${h.url('messages', list='to')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_message"     ></span>
-                                <div class="icon_overlay_red"
+                                <div class="icon_overlay_red msg_c_m"
                                     % if self.num_unread_messages == 0:
                                         style="display:none"
                                     % endif
@@ -568,7 +570,7 @@
                             href="${h.url('messages', list='notification')}">
                             <div style="float:left; width: 4em;">
                                 <span class="icon16 i_notification"></span>
-                                <div class="icon_overlay_red"
+                                <div class="icon_overlay_red msg_c_n"
                                     % if self.num_unread_notifications == 0:
                                         style="display:none"
                                     % endif

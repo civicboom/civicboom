@@ -472,12 +472,25 @@ class UserVisibleContent(Content):
                 action_list.append('dissasociate')
         #AllanC: TODO - if has not boomed before - check boom list:
         if member and self.creator != member:
-            action_list.append('boom')
+            if self.has_boomed(member):
+                action_list.append('unboom')
+            else:
+                action_list.append('boom')
         return action_list
+
+    def has_boomed(self, member):
+        from civicboom.lib.database.actions import has_boomed
+        if has_boomed(self,member):
+            return True
+        return False
 
     def boom_content(self, member):
         from civicboom.lib.database.actions import boom_content
         return boom_content(self, member)
+        
+    def unboom_content(self, member):
+        from civicboom.lib.database.actions import unboom_content
+        return unboom_content(self, member)
 
 
 class ArticleContent(UserVisibleContent):
