@@ -135,13 +135,10 @@ class TestAssignAcceptResponseCycleController(TestController):
 
         # Check that the emails have been generated and sent to the correct users once approved
         self.assertEqual(getNumEmails(), num_emails + 2)
-        emails_sent_when_approved = [
-            emails[len(emails)-1],
-            emails[len(emails)-2],
-        ]
-        emails_to = [email.email_to for email in emails_sent_when_approved]
+        emails_to = [email.email_to for email in emails[-2:]]
         self.assertIn('test+unittest@civicboom.com'  , emails_to)
         self.assertIn('test+unitfriend@civicboom.com', emails_to)
+        self.assertSubStringIn(['requested for potential','creator has been notified'],[email.content_text for email in emails[-2:]]) # Check the contents of the emails is one accepted, one accepted parent
         
         # Disassociate ---------------------------------------------------------
         

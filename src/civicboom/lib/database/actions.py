@@ -812,7 +812,7 @@ def parent_approve(content, delay_commit=False):
     # Generate notifications - these have custom email templates that override the base notification    
     extra_vars = {'content_id':content.id} #extra variables for template rendering
     content       .creator.send_notification(messages.article_approved_creator(member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
-    content.parent.creator.send_notification(messages.article_approved_creator(member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
+    content.parent.creator.send_notification(messages.article_approved_parent (member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
 
 
     if not delay_commit:
