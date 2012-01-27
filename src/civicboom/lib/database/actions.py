@@ -802,16 +802,18 @@ def parent_approve(content, delay_commit=False):
     content.edit_lock = "parent_owner"
     content.approval  = "approved"
 
-    from pylons import tmpl_context as c # Needed for passing varibles to templates
-    c.content = content
+    # AllanC - the direct email notifications were removed. They have now been replaced by the notification system
+    # Email content parent & content creator
+    #from pylons import tmpl_context as c # Needed for passing varibles to templates
+    #c.content = content
+    #content.parent.creator.send_email(subject=_('content request' ), content_html=render('/email/approve_lock/lock_article_to_organisation.mako'))
+    #content.creator.send_email(       subject=_('content approved'), content_html=render('/email/approve_lock/lock_article_to_member.mako'))
+    
+    # Generate notifications - these have custom email templates that override the base notification    
+    extra_vars = {'content_id':content.id} #extra variables for template rendering
+    content       .creator.send_notification(messages.article_approved_creator(member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
+    content.parent.creator.send_notification(messages.article_approved_creator(member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
 
-    # Email content parent
-    content.parent.creator.send_email(subject=_('content request'), content_html=render('/email/approve_lock/lock_article_to_organisation.mako'))
-
-    # Email content creator
-    content.creator.send_email(subject=_('content approved'), content_html=render('/email/approve_lock/lock_article_to_member.mako'))
-    #content.creator.send_notification(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
-    # AllanC - TODO - need to generate notification
 
     if not delay_commit:
         Session.commit()

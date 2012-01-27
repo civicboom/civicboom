@@ -151,9 +151,9 @@ generators = [
     ["assignment_due_1day",                  "ne", _("_assignment alert: due tomorrow"),    _("The _assignment %(you)s accepted %(assignment)s is due tomorrow")],
 
     # Response Actions
-    # NOTE: Don't set these to default email because these action create emails themselfs - AllanC
     ["article_disassociated_from_assignment","n",  _("_article disassociated from _assignment"), _("%(member)s disassociated %(your)s _article %(article)s from the _assignment %(assignment)s")],
-    ["article_approved",                     "n",  _("_article approved by organisation"), _("%(member)s has approved %(your)s _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
+    ["article_approved_creator"             ,"ne", _("_article approved by organisation"),       _("%(member)s has approved %(your)s _article %(content)s in the response to their _assignment %(parent)s. Check your email for more details")],
+    ["article_approved_parent"              ,"e",  _("_article approved details"),               _("%(member)s has approved the _article %(content)s in the response to %(your)s _assignment %(parent)s.")],
       # TODO: response seen
 
     # Groups to group
@@ -201,8 +201,9 @@ for _name, _default_route, _subject, _content in generators:
 
 
 
-def send_notification(members, message):
+def send_notification(members, message, extra_vars={}):
     """
+    extra_vars must be a dict of strings
     """
     #from cbutils.worker import config # AllanC - HACK!!! could be worker config or pylons config - import here is bad - we need a better way of doing this
     
@@ -222,6 +223,11 @@ def send_notification(members, message):
         message = message.copy()
     if hasattr(message, 'to_dict'):
         message = message.to_dict()
+    
+    # AllanC - some notifications can trigger custom template loads. these templates may need extra vars to render
+    if extra_vars:
+        message['extra_vars'] = extra_vars
+    
     
     # Thread the send operation
     # Each member object is retreved and there message preferences observed (by the message thread) for each type of message
