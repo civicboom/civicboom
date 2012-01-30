@@ -42,7 +42,7 @@ cb-website-web.deb: Makefile $(shell find ../nginx ./web)
 	$(call mdcp, ../nginx/civicboom.com         , fs-web/etc/nginx/sites-available/ )
 	$(call mdcp, ../nginx/errors                , fs-web/opt/cb/share/website-web/  )
 	$(call mdcp, ../nginx/civicboom.com         , fs-web/opt/cb/share/website-web/  )
-	$(call mdcp, ../nginx/ssl/wild.c*m.com.key  , fs-web/opt/cb/etc/ssl/            )
+	$(call mdcp, ../nginx/ssl/wild.civicboom.com.2012.key  , fs-web/opt/cb/etc/ssl/,wild.civicboom.com.key            )
 	cat ../nginx/ssl/wild.civicboom.com.crt ../nginx/ssl/rapidssl-ca.crt ../nginx/ssl/rapidssl-ca-cross.crt > fs-web/opt/cb/etc/ssl/wild.civicboom.com.pem
 	sed -i s/VERSION/${VERSION}/ fs-web/DEBIAN/control
 	fakeroot dpkg -b fs-web cb-website-web_${VERSION}_all.deb 
