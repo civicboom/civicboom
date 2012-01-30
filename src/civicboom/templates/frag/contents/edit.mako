@@ -296,7 +296,7 @@
             <tr>
                 <td><label for="media_file">${_("File")}</label></td>
                 <td><input id="media_file" name="media_file" type="text" disabled="true" value=""/></td>
-                <td><input type="submit" name="file_remove" value="Remove" class="file_remove"/></td>
+                <td><input type="submit" name="file_remove" value="Remove" class="file_remove no_submit"/></td>
 
                 <td rowspan="3">
                     <!--<div class="file_type_overlay icon"></div>-->
@@ -329,7 +329,7 @@
                 <tr>
                     <td><label for="media_file_${id}">${_("File")}</label></td>
                     <td><input id="media_file_${id}" name="media_file_${id}" type="text" disabled="true" value="${media['name']}"/></td>
-                    <td><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove"/></td>
+                    <td><input type="submit" name="file_remove_${id}" value="Remove" class="file_remove no_submit"/></td>
 
                     <td rowspan="3">
                         <!--<div class="file_type_overlay icon16 i_${media['type']}"></div>-->

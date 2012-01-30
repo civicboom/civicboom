@@ -139,14 +139,11 @@ class TestGroupsMessages(TestController):
         )
         # The above could be replaced with a call to get_group('test_group_mssages3').send_email('test') # but hey .. the above works
         
+        
         # Check that the emails have been generated and sent to the correct users once approved
-        self.assertEqual(getNumEmails(), num_emails + 2) # 2 emals are generated, aprove_organisation and apprve_user, HOWEVER! as the aprover is a group it is sent to the two members unittest and unit friend, so 3 emails are actually sent
-        emails_sent_when_approved = [
-            emails[len(emails)-1],
-            emails[len(emails)-2],
-        ]
+        self.assertEqual(getNumEmails(), num_emails + 3) # 2 emals are generated, aprove_organisation and apprve_user, HOWEVER! as the aprover is a group it is sent to the two members unittest and unit friend, so 3 emails are actually sent
         email_addresss = []
-        for emails_to in [email.email_to for email in emails_sent_when_approved]:
+        for emails_to in [email.email_to for email in emails[-3:] ]:
             if isinstance(emails_to, list):
                 email_addresss += emails_to
             else:

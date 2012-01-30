@@ -36,7 +36,11 @@ class TestWidgetController(TestController):
         self.assertIn('unittest', response.body)
         self.assertIn('CivicboomWidget-basic', response.body)
         self.assertIn('API Documentation'          , response.body)
+        self.assertNotIn('API Documentation: Response', response.body) # Responses are not included in widget by default anymore - this is a user option
+        
+        response = get_widget(url('content', id='1', **{widget_var_prefix+'show_responses':'True', widget_var_prefix+'button_respond':'Bob'} ))
         self.assertIn('API Documentation: Response', response.body)
+        self.assertIn('Bob'                        , response.body)
         
         
         # Test gradient widget

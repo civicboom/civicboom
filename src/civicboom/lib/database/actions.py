@@ -740,18 +740,22 @@ Author: %(creator_name)s
         content_html = "<pre>"+email_text+"</pre>",
     )
 
+def has_boomed(content, member):
+    """
+    Return boom_object or None for - has this member boomed this content
+    """
+    content = get_content(content)
+    member  = get_member (member)
+    try:
+        return Session.query(Boom).filter(Boom.member_id==member.id).filter(Boom.content_id==content.id).one()
+    except:
+        return None
 
 def boom_content(content, member, delay_commit=False):
-    
     # Validation
     if content.private == True:
         raise action_error(_("cannot boom private content"), code=400)
-    boom = None
-    try:
-        boom = Session.query(Boom).filter(Boom.member_id==member.id).filter(Boom.content_id==content.id).one()
-    except:
-        pass
-    if boom:
+    if has_boomed(content, member):
         raise action_error(_("You have previously boomed this _content"), code=400)
     
     boom = Boom()
@@ -769,7 +773,15 @@ def boom_content(content, member, delay_commit=False):
     elif content.__type__ == 'assignment':
         member.send_notification_to_followers(messages.boom_assignment(member=member, assignment=content))
     
-
+def unboom_content(content, member, delay_commit=False):
+    boom = has_boomed(content, member)
+    if boom:
+        Session.delete(boom)
+    else:
+        raise action_error(_("%s has not boomed previously boomed this _content" % member), code=400)
+        
+    if not delay_commit:
+        Session.commit()
 
 
 def parent_seen(content, delay_commit=False):
@@ -790,16 +802,18 @@ def parent_approve(content, delay_commit=False):
     content.edit_lock = "parent_owner"
     content.approval  = "approved"
 
-    from pylons import tmpl_context as c # Needed for passing varibles to templates
-    c.content = content
+    # AllanC - the direct email notifications were removed. They have now been replaced by the notification system
+    # Email content parent & content creator
+    #from pylons import tmpl_context as c # Needed for passing varibles to templates
+    #c.content = content
+    #content.parent.creator.send_email(subject=_('content request' ), content_html=render('/email/approve_lock/lock_article_to_organisation.mako'))
+    #content.creator.send_email(       subject=_('content approved'), content_html=render('/email/approve_lock/lock_article_to_member.mako'))
+    
+    # Generate notifications - these have custom email templates that override the base notification    
+    extra_vars = {'content_id':content.id} #extra variables for template rendering
+    content       .creator.send_notification(messages.article_approved_creator(member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
+    content.parent.creator.send_notification(messages.article_approved_parent (member=content.parent.creator, parent=content.parent, content=content), extra_vars=extra_vars) #, delay_commit=True
 
-    # Email content parent
-    content.parent.creator.send_email(subject=_('content request'), content_html=render('/email/approve_lock/lock_article_to_organisation.mako'))
-
-    # Email content creator
-    content.creator.send_email(subject=_('content approved'), content_html=render('/email/approve_lock/lock_article_to_member.mako'))
-    #content.creator.send_notification(messages.article_approved(member=content.parent.creator, parent=content.parent, content=content), delay_commit=True)
-    # AllanC - TODO - need to generate notification
 
     if not delay_commit:
         Session.commit()
@@ -816,10 +830,15 @@ def parent_disassociate(content, delay_commit=False):
     #invalidate_content(content.parent) # Could update responses in the future, but for now we just invalidate the whole content
     #invalidate_content(content)        # this currently has code to update parents reponses, is the line above needed?
 
-    content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent))
-    
-    content.parent   = None
-    content.approval = "dissassociated"
+    if content.__type__ == 'comment':
+        content.creator.send_notification(messages.comment_dissassociated(parentcreator=content.parent.creator, parentcontent=content.parent))
+        content.visible = False
+    else:
+        content.creator.send_notification(messages.article_disassociated_from_assignment(member=content.parent.creator, article=content, assignment=content.parent))
+        # TODO: what if an assignment is dissasocaited from an assignment?
+        if content.__type__ == 'article':
+            content.approval = "dissassociated"
+        content.parent   = None
     
     if not delay_commit:
         Session.commit()

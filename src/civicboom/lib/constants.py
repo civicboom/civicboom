@@ -11,7 +11,7 @@ def get_list_titles(list_name):
     contents_list_titles = [
         # list name,             icon,          description
         ('all'                 , 'article'    , _('all').capitalize()   ),
-        ('drafts'              , 'draft'      , _("What I am working on now")   ),
+        ('drafts'              , 'draft'      , _("Drafts")   ),
         ('assignments_active'  , 'assignment' , _("Requests I want you to respond to")  ),
         ('assignments_previous', 'assignment' , _('previous _assignments').capitalize() ),
         ('responses'           , 'response'   , _("Responses I've written") ),
