@@ -357,6 +357,7 @@ if(!('frags' in boom)) {
             boom.util.tinymce.save(form);
             var json_href = form.data('json');
             if(json_href) {
+              console.log('has json_href');
               // If data-json defined, ajax submit to data-json
               var data = form.serializeArray();
               var data_submit_field = form.data('json-submit-field');
@@ -406,7 +407,7 @@ if(!('frags' in boom)) {
                   form.removeClass('link_secure').submit();
               });
               return false;
-            }
+            } else { console.log('does not have json_href'); }
             console.log('returning true');
             return true;
           }
