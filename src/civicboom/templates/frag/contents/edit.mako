@@ -544,8 +544,8 @@
             
             <div class="padded">
                 <div class="jqui-radios event_load">
-                    <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
-                    <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
+                    <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
+                    <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                 </div>
             </div>
             </div>
