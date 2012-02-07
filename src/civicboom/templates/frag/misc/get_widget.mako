@@ -272,7 +272,7 @@
                 <fieldset>
                     <legend>${_("Advanced content options")}</legend>
                     <label>${_('"Respond button" text')}             </label><input type="text"     name="button_respond" value="${widget_default['button_respond']}" size="30" /><br/>
-                    <label>${_("Display responses to _assignments")} </label><select name="show_responses"><option value="False"/>No</option><option value="True"/>Yes</option></select><br/>
+                    <label>${_("Display responses to _assignments")} </label><select name="show_responses"><option value="False">No</option><option value="True">Yes</option></select><br/>
                 </fieldset>
                 
             </form>
