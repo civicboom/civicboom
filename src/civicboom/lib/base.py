@@ -404,6 +404,10 @@ class BaseController(WSGIController):
         if c.logged_in_user and c.logged_in_user.status == 'pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
+            # AllanC - BUG - raised as issue #
+            #  The redirect here is insufficent. If the use is requesting format='json' or 'xml' then we want the system to abort with the correct {status:'error', message:'Complete the registration process'}
+            #  Currently the redirect throws an excepotion that propergates to the web server level and generates a live error under these conditons
+
 
         # Session Flash Message ------------------------------------------------
         flash_message_session = session_remove('flash_message')
