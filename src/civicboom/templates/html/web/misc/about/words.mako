@@ -48,7 +48,7 @@ share_data = {
            'new': {
                'type': {
                     'assignment': _("I just posted a request for _content: %(title)s on _site_name. Respond now!"),
-                    'response'  : _("I just responded to a request for _content by %(owner)s on _site_name. Get involved & add your story too!"),
+                    'response'  : _("I just responded to a request for _content by %(parent_owner)s on _site_name. Get involved & add your story too!"),
                     'group'     : _("I just created the %(name)s Hub on _site_name. Follow it now and get involved!"),
                     'user'      : _("I just signed up to _site_name to get my _articles published - you can too!"),
                     'article'   : _("I just created the content %(title)s on _site_name, check it out here!"),

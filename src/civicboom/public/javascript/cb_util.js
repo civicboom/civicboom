@@ -97,6 +97,8 @@ if(!('util' in boom)) {
         } else {
           content_body = content;
         }
+        if (typeof content_body === 'string')
+          content_body = $('<div />').append(content_body);
         
         content_body = $('<div />').addClass('resizeThis').append(boom.util.convert_jquery(content_body));
         
@@ -344,6 +346,8 @@ if(!('util' in boom)) {
         if ((!body.hasClass('u-user')) || body.hasClass('c-register') ) return;
         console.log('user logged in');
         setInterval(boom.util.message_indicators.update, 120000);
+        // Fudge update method for message indicators into boom.frags.update_message_indicators to allow form complete action.
+        boom.frags.update_message_indicators = boom.util.message_indicators.update;
         $(function() {
           if(boom.util.desktop_notification.has_support() && !boom.util.desktop_notification.has_permission())
             $('.desktop_notifications').show();
@@ -377,6 +381,29 @@ if(!('util' in boom)) {
         yesno.val(this.checked ? yes : no);
       });
       checks.removeClass('unproc').addClass('proc');
+
+      var all_checks = element.find('.yesno-all');
+      if(all_checks.length == 0)
+        return;
+      all_checks.children('input').unbind().change(function () {
+        var check = $(this);
+        var checks = element.find('.'+this.className).not(check).next('input');
+        checks.each(function () {
+          this.checked = check[0].checked;
+        });
+        checks.change();
+      });
+      all_checks.children('input').each(function () {
+        var check = $(this);
+        var checks = element.find('.'+this.className).not(check).next('input');
+        var count_true = 0;
+        checks.each(function () {
+          count_true += this.checked;
+        });
+        if (Math.abs(count_true) > (checks.length / 2))
+          check[0].checked=true;
+      });
+      all_checks.show();
     },
     validators : {
       init : function() {

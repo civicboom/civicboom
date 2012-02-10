@@ -508,7 +508,7 @@
             title=_("Delete"),
             link_class="icon16 i_delete",
             form_data=dict(
-                json_complete = "[ ['update'] ]"
+                json_complete = "[ ['update'], ['update_message_indicators'] ]"
             ),
         )}
     % endif

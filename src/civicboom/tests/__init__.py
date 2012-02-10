@@ -545,6 +545,7 @@ class TestController(TestCase):
 
 
     def boom_content(self, content_id):
+        self.assertIn('boom', self.get_actions(content_id))
         response = self.app.post(
             url('content_action', action='boom', id=content_id, format='json'),
             params={
@@ -554,6 +555,20 @@ class TestController(TestCase):
         )
         response_json = json.loads(response.body)
         assert response_json['status'] == 'ok'
+        
+    def unboom_content(self, content_id):
+        self.assertIn('unboom', self.get_actions(content_id))
+        response = self.app.post(
+            url('content_action', action='unboom', id=content_id, format='json'),
+            params={
+                '_authentication_token': self.auth_token,
+            },
+            status=200
+        )
+        response_json = json.loads(response.body)
+        assert response_json['status'] == 'ok'
+        
+
 
     def comment(self, content_id, comment='comment'):
         response = self.app.post(
@@ -578,9 +593,7 @@ class TestController(TestCase):
         last_parent_creator_notification = self.getLastNotification(user_id=parent_content['content']['creator']['id'])
         self.assertIn('comment'          , last_parent_creator_notification['subject'])
         self.assertIn('commented'        , last_parent_creator_notification['content'])
-
-        # FIXME: actually has a reference to parent ID
-        #self.assertIn('/'+str(comment_id), last_parent_creator_notification['content'])
+        self.assertIn('/'+str(parent_content['content']['id']), last_parent_creator_notification['content'])
         
         return comment_id
 

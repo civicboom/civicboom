@@ -169,11 +169,12 @@ def normalize_kwargs_for_cache(kwargs):
         if not key.startswith('_'): # skip keys beggining with '_' as these have already been processed
             if isinstance(value, list):
                 kwargs[key].sort()
+                #kwargs[key] = ",".join(kwargs[key])
             else:
                 try   : value = value.id
                 except: pass
                 # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-                value = str(value).strip()
+                value = unicode(value).strip()
                 kwargs[key] = value
     return kwargs
 
@@ -189,7 +190,7 @@ def _gen_list_key(*args):
     """
     def string_arg(arg):
         if isinstance(arg, list):
-            arg = list_item_separator.join(arg)
+            arg = list_item_separator.join([string_arg(a) for a in arg])
         if not isinstance(arg, basestring):
             arg = str(arg)
         return arg

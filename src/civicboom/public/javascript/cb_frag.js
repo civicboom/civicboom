@@ -101,7 +101,7 @@ if(!('frags' in boom)) {
                     original.siblings('form').data('json', link.data('json'));
                     //original.data('json', link.data('json'));
                     original.click();
-                    $(this).dialog('close');
+                    boom.frags.modal_close(link);
                   })
                 )
                 .append(
@@ -198,9 +198,25 @@ if(!('frags' in boom)) {
                 'fileDataName' : 'file_data',
                 'removeCompleted' : true,
                 'onComplete' : function(event, id, fileObj, response, data) {
+                  console.log('uploadify onComplete');
                   var form = $(event.target).parents('form');
                   // Boom_load event triggers refresh or media listing
                   $(event.target).parents('table.media_files').trigger('boom_load');
+                  if (data.fileCount == 0) form.removeData('prevent-submit');
+                },
+                'onAllComplete' : function (event) {
+                  console.log('uploadify onAllComplete');
+                  form.removeData('prevent-submit');
+                },
+                'onCancel' : function (event, id, fileObj, data) {
+                  console.log('uploadify onCancel');
+                  var form = $(event.target).parents('form');
+                  if (data.fileCount == 0) form.removeData('prevent-submit');
+                },
+                'onOpen' : function (event, data) {
+                  console.log('uploadify onSelect');
+                  var form = $(event.target).parents('form');
+                  form.data('prevent-submit', 'A file is still uploading, please wait until this has completed before saving or publishing.');
                 }
               });
             });
@@ -288,7 +304,7 @@ if(!('frags' in boom)) {
             return false;
           }
         },
-        'input[type="submit"][name]' : {
+        'input[type="submit"][name]:not(.no_submit)' : {
           'click' : function(event) {
             console.log('input[type="submit"][name] submit')
             var submit_button = $(this);
@@ -333,9 +349,15 @@ if(!('frags' in boom)) {
             // Form submit events, will submit normally if no data-json defined
             console.log('form[method="post"] submit');
             var form = $(this);
+            var prevent_submit;
+            if (prevent_submit = form.data('prevent-submit')) {
+              boom.util.modal_queue.add(prevent_submit, form);
+              return false;
+            }
             boom.util.tinymce.save(form);
             var json_href = form.data('json');
             if(json_href) {
+              console.log('has json_href');
               // If data-json defined, ajax submit to data-json
               var data = form.serializeArray();
               var data_submit_field = form.data('json-submit-field');
@@ -385,7 +407,7 @@ if(!('frags' in boom)) {
                   form.removeClass('link_secure').submit();
               });
               return false;
-            }
+            } else { console.log('does not have json_href'); }
             console.log('returning true');
             return true;
           }
@@ -938,7 +960,12 @@ if(!('frags' in boom)) {
       });
     },
     modal_close :  function(element, callback) {
-      $.modal.close();
+      console.log('modal_close', element);
+      try {
+        $.modal.close();
+      } catch (e) {}
+      $(element).parents('.ui-dialog-content').dialog('close');
+
       if (callback)
         callback(true);
     },

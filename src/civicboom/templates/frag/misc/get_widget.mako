@@ -6,6 +6,9 @@
 <%!
     from civicboom.lib.widget import widget_defaults
     
+    # AllanC - feature removed - dont want to ommit defaults
+    #import json
+    #widget_defaults_basic_json = json.dumps(widget_defaults['basic'])
 
     from civicboom.lib.web import current_protocol
     from pylons import config
@@ -57,6 +60,8 @@
     
     <script type="text/javascript">
         var widget_var_prefix = '${var_prefix}';
+        ##var widget_defaults   = ${widget_defaults_basic_json | n}; ## AllanC - feature removed
+        
         function preview_widget(element) {
             var escaper = encodeURIComponent || escape;
             widget_creator = element.closest('.widget_creator');
@@ -74,15 +79,17 @@
             
             // Overlay widget variables over link url
             if (widget_vars['base_list']) {
-              link += "/" + escaper(widget_vars['base_list']);
-              delete widget_vars['base_list'];
+                link += "/" + escaper(widget_vars['base_list']);
+                delete widget_vars['base_list'];
             }
             link += "?";
             
             //widget_vars[key]
             for (key in widget_vars) {
+                if (key == 'undefined') {break;} // dont include the submit button text
                 var value = widget_vars[key];
-                if (typeof value == 'string') {
+                ## && widget_defaults[key] != value //Only add the variable if it differs from the default ## AllanC - feature removed - because we dont want to break everyones widgets if we change the defaults
+                if (typeof value == 'string') { 
                     link += widget_var_prefix+key+"="+escaper(value)+"&";
                 }
             }
@@ -260,9 +267,14 @@
                     <label>${color_name}</label><input class="event_load jq_simplecolor" type="text" id="${color_field}" name="${color_field}" value="${widget_default[color_field]}" size="6" /><br/>
                     % endfor
                     </div>
-                    
                 </fieldset>
-            
+                
+                <fieldset>
+                    <legend>${_("Advanced content options")}</legend>
+                    <label>${_('"Respond button" text')}             </label><input type="text"     name="button_respond" value="${widget_default['button_respond']}" size="30" /><br/>
+                    <label>${_("Display responses to _assignments")} </label><select name="show_responses"><option value="False">No</option><option value="True">Yes</option></select><br/>
+                </fieldset>
+                
             </form>
             <input type="button" value="${_("Preview _widget")}" onClick="preview_widget($(this));" />
         </td>

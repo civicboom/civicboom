@@ -19,7 +19,7 @@ from civicboom.model.meta              import Session
 from civicboom.model                   import meta, Member
 from civicboom.lib.web                 import * #url, redirect, redirect_to_referer, set_flash_message, overlay_status_message, action_ok, action_error, auto_format_output, session_get, session_remove, session_set, session_keys, session_delete, authenticate_form, cacheable, web_params_to_kwargs, current_url, current_referer
 from civicboom.lib.database.get_cached import get_member as _get_member, get_group as _get_group, get_membership as _get_membership, get_membership_tree as _get_membership_tree, get_message as _get_message, get_content as _get_content, get_members, get_member_email as _get_member_email
-from civicboom.lib.database.query_helpers import to_apilist
+from civicboom.lib.database.query_helpers import to_apilist #, to_idlist
 from civicboom.lib.authentication      import authorize, get_lowest_role_for_user
 from civicboom.lib.permissions         import account_type, role_required, age_required, has_role_required, raise_if_current_role_insufficent
 from civicboom.lib.accounts            import deny_pending_user
@@ -96,7 +96,7 @@ __all__ = [
     "logging",
     "overlay_status_message",
     "current_url", "current_referer",
-    "to_apilist",
+    "to_apilist", # "to_idlist",
     "now", # passthough to get datetime.datetime.now() but can be overridden by automted tests and is the prefered way of getting now()
 ]
 
@@ -404,6 +404,10 @@ class BaseController(WSGIController):
         if c.logged_in_user and c.logged_in_user.status == 'pending' and deny_pending_user(url('current')):
             set_flash_message(_('Please complete the registration process'))
             redirect(url(controller='register', action='new_user', id=c.logged_in_user.id))
+            # AllanC - BUG - raised as issue #
+            #  The redirect here is insufficent. If the use is requesting format='json' or 'xml' then we want the system to abort with the correct {status:'error', message:'Complete the registration process'}
+            #  Currently the redirect throws an excepotion that propergates to the web server level and generates a live error under these conditons
+
 
         # Session Flash Message ------------------------------------------------
         flash_message_session = session_remove('flash_message')

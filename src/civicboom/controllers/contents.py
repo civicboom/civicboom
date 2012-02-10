@@ -254,7 +254,7 @@ class ContentsController(BaseController):
                     raise action_error(_("cannot refer to 'me' when not logged in"), code=400)
 
         creator = None
-
+        
         try:
             # If displaying responses - Try to get the creator of the whole parent chain or creator of self
             # This models the same permission view enforcement as the 'show' private content API call
@@ -273,7 +273,13 @@ class ContentsController(BaseController):
             user_log.exception("Error searching:") # AllanC - um? why is this in a genertic exception catch? if get_content fails then we want that exception to propergate
 
         if kwargs.get('creator'):
+            #try:
+            if isinstance(kwargs['creator'], basestring):
+                assert kwargs['creator'].find(',')==-1 # AllanC - assertion to prevent usernames with ',' attempting to be searhced for
             creator = get_member(kwargs['creator'])
+            #except:
+            #    raise action_error('Creator lists are currently disabled as they violate caching rules')
+            #    #pass # AllanC - we dont care about errors - this creator could be a list of a string split by commas
         
         if creator:
             if c.logged_in_persona == creator:
@@ -282,8 +288,7 @@ class ContentsController(BaseController):
                 except: None
             else:
                 kwargs['_is_trusted_follower'    ] = creator.is_follower_trusted(c.logged_in_persona)
-
-
+        
         # Create Cache key based on kwargs -------------------------------------
         
         kwargs = normalize_kwargs_for_cache(kwargs) # This str()'s all kwargs and gets id from any objects - and sorts any lists
@@ -301,9 +306,12 @@ class ContentsController(BaseController):
         # Everything past here can be cached based on the kwargs state
 
         def contents_index(_filter=None, **kwargs):
-
+    
             time_start = time()
             
+            #if kwargs.get('list_type') == 'id':
+            #    results = Session.query(Content.id).select_from(Content)
+            #else:
             results = Session.query(Content).with_polymorphic('*') # TODO: list
             results = results.filter(Content.visible==True)
             # AllanC - not to sure about this comments addition. It would be nice to have it built with the filters? could this be moved down? thoughts?
@@ -323,6 +331,7 @@ class ContentsController(BaseController):
                 results = results.filter(or_(ArticleContent.approval=='approved', ArticleContent.approval=='seen'))
 
             # AllanC - Optimise joined loads - sub fields that we know are going to be used in the query return should be fetched when the main query fires
+            #if kwargs.get('list_type') != 'id':
             for col in ['creator', 'attachments', 'tags', 'parent', 'license']:
                 if col in kwargs.get('include_fields', []):
                     results = results.options(joinedload(getattr(Content, col)))
@@ -359,7 +368,10 @@ class ContentsController(BaseController):
                     val = kwargs.get(filter_name, '') # AllanC - should already be a string as the normaize decorator should have fired - this strips and strings the input arguments
                     #val = str(kwargs.get(filter_name, '')).strip()
                     if val:
-                        f = filter_map[filter_name].from_string(val)
+                        if isinstance(val, basestring): # AllanC - the val may be a string OR a list of strings - these have already been normalised as kwargs
+                            f = filter_map[filter_name].from_string(val)
+                        else:
+                            f = filter_map[filter_name](val)
                         if hasattr(f, 'mangle'):
                             results = f.mangle(results)
                         parts.append(f)
@@ -379,6 +391,9 @@ class ContentsController(BaseController):
             results = results.filter("("+sql(feed)+")")
             results = sort_results(results, kwargs.get('sort'))
             
+            #if  kwargs.get('list_type') == 'id': # This relys on the Query being setup at the beggining to return Session.query(Content.id), I wanted to do this in a more generic way
+            #    results = to_idlist (results)
+            #else:
             results = to_apilist(results, obj_type='contents', **kwargs)
             
             # hacky benchmarking just to get some basic idea of how each feed performs
@@ -689,13 +704,15 @@ class ContentsController(BaseController):
         # This was also made with the asumption that users of the API would use the site properly - this code will trigger a 'not in db' warning from polymorphic helpers
         #   maybe bits need to be added to 'create' to avoid this issue
         
-        if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
-           content.parent_id and \
-           submit_type == 'publish' and \
-           not content.attachments and not kwargs.get('media_file') and \
-           len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
-            kwargs['type']    = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
-            kwargs['content'] = strip_html_tags(kwargs.get('content', content.content)) # HACK - AllanC - because the content validator has already triggered so I  manually force the removal of html tags - we dont want html in comments
+        # AllanC - Disabled at customer request
+        # Automatic draft to comment
+        #if content.__type__ == 'draft' and kwargs.get('type')=='article' and \
+        #   content.parent_id and \
+        #   submit_type == 'publish' and \
+        #   not content.attachments and not kwargs.get('media_file') and \
+        #   len(kwargs.get('content', content.content)) <= config['setting.content.max_comment_length']:
+        #    kwargs['type']    = 'comment' # This will trigger polymorphic helpers below to convert it to a comment
+        #    kwargs['content'] = strip_html_tags(kwargs.get('content', content.content)) # HACK - AllanC - because the content validator has already triggered so I  manually force the removal of html tags - we dont want html in comments
         
         # Morph Content type - if needed (only appropriate for data already in DB)
         if 'type' in kwargs:

@@ -270,6 +270,21 @@
         </span>
         <div class="separator"></div>
     % endif
+
+    % if 'unboom' in self.actions:
+        <span class="mo-help">
+            ${h.secure_link(
+                h.args_to_tuple('content_action', action='unboom', format='redirect', id=self.id) ,
+                value           = _('Unboom') ,
+                value_formatted = h.literal("<span class='icon16 i_boom'></span>&nbsp;%s") % _('Unboom') ,
+                force_profile   = True,
+            )}
+            <div class="mo-help-l mo-help-b">
+                ${_('UnBooming this content will remove it from your list of boomed content.')}
+            </div>
+        </span>
+        <div class="separator"></div>
+    % endif
     
     % if 'flag' in self.actions:
         <a href='' onclick="$('#flag_content').modal(); return false;" title='${_("Flag inappropriate content")}'><span class="icon16 i_flag"></span>&nbsp;Flag</a>
@@ -427,7 +442,7 @@
                     link_class = 'button',
                     value     = _("Respond with your _content") ,
                     form_data = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('content', id='{json_id}', format='frag'),
                     ),
     
                 )}
@@ -491,7 +506,7 @@
                     link_class  = 'button' ,
                     value       = _("Respond with your _content") ,
                     form_data   = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ) ,
                     link_data   = dict(
                         confirm = _("Would you like to respond to:"),
@@ -521,7 +536,7 @@
                     link_class = 'button',
                     value     = _("Respond with your _content") ,
                     form_data = dict(
-                        json_complete = "[['update', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
+                        json_complete = "[['create', null, '%s']]" % h.url('edit_content', id='{json_id}', format='frag'),
                     ),
                 )}
             ## AllanC the cb_frag creates a new fragment, data is the return fron the JSON call to the 'new_content' method
@@ -743,6 +758,20 @@
             % if c.logged_in_persona:
             <td>
                 ${popup.link(h.args_to_tuple('content_action', action='flag', id=comment['id']), title=_('Flag as') , class_='icon16 i_flag')}
+                
+                % if 'moderator' in self.actions:
+                    ${h.secure_link(
+                        h.args_to_tuple('content_action', action='disassociate', format='redirect', id=comment['id']),
+                        value           = _('disassociate'),
+                        value_formatted ='<span class="icon16 i_delete"></span>',
+                        title           = _("Remove this comment by %s" % comment['creator']['name']) ,
+                        link_data       = dict(
+                            confirm = _("Are you sure you want to disassociate this comment?"),
+                            confirm_yes = _("Yes. Remove it"),
+                            confirm_no  = _("No.  Take me back!"),
+                        ),
+                    )}
+                % endif
             </td>
             % endif
         </tr>

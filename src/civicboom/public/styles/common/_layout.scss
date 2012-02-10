@@ -252,6 +252,13 @@ HTML.no-js #flash_message.event_load {
     cursor: pointer;
 }
 
+.jqui-radios .ui-button.ui-state-default span.ui-button-text {
+    color: black !important;
+}
+.jqui-radios .ui-button.ui-state-active span.ui-button-text {
+    color: white !important;
+}
+
 .acceptrequest {
     width: 100%;
     text-align: center;
@@ -430,3 +437,7 @@ DIV#app .button {
 .cb {
      clear: both;
 }
+
+.yesno-all {
+    display: none;
+    }

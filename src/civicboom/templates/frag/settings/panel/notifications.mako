@@ -68,15 +68,21 @@
                 <tr>
                     <th>Type<span style="float: right;">via&nbsp;&nbsp;</span></th>
                     % for notif_type in notification_types:
-                        <th>${notif_names.get(notif_type, '').replace('Notification', 'Website').capitalize()}</th>
+                        <th>
+                          ${notif_names.get(notif_type, '').replace('Notification', 'Website').capitalize()}
+                            <div class="yesno-all">
+                              ${_('All')}
+                              <input class="nt-${notif_type}" type="checkbox" />
+                            </div>
+                        </th>
                     % endfor
                 </tr>
                 % for setting_name in setting_groups[group_name]:
                     <tr>
                         <td>${d['settings_meta'][setting_name[0]]['description']}</td>
                         % for notif_type in notification_types:
-                            <td>
-                                <select class="yesno" name="${setting_name[0]}-${notif_type[0]}">
+                            <td style="text-align: center;">
+                                <select class="yesno nt-${notif_type}" name="${setting_name[0]}-${notif_type[0]}">
                                     <option class="yes" ${select(setting_name[0],notif_type[0],True )} value="${notif_type[0]}">Yes</option>
                                     <option class="no"  ${select(setting_name[0],notif_type[0],False)} value="">No</option>
                                 </select>

@@ -3,6 +3,7 @@
 cd `dirname $0`
 
 export PYTHONPATH=../lib
+make ini
 
 if [ x$1 = x ]
 then

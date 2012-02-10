@@ -56,7 +56,7 @@ def content_notifications(content, publishing_for_first_time=True):
     
     # Aggregate new content over external services
     if publishing_for_first_time and not content.private:
-        content.aggregate_via_creator() # Agrigate content over creators known providers
+        #content.aggregate_via_creator() # Agrigate content over creators known providers # AllanC - remmed out for now ... it appears that this calls helpers.py that in turn needs pylons.config and pylons.request .. aararar!!
         twitter_global(content)
 
 

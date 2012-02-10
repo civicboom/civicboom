@@ -84,20 +84,20 @@ if (typeof window.boom.plugins.content == 'undefined')
               if (responses !== null && (data.data.content.num_responses * 1) > 0) {
                   num_responses = data.data.content.num_responses * 1;
                   responses = responses * 1;
-                  div.innerHTML += '<div class="responses">'+num_responses+' response'+(num_responses>1?'s':'')+'<br />';
+                  var responseHTML = '<div class="responses">'+num_responses+' response'+(num_responses>1?'s':'')+'<br />';
                   if (responses > data.data.content.num_responses)
                       responses = num_responses;
                   if (responses > data.data.responses.limit*1)
                       responses = data.data.responses.limit*1;
                   if (responses > 0) {
-                      div.innerHTML += '<ul>';
+                      responseHTML += '<ul>';
                       for (j = 0; j < responses; j++) {
                           response = data.data.responses.items[j];
-                          div.innerHTML += '<li><a href="'+host+'/contents/'+response.id+'">By '+response.creator.name+'</a></li>';
+                          responseHTML += '<li><a href="'+host+'/contents/'+response.id+'">By '+response.creator.name+'</a></li>';
                       }
-                      div.innerHTML += '</ul>';
+                      responseHTML += '</ul>';
                   }
-                  div.innerHTML += '</div>';
+                  div.innerHTML += responseHTML + '</div>';
               }
               div.setAttribute('boom:status', 'loaded');
               delete window['boom_callback_'+counter];

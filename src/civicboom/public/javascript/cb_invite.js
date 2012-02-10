@@ -79,8 +79,9 @@ if (!('invite' in window.boom)) {
         return false;
       });
       var container = '.frag_data.c-invite ';
-      $('body').on('click', container+'.invite_click', function () {
+      $('#app').on('click', container+'.invite_click', function (event) {
       //$(container+'.invite_click').live('click', function () {
+        event.stopImmediatePropagation();
         var button = $(this);
         var form = button.parents('form');
         var exclude_members = form.find('.exclude-members').val().split(',');
@@ -141,8 +142,9 @@ if (!('invite' in window.boom)) {
         boom.invite.list_paginate(ul, offset, limit, form.find('input[name="invitee-prev"]'), form.find('input[name="invitee-next"]'));
         return false;
       });
-      $('body').on('click', container+'.invite_post', function () {
+      $('#app').on('click', container+'.invite_post', function () {
       //$(container+'.invite_post').live('click', function () {
+        console.log('invite_post click');
         var element = $(this);
         var form = element.parents('form');
         var frag = form.parents('.frag_container');
@@ -194,3 +196,4 @@ if (!('invite' in window.boom)) {
   }
   boom.invite.init()
 }
+
