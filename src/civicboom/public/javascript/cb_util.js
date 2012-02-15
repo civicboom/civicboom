@@ -381,6 +381,29 @@ if(!('util' in boom)) {
         yesno.val(this.checked ? yes : no);
       });
       checks.removeClass('unproc').addClass('proc');
+
+      var all_checks = element.find('.yesno-all');
+      if(all_checks.length == 0)
+        return;
+      all_checks.children('input').unbind().change(function () {
+        var check = $(this);
+        var checks = element.find('.'+this.className).not(check).next('input');
+        checks.each(function () {
+          this.checked = check[0].checked;
+        });
+        checks.change();
+      });
+      all_checks.children('input').each(function () {
+        var check = $(this);
+        var checks = element.find('.'+this.className).not(check).next('input');
+        var count_true = 0;
+        checks.each(function () {
+          count_true += this.checked;
+        });
+        if (Math.abs(count_true) > (checks.length / 2))
+          check[0].checked=true;
+      });
+      all_checks.show();
     },
     validators : {
       init : function() {

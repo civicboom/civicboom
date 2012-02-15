@@ -214,11 +214,11 @@
             <input id="title_${self.id}" name="title" type="text" class="edit_input auto_save" value="${self.content['title']}" placeholder="${_('Enter _article title')}"/>
         </td></tr>
         <tr><td>
-		<%
-		area_id = h.uniqueish_id("content")
-		%>
-		<label for="${area_id}">${_("Add more detail and supporting links, etc")}</label>
-		<textarea class="editor edit_input auto_save" name="content" id="${area_id}">${self.content['content']}</textarea>
+        <%
+        area_id = h.uniqueish_id("content")
+        %>
+        <label for="${area_id}">${_("Add more detail and supporting links, etc")}</label>
+        <textarea class="editor edit_input auto_save" name="content" id="${area_id}">${self.content['content']}</textarea>
         </td></tr>
         <tr><td>
             <label for="tags_${self.content['id']}">${_("Tags")}</label>
@@ -360,7 +360,7 @@
 <%def name="media_recorder()">
     <div>
         <p>${_('(Please note this is in beta, please use the feedback link at the bottom of the page if you experience any problems.)')}</p>
-    	<div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;"></div>
+        <div class="media_recorder event_load" data-content_id="${self.id}" data-member_id="${c.logged_in_persona.id}" data-key="${c.logged_in_persona.get_action_key("attach to %d" % self.id)}" style="left:0px;width:360px;height:371px;"></div>
     </div>
 </%def>
 
@@ -479,21 +479,21 @@
             <span style="padding-top: 3px;">
               ${form_instruction(_("What is licensing explanation"))}
             </span>
-			<table style="display: inline-block; padding-top: 3px;">
+            <table style="display: inline-block; padding-top: 3px;">
             % for license in get_licenses():
-				<tr>
+                <tr>
                 <%
                   license_selected = ''
                   if 'license_id' in self.content and license.id == self.content['license_id']:
                       license_selected = h.literal('checked="checked"')
                 %>
                 <td><input id="licence_${license.id}" type="radio" name="licence" value="${license.id}" ${license_selected} /></td>
-				<td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
+                <td><a href="${license.url}" target="_blank" title="${_(license.name)}"><img src="/images/licenses/${license.id}.png" alt="${_(license.name)}"/></a></td>
                 <td><label for="licence_${license.id}">${license.description}</label></td>
-				</tr>
+                </tr>
                 ##${popup(_(license.description))}
             % endfor
-			</table>
+            </table>
               <div class="padded">This content will be published under the Creative Commons Attributed licence</div>
               <div class="padded">
                 <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank" title="Creative Commons Attribution"><img src="/images/licenses/CC-BY.png" alt="Creative Commons Attribution"/></a>
@@ -516,13 +516,13 @@
 ##------------------------------------------------------------------------------
 
 <%def name="privacy()">
-	<%def name="selected(private, text='selected')">
-		%if private == self.content.get('private'):
-			${text}="${text}"
-		%endif
-	</%def>
-	<tr class="">
-	    ##${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}
+    <%def name="selected(private, text='selected')">
+        %if private == self.content.get('private'):
+            ${text}="${text}"
+        %endif
+    </%def>
+    <tr class="">
+        ##${'' if c.logged_in_persona.has_account_required('plus') else 'setting-disabled'}
         <td>
             <div style="position: relative;">
             % if not c.logged_in_persona.has_account_required('plus'):
@@ -544,8 +544,8 @@
             
             <div class="padded">
                 <div class="jqui-radios event_load">
-                    <input ${selected("False", "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
-                    <input ${selected("True", "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
+                    <input ${selected(False, "checked")} type="radio" id="private-false" name="private" value="False" /><label for="private-false">${_("Public")}</label>
+                    <input ${selected(True, "checked")} type="radio" id="private-true" name="private" value="True" /><label for="private-true">${_("Private")}</label>
                 </div>
             </div>
             </div>
@@ -681,16 +681,16 @@
     <div class="information">
         <p>${member_includes.avatar(c.logged_in_persona)} <span style="font-size:250%; vertical-align: middle;">${c.logged_in_persona}</span></p>
         % if self.selected_type == "assignment":
-        	<div class="popup-title">
-        	    ${_("Once you post this request, it will appear:")}
-        	</div>
-        	<div class="popup-message">
-        	    <ol>
+            <div class="popup-title">
+                ${_("Once you post this request, it will appear:")}
+            </div>
+            <div class="popup-message">
+                <ol>
                     <li>${_("On your _Widget for your community to respond to")}</li>
                     <li>${_("In all your _site_name followers' notification streams")}</li>
                     <li>${_("On the _site_name request stream")}</li>
-        	    </ol>
-        	</div>
+                </ol>
+            </div>
         % elif self.selected_type == "article":
             % if self.content.get('parent'):
                 <div class="popup-title">

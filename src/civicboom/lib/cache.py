@@ -174,7 +174,7 @@ def normalize_kwargs_for_cache(kwargs):
                 try   : value = value.id
                 except: pass
                 # AllanC: Suggestion - do we want to allow primitive types to pass through, e.g. int's and floats, maybe dates as well?
-                value = str(value).strip()
+                value = unicode(value).strip()
                 kwargs[key] = value
     return kwargs
 
