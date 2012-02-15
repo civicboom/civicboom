@@ -42,7 +42,8 @@
             <td class="title">	
                 <a href="${owner_url}" target="_blank" title="${_('%s on _site_name') % owner_name}">
                     % if title:
-                        ${title.decode('utf-8')}
+                        ${title}
+			##.decode('utf-8')
                     % else:
                         ${owner['name']}
                         ##insight: Share your news and opinion

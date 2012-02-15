@@ -62,7 +62,7 @@ def setup_widget_env():
         #    except:
         #        return None
         for key in [key for key in c.widget.keys() if widget_var_prefix+key in request.params]:  #app_globals.widget_variables:
-            value = request.params[widget_var_prefix+key].encode('utf-8')
+            value = request.params[widget_var_prefix+key]#.encode('utf-8')
             if isinstance(c.widget[key], bool): # keep widget bools as bools
                 try:
                     c.widget[key] = asbool(value)
