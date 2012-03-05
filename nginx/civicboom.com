@@ -103,6 +103,13 @@ server {
 		proxy_pass http://backends;
 	}
 
+	location /doc {
+		root /opt/cb/share/website/civicboom/public/doc/;
+		auth_basic            "Civicboom Developer Zone";
+		auth_basic_user_file  /etc/nginx/htpasswd;
+
+	}
+
 	# for tiles, proxy to openstreetmap
 	# (this allows HTTPS, and caching for offline demos)
 	location /misc/tiles/ {
