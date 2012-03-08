@@ -149,18 +149,19 @@ def url(*args, **kwargs):
 # Redirect Referer
 #-------------------------------------------------------------------------------
 
+class RedirectException(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 def redirect(*args, **kwargs):
     if not c.format or c.format == "html" or c.format == "redirect":
         redirect_pylons(*args, **kwargs)
     else:
-        abort(403, detail='user_pending')
-        #raise Exception('unable to perform redirect with format=%s' % c.format)
+        raise RedirectException('unable to perform redirect with format=%s' % c.format)
+        # AllanC - This exception is caught in base to send the type of error encountered
         # AllanC - we cant raise an action error here ... as this is called in base before the autoformatter triggers
-        #raise action_error(
-        #    code    = 403 ,
-        #    message = 'current user is pending and has not completed registration' , #_(  # AllanC - ****! internationalisation in pylons SUCKS!!! I cant internationalise this string here :( 
-        #)
-
 
 def current_referer(protocol=None):
     #AllanC TODO - needs to enforce prosocol change - for login actions
