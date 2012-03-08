@@ -2,7 +2,7 @@ from pylons import url as url_pylons, session, request, response, config, tmpl_c
 from pylons.controllers.util  import redirect as redirect_pylons
 from pylons.templating        import render_mako
 from pylons.decorators.secure import authenticated_form, get_pylons, secure_form
-from pylons.controllers.util  import etag_cache as pylons_etag_cache # Used for removing eTags on errors
+from pylons.controllers.util  import abort, etag_cache as pylons_etag_cache # Used for removing eTags on errors
 
 from cbutils.cbxml import dictToXMLString
 
@@ -153,7 +153,13 @@ def redirect(*args, **kwargs):
     if not c.format or c.format == "html" or c.format == "redirect":
         redirect_pylons(*args, **kwargs)
     else:
-        raise Exception('unable to perform redirect with format=%s' % c.format)
+        abort(403, detail='user_pending')
+        #raise Exception('unable to perform redirect with format=%s' % c.format)
+        # AllanC - we cant raise an action error here ... as this is called in base before the autoformatter triggers
+        #raise action_error(
+        #    code    = 403 ,
+        #    message = 'current user is pending and has not completed registration' , #_(  # AllanC - ****! internationalisation in pylons SUCKS!!! I cant internationalise this string here :( 
+        #)
 
 
 def current_referer(protocol=None):
@@ -656,7 +662,7 @@ def auto_format_output(target, *args, **kwargs):
     if not c.auto_format_top_call:
         c.auto_format_top_call  = True # This prevent any subsiquent calls formatting therir output
         auto_format_output_flag = True
-
+    
     try:
         result = target(*args, **kwargs) # Execute the wrapped function
     except action_error as ae:
