@@ -7,6 +7,30 @@ from civicboom.tests import *
 #import re
 
 
+# See http://documentation.janrain.com/profiledata for more info
+fake_janrain_return = json.dumps({
+    u'profile': {
+        u'preferredUsername': u'janrain_test',
+        u'displayName'      : u'janrain_test',
+        u'name'             : {
+            u'givenName' : u'Janrain',
+            u'formatted' : u'Janrain Test',
+            u'familyName': u'Test'
+        },
+        u'providerName' : u'Google',
+        u'googleUserId' : u'000000000000000000000',
+        u'url'          : u'https://www.google.com/profiles/000000000000000000000',
+        u'email'        : u'janrain_test@civicboom.com',
+        #u'verifiedEmail': u'janrain_test@civicboom.com',
+        u'identifier'   : u'https://www.google.com/profiles/000000000000000000000',
+        u'primaryKey'   : u'janrain_test',
+        u'photo'        : u'https://www.civicboom.com/images/logo.png',
+        u'birthday'     : u'1980-01-01',
+    },
+    u'stat': u'ok',
+})
+
+
 
 class TestSignup(TestController):
 
@@ -307,28 +331,6 @@ class TestSignup(TestController):
     # Signup with Janrain
     #---------------------------------------------------------------------------
     def test_signup_janrain(self):
-        # See http://documentation.janrain.com/profiledata for more info
-        fake_janrain_return = json.dumps({
-            u'profile': {
-                u'preferredUsername': u'janrain_test',
-                u'displayName'      : u'janrain_test',
-                u'name'             : {
-                    u'givenName' : u'Janrain',
-                    u'formatted' : u'Janrain Test',
-                    u'familyName': u'Test'
-                },
-                u'providerName' : u'Google',
-                u'googleUserId' : u'000000000000000000000',
-                u'url'          : u'https://www.google.com/profiles/000000000000000000000',
-                u'email'        : u'janrain_test@civicboom.com',
-                #u'verifiedEmail': u'janrain_test@civicboom.com',
-                u'identifier'   : u'https://www.google.com/profiles/000000000000000000000',
-                u'primaryKey'   : u'janrain_test',
-                u'photo'        : u'https://www.civicboom.com/images/logo.png',
-                u'birthday'     : u'1980-01-01',
-            },
-            u'stat': u'ok',
-        })
         
         response = self.app.post(
             url(controller='account', action='signin'),
@@ -371,4 +373,30 @@ class TestSignup(TestController):
         self.assertIn('Janrain Test Display Name', response.body    ) # Check that we have arrived at profile page. Should have display name
         
         self.delete_member('janrain_test')
+
+
+    #---------------------------------------------------------------------------
+    # Pending User
+    #---------------------------------------------------------------------------
+    def test_pending_user(self):
+        """
+        When a user has a member record but has not completed registration
+        If that user access's most pages they will be given a "complete registration message"
+        This happens under multiple formats
+        """
+        response = self.app.post(
+            url(controller='account', action='signin'),
+            params={
+                'token'              :'00000000000000000000000000000000',
+                'fake_janrain_return': fake_janrain_return,
+            },
+        )
         
+        response = self.app.get(url(controller='profile', action='index'                    ), status=302)
+        response = self.app.get(url(controller='profile', action='index'     , format='json'), status=403)
+        #response_json = json.loads(response.body)
+        #self.assertIn(response_json['message'], 'pending')
+        
+        response = self.app.get(url(controller='misc'   , action='opensearch', format='xml' ), status=200)
+
+        self.delete_member('janrain_test')

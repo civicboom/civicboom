@@ -293,7 +293,7 @@ def register_new_janrain_user(profile):
     except Exception:
         pass
     
-    u.name          = profile.get('name', dict()).get('formatted')
+    u.name          = profile.get('name', dict()).get('formatted', u.id)
     u.status        = "pending"
     u.avatar        = _fetch_avatar(profile.get('photo'))
     #u.location      = get_location_from_json(profile.get('address'))

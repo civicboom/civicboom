@@ -13,7 +13,8 @@ log      = logging.getLogger(__name__)
 #-------------------------------------------------------------------------------
 # Users in pending status are forced to complete the registration process.
 #   some urls have to be made avalable to pending users (such as signout, etc)
-pending_user_allowed_list = ['register/new_user', 'account/', 'widget/', 'misc/browser_unsupported', 'misc/feedback', 'misc/contact_us', 'misc/qr', '/accept', 'about/']
+# AllanC - I enabled ALL misc pages to be allowed with a pending user, if this is a problem let me know. I figured that feedback and the mobile detection are all important
+pending_user_allowed_list = ['register/new_user', 'account/', 'misc/', 'widget/', '/accept', 'about/'] #'misc/browser_unsupported', 'misc/feedback', 'misc/contact_us', 'misc/qr',
 
 
 def deny_pending_user(url_to_check):
