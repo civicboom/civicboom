@@ -29,6 +29,7 @@ debian/*.css
 # misc
 coverage/
 tmp/
+**/.DS_Store
 
 # swap and eclipse/aptana project files
 *.swp
